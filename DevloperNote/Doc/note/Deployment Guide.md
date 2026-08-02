@@ -13,8 +13,8 @@ the Linux I2C/SPI/GPIO interfaces, Espeak NG, and `gpiod`. Camera commands use e
 Inspect the target without changing it:
 
 ```sh
-xWalkTool/setup-rpi.sh --check --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
-xWalkTool/setup-rpi.sh --dry-run --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
+xWalkTool/shell/setup-rpi.sh --check --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
+xWalkTool/shell/setup-rpi.sh --dry-run --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
 ```
 
 Use the real profile and GPIO device. The script detects Raspberry Pi OS or Ubuntu, the Pi model, and the
@@ -22,6 +22,11 @@ applicable `/boot/firmware/config.txt` or `/boot/config.txt`. It reports all pri
 `--apply`, adds no duplicate setting or group membership, and refuses an unverified Robot HAT v5 profile.
 It never changes a Robot HAT overlay. A 40-pin header does not identify a HAT revision; v4 is always selected
 manually, while v5 requires its supported Device Tree UUID.
+
+`setup-rpi.sh` remains overlay-neutral. Separately, `xHal_Rpi5CarDependencyInstaller --device rpi` can install the
+bundled Robot HAT v5 overlay only after an explicit `--profile robot_hat_v5` selection and local detection of
+the supported UUID. No verified Robot HAT v4 overlay is bundled; the Servo HAT+ asset is not used as a v4
+substitute. Review this operation first with `--dry-run`.
 
 After reviewing the plan, an administrator may run the same command with `--apply`. Do not prefix inspection
 or dry-run commands with `sudo`; use privilege only for the reviewed apply operation.
@@ -79,7 +84,7 @@ cmake --build --preset coverage --parallel
 ctest --preset coverage
 ```
 
-Use `xWalkTool/run-host-coverage.sh run` after the coverage test when `gcovr` is
+Use `xWalkTool/shell/run-host-coverage.sh run` after the coverage test when `gcovr` is
 available. ThreadSanitizer has its own `thread-sanitizer` configure, build, and
 test presets and must not be combined with AddressSanitizer.
 
@@ -139,7 +144,7 @@ unsafe installed file permissions, and retains a checksum manifest for the stage
 [Host Production Readiness Work](Host%20Production%20Readiness%20Work.md) for local commands and the evidence
 boundary.
 
-Use `xWalkTool/run-host-coverage.sh run` for foreground-only coverage. The script does not create a detached
+Use `xWalkTool/shell/run-host-coverage.sh run` for foreground-only coverage. The script does not create a detached
 process, install packages, or request privileges.
 
 ## Installed layout and staging

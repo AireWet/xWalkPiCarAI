@@ -34,20 +34,27 @@ set(XWALK_CLI_INSTALL_RUNTIME ON CACHE BOOL "Install the CLI runtime layout" FOR
 add_subdirectory(xWalkHal)
 
 if(BUILD_TESTING)
+    find_package(Python3 COMPONENTS Interpreter REQUIRED)
     add_test(NAME xWalkProvisioningHostTest
-        COMMAND bash "${CMAKE_CURRENT_SOURCE_DIR}/deployment/test/setup-rpi-test.sh")
+        COMMAND bash
+            "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/deployment/test/setup-rpi-test.sh")
     set_tests_properties(xWalkProvisioningHostTest PROPERTIES LABELS "host;deployment")
     add_test(NAME xWalkLanguageModelConfigHostTest
         COMMAND bash
-            "${CMAKE_CURRENT_SOURCE_DIR}/deployment/test/language-model-config-test.sh")
+            "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/deployment/test/language-model-config-test.sh")
     set_tests_properties(xWalkLanguageModelConfigHostTest PROPERTIES
+        LABELS "host;deployment")
+    add_test(NAME xHal_Rpi5CarDependencyInstallerHostTest
+        COMMAND "${Python3_EXECUTABLE}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/deployment/test/dependency-installer-test.py")
+    set_tests_properties(xHal_Rpi5CarDependencyInstallerHostTest PROPERTIES
         LABELS "host;deployment")
 endif()
 
 find_program(XWALK_CPPCHECK_EXECUTABLE cppcheck)
 if(XWALK_CPPCHECK_EXECUTABLE AND CMAKE_EXPORT_COMPILE_COMMANDS)
     set(XWALK_CPPCHECK_SUPPRESSIONS
-        "${CMAKE_CURRENT_SOURCE_DIR}/.cppcheck-suppressions")
+        "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/environment/.cppcheck-suppressions")
     add_custom_target(cppcheck
         COMMAND "${XWALK_CPPCHECK_EXECUTABLE}"
             "--project=${CMAKE_BINARY_DIR}/compile_commands.json"
@@ -91,6 +98,6 @@ if(XWALK_ENABLE_PACKAGING)
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "espeak-ng, i2c-tools, gpiod")
     set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "rpicam-apps | ffmpeg")
     set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA
-        "${CMAKE_CURRENT_SOURCE_DIR}/deployment/debian/conffiles")
+        "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/deployment/debian/conffiles")
     include(CPack)
 endif()

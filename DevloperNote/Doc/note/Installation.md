@@ -104,18 +104,19 @@ for every command, action, safety rule, and backend-composition detail.
 Preview every root and submodule build directory that will be removed:
 
 ```sh
-xWalkTool/clean-build.sh --dry-run
+xWalkTool/shell/clean-build.sh --dry-run
 ```
 
-Remove all listed `build` and `build-*` directories and supported in-source
-CMake output:
+Remove all listed `build` and `build-*` directories, supported in-source CMake
+output, and recognized Python-generated caches and package output:
 
 ```sh
-xWalkTool/clean-build.sh --yes
+xWalkTool/shell/clean-build.sh --yes
 ```
 
-The cleaner never removes a source `CMakeLists.txt`. Removed build output is not
-recoverable, but it can be regenerated with the documented CMake commands.
+The cleaner never removes a source `CMakeLists.txt` or Python source file.
+Removed generated output is not recoverable, but it can be regenerated with the
+documented build and test commands.
 
 ## Build one module
 

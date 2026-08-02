@@ -17,6 +17,8 @@ options, backend ownership, safety constraints, and verification commands remain
 - [Raspberry Pi setup script guide](Doc/note/Raspberry%20Pi%20Setup%20Script%20Guide.md): setup options,
   safe dry-run, privileged apply behavior, validation, and troubleshooting.
 - [xWalkTool overview](Doc/note/xWalkTool%20Overview.md): tool inventory, safety classes, and detailed links.
+- [Dependency installer guide](Doc/note/Dependency%20Installer%20Guide.md): cross-platform package checks,
+  guarded Robot HAT v5 boot setup, status tables, and safety limits.
 - [Clean build script guide](Doc/note/Clean%20Build%20Script%20Guide.md): cleanup discovery and confirmation.
 - [Eclipse build script guide](Doc/note/Eclipse%20Build%20Script%20Guide.md): host build and clean behavior.
 - [Hardware provisioning guide](Doc/note/Hardware%20Provisioning%20Script%20Guide.md): board and Linux device

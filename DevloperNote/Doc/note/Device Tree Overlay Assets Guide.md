@@ -11,7 +11,8 @@ boards. They are binary boot-configuration assets, not shell scripts, runtime li
 | `sunfounder-servohat+.dtbo` | SunFounder Servo HAT+ boot-time configuration |
 
 The files are kept as source-development assets. Current CMake installation rules, host CI,
-`setup-rpi.sh`, and `provision-hardware.sh` do not install or activate them.
+`setup-rpi.sh`, and `provision-hardware.sh` do not install or activate them. The explicitly invoked
+`xHal_Rpi5CarDependencyInstaller` can install only the verified Robot HAT v5 asset on its matching local hardware.
 
 ## Safety restrictions
 
@@ -44,16 +45,34 @@ dtc -I dtb -O dts xWalkTool/dtoverlays/sunfounder-robothat5.dtbo
 Warnings from decompilation require review and are not evidence that an overlay is safe for the attached
 board. Host inspection cannot verify electrical compatibility or runtime behavior.
 
-## Target use boundary
+## Guarded Robot HAT v5 installation
 
-There is intentionally no automatic installation command in this guide. Overlay installation changes the
-Raspberry Pi boot configuration and requires all of the following first:
+Overlay installation changes the Raspberry Pi boot configuration and requires all of the following first:
 
 1. Physical confirmation of the exact HAT revision.
 2. Review of the target Raspberry Pi model and operating-system overlay mechanism.
 3. Review of existing I2C, SPI, I2S, audio, GPIO, and other overlays.
 4. A recovery method for an unbootable or incorrectly configured target.
 5. Explicit authorization to modify the target boot partition.
+
+The repository does not contain a verified Robot HAT v4 overlay. `sunfounder-servohat+.dtbo` is not a Robot
+HAT v4 substitute. The installer rejects v4 instead of guessing or activating the Servo HAT+ asset.
+
+For a physically verified Robot HAT v5 whose supported UUID is already exposed locally, inspect the plan:
+
+```sh
+xWalkTool/python/xHal_Rpi5CarDependencyInstaller --device rpi --profile robot_hat_v5 --required-only --dry-run
+```
+
+Apply only after reviewing the package, backup, overlay, I2C, and SPI changes:
+
+```sh
+xWalkTool/python/xHal_Rpi5CarDependencyInstaller --device rpi --profile robot_hat_v5 --required-only
+```
+
+The installer verifies the source checksum, rejects its known bundled overlay conflict, preserves one
+recoverable backup of an existing boot configuration and different destination blob, installs the v5 blob,
+and adds only missing settings. It does not reboot or perform hardware acceptance.
 
 After an authorized target administrator installs and selects the verified overlay, reboot the Raspberry Pi,
 run the non-moving `doctor` command, inspect the expected device nodes, and complete the documented physical

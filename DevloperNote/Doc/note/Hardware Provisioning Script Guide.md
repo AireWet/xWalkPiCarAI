@@ -1,7 +1,8 @@
 # Hardware Provisioning Script Guide
 
-[`xWalkTool/provision-hardware.sh`](../../../xWalkTool/provision-hardware.sh) validates a selected Robot
-HAT profile and Linux device identity, then persists that identity into one existing writable xWalk
+[`xWalkTool/shell/provision-hardware.sh`](../../../xWalkTool/shell/provision-hardware.sh)
+validates a selected Robot HAT profile and Linux device identity, then persists
+that identity into one existing writable xWalk
 configuration file. It is normally invoked by `setup-rpi.sh` near the end of target provisioning.
 
 The script does not move actuators, claim device outputs, install packages, edit Raspberry Pi boot settings,
@@ -42,7 +43,7 @@ physically; device paths alone do not identify the HAT.
 ## Provision the configuration
 
 ```sh
-xWalkTool/provision-hardware.sh --profile robot_hat_v4 --config /var/lib/xwalk/picar-x.conf --gpio-device /dev/gpiochip0 --i2c-device /dev/i2c-1 --spi-device /dev/spidev0.0
+xWalkTool/shell/provision-hardware.sh --profile robot_hat_v4 --config /var/lib/xwalk/picar-x.conf --gpio-device /dev/gpiochip0 --i2c-device /dev/i2c-1 --spi-device /dev/spidev0.0
 ```
 
 Use the actual profile and devices reported on the target. Robot HAT v5 is rejected unless the supported
@@ -95,6 +96,6 @@ The script's successful exit confirms configuration provisioning, not physical m
 The repository test uses a temporary simulated target and does not access physical hardware:
 
 ```sh
-bash -n xWalkTool/provision-hardware.sh
-bash deployment/test/setup-rpi-test.sh
+bash -n xWalkTool/shell/provision-hardware.sh
+bash xWalkTool/deployment/test/setup-rpi-test.sh
 ```

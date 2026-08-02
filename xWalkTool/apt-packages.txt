@@ -1,0 +1,261 @@
+# xWalk operating-system package manifest
+#
+# Package names are derived from the repository CMake checks, GitHub Actions workflow,
+# xWalkTool/shell/setup-rpi.sh, deployment validation commands, and the inactive xWalkIW generator.
+# The human-readable lists use Debian/Ubuntu names. The machine-readable catalog at the
+# end maps supported dependencies to apt, dnf, pacman, and Homebrew package names.
+# Packages marked OPTIONAL are not required for the normal host or Raspberry Pi runtime.
+
+HOST BUILD AND TEST - REQUIRED
+build-essential
+cmake
+ninja-build
+pkg-config
+python3
+libasound2-dev
+libcurl4-openssl-dev
+
+HOST NATIVE AUDIO AND RPI-COMPATIBLE BUILD - OPTIONAL
+# Required when XWALK_MUSIC_BUILD_SNDFILE_DECODER=ON. Include it when preparing an
+# RPi-compatible build or Debian package on a host that can build the RPi targets.
+libsndfile1-dev
+
+HOST QUALITY CHECKS - OPTIONAL
+# These packages support the repository's static analysis, coverage, and shell checks.
+clang
+clang-tidy
+cppcheck
+gcovr
+shellcheck
+
+HOST DEBIAN PACKAGE AND DEPLOYMENT VALIDATION - OPTIONAL
+# dpkg-dev supplies Debian package helpers used by dependency inspection.
+# acl, udev, and systemd supply getfacl, udevadm, and systemd-analyze respectively.
+dpkg-dev
+fakeroot
+lintian
+acl
+udev
+systemd
+
+RASPBERRY PI BUILD AND RUNTIME - REQUIRED COMMON PACKAGES
+# This list intentionally matches required_packages in xWalkTool/shell/setup-rpi.sh.
+build-essential
+cmake
+ninja-build
+pkg-config
+python3
+linux-libc-dev
+libasound2-dev
+alsa-utils
+libcurl4-openssl-dev
+libsndfile1-dev
+i2c-tools
+libi2c-dev
+gpiod
+espeak-ng
+curl
+ca-certificates
+
+RASPBERRY PI CAMERA - INSTALL EXACTLY ONE PROFILE
+# CSI camera profile used by: setup-rpi.sh --camera csi
+rpicam-apps
+
+# USB camera profile used by: setup-rpi.sh --camera usb
+ffmpeg
+
+XWALKHAL MODULE DEPENDENCY MAP
+# Names beginning with xWalk are source modules built by CMake. They are not APT packages.
+# "Internal" lists direct project-library dependencies. "APT" lists direct or inherited
+# operating-system packages needed by the Raspberry Pi backend. Host fakes use only the
+# HOST BUILD AND TEST packages above unless another dependency is stated.
+
+xWalkHal aggregate target
+Internal: every xWalkHal module listed below, plus xWalkCommon
+APT: the complete RASPBERRY PI BUILD AND RUNTIME list and one camera profile above
+
+xWalkCommon
+Internal: none
+APT: none beyond the compiler and standard C++ runtime from build-essential
+
+xWalkI2c
+Internal: xWalkCommon
+APT: linux-libc-dev, libi2c-dev, i2c-tools
+
+xWalkSpi
+Internal: xWalkCommon
+APT: linux-libc-dev
+Runtime interface: the kernel must expose the configured /dev/spidevN.N device
+
+xWalkGpio
+Internal: xWalkCommon
+APT: linux-libc-dev, gpiod
+
+xWalkAudio
+Internal: xWalkCommon
+APT: libasound2-dev, alsa-utils
+
+xWalkConfig
+Internal: xWalkCommon
+APT: none
+
+xWalkTrace
+Internal: xWalkCommon
+APT: none
+
+xWalkUtils
+Internal: xWalkCommon
+APT: none beyond the Linux/POSIX runtime supplied by the operating system
+
+xWalkLanguageModel
+Internal: xWalkCommon
+APT: libcurl4-openssl-dev, curl, ca-certificates
+External runtime: Ollama executable and model when its provider is selected
+
+xWalkMusic
+Internal: xWalkCommon, xWalkAudio
+APT: libasound2-dev, alsa-utils, libsndfile1-dev
+
+xWalkSpeaker
+Internal: xWalkCommon, xWalkAudio
+APT: libasound2-dev, alsa-utils
+
+xWalkPwm
+Internal: xWalkCommon, xWalkI2c
+APT: linux-libc-dev, libi2c-dev, i2c-tools
+
+xWalkAdc
+Internal: xWalkCommon, xWalkI2c
+APT: linux-libc-dev, libi2c-dev, i2c-tools
+
+xWalkServo
+Internal: xWalkCommon, xWalkPwm
+APT: linux-libc-dev, libi2c-dev, i2c-tools
+
+xWalkAdxl345
+Internal: xWalkCommon, xWalkI2c
+APT: linux-libc-dev, libi2c-dev, i2c-tools
+
+xWalkLineTracker
+Internal: xWalkCommon, xWalkAdc
+APT: linux-libc-dev, libi2c-dev, i2c-tools
+
+xWalkUltrasonic
+Internal: xWalkCommon, xWalkGpio
+APT: linux-libc-dev, gpiod
+
+xWalkMotor
+Internal: xWalkCommon, xWalkPwm, xWalkGpio
+APT: linux-libc-dev, libi2c-dev, i2c-tools, gpiod
+
+xWalkLed
+Internal: xWalkCommon, xWalkGpio, xWalkPwm
+APT: linux-libc-dev, libi2c-dev, i2c-tools, gpiod
+
+xWalkBuzzer
+Internal: xWalkCommon, xWalkPwm, xWalkGpio
+APT: linux-libc-dev, libi2c-dev, i2c-tools, gpiod
+
+xWalkCamera
+Internal: xWalkCommon
+APT: rpicam-apps for CSI, or ffmpeg for USB
+
+xWalkUserButton
+Internal: xWalkCommon, xWalkGpio
+APT: linux-libc-dev, gpiod
+
+xWalkBoardControl
+Internal: xWalkAdc, xWalkCommon, xWalkGpio, xWalkI2c
+APT: linux-libc-dev, libi2c-dev, i2c-tools, gpiod
+
+xWalkRobot
+Internal: xWalkCommon, xWalkServo, xWalkConfig
+APT: linux-libc-dev, libi2c-dev, i2c-tools
+
+xWalkGPT
+Internal: xWalkBoardControl, xWalkCommon, xWalkAudio
+APT: libasound2-dev, alsa-utils, espeak-ng, linux-libc-dev, libi2c-dev, i2c-tools, gpiod
+External runtime: Vosk shared library and voice model when its provider is selected
+
+xWalkVoiceAssistant
+Internal: xWalkGPT, xWalkLanguageModel, xWalkCommon
+APT: dependencies inherited from xWalkGPT and xWalkLanguageModel
+External runtime: the configured Vosk and language-model providers
+
+XWALKIW PROTOBUF/GRPC GENERATOR - OPTIONAL AND CURRENTLY INACTIVE
+# These packages are needed only if xWalkHal/xWalkIW schemas are restored and
+# xWalkTool/python/xHal_Rpi5CarIwGenerator is used.
+python3
+protobuf-compiler
+protobuf-compiler-grpc
+libprotobuf-dev
+libgrpc++-dev
+
+NOT MANAGED BY THIS APT MANIFEST
+# Vosk requires a compatible shared library and a separately downloaded voice model.
+# Ollama requires its executable and separately downloaded model manifests.
+# Neither optional component is installed by setup-rpi.sh; use an approved upstream
+# installation method and enable its validation explicitly with --with-vosk or --with-ollama.
+
+XWALK MACHINE-READABLE PACKAGE CATALOG V1
+# Parsed by xWalkTool/python/xHal_Rpi5CarDependencyInstaller. Do not change the field order.
+# group|group-id|comma-separated report modules
+# package|id|scope|targets|groups|apt|dnf|pacman|brew
+# A dash means that the dependency is unavailable or not applicable to that package family.
+
+group|workspace|xWalkHal,xWalkCommon
+group|spi|xWalkSpi
+group|i2c|xWalkI2c,xWalkPwm,xWalkAdc,xWalkServo,xWalkAdxl345
+group|i2c|xWalkLineTracker,xWalkMotor,xWalkLed,xWalkBuzzer,xWalkBoardControl,xWalkRobot
+group|gpio|xWalkGpio,xWalkUltrasonic,xWalkMotor,xWalkLed,xWalkBuzzer
+group|gpio|xWalkUserButton,xWalkBoardControl,xWalkGPT
+group|audio|xWalkAudio,xWalkMusic,xWalkSpeaker,xWalkGPT,xWalkVoiceAssistant
+group|curl|xWalkLanguageModel,xWalkVoiceAssistant
+group|camera|xWalkCamera
+group|core|xWalkConfig,xWalkTrace,xWalkUtils
+group|quality|HostQuality
+group|release|DebianRelease
+group|generator|xWalkIWGenerator
+group|external|xWalkGPT,xWalkLanguageModel,xWalkVoiceAssistant
+
+package|toolchain|required|host,rpi|workspace|build-essential|gcc-c++,make|base-devel|@xcode-clt
+package|cmake|required|host,rpi|workspace|cmake|cmake|cmake|cmake
+package|ninja|required|host,rpi|workspace|ninja-build|ninja-build|ninja|ninja
+package|pkg-config|required|host,rpi|workspace|pkg-config|pkgconf-pkg-config|pkgconf|pkg-config
+package|python|required|host,rpi|workspace|python3|python3|python|python
+package|linux-uapi|required|rpi|i2c,gpio,spi|linux-libc-dev|kernel-headers|linux-api-headers|-
+package|alsa-dev|required|host,rpi|audio|libasound2-dev|alsa-lib-devel|alsa-lib|-
+package|alsa-utils|required|rpi|audio|alsa-utils|alsa-utils|alsa-utils|-
+package|curl-dev|required|host,rpi|curl|libcurl4-openssl-dev|libcurl-devel|curl|curl
+package|sndfile|required|rpi|audio|libsndfile1-dev|libsndfile-devel|libsndfile|libsndfile
+package|sndfile-host|audio|host|audio|libsndfile1-dev|libsndfile-devel|libsndfile|libsndfile
+package|i2c-tools|required|rpi|i2c|i2c-tools|i2c-tools|i2c-tools|-
+package|i2c-dev|required|rpi|i2c|libi2c-dev|i2c-tools-devel|i2c-tools|-
+package|gpio-tools|required|rpi|gpio|gpiod|libgpiod-utils|libgpiod|-
+package|espeak|required|rpi|audio|espeak-ng|espeak-ng|espeak-ng|-
+package|curl-cli|required|rpi|curl|curl|curl|curl|curl
+package|certificates|required|rpi|curl|ca-certificates|ca-certificates|ca-certificates|ca-certificates
+package|camera-csi|camera-csi|rpi|camera|rpicam-apps|-|-|-
+package|camera-usb|camera-usb|rpi|camera|ffmpeg|ffmpeg|ffmpeg|ffmpeg
+
+package|clang|quality|host,rpi|quality|clang|clang|clang|llvm
+package|clang-tidy|quality|host,rpi|quality|clang-tidy|clang-tools-extra|clang|llvm
+package|cppcheck|quality|host,rpi|quality|cppcheck|cppcheck|cppcheck|cppcheck
+package|gcovr|quality|host,rpi|quality|gcovr|gcovr|gcovr|gcovr
+package|shellcheck|quality|host,rpi|quality|shellcheck|ShellCheck|shellcheck|shellcheck
+
+package|dpkg-dev|release|host,rpi|release|dpkg-dev|-|-|-
+package|fakeroot|release|host,rpi|release|fakeroot|-|fakeroot|-
+package|lintian|release|host,rpi|release|lintian|-|-|-
+package|acl|release|host,rpi|release|acl|acl|acl|-
+package|udev|release|host,rpi|release|udev|systemd-udev|systemd|-
+package|systemd|release|host,rpi|release|systemd|systemd|systemd|-
+
+package|protoc|generator|host,rpi|generator|protobuf-compiler|protobuf-compiler|protobuf|protobuf
+package|grpc-plugin|generator|host,rpi|generator|protobuf-compiler-grpc|grpc-plugins|grpc|grpc
+package|protobuf-dev|generator|host,rpi|generator|libprotobuf-dev|protobuf-devel|protobuf|protobuf
+package|grpc-dev|generator|host,rpi|generator|libgrpc++-dev|grpc-devel|grpc|grpc
+
+package|vosk|external|rpi|external|@vosk|@vosk|@vosk|-
+package|ollama|external|host,rpi|external|@ollama|@ollama|@ollama|@ollama
+XWALK MACHINE-READABLE PACKAGE CATALOG END

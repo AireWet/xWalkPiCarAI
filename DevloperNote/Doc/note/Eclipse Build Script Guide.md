@@ -1,7 +1,8 @@
 # Eclipse Build Script Guide
 
-[`xWalkTool/eclipse-build.sh`](../../../xWalkTool/eclipse-build.sh) configures and builds the host CLI tree used by
-the repository's Eclipse workflow. It does not configure Raspberry Pi backends or access physical hardware.
+[`xWalkTool/shell/eclipse-build.sh`](../../../xWalkTool/shell/eclipse-build.sh)
+configures and builds the host CLI tree used by the repository's Eclipse
+workflow. It does not configure Raspberry Pi backends or access physical hardware.
 
 ## Fixed configuration
 
@@ -21,7 +22,7 @@ does not redirect its output.
 ## Configure and build
 
 ```sh
-xWalkTool/eclipse-build.sh
+xWalkTool/shell/eclipse-build.sh
 ```
 
 This command configures the existing or new build tree and then runs a parallel build. The generated
@@ -30,14 +31,14 @@ This command configures the existing or new build tree and then runs a parallel 
 ## Clean the configured build
 
 ```sh
-xWalkTool/eclipse-build.sh clean
+xWalkTool/shell/eclipse-build.sh clean
 ```
 
 The script still runs CMake configuration first, then invokes the configured `clean` target. It retains the
 build directory and CMake cache. Use the clean-build tool when the entire generated directory must be removed.
 
 ```sh
-xWalkTool/clean-build.sh --dry-run
+xWalkTool/shell/clean-build.sh --dry-run
 ```
 
 ## Command limitations
@@ -54,7 +55,7 @@ Configuration or compilation failures stop the script with the failing CMake sta
 Syntax validation does not configure or build:
 
 ```sh
-bash -n xWalkTool/eclipse-build.sh
+bash -n xWalkTool/shell/eclipse-build.sh
 ```
 
 Running the script itself writes generated host output and performs compilation. It does not run CTest.

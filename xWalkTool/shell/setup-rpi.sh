@@ -133,7 +133,7 @@ for setting in i2c_arm spi; do
 done
 
 required_packages=(
-    build-essential cmake ninja-build pkg-config linux-libc-dev
+    build-essential cmake ninja-build pkg-config python3 linux-libc-dev
     libasound2-dev alsa-utils libcurl4-openssl-dev
     libsndfile1-dev i2c-tools libi2c-dev gpiod
     espeak-ng curl ca-certificates

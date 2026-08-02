@@ -2,7 +2,7 @@
 
 set -eu
 
-repository_root="$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)"
+repository_root="$(CDPATH='' cd -- "$(dirname -- "$0")/../.." && pwd)"
 
 usage() {
     echo "Usage: $0 run"
@@ -31,7 +31,7 @@ run_coverage() {
     cmake --fresh --preset coverage || return $?
     cmake --build --preset coverage --parallel || return $?
     ctest --preset coverage || return $?
-    "$gcovr_executable" --config gcovr.cfg
+    "$gcovr_executable" --config xWalkTool/environment/gcovr.cfg
 }
 
 case "${1-}" in

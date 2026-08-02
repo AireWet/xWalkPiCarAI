@@ -38,7 +38,7 @@
       "inherits": "host-debug",
       "binaryDir": "${sourceDir}/build-host/clang-tidy",
       "cacheVariables": {
-        "CMAKE_CXX_CLANG_TIDY": "clang-tidy;--config-file=${sourceDir}/.clang-tidy",
+        "CMAKE_CXX_CLANG_TIDY": "clang-tidy;--config-file=${sourceDir}/xWalkTool/environment/.clang-tidy",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
     },

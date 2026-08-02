@@ -3,16 +3,16 @@
 set -u
 
 SCRIPT_DIRECTORY=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
-REPOSITORY_ROOT=$(CDPATH='' cd -- "${SCRIPT_DIRECTORY}/.." && pwd)
+REPOSITORY_ROOT=$(CDPATH='' cd -- "${SCRIPT_DIRECTORY}/../.." && pwd)
 DRY_RUN=false
 ASSUME_YES=false
 
 show_usage()
 {
     printf '%s\n' \
-        "Usage: xWalkTool/clean-build.sh [--dry-run] [--yes]" \
+        "Usage: xWalkTool/shell/clean-build.sh [--dry-run] [--yes]" \
         "" \
-        "  --dry-run  List generated build directories and files without deleting them." \
+        "  --dry-run  List generated CMake and Python output without deleting it." \
         "  --yes      Delete without an interactive confirmation." \
         "  --help     Show this help text."
 }
@@ -63,6 +63,66 @@ mapfile -d '' -t CACHE_FILES < <(
         -print0 | sort -z
 )
 
+mapfile -d '' -t PYTHON_GENERATED_DIRECTORIES < <(
+    find "${REPOSITORY_ROOT}" -mindepth 1 \
+        \( -type d \( -name build -o -name 'build-*' \) -prune \) -o \
+        \( -type d \( \
+            -name __pycache__ -o \
+            -name .pytest_cache -o \
+            -name .mypy_cache -o \
+            -name .ruff_cache -o \
+            -name .hypothesis -o \
+            -name .pytype -o \
+            -name .pyre -o \
+            -name .tox -o \
+            -name .nox -o \
+            -name .eggs -o \
+            -name pip-wheel-metadata -o \
+            -name '*.egg-info' \
+        \) -prune -print0 \) | sort -z
+)
+
+mapfile -d '' -t PYTHON_GENERATED_FILES < <(
+    find "${REPOSITORY_ROOT}" -mindepth 1 \
+        \( -type d \( \
+            -name build -o \
+            -name 'build-*' -o \
+            -name __pycache__ -o \
+            -name .pytest_cache -o \
+            -name .mypy_cache -o \
+            -name .ruff_cache -o \
+            -name .hypothesis -o \
+            -name .pytype -o \
+            -name .pyre -o \
+            -name .tox -o \
+            -name .nox -o \
+            -name .eggs -o \
+            -name pip-wheel-metadata -o \
+            -name '*.egg-info' \
+        \) -prune \) -o \
+        \( -type f \( \
+            -name '*.pyc' -o \
+            -name '*.pyo' -o \
+            -name .coverage -o \
+            -name '.coverage.*' \
+        \) -print0 \) | sort -z
+)
+
+while IFS= read -r -d '' python_distribution_directory
+do
+    python_package_root=${python_distribution_directory%/*}
+    if [ -f "${python_package_root}/pyproject.toml" ] ||
+        [ -f "${python_package_root}/setup.py" ] ||
+        [ -f "${python_package_root}/setup.cfg" ]
+    then
+        PYTHON_GENERATED_DIRECTORIES+=("${python_distribution_directory}")
+    fi
+done < <(
+    find "${REPOSITORY_ROOT}" -mindepth 1 \
+        \( -type d \( -name build -o -name 'build-*' \) -prune \) -o \
+        \( -type d -name dist -print0 \)
+)
+
 declare -a IN_SOURCE_BUILD_ROOTS=()
 
 for cache_file in "${CACHE_FILES[@]}"
@@ -101,10 +161,24 @@ do
         "${build_root#"${REPOSITORY_ROOT}"/}"
 done
 
+for python_directory in "${PYTHON_GENERATED_DIRECTORIES[@]}"
+do
+    printf '  Python generated directory: %s\n' \
+        "${python_directory#"${REPOSITORY_ROOT}"/}"
+done
+
+for python_file in "${PYTHON_GENERATED_FILES[@]}"
+do
+    printf '  Python generated file: %s\n' \
+        "${python_file#"${REPOSITORY_ROOT}"/}"
+done
+
 if [ "${#BUILD_DIRECTORIES[@]}" -eq 0 ] &&
-    [ "${#IN_SOURCE_BUILD_ROOTS[@]}" -eq 0 ]
+    [ "${#IN_SOURCE_BUILD_ROOTS[@]}" -eq 0 ] &&
+    [ "${#PYTHON_GENERATED_DIRECTORIES[@]}" -eq 0 ] &&
+    [ "${#PYTHON_GENERATED_FILES[@]}" -eq 0 ]
 then
-    printf 'No generated CMake build output was found.\n'
+    printf 'No generated CMake or Python output was found.\n'
     exit 0
 fi
 
@@ -122,7 +196,7 @@ then
         exit 2
     fi
 
-    printf 'Remove all listed generated build output? [y/N] '
+    printf 'Remove all listed generated CMake and Python output? [y/N] '
     read -r confirmation
     case "${confirmation}" in
         y|Y|yes|YES)
@@ -176,4 +250,20 @@ do
     done
 done
 
-printf 'Build cleanup completed. Generated output cannot be recovered, but it can be rebuilt.\n'
+for python_directory in "${PYTHON_GENERATED_DIRECTORIES[@]}"
+do
+    if [ -d "${python_directory}" ]
+    then
+        cmake -E remove_directory "${python_directory}"
+    fi
+done
+
+for python_file in "${PYTHON_GENERATED_FILES[@]}"
+do
+    if [ -f "${python_file}" ]
+    then
+        cmake -E remove "${python_file}"
+    fi
+done
+
+printf 'Build and Python cache cleanup completed. Generated output cannot be recovered, but it can be rebuilt.\n'
