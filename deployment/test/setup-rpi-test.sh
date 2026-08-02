@@ -2,7 +2,7 @@
 
 set -eu
 
-repository_root="$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
+repository_root="$(CDPATH='' cd -- "$(dirname -- "$0")/../.." && pwd)"
 fixture_root="$(mktemp -d)"
 trap 'rm -rf "$fixture_root"' EXIT
 

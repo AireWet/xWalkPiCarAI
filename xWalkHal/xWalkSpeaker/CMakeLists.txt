@@ -47,8 +47,22 @@ if(XWALK_SPEAKER_BUILD_HOST_TESTS)
     add_test(NAME xWalkSpeakerHostTest COMMAND xWalkSpeakerTest
         ${CMAKE_CURRENT_BINARY_DIR}/speaker-test.wav
         ${CMAKE_CURRENT_BINARY_DIR}/speaker-test.MP3
-        ${CMAKE_CURRENT_BINARY_DIR}/speaker-test.txt)
-    set_tests_properties(xWalkSpeakerHostTest PROPERTIES LABELS "host")
+        ${CMAKE_CURRENT_BINARY_DIR}/speaker-test.txt
+        concurrency)
+    set_tests_properties(xWalkSpeakerHostTest PROPERTIES
+        LABELS "host"
+        TIMEOUT 30)
+
+    if(NOT XWALK_ENABLE_THREAD_SANITIZER)
+        add_test(NAME xWalkSpeakerFailureHostTest COMMAND xWalkSpeakerTest
+            ${CMAKE_CURRENT_BINARY_DIR}/speaker-failure-test.wav
+            ${CMAKE_CURRENT_BINARY_DIR}/speaker-failure-test.MP3
+            ${CMAKE_CURRENT_BINARY_DIR}/speaker-failure-test.txt
+            failure)
+        set_tests_properties(xWalkSpeakerFailureHostTest PROPERTIES
+            LABELS "host;failure-isolation"
+            TIMEOUT 30)
+    endif()
 endif()
 
 if(XWALK_SPEAKER_NEEDS_ALSA)

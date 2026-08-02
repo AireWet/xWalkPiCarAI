@@ -128,6 +128,11 @@ ctest --test-dir xWalkHal/xWalkSpeaker/build-host --output-on-failure
 The host suites use module-local fixtures plus injected decoder and ALSA
 operations. They do not access an audio device.
 
+The concurrency suite remains enabled under ThreadSanitizer. Process-isolated
+exception and worker-termination scenarios run in a separate host test because
+forking a process with active instrumented worker threads can deadlock the
+ThreadSanitizer runtime. Both speaker tests have a 30-second CTest timeout.
+
 ## Target compilation
 
 ```bash

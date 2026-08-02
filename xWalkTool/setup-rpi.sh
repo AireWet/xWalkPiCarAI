@@ -132,19 +132,21 @@ for setting in i2c_arm spi; do
     fi
 done
 
-required_packages="build-essential cmake ninja-build pkg-config linux-libc-dev"
-required_packages="$required_packages libasound2-dev alsa-utils libcurl4-openssl-dev"
-required_packages="$required_packages libsndfile1-dev i2c-tools libi2c-dev gpiod"
-required_packages="$required_packages espeak-ng curl ca-certificates"
+required_packages=(
+    build-essential cmake ninja-build pkg-config linux-libc-dev
+    libasound2-dev alsa-utils libcurl4-openssl-dev
+    libsndfile1-dev i2c-tools libi2c-dev gpiod
+    espeak-ng curl ca-certificates
+)
 if [ "$camera" = "csi" ]; then
-    required_packages="$required_packages rpicam-apps"
+    required_packages+=(rpicam-apps)
 else
-    required_packages="$required_packages ffmpeg"
+    required_packages+=(ffmpeg)
 fi
-missing_packages=""
-for package in $required_packages; do
+missing_packages=()
+for package in "${required_packages[@]}"; do
     if ! dpkg-query -W -f='${Status}' "$package" 2>/dev/null | grep -q 'ok installed'; then
-        missing_packages="$missing_packages $package"
+        missing_packages+=("$package")
     fi
 done
 
@@ -166,7 +168,7 @@ configuration_value() {
     ' "$effective_config"
 }
 
-script_directory="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+script_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 rule_template="$script_directory/../deployment/udev/99-xwalk-picarx.rules.in"
 if [ ! -f "$rule_template" ]; then
     rule_template="$script_directory/../../share/xwalk/deployment/udev/99-xwalk-picarx.rules.in"
@@ -187,8 +189,8 @@ if [ "$config_ready" != "true" ]; then
     echo "  configuration action: install the default file before apply mode"
 fi
 echo "  exact devices: $i2c_device, $gpio_device, $spi_device"
-if [ -n "$missing_packages" ]; then
-    echo "  install packages:$missing_packages"
+if [ "${#missing_packages[@]}" -ne 0 ]; then
+    echo "  install packages: ${missing_packages[*]}"
 else
     echo "  packages: already installed"
 fi
@@ -232,8 +234,8 @@ fi
 
 if [ "$mode" = "check" ]; then
     required_failures=0
-    if [ -n "$missing_packages" ]; then
-        echo "[FAIL] required packages:$missing_packages"
+    if [ "${#missing_packages[@]}" -ne 0 ]; then
+        echo "[FAIL] required packages: ${missing_packages[*]}"
         required_failures=$((required_failures + 1))
     fi
     for setting in i2c_arm spi; do
@@ -290,10 +292,9 @@ run_root() {
     fi
 }
 
-if [ -n "$missing_packages" ]; then
+if [ "${#missing_packages[@]}" -ne 0 ]; then
     run_root apt-get update
-    # Word splitting is intentional: this list contains validated package names only.
-    run_root apt-get install -y $missing_packages
+    run_root apt-get install -y "${missing_packages[@]}"
 fi
 
 for setting in i2c_arm spi; do

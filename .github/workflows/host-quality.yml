@@ -64,6 +64,7 @@ jobs:
 
   thread-sanitizer:
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - name: Install host dependencies
@@ -75,7 +76,7 @@ jobs:
       - name: Build
         run: cmake --build --preset thread-sanitizer --parallel
       - name: Test concurrency with ThreadSanitizer
-        run: ctest --preset thread-sanitizer
+        run: ctest --preset thread-sanitizer --timeout 60
 
   stress-tests:
     runs-on: ubuntu-24.04

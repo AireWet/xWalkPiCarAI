@@ -46,6 +46,8 @@ namespace
 /** @brief Records simulated decoding, stream, and speaker-output operations. */
 struct TestBackend
 {
+    /** @brief Protects counters updated concurrently by simulated playback workers. */
+    XWalkHal::mutexhandle callbackMutex{};
     /** @brief Number of speaker-output enable operations. */
     XWalkHal::uint32 enableCount{};
     /** @brief Number of speaker-output disable operations. */
@@ -109,7 +111,10 @@ XWalkHal::speakerstreamhandle openStream(XWalkHal::contextpointer context,
     TestBackend& backend = *static_cast<TestBackend*>(context);
     assert(sampleRateHz == 44'100U);
     assert(channelCount == 1U);
-    ++backend.openCount;
+    {
+        const XWalkHal::mutexlock lock(backend.callbackMutex);
+        ++backend.openCount;
+    }
     return context;
 }
 
@@ -126,7 +131,10 @@ void writeStream(XWalkHal::contextpointer context, XWalkHal::speakerstreamhandle
     {
         XHAL_THROW_RUNTIME_ERROR("Simulated speaker stream failure");
     }
-    ++backend.writeCount;
+    {
+        const XWalkHal::mutexlock lock(backend.callbackMutex);
+        ++backend.writeCount;
+    }
     XWalkHal::common::sleepMilliseconds(2U);
 }
 
@@ -135,6 +143,7 @@ void closeStream(XWalkHal::contextpointer context, XWalkHal::speakerstreamhandle
 {
     TestBackend& backend = *static_cast<TestBackend*>(context);
     assert(stream == context);
+    const XWalkHal::mutexlock lock(backend.callbackMutex);
     ++backend.closeCount;
 }
 
@@ -194,7 +203,7 @@ void testFormatAndCompletion(const XWalkHal::filesystempath& compressedPath)
     assert(backend.closeCount == 1U);
 }
 
-/** @brief Verifies rejection when all eight bounded playback slots are occupied. */
+/** @brief Verifies that all eight bounded playback slots can be occupied and cleaned up. */
 void testTaskCapacity(const XWalkHal::filesystempath& wavePath)
 {
     TestBackend backend;
@@ -206,9 +215,21 @@ void testTaskCapacity(const XWalkHal::filesystempath& wavePath)
         static_cast<void>(speaker.play(wavePath.string()));
     }
     assert(speaker.listTasks().size() == XHAL_RPI5CAR_SPEAKER_MAXIMUM_TASK_COUNT);
+}
 
+/** @brief Verifies rejection when a ninth playback task exceeds the bounded capacity. */
+void testTaskCapacityFailure(const XWalkHal::filesystempath& wavePath)
+{
     xwalk::hal::test::expectFailure([&]()
     {
+        TestBackend backend;
+        const XWalkHal::XWalkSpeakerCallbacks callbacks = speakerCallbacks();
+        XWalkHal::XWalkSpeaker speaker(&backend, callbacks);
+        for (XWalkHal::uint32 taskCount = 0U;
+            taskCount < XHAL_RPI5CAR_SPEAKER_MAXIMUM_TASK_COUNT; ++taskCount)
+        {
+            static_cast<void>(speaker.play(wavePath.string()));
+        }
         static_cast<void>(speaker.play(wavePath.string()));
     });
 }
@@ -280,31 +301,40 @@ void createTestFile(const XWalkHal::filesystempath& path)
  * @brief Runs all host-side speaker tests using module-local files.
  *
  * @param[in] argumentCount
- * Number of command-line arguments; exactly four are required.
+ * Number of command-line arguments; exactly five are required.
  *
  * @param[in] arguments
- * Executable, WAV, compressed, and unsupported test paths.
+ * Executable, WAV, compressed, unsupported test paths, and suite mode.
  *
  * @return
  * Zero after every assertion passes.
  */
 XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer arguments[])
 {
-    assert(argumentCount == 4);
+    assert(argumentCount == 5);
     const XWalkHal::filesystempath wavePath(arguments[1]);
     const XWalkHal::filesystempath compressedPath(arguments[2]);
     const XWalkHal::filesystempath unsupportedPath(arguments[3]);
+    const XWalkHal::stringview suiteMode(arguments[4]);
     XWalkHal::filesystempath missingPath = wavePath;
     missingPath.replace_extension(".missing.wav");
     createTestFile(wavePath);
     createTestFile(compressedPath);
     createTestFile(unsupportedPath);
 
-    testPlaybackControl(wavePath);
-    testFormatAndCompletion(compressedPath);
-    testTaskCapacity(wavePath);
-    testValidation(unsupportedPath, missingPath);
-    testWorkerFailure(wavePath);
+    if (suiteMode == "concurrency")
+    {
+        testPlaybackControl(wavePath);
+        testFormatAndCompletion(compressedPath);
+        testTaskCapacity(wavePath);
+    }
+    else
+    {
+        assert(suiteMode == "failure");
+        testTaskCapacityFailure(wavePath);
+        testValidation(unsupportedPath, missingPath);
+        testWorkerFailure(wavePath);
+    }
 
     static_cast<void>(XWalkHal::removeFilesystemEntry(wavePath));
     static_cast<void>(XWalkHal::removeFilesystemEntry(compressedPath));

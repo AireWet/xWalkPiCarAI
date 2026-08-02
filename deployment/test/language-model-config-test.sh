@@ -2,7 +2,7 @@
 
 set -eu
 
-repository_root="$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
+repository_root="$(CDPATH='' cd -- "$(dirname -- "$0")/../.." && pwd)"
 configuration_file="$repository_root/xWalkCLI/xWalkController/config/picar-x.conf"
 
 test -r "$configuration_file"

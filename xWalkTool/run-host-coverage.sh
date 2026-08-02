@@ -2,7 +2,7 @@
 
 set -eu
 
-repository_root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+repository_root="$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)"
 
 usage() {
     echo "Usage: $0 run"
