@@ -1,0 +1,102 @@
+# Project build trees
+/build-host/
+/build-rpi/
+/**/build/
+/**/build-*/
+/**/cmake-build-*/
+/out/
+
+# Accidental in-source CMake, CTest, CPack, Make, and Ninja output
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+CPackConfig.cmake
+CPackSourceConfig.cmake
+install_manifest.txt
+compile_commands.json
+Testing/
+_CPack_Packages/
+/Makefile
+build.ninja
+rules.ninja
+.ninja_deps
+.ninja_log
+CMakeUserPresets.json
+
+# Compiler, linker, and executable output
+*.o
+*.obj
+*.lo
+*.a
+*.la
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.elf
+*.map
+*.pdb
+*.ilk
+
+# Coverage, profiling, sanitizer, and test reports
+*.gcda
+*.gcno
+*.gcov
+*.profraw
+*.profdata
+*.coverage
+coverage.html
+coverage.xml
+coverage/
+test-results/
+junit.xml
+
+# Generated packages and release archives at the workspace root
+/*.deb
+/*.rpm
+/*.tar.gz
+/*.tar.xz
+/*.tgz
+/*.zip
+
+# Logs, process state, crash output, and temporary files
+*.log
+*.pid
+*.sock
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+*.swp
+*.swo
+*~
+/core.[0-9]*
+
+# Tool, language, and editor caches
+.cache/
+.ccache/
+.clangd/
+.clang-tidy-cache/
+.idea/
+.vs/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+.codex/
+
+# OS and personal workspace metadata
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+**/.obsidian/workspace.json
+**/.obsidian/workspace-mobile.json
+
+# Local deployment configuration and credentials
+/xWalkCLI/xWalkController/config/picar-x.local.conf
+.env
+.env.*
+!.env.example

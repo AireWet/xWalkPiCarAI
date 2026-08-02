@@ -1,0 +1,179 @@
+name: Host quality
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.compiler }} ${{ matrix.build_type }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang]
+        build_type: [Debug, Release]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install host dependencies
+        run: >-
+          sudo apt-get update && sudo apt-get install --yes
+          cmake ninja-build libasound2-dev libcurl4-openssl-dev
+      - name: Select compiler
+        run: |
+          if [ "${{ matrix.compiler }}" = clang ]; then
+              echo "CC=clang" >> "$GITHUB_ENV"
+              echo "CXX=clang++" >> "$GITHUB_ENV"
+          else
+              echo "CC=gcc" >> "$GITHUB_ENV"
+              echo "CXX=g++" >> "$GITHUB_ENV"
+          fi
+      - name: Configure
+        run: >-
+          cmake --fresh -S .
+          -B build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
+          -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DXWALK_ENABLE_STRICT_WARNINGS=ON
+      - name: Build
+        run: >-
+          cmake --build build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
+          --parallel
+      - name: Test
+        run: >-
+          ctest --test-dir build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
+          --output-on-failure --no-tests=error
+
+  sanitizers:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install host dependencies
+        run: >-
+          sudo apt-get update && sudo apt-get install --yes
+          cmake ninja-build libasound2-dev libcurl4-openssl-dev
+      - name: Configure
+        run: cmake --fresh --preset sanitizers
+      - name: Build
+        run: cmake --build --preset sanitizers --parallel
+      - name: Test with AddressSanitizer and UndefinedBehaviorSanitizer
+        run: ctest --preset sanitizers
+
+  thread-sanitizer:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install host dependencies
+        run: >-
+          sudo apt-get update && sudo apt-get install --yes
+          cmake ninja-build libasound2-dev libcurl4-openssl-dev
+      - name: Configure
+        run: cmake --fresh --preset thread-sanitizer
+      - name: Build
+        run: cmake --build --preset thread-sanitizer --parallel
+      - name: Test concurrency with ThreadSanitizer
+        run: ctest --preset thread-sanitizer
+
+  stress-tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install host dependencies
+        run: >-
+          sudo apt-get update && sudo apt-get install --yes
+          cmake ninja-build libasound2-dev libcurl4-openssl-dev
+      - name: Configure strict host build
+        run: cmake --fresh --preset sanity
+      - name: Build
+        run: cmake --build --preset sanity --parallel
+      - name: Repeat every host test until failure
+        run: ctest --preset host-stress
+
+  static-analysis:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install analysis dependencies
+        run: >-
+          sudo apt-get update && sudo apt-get install --yes
+          cmake ninja-build clang-tidy cppcheck libasound2-dev libcurl4-openssl-dev
+      - name: Configure
+        run: cmake --fresh --preset clang-tidy
+      - name: Run Clang-Tidy while building
+        run: cmake --build --preset clang-tidy --parallel
+      - name: Run Cppcheck
+        run: cmake --build build-host/clang-tidy --target cppcheck
+
+  coverage:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install coverage dependencies
+        run: >-
+          sudo apt-get update && sudo apt-get install --yes
+          cmake ninja-build gcovr libasound2-dev libcurl4-openssl-dev
+      - name: Build, test, and generate coverage reports
+        run: xWalkTool/run-host-coverage.sh run
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            build-host/coverage/coverage.html
+            build-host/coverage/coverage.*.html
+            build-host/coverage/coverage.xml
+
+  deployment-scripts:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install script validation dependencies
+        run: sudo apt-get update && sudo apt-get install --yes shellcheck
+      - name: Check shell scripts
+        run: shellcheck xWalkTool/*.sh deployment/test/*.sh
+      - name: Test provisioning behavior
+        run: bash deployment/test/setup-rpi-test.sh
+
+  staged-install:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install host dependencies
+        run: >-
+          sudo apt-get update && sudo apt-get install --yes
+          cmake ninja-build libasound2-dev libcurl4-openssl-dev
+      - name: Configure release installation
+        run: >-
+          cmake --fresh -S . -B build-host/install -G Ninja
+          -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+      - name: Build
+        run: cmake --build build-host/install --parallel
+      - name: Stage exact system layout
+        run: DESTDIR="$PWD/build-host/deploy" cmake --install build-host/install
+      - name: Verify staged resources and executable
+        run: |
+          test -x build-host/deploy/usr/bin/xwalk-picarx-control
+          test -r build-host/deploy/etc/xwalk/picar-x.conf
+          test -r build-host/deploy/usr/share/xwalk/sounds/car-double-horn.wav
+          test -r build-host/deploy/usr/share/xwalk/sounds/car-start-engine.wav
+          test -r build-host/deploy/usr/share/xwalk/music/slow-trail-Ahjay_Stelino.mp3
+          cd /tmp
+          "$GITHUB_WORKSPACE/build-host/deploy/usr/bin/xwalk-picarx-control" --help
+      - name: Reject developer paths in installed configuration
+        run: >-
+          if grep -R --fixed-strings "$GITHUB_WORKSPACE"
+          build-host/deploy/etc build-host/deploy/usr/share/xwalk/config; then exit 1; fi
+      - name: Inspect linked libraries
+        run: ldd build-host/deploy/usr/bin/xwalk-picarx-control
+      - name: Reject unsafe installed permissions
+        run: test -z "$(find build-host/deploy -type f -perm /022 -print -quit)"
+      - name: Record staged artifact checksums
+        run: >-
+          find build-host/deploy -type f -print0 | sort -z |
+          xargs -0 sha256sum > build-host/deploy.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: staged-install-checksums
+          path: build-host/deploy.sha256

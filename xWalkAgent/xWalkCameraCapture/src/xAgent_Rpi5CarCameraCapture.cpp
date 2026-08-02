@@ -1,0 +1,51 @@
+/******************************************************************************
+ * @file        xAgent_Rpi5CarCameraCapture.cpp
+ * @brief       Implements voice-image camera adaptation.
+ *
+ * @project     xWalk Firmware
+ * @module      xWalkCameraCapture
+ * @author      Joxy John
+ * @date        2026-08-02
+ * @version     1.0.0
+ * @copyright   Copyright (c) 2026 Joxy John. All rights reserved.
+ * @note        Developed using MISRA C++ coding guidelines.
+ ******************************************************************************/
+
+#include "xAgent_Rpi5CarCameraCapture.h"
+
+#include "xHal_Rpi5CarExceptions.h"
+
+namespace xwalk::agent
+{
+
+/** @brief Binds one camera and one reusable output path. */
+XWalkCameraCapture::XWalkCameraCapture(
+    hal::XWalkCamera& camera, hal::stringview outputPath):
+    cameraObject(&camera), outputPathValue(outputPath)
+{
+    if (outputPathValue.empty())
+    {
+        XHAL_THROW_INVALID_ARGUMENT("Camera capture output path must not be empty");
+    }
+}
+
+/** @brief Releases no caller-owned camera resource. */
+XWalkCameraCapture::~XWalkCameraCapture() = default;
+
+/** @brief Captures one image and returns its owned destination path. */
+hal::string XWalkCameraCapture::capture()
+{
+    return cameraObject->capture(outputPathValue);
+}
+
+/** @brief Adapts this object to a voice-active image callback. */
+hal::string XWalkCameraCapture::captureImage(hal::contextpointer context)
+{
+    if (context == nullptr)
+    {
+        XHAL_THROW_INVALID_ARGUMENT("Camera capture Agent context must not be null");
+    }
+    return static_cast<XWalkCameraCapture*>(context)->capture();
+}
+
+} /* namespace xwalk::agent */

@@ -1,0 +1,74 @@
+/******************************************************************************
+ * @file        xHal_Rpi5CarSpeechToTextAlsaHardwareTest.cpp
+ * @brief       Provides an opt-in bounded ALSA microphone capture test.
+ * @project     xWalk Firmware
+ * @module      xWalkGPT Speech-to-Text ALSA Hardware Test
+ * @author      Joxy John
+ * @date        2026-08-01
+ * @version     1.0.0
+ * @copyright Copyright (c) 2026 Joxy John. All rights reserved.
+ * @note Developed using MISRA C++ coding guidelines.
+ ******************************************************************************/
+
+#include "xHal_Rpi5CarSpeechToText.h"
+#include "xHal_Rpi5CarSpeechToTextAlsa.h"
+
+/** @brief Contains the deterministic recognition sink for this test. */
+namespace
+{
+XWalkHal::boolean ready(XWalkHal::contextpointer context)
+{
+    static_cast<void>(context);
+    return true;
+}
+
+XWalkHal::string recognizePcm(XWalkHal::contextpointer context,
+    const XWalkHal::bytevector& pcm, XWalkHal::uint32 rate, XWalkHal::uint8 channels)
+{
+    static_cast<void>(context);
+    if (pcm.empty() || rate != 16'000U || channels != 1U)
+    {
+        XHAL_THROW_RUNTIME_ERROR("Speech hardware test received invalid microphone PCM");
+    }
+    return "microphone capture received";
+}
+
+XWalkHal::string recognizeFile(XWalkHal::contextpointer context, XWalkHal::stringview path)
+{
+    static_cast<void>(context);
+    static_cast<void>(path);
+    return {};
+}
+
+void cancel(XWalkHal::contextpointer context)
+{
+    static_cast<void>(context);
+}
+} /* namespace */
+
+/**
+ * @brief Captures 100 milliseconds from an explicitly selected microphone.
+ * @param[in] argumentCount Exactly two arguments are required.
+ * @param[in] argumentValues Program name and explicit ALSA capture device.
+ * @return Zero after bounded PCM reaches the recognition sink.
+ * @warning Run only after confirming the intended microphone device and privacy context.
+ */
+XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer argumentValues[])
+{
+    if (argumentCount != 2)
+    {
+        XHAL_THROW_INVALID_ARGUMENT("Speech hardware test requires an explicit ALSA microphone");
+    }
+    XWalkHal::XWalkSpeechToTextAlsaOperations recognizer{};
+    recognizer.recognizerReady = &ready;
+    recognizer.recognizePcm = &recognizePcm;
+    recognizer.recognizeFile = &recognizeFile;
+    recognizer.cancelRecognition = &cancel;
+    XWalkHal::XWalkSpeechToTextAlsa adapter(argumentValues[1], nullptr, recognizer);
+    XWalkHal::XWalkSpeechToText speech(&adapter, adapter.callbacks());
+    if (!speech.isReady() || speech.listen(100U).empty())
+    {
+        XHAL_THROW_RUNTIME_ERROR("Speech hardware test did not receive microphone PCM");
+    }
+    return 0;
+}

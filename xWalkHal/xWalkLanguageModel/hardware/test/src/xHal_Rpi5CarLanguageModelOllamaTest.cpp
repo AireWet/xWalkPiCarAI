@@ -1,0 +1,380 @@
+/******************************************************************************
+ * @file        xHal_Rpi5CarLanguageModelOllamaTest.cpp
+ * @brief       Verifies HTTP language-model provider behavior without network access.
+ *
+ * @details
+ * Covers JSON conversion, roles, history truncation, image encoding, Unicode
+ * response decoding, transport failures, malformed responses, and all bounds.
+ *
+ * @project     xWalk Firmware
+ * @module      xWalkLanguageModel Ollama Host Test
+ *
+ * @author      Joxy John
+ * @date        2026-08-01
+ * @version     1.0.0
+ *
+ * @copyright
+ * Copyright (c) 2026 Joxy John.
+ * All rights reserved.
+ *
+ * @note
+ * Developed using MISRA C++ coding guidelines.
+ ******************************************************************************/
+
+/******************************************************************************
+ * Includes
+ ******************************************************************************/
+
+#include "xHal_Rpi5CarLanguageModel.h"
+#include "xHal_Rpi5CarLanguageModelOllama.h"
+
+#include "xHal_Rpi5CarTestFunctions.h"
+
+#include <fstream>
+
+/******************************************************************************
+ * Anonymous namespace
+ ******************************************************************************/
+
+/**
+ * @brief Contains deterministic HTTP state and test scenarios.
+ */
+namespace
+{
+
+/******************************************************************************
+ * Structure declarations
+ ******************************************************************************/
+
+/** @brief Records one injected Ollama HTTP transport. */
+struct TestTransport
+{
+    /** @brief Most recently requested endpoint. */
+    XWalkHal::string endpoint{};
+    /** @brief Most recently serialized JSON request. */
+    XWalkHal::string request{};
+    /** @brief Most recently supplied authorization header. */
+    XWalkHal::string authorizationHeader{};
+    /** @brief JSON response returned by the next request. */
+    XWalkHal::string response{
+        "{\"message\":{\"role\":\"assistant\",\"content\":\"ready\"},\"done\":true}"};
+    /** @brief Most recently requested timeout in milliseconds. */
+    XWalkHal::uint32 timeoutMs{};
+    /** @brief Most recently supplied response bound in bytes. */
+    XWalkHal::size maximumResponseBytes{};
+    /** @brief Number of JSON POST operations. */
+    XWalkHal::uint32 requestCount{};
+    /** @brief Makes the next transport call report failure when true. */
+    XWalkHal::boolean fail{};
+};
+
+/******************************************************************************
+ * Private function definitions
+ ******************************************************************************/
+
+/**
+ * @brief Records one bounded request and returns a configured JSON response.
+ *
+ * @param[in,out] context Non-null test transport context.
+ * @param[in] endpoint Ollama chat endpoint retained for assertions.
+ * @param[in] requestJson Complete request retained for assertions.
+ * @param[in] authorizationHeader Empty or authenticated header retained for assertions.
+ * @param[in] timeoutMs Request timeout retained for assertions.
+ * @param[in] maximumResponseBytes Response bound retained for assertions.
+ * @return Configured owned JSON response.
+ * @throws std::runtime_error When transport failure is enabled.
+ */
+XWalkHal::string postJson(XWalkHal::contextpointer context,
+    XWalkHal::stringview endpoint, XWalkHal::stringview requestJson,
+    XWalkHal::stringview authorizationHeader, XWalkHal::uint32 timeoutMs,
+    XWalkHal::size maximumResponseBytes)
+{
+    TestTransport& transport = *static_cast<TestTransport*>(context);
+    ++transport.requestCount;
+    transport.endpoint = endpoint;
+    transport.request = requestJson;
+    transport.authorizationHeader = authorizationHeader;
+    transport.timeoutMs = timeoutMs;
+    transport.maximumResponseBytes = maximumResponseBytes;
+    if (transport.fail)
+    {
+        XHAL_THROW_RUNTIME_ERROR("Simulated Ollama transport failure");
+    }
+    return transport.response;
+}
+
+/**
+ * @brief Returns the complete deterministic HTTP operation table.
+ * @return One non-null fake JSON POST callback.
+ */
+XWalkHal::XWalkLanguageModelOllamaOperations operations()
+{
+    return {&postJson};
+}
+
+/**
+ * @brief Writes a three-byte image fixture below the supplied test directory.
+ *
+ * @param[in] testDirectory Existing test-owned output directory.
+ * @return Path of the completed fixture.
+ */
+XWalkHal::filesystempath writeImageFixture(
+    const XWalkHal::filesystempath& testDirectory)
+{
+    const XWalkHal::filesystempath imagePath = testDirectory / "ollama-image.bin";
+    XWalkHal::outputfilestream image(imagePath, XWalkHal::FILE_OPEN_WRITE_TRUNCATE);
+    const XWalkHal::string bytes{"\x01\x02\x03", 3U};
+    image << bytes;
+    assert(image.good());
+    return imagePath;
+}
+
+/**
+ * @brief Verifies complete request conversion and Unicode response decoding.
+ *
+ * @param[in] imagePath Existing three-byte test image.
+ */
+void testRequestAndResponse(const XWalkHal::filesystempath& imagePath)
+{
+    TestTransport transport;
+    transport.response =
+        "{\"model\":\"tiny\",\"message\":{\"role\":\"assistant\","
+        "\"content\":\"hello\\n\\u00E5\\uD83D\\uDE80\"},\"done\":true}";
+    XWalkHal::XWalkLanguageModelOllama backend(&transport, operations(),
+        "http://127.0.0.1:11434/api/chat", "tiny", 5'000U);
+    XWalkHal::XWalkLanguageModel model(&backend, backend.callbacks());
+    model.setInstructions("answer \"briefly\"");
+    model.setWelcome("welcome");
+    model.setMaximumMessages(4U);
+    model.addMessage(XWalkHal::XWalkLanguageModelRole::Assistant, "prior");
+    const XWalkHal::string result = model.prompt("inspect\nimage", imagePath.string());
+    assert(result == u8"hello\nå🚀");
+    assert(transport.endpoint == "http://127.0.0.1:11434/api/chat");
+    assert(transport.timeoutMs == 5'000U);
+    assert(transport.maximumResponseBytes ==
+        XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_RESPONSE_BYTES);
+    assert(transport.request.find("\"model\":\"tiny\"") != XWalkHal::string::npos);
+    assert(transport.request.find("answer \\\"briefly\\\"") != XWalkHal::string::npos);
+    assert(transport.request.find("inspect\\u000Aimage") != XWalkHal::string::npos);
+    assert(transport.request.find("\"images\":[\"AQID\"]") != XWalkHal::string::npos);
+    assert(transport.request.find("\"stream\":false") != XWalkHal::string::npos);
+    assert(transport.authorizationHeader.empty());
+}
+
+/**
+ * @brief Verifies authenticated OpenAI-compatible request and response conversion.
+ * @param[in] imagePath Existing three-byte test image.
+ */
+void testOpenAiCompatibleRequest(const XWalkHal::filesystempath& imagePath)
+{
+    TestTransport transport;
+    transport.response =
+        "{\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\","
+        "\"content\":\"cloud-ready\"}}]}";
+    XWalkHal::XWalkLanguageModelHttp backend(&transport, operations(),
+        XWalkHal::XWalkLanguageModelHttpDialect::OpenAiChatCompletions,
+        "https://api.example/v1/chat/completions", "selected-model",
+        "test-secret", 5'000U, 321U);
+    XWalkHal::XWalkLanguageModel model(&backend, backend.callbacks());
+    model.setInstructions("be concise");
+    const XWalkHal::string result = model.prompt("inspect", imagePath.string());
+    assert(result == "cloud-ready");
+    assert(transport.authorizationHeader == "Authorization: Bearer test-secret");
+    assert(transport.request.find("test-secret") == XWalkHal::string::npos);
+    assert(transport.request.find("\"model\":\"selected-model\"") != XWalkHal::string::npos);
+    assert(transport.request.find("\"max_tokens\":321") != XWalkHal::string::npos);
+    assert(transport.request.find("\"type\":\"image_url\"") != XWalkHal::string::npos);
+    assert(transport.request.find("data:image/jpeg;base64,AQID") != XWalkHal::string::npos);
+}
+
+/** @brief Verifies deployment provider-name mapping and unsupported Kiro rejection. */
+void testProviderNames()
+{
+    assert(XWalkHal::XWalkLanguageModelHttp::dialectFromString("ollama") ==
+        XWalkHal::XWalkLanguageModelHttpDialect::Ollama);
+    for (const XWalkHal::stringview provider :
+        {"openai", "chatgpt", "gemini", "claude", "anthropic", "openai_compatible"})
+    {
+        assert(XWalkHal::XWalkLanguageModelHttp::dialectFromString(provider) ==
+            XWalkHal::XWalkLanguageModelHttpDialect::OpenAiChatCompletions);
+    }
+    xwalk::hal::test::expectFailure([]()
+    {
+        static_cast<void>(XWalkHal::XWalkLanguageModelHttp::dialectFromString("kiro"));
+    });
+    xwalk::hal::test::expectFailure([]()
+    {
+        static_cast<void>(XWalkHal::XWalkLanguageModelHttp::dialectFromString("unknown"));
+    });
+}
+
+/**
+ * @brief Verifies oldest-first history truncation and successful exchange retention.
+ */
+void testHistory()
+{
+    TestTransport transport;
+    XWalkHal::XWalkLanguageModelOllama backend(&transport, operations(),
+        "http://localhost:11434/api/chat", "tiny");
+    XWalkHal::XWalkLanguageModel model(&backend, backend.callbacks());
+    model.setMaximumMessages(2U);
+    model.addMessage(XWalkHal::XWalkLanguageModelRole::User, "discarded");
+    model.addMessage(XWalkHal::XWalkLanguageModelRole::Assistant, "retained-one");
+    model.addMessage(XWalkHal::XWalkLanguageModelRole::User, "retained-two");
+    assert(model.prompt("first") == "ready");
+    assert(transport.request.find("discarded") == XWalkHal::string::npos);
+    assert(transport.request.find("retained-one") != XWalkHal::string::npos);
+    assert(transport.request.find("retained-two") != XWalkHal::string::npos);
+    assert(model.prompt("second") == "ready");
+    assert(transport.request.find("first") != XWalkHal::string::npos);
+    assert(transport.request.find("ready") != XWalkHal::string::npos);
+    assert(transport.request.find("retained-two") == XWalkHal::string::npos);
+}
+
+/**
+ * @brief Verifies configuration, role, text, response, and request limits.
+ */
+void testValidation()
+{
+    TestTransport transport;
+    xwalk::hal::test::expectFailure([&]()
+    {
+        const XWalkHal::XWalkLanguageModelOllamaOperations missing{};
+        XWalkHal::XWalkLanguageModelOllama backend(&transport, missing,
+            "http://localhost:11434/api/chat", "tiny");
+    });
+    xwalk::hal::test::expectFailure([&]()
+    {
+        XWalkHal::XWalkLanguageModelOllama backend(&transport, operations(),
+            "localhost:11434/api/chat", "tiny");
+    });
+    xwalk::hal::test::expectFailure([&]()
+    {
+        XWalkHal::XWalkLanguageModelOllama backend(&transport, operations(),
+            "http://localhost:11434/api/chat", "", 0U);
+    });
+    xwalk::hal::test::expectFailure([&]()
+    {
+        XWalkHal::XWalkLanguageModelHttp backend(&transport, operations(),
+            XWalkHal::XWalkLanguageModelHttpDialect::OpenAiChatCompletions,
+            "http://api.example/v1/chat/completions", "model", "key");
+    });
+    xwalk::hal::test::expectFailure([&]()
+    {
+        XWalkHal::XWalkLanguageModelHttp backend(&transport, operations(),
+            XWalkHal::XWalkLanguageModelHttpDialect::Ollama,
+            "http://localhost:11434/api/chat", "model", "unexpected-key");
+    });
+    xwalk::hal::test::expectFailure([&]()
+    {
+        XWalkHal::XWalkLanguageModelHttp backend(&transport, operations(),
+            XWalkHal::XWalkLanguageModelHttpDialect::OpenAiChatCompletions,
+            "https://api.example/v1/chat/completions", "model", "");
+    });
+    xwalk::hal::test::expectFailure([&]()
+    {
+        XWalkHal::XWalkLanguageModelHttp backend(&transport, operations(),
+            XWalkHal::XWalkLanguageModelHttpDialect::OpenAiChatCompletions,
+            "https://api.example/v1/chat/completions", "model", "bad\nkey");
+    });
+    xwalk::hal::test::expectFailure([&]()
+    {
+        XWalkHal::XWalkLanguageModelHttp backend(&transport, operations(),
+            XWalkHal::XWalkLanguageModelHttpDialect::OpenAiChatCompletions,
+            "https://api.example/v1/chat/completions", "model", "key",
+            5'000U, 0U);
+    });
+
+    XWalkHal::XWalkLanguageModelOllama backend(&transport, operations(),
+        "http://localhost:11434/api/chat", "tiny");
+    XWalkHal::XWalkLanguageModel model(&backend, backend.callbacks());
+    xwalk::hal::test::expectFailure([&]()
+    {
+        model.setMaximumMessages(
+            XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_MESSAGES + 1U);
+    });
+    xwalk::hal::test::expectFailure([&]()
+    {
+        model.addMessage(static_cast<XWalkHal::XWalkLanguageModelRole>(9U), "invalid");
+    });
+    const XWalkHal::string excessiveText(
+        XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_TEXT_BYTES + 1U, 'x');
+    xwalk::hal::test::expectFailure([&]()
+    {
+        static_cast<void>(model.prompt(excessiveText));
+    });
+    transport.response.assign(
+        XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_RESPONSE_BYTES + 1U, 'x');
+    xwalk::hal::test::expectFailure([&]()
+    {
+        static_cast<void>(model.prompt("response bound"));
+    });
+
+    transport.response =
+        "{\"message\":{\"role\":\"assistant\",\"content\":\"ready\"},\"done\":true}";
+    model.setMaximumMessages(XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_MESSAGES);
+    const XWalkHal::string boundedText(
+        XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_TEXT_BYTES, 'y');
+    for (XWalkHal::uint32 index = 0U; index < 33U; ++index)
+    {
+        model.addMessage(XWalkHal::XWalkLanguageModelRole::User, boundedText);
+    }
+    xwalk::hal::test::expectFailure([&]()
+    {
+        static_cast<void>(model.prompt("request bound"));
+    });
+}
+
+/**
+ * @brief Verifies transport and malformed-response failures are propagated.
+ */
+void testFailures()
+{
+    TestTransport transport;
+    XWalkHal::XWalkLanguageModelOllama backend(&transport, operations(),
+        "http://localhost:11434/api/chat", "tiny");
+    XWalkHal::XWalkLanguageModel model(&backend, backend.callbacks());
+    transport.fail = true;
+    xwalk::hal::test::expectFailure([&]()
+    {
+        static_cast<void>(model.prompt("transport"));
+    });
+    transport.fail = false;
+    transport.response = "{\"done\":true}";
+    xwalk::hal::test::expectFailure([&]()
+    {
+        static_cast<void>(model.prompt("missing content"));
+    });
+    transport.response = "{\"message\":{\"content\":\"\\uD800\"}}";
+    xwalk::hal::test::expectFailure([&]()
+    {
+        static_cast<void>(model.prompt("invalid unicode"));
+    });
+}
+
+} /* namespace */
+
+/******************************************************************************
+ * Global function definitions
+ ******************************************************************************/
+
+/**
+ * @brief Runs every device-free Ollama provider test.
+ *
+ * @param[in] argumentCount Exactly two arguments are required.
+ * @param[in] argumentValues Program name and test-owned output directory.
+ * @return Zero after every assertion passes.
+ */
+XWalkHal::int32 main(XWalkHal::int32 argumentCount,
+    XWalkHal::charpointer argumentValues[])
+{
+    assert(argumentCount == 2);
+    const XWalkHal::filesystempath imagePath = writeImageFixture(argumentValues[1]);
+    testRequestAndResponse(imagePath);
+    testOpenAiCompatibleRequest(imagePath);
+    testProviderNames();
+    testHistory();
+    testValidation();
+    testFailures();
+    return 0;
+}

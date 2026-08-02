@@ -1,0 +1,345 @@
+#!/usr/bin/env python3
+###############################################################################
+# @file        xHal_Rpi5CarIwGenerator
+# @brief       Generates xWalkIW gRPC sources in the module auto-gen tree.
+#
+# @details
+# Validates the gRPC schema and YAML mappings, invokes the Protobuf and gRPC
+# generators, and separates generated headers from C++ sources.
+#
+# @project     xWalk Firmware
+# @module      xWalkTool
+#
+# @author      Joxy John
+# @date        2026-07-30
+# @version     1.0.0
+#
+# Copyright (c) 2026 Joxy John.
+# All rights reserved.
+#
+# @note
+# Developed using MISRA C++ coding guidelines.
+###############################################################################
+
+"""Validate and generate the xWalkIW I2C gRPC schema."""
+
+from __future__ import annotations
+
+import argparse
+import pathlib
+import re
+import shutil
+import subprocess
+import tempfile
+
+
+PAYLOAD_NAMES = (
+    "XWalkI2cRequestPayload",
+    "XWalkI2cConfirmPayload",
+    "XWalkI2cRejectPayload",
+)
+ENUM_NAMES = ("XWalkI2cOperation",)
+ENUM_PATTERN = re.compile(r"^enum\s+(\w+)", re.MULTILINE)
+MESSAGE_PATTERN = re.compile(r"^message\s+(\w+)", re.MULTILINE)
+SERVICE_PATTERN = re.compile(r"^service\s+(\w+)", re.MULTILINE)
+RPC_PATTERN = re.compile(r"^\s+rpc\s+(\w+)", re.MULTILINE)
+YAML_PAYLOAD_PATTERN = re.compile(r"^\s+message:\s+(\w+)\s*$", re.MULTILINE)
+SIGNAL_BINDINGS = (
+    ("XWalkI2cRequestPayload", "XWALK_I2C_RPI5CAR_REQ", "0x1081"),
+    ("XWalkI2cConfirmPayload", "XWALK_I2C_RPI5CAR_CFM", "0x1082"),
+    ("XWalkI2cRejectPayload", "XWALK_I2C_RPI5CAR_REJ", "0x1083"),
+)
+
+
+def run_command(command: list[str]) -> None:
+    """Run one generator command.
+
+    Args:
+        command: Executable and arguments passed without shell interpretation.
+
+    Raises:
+        subprocess.CalledProcessError: If the command returns a non-zero status.
+    """
+    print("running:", " ".join(command))
+    subprocess.run(command, check=True)
+
+
+def resolve_program(program: str, description: str) -> str:
+    """Resolve one required executable.
+
+    Args:
+        program: Executable name or path supplied by the caller.
+        description: Human-readable tool role used in diagnostics.
+
+    Returns:
+        Resolved executable path.
+
+    Raises:
+        ValueError: If the executable cannot be found.
+    """
+    resolved = shutil.which(program)
+    if resolved is None:
+        raise ValueError(f"{description} executable was not found: {program}")
+    return resolved
+
+
+def route_generated_cpp(
+    staging_directory: pathlib.Path,
+    include_directory: pathlib.Path,
+    source_directory: pathlib.Path,
+) -> None:
+    """Copy generated C++ headers and sources into separate directories.
+
+    Args:
+        staging_directory: Temporary directory populated by ``protoc``.
+        include_directory: Destination for generated ``.h`` files.
+        source_directory: Destination for generated ``.cpp`` files.
+
+    Raises:
+        OSError: If an output directory or generated file cannot be written.
+    """
+    include_directory.mkdir(parents=True, exist_ok=True)
+    source_directory.mkdir(parents=True, exist_ok=True)
+    for generated_path in staging_directory.iterdir():
+        if generated_path.suffix == ".h":
+            shutil.copyfile(generated_path, include_directory / generated_path.name)
+        elif generated_path.suffix == ".cc":
+            source_name = generated_path.with_suffix(".cpp").name
+            shutil.copyfile(generated_path, source_directory / source_name)
+
+
+def validate_inputs(
+    enum_proto: pathlib.Path,
+    message_proto: pathlib.Path,
+    service_proto: pathlib.Path,
+    yaml_path: pathlib.Path,
+) -> None:
+    """Validate the enum, message, gRPC service, and YAML schemas.
+
+    Args:
+        enum_proto: Proto3 operation-enum schema.
+        message_proto: Proto3 payload-message schema.
+        service_proto: Proto3 gRPC service schema.
+        yaml_path: YAML payload-name mapping.
+
+    Raises:
+        OSError: If an input cannot be read.
+        ValueError: If a payload definition or mapping is inconsistent.
+    """
+    enum_text = enum_proto.read_text(encoding="utf-8")
+    message_text = message_proto.read_text(encoding="utf-8")
+    service_text = service_proto.read_text(encoding="utf-8")
+    yaml_text = yaml_path.read_text(encoding="utf-8")
+
+    enum_names = tuple(ENUM_PATTERN.findall(enum_text))
+    enum_messages = tuple(MESSAGE_PATTERN.findall(enum_text))
+    enum_services = tuple(SERVICE_PATTERN.findall(enum_text))
+    enum_rpcs = tuple(RPC_PATTERN.findall(enum_text))
+    message_enums = tuple(ENUM_PATTERN.findall(message_text))
+    payload_messages = tuple(MESSAGE_PATTERN.findall(message_text))
+    message_services = tuple(SERVICE_PATTERN.findall(message_text))
+    message_rpcs = tuple(RPC_PATTERN.findall(message_text))
+    service_messages = tuple(MESSAGE_PATTERN.findall(service_text))
+    grpc_services = tuple(SERVICE_PATTERN.findall(service_text))
+    grpc_rpcs = tuple(RPC_PATTERN.findall(service_text))
+    mapped_payloads = tuple(YAML_PAYLOAD_PATTERN.findall(yaml_text))
+
+    if enum_names != ENUM_NAMES:
+        raise ValueError(f"unexpected Protobuf enumerations: {enum_names}")
+    if enum_messages or enum_services or enum_rpcs:
+        raise ValueError("xHal_Rpi5CarXIwEnum.proto must contain only enumerations")
+    if message_enums:
+        raise ValueError(f"unexpected enumerations in message schema: {message_enums}")
+    if payload_messages != PAYLOAD_NAMES:
+        raise ValueError(f"unexpected Protobuf payload messages: {payload_messages}")
+    if message_services or message_rpcs:
+        raise ValueError(
+            "xHal_Rpi5CarXIwMessage.proto must not declare gRPC services or methods"
+        )
+    if service_messages:
+        raise ValueError(f"unexpected messages in gRPC service schema: {service_messages}")
+    if grpc_services != ("XWalkI2cService",):
+        raise ValueError(f"unexpected gRPC services: {grpc_services}")
+    if grpc_rpcs != ("Execute",):
+        raise ValueError(f"unexpected gRPC methods: {grpc_rpcs}")
+    expected_rpc = "rpc Execute(XWalkI2cRequestPayload) returns (XWalkI2cConfirmPayload);"
+    if expected_rpc not in service_text:
+        raise ValueError("XWalkI2cService.Execute has an unexpected request or response type")
+    if 'import "xHal_Rpi5CarXIwMessage.proto";' not in service_text:
+        raise ValueError(
+            "xHal_Rpi5CarXIwGrpc.proto must import xHal_Rpi5CarXIwMessage.proto"
+        )
+    if 'import "xHal_Rpi5CarXIwEnum.proto";' not in message_text:
+        raise ValueError(
+            "xHal_Rpi5CarXIwMessage.proto must import xHal_Rpi5CarXIwEnum.proto"
+        )
+    if "XWalkI2cOperation operation = 5;" not in message_text:
+        raise ValueError("XWalkI2cRequestPayload is missing its operation selector")
+    if mapped_payloads != PAYLOAD_NAMES:
+        raise ValueError(f"unexpected YAML payload mapping: {mapped_payloads}")
+    if "mode: grpc_single_rpc" not in yaml_text:
+        raise ValueError("xHal_Rpi5CarGrpcSig.yaml must declare grpc_single_rpc mode")
+    for message_name, signal_name, signal_number in SIGNAL_BINDINGS:
+        message_pattern = re.compile(
+            rf"message\s+{message_name}\s*\{{.*?"
+            rf"option\s+\(xwalkSignal\)\s*=\s*{signal_number}\s*;",
+            re.DOTALL,
+        )
+        if message_pattern.search(message_text) is None:
+            raise ValueError(
+                f"Protobuf message {message_name} is not bound to signal number {signal_number}"
+            )
+        yaml_signal_pattern = re.compile(
+            rf"^\s{{2}}{signal_name}:\s*$.*?^\s{{4}}number:\s*{signal_number}\s*$",
+            re.MULTILINE | re.DOTALL,
+        )
+        if yaml_signal_pattern.search(yaml_text) is None:
+            raise ValueError(
+                f"YAML signal {signal_name} is not bound to signal number {signal_number}"
+            )
+
+
+def generate_grpc_cpp(
+    enum_proto_path: pathlib.Path,
+    message_proto_path: pathlib.Path,
+    service_proto_path: pathlib.Path,
+    generated_directory: pathlib.Path,
+    protoc_name: str,
+    grpc_plugin_name: str,
+    protobuf_include: pathlib.Path | None = None,
+) -> None:
+    """Generate and route C++ Protobuf and gRPC files.
+
+    Args:
+        enum_proto_path: Source operation-enum schema.
+        message_proto_path: Source payload-message schema.
+        service_proto_path: Source gRPC service schema.
+        generated_directory: Root containing ``include`` and ``src`` outputs.
+        protoc_name: Protobuf compiler executable name or path.
+        grpc_plugin_name: gRPC C++ generator executable name or path.
+        protobuf_include: Optional directory containing imported Google schemas.
+
+    Raises:
+        OSError: If staging or output files cannot be written.
+        ValueError: If the Protobuf compiler cannot be resolved.
+        subprocess.CalledProcessError: If Protobuf generation fails.
+    """
+    protoc = resolve_program(protoc_name, "Protobuf compiler")
+    include_directory = generated_directory / "include"
+    source_directory = generated_directory / "src"
+
+    with tempfile.TemporaryDirectory(prefix="xwalk-iw-proto-") as staging_name:
+        staging_directory = pathlib.Path(staging_name)
+        staged_enum_proto = staging_directory / "xHal_Rpi5CarXIwEnum.proto"
+        staged_message_proto = staging_directory / "xHal_Rpi5CarXIwMessage.proto"
+        staged_service_proto = staging_directory / "xHal_Rpi5CarXIwGrpc.proto"
+        shutil.copyfile(enum_proto_path.resolve(), staged_enum_proto)
+        shutil.copyfile(message_proto_path.resolve(), staged_message_proto)
+        shutil.copyfile(service_proto_path.resolve(), staged_service_proto)
+        base_command = [protoc, f"--proto_path={staging_directory}"]
+        if protobuf_include is not None:
+            base_command.append(f"--proto_path={protobuf_include.resolve()}")
+        enum_command = [
+            *base_command,
+            f"--cpp_out={staging_directory}",
+            str(staged_enum_proto),
+        ]
+        message_command = [
+            *base_command,
+            f"--cpp_out={staging_directory}",
+            str(staged_message_proto),
+        ]
+        grpc_plugin = resolve_program(grpc_plugin_name, "gRPC C++ plugin")
+        service_command = [
+            *base_command,
+            f"--cpp_out={staging_directory}",
+            f"--grpc_out={staging_directory}",
+            f"--plugin=protoc-gen-grpc={grpc_plugin}",
+            str(staged_service_proto),
+        ]
+        run_command(enum_command)
+        run_command(message_command)
+        run_command(service_command)
+        route_generated_cpp(staging_directory, include_directory, source_directory)
+
+
+def main() -> int:
+    """Parse arguments and validate or generate the gRPC schema.
+
+    Returns:
+        Zero after successful validation or generation; otherwise one.
+    """
+    repository_directory = pathlib.Path(__file__).resolve().parents[1]
+    component_directory = repository_directory / "xWalkHal" / "xWalkIW"
+    generated_directory = component_directory / "auto-gen"
+    parser = argparse.ArgumentParser(
+        description="Validate or generate the xWalkIW I2C gRPC schema."
+    )
+    parser.add_argument(
+        "--enum-proto",
+        type=pathlib.Path,
+        default=component_directory / "proto" / "xHal_Rpi5CarXIwEnum.proto",
+    )
+    parser.add_argument(
+        "--message-proto",
+        type=pathlib.Path,
+        default=component_directory / "proto" / "xHal_Rpi5CarXIwMessage.proto",
+    )
+    parser.add_argument(
+        "--service-proto",
+        type=pathlib.Path,
+        default=component_directory / "proto" / "xHal_Rpi5CarXIwGrpc.proto",
+    )
+    parser.add_argument(
+        "--yaml",
+        type=pathlib.Path,
+        default=component_directory / "config" / "xHal_Rpi5CarGrpcSig.yaml",
+    )
+    action_group = parser.add_mutually_exclusive_group(required=True)
+    action_group.add_argument(
+        "--check",
+        action="store_true",
+        help="validate the proto and YAML inputs without generating files",
+    )
+    action_group.add_argument(
+        "--generate-cpp",
+        "--genrate-cpp",
+        dest="generate_cpp",
+        action="store_true",
+        help="validate the inputs and generate the Protobuf and gRPC C++ files",
+    )
+    parser.add_argument("--protoc", default="protoc")
+    parser.add_argument("--grpc-cpp-plugin", default="grpc_cpp_plugin")
+    parser.add_argument(
+        "--protobuf-include", type=pathlib.Path, default=pathlib.Path("/usr/include")
+    )
+    parser.add_argument(
+        "--generated-directory",
+        type=pathlib.Path,
+        default=generated_directory,
+    )
+    arguments = parser.parse_args()
+
+    validate_inputs(
+        arguments.enum_proto,
+        arguments.message_proto,
+        arguments.service_proto,
+        arguments.yaml,
+    )
+    if arguments.generate_cpp:
+        generate_grpc_cpp(
+            arguments.enum_proto,
+            arguments.message_proto,
+            arguments.service_proto,
+            arguments.generated_directory.resolve(),
+            arguments.protoc,
+            arguments.grpc_cpp_plugin,
+            arguments.protobuf_include,
+        )
+    else:
+        print("validated xWalkIW single-RPC gRPC schema")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
