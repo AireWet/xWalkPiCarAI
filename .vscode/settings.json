@@ -1,7 +1,7 @@
 {
     "C_Cpp.intelliSenseCacheSize": 0,
     "C_Cpp.errorSquiggles": "enabled",
-    "github-actions.remote-name": "origin",
+    "github-actions.remote-name": "github-actions",
     "github-actions.workflows.pinned.refresh.enabled": false,
     "github-actions.workflows.pinned.workflows": [
         ".github/workflows/host-quality.yml"
