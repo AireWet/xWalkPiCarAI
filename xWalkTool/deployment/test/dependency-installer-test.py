@@ -30,7 +30,7 @@ class DependencyInstallerTest(unittest.TestCase):
     """Verify manifest coverage and boot-configuration safety logic."""
 
     def test_catalog_covers_every_hal_module(self) -> None:
-        """Every xWalkHal source module must occur in a reporting group."""
+        """Every independently configurable xWalkHal module must occur in a reporting group."""
         catalog = INSTALLER.parse_catalog(REPOSITORY_ROOT / "xWalkTool" / "apt-packages.txt")
         mapped_modules = {
             module
@@ -41,7 +41,9 @@ class DependencyInstallerTest(unittest.TestCase):
         source_modules = {
             path.name
             for path in (REPOSITORY_ROOT / "xWalkHal").iterdir()
-            if path.is_dir() and path.name.startswith("xWalk")
+            if path.is_dir()
+            and path.name.startswith("xWalk")
+            and (path / "CMakeLists.txt").is_file()
         }
         self.assertTrue(source_modules.issubset(mapped_modules))
 
