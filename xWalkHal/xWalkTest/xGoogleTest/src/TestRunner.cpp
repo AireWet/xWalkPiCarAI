@@ -179,7 +179,7 @@ LegacyTestDefinition noArgumentTest(xwalk::hal::cstring suiteName, xwalk::hal::c
  * Complete argument-taking test definition.
  */
 LegacyTestDefinition argumentTest(xwalk::hal::cstring suiteName, xwalk::hal::cstring caseName,
-    legacytestwithargs function, xwalk::hal::stringvector arguments,
+    legacytestwithargs function, const xwalk::hal::stringvector& arguments,
     xwalk::hal::boolean skipWithThreadSanitizer = false)
 {
     return {suiteName, caseName, nullptr, function, arguments, {}, skipWithThreadSanitizer};
@@ -206,7 +206,7 @@ LegacyTestDefinition argumentTest(xwalk::hal::cstring suiteName, xwalk::hal::cst
 #if defined(XWALK_GOOGLE_TEST_HARDWARE_PROFILE)
 LegacyTestDefinition externalTest(xwalk::hal::cstring suiteName,
     xwalk::hal::cstring caseName, xwalk::hal::cstring executablePath,
-    xwalk::hal::stringvector arguments = {})
+    const xwalk::hal::stringvector& arguments = {})
 {
     return {suiteName, caseName, nullptr, nullptr, arguments, executablePath, false};
 }
