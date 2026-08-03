@@ -16,6 +16,11 @@ credentials.
 Contains bounded HAL sequence and integration tests split into host-testable
 core behavior and opt-in physical-hardware composition.
 
+The GitHub `Host quality` workflow explicitly selects the complete
+`TEST_SUITE_XWALK_SEQUENCE` host suite for every GCC/Clang Debug/Release build.
+This CI selection runs only deterministic core tests; it never builds or invokes
+the Raspberry Pi hardware adapters.
+
 ## Button event sequence
 
 The `button-event` selection ports
