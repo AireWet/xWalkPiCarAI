@@ -1,251 +1,260 @@
-# Dependency Installer Guide
+# CMake Dependency Guide
 
-[`xWalkTool/python/xHal_Rpi5CarDependencyInstaller`](../../../xWalkTool/python/xHal_Rpi5CarDependencyInstaller)
-is the executable Python tool for checking and installing the operating-system
-packages catalogued in
-[`xWalkTool/apt-packages.txt`](../../../xWalkTool/apt-packages.txt). It prints a final result table grouped by
-xWalk module or tooling responsibility.
+This guide documents the dependencies that CMake needs to configure and build the xWalk C++ workspace. It
+describes external development packages, project-target relationships, build-mode differences, and common
+discovery failures. It does not document the Python dependency installer.
 
-The script can also configure the Raspberry Pi boot files for one locally detected and physically verified
-Robot HAT v5. Host mode never reads, copies, or modifies Raspberry Pi boot configuration or overlay files.
+For the Python command-line interface, see
+[Dependency Installer Script Flags](Dependency%20Installer%20Script%20Flags.md).
 
-## Safety boundary
+## Dependency model
 
-The script does not start motors, servos, speakers, cameras, microphones, or hardware tests. Package and boot
-installation can still change the operating system and may require root privileges. Always run `--check` and
-`--dry-run` before installation on a Raspberry Pi.
+The workspace uses target-based CMake dependencies. Project modules are imported with `add_subdirectory()`
+and linked through named targets. External libraries are discovered only where their targets are needed.
 
-The script does not:
+Do not add global include paths, global linker paths, or manually assembled `-l` flags. Install the matching
+development package and allow CMake to provide the imported target.
 
-- infer a Robot HAT revision from a Raspberry Pi or 40-pin header;
-- treat failed v5 detection as evidence of Robot HAT v4;
-- use the Servo HAT+ overlay as a Robot HAT v4 overlay;
-- download Vosk models or install Ollama through an unverified remote command;
-- configure runtime users, groups, udev rules, or `/var/lib/xwalk/picar-x.conf`;
-- reboot the operating system;
-- prove physical hardware safety.
-
-Python 3 is a bootstrap requirement: Python must already be available to run the installer. It is also
-recorded as a required package so later status checks and provisioning retain it.
-
-## Package manifest
-
-The beginning of `apt-packages.txt` is a human-readable Debian/Ubuntu package list and xWalk HAL dependency
-map. The bounded `XWALK MACHINE-READABLE PACKAGE CATALOG V1` section supplies package mappings for the Python
-installer. Do not reorder its pipe-separated fields without updating the parser and tests.
-
-The catalog supports these package families:
-
-| Operating-system family | Package manager |
-| --- | --- |
-| Debian, Ubuntu, Raspberry Pi OS, Linux Mint, Pop!_OS | APT and `dpkg-query` |
-| Fedora, RHEL, CentOS, Rocky Linux, AlmaLinux | DNF and RPM |
-| Arch Linux, Manjaro, EndeavourOS | Pacman |
-| macOS | Homebrew and Apple Command Line Tools |
-
-An unknown Linux distribution is rejected. An explicit `--os` selects a mapping; it does not emulate that OS
-or install a missing package manager. Repository hardware backends require Linux. macOS can install compatible
-development tools but reports ALSA and Linux device dependencies as unsupported.
-
-## Device selection
-
-`--device` accepts `auto`, `host`, or `rpi`. The default is `auto`:
-
-- A readable local Device Tree model containing `Raspberry Pi` selects `rpi`.
-- Every other supported machine selects `host`.
-- `--target` remains an alias for compatibility.
-- `--device host` unconditionally skips all `config.txt` and overlay behavior.
-- `--device rpi` requires a locally detected Raspberry Pi and a verified profile.
-
-Use an explicit host selection when reviewing or installing workstation dependencies:
-
-```sh
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --device host --check
-```
-
-## Actions and scopes
-
-Installation is the default action. The action options are mutually exclusive:
-
-| Option | Behavior |
-| --- | --- |
-| `--check` | Queries installed state without changing packages or boot files |
-| `--dry-run` | Prints planned package and boot changes without applying them |
-| `--install` | Explicit spelling of the default installation action |
-
-By default, required, native-audio, quality, release, generator, and external scopes are selected. External
-Vosk and Ollama entries are checked and reported but are not automatically installed. Use `--required-only`
-for the minimum normal build/runtime selection. Optional scopes can then be added individually with repeated
-`--include audio`, `--include quality`, `--include release`, `--include generator`, or `--include external`.
-
-Camera selection accepts `auto`, `none`, `csi`, or `usb`. Raspberry Pi `auto` selects CSI and therefore
-`rpicam-apps`; USB selects `ffmpeg`. Host mode selects no camera package automatically.
-
-## Host workflow
-
-Check the minimum packages without changing the host:
-
-```sh
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --device host --required-only --check
-```
-
-Preview all supported package scopes:
-
-```sh
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --device host --dry-run
-```
-
-Install the minimum packages on Ubuntu:
-
-```sh
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --os ubuntu --device host --required-only
-```
-
-Equivalent explicit examples for other supported workstation families are:
-
-```sh
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --os fedora --device host --required-only
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --os arch --device host --required-only
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --os macos --device host --required-only
-```
-
-Linux installation uses the current root account or prefixes individual package commands with `sudo`.
-Homebrew is never executed through `sudo`. Installed packages are skipped and absent mapped packages are sent
-to the selected package manager in one installation request.
-
-## Raspberry Pi Robot HAT v5 workflow
-
-Raspberry Pi boot configuration is supported only on the APT-based Raspberry Pi OS and Ubuntu target covered
-by the repository deployment architecture. The administrator must physically confirm Robot HAT v5 and supply
-`--profile robot_hat_v5`. The script also requires local Device Tree UUID
-`9daeea78-0000-076e-0032-582369ac3e02`; the option cannot override failed detection.
-
-First inspect current state:
-
-```sh
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --device rpi --profile robot_hat_v5 --camera csi --required-only --check
-```
-
-Then review every planned change:
-
-```sh
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --device rpi --profile robot_hat_v5 --camera csi --required-only --dry-run
-```
-
-Apply only on the verified target:
-
-```sh
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --device rpi --profile robot_hat_v5 --camera csi --required-only
-```
-
-Before applying boot changes, the script verifies:
-
-1. The OS uses the supported APT path.
-2. The local model is a Raspberry Pi.
-3. The v5 profile was explicitly selected.
-4. The supported Robot HAT v5 UUID is locally exposed.
-5. The bundled overlay is readable and has its recorded SHA-256 checksum.
-6. A supported boot configuration and overlay directory pair exists.
-7. I2C and SPI are not explicitly disabled.
-8. The overlapping `sunfounder-servohat+` overlay is not active.
-
-The supported boot layouts are:
-
-| Configuration | Overlay directory |
-| --- | --- |
-| `/boot/firmware/config.txt` | `/boot/firmware/overlays` |
-| `/boot/config.txt` | `/boot/overlays` |
-
-Before its first modification, the installer preserves `config.txt.xwalk-backup`. If a different destination
-`sunfounder-robothat5.dtbo` already exists, it preserves
-`sunfounder-robothat5.dtbo.xwalk-backup`. Existing backups are not overwritten.
-
-The source blob is installed as `sunfounder-robothat5.dtbo`. Missing settings are appended in an explicit
-global section so a preceding model-specific section cannot accidentally contain them:
+The root build follows this dependency flow:
 
 ```text
-[all]
-# xWalk Robot HAT v5 configuration
-dtparam=i2c_arm=on
-dtparam=spi=on
-dtoverlay=sunfounder-robothat5
+MyPiCarX
+├── xWalkCommon
+├── xWalkIW
+├── xWalkHal modules and aggregate target
+└── xWalkCLI
+    └── xWalkAgent
+        └── HAL targets
 ```
 
-Already valid settings and a matching destination overlay are retained. The operation does not reboot.
+Individual modules import a project dependency only when its target does not already exist. This permits both
+standalone module builds and aggregate builds without defining the same target twice.
 
-## Robot HAT v4 limitation
+## CMake and compiler requirements
 
-The repository contains Robot HAT v5 and Servo HAT+ assets. It does not contain a verified Robot HAT v4
-overlay. `--device rpi --profile robot_hat_v4` therefore exits before package or boot modification. This is an
-intentional safety failure, not an instruction to install `sunfounder-servohat+.dtbo`.
-
-Use [`setup-rpi.sh`](../../../xWalkTool/shell/setup-rpi.sh) for the separately documented v4 deployment profile and
-leave overlay selection under verified target administration until a genuine v4 asset and validation evidence
-are added.
-
-## Result table and exit status
-
-The final table contains these columns:
-
-| Column | Meaning |
+| Requirement | Workspace role |
 | --- | --- |
-| Symbol | `✓` means installed/valid; `✗` means missing, failed, external, planned, or unsupported |
-| Module/submodule | xWalk consumer or tooling responsibility |
-| Dependency | Logical manifest dependency or Raspberry Pi boot requirement |
-| Package | Selected package name, external component, or exact boot path |
-| State / issue | Existing, newly installed, planned, unsupported, or failure detail |
+| CMake 3.25 or newer | Required by the checked-in `CMakePresets.json` schema |
+| CMake 3.16 or newer | Minimum declared by individual project and module CMake files |
+| C++17 compiler | Required by all public C++ targets |
+| Ninja | Generator selected by every root configure preset |
+| Python 3 | Runs root deployment tests and validates the xWalkIW schema |
+| `pkg-config` | Supports transitive discovery used by the installed gRPC configuration |
 
-Exit statuses are:
+GCC and Clang are the supported host compilers. The configured C++ result is authoritative; editor indexing
+does not replace a successful CMake configure and build.
 
-| Status | Meaning |
-| --- | --- |
-| `0` | Selected check/install completed with every selected row valid, or a valid dry-run was produced |
-| `1` | One or more selected packages or boot requirements remain unavailable or failed |
-| `2` | Arguments, OS, device, HAT identity, or required selection is invalid |
+## External CMake dependencies
 
-The default all-scope installation can return `1` after package installation when optional external Vosk or
-Ollama components remain unavailable. Use `--required-only` when validating the minimum deployment packages.
+| Dependency | CMake discovery | Imported target or result | Required when |
+| --- | --- | --- | --- |
+| Protobuf | `find_package(Protobuf REQUIRED)` | `protobuf::libprotobuf` | Every build containing xWalkIW |
+| gRPC | `find_package(gRPC CONFIG REQUIRED)` | `gRPC::grpc++` | Every build containing xWalkIW |
+| Python 3 | `find_package(Python3)` | `Python3_EXECUTABLE` | xWalkIW and root tests |
+| ALSA | `find_package(ALSA REQUIRED)` | `ALSA::ALSA` | Audio and speech targets |
+| libcurl | `find_package(CURL REQUIRED)` | `CURL::libcurl` | LanguageModel tests or Ollama provider |
+| Threads | `find_package(Threads REQUIRED)` | `Threads::Threads` | Linux GPIO backend or GPIO hardware tests |
+| libsndfile | `find_path()` and `find_library()` | `xWalkSndFileDependency` | Native Music decoder is enabled |
+| GoogleTest | `find_package(GTest CONFIG REQUIRED)` | `GTest::gtest` | Central HAL tests are enabled |
+| TinyXML2 | `find_package(tinyxml2 CONFIG REQUIRED)` | `tinyxml2::tinyxml2` | Central HAL tests are enabled |
+| yaml-cpp | `find_package(yaml-cpp CONFIG REQUIRED)` | `yaml-cpp::yaml-cpp` | YAML runners |
+| Linux UAPI headers | `check_include_file_cxx()` | Configure-test results | Raspberry Pi aggregate build |
 
-## Complete Raspberry Pi deployment sequence
+### GoogleTest, TinyXML2, and yaml-cpp
 
-Package and overlay installation is only one part of deployment:
+When `BUILD_TESTING=ON` in a normal host build, `xWalkHal/xWalkTest/xGoogleTest`
+creates the single HAL unit-test executable. GoogleTest supplies test
+registration and reporting; TinyXML2 validates the suite/case enablement file.
+yaml-cpp loads board, AI, example, and hardware runtime values. GoogleTest and
+TinyXML2 are test-only. An RPI build also requires yaml-cpp for the example
+launcher, including when testing is disabled.
 
-1. Physically verify the Raspberry Pi and Robot HAT revision.
-2. Run the dependency installer with `--check` and `--dry-run`.
-3. Apply the reviewed Robot HAT v5 dependency and boot changes.
-4. Reboot the Raspberry Pi.
-5. Run `setup-rpi.sh --dry-run` and then its reviewed `--apply` operation.
-6. Refresh the runtime-user login session if group membership changed.
-7. Run the non-moving CLI `doctor` command.
-8. Complete the documented raised-wheel and hardware-in-the-loop acceptance procedure.
+### Protobuf and gRPC
 
-The dependency installer does not replace `setup-rpi.sh`: setup owns runtime groups, udev permissions,
-device-node selection, and mutable deployment configuration.
+The top-level `xWalkIW` module is part of the `xWalkHal` aggregate, so normal workspace builds require the
+Protobuf and gRPC C++ development libraries. CMake compiles the checked-in generated sources and links them to
+`protobuf::libprotobuf` and `gRPC::grpc++`.
 
-## Host verification
-
-These checks do not install packages or access hardware:
+The Protobuf compiler and gRPC C++ plugin are not required merely to compile those checked-in sources. They
+are required after a schema change when regenerating the `xWalkIW/auto-gen` tree:
 
 ```sh
-python3 -m py_compile xWalkTool/python/xHal_Rpi5CarDependencyInstaller xWalkTool/deployment/test/dependency-installer-test.py
-python3 xWalkTool/deployment/test/dependency-installer-test.py
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --device host --required-only --check
-ctest --test-dir build-host/sanity --output-on-failure -R xHal_Rpi5CarDependencyInstallerHostTest
+xWalkTool/python/xHal_Rpi5CarIwGenerator --generate-cpp
 ```
 
-The host tests validate package-catalog coverage, comment handling, boot-section scoping, expected overlay
-checksum/configuration recognition, and refusal to substitute Servo HAT+ for Robot HAT v4. They do not prove
-that the Raspberry Pi boots or that the physical Robot HAT is safe.
+### ALSA
 
-## Troubleshooting
+ALSA is required when any of these conditions enables an audio or speech backend:
 
-- **Package query executable unavailable:** install or select the correct package manager for the actual OS.
-- **Unsupported Linux distribution:** add reviewed catalog mappings and tests before enabling installation.
-- **Raspberry Pi not detected:** do not force boot changes from a workstation or container.
-- **Robot HAT v5 UUID missing:** confirm the physical board and EEPROM/Device Tree state; do not bypass it.
-- **v4 overlay error:** no verified v4 blob exists; never substitute the Servo HAT+ blob.
-- **I2C or SPI disabled:** resolve the existing `dtparam=...=off` entry manually before rerunning.
-- **Servo HAT+ conflict:** remove only after verifying the installed physical board and resource ownership.
-- **Checksum mismatch:** do not install the blob until its source, license, and expected checksum are reviewed.
-- **Installation failure:** read the final package/module row and the package manager's last diagnostic.
-- **Reboot required:** reboot, inspect device nodes, run `doctor`, and perform hardware acceptance.
+- `XWALK_AUDIO_BUILD_HOST_TESTS`
+- `XWALK_AUDIO_BUILD_HARDWARE_TESTS`
+- `XWALK_AUDIO_BUILD_LINUX_BACKEND`
+- `XWALK_MUSIC_BUILD_HOST_TESTS`
+- `XWALK_MUSIC_BUILD_HARDWARE_TESTS`
+- `XWALK_MUSIC_BUILD_ALSA_BACKEND`
+- the corresponding xWalkGPT host, hardware, ALSA, Vosk, or Espeak path
+
+The aggregate host suite enables device-free ALSA software tests, so ALSA development headers are part of the
+normal host build requirements even though the tests do not open physical audio devices.
+
+### libcurl
+
+The LanguageModel module discovers libcurl when its host tests, hardware tests, or Ollama provider are
+enabled. Host tests inject controlled transport behavior; finding and linking libcurl does not contact an
+Ollama endpoint.
+
+### Threads and Linux headers
+
+The Linux GPIO backend links `Threads::Threads`. This is normally supplied by the compiler and operating
+system rather than a separate package.
+
+The Raspberry Pi aggregate checks for these Linux UAPI headers before adding hardware targets:
+
+- `linux/gpio.h`
+- `linux/i2c-dev.h`
+- `linux/i2c.h`
+- `linux/spi/spidev.h`
+
+The check is compile-only and does not open a GPIO, I2C, or SPI device.
+
+### libsndfile
+
+The native Music decoder searches for `sndfile.h` and the `sndfile` library only when
+`XWALK_MUSIC_BUILD_SNDFILE_DECODER=ON`. That option also requires the ALSA adapter. The Raspberry Pi aggregate
+enables both; the normal root host build does not enable the libsndfile decoder.
+
+## Debian and Ubuntu packages
+
+Install the dependencies for the complete root host build and test suite:
+
+```sh
+sudo apt-get install build-essential cmake ninja-build pkg-config python3 libasound2-dev libcurl4-openssl-dev libprotobuf-dev libgrpc++-dev libgtest-dev libtinyxml2-dev libyaml-cpp-dev
+```
+
+For the full Raspberry Pi-compatible CMake build, also install the Linux headers and libsndfile development
+package:
+
+```sh
+sudo apt-get install linux-libc-dev libsndfile1-dev
+```
+
+To regenerate the checked-in Protobuf and gRPC sources, additionally install:
+
+```sh
+sudo apt-get install protobuf-compiler protobuf-compiler-grpc
+```
+
+Runtime utilities such as `alsa-utils`, `espeak-ng`, `i2c-tools`, `gpiod`, `rpicam-apps`, `ffmpeg`, Ollama,
+and Vosk are deployment dependencies, not CMake library-discovery requirements. See
+[`xWalkTool/apt-packages.txt`](../../../xWalkTool/apt-packages.txt) for the complete build and runtime package
+map.
+
+## Root build modes
+
+| Preset | Additional dependency behavior |
+| --- | --- |
+| `host-debug` | Full host tests: Protobuf, gRPC, Python, ALSA, curl, GoogleTest, TinyXML2, and yaml-cpp |
+| `host-release` | Uses the same dependency surface as `host-debug` |
+| `sanity` | Uses host dependencies and enables strict compiler warnings |
+| `clang-tidy` | Adds the external `clang-tidy` executable and compilation database |
+| `sanitizers` | Requires compiler AddressSanitizer and UndefinedBehaviorSanitizer support |
+| `thread-sanitizer` | Requires compiler ThreadSanitizer support in a separate build tree |
+| `coverage` | Requires GCC-compatible coverage instrumentation and the external `gcovr` tool |
+| `rpi-release` | Adds Linux UAPI headers, libsndfile, RPi backends, and Debian packaging |
+
+Configure, build, and test the normal host tree from the workspace root:
+
+```sh
+cmake --fresh --preset host-debug
+cmake --build --preset host-debug --parallel
+ctest --preset host-debug
+```
+
+The Raspberry Pi preset builds hardware-labelled executables but hardware tests remain opt-in. Listing them
+is safe:
+
+```sh
+cmake --fresh --preset rpi-release
+cmake --build --preset rpi-release --parallel
+ctest --test-dir build-rpi/cmake -N -L hardware
+```
+
+Do not execute the hardware tests unless the correct Raspberry Pi and Robot HAT are connected, the robot is
+secured, and physical execution is explicitly approved.
+
+## Standalone module dependency behavior
+
+Standalone production-only modules usually need only a C++17 compiler and their internal project targets.
+Enabling a backend or test option can expand the external dependency surface.
+
+| Module | Option or mode | Added external requirement |
+| --- | --- | --- |
+| `xWalkIW` | Any configuration | Protobuf, gRPC, and Python 3 |
+| `xWalkAudio` | Host tests, hardware tests, or Linux backend | ALSA |
+| `xWalkMusic` | Host tests, hardware tests, or ALSA backend | ALSA |
+| `xWalkMusic` | `XWALK_MUSIC_BUILD_SNDFILE_DECODER=ON` | libsndfile and ALSA |
+| `xWalkGPT` | Host tests, hardware tests, or speech/provider backends | ALSA and Linux |
+| `xWalkLanguageModel` | Tests or Ollama provider | libcurl |
+| `xWalkGpio` | Hardware tests or Linux backend | Threads and Linux GPIO headers |
+| Hardware-dependent HAL modules | Hardware-test option | Linux and inherited backend dependencies |
+
+Project-library dependencies such as `xWalkCommon`, `xWalkI2c`, `xWalkPwm`, `xWalkGpio`, and `xWalkAudio`
+are imported by the owning CMake files. Do not install them as operating-system packages.
+
+## Quality and packaging tools
+
+These executables support workspace workflows but are not linked C++ libraries:
+
+| Tool | Used by |
+| --- | --- |
+| Clang-Tidy | `clang-tidy` preset build |
+| Cppcheck | `cppcheck` and `cppcheck-full` custom targets when detected |
+| gcovr | Coverage report and enforced threshold generation |
+| ShellCheck | GitHub host-quality workflow for shell scripts |
+| CPack and Debian tools | `rpi-release` packaging and release validation |
+
+The root CMake project adds Cppcheck targets only when `cppcheck` is found and compilation-database export is
+enabled. Absence of Cppcheck does not break an ordinary host build.
+
+## CMake discovery troubleshooting
+
+### Protobuf not found
+
+Install the Protobuf development package. The compiler package alone is insufficient because CMake needs the
+headers and link library.
+
+### gRPC configuration not found
+
+Install the gRPC C++ development package that provides `gRPCConfig.cmake`. Adding only a runtime gRPC library
+does not provide the imported `gRPC::grpc++` target.
+
+### ALSA not found
+
+Install ALSA development headers or disable the option that requested an ALSA backend. The aggregate host
+suite intentionally enables ALSA software tests.
+
+### CURL not found
+
+Install the libcurl development package or configure a production-only LanguageModel target without tests or
+the Ollama provider.
+
+### libsndfile development files missing
+
+Install the libsndfile development package or disable `XWALK_MUSIC_BUILD_SNDFILE_DECODER`. Do not leave the
+decoder enabled while disabling its required ALSA adapter.
+
+### Linux UAPI header check failed
+
+Install the target Linux userspace headers and confirm that the selected compiler or cross-compiling sysroot
+contains GPIO, I2C, and SPI headers. Do not bypass the check with cached result variables.
+
+### Generated xWalkIW file missing
+
+Install `protoc` and `grpc_cpp_plugin`, regenerate the checked-in files from the reviewed schemas, and rerun a
+fresh configure. Do not hand-edit generated output.
+
+## Verification boundary
+
+CMake dependency discovery and compilation do not establish that runtime services, models, device nodes, or
+physical hardware are available. Host tests remain the default verification path. Hardware execution requires
+the separate deployment and safety procedures.

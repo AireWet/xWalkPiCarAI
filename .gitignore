@@ -32,6 +32,8 @@ CMakeUserPresets.json
 *.la
 *.so
 *.so.*
+!/xWalkLibrary/vosk/lib/aarch64/libvosk.so
+!/xWalkLibrary/vosk/lib/x86_64/libvosk.so
 *.dylib
 *.dll
 *.exe
@@ -92,8 +94,7 @@ __pycache__/
 ._*
 Thumbs.db
 Desktop.ini
-**/.obsidian/workspace.json
-**/.obsidian/workspace-mobile.json
+**/.obsidian/
 
 # Local deployment configuration and credentials
 /xWalkCLI/xWalkController/config/picar-x.local.conf

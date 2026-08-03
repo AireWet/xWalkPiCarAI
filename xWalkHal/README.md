@@ -1,8 +1,9 @@
 # xWalk HAL aggregate build and test guide
 
-The top-level `xWalkHal` CMake project builds the HAL libraries and coordinates
-the tests registered by every submodule. Run the commands in this document from
-the `xWalkHal` directory.
+The workspace root CMake project builds the HAL libraries and coordinates the
+tests registered by every submodule and the sibling `xWalkIW` interface. The
+`xWalkHal` directory has no aggregate CMake file; run the commands in this
+document from the repository root.
 
 All aggregate build flags default to `OFF`. Host and Raspberry Pi verification
 must use separate build directories because they enable different backends and
@@ -10,16 +11,16 @@ tests.
 
 ## Aggregate build modes
 
-| Flag | Default | Result |
+| Root flag | Default | Result |
 |---|---:|---|
-| `XWALK_HAL_BUILD_HOST` | `OFF` | Builds host tests, the native interface, and CLI without hardware |
-| `XWALK_HAL_BUILD_RPI` | `OFF` | Builds all Raspberry Pi backends and hardware-labelled tests |
-| `XWALK_HAL_BUILD_CLI` | `OFF` | Builds the agent CLI without the aggregate suite |
+| `BUILD_TESTING` | `ON` | Builds deterministic host tests when `XWALK_BUILD_RPI=OFF` |
+| `XWALK_BUILD_RPI` | `OFF` | Builds Raspberry Pi backends and hardware-labelled tests |
+| `XWALK_ENABLE_PACKAGING` | `OFF` | Enables deployment packaging for an RPI build |
 
-Do not enable `XWALK_HAL_BUILD_HOST` and `XWALK_HAL_BUILD_RPI` together. The
-top-level configuration automatically propagates the selected mode to every
-submodule, so individual options such as `XWALK_PWM_BUILD_HOST_TESTS` and
-`XWALK_I2C_BUILD_HOST_TESTS` are not needed for an aggregate build.
+The root configuration derives its internal HAL host/RPI mode and propagates
+it to every submodule. Individual options such as
+`XWALK_PWM_BUILD_HOST_TESTS` and `XWALK_I2C_BUILD_HOST_TESTS` are not needed for
+a workspace build.
 
 ## Required tools and source layout
 
@@ -28,14 +29,20 @@ submodule, so individual options such as `XWALK_PWM_BUILD_HOST_TESTS` and
 | CMake 3.16 or newer | Configures the aggregate project |
 | C++17 compiler | Builds all native libraries and tests |
 | ALSA development library | Builds the optional shared PCM and mixer backend |
+| Protobuf and gRPC development libraries | Build the xWalkIW interface library |
+| GoogleTest development library | Provides the central HAL host-test framework |
+| TinyXML2 development library | Validates the central test selection file |
+| yaml-cpp development library | Loads board, AI, example, and hardware runtime values |
+| `../xWalkLibrary/vosk` | Project-managed ARM64/x86-64 Vosk runtimes and shared English model |
+| `../xWalkIW` | Protobuf and gRPC interface module imported by the aggregate |
 | `../xWalkCLI` | Standalone CLI aggregate included by host and RPI aggregate builds |
 | `../xWalkTool/dtoverlays` | Robot HAT and Servo HAT+ Raspberry Pi boot overlays |
-| Linux GPIO, I2C, and SPI UAPI headers | Required when `XWALK_HAL_BUILD_RPI=ON` |
+| Linux GPIO, I2C, and SPI UAPI headers | Required when `XWALK_BUILD_RPI=ON` |
 
 On Debian or Ubuntu, install the normal build dependencies with:
 
 ```bash
-sudo apt-get install build-essential cmake libasound2-dev libcurl4-openssl-dev libsndfile1-dev linux-libc-dev
+sudo apt-get install build-essential cmake libasound2-dev libcurl4-openssl-dev libgrpc++-dev libprotobuf-dev libgtest-dev libtinyxml2-dev libyaml-cpp-dev libsndfile1-dev linux-libc-dev
 ```
 
 ## Build and run every host test
@@ -43,73 +50,93 @@ sudo apt-get install build-essential cmake libasound2-dev libcurl4-openssl-dev l
 Host mode is deterministic logic simulation. It must not open GPIO or I2C
 devices, and it does not require a Raspberry Pi or Robot HAT.
 
-Configure the complete host build:
+From the repository root, configure the complete host build:
 
 ```bash
-cmake -S . -B build-host -DXWALK_HAL_BUILD_HOST=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S . -B build -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Debug
 ```
 
 Build every library and host test executable:
 
 ```bash
-cmake --build build-host --parallel
+cmake --build build --parallel
 ```
 
 List every registered host test without running it:
 
 ```bash
-ctest --test-dir build-host -N -L host
+ctest --test-dir build -N -L host
 ```
 
 Run every host test from every submodule:
 
 ```bash
-ctest --test-dir build-host -L host --output-on-failure --parallel 4
+./build/xGoogleTest
+ctest --test-dir build -L host --output-on-failure --parallel 4
 ```
 
-Plain `ctest --test-dir build-host --output-on-failure` is equivalent in a
+Plain `ctest --test-dir build --output-on-failure` is equivalent in a
 host-only build, but the `host` label makes the intended test class explicit.
+
+The HAL scenarios are registered inside the single `xGoogleTest` CTest entry.
+Their sources remain in each owning module. See
+[`xWalkTest/xGoogleTest/README.md`](xWalkTest/xGoogleTest/README.md) for the separate host
+and hardware XML profiles, the source inventory, and runtime selection.
 
 ## Run tests from one submodule
 
-The aggregate build preserves a CTest directory for each submodule. Use that
-directory to list or run only the tests belonging to the selected module.
-
-For example, list and run only PWM tests:
+Use the central runtime suite name to select one HAL module. For example:
 
 ```bash
-ctest --test-dir build-host/xWalkPwm -N
-ctest --test-dir build-host/xWalkPwm --output-on-failure
+./build/xGoogleTest TEST_SUITE_XWALK_PWM:1
+./build/xGoogleTest TEST_SUITE_XWALK_PWM:Address:1
 ```
 
-| Submodule | Host CTest directory | Test scope |
+| Submodule | Central suite | Test scope |
 |---|---|---|
-| xWalkAdc | `build-host/xWalkAdc` | ADC conversion and callback logic |
-| xWalkAdxl345 | `build-host/xWalkAdxl345` | Accelerometer decoding and validation |
-| xWalkAudio | `build-host/xWalkAudio` | Injected ALSA ownership and recovery behavior |
-| xWalkBoardControl | `build-host/xWalkBoardControl` | Board control, device, and firmware information |
-| xWalkBuzzer | `build-host/xWalkBuzzer` | Buzzer behavior |
-| xWalkCamera | `build-host/xWalkCamera` | Capture validation and injected backend behavior |
-| xWalkConfig | `build-host/xWalkConfig` | Configuration and configuration-store behavior |
-| xWalkGpio | `build-host/xWalkGpio` | Callback-based GPIO behavior |
-| xWalkGPT | `build-host/xWalkGPT` | Speech, ALSA, Vosk, and Espeak adapter behavior |
-| xWalkI2c | `build-host/xWalkI2c` | Callback-based I2C behavior |
-| xWalkLanguageModel | `build-host/xWalkLanguageModel` | Coordinator and Ollama provider behavior |
-| xWalkLed | `build-host/xWalkLed` | Single-color and RGB LED behavior |
-| xWalkLineTracker | `build-host/xWalkLineTracker` | Line-tracker interpretation |
-| xWalkMotor | `build-host/xWalkMotor` | Motor direction and speed logic |
-| xWalkMusic | `build-host/xWalkMusic` | Music behavior and shared-ALSA callback adapter |
-| xWalkPwm | `build-host/xWalkPwm` | Addressing, timers, registers, percentages, frequency, and validation |
-| xWalkRobot | `build-host/xWalkRobot` | Robot composition behavior |
-| xWalkServo | `build-host/xWalkServo` | Initialization, angle, pulse-width, and validation behavior |
-| xWalkSpeaker | `build-host/xWalkSpeaker` | Speaker behavior, bounded decoding, and ALSA adaptation |
-| xWalkSpi | `build-host/xWalkSpi` | Bounded full-duplex SPI callback behavior |
-| xWalkTrace | `build-host/xWalkTrace` | Trace behavior |
-| xWalkUltrasonic | `build-host/xWalkUltrasonic` | Distance calculation logic |
-| xWalkUserButton | `build-host/xWalkUserButton` | Button behavior |
-| xWalkUtils | `build-host/xWalkUtils` | Shared utility behavior |
-| xWalkVoiceAssistant | `build-host/xWalkVoiceAssistant` | Coordinator and completed-backend composition |
-| xWalkController | `build-host/xWalkCLI/xWalkController` | Terminal parsing and safe dispatch behavior |
+| xWalkAdc | `TEST_SUITE_XWALK_ADC` | ADC conversion and callback logic |
+| xWalkAdxl345 | `TEST_SUITE_XWALK_ADXL345` | Accelerometer decoding and validation |
+| xWalkAudio | `TEST_SUITE_XWALK_AUDIO` | Injected ALSA ownership and recovery behavior |
+| xWalkBoardControl | `TEST_SUITE_XWALK_BOARD_CONTROL` | Board control, device, and firmware information |
+| xWalkBuzzer | `TEST_SUITE_XWALK_BUZZER` | Buzzer behavior |
+| xWalkCamera | `TEST_SUITE_XWALK_CAMERA` | Capture validation and injected backend behavior |
+| xWalkConfig | `TEST_SUITE_XWALK_CONFIG` | Configuration and configuration-store behavior |
+| xWalkGpio | `TEST_SUITE_XWALK_GPIO` | Callback-based GPIO behavior |
+| xWalkGPT | `TEST_SUITE_XWALK_GPT` | Speech and device-free ALSA adapter behavior |
+| xWalkI2c | `TEST_SUITE_XWALK_I2C` | Callback-based I2C behavior |
+| xWalkLanguageModel | `TEST_SUITE_XWALK_LANGUAGE_MODEL` | Coordinator and Ollama provider behavior |
+| xWalkLed | `TEST_SUITE_XWALK_LED` | Single-color and RGB LED behavior |
+| xWalkLineTracker | `TEST_SUITE_XWALK_LINE_TRACKER` | Line-tracker interpretation |
+| xWalkMotor | `TEST_SUITE_XWALK_MOTOR` | Motor direction and speed logic |
+| xWalkMusic | `TEST_SUITE_XWALK_MUSIC` | Music behavior and shared-ALSA callback adapter |
+| xWalkPwm | `TEST_SUITE_XWALK_PWM` | Addressing, timers, registers, percentages, frequency, and validation |
+| xWalkRobot | `TEST_SUITE_XWALK_ROBOT` | Robot composition behavior |
+| xWalkServo | `TEST_SUITE_XWALK_SERVO` | Initialization, angle, pulse-width, and validation behavior |
+| xWalkSpeaker | `TEST_SUITE_XWALK_SPEAKER` | Speaker behavior, bounded decoding, and ALSA adaptation |
+| xWalkSpi | `TEST_SUITE_XWALK_SPI` | Bounded full-duplex SPI callback behavior |
+| xWalkTrace | `TEST_SUITE_XWALK_TRACE` | Trace behavior |
+| xWalkUltrasonic | `TEST_SUITE_XWALK_ULTRASONIC` | Distance calculation logic |
+| xWalkUserButton | `TEST_SUITE_XWALK_USER_BUTTON` | Button behavior |
+| xWalkUtils | `TEST_SUITE_XWALK_UTILS` | Shared utility behavior |
+| xWalkVoiceAssistant | `TEST_SUITE_XWALK_VOICE_ASSISTANT` | Coordinator and completed-backend composition |
+| xSequenceTest | `TEST_SUITE_XWALK_SEQUENCE` | Button, servo, ADC, motor, speech, and tone flows |
+| xExample | Direct `xExample <selector> <arguments>` invocation | Ported hardware and service examples |
+
+Upstream examples are ported one by one under `xWalkTest/xExample`. That module has
+separate reusable and Raspberry Pi layers and one central `main.cpp`. It is an
+example launcher rather than a test suite, so it has no XML profile or CTest
+registration. See [`xWalkTest/xExample/README.md`](xWalkTest/xExample/README.md) for each
+selector's YAML configuration and formal argument compatibility form.
+
+The project-managed Vosk assets are documented in
+[`../xWalkLibrary/README.md`](../xWalkLibrary/README.md). The xExample CMake configuration writes
+their absolute paths into its build-local YAML, so Vosk selectors do not depend
+on `/usr/share`, the dynamic-linker search path, or the current working
+directory. CMake selects the separate Linux ARM64 or x86-64 native library for
+the target. Neither retained library supports 32-bit Raspberry Pi OS.
+
+The xWalkIW schema validator and xWalkController tests are separate non-HAL
+CTest entries and continue to run through the complete root `ctest` command.
 
 The workspace-level `../xWalkCommon` module is a header-only interface library
 shared by HAL, agent, and other application layers. It does not currently
@@ -117,39 +144,33 @@ register a separate executable test.
 
 ## Run one specific test case
 
-First obtain the exact test name:
+First obtain the exact GoogleTest suite and case names:
 
 ```bash
-ctest --test-dir build-host -N
+./build/xGoogleTest --gtest_list_tests
 ```
 
-Run one exact test using an anchored regular expression:
+Run one exact case using the custom selector:
 
 ```bash
-ctest --test-dir build-host -R '^xWalkPwmFrequencyTest$' --output-on-failure
+./build/xGoogleTest TEST_SUITE_XWALK_PWM:Frequency:1
 ```
 
-Run every test whose name begins with a module prefix:
+Or use a standard GoogleTest filter:
 
 ```bash
-ctest --test-dir build-host -R '^xWalkServo' --output-on-failure
+./build/xGoogleTest --gtest_filter=TEST_SUITE_XWALK_SERVO.*
 ```
 
-Run tests by sequence number after checking the current list:
-
-```bash
-ctest --test-dir build-host -I 1,1 --output-on-failure
-```
-
-Exact names and sequence numbers can change when tests are added, so `ctest -N`
-should be treated as the current source of truth.
+The XML inventory and `--gtest_list_tests` output are the current sources of
+truth when cases are added.
 
 ## Build Raspberry Pi hardware tests
 
 Configure and compile hardware tests on Linux without running them:
 
 ```bash
-cmake -S . -B build-rpi -DXWALK_HAL_BUILD_RPI=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S . -B build-rpi -DXWALK_BUILD_RPI=ON -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build build-rpi --parallel
 ctest --test-dir build-rpi -N -L hardware
 ```
@@ -212,7 +233,7 @@ Perform a completely clean host build and test run:
 
 ```bash
 cmake -E remove_directory build-host
-cmake -S . -B build-host -DXWALK_HAL_BUILD_HOST=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S . -B build-host -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build build-host --parallel
 ctest --test-dir build-host -L host --output-on-failure --parallel 4
 ```

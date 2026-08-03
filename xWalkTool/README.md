@@ -49,7 +49,8 @@ separate `xWalkTool/LICENSE` file.
 - [Clean build script](../DevloperNote/Doc/note/Clean%20Build%20Script%20Guide.md)
 - [Eclipse build script](../DevloperNote/Doc/note/Eclipse%20Build%20Script%20Guide.md)
 - [Host coverage script](../DevloperNote/Doc/note/Host%20Coverage%20Script%20Guide.md)
-- [Dependency installer](../DevloperNote/Doc/note/Dependency%20Installer%20Guide.md)
+- [CMake dependencies](../DevloperNote/Doc/note/Dependency%20Installer%20Guide.md)
+- [Dependency installer flags](../DevloperNote/Doc/note/Dependency%20Installer%20Script%20Flags.md)
 - [Raspberry Pi setup script](../DevloperNote/Doc/note/Raspberry%20Pi%20Setup%20Script%20Guide.md)
 - [Hardware provisioning script](../DevloperNote/Doc/note/Hardware%20Provisioning%20Script%20Guide.md)
 - [Device Tree overlay assets](../DevloperNote/Doc/note/Device%20Tree%20Overlay%20Assets%20Guide.md)
@@ -60,14 +61,14 @@ separate `xWalkTool/LICENSE` file.
 |---|---|---|
 | `apt-packages.txt` | Lists and maps host, Raspberry Pi, quality, packaging, and optional packages | Read-only |
 | `python/xHal_Rpi5CarDependencyInstaller` | Installs dependencies and configures verified v5 boot | Privileged |
-| `shell/clean-build.sh` | Discovers and optionally deletes generated CMake and Python output | Dry-run is non-destructive |
+| `shell/clean-build.sh` | Finds and optionally deletes generated output | Dry-run is non-destructive |
 | `shell/eclipse-build.sh` | Configures or cleans the Eclipse-oriented CLI host build | Does not access hardware |
 | `shell/run-host-coverage.sh` | Runs the root coverage preset, tests, and `gcovr` | Foreground and host-only |
 | `shell/setup-rpi.sh` | Inspects, plans, validates, or applies Raspberry Pi provisioning | Apply is privileged |
 | `shell/provision-hardware.sh` | Records selected GPIO, I2C, SPI, and board identity | Modifies one config file |
-| `python/xHal_Rpi5CarIwGenerator` | Generates inactive xWalkIW Protobuf/gRPC sources | Currently inactive |
+| `python/xHal_Rpi5CarIwGenerator` | Validates and generates xWalkIW Protobuf/gRPC sources | Host-only generation |
 | `environment/` | Configures Clang-Tidy, Cppcheck suppressions, and gcovr reports | Host-only configuration |
-| `deployment/` | Stores packaging metadata, service definitions, permission templates, and host deployment tests | Installation and host validation |
+| `deployment/` | Stores packaging, service, permission, and test assets | Host validation and installation |
 | `dtoverlays/` | Stores unchanged SunFounder Robot HAT and Servo HAT+ blobs | Raspberry Pi boot assets |
 
 ## Dependency installation and host maintenance
@@ -228,6 +229,9 @@ build-host/coverage/coverage.html
 build-host/coverage/coverage.xml
 ```
 
+The report command is also a gate. It fails below 79 percent total line
+coverage or 40 percent total branch coverage.
+
 ## Raspberry Pi provisioning
 
 `setup-rpi.sh` supports Debian-family Raspberry Pi OS and Ubuntu Server on a Raspberry Pi. It requires an
@@ -321,10 +325,9 @@ xWalkTool/python/xHal_Rpi5CarIwGenerator --check
 xWalkTool/python/xHal_Rpi5CarIwGenerator --generate-cpp
 ```
 
-The default input root is `xWalkHal/xWalkIW`. That module is not present in the current repository, so
-`--check` and `--generate-cpp` cannot succeed with their defaults. The generator is retained as an inactive
-development asset; it must not be presented as a working build step until the matching schema module is
-restored or explicit valid input paths are supplied.
+The default input root is `xWalkIW`. The aggregate build validates its
+schema contract and compiles the generated C++ library. The module README is the
+authoritative protocol, generation, build, and test guide.
 
 Generation additionally requires `protoc`, `grpc_cpp_plugin`, the imported Protobuf schemas, and writable
 output directories. Generated files belong under the selected module's `auto-gen/include` and `auto-gen/src`

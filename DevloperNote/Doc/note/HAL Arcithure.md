@@ -253,12 +253,12 @@ must not propagate exceptions.
 
 ## 15. Build architecture
 
-Each module has its own CMake entry point and disabled-by-default host or hardware options. The aggregate HAL
-modes are mutually exclusive:
+Each module has its own CMake entry point and disabled-by-default host or hardware options. The workspace root
+owns aggregate HAL composition; `xWalkHal` intentionally has no aggregate CMake file:
 
-- `XWALK_HAL_BUILD_HOST=ON` selects deterministic host tests.
-- `XWALK_HAL_BUILD_RPI=ON` selects Linux backends and hardware-labelled targets.
-- both flags off builds production libraries only.
+- `BUILD_TESTING=ON` with `XWALK_BUILD_RPI=OFF` selects deterministic host tests.
+- `XWALK_BUILD_RPI=ON` selects Linux backends and hardware-labelled targets.
+- `BUILD_TESTING=OFF` with `XWALK_BUILD_RPI=OFF` builds production libraries only.
 
 The aggregate HAL and Agent builds provide the complete source-tree composition for their respective layers.
 

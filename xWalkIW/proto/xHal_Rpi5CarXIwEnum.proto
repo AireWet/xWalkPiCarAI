@@ -1,0 +1,45 @@
+/******************************************************************************
+ * @file        xHal_Rpi5CarXIwEnum.proto
+ * @brief       Defines the public Protobuf enumeration for xWalk I2C.
+ *
+ * @details
+ * Defines the stable operation values selected by an xWalk I2C request.
+ *
+ * @project     xWalk Firmware
+ * @module      xWalkIW
+ *
+ * @author      Joxy John
+ * @date        2026-07-30
+ * @version     1.0.0
+ *
+ * @copyright
+ * Copyright (c) 2026 Joxy John.
+ * All rights reserved.
+ *
+ * @note
+ * Developed using MISRA C++ coding guidelines.
+ ******************************************************************************/
+
+syntax = "proto3";
+
+package xwalk.iw.v1;
+
+/******************************************************************************
+ * Enumeration declarations
+ ******************************************************************************/
+
+/**
+ * @brief Selects the I2C operation performed by the generic gRPC request.
+ *
+ * @details
+ * The numeric values are stable protocol data. Each value selects which fields
+ * in `XWalkI2cRequestPayload` are meaningful for one `Execute` RPC call.
+ */
+enum XWalkI2cOperation
+{
+    XWALK_I2C_OPERATION_UNSPECIFIED = 0;
+    XWALK_I2C_OPERATION_PROBE = 1;
+    XWALK_I2C_OPERATION_READ = 2;
+    XWALK_I2C_OPERATION_READ_REGISTER = 3;
+    XWALK_I2C_OPERATION_WRITE_REGISTER = 4;
+}

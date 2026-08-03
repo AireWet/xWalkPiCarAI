@@ -1,0 +1,95 @@
+/******************************************************************************
+ * @file        xHal_Rpi5CarXIwMessage.proto
+ * @brief       Defines the public Protobuf messages for xWalk I2C.
+ *
+ * @details
+ * Defines the shared request, confirmation, and rejection payloads used by the
+ * xWalk I2C gRPC service and imports their operation enumeration.
+ *
+ * @project     xWalk Firmware
+ * @module      xWalkIW
+ *
+ * @author      Joxy John
+ * @date        2026-07-30
+ * @version     1.0.0
+ *
+ * @copyright
+ * Copyright (c) 2026 Joxy John.
+ * All rights reserved.
+ *
+ * @note
+ * Developed using MISRA C++ coding guidelines.
+ ******************************************************************************/
+
+syntax = "proto3";
+
+package xwalk.iw.v1;
+
+/******************************************************************************
+ * Imports
+ ******************************************************************************/
+
+import "google/protobuf/descriptor.proto";
+import "xHal_Rpi5CarXIwEnum.proto";
+
+/******************************************************************************
+ * Message option declarations
+ ******************************************************************************/
+
+/**
+ * @brief Associates a gRPC payload message with its stable signal number.
+ */
+extend google.protobuf.MessageOptions
+{
+    uint32 xwalkSignal = 50001;
+}
+
+/******************************************************************************
+ * Payload structure declarations
+ ******************************************************************************/
+
+/**
+ * @brief Carries the superset of fields used by every public I2C request.
+ *
+ * @details
+ * The selected operation determines which fields are meaningful. Probe uses
+ * `address`; direct read uses `address` and `length`; register read uses
+ * `address`, `register_address`, and `length`; register write uses `address`,
+ * `register_address`, and `data`.
+ */
+message XWalkI2cRequestPayload
+{
+    option (xwalkSignal) = 0x1081;
+
+    uint32 address = 1;
+    uint32 register_address = 2;
+    uint32 length = 3;
+    bytes data = 4;
+    XWalkI2cOperation operation = 5;
+}
+
+/**
+ * @brief Carries the fields returned by every successful public I2C operation.
+ *
+ * @details
+ * Read operations populate `data` in bus order. A probe populates `responding`.
+ * A successful register write leaves both fields at their default values.
+ */
+message XWalkI2cConfirmPayload
+{
+    option (xwalkSignal) = 0x1082;
+
+    bytes data = 1;
+    bool responding = 2;
+}
+
+/**
+ * @brief Carries the shared rejection result for every public I2C operation.
+ */
+message XWalkI2cRejectPayload
+{
+    option (xwalkSignal) = 0x1083;
+
+    uint32 reason = 1;
+    string detail = 2;
+}

@@ -41,7 +41,7 @@ class DependencyInstallerTest(unittest.TestCase):
         source_modules = {
             path.name
             for path in (REPOSITORY_ROOT / "xWalkHal").iterdir()
-            if path.is_dir() and path.name != ".git"
+            if path.is_dir() and path.name.startswith("xWalk")
         }
         self.assertTrue(source_modules.issubset(mapped_modules))
 

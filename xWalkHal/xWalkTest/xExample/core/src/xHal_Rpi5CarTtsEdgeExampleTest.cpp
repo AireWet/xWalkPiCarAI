@@ -1,0 +1,82 @@
+/******************************************************************************
+ * @file        xHal_Rpi5CarTtsEdgeExampleTest.cpp
+ * @brief       Verifies Edge TTS request flow without network or audio access.
+ *
+ * @details
+ * Records the injected request to verify exact voice and message preservation
+ * and confirms that a missing speech operation is rejected.
+ *
+ * @project     xWalk Firmware
+ * @module      xExample Host Test
+ * @author      Joxy John
+ * @date        2026-08-03
+ * @version     1.0.0
+ * @copyright
+ * Copyright (c) 2026 Joxy John.
+ * All rights reserved.
+ * @note Developed using MISRA C++ coding guidelines.
+ ******************************************************************************/
+
+#include "xHal_Rpi5CarTtsEdgeExample.h"
+
+#include <cassert>
+
+namespace
+{
+
+/** @brief Records one deterministic voice and speech message. */
+struct TtsEdgeExampleState
+{
+    XWalkHal::string voice;
+    XWalkHal::string text;
+    XWalkHal::uint32 callCount{};
+};
+
+/** @brief Records one injected Edge TTS request. */
+void speak(XWalkHal::contextpointer context, XWalkHal::stringview voice,
+    XWalkHal::stringview text)
+{
+    TtsEdgeExampleState& state = *static_cast<TtsEdgeExampleState*>(context);
+    state.voice = voice;
+    state.text = text;
+    ++state.callCount;
+}
+
+/** @brief Verifies the exact voice, message, and single invocation. */
+void testRequest()
+{
+    TtsEdgeExampleState state;
+    xwalk::hal::example::XWalkTtsEdgeExample example(&state, &speak);
+
+    example.run();
+
+    assert(state.callCount == 1U);
+    assert(state.voice == "en-US-AriaNeural");
+    assert(state.text ==
+        "Hi, I'm Edge TTS. A free cloud text-to-speech service powered by Microsoft Edge.");
+}
+
+/** @brief Verifies rejection of a missing speech operation. */
+void testValidation()
+{
+    XWalkHal::boolean rejected = false;
+    try
+    {
+        xwalk::hal::example::XWalkTtsEdgeExample invalid(nullptr, nullptr);
+    }
+    catch (const XWalkHal::invalidargument&)
+    {
+        rejected = true;
+    }
+    assert(rejected);
+}
+
+} /* namespace */
+
+/** @brief Runs the host-safe Edge TTS example verification. */
+int xWalkTtsEdgeExampleHostTest()
+{
+    testRequest();
+    testValidation();
+    return 0;
+}

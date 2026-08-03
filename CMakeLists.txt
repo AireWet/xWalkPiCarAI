@@ -29,9 +29,280 @@ endif()
 set(XWALK_HAL_BUILD_HOST ${XWALK_ROOT_BUILD_HOST} CACHE BOOL "Controlled by the workspace root" FORCE)
 set(XWALK_HAL_BUILD_RPI ${XWALK_BUILD_RPI} CACHE BOOL "Controlled by the workspace root" FORCE)
 set(XWALK_HAL_BUILD_CLI ON CACHE BOOL "Build the workspace CLI" FORCE)
-set(XWALK_CLI_INSTALL_RUNTIME ON CACHE BOOL "Install the CLI runtime layout" FORCE)
+set(XWALK_CLI_INSTALL_RUNTIME
+    ${XWALK_ROOT_BUILD_HOST} CACHE BOOL "Install the CLI runtime layout" FORCE)
+if(XWALK_BUILD_RPI)
+    set(XWALK_CLI_INSTALL_RUNTIME ON CACHE BOOL
+        "Install the CLI runtime layout" FORCE)
+endif()
 
-add_subdirectory(xWalkHal)
+if(XWALK_HAL_BUILD_HOST AND XWALK_HAL_BUILD_RPI)
+    message(FATAL_ERROR
+        "Host and RPI verification require separate build directories")
+endif()
+
+if(XWALK_HAL_BUILD_RPI AND NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    message(FATAL_ERROR "XWALK_HAL_BUILD_RPI requires a Linux build host")
+endif()
+
+if(XWALK_HAL_BUILD_RPI)
+    include(CheckIncludeFileCXX)
+    check_include_file_cxx("linux/gpio.h" XWALK_HAL_HAS_LINUX_GPIO_HEADER)
+    check_include_file_cxx("linux/i2c-dev.h" XWALK_HAL_HAS_LINUX_I2C_DEV_HEADER)
+    check_include_file_cxx("linux/i2c.h" XWALK_HAL_HAS_LINUX_I2C_HEADER)
+    check_include_file_cxx("linux/spi/spidev.h" XWALK_HAL_HAS_LINUX_SPI_HEADER)
+    if(NOT XWALK_HAL_HAS_LINUX_GPIO_HEADER OR
+        NOT XWALK_HAL_HAS_LINUX_I2C_DEV_HEADER OR
+        NOT XWALK_HAL_HAS_LINUX_I2C_HEADER OR
+        NOT XWALK_HAL_HAS_LINUX_SPI_HEADER)
+        message(FATAL_ERROR
+            "The RPI build requires Linux GPIO, I2C, and SPI UAPI headers")
+    endif()
+endif()
+
+set(XWALK_HAL_HOST_OPTION_NAMES
+    XWALK_ADC_BUILD_HOST_TESTS
+    XWALK_ADXL345_BUILD_HOST_TESTS
+    XWALK_AUDIO_BUILD_HOST_TESTS
+    XWALK_BOARD_CONTROL_BUILD_HOST_TESTS
+    XWALK_BUZZER_BUILD_HOST_TESTS
+    XWALK_CAMERA_BUILD_HOST_TESTS
+    XWALK_CONFIG_BUILD_HOST_TESTS
+    XWALK_CLI_BUILD_HOST
+    XWALK_GPIO_BUILD_HOST_TESTS
+    XWALK_GPT_BUILD_HOST_TESTS
+    XWALK_I2C_BUILD_HOST_TESTS
+    XWALK_IW_BUILD_HOST_TESTS
+    XWALK_LANGUAGE_MODEL_BUILD_HOST_TESTS
+    XWALK_LED_BUILD_HOST_TESTS
+    XWALK_LINE_TRACKER_BUILD_HOST_TESTS
+    XWALK_MOTOR_BUILD_HOST_TESTS
+    XWALK_MUSIC_BUILD_HOST_TESTS
+    XWALK_PWM_BUILD_HOST_TESTS
+    XWALK_ROBOT_BUILD_HOST_TESTS
+    XWALK_SERVO_BUILD_HOST_TESTS
+    XWALK_SPEAKER_BUILD_HOST_TESTS
+    XWALK_SPI_BUILD_HOST_TESTS
+    XWALK_TRACE_BUILD_HOST_TESTS
+    XWALK_ULTRASONIC_BUILD_HOST_TESTS
+    XWALK_USER_BUTTON_BUILD_HOST_TESTS
+    XWALK_UTILS_BUILD_HOST_TESTS
+    XWALK_VOICE_ASSISTANT_BUILD_HOST_TESTS)
+
+set(XWALK_HAL_RPI_OPTION_NAMES
+    XWALK_ADC_BUILD_HARDWARE_TESTS
+    XWALK_ADXL345_BUILD_HARDWARE_TESTS
+    XWALK_AUDIO_BUILD_HARDWARE_TESTS
+    XWALK_BOARD_CONTROL_BUILD_HARDWARE_TESTS
+    XWALK_BUZZER_BUILD_HARDWARE_TESTS
+    XWALK_CAMERA_BUILD_HARDWARE_TESTS
+    XWALK_CLI_BUILD_RPI
+    XWALK_GPIO_BUILD_HARDWARE_TESTS
+    XWALK_GPT_BUILD_HARDWARE_TESTS
+    XWALK_I2C_BUILD_HARDWARE_TESTS
+    XWALK_LANGUAGE_MODEL_BUILD_HARDWARE_TESTS
+    XWALK_LED_BUILD_HARDWARE_TESTS
+    XWALK_LINE_TRACKER_BUILD_HARDWARE_TESTS
+    XWALK_MOTOR_BUILD_HARDWARE_TESTS
+    XWALK_MUSIC_BUILD_HARDWARE_TESTS
+    XWALK_PWM_BUILD_HARDWARE_TESTS
+    XWALK_ROBOT_BUILD_HARDWARE_TESTS
+    XWALK_SERVO_BUILD_HARDWARE_TESTS
+    XWALK_SPEAKER_BUILD_HARDWARE_TESTS
+    XWALK_SPI_BUILD_HARDWARE_TESTS
+    XWALK_TRACE_BUILD_HARDWARE_TESTS
+    XWALK_ULTRASONIC_BUILD_HARDWARE_TESTS
+    XWALK_USER_BUTTON_BUILD_HARDWARE_TESTS
+    XWALK_UTILS_BUILD_HARDWARE_TESTS
+    XWALK_VOICE_ASSISTANT_BUILD_HARDWARE_TESTS)
+
+set(XWALK_HAL_CENTRAL_TEST_OPTION_NAMES
+    XWALK_ADC_BUILD_HOST_TESTS
+    XWALK_ADXL345_BUILD_HOST_TESTS
+    XWALK_AUDIO_BUILD_HOST_TESTS
+    XWALK_BOARD_CONTROL_BUILD_HOST_TESTS
+    XWALK_BUZZER_BUILD_HOST_TESTS
+    XWALK_CAMERA_BUILD_HOST_TESTS
+    XWALK_CONFIG_BUILD_HOST_TESTS
+    XWALK_GPIO_BUILD_HOST_TESTS
+    XWALK_GPT_BUILD_HOST_TESTS
+    XWALK_I2C_BUILD_HOST_TESTS
+    XWALK_LANGUAGE_MODEL_BUILD_HOST_TESTS
+    XWALK_LED_BUILD_HOST_TESTS
+    XWALK_LINE_TRACKER_BUILD_HOST_TESTS
+    XWALK_MOTOR_BUILD_HOST_TESTS
+    XWALK_MUSIC_BUILD_HOST_TESTS
+    XWALK_PWM_BUILD_HOST_TESTS
+    XWALK_ROBOT_BUILD_HOST_TESTS
+    XWALK_SERVO_BUILD_HOST_TESTS
+    XWALK_SPEAKER_BUILD_HOST_TESTS
+    XWALK_SPI_BUILD_HOST_TESTS
+    XWALK_TRACE_BUILD_HOST_TESTS
+    XWALK_ULTRASONIC_BUILD_HOST_TESTS
+    XWALK_USER_BUTTON_BUILD_HOST_TESTS
+    XWALK_UTILS_BUILD_HOST_TESTS
+    XWALK_VOICE_ASSISTANT_BUILD_HOST_TESTS)
+
+foreach(host_option_name IN LISTS XWALK_HAL_HOST_OPTION_NAMES)
+    set(${host_option_name} ${XWALK_HAL_BUILD_HOST} CACHE BOOL
+        "Controlled by the workspace root" FORCE)
+    mark_as_advanced(${host_option_name})
+endforeach()
+foreach(rpi_option_name IN LISTS XWALK_HAL_RPI_OPTION_NAMES)
+    set(${rpi_option_name} ${XWALK_HAL_BUILD_RPI} CACHE BOOL
+        "Controlled by the workspace root" FORCE)
+    mark_as_advanced(${rpi_option_name})
+endforeach()
+
+if(BUILD_TESTING AND (XWALK_HAL_BUILD_HOST OR XWALK_HAL_BUILD_RPI))
+    set(XWALK_HAL_BUILD_CENTRAL_TESTS ON)
+else()
+    set(XWALK_HAL_BUILD_CENTRAL_TESTS OFF)
+endif()
+if(XWALK_HAL_BUILD_CENTRAL_TESTS)
+    foreach(central_test_option_name IN LISTS XWALK_HAL_CENTRAL_TEST_OPTION_NAMES)
+        set(${central_test_option_name} OFF CACHE BOOL
+            "Collected by the xGoogleTest executable" FORCE)
+    endforeach()
+endif()
+
+set(XWALK_GPT_BUILD_VOSK_PROVIDER ${XWALK_HAL_BUILD_RPI} CACHE BOOL
+    "Build the Vosk provider" FORCE)
+set(XWALK_GPT_BUILD_ESPEAK_PROVIDER ${XWALK_HAL_BUILD_RPI} CACHE BOOL
+    "Build the Espeak provider" FORCE)
+set(XWALK_GPT_BUILD_STT_ALSA_BACKEND ${XWALK_HAL_BUILD_RPI} CACHE BOOL
+    "Build ALSA speech capture" FORCE)
+set(XWALK_GPT_BUILD_TTS_ALSA_BACKEND ${XWALK_HAL_BUILD_RPI} CACHE BOOL
+    "Build ALSA speech playback" FORCE)
+set(XWALK_MUSIC_BUILD_ALSA_BACKEND ${XWALK_HAL_BUILD_RPI} CACHE BOOL
+    "Build ALSA music" FORCE)
+set(XWALK_MUSIC_BUILD_SNDFILE_DECODER ${XWALK_HAL_BUILD_RPI} CACHE BOOL
+    "Build compressed-audio decoding" FORCE)
+if(XWALK_HAL_BUILD_CENTRAL_TESTS)
+    set(XWALK_AUDIO_BUILD_LINUX_BACKEND ON CACHE BOOL
+        "Required by centralized ALSA software tests" FORCE)
+    set(XWALK_GPT_BUILD_STT_ALSA_BACKEND ON CACHE BOOL
+        "Required by centralized speech capture tests" FORCE)
+    set(XWALK_GPT_BUILD_TTS_ALSA_BACKEND ON CACHE BOOL
+        "Required by centralized speech playback tests" FORCE)
+    set(XWALK_LANGUAGE_MODEL_BUILD_OLLAMA_PROVIDER ON CACHE BOOL
+        "Required by centralized language-model tests" FORCE)
+    set(XWALK_MUSIC_BUILD_ALSA_BACKEND ON CACHE BOOL
+        "Required by centralized music tests" FORCE)
+    set(XWALK_SPEAKER_BUILD_ALSA_BACKEND ON CACHE BOOL
+        "Required by centralized speaker tests" FORCE)
+    set(XWALK_UTILS_BUILD_LINUX_BACKEND ON CACHE BOOL
+        "Required by centralized Linux utility tests" FORCE)
+endif()
+mark_as_advanced(
+    XWALK_GPT_BUILD_VOSK_PROVIDER
+    XWALK_GPT_BUILD_ESPEAK_PROVIDER
+    XWALK_GPT_BUILD_STT_ALSA_BACKEND
+    XWALK_GPT_BUILD_TTS_ALSA_BACKEND
+    XWALK_MUSIC_BUILD_ALSA_BACKEND
+    XWALK_MUSIC_BUILD_SNDFILE_DECODER)
+
+if(XWALK_GPT_BUILD_TTS_ALSA_BACKEND)
+    set(XWALK_AUDIO_BUILD_LINUX_BACKEND ON CACHE BOOL
+        "Required by the speech ALSA backend" FORCE)
+endif()
+
+if(XWALK_HAL_BUILD_HOST)
+    message(STATUS "xWalk HAL host mode: central host tests are enabled")
+elseif(XWALK_HAL_BUILD_RPI)
+    message(STATUS "xWalk HAL RPI mode: hardware targets are enabled")
+else()
+    message(STATUS "xWalk HAL production mode: verification targets are disabled")
+endif()
+
+add_subdirectory(xWalkCommon)
+add_subdirectory(xWalkIW)
+add_subdirectory(xWalkHal/xWalkI2c)
+add_subdirectory(xWalkHal/xWalkSpi)
+add_subdirectory(xWalkHal/xWalkGpio)
+add_subdirectory(xWalkHal/xWalkAudio)
+add_subdirectory(xWalkHal/xWalkConfig)
+add_subdirectory(xWalkHal/xWalkTrace)
+add_subdirectory(xWalkHal/xWalkUtils)
+add_subdirectory(xWalkHal/xWalkLanguageModel)
+add_subdirectory(xWalkHal/xWalkMusic)
+add_subdirectory(xWalkHal/xWalkSpeaker)
+add_subdirectory(xWalkHal/xWalkPwm)
+add_subdirectory(xWalkHal/xWalkAdc)
+add_subdirectory(xWalkHal/xWalkServo)
+add_subdirectory(xWalkHal/xWalkAdxl345)
+add_subdirectory(xWalkHal/xWalkLineTracker)
+add_subdirectory(xWalkHal/xWalkUltrasonic)
+add_subdirectory(xWalkHal/xWalkMotor)
+add_subdirectory(xWalkHal/xWalkLed)
+add_subdirectory(xWalkHal/xWalkBuzzer)
+add_subdirectory(xWalkHal/xWalkCamera)
+add_subdirectory(xWalkHal/xWalkUserButton)
+add_subdirectory(xWalkHal/xWalkBoardControl)
+add_subdirectory(xWalkHal/xWalkRobot)
+add_subdirectory(xWalkHal/xWalkGPT)
+add_subdirectory(xWalkHal/xWalkVoiceAssistant)
+
+if(XWALK_HAL_BUILD_RPI)
+    add_subdirectory(xWalkHal/xWalkTest/xExample)
+endif()
+if(BUILD_TESTING)
+    add_subdirectory(xWalkHal/xWalkTest/xSequenceTest)
+endif()
+if(XWALK_HAL_BUILD_CLI OR XWALK_HAL_BUILD_HOST OR XWALK_HAL_BUILD_RPI)
+    add_subdirectory(xWalkCLI)
+endif()
+
+add_library(xWalkHal INTERFACE)
+add_library(xWalk::Hal ALIAS xWalkHal)
+target_compile_features(xWalkHal INTERFACE cxx_std_17)
+target_link_libraries(xWalkHal INTERFACE
+    xWalkAdc
+    xWalkAdxl345
+    xWalkAudio
+    xWalkBoardControl
+    xWalkBuzzer
+    xWalkCamera
+    xWalkCommon
+    xWalkConfig
+    xWalkGpio
+    xWalkGPT
+    xWalkI2c
+    xWalkIW
+    xWalkLanguageModel
+    xWalkLed
+    xWalkLineTracker
+    xWalkMotor
+    xWalkMusic
+    xWalkPwm
+    xWalkRobot
+    xWalkServo
+    xWalkSpeaker
+    xWalkSpi
+    xWalkTrace
+    xWalkUltrasonic
+    xWalkUserButton
+    xWalkUtils
+    xWalkVoiceAssistant)
+if(XWALK_HAL_BUILD_RPI)
+    target_link_libraries(xWalkHal INTERFACE
+        xWalkGpioLinux
+        xWalkCameraLinux
+        xWalkI2cLinux
+        xWalkSpiLinux
+        xWalkLanguageModelOllama
+        xWalkAudioAlsa
+        xWalkMusicAlsa
+        xWalkSpeakerAlsa
+        xWalkSpeechToTextAlsa
+        xWalkSpeechRecognizerVosk
+        xWalkTextToSpeechAlsa
+        xWalkTextToSpeechEspeak
+        xWalkUtilsLinux)
+endif()
+if(XWALK_HAL_BUILD_CENTRAL_TESTS)
+    add_subdirectory(xWalkHal/xWalkTest/xGoogleTest)
+endif()
 
 if(BUILD_TESTING)
     find_package(Python3 COMPONENTS Interpreter REQUIRED)
@@ -60,6 +331,7 @@ if(XWALK_CPPCHECK_EXECUTABLE AND CMAKE_EXPORT_COMPILE_COMMANDS)
             "--project=${CMAKE_BINARY_DIR}/compile_commands.json"
             --enable=warning,performance,portability
             --error-exitcode=1
+            "-i${CMAKE_CURRENT_SOURCE_DIR}/xWalkIW/auto-gen"
             --suppress=missingIncludeSystem
             --suppress=assertWithSideEffect
             "--suppressions-list=${XWALK_CPPCHECK_SUPPRESSIONS}"
@@ -70,6 +342,7 @@ if(XWALK_CPPCHECK_EXECUTABLE AND CMAKE_EXPORT_COMPILE_COMMANDS)
             "--project=${CMAKE_BINARY_DIR}/compile_commands.json"
             --enable=warning,style,performance,portability
             --inconclusive
+            "-i${CMAKE_CURRENT_SOURCE_DIR}/xWalkIW/auto-gen"
             --suppress=missingIncludeSystem
             "--suppressions-list=${XWALK_CPPCHECK_SUPPRESSIONS}"
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"

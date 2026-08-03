@@ -15,5 +15,5 @@ Checks: >
   -bugprone-easily-swappable-parameters,
   -bugprone-exception-escape
 WarningsAsErrors: ''
-HeaderFilterRegex: '^(?!.*(build-host|build-rpi|third_party)).*(xWalkCommon|xWalkHal|xWalkAgent|xWalkCLI)/.*'
+HeaderFilterRegex: '^(?!.*(build-(host|rpi)|third_party|auto-gen)).*xWalk(Common|Hal|Agent|CLI)/.*'
 FormatStyle: none

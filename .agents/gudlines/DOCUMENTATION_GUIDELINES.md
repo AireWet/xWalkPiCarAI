@@ -63,6 +63,11 @@ Every `.cpp`, `.hpp`, and `.h` file starts with this header. Use the real file
 name, a responsibility-focused brief and details, the owning module name, and
 the date on which the file is created or receives its first project header.
 
+Generated sources under an `auto-gen` tree retain the generator's identifying
+header and are exempt from the handwritten project-header and Doxygen rules.
+Never edit generated output merely to make it resemble handwritten project
+code; update its source schema or generator instead.
+
 ```cpp
 /******************************************************************************
  * @file        <file_name>

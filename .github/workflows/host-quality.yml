@@ -23,6 +23,8 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
+          libgtest-dev libtinyxml2-dev libyaml-cpp-dev
+          protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Select compiler
         run: |
           if [ "${{ matrix.compiler }}" = clang ]; then
@@ -49,12 +51,17 @@ jobs:
 
   sanitizers:
     runs-on: ubuntu-24.04
+    env:
+      ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
     steps:
       - uses: actions/checkout@v4
       - name: Install host dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
+          libgtest-dev libtinyxml2-dev libyaml-cpp-dev
+          protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure
         run: cmake --fresh --preset sanitizers
       - name: Build
@@ -65,12 +72,16 @@ jobs:
   thread-sanitizer:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    env:
+      TSAN_OPTIONS: halt_on_error=1
     steps:
       - uses: actions/checkout@v4
       - name: Install host dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
+          libgtest-dev libtinyxml2-dev libyaml-cpp-dev
+          protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure
         run: cmake --fresh --preset thread-sanitizer
       - name: Build
@@ -86,6 +97,8 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
+          libgtest-dev libtinyxml2-dev libyaml-cpp-dev
+          protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure strict host build
         run: cmake --fresh --preset sanity
       - name: Build
@@ -101,6 +114,8 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build clang-tidy cppcheck libasound2-dev libcurl4-openssl-dev
+          libgtest-dev libtinyxml2-dev libyaml-cpp-dev
+          protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure
         run: cmake --fresh --preset clang-tidy
       - name: Run Clang-Tidy while building
@@ -116,6 +131,8 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build gcovr libasound2-dev libcurl4-openssl-dev
+          libgtest-dev libtinyxml2-dev libyaml-cpp-dev
+          protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Build, test, and generate coverage reports
         run: xWalkTool/shell/run-host-coverage.sh run
       - uses: actions/upload-artifact@v4
@@ -145,6 +162,8 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
+          libgtest-dev libtinyxml2-dev libyaml-cpp-dev
+          protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure release installation
         run: >-
           cmake --fresh -S . -B build-host/install -G Ninja

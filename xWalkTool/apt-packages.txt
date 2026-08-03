@@ -1,7 +1,7 @@
 # xWalk operating-system package manifest
 #
 # Package names are derived from the repository CMake checks, GitHub Actions workflow,
-# xWalkTool/shell/setup-rpi.sh, deployment validation commands, and the inactive xWalkIW generator.
+# xWalkTool/shell/setup-rpi.sh, deployment validation commands, and the xWalkIW generator.
 # The human-readable lists use Debian/Ubuntu names. The machine-readable catalog at the
 # end maps supported dependencies to apt, dnf, pacman, and Homebrew package names.
 # Packages marked OPTIONAL are not required for the normal host or Raspberry Pi runtime.
@@ -14,6 +14,11 @@ pkg-config
 python3
 libasound2-dev
 libcurl4-openssl-dev
+libprotobuf-dev
+libgrpc++-dev
+libgtest-dev
+libtinyxml2-dev
+libyaml-cpp-dev
 
 HOST NATIVE AUDIO AND RPI-COMPATIBLE BUILD - OPTIONAL
 # Required when XWALK_MUSIC_BUILD_SNDFILE_DECODER=ON. Include it when preparing an
@@ -48,8 +53,14 @@ python3
 linux-libc-dev
 libasound2-dev
 alsa-utils
+libatomic1
 libcurl4-openssl-dev
 libsndfile1-dev
+libprotobuf-dev
+libgrpc++-dev
+libgtest-dev
+libtinyxml2-dev
+libyaml-cpp-dev
 i2c-tools
 libi2c-dev
 gpiod
@@ -174,28 +185,26 @@ APT: linux-libc-dev, libi2c-dev, i2c-tools
 
 xWalkGPT
 Internal: xWalkBoardControl, xWalkCommon, xWalkAudio
-APT: libasound2-dev, alsa-utils, espeak-ng, linux-libc-dev, libi2c-dev, i2c-tools, gpiod
-External runtime: Vosk shared library and voice model when its provider is selected
+APT: libasound2-dev, alsa-utils, libatomic1, espeak-ng, linux-libc-dev, libi2c-dev, i2c-tools, gpiod
+Project runtime: `xWalkLibrary/vosk` supplies ARM64/x86-64 Vosk libraries and one voice model
 
 xWalkVoiceAssistant
 Internal: xWalkGPT, xWalkLanguageModel, xWalkCommon
 APT: dependencies inherited from xWalkGPT and xWalkLanguageModel
 External runtime: the configured Vosk and language-model providers
 
-XWALKIW PROTOBUF/GRPC GENERATOR - OPTIONAL AND CURRENTLY INACTIVE
-# These packages are needed only if xWalkHal/xWalkIW schemas are restored and
-# xWalkTool/python/xHal_Rpi5CarIwGenerator is used.
+XWALKIW PROTOBUF/GRPC GENERATION TOOLS - OPTIONAL
+# The development libraries above build xWalkIW. These tools are required only
+# after changing its source schemas and regenerating the checked-in C++ files.
 python3
 protobuf-compiler
 protobuf-compiler-grpc
-libprotobuf-dev
-libgrpc++-dev
 
 NOT MANAGED BY THIS APT MANIFEST
-# Vosk requires a compatible shared library and a separately downloaded voice model.
+# Reviewed ARM64/x86-64 Vosk libraries and a shared model are under root-level xWalkLibrary.
 # Ollama requires its executable and separately downloaded model manifests.
-# Neither optional component is installed by setup-rpi.sh; use an approved upstream
-# installation method and enable its validation explicitly with --with-vosk or --with-ollama.
+# Neither optional component is installed into a system prefix by setup-rpi.sh; enable
+# its validation explicitly with --with-vosk or --with-ollama.
 
 XWALK MACHINE-READABLE PACKAGE CATALOG V1
 # Parsed by xWalkTool/python/xHal_Rpi5CarDependencyInstaller. Do not change the field order.
@@ -203,7 +212,7 @@ XWALK MACHINE-READABLE PACKAGE CATALOG V1
 # package|id|scope|targets|groups|apt|dnf|pacman|brew
 # A dash means that the dependency is unavailable or not applicable to that package family.
 
-group|workspace|xWalkHal,xWalkCommon
+group|workspace|xWalkHal,xWalkCommon,xWalkIW
 group|spi|xWalkSpi
 group|i2c|xWalkI2c,xWalkPwm,xWalkAdc,xWalkServo,xWalkAdxl345
 group|i2c|xWalkLineTracker,xWalkMotor,xWalkLed,xWalkBuzzer,xWalkBoardControl,xWalkRobot
@@ -226,7 +235,13 @@ package|python|required|host,rpi|workspace|python3|python3|python|python
 package|linux-uapi|required|rpi|i2c,gpio,spi|linux-libc-dev|kernel-headers|linux-api-headers|-
 package|alsa-dev|required|host,rpi|audio|libasound2-dev|alsa-lib-devel|alsa-lib|-
 package|alsa-utils|required|rpi|audio|alsa-utils|alsa-utils|alsa-utils|-
+package|atomic|required|rpi|external|libatomic1|libatomic|gcc-libs|-
 package|curl-dev|required|host,rpi|curl|libcurl4-openssl-dev|libcurl-devel|curl|curl
+package|protobuf-dev|required|host,rpi|workspace|libprotobuf-dev|protobuf-devel|protobuf|protobuf
+package|grpc-dev|required|host,rpi|workspace|libgrpc++-dev|grpc-devel|grpc|grpc
+package|gtest|required|host,rpi|workspace|libgtest-dev|gtest-devel|gtest|googletest
+package|tinyxml2|required|host,rpi|workspace|libtinyxml2-dev|tinyxml2-devel|tinyxml2|tinyxml2
+package|yaml-cpp|required|host,rpi|workspace|libyaml-cpp-dev|yaml-cpp-devel|yaml-cpp|yaml-cpp
 package|sndfile|required|rpi|audio|libsndfile1-dev|libsndfile-devel|libsndfile|libsndfile
 package|sndfile-host|audio|host|audio|libsndfile1-dev|libsndfile-devel|libsndfile|libsndfile
 package|i2c-tools|required|rpi|i2c|i2c-tools|i2c-tools|i2c-tools|-
@@ -253,8 +268,6 @@ package|systemd|release|host,rpi|release|systemd|systemd|systemd|-
 
 package|protoc|generator|host,rpi|generator|protobuf-compiler|protobuf-compiler|protobuf|protobuf
 package|grpc-plugin|generator|host,rpi|generator|protobuf-compiler-grpc|grpc-plugins|grpc|grpc
-package|protobuf-dev|generator|host,rpi|generator|libprotobuf-dev|protobuf-devel|protobuf|protobuf
-package|grpc-dev|generator|host,rpi|generator|libgrpc++-dev|grpc-devel|grpc|grpc
 
 package|vosk|external|rpi|external|@vosk|@vosk|@vosk|-
 package|ollama|external|host,rpi|external|@ollama|@ollama|@ollama|@ollama

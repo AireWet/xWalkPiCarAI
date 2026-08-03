@@ -87,6 +87,8 @@ using contextpointer = void*;
 using bytevector = std::vector<uint8>;
 /** @brief Dynamically sized sequence of owned character strings. */
 using stringvector = std::vector<string>;
+/** @brief Dynamically sized sequence of mutable character pointers. */
+using charpointervector = std::vector<charpointer>;
 /** @brief Dynamically sized sequence of byte payloads. */
 using bytevectorvector = std::vector<bytevector>;
 /** @brief Dynamically sized sequence of unsigned 32-bit values. */

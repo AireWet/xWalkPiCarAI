@@ -1,0 +1,27 @@
+# xWalk Firmware I2C payload interface mapping.
+service:
+  name: xWalkIW
+  properties:
+    - key: Revision
+      values: [1]
+
+interface:
+  module: xWalkI2c
+  mode: grpc_single_rpc
+
+operations:
+  XWALK_I2C_OPERATION_PROBE: 1
+  XWALK_I2C_OPERATION_READ: 2
+  XWALK_I2C_OPERATION_READ_REGISTER: 3
+  XWALK_I2C_OPERATION_WRITE_REGISTER: 4
+
+signals:
+  XWALK_I2C_RPI5CAR_REQ:
+    number: 0x1081
+    message: XWalkI2cRequestPayload
+  XWALK_I2C_RPI5CAR_CFM:
+    number: 0x1082
+    message: XWalkI2cConfirmPayload
+  XWALK_I2C_RPI5CAR_REJ:
+    number: 0x1083
+    message: XWalkI2cRejectPayload

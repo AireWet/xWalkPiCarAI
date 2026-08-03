@@ -53,11 +53,12 @@ exception.
 ## Project structure
 
 Keep each C++ module independently configurable with its own `CMakeLists.txt`
-and README. The root `xWalkHal/CMakeLists.txt` composes every module and maps the
-`XWALK_HAL_BUILD_HOST` and `XWALK_HAL_BUILD_RPI` flags to module verification
-options. Both aggregate flags default to `OFF` and must not be enabled in the
-same build directory. The default aggregate build contains production libraries
-only. A host build must register every submodule host and unit test so plain
+and README. The workspace root `CMakeLists.txt` composes every HAL module and
+maps the `XWALK_HAL_BUILD_HOST` and `XWALK_HAL_BUILD_RPI` flags to module
+verification options. The `xWalkHal` directory intentionally has no aggregate
+`CMakeLists.txt`. Both aggregate flags default to `OFF` and must not be enabled
+in the same build directory. The default aggregate build contains production
+libraries only. A host build must register every submodule host and unit test so plain
 `ctest` runs the complete host suite. An RPI build must register every submodule
 hardware test so plain `ctest` runs the complete hardware suite after deployment
 and safety approval. The `Doc` directory has no build system. Use the existing
@@ -87,7 +88,9 @@ xWalkCLI/xWalkController/    PiCar-X command parsing and Raspberry Pi applicatio
 xWalkCommon/                 workspace-wide types, constants, and reusable facilities
 xWalkMusics/                 packaged background-music resources and provenance
 xWalkSounds/                 packaged sound-effect resources and provenance
-xWalkHal/CMakeLists.txt      aggregate host and Raspberry Pi build
+xWalkIW/                     Protobuf and gRPC interface definitions for xWalkI2c
+xWalkLibrary/                reviewed project-managed runtime models and native AI assets
+CMakeLists.txt               workspace and HAL aggregate build
 xWalkHal/xWalkBoardControl/  board control, discovery, and firmware information
 xWalkHal/xWalkBuzzer/        active GPIO and passive PWM buzzer control
 xWalkHal/xWalkCamera/        backend-neutral capture plus Linux CSI and USB providers
@@ -113,6 +116,9 @@ xWalkHal/xWalk<Module>/include/ public module headers
 xWalkHal/xWalk<Module>/src/  hardware-independent implementation
 xWalkHal/xWalk<Module>/test/ host-side tests and test helpers
 xWalkHal/xWalk<Module>/hardware/ optional platform backend and hardware tests
+xWalkHal/xWalkTest/xGoogleTest/ centralized HAL host/hardware runner and XML selection
+xWalkHal/xWalkTest/xExample/ centralized ported examples with core and hardware layers
+xWalkHal/xWalkTest/xSequenceTest/ bounded opt-in sequence and integration tests
 ```
 
 For a module with `core` and `hardware` layers, keep the hardware-independent
@@ -134,6 +140,56 @@ its README.
 Keep AddressSanitizer/UndefinedBehaviorSanitizer and ThreadSanitizer in separate host build directories and
 never combine them in one executable. Use the root presets for repeat-under-load host verification so a
 failure stops the bounded repetition immediately.
+
+Keep HAL unit-test implementations in each owning module's existing `test/`
+tree. The central `xGoogleTest` target may compile those sources and adapt
+legacy entry points, but it must contain only common runner code, use one
+central `main()`, list sources explicitly, and remain disabled with
+`BUILD_TESTING=OFF`. Physical hardware executables stay separate, use a
+separate disabled-by-default XML profile, and require explicit runtime
+selection.
+
+Sequence tests that observe or manipulate physical hardware must use a bounded
+runtime, carry the CTest `hardware;sequence` labels, and remain disabled in the
+hardware XML profile until explicitly selected. Keep reusable, host-testable
+logic under `core/include` and `core/src`; keep platform adapters and physical
+implementations under `hardware/include` and `hardware/src`. Keep the single
+sequence-runner process entry point at `xWalkHal/xWalkTest/xSequenceTest/main.cpp`.
+Keep CLI usage, argument validation, and selector dispatch in the dedicated
+hardware-layer `XWalkSequenceTestRunner`; `main.cpp` only delegates to it.
+
+Port upstream example programs under `xWalkHal/xWalkTest/xExample`, keeping reusable
+behavior in `core` and Raspberry Pi composition in `hardware`. Keep its only
+process entry point at `xWalkHal/xWalkTest/xExample/main.cpp`; individual example
+sources must not define `main()`. Add only real supplied examples. Select them
+through the `xExample` executable using their formal selector names. Keep
+default board, AI, and bounded selector arguments in the module YAML file and
+accept an explicit YAML-path override; validated positional arguments remain a
+compatibility override. Do not add xExample XML manifests, CTest registrations,
+or xGoogleTest inventory entries. Keep CLI usage, argument validation,
+environment lookup, and selector dispatch in the hardware-layer
+`XWalkExampleRunner`; `main.cpp` only delegates to it. Place example contracts
+and adapters in `namespace xwalk::hal::example`; reserve
+`namespace xwalk::hal::test` for test implementations.
+
+Keep reviewed offline AI runtime assets under the root-level `xWalkLibrary`. Record the
+upstream version, architecture, source URL, checksum, license, and runtime path
+in that directory. Architecture-specific native libraries must use an explicit
+architecture subdirectory and must never be loaded by a mismatched target.
+Generate absolute deployment paths into build-local configuration so execution
+does not depend on the current working directory. Do not modify third-party
+model or binary contents locally.
+
+Name handwritten project YAML configuration files
+`xHal_Rpi5Car<Component>Config.yml`, where `<Component>` matches the owning
+module or runner, such as `Example`, `GoogleTest`, or `SequenceTest`. Keep
+generated copies under the same filename so runtime diagnostics and deployment
+instructions identify one stable configuration artifact.
+
+Keep generated Protobuf and gRPC sources under the owning module's `auto-gen`
+tree. Regenerate them from reviewed schemas, never edit them by hand, and
+exclude them from handwritten-source coverage and static-analysis gates while
+retaining normal compiler warnings and compilation checks.
 
 ## Files and naming
 
@@ -1285,7 +1341,7 @@ command compiles only the production filesystem library.
 
 ## Current verification status
 
-As of 2026-08-02:
+As of 2026-08-03:
 
 - The standalone xWalkCLI host suite passes, and its Controller executable
   builds in the aggregate host and Ubuntu/RPI configurations.
@@ -1302,6 +1358,8 @@ As of 2026-08-02:
   foreground line tracking, and preset self-drive actions. External-service
   commands remain unavailable until their safe process-level backends are composed.
 - The I2C Linux backend and `xWalkI2cLinuxHardwareTest` compile successfully.
+- The xWalkIW Protobuf/YAML contract validates, its generated gRPC C++ library
+  compiles, and its host schema test passes in the aggregate suite.
 - The SPI core, Agent transaction service, and CLI dispatch host tests pass with
   injected transfers; the Linux spidev backend and opt-in hardware test compile.
 - The CLI `spi transfer <HEX>` path compiles in the complete Raspberry Pi
@@ -1340,6 +1398,75 @@ As of 2026-08-02:
 - The combined LED target and its Linux GPIO and I2C hardware dependencies compile successfully.
 - The UserButton host suite and its GPIO dependency suite pass.
 - The UserButton target and its Linux GPIO hardware dependency compile successfully.
+- The bounded D0 button-event sequence passes with an in-memory host backend,
+  and its Linux adapter and central hardware selector compile successfully;
+  physical button events have not been exercised.
+- The three-servo initialization-angle sequence passes with in-memory GPIO and
+  I2C backends. Its MCU-reset and PWM hardware composition compiles; physical
+  servo movement has not been exercised.
+- The bounded Robot HAT v5 four-motor sequence passes with an in-memory I2C
+  backend and guaranteed cleanup attempts. Its physical dual-PWM composition
+  compiles; motor movement has not been exercised.
+- The bounded Robot HAT two-motor sequence passes with in-memory I2C and GPIO
+  backends and guaranteed cleanup attempts. Its P13/D4 and P12/D5 physical
+  composition compiles; motor movement has not been exercised.
+- The bounded Robot HAT servo sequence passes with in-memory GPIO and I2C
+  backends across all 16 PWM servos and five ADC channels. Its physical
+  composition compiles; MCU reset and servo movement have not been exercised.
+- The bounded 12-channel servo sweep passes with an in-memory I2C backend and
+  verifies progressive channel order at negative and positive 20 degrees. Its
+  physical composition compiles; servo movement has not been exercised.
+- The Piper stream-comparison sequence passes with injected provider, clock,
+  and output callbacks. No physical case is registered because the workspace
+  has no C++ Piper provider supporting both streamed and buffered modes.
+- The 17-measure Robot HAT tone sequence passes through the real Music
+  abstraction with an in-memory audio backend. Its ALSA hardware composition
+  compiles and remains disabled by default; physical playback has not been exercised.
+- The ported Robot HAT LED example passes with injected LED, timing, and output
+  callbacks. Its GPIO26 Linux composition and central example selector compile;
+  the physical 19-second LED flow remains disabled by default and has not run.
+- The ported DeepSeek chat example passes with an injected language model and
+  console. Its authenticated HTTPS adapter and central example selector compile;
+  the disabled live case has not sent prompts or consumed provider service.
+- The ported Doubao image-chat example passes with injected camera, language
+  model, and console dependencies. Its camera and authenticated HTTPS adapters
+  compile; the disabled live case has not captured or uploaded an image.
+- The ported Doubao text-chat example passes with an injected language model
+  and console. Its authenticated HTTPS adapter compiles; the disabled live case
+  has not sent a prompt or consumed provider service.
+- The ported Gemini chat example passes with an injected language model and
+  console. Its authenticated OpenAI-compatible HTTPS adapter compiles; the
+  disabled live case has not sent a prompt or consumed provider service.
+- The ported Grok chat example passes with an injected language model and
+  console. Its authenticated OpenAI-compatible HTTPS adapter compiles; the
+  disabled live case has not sent a prompt or consumed provider service.
+- The ported Ollama text-chat example passes with an injected language model
+  and console. Its native Ollama adapter compiles with the upstream localhost
+  endpoint and `deepseek-r1:1.5b` model; the disabled live case has not sent a
+  prompt.
+- The ported Ollama image-chat example passes with injected camera, language
+  model, and console dependencies. Its 1280-by-720 camera and native Ollama
+  adapters compile; the disabled live case has not captured or uploaded an image.
+- The ported OpenAI image-chat example passes with injected camera, language
+  model, and console dependencies. Its 640-by-480 camera and authenticated
+  OpenAI-compatible HTTPS adapters compile; the disabled live case has not
+  captured or uploaded an image.
+- The ported OpenAI text-chat example passes with an injected language model
+  and console. Its authenticated OpenAI-compatible HTTPS adapter compiles; the
+  disabled live case has not sent a prompt or consumed provider service.
+- The ported generic-provider chat template passes with an injected language
+  model and console. Its runtime-selected OpenAI-compatible HTTPS adapter
+  compiles; the disabled live case has not sent a prompt or consumed provider
+  service.
+- The ported Qwen chat example passes with an injected language model and
+  console. Its configurable DashScope OpenAI-compatible HTTPS adapter compiles;
+  the disabled live case has not sent a prompt or consumed provider service.
+- The ported pin-input example passes with injected input, timing, and reporting
+  operations. Its bounded D3/GPIO22 pull-up adapter compiles; the disabled live
+  case has not opened or sampled a physical GPIO line.
+- The ported servo example passes with injected angle, timing, and reporting
+  operations. Its bounded PWM-channel-one adapter compiles; the disabled live
+  case has not opened I2C or moved a physical servo.
 - The Music host suite passes, and its hardware-independent target compiles successfully.
 - Music callbacks are connected to shared ALSA and its opt-in hardware target compiles.
 - Native Music MP3 decoding is covered by a device-free libsndfile host test.
@@ -1348,4 +1475,6 @@ As of 2026-08-02:
 - Speaker decoding and shared-ALSA playback are covered by host and opt-in hardware targets.
 - The host and hardware compilation paths are warning-clean under the configured
   GCC warning options.
+- Host coverage passes enforced minimums of 79 percent for lines and 40 percent
+  for branches.
 - Hardware tests have not been executed as part of this verification.

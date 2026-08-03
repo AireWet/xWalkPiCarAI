@@ -8,7 +8,8 @@ caches must be discarded, or Python caches must be regenerated.
 ## Requirements
 
 - Run the checked-in script from this workspace.
-- Keep the root `AGENTS.md` and `xWalkHal/CMakeLists.txt` present so the script can verify the workspace.
+- Keep the root `AGENTS.md`, root `CMakeLists.txt`, and HAL module CMake files present so the script can verify
+  the workspace.
 - Provide `cmake` on `PATH`; deletion uses `cmake -E`.
 
 The script resolves the repository root from its own location, so the current working directory does not

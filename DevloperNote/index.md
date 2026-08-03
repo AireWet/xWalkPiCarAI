@@ -14,16 +14,9 @@ options, backend ownership, safety constraints, and verification commands remain
 - [CLI architecture](Doc/note/CLI%20Architecture.md): command coverage and implementation plan.
 - [Raspberry Pi deployment guide](Doc/note/Deployment%20Guide.md): install layout, idempotent setup, board-profile
   checks, and narrowly scoped device permissions.
-- [Raspberry Pi setup script guide](Doc/note/Raspberry%20Pi%20Setup%20Script%20Guide.md): setup options,
-  safe dry-run, privileged apply behavior, validation, and troubleshooting.
+- [CMake dependency guide](Doc/note/Dependency%20Installer%20Guide.md): external libraries, imported targets,
+  build-mode requirements, package names, and discovery troubleshooting.
 - [xWalkTool overview](Doc/note/xWalkTool%20Overview.md): tool inventory, safety classes, and detailed links.
-- [Dependency installer guide](Doc/note/Dependency%20Installer%20Guide.md): cross-platform package checks,
-  guarded Robot HAT v5 boot setup, status tables, and safety limits.
-- [Clean build script guide](Doc/note/Clean%20Build%20Script%20Guide.md): cleanup discovery and confirmation.
-- [Eclipse build script guide](Doc/note/Eclipse%20Build%20Script%20Guide.md): host build and clean behavior.
-- [Hardware provisioning guide](Doc/note/Hardware%20Provisioning%20Script%20Guide.md): board and Linux device
-  identity validation and configuration persistence.
-- [Host coverage script guide](Doc/note/Host%20Coverage%20Script%20Guide.md): foreground workflow and reports.
 - [Device Tree overlay guide](Doc/note/Device%20Tree%20Overlay%20Assets%20Guide.md): asset roles and inspection.
 - [Release acceptance checklist](Doc/note/Release%20Acceptance%20Checklist.md): independent host, ARM package,
   plug-and-run, and physical-safety evidence gates.
@@ -31,6 +24,21 @@ options, backend ownership, safety constraints, and verification commands remain
   coverage, clean-environment, and staged-install verification.
 - [Language-model provider configuration](Doc/note/Language%20Model%20Provider%20Configuration.md): Ollama,
   ChatGPT, Gemini, Claude, credential handling, and model selection.
+
+## Scripts
+
+- [Clean build script guide](Doc/note/Clean%20Build%20Script%20Guide.md): safe discovery, preview, confirmation,
+  and removal of generated CMake and Python output.
+- [Dependency installer script flags](Doc/note/Dependency%20Installer%20Script%20Flags.md): complete option,
+  default, compatibility alias, combination, and exit-status reference.
+- [Eclipse build script guide](Doc/note/Eclipse%20Build%20Script%20Guide.md): host configuration, compilation
+  database generation, build, and clean behavior.
+- [Hardware provisioning script guide](Doc/note/Hardware%20Provisioning%20Script%20Guide.md): Robot HAT profile
+  and Linux device validation with configuration persistence.
+- [Host coverage script guide](Doc/note/Host%20Coverage%20Script%20Guide.md): foreground configure, build, test,
+  coverage reporting, and enforced thresholds.
+- [Raspberry Pi setup script guide](Doc/note/Raspberry%20Pi%20Setup%20Script%20Guide.md): safe dry-run, target
+  validation, privileged apply behavior, and troubleshooting.
 
 ## Robot HAT board diagram
 
@@ -61,6 +69,7 @@ notes.
 - [xWalkGpio](../xWalkHal/xWalkGpio/README.md): GPIO abstraction and Linux backend.
 - [xWalkGPT](../xWalkHal/xWalkGPT/README.md): speech coordination plus Vosk and Espeak providers.
 - [xWalkI2c](../xWalkHal/xWalkI2c/README.md): I2C abstraction and Linux backend.
+- [xWalkIW](../xWalkIW/README.md): Protobuf and gRPC interface definitions for xWalkI2c.
 - [xWalkLanguageModel](../xWalkHal/xWalkLanguageModel/README.md): provider-neutral language-model access.
 - [xWalkLed](../xWalkHal/xWalkLed/README.md): GPIO and PWM LED control.
 - [xWalkLineTracker](../xWalkHal/xWalkLineTracker/README.md): grayscale line-position estimation.

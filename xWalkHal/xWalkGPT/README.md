@@ -89,12 +89,14 @@ Espeak → XWalkTextToSpeechEspeak → XWalkTextToSpeechAlsa
        → XWalkTextToSpeech → XWalkVoicePromptCar
 ```
 
-The Vosk provider resolves `libvosk.so` at runtime and therefore requires the
-Vosk runtime plus a compatible model directory on the Raspberry Pi. The Espeak
-provider requires the configured `espeak-ng` executable. Neither provider uses
-a shell or embeds third-party model data in this repository. A scope-bound Vosk
-recognizer guard releases each recognizer during normal return and stack cleanup
-without exception interception.
+The Vosk provider resolves a caller-supplied shared-library path at runtime and
+therefore requires a target-compatible Vosk runtime plus a model directory.
+The aggregate repository provides separate ARM64 and x86-64 Vosk 0.3.45
+runtimes and one shared small US English 0.15 model under `../../xWalkLibrary/vosk`;
+deployments may override both paths. The Espeak provider requires `espeak-ng`
+executable. Neither provider uses a shell. A scope-bound Vosk recognizer guard
+releases each recognizer during normal return and stack cleanup without
+exception interception.
 
 ## Host build and test
 

@@ -35,7 +35,8 @@ current C++ implementation.
 ### Build and examples
 
 - [Build and installation](Installation.md)
-- [Dependency installer](Dependency%20Installer%20Guide.md)
+- [CMake dependencies](Dependency%20Installer%20Guide.md)
+- [Dependency installer flags](Dependency%20Installer%20Script%20Flags.md)
 - [Project index](Projects.md)
 - [Motor and servo control](Project%20Control%20Motor%20Servo.md)
 - [Line-following car](Project%20DIY%20Car.md)

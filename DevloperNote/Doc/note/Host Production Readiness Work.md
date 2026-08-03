@@ -11,7 +11,8 @@ device permissions on the target image, Raspberry Pi plug-and-run behavior, or A
 - AddressSanitizer and UndefinedBehaviorSanitizer use an isolated build.
 - ThreadSanitizer uses a separate build and is never combined with AddressSanitizer.
 - Clang-Tidy and focused Cppcheck checks use the compilation database.
-- Coverage instrumentation has an isolated GCC/gcov build.
+- Coverage instrumentation has an isolated GCC/gcov build with enforced line
+  and branch baselines.
 - Shell syntax, provisioning behavior, and staged installation have host-safe checks.
 - CI repeats all host tests 20 times and stops at the first failure.
 - CI rejects group-writable or world-writable installed files and records staged-file checksums.
@@ -68,10 +69,11 @@ The foreground-only runner uses a system `gcovr` executable or
 `build-host/tools/gcovr-venv/bin/gcovr`. It fails before configuration when neither is available and does not
 create a detached process.
 
-Review line, function, and branch coverage separately. Add tests for meaningful production behavior,
-especially motor shutdown, configuration validation, resource validation, initialization rollback, worker
-cancellation, and malformed backend responses. Do not enforce thresholds until the measured baseline is
-reviewed, and do not improve percentages by excluding important production files or testing trivial getters.
+The reviewed 2026-08-03 baseline is 79.8 percent line coverage, 92.6 percent
+function coverage, and 40.8 percent branch coverage. The gate requires at least
+79 percent line coverage and 40 percent branch coverage. Add tests for
+meaningful production behavior rather than excluding important production files
+or testing trivial getters merely to raise percentages.
 
 ## 4. Clean-environment checks
 
@@ -100,13 +102,15 @@ The staged-install job must confirm:
 These items remain incomplete until their commands actually pass. Missing local tools must be reported rather
 than silently skipped.
 
-## 6. Local evidence from 2026-08-02
+## 6. Local evidence from 2026-08-03
 
-- The isolated ThreadSanitizer configuration and all 264 build steps completed successfully.
+- The integrated ThreadSanitizer configuration and build completed successfully.
 - ThreadSanitizer execution is blocked in this traced sandbox by `unexpected memory mapping`; it did not pass.
-- The strict host suite completed 20 repetitions without failure: 58 tests per cycle and 1,160 executions.
-- The stress run completed in 83.16 seconds without physical device access.
-- `gcovr` and ShellCheck are unavailable locally, so their CI jobs remain the required execution evidence.
+- AddressSanitizer and UndefinedBehaviorSanitizer passed all 62 host tests with
+  leak detection disabled because LeakSanitizer cannot run under tracing.
+- Coverage passed the new gate at 79.8 percent lines, 92.6 percent functions,
+  and 40.8 percent branches.
+- ShellCheck is unavailable locally, so its CI job remains the required execution evidence.
 - No Raspberry Pi, ARM package, system service, udev installation, or physical actuator test was performed.
 
 ## 7. Raspberry Pi boundary

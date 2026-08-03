@@ -16,13 +16,14 @@ review whether it is read-only, writes generated output, changes configuration, 
   [host coverage guide](Host%20Coverage%20Script%20Guide.md).
 - `python/xHal_Rpi5CarDependencyInstaller` checks and installs mapped packages. Its guarded v5 mode can also
   back up and update the Raspberry Pi boot configuration and install the verified v5 overlay. See the
-  [dependency installer guide](Dependency%20Installer%20Guide.md).
+  [complete flag reference](Dependency%20Installer%20Script%20Flags.md).
 - `shell/setup-rpi.sh` plans, validates, or applies Raspberry Pi setup. See the
   [Raspberry Pi setup guide](Raspberry%20Pi%20Setup%20Script%20Guide.md).
 - `shell/provision-hardware.sh` persists exact target hardware identity. See the
   [hardware provisioning guide](Hardware%20Provisioning%20Script%20Guide.md).
-- `python/xHal_Rpi5CarIwGenerator` validates or generates the inactive xWalkIW
-  schema outputs. It is not separately documented.
+- `python/xHal_Rpi5CarIwGenerator` validates or generates the active xWalkIW
+  schema outputs. The [module README](../../../xWalkIW/README.md)
+  documents its protocol and build contract.
 - `environment/` contains the checked-in Clang-Tidy, Cppcheck-suppression, and
   gcovr configurations used by the host quality workflows.
 - `deployment/` contains Debian metadata, systemd and tmpfiles definitions, the

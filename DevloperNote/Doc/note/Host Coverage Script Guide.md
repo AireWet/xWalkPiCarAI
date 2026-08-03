@@ -45,6 +45,10 @@ The script performs these foreground steps in order:
 Any failing step stops the workflow and returns its failure status. No process is intentionally left running
 in the background.
 
+The final report enforces the measured baseline: at least 79 percent total line
+coverage and 40 percent total branch coverage. Falling below either threshold
+returns a non-zero status and fails CI.
+
 ## Output
 
 The coverage preset uses `build-host/coverage`. The
@@ -56,9 +60,9 @@ build-host/coverage/coverage.html
 build-host/coverage/coverage.xml
 ```
 
-The report excludes tests, third-party content, and build directories according
-to `xWalkTool/environment/gcovr.cfg`. Coverage percentages must be reported only
-after `gcovr` finishes successfully.
+The report excludes tests, generated sources, third-party content, and build
+directories according to `xWalkTool/environment/gcovr.cfg`. Coverage
+percentages must be reported only after `gcovr` finishes successfully.
 
 ## Missing gcovr
 

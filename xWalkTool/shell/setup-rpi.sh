@@ -134,8 +134,8 @@ done
 
 required_packages=(
     build-essential cmake ninja-build pkg-config python3 linux-libc-dev
-    libasound2-dev alsa-utils libcurl4-openssl-dev
-    libsndfile1-dev i2c-tools libi2c-dev gpiod
+    libasound2-dev alsa-utils libatomic1 libcurl4-openssl-dev
+    libsndfile1-dev libyaml-cpp-dev i2c-tools libi2c-dev gpiod
     espeak-ng curl ca-certificates
 )
 if [ "$camera" = "csi" ]; then
@@ -209,7 +209,9 @@ if [ "$with_vosk" = "true" ]; then
     if [ "$config_ready" = "true" ]; then
         vosk_library="$(configuration_value voice_vosk_library)"
         vosk_model="$(configuration_value voice_vosk_model)"
-        if ldconfig -p 2>/dev/null | grep -Fq "$vosk_library" && [ -r "$vosk_model" ]; then
+        if { [ -f "$vosk_library" ] ||
+            ldconfig -p 2>/dev/null | grep -Fq "$vosk_library"; } &&
+            [ -d "$vosk_model" ] && [ -r "$vosk_model" ]; then
             echo "  Vosk: configured library and model are locally available"
         else
             echo "  Vosk: configured library or model is missing; install it from an approved source"

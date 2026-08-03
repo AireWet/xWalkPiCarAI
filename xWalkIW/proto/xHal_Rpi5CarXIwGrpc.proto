@@ -1,0 +1,49 @@
+/******************************************************************************
+ * @file        xHal_Rpi5CarXIwGrpc.proto
+ * @brief       Defines the public gRPC service for xWalk I2C.
+ *
+ * @details
+ * Defines one generic request-confirmation RPC using the payload messages from
+ * `xHal_Rpi5CarXIwMessage.proto`.
+ *
+ * @project     xWalk Firmware
+ * @module      xWalkIW
+ *
+ * @author      Joxy John
+ * @date        2026-07-30
+ * @version     1.0.0
+ *
+ * @copyright
+ * Copyright (c) 2026 Joxy John.
+ * All rights reserved.
+ *
+ * @note
+ * Developed using MISRA C++ coding guidelines.
+ ******************************************************************************/
+
+syntax = "proto3";
+
+package xwalk.iw.v1;
+
+/******************************************************************************
+ * Imports
+ ******************************************************************************/
+
+import "xHal_Rpi5CarXIwMessage.proto";
+
+/******************************************************************************
+ * Service declarations
+ ******************************************************************************/
+
+/**
+ * @brief Provides one generic request-confirmation exchange for xWalk I2C.
+ *
+ * @details
+ * The request operation selects probe, direct read, register read, or register
+ * write. A successful call returns the shared confirmation payload. A rejected
+ * call returns a non-OK gRPC status with rejection details.
+ */
+service XWalkI2cService
+{
+    rpc Execute(XWalkI2cRequestPayload) returns (XWalkI2cConfirmPayload);
+}
