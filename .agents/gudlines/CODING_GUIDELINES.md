@@ -124,7 +124,7 @@ xWalkController/xWalkTest/xGoogleTest/ centralized CLI host-test runner and XML 
 xWalkController/xWalkTest/xSequenceTest/ bounded CLI command-sequence verification
 xWalkAudioResources/music/   packaged background-music resources
 xWalkAudioResources/sounds/  packaged sound-effect resources
-xWalkIW/                     Controller Protobuf DTOs and xWalkI2c gRPC interface definitions
+xWalkIW/                     I2C and Controller Protobuf DTOs and gRPC interface definitions
 xWalkLibrary/                common public headers, portable dependencies, models, and native assets
 xWalkLibrary/common/         common interface target, headers, configuration, and documentation
 CMakeLists.txt               workspace and HAL aggregate build

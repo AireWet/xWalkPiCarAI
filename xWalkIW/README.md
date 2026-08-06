@@ -1,12 +1,12 @@
 # xWalkIW
 
-C++17 Protobuf definitions for xWalk Controller requests and the `xWalkI2c`
-gRPC service.
+C++17 Protobuf definitions and gRPC services for xWalk I2C and Controller
+requests.
 
 The enum schema defines stable I2C and Controller selections. The message schema
 defines the I2C payloads and mirrors the plain Controller types declared in
 `../xWalkLibrary/common/include/xWalkControllerConfigTypes.h`. The service
-schema defines one generic I2C request-confirmation RPC.
+schema defines the generic I2C exchange and typed Controller command RPCs.
 
 ## Directory layout
 
@@ -43,10 +43,10 @@ The schema uses package `xwalk.iw.v1` and proto3 defaults. Public request fields
 use address `1`, register address `2`, length `3`, data `4`, and operation `5`.
 The three message signal identifiers are stable protocol values.
 
-`XWalkI2cService.Execute` is the only RPC. It accepts
-`XWalkI2cRequestPayload` and returns `XWalkI2cConfirmPayload` after a successful
-probe, direct read, register read, or register write. Rejections use a non-OK
-gRPC status, with `XWalkI2cRejectPayload` available for structured details.
+`XWalkI2cService.Execute` accepts `XWalkI2cRequestPayload` and returns
+`XWalkI2cConfirmPayload` after a successful probe, direct read, register read,
+or register write. Rejections use a non-OK gRPC status, with
+`XWalkI2cRejectPayload` available for structured details.
 
 ### Controller messages
 
@@ -81,6 +81,19 @@ command field remains an unsigned integer because the Controller source owns
 those signals as `XWALK_CNTRL_*_REQ` macros rather than a C++ enum. The macros
 and their command-specific request messages share the contiguous signal range
 `0x2000` through `0x201F`.
+
+### Controller service
+
+`XWalkControllerService` exposes one unary RPC for every command-specific
+message in the `0x2000` through `0x201F` range. Method names match the command
+message names without the `XWalk` prefix or `CommandRequest` suffix. For
+example, `Move` accepts `XWalkMoveCommandRequest`, and `Calibrate` accepts
+`XWalkCalibrateCommandRequest`.
+
+Successful Controller dispatch returns `google.protobuf.Empty`. Invalid input,
+unavailable services, and execution failures return a non-OK gRPC status. The
+empty response is only an acknowledgement; command output and runtime service
+objects are not serialized into the public transport contract.
 
 Proto3 optional presence is retained for fields whose C++ defaults are not the
 scalar wire defaults. A protocol adapter must apply the documented C++ defaults

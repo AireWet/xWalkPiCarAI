@@ -83,7 +83,7 @@ notes.
 - [xWalkGpio](../xWalkHal/xWalkGpio/README.md): GPIO abstraction and Linux backend.
 - [xWalkGPT](../xWalkHal/xWalkGPT/README.md): speech coordination plus Vosk and Espeak providers.
 - [xWalkI2c](../xWalkHal/xWalkI2c/README.md): I2C abstraction and Linux backend.
-- [xWalkIW](../xWalkIW/README.md): Controller Protobuf DTOs and the xWalkI2c gRPC interface.
+- [xWalkIW](../xWalkIW/README.md): I2C and Controller Protobuf DTOs and typed gRPC services.
 - [xWalkLanguageModel](../xWalkHal/xWalkLanguageModel/README.md): provider-neutral language-model access.
 - [xWalkLed](../xWalkHal/xWalkLed/README.md): GPIO and PWM LED control.
 - [xWalkLineTracker](../xWalkHal/xWalkLineTracker/README.md): grayscale line-position estimation.

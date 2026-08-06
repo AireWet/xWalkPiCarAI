@@ -84,6 +84,1369 @@ XWalkI2cService::Service::~Service() {
 }
 
 
+static const char* XWalkControllerService_method_names[] = {
+  "/xwalk.iw.v1.XWalkControllerService/Unknown",
+  "/xwalk.iw.v1.XWalkControllerService/Help",
+  "/xwalk.iw.v1.XWalkControllerService/Spi",
+  "/xwalk.iw.v1.XWalkControllerService/Doctor",
+  "/xwalk.iw.v1.XWalkControllerService/ServoZeroing",
+  "/xwalk.iw.v1.XWalkControllerService/ComputerVision",
+  "/xwalk.iw.v1.XWalkControllerService/RecordVideo",
+  "/xwalk.iw.v1.XWalkControllerService/SoundBackgroundMusic",
+  "/xwalk.iw.v1.XWalkControllerService/TextVisionTalk",
+  "/xwalk.iw.v1.XWalkControllerService/OnlineLlmTest",
+  "/xwalk.iw.v1.XWalkControllerService/Move",
+  "/xwalk.iw.v1.XWalkControllerService/KeyboardControl",
+  "/xwalk.iw.v1.XWalkControllerService/AvoidObstacles",
+  "/xwalk.iw.v1.XWalkControllerService/CliffDetection",
+  "/xwalk.iw.v1.XWalkControllerService/StareAtYou",
+  "/xwalk.iw.v1.XWalkControllerService/BullFight",
+  "/xwalk.iw.v1.XWalkControllerService/TreasureHunt",
+  "/xwalk.iw.v1.XWalkControllerService/VideoCar",
+  "/xwalk.iw.v1.XWalkControllerService/AppControl",
+  "/xwalk.iw.v1.XWalkControllerService/Turn",
+  "/xwalk.iw.v1.XWalkControllerService/Camera",
+  "/xwalk.iw.v1.XWalkControllerService/Sensor",
+  "/xwalk.iw.v1.XWalkControllerService/LineTrack",
+  "/xwalk.iw.v1.XWalkControllerService/SelfDrive",
+  "/xwalk.iw.v1.XWalkControllerService/Sound",
+  "/xwalk.iw.v1.XWalkControllerService/VoiceChat",
+  "/xwalk.iw.v1.XWalkControllerService/VoiceActiveCar",
+  "/xwalk.iw.v1.XWalkControllerService/GptCar",
+  "/xwalk.iw.v1.XWalkControllerService/VoiceControlledCar",
+  "/xwalk.iw.v1.XWalkControllerService/VoicePromptCar",
+  "/xwalk.iw.v1.XWalkControllerService/StorytellingRobot",
+  "/xwalk.iw.v1.XWalkControllerService/Calibrate",
+};
+
+std::unique_ptr< XWalkControllerService::Stub> XWalkControllerService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
+  (void)options;
+  std::unique_ptr< XWalkControllerService::Stub> stub(new XWalkControllerService::Stub(channel, options));
+  return stub;
+}
+
+XWalkControllerService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
+  : channel_(channel), rpcmethod_Unknown_(XWalkControllerService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Help_(XWalkControllerService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Spi_(XWalkControllerService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Doctor_(XWalkControllerService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ServoZeroing_(XWalkControllerService_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ComputerVision_(XWalkControllerService_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_RecordVideo_(XWalkControllerService_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SoundBackgroundMusic_(XWalkControllerService_method_names[7], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_TextVisionTalk_(XWalkControllerService_method_names[8], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_OnlineLlmTest_(XWalkControllerService_method_names[9], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Move_(XWalkControllerService_method_names[10], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_KeyboardControl_(XWalkControllerService_method_names[11], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_AvoidObstacles_(XWalkControllerService_method_names[12], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_CliffDetection_(XWalkControllerService_method_names[13], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_StareAtYou_(XWalkControllerService_method_names[14], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_BullFight_(XWalkControllerService_method_names[15], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_TreasureHunt_(XWalkControllerService_method_names[16], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_VideoCar_(XWalkControllerService_method_names[17], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_AppControl_(XWalkControllerService_method_names[18], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Turn_(XWalkControllerService_method_names[19], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Camera_(XWalkControllerService_method_names[20], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Sensor_(XWalkControllerService_method_names[21], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_LineTrack_(XWalkControllerService_method_names[22], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SelfDrive_(XWalkControllerService_method_names[23], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Sound_(XWalkControllerService_method_names[24], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_VoiceChat_(XWalkControllerService_method_names[25], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_VoiceActiveCar_(XWalkControllerService_method_names[26], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GptCar_(XWalkControllerService_method_names[27], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_VoiceControlledCar_(XWalkControllerService_method_names[28], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_VoicePromptCar_(XWalkControllerService_method_names[29], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_StorytellingRobot_(XWalkControllerService_method_names[30], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Calibrate_(XWalkControllerService_method_names[31], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  {}
+
+::grpc::Status XWalkControllerService::Stub::Unknown(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkUnknownCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Unknown_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::Unknown(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkUnknownCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Unknown_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::Unknown(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Unknown_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncUnknownRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkUnknownCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Unknown_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncUnknownRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncUnknownRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::Help(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkHelpCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Help_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::Help(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkHelpCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Help_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::Help(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Help_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncHelpRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkHelpCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Help_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncHelpRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncHelpRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::Spi(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkSpiCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Spi_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::Spi(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkSpiCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Spi_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::Spi(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Spi_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncSpiRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkSpiCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Spi_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncSpiRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncSpiRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::Doctor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkDoctorCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Doctor_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::Doctor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkDoctorCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Doctor_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::Doctor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Doctor_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncDoctorRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkDoctorCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Doctor_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncDoctorRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncDoctorRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::ServoZeroing(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkServoZeroingCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_ServoZeroing_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::ServoZeroing(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkServoZeroingCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ServoZeroing_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::ServoZeroing(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ServoZeroing_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncServoZeroingRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkServoZeroingCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_ServoZeroing_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncServoZeroingRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncServoZeroingRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::ComputerVision(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkComputerVisionCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_ComputerVision_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::ComputerVision(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkComputerVisionCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ComputerVision_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::ComputerVision(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ComputerVision_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncComputerVisionRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkComputerVisionCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_ComputerVision_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncComputerVisionRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncComputerVisionRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::RecordVideo(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkRecordVideoCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_RecordVideo_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::RecordVideo(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkRecordVideoCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_RecordVideo_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::RecordVideo(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_RecordVideo_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncRecordVideoRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkRecordVideoCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_RecordVideo_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncRecordVideoRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncRecordVideoRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::SoundBackgroundMusic(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_SoundBackgroundMusic_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::SoundBackgroundMusic(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_SoundBackgroundMusic_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::SoundBackgroundMusic(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_SoundBackgroundMusic_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncSoundBackgroundMusicRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_SoundBackgroundMusic_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncSoundBackgroundMusicRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncSoundBackgroundMusicRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::TextVisionTalk(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_TextVisionTalk_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::TextVisionTalk(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_TextVisionTalk_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::TextVisionTalk(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_TextVisionTalk_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncTextVisionTalkRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_TextVisionTalk_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncTextVisionTalkRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncTextVisionTalkRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::OnlineLlmTest(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_OnlineLlmTest_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::OnlineLlmTest(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_OnlineLlmTest_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::OnlineLlmTest(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_OnlineLlmTest_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncOnlineLlmTestRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_OnlineLlmTest_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncOnlineLlmTestRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncOnlineLlmTestRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::Move(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkMoveCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Move_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::Move(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkMoveCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Move_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::Move(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Move_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncMoveRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkMoveCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Move_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncMoveRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncMoveRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::KeyboardControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_KeyboardControl_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::KeyboardControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_KeyboardControl_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::KeyboardControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_KeyboardControl_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncKeyboardControlRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_KeyboardControl_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncKeyboardControlRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncKeyboardControlRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::AvoidObstacles(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_AvoidObstacles_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::AvoidObstacles(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_AvoidObstacles_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::AvoidObstacles(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_AvoidObstacles_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncAvoidObstaclesRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_AvoidObstacles_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncAvoidObstaclesRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncAvoidObstaclesRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::CliffDetection(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_CliffDetection_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::CliffDetection(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_CliffDetection_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::CliffDetection(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_CliffDetection_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncCliffDetectionRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_CliffDetection_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncCliffDetectionRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncCliffDetectionRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::StareAtYou(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkStareAtYouCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_StareAtYou_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::StareAtYou(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkStareAtYouCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_StareAtYou_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::StareAtYou(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_StareAtYou_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncStareAtYouRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkStareAtYouCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_StareAtYou_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncStareAtYouRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncStareAtYouRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::BullFight(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkBullFightCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_BullFight_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::BullFight(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkBullFightCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_BullFight_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::BullFight(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_BullFight_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncBullFightRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkBullFightCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_BullFight_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncBullFightRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncBullFightRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::TreasureHunt(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_TreasureHunt_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::TreasureHunt(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_TreasureHunt_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::TreasureHunt(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_TreasureHunt_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncTreasureHuntRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_TreasureHunt_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncTreasureHuntRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncTreasureHuntRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::VideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkVideoCarCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_VideoCar_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::VideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkVideoCarCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_VideoCar_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::VideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_VideoCar_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncVideoCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkVideoCarCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_VideoCar_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncVideoCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncVideoCarRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::AppControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkAppControlCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_AppControl_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::AppControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkAppControlCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_AppControl_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::AppControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_AppControl_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncAppControlRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkAppControlCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_AppControl_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncAppControlRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncAppControlRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::Turn(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkTurnCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Turn_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::Turn(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkTurnCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Turn_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::Turn(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Turn_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncTurnRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkTurnCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Turn_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncTurnRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncTurnRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::Camera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkCameraCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Camera_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::Camera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkCameraCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Camera_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::Camera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Camera_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncCameraRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkCameraCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Camera_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncCameraRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncCameraRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::Sensor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkSensorCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Sensor_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::Sensor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkSensorCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Sensor_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::Sensor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Sensor_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncSensorRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkSensorCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Sensor_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncSensorRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncSensorRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::LineTrack(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkLineTrackCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_LineTrack_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::LineTrack(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkLineTrackCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_LineTrack_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::LineTrack(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_LineTrack_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncLineTrackRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkLineTrackCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_LineTrack_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncLineTrackRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncLineTrackRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::SelfDrive(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkSelfDriveCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_SelfDrive_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::SelfDrive(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkSelfDriveCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_SelfDrive_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::SelfDrive(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_SelfDrive_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncSelfDriveRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkSelfDriveCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_SelfDrive_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncSelfDriveRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncSelfDriveRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::Sound(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkSoundCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Sound_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::Sound(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkSoundCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Sound_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::Sound(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Sound_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncSoundRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkSoundCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Sound_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncSoundRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncSoundRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::VoiceChat(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkVoiceChatCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_VoiceChat_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::VoiceChat(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkVoiceChatCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_VoiceChat_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::VoiceChat(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_VoiceChat_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncVoiceChatRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkVoiceChatCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_VoiceChat_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncVoiceChatRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncVoiceChatRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::VoiceActiveCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_VoiceActiveCar_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::VoiceActiveCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_VoiceActiveCar_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::VoiceActiveCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_VoiceActiveCar_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncVoiceActiveCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_VoiceActiveCar_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncVoiceActiveCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncVoiceActiveCarRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::GptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkGptCarCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GptCar_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::GptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkGptCarCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GptCar_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::GptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GptCar_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncGptCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkGptCarCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_GptCar_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncGptCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncGptCarRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::VoiceControlledCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_VoiceControlledCar_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::VoiceControlledCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_VoiceControlledCar_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::VoiceControlledCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_VoiceControlledCar_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncVoiceControlledCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_VoiceControlledCar_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncVoiceControlledCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncVoiceControlledCarRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::VoicePromptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_VoicePromptCar_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::VoicePromptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_VoicePromptCar_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::VoicePromptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_VoicePromptCar_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncVoicePromptCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_VoicePromptCar_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncVoicePromptCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncVoicePromptCarRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::StorytellingRobot(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_StorytellingRobot_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::StorytellingRobot(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_StorytellingRobot_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::StorytellingRobot(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_StorytellingRobot_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncStorytellingRobotRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_StorytellingRobot_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncStorytellingRobotRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncStorytellingRobotRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status XWalkControllerService::Stub::Calibrate(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkCalibrateCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Calibrate_, context, request, response);
+}
+
+void XWalkControllerService::Stub::async::Calibrate(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkCalibrateCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Calibrate_, context, request, response, std::move(f));
+}
+
+void XWalkControllerService::Stub::async::Calibrate(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Calibrate_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::PrepareAsyncCalibrateRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::xwalk::iw::v1::XWalkCalibrateCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Calibrate_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* XWalkControllerService::Stub::AsyncCalibrateRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncCalibrateRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+XWalkControllerService::Service::Service() {
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[0],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkUnknownCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkUnknownCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->Unknown(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkHelpCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkHelpCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->Help(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkSpiCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkSpiCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->Spi(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[3],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkDoctorCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkDoctorCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->Doctor(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[4],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkServoZeroingCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->ServoZeroing(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[5],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkComputerVisionCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->ComputerVision(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[6],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkRecordVideoCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->RecordVideo(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[7],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->SoundBackgroundMusic(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[8],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->TextVisionTalk(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[9],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->OnlineLlmTest(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[10],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkMoveCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkMoveCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->Move(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[11],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->KeyboardControl(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[12],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->AvoidObstacles(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[13],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->CliffDetection(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[14],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkStareAtYouCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->StareAtYou(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[15],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkBullFightCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkBullFightCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->BullFight(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[16],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->TreasureHunt(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[17],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkVideoCarCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->VideoCar(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[18],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkAppControlCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkAppControlCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->AppControl(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[19],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkTurnCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkTurnCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->Turn(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[20],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkCameraCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkCameraCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->Camera(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[21],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkSensorCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkSensorCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->Sensor(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[22],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkLineTrackCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkLineTrackCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->LineTrack(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[23],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkSelfDriveCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->SelfDrive(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[24],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkSoundCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkSoundCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->Sound(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[25],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkVoiceChatCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->VoiceChat(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[26],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->VoiceActiveCar(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[27],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkGptCarCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkGptCarCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->GptCar(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[28],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->VoiceControlledCar(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[29],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->VoicePromptCar(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[30],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->StorytellingRobot(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkControllerService_method_names[31],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkControllerService::Service, ::xwalk::iw::v1::XWalkCalibrateCommandRequest, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkControllerService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkCalibrateCommandRequest* req,
+             ::google::protobuf::Empty* resp) {
+               return service->Calibrate(ctx, req, resp);
+             }, this)));
+}
+
+XWalkControllerService::Service::~Service() {
+}
+
+::grpc::Status XWalkControllerService::Service::Unknown(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::Help(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::Spi(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::Doctor(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::ServoZeroing(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::ComputerVision(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::RecordVideo(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::SoundBackgroundMusic(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::TextVisionTalk(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::OnlineLlmTest(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::Move(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::KeyboardControl(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::AvoidObstacles(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::CliffDetection(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::StareAtYou(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::BullFight(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::TreasureHunt(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::VideoCar(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::AppControl(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::Turn(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::Camera(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::Sensor(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::LineTrack(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::SelfDrive(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::Sound(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::VoiceChat(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::VoiceActiveCar(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::GptCar(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::VoiceControlledCar(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::VoicePromptCar(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::StorytellingRobot(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkControllerService::Service::Calibrate(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+
 }  // namespace xwalk
 }  // namespace iw
 }  // namespace v1

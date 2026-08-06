@@ -34,19 +34,87 @@ static constexpr ::_pb::Message* const* file_default_instances = nullptr;
 
 const char descriptor_table_protodef_xHal_5fRpi5CarXIwGrpc_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\031xHal_Rpi5CarXIwGrpc.proto\022\013xwalk.iw.v1"
-  "\032\034xHal_Rpi5CarXIwMessage.proto2f\n\017XWalkI"
-  "2cService\022S\n\007Execute\022#.xwalk.iw.v1.XWalk"
-  "I2cRequestPayload\032#.xwalk.iw.v1.XWalkI2c"
-  "ConfirmPayloadb\006proto3"
+  "\032\034xHal_Rpi5CarXIwMessage.proto\032\033google/p"
+  "rotobuf/empty.proto2f\n\017XWalkI2cService\022S"
+  "\n\007Execute\022#.xwalk.iw.v1.XWalkI2cRequestP"
+  "ayload\032#.xwalk.iw.v1.XWalkI2cConfirmPayl"
+  "oad2\344\024\n\026XWalkControllerService\022J\n\007Unknow"
+  "n\022\'.xwalk.iw.v1.XWalkUnknownCommandReque"
+  "st\032\026.google.protobuf.Empty\022D\n\004Help\022$.xwa"
+  "lk.iw.v1.XWalkHelpCommandRequest\032\026.googl"
+  "e.protobuf.Empty\022B\n\003Spi\022#.xwalk.iw.v1.XW"
+  "alkSpiCommandRequest\032\026.google.protobuf.E"
+  "mpty\022H\n\006Doctor\022&.xwalk.iw.v1.XWalkDoctor"
+  "CommandRequest\032\026.google.protobuf.Empty\022T"
+  "\n\014ServoZeroing\022,.xwalk.iw.v1.XWalkServoZ"
+  "eroingCommandRequest\032\026.google.protobuf.E"
+  "mpty\022X\n\016ComputerVision\022..xwalk.iw.v1.XWa"
+  "lkComputerVisionCommandRequest\032\026.google."
+  "protobuf.Empty\022R\n\013RecordVideo\022+.xwalk.iw"
+  ".v1.XWalkRecordVideoCommandRequest\032\026.goo"
+  "gle.protobuf.Empty\022d\n\024SoundBackgroundMus"
+  "ic\0224.xwalk.iw.v1.XWalkSoundBackgroundMus"
+  "icCommandRequest\032\026.google.protobuf.Empty"
+  "\022X\n\016TextVisionTalk\022..xwalk.iw.v1.XWalkTe"
+  "xtVisionTalkCommandRequest\032\026.google.prot"
+  "obuf.Empty\022V\n\rOnlineLlmTest\022-.xwalk.iw.v"
+  "1.XWalkOnlineLlmTestCommandRequest\032\026.goo"
+  "gle.protobuf.Empty\022D\n\004Move\022$.xwalk.iw.v1"
+  ".XWalkMoveCommandRequest\032\026.google.protob"
+  "uf.Empty\022Z\n\017KeyboardControl\022/.xwalk.iw.v"
+  "1.XWalkKeyboardControlCommandRequest\032\026.g"
+  "oogle.protobuf.Empty\022X\n\016AvoidObstacles\022."
+  ".xwalk.iw.v1.XWalkAvoidObstaclesCommandR"
+  "equest\032\026.google.protobuf.Empty\022X\n\016CliffD"
+  "etection\022..xwalk.iw.v1.XWalkCliffDetecti"
+  "onCommandRequest\032\026.google.protobuf.Empty"
+  "\022P\n\nStareAtYou\022*.xwalk.iw.v1.XWalkStareA"
+  "tYouCommandRequest\032\026.google.protobuf.Emp"
+  "ty\022N\n\tBullFight\022).xwalk.iw.v1.XWalkBullF"
+  "ightCommandRequest\032\026.google.protobuf.Emp"
+  "ty\022T\n\014TreasureHunt\022,.xwalk.iw.v1.XWalkTr"
+  "easureHuntCommandRequest\032\026.google.protob"
+  "uf.Empty\022L\n\010VideoCar\022(.xwalk.iw.v1.XWalk"
+  "VideoCarCommandRequest\032\026.google.protobuf"
+  ".Empty\022P\n\nAppControl\022*.xwalk.iw.v1.XWalk"
+  "AppControlCommandRequest\032\026.google.protob"
+  "uf.Empty\022D\n\004Turn\022$.xwalk.iw.v1.XWalkTurn"
+  "CommandRequest\032\026.google.protobuf.Empty\022H"
+  "\n\006Camera\022&.xwalk.iw.v1.XWalkCameraComman"
+  "dRequest\032\026.google.protobuf.Empty\022H\n\006Sens"
+  "or\022&.xwalk.iw.v1.XWalkSensorCommandReque"
+  "st\032\026.google.protobuf.Empty\022N\n\tLineTrack\022"
+  ").xwalk.iw.v1.XWalkLineTrackCommandReque"
+  "st\032\026.google.protobuf.Empty\022N\n\tSelfDrive\022"
+  ").xwalk.iw.v1.XWalkSelfDriveCommandReque"
+  "st\032\026.google.protobuf.Empty\022F\n\005Sound\022%.xw"
+  "alk.iw.v1.XWalkSoundCommandRequest\032\026.goo"
+  "gle.protobuf.Empty\022N\n\tVoiceChat\022).xwalk."
+  "iw.v1.XWalkVoiceChatCommandRequest\032\026.goo"
+  "gle.protobuf.Empty\022X\n\016VoiceActiveCar\022..x"
+  "walk.iw.v1.XWalkVoiceActiveCarCommandReq"
+  "uest\032\026.google.protobuf.Empty\022H\n\006GptCar\022&"
+  ".xwalk.iw.v1.XWalkGptCarCommandRequest\032\026"
+  ".google.protobuf.Empty\022`\n\022VoiceControlle"
+  "dCar\0222.xwalk.iw.v1.XWalkVoiceControlledC"
+  "arCommandRequest\032\026.google.protobuf.Empty"
+  "\022X\n\016VoicePromptCar\022..xwalk.iw.v1.XWalkVo"
+  "icePromptCarCommandRequest\032\026.google.prot"
+  "obuf.Empty\022^\n\021StorytellingRobot\0221.xwalk."
+  "iw.v1.XWalkStorytellingRobotCommandReque"
+  "st\032\026.google.protobuf.Empty\022N\n\tCalibrate\022"
+  ").xwalk.iw.v1.XWalkCalibrateCommandReque"
+  "st\032\026.google.protobuf.Emptyb\006proto3"
   ;
-static const ::_pbi::DescriptorTable* const descriptor_table_xHal_5fRpi5CarXIwGrpc_2eproto_deps[1] = {
+static const ::_pbi::DescriptorTable* const descriptor_table_xHal_5fRpi5CarXIwGrpc_2eproto_deps[2] = {
+  &::descriptor_table_google_2fprotobuf_2fempty_2eproto,
   &::descriptor_table_xHal_5fRpi5CarXIwMessage_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_xHal_5fRpi5CarXIwGrpc_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_xHal_5fRpi5CarXIwGrpc_2eproto = {
-    false, false, 182, descriptor_table_protodef_xHal_5fRpi5CarXIwGrpc_2eproto,
+    false, false, 2874, descriptor_table_protodef_xHal_5fRpi5CarXIwGrpc_2eproto,
     "xHal_Rpi5CarXIwGrpc.proto",
-    &descriptor_table_xHal_5fRpi5CarXIwGrpc_2eproto_once, descriptor_table_xHal_5fRpi5CarXIwGrpc_2eproto_deps, 1, 0,
+    &descriptor_table_xHal_5fRpi5CarXIwGrpc_2eproto_once, descriptor_table_xHal_5fRpi5CarXIwGrpc_2eproto_deps, 2, 0,
     schemas, file_default_instances, TableStruct_xHal_5fRpi5CarXIwGrpc_2eproto::offsets,
     nullptr, file_level_enum_descriptors_xHal_5fRpi5CarXIwGrpc_2eproto,
     file_level_service_descriptors_xHal_5fRpi5CarXIwGrpc_2eproto,

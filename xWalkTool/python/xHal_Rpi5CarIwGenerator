@@ -284,6 +284,11 @@ COMMAND_SIGNAL_BINDINGS = (
     ("XWalkCalibrateCommandRequest", "XWALK_CNTRL_CALIBRATE_REQ", "0x201F"),
 )
 
+CONTROLLER_RPC_BINDINGS = tuple(
+    (message_name.removeprefix("XWalk").removesuffix("CommandRequest"), message_name)
+    for message_name, _signal_name, _signal_number in COMMAND_SIGNAL_BINDINGS
+)
+
 SIGNAL_BINDINGS = (
     *PAYLOAD_SIGNAL_BINDINGS,
     *(
@@ -414,16 +419,33 @@ def validate_inputs(
         )
     if service_messages:
         raise ValueError(f"unexpected messages in gRPC service schema: {service_messages}")
-    if grpc_services != ("XWalkI2cService",):
+    if grpc_services != ("XWalkI2cService", "XWalkControllerService"):
         raise ValueError(f"unexpected gRPC services: {grpc_services}")
-    if grpc_rpcs != ("Execute",):
+    expected_controller_rpcs = tuple(
+        rpc_name for rpc_name, _message_name in CONTROLLER_RPC_BINDINGS
+    )
+    if grpc_rpcs != ("Execute", *expected_controller_rpcs):
         raise ValueError(f"unexpected gRPC methods: {grpc_rpcs}")
     expected_rpc = "rpc Execute(XWalkI2cRequestPayload) returns (XWalkI2cConfirmPayload);"
     if expected_rpc not in service_text:
         raise ValueError("XWalkI2cService.Execute has an unexpected request or response type")
+    for rpc_name, message_name in CONTROLLER_RPC_BINDINGS:
+        rpc_pattern = re.compile(
+            rf"rpc\s+{rpc_name}\s*\(\s*{message_name}\s*\)\s*"
+            rf"returns\s*\(\s*google\.protobuf\.Empty\s*\)\s*;"
+        )
+        if rpc_pattern.search(service_text) is None:
+            raise ValueError(
+                f"XWalkControllerService.{rpc_name} has an unexpected "
+                "request or response type"
+            )
     if 'import "xHal_Rpi5CarXIwMessage.proto";' not in service_text:
         raise ValueError(
             "xHal_Rpi5CarXIwGrpc.proto must import xHal_Rpi5CarXIwMessage.proto"
+        )
+    if 'import "google/protobuf/empty.proto";' not in service_text:
+        raise ValueError(
+            "xHal_Rpi5CarXIwGrpc.proto must import google/protobuf/empty.proto"
         )
     if 'import "xHal_Rpi5CarXIwEnum.proto";' not in message_text:
         raise ValueError(
@@ -435,8 +457,8 @@ def validate_inputs(
         raise ValueError(f"unexpected YAML payload mapping: {mapped_payloads}")
     if len(set(signal_numbers)) != len(signal_numbers):
         raise ValueError("duplicate xWalk signal numbers are configured")
-    if "mode: grpc_single_rpc" not in yaml_text:
-        raise ValueError("xHal_Rpi5CarGrpcSig.yml must declare grpc_single_rpc mode")
+    if "mode: grpc_multi_service" not in yaml_text:
+        raise ValueError("xHal_Rpi5CarGrpcSig.yml must declare grpc_multi_service mode")
     for message_name, signal_name, signal_number, cpp_signal_name in SIGNAL_BINDINGS:
         message_pattern = re.compile(
             rf"message\s+{message_name}\s*\{{.*?"

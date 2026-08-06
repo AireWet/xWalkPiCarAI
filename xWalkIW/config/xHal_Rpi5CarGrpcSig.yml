@@ -1,4 +1,4 @@
-# xWalk Firmware I2C payload interface mapping.
+# xWalk Firmware I2C and Controller interface mapping.
 service:
   name: xWalkIW
   properties:
@@ -6,8 +6,8 @@ service:
       values: [1]
 
 interface:
-  module: xWalkI2c
-  mode: grpc_single_rpc
+  module: xWalkIW
+  mode: grpc_multi_service
 
 operations:
   XWALK_I2C_OPERATION_PROBE: 1

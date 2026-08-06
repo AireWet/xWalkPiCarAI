@@ -4,11 +4,11 @@
 // Original file comments:
 // *****************************************************************************
 // @file        xHal_Rpi5CarXIwGrpc.proto
-// @brief       Defines the public gRPC service for xWalk I2C.
+// @brief       Defines the public gRPC services for xWalk interfaces.
 //
 // @details
-// Defines one generic request-confirmation RPC using the payload messages from
-// `xHal_Rpi5CarXIwMessage.proto`.
+// Defines the I2C request-confirmation exchange and typed Controller command
+// RPCs using the payload messages from `xHal_Rpi5CarXIwMessage.proto`.
 //
 // @project     xWalk Firmware
 // @module      xWalkIW
@@ -269,6 +269,5088 @@ class XWalkI2cService final {
   typedef WithStreamedUnaryMethod_Execute<Service > StreamedUnaryService;
   typedef Service SplitStreamedService;
   typedef WithStreamedUnaryMethod_Execute<Service > StreamedService;
+};
+
+// *
+// @brief Provides typed RPC entry points for Controller command signals.
+//
+// @details
+// Each method accepts the command-specific message carrying the same stable
+// signal number as its matching `XWALK_CNTRL_*_REQ` definition. Successful
+// dispatch returns an empty acknowledgement. Validation or execution failures
+// return a non-OK gRPC status without exposing Controller runtime objects.
+class XWalkControllerService final {
+ public:
+  static constexpr char const* service_full_name() {
+    return "xwalk.iw.v1.XWalkControllerService";
+  }
+  class StubInterface {
+   public:
+    virtual ~StubInterface() {}
+    virtual ::grpc::Status Unknown(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncUnknown(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncUnknownRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncUnknown(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncUnknownRaw(context, request, cq));
+    }
+    virtual ::grpc::Status Help(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncHelp(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncHelpRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncHelp(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncHelpRaw(context, request, cq));
+    }
+    virtual ::grpc::Status Spi(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncSpi(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncSpiRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncSpi(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncSpiRaw(context, request, cq));
+    }
+    virtual ::grpc::Status Doctor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncDoctor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncDoctorRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncDoctor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncDoctorRaw(context, request, cq));
+    }
+    virtual ::grpc::Status ServoZeroing(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncServoZeroing(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncServoZeroingRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncServoZeroing(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncServoZeroingRaw(context, request, cq));
+    }
+    virtual ::grpc::Status ComputerVision(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncComputerVision(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncComputerVisionRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncComputerVision(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncComputerVisionRaw(context, request, cq));
+    }
+    virtual ::grpc::Status RecordVideo(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncRecordVideo(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncRecordVideoRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncRecordVideo(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncRecordVideoRaw(context, request, cq));
+    }
+    virtual ::grpc::Status SoundBackgroundMusic(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncSoundBackgroundMusic(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncSoundBackgroundMusicRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncSoundBackgroundMusic(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncSoundBackgroundMusicRaw(context, request, cq));
+    }
+    virtual ::grpc::Status TextVisionTalk(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncTextVisionTalk(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncTextVisionTalkRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncTextVisionTalk(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncTextVisionTalkRaw(context, request, cq));
+    }
+    virtual ::grpc::Status OnlineLlmTest(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncOnlineLlmTest(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncOnlineLlmTestRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncOnlineLlmTest(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncOnlineLlmTestRaw(context, request, cq));
+    }
+    virtual ::grpc::Status Move(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncMove(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncMoveRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncMove(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncMoveRaw(context, request, cq));
+    }
+    virtual ::grpc::Status KeyboardControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncKeyboardControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncKeyboardControlRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncKeyboardControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncKeyboardControlRaw(context, request, cq));
+    }
+    virtual ::grpc::Status AvoidObstacles(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncAvoidObstacles(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncAvoidObstaclesRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncAvoidObstacles(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncAvoidObstaclesRaw(context, request, cq));
+    }
+    virtual ::grpc::Status CliffDetection(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncCliffDetection(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncCliffDetectionRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncCliffDetection(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncCliffDetectionRaw(context, request, cq));
+    }
+    virtual ::grpc::Status StareAtYou(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncStareAtYou(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncStareAtYouRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncStareAtYou(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncStareAtYouRaw(context, request, cq));
+    }
+    virtual ::grpc::Status BullFight(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncBullFight(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncBullFightRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncBullFight(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncBullFightRaw(context, request, cq));
+    }
+    virtual ::grpc::Status TreasureHunt(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncTreasureHunt(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncTreasureHuntRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncTreasureHunt(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncTreasureHuntRaw(context, request, cq));
+    }
+    virtual ::grpc::Status VideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncVideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncVideoCarRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncVideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncVideoCarRaw(context, request, cq));
+    }
+    virtual ::grpc::Status AppControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncAppControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncAppControlRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncAppControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncAppControlRaw(context, request, cq));
+    }
+    virtual ::grpc::Status Turn(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncTurn(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncTurnRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncTurn(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncTurnRaw(context, request, cq));
+    }
+    virtual ::grpc::Status Camera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncCamera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncCameraRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncCamera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncCameraRaw(context, request, cq));
+    }
+    virtual ::grpc::Status Sensor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncSensor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncSensorRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncSensor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncSensorRaw(context, request, cq));
+    }
+    virtual ::grpc::Status LineTrack(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncLineTrack(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncLineTrackRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncLineTrack(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncLineTrackRaw(context, request, cq));
+    }
+    virtual ::grpc::Status SelfDrive(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncSelfDrive(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncSelfDriveRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncSelfDrive(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncSelfDriveRaw(context, request, cq));
+    }
+    virtual ::grpc::Status Sound(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncSound(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncSoundRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncSound(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncSoundRaw(context, request, cq));
+    }
+    virtual ::grpc::Status VoiceChat(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncVoiceChat(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncVoiceChatRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncVoiceChat(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncVoiceChatRaw(context, request, cq));
+    }
+    virtual ::grpc::Status VoiceActiveCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncVoiceActiveCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncVoiceActiveCarRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncVoiceActiveCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncVoiceActiveCarRaw(context, request, cq));
+    }
+    virtual ::grpc::Status GptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncGptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncGptCarRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncGptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncGptCarRaw(context, request, cq));
+    }
+    virtual ::grpc::Status VoiceControlledCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncVoiceControlledCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncVoiceControlledCarRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncVoiceControlledCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncVoiceControlledCarRaw(context, request, cq));
+    }
+    virtual ::grpc::Status VoicePromptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncVoicePromptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncVoicePromptCarRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncVoicePromptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncVoicePromptCarRaw(context, request, cq));
+    }
+    virtual ::grpc::Status StorytellingRobot(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncStorytellingRobot(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncStorytellingRobotRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncStorytellingRobot(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncStorytellingRobotRaw(context, request, cq));
+    }
+    virtual ::grpc::Status Calibrate(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncCalibrate(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncCalibrateRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncCalibrate(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncCalibrateRaw(context, request, cq));
+    }
+    class async_interface {
+     public:
+      virtual ~async_interface() {}
+      virtual void Unknown(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Unknown(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void Help(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Help(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void Spi(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Spi(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void Doctor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Doctor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void ServoZeroing(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void ServoZeroing(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void ComputerVision(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void ComputerVision(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void RecordVideo(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void RecordVideo(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void SoundBackgroundMusic(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void SoundBackgroundMusic(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void TextVisionTalk(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void TextVisionTalk(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void OnlineLlmTest(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void OnlineLlmTest(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void Move(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Move(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void KeyboardControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void KeyboardControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void AvoidObstacles(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void AvoidObstacles(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void CliffDetection(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void CliffDetection(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void StareAtYou(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void StareAtYou(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void BullFight(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void BullFight(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void TreasureHunt(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void TreasureHunt(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void VideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void VideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void AppControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void AppControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void Turn(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Turn(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void Camera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Camera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void Sensor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Sensor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void LineTrack(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void LineTrack(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void SelfDrive(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void SelfDrive(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void Sound(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Sound(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void VoiceChat(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void VoiceChat(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void VoiceActiveCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void VoiceActiveCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void GptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void VoiceControlledCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void VoiceControlledCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void VoicePromptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void VoicePromptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void StorytellingRobot(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void StorytellingRobot(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void Calibrate(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Calibrate(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+    };
+    typedef class async_interface experimental_async_interface;
+    virtual class async_interface* async() { return nullptr; }
+    class async_interface* experimental_async() { return async(); }
+   private:
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncUnknownRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncUnknownRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncHelpRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncHelpRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncSpiRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncSpiRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncDoctorRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncDoctorRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncServoZeroingRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncServoZeroingRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncComputerVisionRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncComputerVisionRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncRecordVideoRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncRecordVideoRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncSoundBackgroundMusicRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncSoundBackgroundMusicRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncTextVisionTalkRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncTextVisionTalkRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncOnlineLlmTestRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncOnlineLlmTestRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncMoveRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncMoveRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncKeyboardControlRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncKeyboardControlRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncAvoidObstaclesRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncAvoidObstaclesRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncCliffDetectionRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncCliffDetectionRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncStareAtYouRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncStareAtYouRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncBullFightRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncBullFightRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncTreasureHuntRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncTreasureHuntRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncVideoCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncVideoCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncAppControlRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncAppControlRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncTurnRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncTurnRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncCameraRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncCameraRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncSensorRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncSensorRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncLineTrackRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncLineTrackRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncSelfDriveRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncSelfDriveRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncSoundRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncSoundRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncVoiceChatRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncVoiceChatRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncVoiceActiveCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncVoiceActiveCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncGptCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncGptCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncVoiceControlledCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncVoiceControlledCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncVoicePromptCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncVoicePromptCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncStorytellingRobotRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncStorytellingRobotRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncCalibrateRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncCalibrateRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+  };
+  class Stub final : public StubInterface {
+   public:
+    Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
+    ::grpc::Status Unknown(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncUnknown(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncUnknownRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncUnknown(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncUnknownRaw(context, request, cq));
+    }
+    ::grpc::Status Help(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncHelp(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncHelpRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncHelp(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncHelpRaw(context, request, cq));
+    }
+    ::grpc::Status Spi(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncSpi(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncSpiRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncSpi(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncSpiRaw(context, request, cq));
+    }
+    ::grpc::Status Doctor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncDoctor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncDoctorRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncDoctor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncDoctorRaw(context, request, cq));
+    }
+    ::grpc::Status ServoZeroing(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncServoZeroing(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncServoZeroingRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncServoZeroing(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncServoZeroingRaw(context, request, cq));
+    }
+    ::grpc::Status ComputerVision(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncComputerVision(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncComputerVisionRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncComputerVision(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncComputerVisionRaw(context, request, cq));
+    }
+    ::grpc::Status RecordVideo(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncRecordVideo(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncRecordVideoRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncRecordVideo(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncRecordVideoRaw(context, request, cq));
+    }
+    ::grpc::Status SoundBackgroundMusic(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncSoundBackgroundMusic(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncSoundBackgroundMusicRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncSoundBackgroundMusic(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncSoundBackgroundMusicRaw(context, request, cq));
+    }
+    ::grpc::Status TextVisionTalk(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncTextVisionTalk(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncTextVisionTalkRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncTextVisionTalk(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncTextVisionTalkRaw(context, request, cq));
+    }
+    ::grpc::Status OnlineLlmTest(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncOnlineLlmTest(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncOnlineLlmTestRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncOnlineLlmTest(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncOnlineLlmTestRaw(context, request, cq));
+    }
+    ::grpc::Status Move(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncMove(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncMoveRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncMove(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncMoveRaw(context, request, cq));
+    }
+    ::grpc::Status KeyboardControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncKeyboardControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncKeyboardControlRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncKeyboardControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncKeyboardControlRaw(context, request, cq));
+    }
+    ::grpc::Status AvoidObstacles(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncAvoidObstacles(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncAvoidObstaclesRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncAvoidObstacles(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncAvoidObstaclesRaw(context, request, cq));
+    }
+    ::grpc::Status CliffDetection(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncCliffDetection(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncCliffDetectionRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncCliffDetection(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncCliffDetectionRaw(context, request, cq));
+    }
+    ::grpc::Status StareAtYou(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncStareAtYou(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncStareAtYouRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncStareAtYou(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncStareAtYouRaw(context, request, cq));
+    }
+    ::grpc::Status BullFight(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncBullFight(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncBullFightRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncBullFight(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncBullFightRaw(context, request, cq));
+    }
+    ::grpc::Status TreasureHunt(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncTreasureHunt(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncTreasureHuntRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncTreasureHunt(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncTreasureHuntRaw(context, request, cq));
+    }
+    ::grpc::Status VideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncVideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncVideoCarRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncVideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncVideoCarRaw(context, request, cq));
+    }
+    ::grpc::Status AppControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncAppControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncAppControlRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncAppControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncAppControlRaw(context, request, cq));
+    }
+    ::grpc::Status Turn(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncTurn(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncTurnRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncTurn(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncTurnRaw(context, request, cq));
+    }
+    ::grpc::Status Camera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncCamera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncCameraRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncCamera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncCameraRaw(context, request, cq));
+    }
+    ::grpc::Status Sensor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncSensor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncSensorRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncSensor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncSensorRaw(context, request, cq));
+    }
+    ::grpc::Status LineTrack(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncLineTrack(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncLineTrackRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncLineTrack(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncLineTrackRaw(context, request, cq));
+    }
+    ::grpc::Status SelfDrive(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncSelfDrive(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncSelfDriveRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncSelfDrive(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncSelfDriveRaw(context, request, cq));
+    }
+    ::grpc::Status Sound(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncSound(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncSoundRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncSound(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncSoundRaw(context, request, cq));
+    }
+    ::grpc::Status VoiceChat(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncVoiceChat(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncVoiceChatRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncVoiceChat(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncVoiceChatRaw(context, request, cq));
+    }
+    ::grpc::Status VoiceActiveCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncVoiceActiveCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncVoiceActiveCarRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncVoiceActiveCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncVoiceActiveCarRaw(context, request, cq));
+    }
+    ::grpc::Status GptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncGptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncGptCarRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncGptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncGptCarRaw(context, request, cq));
+    }
+    ::grpc::Status VoiceControlledCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncVoiceControlledCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncVoiceControlledCarRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncVoiceControlledCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncVoiceControlledCarRaw(context, request, cq));
+    }
+    ::grpc::Status VoicePromptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncVoicePromptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncVoicePromptCarRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncVoicePromptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncVoicePromptCarRaw(context, request, cq));
+    }
+    ::grpc::Status StorytellingRobot(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncStorytellingRobot(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncStorytellingRobotRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncStorytellingRobot(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncStorytellingRobotRaw(context, request, cq));
+    }
+    ::grpc::Status Calibrate(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncCalibrate(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncCalibrateRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncCalibrate(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncCalibrateRaw(context, request, cq));
+    }
+    class async final :
+      public StubInterface::async_interface {
+     public:
+      void Unknown(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void Unknown(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void Help(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void Help(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void Spi(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void Spi(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void Doctor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void Doctor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void ServoZeroing(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void ServoZeroing(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void ComputerVision(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void ComputerVision(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void RecordVideo(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void RecordVideo(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void SoundBackgroundMusic(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void SoundBackgroundMusic(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void TextVisionTalk(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void TextVisionTalk(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void OnlineLlmTest(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void OnlineLlmTest(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void Move(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void Move(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void KeyboardControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void KeyboardControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void AvoidObstacles(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void AvoidObstacles(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void CliffDetection(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void CliffDetection(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void StareAtYou(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void StareAtYou(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void BullFight(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void BullFight(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void TreasureHunt(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void TreasureHunt(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void VideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void VideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void AppControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void AppControl(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void Turn(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void Turn(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void Camera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void Camera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void Sensor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void Sensor(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void LineTrack(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void LineTrack(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void SelfDrive(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void SelfDrive(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void Sound(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void Sound(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void VoiceChat(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void VoiceChat(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void VoiceActiveCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void VoiceActiveCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void GptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void GptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void VoiceControlledCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void VoiceControlledCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void VoicePromptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void VoicePromptCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void StorytellingRobot(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void StorytellingRobot(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void Calibrate(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void Calibrate(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+     private:
+      friend class Stub;
+      explicit async(Stub* stub): stub_(stub) { }
+      Stub* stub() { return stub_; }
+      Stub* stub_;
+    };
+    class async* async() override { return &async_stub_; }
+
+   private:
+    std::shared_ptr< ::grpc::ChannelInterface> channel_;
+    class async async_stub_{this};
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncUnknownRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncUnknownRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncHelpRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncHelpRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncSpiRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncSpiRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncDoctorRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncDoctorRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncServoZeroingRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncServoZeroingRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncComputerVisionRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncComputerVisionRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncRecordVideoRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncRecordVideoRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncSoundBackgroundMusicRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncSoundBackgroundMusicRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncTextVisionTalkRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncTextVisionTalkRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncOnlineLlmTestRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncOnlineLlmTestRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncMoveRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncMoveRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncKeyboardControlRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncKeyboardControlRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncAvoidObstaclesRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncAvoidObstaclesRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncCliffDetectionRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncCliffDetectionRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncStareAtYouRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncStareAtYouRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncBullFightRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncBullFightRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncTreasureHuntRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncTreasureHuntRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncVideoCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncVideoCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncAppControlRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncAppControlRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncTurnRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncTurnRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncCameraRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncCameraRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncSensorRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncSensorRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncLineTrackRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncLineTrackRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncSelfDriveRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncSelfDriveRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncSoundRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncSoundRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncVoiceChatRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncVoiceChatRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncVoiceActiveCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncVoiceActiveCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncGptCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncGptCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncVoiceControlledCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncVoiceControlledCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncVoicePromptCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncVoicePromptCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncStorytellingRobotRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncStorytellingRobotRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncCalibrateRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncCalibrateRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    const ::grpc::internal::RpcMethod rpcmethod_Unknown_;
+    const ::grpc::internal::RpcMethod rpcmethod_Help_;
+    const ::grpc::internal::RpcMethod rpcmethod_Spi_;
+    const ::grpc::internal::RpcMethod rpcmethod_Doctor_;
+    const ::grpc::internal::RpcMethod rpcmethod_ServoZeroing_;
+    const ::grpc::internal::RpcMethod rpcmethod_ComputerVision_;
+    const ::grpc::internal::RpcMethod rpcmethod_RecordVideo_;
+    const ::grpc::internal::RpcMethod rpcmethod_SoundBackgroundMusic_;
+    const ::grpc::internal::RpcMethod rpcmethod_TextVisionTalk_;
+    const ::grpc::internal::RpcMethod rpcmethod_OnlineLlmTest_;
+    const ::grpc::internal::RpcMethod rpcmethod_Move_;
+    const ::grpc::internal::RpcMethod rpcmethod_KeyboardControl_;
+    const ::grpc::internal::RpcMethod rpcmethod_AvoidObstacles_;
+    const ::grpc::internal::RpcMethod rpcmethod_CliffDetection_;
+    const ::grpc::internal::RpcMethod rpcmethod_StareAtYou_;
+    const ::grpc::internal::RpcMethod rpcmethod_BullFight_;
+    const ::grpc::internal::RpcMethod rpcmethod_TreasureHunt_;
+    const ::grpc::internal::RpcMethod rpcmethod_VideoCar_;
+    const ::grpc::internal::RpcMethod rpcmethod_AppControl_;
+    const ::grpc::internal::RpcMethod rpcmethod_Turn_;
+    const ::grpc::internal::RpcMethod rpcmethod_Camera_;
+    const ::grpc::internal::RpcMethod rpcmethod_Sensor_;
+    const ::grpc::internal::RpcMethod rpcmethod_LineTrack_;
+    const ::grpc::internal::RpcMethod rpcmethod_SelfDrive_;
+    const ::grpc::internal::RpcMethod rpcmethod_Sound_;
+    const ::grpc::internal::RpcMethod rpcmethod_VoiceChat_;
+    const ::grpc::internal::RpcMethod rpcmethod_VoiceActiveCar_;
+    const ::grpc::internal::RpcMethod rpcmethod_GptCar_;
+    const ::grpc::internal::RpcMethod rpcmethod_VoiceControlledCar_;
+    const ::grpc::internal::RpcMethod rpcmethod_VoicePromptCar_;
+    const ::grpc::internal::RpcMethod rpcmethod_StorytellingRobot_;
+    const ::grpc::internal::RpcMethod rpcmethod_Calibrate_;
+  };
+  static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
+
+  class Service : public ::grpc::Service {
+   public:
+    Service();
+    virtual ~Service();
+    virtual ::grpc::Status Unknown(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status Help(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status Spi(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status Doctor(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status ServoZeroing(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status ComputerVision(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status RecordVideo(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status SoundBackgroundMusic(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status TextVisionTalk(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status OnlineLlmTest(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status Move(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status KeyboardControl(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status AvoidObstacles(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status CliffDetection(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status StareAtYou(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status BullFight(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status TreasureHunt(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status VideoCar(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status AppControl(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status Turn(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status Camera(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status Sensor(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status LineTrack(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status SelfDrive(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status Sound(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status VoiceChat(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status VoiceActiveCar(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status GptCar(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status VoiceControlledCar(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status VoicePromptCar(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status StorytellingRobot(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status Calibrate(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest* request, ::google::protobuf::Empty* response);
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_Unknown : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_Unknown() {
+      ::grpc::Service::MarkMethodAsync(0);
+    }
+    ~WithAsyncMethod_Unknown() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Unknown(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkUnknownCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestUnknown(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkUnknownCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_Help : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_Help() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_Help() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Help(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkHelpCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestHelp(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkHelpCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_Spi : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_Spi() {
+      ::grpc::Service::MarkMethodAsync(2);
+    }
+    ~WithAsyncMethod_Spi() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Spi(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSpiCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestSpi(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkSpiCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_Doctor : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_Doctor() {
+      ::grpc::Service::MarkMethodAsync(3);
+    }
+    ~WithAsyncMethod_Doctor() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Doctor(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkDoctorCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestDoctor(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkDoctorCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_ServoZeroing : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_ServoZeroing() {
+      ::grpc::Service::MarkMethodAsync(4);
+    }
+    ~WithAsyncMethod_ServoZeroing() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ServoZeroing(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestServoZeroing(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_ComputerVision : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_ComputerVision() {
+      ::grpc::Service::MarkMethodAsync(5);
+    }
+    ~WithAsyncMethod_ComputerVision() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ComputerVision(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestComputerVision(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_RecordVideo : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_RecordVideo() {
+      ::grpc::Service::MarkMethodAsync(6);
+    }
+    ~WithAsyncMethod_RecordVideo() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RecordVideo(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestRecordVideo(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_SoundBackgroundMusic : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_SoundBackgroundMusic() {
+      ::grpc::Service::MarkMethodAsync(7);
+    }
+    ~WithAsyncMethod_SoundBackgroundMusic() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SoundBackgroundMusic(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestSoundBackgroundMusic(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_TextVisionTalk : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_TextVisionTalk() {
+      ::grpc::Service::MarkMethodAsync(8);
+    }
+    ~WithAsyncMethod_TextVisionTalk() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status TextVisionTalk(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestTextVisionTalk(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_OnlineLlmTest : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_OnlineLlmTest() {
+      ::grpc::Service::MarkMethodAsync(9);
+    }
+    ~WithAsyncMethod_OnlineLlmTest() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status OnlineLlmTest(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestOnlineLlmTest(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(9, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_Move : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_Move() {
+      ::grpc::Service::MarkMethodAsync(10);
+    }
+    ~WithAsyncMethod_Move() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Move(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkMoveCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestMove(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkMoveCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_KeyboardControl : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_KeyboardControl() {
+      ::grpc::Service::MarkMethodAsync(11);
+    }
+    ~WithAsyncMethod_KeyboardControl() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status KeyboardControl(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestKeyboardControl(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_AvoidObstacles : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_AvoidObstacles() {
+      ::grpc::Service::MarkMethodAsync(12);
+    }
+    ~WithAsyncMethod_AvoidObstacles() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AvoidObstacles(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestAvoidObstacles(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_CliffDetection : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_CliffDetection() {
+      ::grpc::Service::MarkMethodAsync(13);
+    }
+    ~WithAsyncMethod_CliffDetection() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CliffDetection(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestCliffDetection(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_StareAtYou : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_StareAtYou() {
+      ::grpc::Service::MarkMethodAsync(14);
+    }
+    ~WithAsyncMethod_StareAtYou() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StareAtYou(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestStareAtYou(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_BullFight : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_BullFight() {
+      ::grpc::Service::MarkMethodAsync(15);
+    }
+    ~WithAsyncMethod_BullFight() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status BullFight(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkBullFightCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestBullFight(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkBullFightCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(15, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_TreasureHunt : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_TreasureHunt() {
+      ::grpc::Service::MarkMethodAsync(16);
+    }
+    ~WithAsyncMethod_TreasureHunt() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status TreasureHunt(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestTreasureHunt(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(16, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_VideoCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_VideoCar() {
+      ::grpc::Service::MarkMethodAsync(17);
+    }
+    ~WithAsyncMethod_VideoCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VideoCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestVideoCar(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkVideoCarCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(17, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_AppControl : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_AppControl() {
+      ::grpc::Service::MarkMethodAsync(18);
+    }
+    ~WithAsyncMethod_AppControl() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AppControl(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkAppControlCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestAppControl(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkAppControlCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(18, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_Turn : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_Turn() {
+      ::grpc::Service::MarkMethodAsync(19);
+    }
+    ~WithAsyncMethod_Turn() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Turn(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTurnCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestTurn(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkTurnCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(19, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_Camera : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_Camera() {
+      ::grpc::Service::MarkMethodAsync(20);
+    }
+    ~WithAsyncMethod_Camera() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Camera(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCameraCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestCamera(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkCameraCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(20, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_Sensor : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_Sensor() {
+      ::grpc::Service::MarkMethodAsync(21);
+    }
+    ~WithAsyncMethod_Sensor() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Sensor(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSensorCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestSensor(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkSensorCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(21, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_LineTrack : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_LineTrack() {
+      ::grpc::Service::MarkMethodAsync(22);
+    }
+    ~WithAsyncMethod_LineTrack() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status LineTrack(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestLineTrack(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkLineTrackCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(22, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_SelfDrive : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_SelfDrive() {
+      ::grpc::Service::MarkMethodAsync(23);
+    }
+    ~WithAsyncMethod_SelfDrive() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SelfDrive(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestSelfDrive(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(23, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_Sound : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_Sound() {
+      ::grpc::Service::MarkMethodAsync(24);
+    }
+    ~WithAsyncMethod_Sound() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Sound(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSoundCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestSound(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkSoundCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(24, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_VoiceChat : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_VoiceChat() {
+      ::grpc::Service::MarkMethodAsync(25);
+    }
+    ~WithAsyncMethod_VoiceChat() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoiceChat(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestVoiceChat(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(25, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_VoiceActiveCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_VoiceActiveCar() {
+      ::grpc::Service::MarkMethodAsync(26);
+    }
+    ~WithAsyncMethod_VoiceActiveCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoiceActiveCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestVoiceActiveCar(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(26, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_GptCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_GptCar() {
+      ::grpc::Service::MarkMethodAsync(27);
+    }
+    ~WithAsyncMethod_GptCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GptCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkGptCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGptCar(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkGptCarCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(27, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_VoiceControlledCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_VoiceControlledCar() {
+      ::grpc::Service::MarkMethodAsync(28);
+    }
+    ~WithAsyncMethod_VoiceControlledCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoiceControlledCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestVoiceControlledCar(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_VoicePromptCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_VoicePromptCar() {
+      ::grpc::Service::MarkMethodAsync(29);
+    }
+    ~WithAsyncMethod_VoicePromptCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoicePromptCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestVoicePromptCar(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_StorytellingRobot : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_StorytellingRobot() {
+      ::grpc::Service::MarkMethodAsync(30);
+    }
+    ~WithAsyncMethod_StorytellingRobot() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StorytellingRobot(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestStorytellingRobot(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_Calibrate : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_Calibrate() {
+      ::grpc::Service::MarkMethodAsync(31);
+    }
+    ~WithAsyncMethod_Calibrate() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Calibrate(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestCalibrate(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkCalibrateCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_Unknown<WithAsyncMethod_Help<WithAsyncMethod_Spi<WithAsyncMethod_Doctor<WithAsyncMethod_ServoZeroing<WithAsyncMethod_ComputerVision<WithAsyncMethod_RecordVideo<WithAsyncMethod_SoundBackgroundMusic<WithAsyncMethod_TextVisionTalk<WithAsyncMethod_OnlineLlmTest<WithAsyncMethod_Move<WithAsyncMethod_KeyboardControl<WithAsyncMethod_AvoidObstacles<WithAsyncMethod_CliffDetection<WithAsyncMethod_StareAtYou<WithAsyncMethod_BullFight<WithAsyncMethod_TreasureHunt<WithAsyncMethod_VideoCar<WithAsyncMethod_AppControl<WithAsyncMethod_Turn<WithAsyncMethod_Camera<WithAsyncMethod_Sensor<WithAsyncMethod_LineTrack<WithAsyncMethod_SelfDrive<WithAsyncMethod_Sound<WithAsyncMethod_VoiceChat<WithAsyncMethod_VoiceActiveCar<WithAsyncMethod_GptCar<WithAsyncMethod_VoiceControlledCar<WithAsyncMethod_VoicePromptCar<WithAsyncMethod_StorytellingRobot<WithAsyncMethod_Calibrate<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > AsyncService;
+  template <class BaseClass>
+  class WithCallbackMethod_Unknown : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_Unknown() {
+      ::grpc::Service::MarkMethodCallback(0,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkUnknownCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkUnknownCommandRequest* request, ::google::protobuf::Empty* response) { return this->Unknown(context, request, response); }));}
+    void SetMessageAllocatorFor_Unknown(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkUnknownCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkUnknownCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_Unknown() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Unknown(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkUnknownCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Unknown(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkUnknownCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_Help : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_Help() {
+      ::grpc::Service::MarkMethodCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkHelpCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkHelpCommandRequest* request, ::google::protobuf::Empty* response) { return this->Help(context, request, response); }));}
+    void SetMessageAllocatorFor_Help(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkHelpCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkHelpCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_Help() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Help(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkHelpCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Help(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkHelpCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_Spi : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_Spi() {
+      ::grpc::Service::MarkMethodCallback(2,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkSpiCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkSpiCommandRequest* request, ::google::protobuf::Empty* response) { return this->Spi(context, request, response); }));}
+    void SetMessageAllocatorFor_Spi(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkSpiCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkSpiCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_Spi() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Spi(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSpiCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Spi(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSpiCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_Doctor : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_Doctor() {
+      ::grpc::Service::MarkMethodCallback(3,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkDoctorCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkDoctorCommandRequest* request, ::google::protobuf::Empty* response) { return this->Doctor(context, request, response); }));}
+    void SetMessageAllocatorFor_Doctor(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkDoctorCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(3);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkDoctorCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_Doctor() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Doctor(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkDoctorCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Doctor(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkDoctorCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_ServoZeroing : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_ServoZeroing() {
+      ::grpc::Service::MarkMethodCallback(4,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkServoZeroingCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* request, ::google::protobuf::Empty* response) { return this->ServoZeroing(context, request, response); }));}
+    void SetMessageAllocatorFor_ServoZeroing(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkServoZeroingCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(4);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkServoZeroingCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_ServoZeroing() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ServoZeroing(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* ServoZeroing(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_ComputerVision : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_ComputerVision() {
+      ::grpc::Service::MarkMethodCallback(5,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkComputerVisionCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* request, ::google::protobuf::Empty* response) { return this->ComputerVision(context, request, response); }));}
+    void SetMessageAllocatorFor_ComputerVision(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkComputerVisionCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkComputerVisionCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_ComputerVision() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ComputerVision(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* ComputerVision(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_RecordVideo : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_RecordVideo() {
+      ::grpc::Service::MarkMethodCallback(6,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkRecordVideoCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* request, ::google::protobuf::Empty* response) { return this->RecordVideo(context, request, response); }));}
+    void SetMessageAllocatorFor_RecordVideo(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkRecordVideoCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkRecordVideoCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_RecordVideo() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RecordVideo(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* RecordVideo(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_SoundBackgroundMusic : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_SoundBackgroundMusic() {
+      ::grpc::Service::MarkMethodCallback(7,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* request, ::google::protobuf::Empty* response) { return this->SoundBackgroundMusic(context, request, response); }));}
+    void SetMessageAllocatorFor_SoundBackgroundMusic(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(7);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_SoundBackgroundMusic() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SoundBackgroundMusic(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* SoundBackgroundMusic(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_TextVisionTalk : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_TextVisionTalk() {
+      ::grpc::Service::MarkMethodCallback(8,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* request, ::google::protobuf::Empty* response) { return this->TextVisionTalk(context, request, response); }));}
+    void SetMessageAllocatorFor_TextVisionTalk(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(8);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_TextVisionTalk() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status TextVisionTalk(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* TextVisionTalk(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_OnlineLlmTest : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_OnlineLlmTest() {
+      ::grpc::Service::MarkMethodCallback(9,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* request, ::google::protobuf::Empty* response) { return this->OnlineLlmTest(context, request, response); }));}
+    void SetMessageAllocatorFor_OnlineLlmTest(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(9);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_OnlineLlmTest() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status OnlineLlmTest(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* OnlineLlmTest(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_Move : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_Move() {
+      ::grpc::Service::MarkMethodCallback(10,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkMoveCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkMoveCommandRequest* request, ::google::protobuf::Empty* response) { return this->Move(context, request, response); }));}
+    void SetMessageAllocatorFor_Move(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkMoveCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(10);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkMoveCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_Move() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Move(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkMoveCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Move(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkMoveCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_KeyboardControl : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_KeyboardControl() {
+      ::grpc::Service::MarkMethodCallback(11,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* request, ::google::protobuf::Empty* response) { return this->KeyboardControl(context, request, response); }));}
+    void SetMessageAllocatorFor_KeyboardControl(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(11);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_KeyboardControl() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status KeyboardControl(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* KeyboardControl(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_AvoidObstacles : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_AvoidObstacles() {
+      ::grpc::Service::MarkMethodCallback(12,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* request, ::google::protobuf::Empty* response) { return this->AvoidObstacles(context, request, response); }));}
+    void SetMessageAllocatorFor_AvoidObstacles(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(12);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_AvoidObstacles() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AvoidObstacles(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* AvoidObstacles(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_CliffDetection : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_CliffDetection() {
+      ::grpc::Service::MarkMethodCallback(13,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* request, ::google::protobuf::Empty* response) { return this->CliffDetection(context, request, response); }));}
+    void SetMessageAllocatorFor_CliffDetection(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(13);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_CliffDetection() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CliffDetection(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* CliffDetection(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_StareAtYou : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_StareAtYou() {
+      ::grpc::Service::MarkMethodCallback(14,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkStareAtYouCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* request, ::google::protobuf::Empty* response) { return this->StareAtYou(context, request, response); }));}
+    void SetMessageAllocatorFor_StareAtYou(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkStareAtYouCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(14);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkStareAtYouCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_StareAtYou() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StareAtYou(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* StareAtYou(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_BullFight : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_BullFight() {
+      ::grpc::Service::MarkMethodCallback(15,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkBullFightCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkBullFightCommandRequest* request, ::google::protobuf::Empty* response) { return this->BullFight(context, request, response); }));}
+    void SetMessageAllocatorFor_BullFight(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkBullFightCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(15);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkBullFightCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_BullFight() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status BullFight(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkBullFightCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* BullFight(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkBullFightCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_TreasureHunt : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_TreasureHunt() {
+      ::grpc::Service::MarkMethodCallback(16,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* request, ::google::protobuf::Empty* response) { return this->TreasureHunt(context, request, response); }));}
+    void SetMessageAllocatorFor_TreasureHunt(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(16);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_TreasureHunt() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status TreasureHunt(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* TreasureHunt(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_VideoCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_VideoCar() {
+      ::grpc::Service::MarkMethodCallback(17,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkVideoCarCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* request, ::google::protobuf::Empty* response) { return this->VideoCar(context, request, response); }));}
+    void SetMessageAllocatorFor_VideoCar(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkVideoCarCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(17);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkVideoCarCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_VideoCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VideoCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* VideoCar(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_AppControl : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_AppControl() {
+      ::grpc::Service::MarkMethodCallback(18,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkAppControlCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkAppControlCommandRequest* request, ::google::protobuf::Empty* response) { return this->AppControl(context, request, response); }));}
+    void SetMessageAllocatorFor_AppControl(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkAppControlCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(18);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkAppControlCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_AppControl() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AppControl(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkAppControlCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* AppControl(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkAppControlCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_Turn : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_Turn() {
+      ::grpc::Service::MarkMethodCallback(19,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkTurnCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkTurnCommandRequest* request, ::google::protobuf::Empty* response) { return this->Turn(context, request, response); }));}
+    void SetMessageAllocatorFor_Turn(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkTurnCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(19);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkTurnCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_Turn() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Turn(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTurnCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Turn(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTurnCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_Camera : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_Camera() {
+      ::grpc::Service::MarkMethodCallback(20,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkCameraCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest* request, ::google::protobuf::Empty* response) { return this->Camera(context, request, response); }));}
+    void SetMessageAllocatorFor_Camera(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkCameraCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(20);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkCameraCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_Camera() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Camera(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCameraCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Camera(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCameraCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_Sensor : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_Sensor() {
+      ::grpc::Service::MarkMethodCallback(21,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkSensorCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkSensorCommandRequest* request, ::google::protobuf::Empty* response) { return this->Sensor(context, request, response); }));}
+    void SetMessageAllocatorFor_Sensor(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkSensorCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(21);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkSensorCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_Sensor() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Sensor(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSensorCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Sensor(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSensorCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_LineTrack : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_LineTrack() {
+      ::grpc::Service::MarkMethodCallback(22,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkLineTrackCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest* request, ::google::protobuf::Empty* response) { return this->LineTrack(context, request, response); }));}
+    void SetMessageAllocatorFor_LineTrack(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkLineTrackCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(22);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkLineTrackCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_LineTrack() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status LineTrack(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* LineTrack(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_SelfDrive : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_SelfDrive() {
+      ::grpc::Service::MarkMethodCallback(23,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkSelfDriveCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* request, ::google::protobuf::Empty* response) { return this->SelfDrive(context, request, response); }));}
+    void SetMessageAllocatorFor_SelfDrive(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkSelfDriveCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(23);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkSelfDriveCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_SelfDrive() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SelfDrive(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* SelfDrive(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_Sound : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_Sound() {
+      ::grpc::Service::MarkMethodCallback(24,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkSoundCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkSoundCommandRequest* request, ::google::protobuf::Empty* response) { return this->Sound(context, request, response); }));}
+    void SetMessageAllocatorFor_Sound(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkSoundCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(24);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkSoundCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_Sound() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Sound(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSoundCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Sound(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSoundCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_VoiceChat : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_VoiceChat() {
+      ::grpc::Service::MarkMethodCallback(25,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkVoiceChatCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* request, ::google::protobuf::Empty* response) { return this->VoiceChat(context, request, response); }));}
+    void SetMessageAllocatorFor_VoiceChat(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkVoiceChatCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(25);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkVoiceChatCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_VoiceChat() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoiceChat(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* VoiceChat(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_VoiceActiveCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_VoiceActiveCar() {
+      ::grpc::Service::MarkMethodCallback(26,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* request, ::google::protobuf::Empty* response) { return this->VoiceActiveCar(context, request, response); }));}
+    void SetMessageAllocatorFor_VoiceActiveCar(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(26);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_VoiceActiveCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoiceActiveCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* VoiceActiveCar(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_GptCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_GptCar() {
+      ::grpc::Service::MarkMethodCallback(27,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkGptCarCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkGptCarCommandRequest* request, ::google::protobuf::Empty* response) { return this->GptCar(context, request, response); }));}
+    void SetMessageAllocatorFor_GptCar(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkGptCarCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(27);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkGptCarCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_GptCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GptCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkGptCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GptCar(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkGptCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_VoiceControlledCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_VoiceControlledCar() {
+      ::grpc::Service::MarkMethodCallback(28,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* request, ::google::protobuf::Empty* response) { return this->VoiceControlledCar(context, request, response); }));}
+    void SetMessageAllocatorFor_VoiceControlledCar(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(28);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_VoiceControlledCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoiceControlledCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* VoiceControlledCar(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_VoicePromptCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_VoicePromptCar() {
+      ::grpc::Service::MarkMethodCallback(29,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* request, ::google::protobuf::Empty* response) { return this->VoicePromptCar(context, request, response); }));}
+    void SetMessageAllocatorFor_VoicePromptCar(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(29);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_VoicePromptCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoicePromptCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* VoicePromptCar(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_StorytellingRobot : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_StorytellingRobot() {
+      ::grpc::Service::MarkMethodCallback(30,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* request, ::google::protobuf::Empty* response) { return this->StorytellingRobot(context, request, response); }));}
+    void SetMessageAllocatorFor_StorytellingRobot(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(30);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_StorytellingRobot() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StorytellingRobot(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* StorytellingRobot(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_Calibrate : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_Calibrate() {
+      ::grpc::Service::MarkMethodCallback(31,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkCalibrateCommandRequest, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest* request, ::google::protobuf::Empty* response) { return this->Calibrate(context, request, response); }));}
+    void SetMessageAllocatorFor_Calibrate(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkCalibrateCommandRequest, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(31);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkCalibrateCommandRequest, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_Calibrate() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Calibrate(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Calibrate(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_Unknown<WithCallbackMethod_Help<WithCallbackMethod_Spi<WithCallbackMethod_Doctor<WithCallbackMethod_ServoZeroing<WithCallbackMethod_ComputerVision<WithCallbackMethod_RecordVideo<WithCallbackMethod_SoundBackgroundMusic<WithCallbackMethod_TextVisionTalk<WithCallbackMethod_OnlineLlmTest<WithCallbackMethod_Move<WithCallbackMethod_KeyboardControl<WithCallbackMethod_AvoidObstacles<WithCallbackMethod_CliffDetection<WithCallbackMethod_StareAtYou<WithCallbackMethod_BullFight<WithCallbackMethod_TreasureHunt<WithCallbackMethod_VideoCar<WithCallbackMethod_AppControl<WithCallbackMethod_Turn<WithCallbackMethod_Camera<WithCallbackMethod_Sensor<WithCallbackMethod_LineTrack<WithCallbackMethod_SelfDrive<WithCallbackMethod_Sound<WithCallbackMethod_VoiceChat<WithCallbackMethod_VoiceActiveCar<WithCallbackMethod_GptCar<WithCallbackMethod_VoiceControlledCar<WithCallbackMethod_VoicePromptCar<WithCallbackMethod_StorytellingRobot<WithCallbackMethod_Calibrate<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > CallbackService;
+  typedef CallbackService ExperimentalCallbackService;
+  template <class BaseClass>
+  class WithGenericMethod_Unknown : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_Unknown() {
+      ::grpc::Service::MarkMethodGeneric(0);
+    }
+    ~WithGenericMethod_Unknown() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Unknown(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkUnknownCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_Help : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_Help() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_Help() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Help(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkHelpCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_Spi : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_Spi() {
+      ::grpc::Service::MarkMethodGeneric(2);
+    }
+    ~WithGenericMethod_Spi() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Spi(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSpiCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_Doctor : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_Doctor() {
+      ::grpc::Service::MarkMethodGeneric(3);
+    }
+    ~WithGenericMethod_Doctor() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Doctor(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkDoctorCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_ServoZeroing : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_ServoZeroing() {
+      ::grpc::Service::MarkMethodGeneric(4);
+    }
+    ~WithGenericMethod_ServoZeroing() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ServoZeroing(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_ComputerVision : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_ComputerVision() {
+      ::grpc::Service::MarkMethodGeneric(5);
+    }
+    ~WithGenericMethod_ComputerVision() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ComputerVision(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_RecordVideo : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_RecordVideo() {
+      ::grpc::Service::MarkMethodGeneric(6);
+    }
+    ~WithGenericMethod_RecordVideo() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RecordVideo(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_SoundBackgroundMusic : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_SoundBackgroundMusic() {
+      ::grpc::Service::MarkMethodGeneric(7);
+    }
+    ~WithGenericMethod_SoundBackgroundMusic() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SoundBackgroundMusic(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_TextVisionTalk : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_TextVisionTalk() {
+      ::grpc::Service::MarkMethodGeneric(8);
+    }
+    ~WithGenericMethod_TextVisionTalk() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status TextVisionTalk(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_OnlineLlmTest : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_OnlineLlmTest() {
+      ::grpc::Service::MarkMethodGeneric(9);
+    }
+    ~WithGenericMethod_OnlineLlmTest() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status OnlineLlmTest(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_Move : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_Move() {
+      ::grpc::Service::MarkMethodGeneric(10);
+    }
+    ~WithGenericMethod_Move() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Move(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkMoveCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_KeyboardControl : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_KeyboardControl() {
+      ::grpc::Service::MarkMethodGeneric(11);
+    }
+    ~WithGenericMethod_KeyboardControl() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status KeyboardControl(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_AvoidObstacles : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_AvoidObstacles() {
+      ::grpc::Service::MarkMethodGeneric(12);
+    }
+    ~WithGenericMethod_AvoidObstacles() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AvoidObstacles(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_CliffDetection : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_CliffDetection() {
+      ::grpc::Service::MarkMethodGeneric(13);
+    }
+    ~WithGenericMethod_CliffDetection() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CliffDetection(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_StareAtYou : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_StareAtYou() {
+      ::grpc::Service::MarkMethodGeneric(14);
+    }
+    ~WithGenericMethod_StareAtYou() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StareAtYou(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_BullFight : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_BullFight() {
+      ::grpc::Service::MarkMethodGeneric(15);
+    }
+    ~WithGenericMethod_BullFight() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status BullFight(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkBullFightCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_TreasureHunt : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_TreasureHunt() {
+      ::grpc::Service::MarkMethodGeneric(16);
+    }
+    ~WithGenericMethod_TreasureHunt() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status TreasureHunt(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_VideoCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_VideoCar() {
+      ::grpc::Service::MarkMethodGeneric(17);
+    }
+    ~WithGenericMethod_VideoCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VideoCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_AppControl : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_AppControl() {
+      ::grpc::Service::MarkMethodGeneric(18);
+    }
+    ~WithGenericMethod_AppControl() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AppControl(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkAppControlCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_Turn : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_Turn() {
+      ::grpc::Service::MarkMethodGeneric(19);
+    }
+    ~WithGenericMethod_Turn() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Turn(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTurnCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_Camera : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_Camera() {
+      ::grpc::Service::MarkMethodGeneric(20);
+    }
+    ~WithGenericMethod_Camera() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Camera(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCameraCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_Sensor : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_Sensor() {
+      ::grpc::Service::MarkMethodGeneric(21);
+    }
+    ~WithGenericMethod_Sensor() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Sensor(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSensorCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_LineTrack : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_LineTrack() {
+      ::grpc::Service::MarkMethodGeneric(22);
+    }
+    ~WithGenericMethod_LineTrack() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status LineTrack(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_SelfDrive : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_SelfDrive() {
+      ::grpc::Service::MarkMethodGeneric(23);
+    }
+    ~WithGenericMethod_SelfDrive() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SelfDrive(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_Sound : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_Sound() {
+      ::grpc::Service::MarkMethodGeneric(24);
+    }
+    ~WithGenericMethod_Sound() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Sound(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSoundCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_VoiceChat : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_VoiceChat() {
+      ::grpc::Service::MarkMethodGeneric(25);
+    }
+    ~WithGenericMethod_VoiceChat() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoiceChat(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_VoiceActiveCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_VoiceActiveCar() {
+      ::grpc::Service::MarkMethodGeneric(26);
+    }
+    ~WithGenericMethod_VoiceActiveCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoiceActiveCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_GptCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_GptCar() {
+      ::grpc::Service::MarkMethodGeneric(27);
+    }
+    ~WithGenericMethod_GptCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GptCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkGptCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_VoiceControlledCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_VoiceControlledCar() {
+      ::grpc::Service::MarkMethodGeneric(28);
+    }
+    ~WithGenericMethod_VoiceControlledCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoiceControlledCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_VoicePromptCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_VoicePromptCar() {
+      ::grpc::Service::MarkMethodGeneric(29);
+    }
+    ~WithGenericMethod_VoicePromptCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoicePromptCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_StorytellingRobot : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_StorytellingRobot() {
+      ::grpc::Service::MarkMethodGeneric(30);
+    }
+    ~WithGenericMethod_StorytellingRobot() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StorytellingRobot(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_Calibrate : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_Calibrate() {
+      ::grpc::Service::MarkMethodGeneric(31);
+    }
+    ~WithGenericMethod_Calibrate() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Calibrate(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Unknown : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_Unknown() {
+      ::grpc::Service::MarkMethodRaw(0);
+    }
+    ~WithRawMethod_Unknown() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Unknown(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkUnknownCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestUnknown(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Help : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_Help() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_Help() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Help(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkHelpCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestHelp(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Spi : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_Spi() {
+      ::grpc::Service::MarkMethodRaw(2);
+    }
+    ~WithRawMethod_Spi() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Spi(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSpiCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestSpi(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Doctor : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_Doctor() {
+      ::grpc::Service::MarkMethodRaw(3);
+    }
+    ~WithRawMethod_Doctor() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Doctor(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkDoctorCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestDoctor(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_ServoZeroing : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_ServoZeroing() {
+      ::grpc::Service::MarkMethodRaw(4);
+    }
+    ~WithRawMethod_ServoZeroing() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ServoZeroing(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestServoZeroing(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_ComputerVision : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_ComputerVision() {
+      ::grpc::Service::MarkMethodRaw(5);
+    }
+    ~WithRawMethod_ComputerVision() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ComputerVision(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestComputerVision(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_RecordVideo : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_RecordVideo() {
+      ::grpc::Service::MarkMethodRaw(6);
+    }
+    ~WithRawMethod_RecordVideo() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RecordVideo(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestRecordVideo(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_SoundBackgroundMusic : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_SoundBackgroundMusic() {
+      ::grpc::Service::MarkMethodRaw(7);
+    }
+    ~WithRawMethod_SoundBackgroundMusic() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SoundBackgroundMusic(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestSoundBackgroundMusic(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_TextVisionTalk : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_TextVisionTalk() {
+      ::grpc::Service::MarkMethodRaw(8);
+    }
+    ~WithRawMethod_TextVisionTalk() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status TextVisionTalk(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestTextVisionTalk(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_OnlineLlmTest : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_OnlineLlmTest() {
+      ::grpc::Service::MarkMethodRaw(9);
+    }
+    ~WithRawMethod_OnlineLlmTest() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status OnlineLlmTest(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestOnlineLlmTest(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(9, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Move : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_Move() {
+      ::grpc::Service::MarkMethodRaw(10);
+    }
+    ~WithRawMethod_Move() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Move(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkMoveCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestMove(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_KeyboardControl : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_KeyboardControl() {
+      ::grpc::Service::MarkMethodRaw(11);
+    }
+    ~WithRawMethod_KeyboardControl() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status KeyboardControl(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestKeyboardControl(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_AvoidObstacles : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_AvoidObstacles() {
+      ::grpc::Service::MarkMethodRaw(12);
+    }
+    ~WithRawMethod_AvoidObstacles() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AvoidObstacles(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestAvoidObstacles(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_CliffDetection : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_CliffDetection() {
+      ::grpc::Service::MarkMethodRaw(13);
+    }
+    ~WithRawMethod_CliffDetection() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CliffDetection(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestCliffDetection(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_StareAtYou : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_StareAtYou() {
+      ::grpc::Service::MarkMethodRaw(14);
+    }
+    ~WithRawMethod_StareAtYou() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StareAtYou(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestStareAtYou(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_BullFight : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_BullFight() {
+      ::grpc::Service::MarkMethodRaw(15);
+    }
+    ~WithRawMethod_BullFight() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status BullFight(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkBullFightCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestBullFight(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(15, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_TreasureHunt : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_TreasureHunt() {
+      ::grpc::Service::MarkMethodRaw(16);
+    }
+    ~WithRawMethod_TreasureHunt() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status TreasureHunt(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestTreasureHunt(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(16, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_VideoCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_VideoCar() {
+      ::grpc::Service::MarkMethodRaw(17);
+    }
+    ~WithRawMethod_VideoCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VideoCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestVideoCar(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(17, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_AppControl : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_AppControl() {
+      ::grpc::Service::MarkMethodRaw(18);
+    }
+    ~WithRawMethod_AppControl() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AppControl(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkAppControlCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestAppControl(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(18, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Turn : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_Turn() {
+      ::grpc::Service::MarkMethodRaw(19);
+    }
+    ~WithRawMethod_Turn() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Turn(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTurnCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestTurn(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(19, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Camera : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_Camera() {
+      ::grpc::Service::MarkMethodRaw(20);
+    }
+    ~WithRawMethod_Camera() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Camera(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCameraCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestCamera(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(20, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Sensor : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_Sensor() {
+      ::grpc::Service::MarkMethodRaw(21);
+    }
+    ~WithRawMethod_Sensor() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Sensor(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSensorCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestSensor(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(21, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_LineTrack : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_LineTrack() {
+      ::grpc::Service::MarkMethodRaw(22);
+    }
+    ~WithRawMethod_LineTrack() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status LineTrack(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestLineTrack(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(22, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_SelfDrive : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_SelfDrive() {
+      ::grpc::Service::MarkMethodRaw(23);
+    }
+    ~WithRawMethod_SelfDrive() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SelfDrive(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestSelfDrive(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(23, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Sound : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_Sound() {
+      ::grpc::Service::MarkMethodRaw(24);
+    }
+    ~WithRawMethod_Sound() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Sound(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSoundCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestSound(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(24, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_VoiceChat : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_VoiceChat() {
+      ::grpc::Service::MarkMethodRaw(25);
+    }
+    ~WithRawMethod_VoiceChat() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoiceChat(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestVoiceChat(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(25, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_VoiceActiveCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_VoiceActiveCar() {
+      ::grpc::Service::MarkMethodRaw(26);
+    }
+    ~WithRawMethod_VoiceActiveCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoiceActiveCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestVoiceActiveCar(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(26, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_GptCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_GptCar() {
+      ::grpc::Service::MarkMethodRaw(27);
+    }
+    ~WithRawMethod_GptCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GptCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkGptCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGptCar(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(27, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_VoiceControlledCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_VoiceControlledCar() {
+      ::grpc::Service::MarkMethodRaw(28);
+    }
+    ~WithRawMethod_VoiceControlledCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoiceControlledCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestVoiceControlledCar(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_VoicePromptCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_VoicePromptCar() {
+      ::grpc::Service::MarkMethodRaw(29);
+    }
+    ~WithRawMethod_VoicePromptCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoicePromptCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestVoicePromptCar(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_StorytellingRobot : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_StorytellingRobot() {
+      ::grpc::Service::MarkMethodRaw(30);
+    }
+    ~WithRawMethod_StorytellingRobot() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StorytellingRobot(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestStorytellingRobot(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Calibrate : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_Calibrate() {
+      ::grpc::Service::MarkMethodRaw(31);
+    }
+    ~WithRawMethod_Calibrate() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Calibrate(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestCalibrate(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_Unknown : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_Unknown() {
+      ::grpc::Service::MarkMethodRawCallback(0,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Unknown(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_Unknown() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Unknown(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkUnknownCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Unknown(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_Help : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_Help() {
+      ::grpc::Service::MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Help(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_Help() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Help(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkHelpCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Help(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_Spi : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_Spi() {
+      ::grpc::Service::MarkMethodRawCallback(2,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Spi(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_Spi() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Spi(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSpiCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Spi(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_Doctor : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_Doctor() {
+      ::grpc::Service::MarkMethodRawCallback(3,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Doctor(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_Doctor() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Doctor(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkDoctorCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Doctor(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_ServoZeroing : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_ServoZeroing() {
+      ::grpc::Service::MarkMethodRawCallback(4,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ServoZeroing(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_ServoZeroing() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ServoZeroing(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* ServoZeroing(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_ComputerVision : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_ComputerVision() {
+      ::grpc::Service::MarkMethodRawCallback(5,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ComputerVision(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_ComputerVision() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ComputerVision(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* ComputerVision(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_RecordVideo : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_RecordVideo() {
+      ::grpc::Service::MarkMethodRawCallback(6,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->RecordVideo(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_RecordVideo() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RecordVideo(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* RecordVideo(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_SoundBackgroundMusic : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_SoundBackgroundMusic() {
+      ::grpc::Service::MarkMethodRawCallback(7,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SoundBackgroundMusic(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_SoundBackgroundMusic() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SoundBackgroundMusic(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* SoundBackgroundMusic(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_TextVisionTalk : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_TextVisionTalk() {
+      ::grpc::Service::MarkMethodRawCallback(8,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->TextVisionTalk(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_TextVisionTalk() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status TextVisionTalk(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* TextVisionTalk(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_OnlineLlmTest : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_OnlineLlmTest() {
+      ::grpc::Service::MarkMethodRawCallback(9,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->OnlineLlmTest(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_OnlineLlmTest() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status OnlineLlmTest(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* OnlineLlmTest(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_Move : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_Move() {
+      ::grpc::Service::MarkMethodRawCallback(10,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Move(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_Move() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Move(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkMoveCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Move(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_KeyboardControl : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_KeyboardControl() {
+      ::grpc::Service::MarkMethodRawCallback(11,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->KeyboardControl(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_KeyboardControl() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status KeyboardControl(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* KeyboardControl(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_AvoidObstacles : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_AvoidObstacles() {
+      ::grpc::Service::MarkMethodRawCallback(12,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->AvoidObstacles(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_AvoidObstacles() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AvoidObstacles(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* AvoidObstacles(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_CliffDetection : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_CliffDetection() {
+      ::grpc::Service::MarkMethodRawCallback(13,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->CliffDetection(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_CliffDetection() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CliffDetection(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* CliffDetection(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_StareAtYou : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_StareAtYou() {
+      ::grpc::Service::MarkMethodRawCallback(14,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->StareAtYou(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_StareAtYou() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StareAtYou(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* StareAtYou(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_BullFight : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_BullFight() {
+      ::grpc::Service::MarkMethodRawCallback(15,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->BullFight(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_BullFight() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status BullFight(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkBullFightCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* BullFight(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_TreasureHunt : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_TreasureHunt() {
+      ::grpc::Service::MarkMethodRawCallback(16,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->TreasureHunt(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_TreasureHunt() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status TreasureHunt(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* TreasureHunt(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_VideoCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_VideoCar() {
+      ::grpc::Service::MarkMethodRawCallback(17,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->VideoCar(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_VideoCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VideoCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* VideoCar(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_AppControl : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_AppControl() {
+      ::grpc::Service::MarkMethodRawCallback(18,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->AppControl(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_AppControl() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AppControl(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkAppControlCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* AppControl(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_Turn : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_Turn() {
+      ::grpc::Service::MarkMethodRawCallback(19,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Turn(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_Turn() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Turn(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTurnCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Turn(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_Camera : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_Camera() {
+      ::grpc::Service::MarkMethodRawCallback(20,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Camera(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_Camera() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Camera(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCameraCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Camera(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_Sensor : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_Sensor() {
+      ::grpc::Service::MarkMethodRawCallback(21,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Sensor(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_Sensor() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Sensor(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSensorCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Sensor(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_LineTrack : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_LineTrack() {
+      ::grpc::Service::MarkMethodRawCallback(22,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->LineTrack(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_LineTrack() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status LineTrack(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* LineTrack(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_SelfDrive : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_SelfDrive() {
+      ::grpc::Service::MarkMethodRawCallback(23,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SelfDrive(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_SelfDrive() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SelfDrive(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* SelfDrive(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_Sound : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_Sound() {
+      ::grpc::Service::MarkMethodRawCallback(24,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Sound(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_Sound() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Sound(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSoundCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Sound(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_VoiceChat : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_VoiceChat() {
+      ::grpc::Service::MarkMethodRawCallback(25,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->VoiceChat(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_VoiceChat() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoiceChat(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* VoiceChat(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_VoiceActiveCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_VoiceActiveCar() {
+      ::grpc::Service::MarkMethodRawCallback(26,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->VoiceActiveCar(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_VoiceActiveCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoiceActiveCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* VoiceActiveCar(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_GptCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_GptCar() {
+      ::grpc::Service::MarkMethodRawCallback(27,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GptCar(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_GptCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GptCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkGptCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GptCar(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_VoiceControlledCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_VoiceControlledCar() {
+      ::grpc::Service::MarkMethodRawCallback(28,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->VoiceControlledCar(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_VoiceControlledCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoiceControlledCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* VoiceControlledCar(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_VoicePromptCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_VoicePromptCar() {
+      ::grpc::Service::MarkMethodRawCallback(29,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->VoicePromptCar(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_VoicePromptCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VoicePromptCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* VoicePromptCar(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_StorytellingRobot : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_StorytellingRobot() {
+      ::grpc::Service::MarkMethodRawCallback(30,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->StorytellingRobot(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_StorytellingRobot() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status StorytellingRobot(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* StorytellingRobot(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_Calibrate : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_Calibrate() {
+      ::grpc::Service::MarkMethodRawCallback(31,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Calibrate(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_Calibrate() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Calibrate(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Calibrate(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_Unknown : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_Unknown() {
+      ::grpc::Service::MarkMethodStreamed(0,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkUnknownCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkUnknownCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedUnknown(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_Unknown() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status Unknown(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkUnknownCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedUnknown(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkUnknownCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_Help : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_Help() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkHelpCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkHelpCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedHelp(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_Help() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status Help(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkHelpCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedHelp(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkHelpCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_Spi : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_Spi() {
+      ::grpc::Service::MarkMethodStreamed(2,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkSpiCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkSpiCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedSpi(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_Spi() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status Spi(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSpiCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedSpi(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkSpiCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_Doctor : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_Doctor() {
+      ::grpc::Service::MarkMethodStreamed(3,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkDoctorCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkDoctorCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedDoctor(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_Doctor() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status Doctor(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkDoctorCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedDoctor(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkDoctorCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_ServoZeroing : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_ServoZeroing() {
+      ::grpc::Service::MarkMethodStreamed(4,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkServoZeroingCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkServoZeroingCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedServoZeroing(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_ServoZeroing() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status ServoZeroing(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedServoZeroing(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkServoZeroingCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_ComputerVision : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_ComputerVision() {
+      ::grpc::Service::MarkMethodStreamed(5,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkComputerVisionCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkComputerVisionCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedComputerVision(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_ComputerVision() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status ComputerVision(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedComputerVision(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkComputerVisionCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_RecordVideo : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_RecordVideo() {
+      ::grpc::Service::MarkMethodStreamed(6,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkRecordVideoCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkRecordVideoCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedRecordVideo(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_RecordVideo() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status RecordVideo(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedRecordVideo(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkRecordVideoCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_SoundBackgroundMusic : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_SoundBackgroundMusic() {
+      ::grpc::Service::MarkMethodStreamed(7,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedSoundBackgroundMusic(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_SoundBackgroundMusic() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status SoundBackgroundMusic(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedSoundBackgroundMusic(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_TextVisionTalk : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_TextVisionTalk() {
+      ::grpc::Service::MarkMethodStreamed(8,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedTextVisionTalk(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_TextVisionTalk() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status TextVisionTalk(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedTextVisionTalk(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_OnlineLlmTest : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_OnlineLlmTest() {
+      ::grpc::Service::MarkMethodStreamed(9,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedOnlineLlmTest(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_OnlineLlmTest() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status OnlineLlmTest(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedOnlineLlmTest(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_Move : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_Move() {
+      ::grpc::Service::MarkMethodStreamed(10,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkMoveCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkMoveCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedMove(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_Move() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status Move(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkMoveCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedMove(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkMoveCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_KeyboardControl : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_KeyboardControl() {
+      ::grpc::Service::MarkMethodStreamed(11,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedKeyboardControl(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_KeyboardControl() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status KeyboardControl(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedKeyboardControl(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_AvoidObstacles : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_AvoidObstacles() {
+      ::grpc::Service::MarkMethodStreamed(12,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedAvoidObstacles(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_AvoidObstacles() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status AvoidObstacles(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedAvoidObstacles(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_CliffDetection : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_CliffDetection() {
+      ::grpc::Service::MarkMethodStreamed(13,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedCliffDetection(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_CliffDetection() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status CliffDetection(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedCliffDetection(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_StareAtYou : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_StareAtYou() {
+      ::grpc::Service::MarkMethodStreamed(14,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkStareAtYouCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkStareAtYouCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedStareAtYou(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_StareAtYou() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status StareAtYou(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedStareAtYou(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkStareAtYouCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_BullFight : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_BullFight() {
+      ::grpc::Service::MarkMethodStreamed(15,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkBullFightCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkBullFightCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedBullFight(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_BullFight() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status BullFight(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkBullFightCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedBullFight(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkBullFightCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_TreasureHunt : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_TreasureHunt() {
+      ::grpc::Service::MarkMethodStreamed(16,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedTreasureHunt(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_TreasureHunt() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status TreasureHunt(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedTreasureHunt(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_VideoCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_VideoCar() {
+      ::grpc::Service::MarkMethodStreamed(17,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkVideoCarCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkVideoCarCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedVideoCar(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_VideoCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status VideoCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedVideoCar(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkVideoCarCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_AppControl : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_AppControl() {
+      ::grpc::Service::MarkMethodStreamed(18,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkAppControlCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkAppControlCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedAppControl(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_AppControl() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status AppControl(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkAppControlCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedAppControl(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkAppControlCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_Turn : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_Turn() {
+      ::grpc::Service::MarkMethodStreamed(19,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkTurnCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkTurnCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedTurn(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_Turn() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status Turn(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkTurnCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedTurn(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkTurnCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_Camera : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_Camera() {
+      ::grpc::Service::MarkMethodStreamed(20,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkCameraCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkCameraCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedCamera(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_Camera() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status Camera(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCameraCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedCamera(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkCameraCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_Sensor : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_Sensor() {
+      ::grpc::Service::MarkMethodStreamed(21,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkSensorCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkSensorCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedSensor(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_Sensor() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status Sensor(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSensorCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedSensor(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkSensorCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_LineTrack : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_LineTrack() {
+      ::grpc::Service::MarkMethodStreamed(22,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkLineTrackCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkLineTrackCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedLineTrack(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_LineTrack() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status LineTrack(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkLineTrackCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedLineTrack(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkLineTrackCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_SelfDrive : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_SelfDrive() {
+      ::grpc::Service::MarkMethodStreamed(23,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkSelfDriveCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkSelfDriveCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedSelfDrive(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_SelfDrive() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status SelfDrive(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedSelfDrive(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkSelfDriveCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_Sound : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_Sound() {
+      ::grpc::Service::MarkMethodStreamed(24,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkSoundCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkSoundCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedSound(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_Sound() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status Sound(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkSoundCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedSound(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkSoundCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_VoiceChat : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_VoiceChat() {
+      ::grpc::Service::MarkMethodStreamed(25,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkVoiceChatCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkVoiceChatCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedVoiceChat(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_VoiceChat() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status VoiceChat(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedVoiceChat(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkVoiceChatCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_VoiceActiveCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_VoiceActiveCar() {
+      ::grpc::Service::MarkMethodStreamed(26,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedVoiceActiveCar(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_VoiceActiveCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status VoiceActiveCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedVoiceActiveCar(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_GptCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_GptCar() {
+      ::grpc::Service::MarkMethodStreamed(27,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkGptCarCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkGptCarCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedGptCar(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_GptCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status GptCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkGptCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedGptCar(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkGptCarCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_VoiceControlledCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_VoiceControlledCar() {
+      ::grpc::Service::MarkMethodStreamed(28,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedVoiceControlledCar(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_VoiceControlledCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status VoiceControlledCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedVoiceControlledCar(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_VoicePromptCar : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_VoicePromptCar() {
+      ::grpc::Service::MarkMethodStreamed(29,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedVoicePromptCar(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_VoicePromptCar() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status VoicePromptCar(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedVoicePromptCar(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_StorytellingRobot : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_StorytellingRobot() {
+      ::grpc::Service::MarkMethodStreamed(30,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedStorytellingRobot(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_StorytellingRobot() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status StorytellingRobot(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedStorytellingRobot(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_Calibrate : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_Calibrate() {
+      ::grpc::Service::MarkMethodStreamed(31,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkCalibrateCommandRequest, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkCalibrateCommandRequest, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedCalibrate(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_Calibrate() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status Calibrate(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCalibrateCommandRequest* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedCalibrate(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkCalibrateCommandRequest,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_Unknown<WithStreamedUnaryMethod_Help<WithStreamedUnaryMethod_Spi<WithStreamedUnaryMethod_Doctor<WithStreamedUnaryMethod_ServoZeroing<WithStreamedUnaryMethod_ComputerVision<WithStreamedUnaryMethod_RecordVideo<WithStreamedUnaryMethod_SoundBackgroundMusic<WithStreamedUnaryMethod_TextVisionTalk<WithStreamedUnaryMethod_OnlineLlmTest<WithStreamedUnaryMethod_Move<WithStreamedUnaryMethod_KeyboardControl<WithStreamedUnaryMethod_AvoidObstacles<WithStreamedUnaryMethod_CliffDetection<WithStreamedUnaryMethod_StareAtYou<WithStreamedUnaryMethod_BullFight<WithStreamedUnaryMethod_TreasureHunt<WithStreamedUnaryMethod_VideoCar<WithStreamedUnaryMethod_AppControl<WithStreamedUnaryMethod_Turn<WithStreamedUnaryMethod_Camera<WithStreamedUnaryMethod_Sensor<WithStreamedUnaryMethod_LineTrack<WithStreamedUnaryMethod_SelfDrive<WithStreamedUnaryMethod_Sound<WithStreamedUnaryMethod_VoiceChat<WithStreamedUnaryMethod_VoiceActiveCar<WithStreamedUnaryMethod_GptCar<WithStreamedUnaryMethod_VoiceControlledCar<WithStreamedUnaryMethod_VoicePromptCar<WithStreamedUnaryMethod_StorytellingRobot<WithStreamedUnaryMethod_Calibrate<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedUnaryService;
+  typedef Service SplitStreamedService;
+  typedef WithStreamedUnaryMethod_Unknown<WithStreamedUnaryMethod_Help<WithStreamedUnaryMethod_Spi<WithStreamedUnaryMethod_Doctor<WithStreamedUnaryMethod_ServoZeroing<WithStreamedUnaryMethod_ComputerVision<WithStreamedUnaryMethod_RecordVideo<WithStreamedUnaryMethod_SoundBackgroundMusic<WithStreamedUnaryMethod_TextVisionTalk<WithStreamedUnaryMethod_OnlineLlmTest<WithStreamedUnaryMethod_Move<WithStreamedUnaryMethod_KeyboardControl<WithStreamedUnaryMethod_AvoidObstacles<WithStreamedUnaryMethod_CliffDetection<WithStreamedUnaryMethod_StareAtYou<WithStreamedUnaryMethod_BullFight<WithStreamedUnaryMethod_TreasureHunt<WithStreamedUnaryMethod_VideoCar<WithStreamedUnaryMethod_AppControl<WithStreamedUnaryMethod_Turn<WithStreamedUnaryMethod_Camera<WithStreamedUnaryMethod_Sensor<WithStreamedUnaryMethod_LineTrack<WithStreamedUnaryMethod_SelfDrive<WithStreamedUnaryMethod_Sound<WithStreamedUnaryMethod_VoiceChat<WithStreamedUnaryMethod_VoiceActiveCar<WithStreamedUnaryMethod_GptCar<WithStreamedUnaryMethod_VoiceControlledCar<WithStreamedUnaryMethod_VoicePromptCar<WithStreamedUnaryMethod_StorytellingRobot<WithStreamedUnaryMethod_Calibrate<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedService;
 };
 
 }  // namespace v1

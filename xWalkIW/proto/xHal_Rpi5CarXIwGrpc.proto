@@ -1,10 +1,10 @@
 /******************************************************************************
  * @file        xHal_Rpi5CarXIwGrpc.proto
- * @brief       Defines the public gRPC service for xWalk I2C.
+ * @brief       Defines the public gRPC services for xWalk interfaces.
  *
  * @details
- * Defines one generic request-confirmation RPC using the payload messages from
- * `xHal_Rpi5CarXIwMessage.proto`.
+ * Defines the I2C request-confirmation exchange and typed Controller command
+ * RPCs using the payload messages from `xHal_Rpi5CarXIwMessage.proto`.
  *
  * @project     xWalk Firmware
  * @module      xWalkIW
@@ -30,6 +30,7 @@ package xwalk.iw.v1;
  ******************************************************************************/
 
 import "xHal_Rpi5CarXIwMessage.proto";
+import "google/protobuf/empty.proto";
 
 /******************************************************************************
  * Service declarations
@@ -46,4 +47,62 @@ import "xHal_Rpi5CarXIwMessage.proto";
 service XWalkI2cService
 {
     rpc Execute(XWalkI2cRequestPayload) returns (XWalkI2cConfirmPayload);
+}
+
+/**
+ * @brief Provides typed RPC entry points for Controller command signals.
+ *
+ * @details
+ * Each method accepts the command-specific message carrying the same stable
+ * signal number as its matching `XWALK_CNTRL_*_REQ` definition. Successful
+ * dispatch returns an empty acknowledgement. Validation or execution failures
+ * return a non-OK gRPC status without exposing Controller runtime objects.
+ */
+service XWalkControllerService
+{
+    rpc Unknown(XWalkUnknownCommandRequest) returns (google.protobuf.Empty);
+    rpc Help(XWalkHelpCommandRequest) returns (google.protobuf.Empty);
+    rpc Spi(XWalkSpiCommandRequest) returns (google.protobuf.Empty);
+    rpc Doctor(XWalkDoctorCommandRequest) returns (google.protobuf.Empty);
+    rpc ServoZeroing(XWalkServoZeroingCommandRequest)
+        returns (google.protobuf.Empty);
+    rpc ComputerVision(XWalkComputerVisionCommandRequest)
+        returns (google.protobuf.Empty);
+    rpc RecordVideo(XWalkRecordVideoCommandRequest) returns (google.protobuf.Empty);
+    rpc SoundBackgroundMusic(XWalkSoundBackgroundMusicCommandRequest)
+        returns (google.protobuf.Empty);
+    rpc TextVisionTalk(XWalkTextVisionTalkCommandRequest)
+        returns (google.protobuf.Empty);
+    rpc OnlineLlmTest(XWalkOnlineLlmTestCommandRequest)
+        returns (google.protobuf.Empty);
+    rpc Move(XWalkMoveCommandRequest) returns (google.protobuf.Empty);
+    rpc KeyboardControl(XWalkKeyboardControlCommandRequest)
+        returns (google.protobuf.Empty);
+    rpc AvoidObstacles(XWalkAvoidObstaclesCommandRequest)
+        returns (google.protobuf.Empty);
+    rpc CliffDetection(XWalkCliffDetectionCommandRequest)
+        returns (google.protobuf.Empty);
+    rpc StareAtYou(XWalkStareAtYouCommandRequest) returns (google.protobuf.Empty);
+    rpc BullFight(XWalkBullFightCommandRequest) returns (google.protobuf.Empty);
+    rpc TreasureHunt(XWalkTreasureHuntCommandRequest)
+        returns (google.protobuf.Empty);
+    rpc VideoCar(XWalkVideoCarCommandRequest) returns (google.protobuf.Empty);
+    rpc AppControl(XWalkAppControlCommandRequest) returns (google.protobuf.Empty);
+    rpc Turn(XWalkTurnCommandRequest) returns (google.protobuf.Empty);
+    rpc Camera(XWalkCameraCommandRequest) returns (google.protobuf.Empty);
+    rpc Sensor(XWalkSensorCommandRequest) returns (google.protobuf.Empty);
+    rpc LineTrack(XWalkLineTrackCommandRequest) returns (google.protobuf.Empty);
+    rpc SelfDrive(XWalkSelfDriveCommandRequest) returns (google.protobuf.Empty);
+    rpc Sound(XWalkSoundCommandRequest) returns (google.protobuf.Empty);
+    rpc VoiceChat(XWalkVoiceChatCommandRequest) returns (google.protobuf.Empty);
+    rpc VoiceActiveCar(XWalkVoiceActiveCarCommandRequest)
+        returns (google.protobuf.Empty);
+    rpc GptCar(XWalkGptCarCommandRequest) returns (google.protobuf.Empty);
+    rpc VoiceControlledCar(XWalkVoiceControlledCarCommandRequest)
+        returns (google.protobuf.Empty);
+    rpc VoicePromptCar(XWalkVoicePromptCarCommandRequest)
+        returns (google.protobuf.Empty);
+    rpc StorytellingRobot(XWalkStorytellingRobotCommandRequest)
+        returns (google.protobuf.Empty);
+    rpc Calibrate(XWalkCalibrateCommandRequest) returns (google.protobuf.Empty);
 }
