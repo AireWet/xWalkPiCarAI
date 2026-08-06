@@ -32,8 +32,8 @@ CMakeUserPresets.json
 *.la
 *.so
 *.so.*
-!/xWalkLibrary/vosk/lib/aarch64/libvosk.so
-!/xWalkLibrary/vosk/lib/x86_64/libvosk.so
+!/xWalkLibrary/aarch64/lib/libvosk.so
+!/xWalkLibrary/x86_64/lib/libvosk.so
 *.dylib
 *.dll
 *.exe
