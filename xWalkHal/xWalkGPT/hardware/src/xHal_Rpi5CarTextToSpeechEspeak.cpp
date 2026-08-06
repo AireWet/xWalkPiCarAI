@@ -57,7 +57,10 @@ XWalkTextToSpeechEspeak::XWalkTextToSpeechEspeak(
     stringview executable, stringview voice):
     executableName(executable), voiceName(voice)
 {
-    if (executableName.empty() || voiceName.empty())
+    const hal::boolean executableNameVoiceNameInvalid =
+        static_cast<hal::boolean>(
+            executableName.empty() || voiceName.empty());
+    if (executableNameVoiceNameInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Espeak executable and voice are required");
     }
@@ -104,11 +107,17 @@ XWalkTextToSpeechEspeak& XWalkTextToSpeechEspeak::provider(contextpointer contex
 XWalkTextToSpeechPcmData XWalkTextToSpeechEspeak::synthesize(
     contextpointer context, stringview text)
 {
-    if (text.empty())
+    const hal::boolean textEmpty =
+        static_cast<hal::boolean>(
+            text.empty());
+    if (textEmpty)
     {
         return {};
     }
-    if (text.size() > 4'096U)
+    const hal::boolean textTooLarge =
+        static_cast<hal::boolean>(
+            text.size() > 4'096U);
+    if (textTooLarge)
     {
         XHAL_THROW_OUT_OF_RANGE("Espeak text exceeds the bounded input length");
     }
@@ -125,19 +134,33 @@ bytevector XWalkTextToSpeechEspeak::execute(stringview text) const
 {
     fixedarray<int32, 2U> inputPipe{};
     fixedarray<int32, 2U> outputPipe{};
-    if (::pipe2(inputPipe.data(), O_CLOEXEC) != 0)
+    const hal::boolean inputPipeDifferent =
+        static_cast<hal::boolean>(
+            ::pipe2(inputPipe.data(), O_CLOEXEC) != 0);
+    if (inputPipeDifferent)
     {
         XHAL_THROW_RUNTIME_ERROR("Espeak pipe creation failed");
     }
-    if (::pipe2(outputPipe.data(), O_CLOEXEC) != 0)
+    const hal::boolean outputPipeDifferent =
+        static_cast<hal::boolean>(
+            ::pipe2(outputPipe.data(), O_CLOEXEC) != 0);
+    if (outputPipeDifferent)
     {
         static_cast<void>(::close(inputPipe[0U]));
         static_cast<void>(::close(inputPipe[1U]));
         XHAL_THROW_RUNTIME_ERROR("Espeak output pipe creation failed");
     }
     size writtenByteCount{};
-    while (writtenByteCount < text.size())
+    const hal::boolean processingLoopRequested{true};
+    while (processingLoopRequested)
     {
+        const hal::boolean textBytesRemaining =
+            static_cast<hal::boolean>(
+                writtenByteCount < text.size());
+        if (textBytesRemaining == false)
+        {
+            break;
+        }
         const auto result = ::write(inputPipe[1U], text.data() + writtenByteCount,
             text.size() - writtenByteCount);
         if (result > 0)
@@ -169,8 +192,11 @@ bytevector XWalkTextToSpeechEspeak::execute(stringview text) const
     if (childProcess == 0)
     {
         static_cast<void>(::close(outputPipe[0U]));
-        if ((::dup2(inputPipe[0U], STDIN_FILENO) < 0) ||
-            (::dup2(outputPipe[1U], STDOUT_FILENO) < 0))
+        const hal::boolean inputPipeOutputPipeInvalid =
+            static_cast<hal::boolean>(
+                (::dup2(inputPipe[0U], STDIN_FILENO) < 0) ||
+            (::dup2(outputPipe[1U], STDOUT_FILENO) < 0));
+        if (inputPipeOutputPipeInvalid)
         {
             ::_exit(127);
         }
@@ -199,8 +225,11 @@ bytevector XWalkTextToSpeechEspeak::execute(stringview text) const
         {
             waveData.insert(waveData.end(), buffer.data(),
                 buffer.data() + static_cast<size>(result));
-            if (waveData.size() >
-                (XHAL_RPI5CAR_TEXT_TO_SPEECH_MAXIMUM_PCM_BYTES + 65'536U))
+            const hal::boolean waveDataTooLarge =
+                static_cast<hal::boolean>(
+                    waveData.size() >
+                (XHAL_RPI5CAR_TEXT_TO_SPEECH_MAXIMUM_PCM_BYTES + 65'536U));
+            if (waveDataTooLarge)
             {
                 static_cast<void>(::close(outputPipe[0U]));
                 static_cast<void>(::kill(childProcess, SIGTERM));
@@ -227,8 +256,11 @@ bytevector XWalkTextToSpeechEspeak::execute(stringview text) const
     {
         waitResult = ::waitpid(childProcess, &processStatus, 0);
     }
-    if ((waitResult < 0) ||
-        !WIFEXITED(processStatus) || (WEXITSTATUS(processStatus) != 0))
+    const hal::boolean waitResultProcessStatusInvalid =
+        static_cast<hal::boolean>(
+            (waitResult < 0) ||
+        !WIFEXITED(processStatus) || (WEXITSTATUS(processStatus) != 0));
+    if (waitResultProcessStatusInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Espeak executable failed or is unavailable");
     }
@@ -244,9 +276,12 @@ bytevector XWalkTextToSpeechEspeak::execute(stringview text) const
 XWalkTextToSpeechPcmData XWalkTextToSpeechEspeak::parseWave(
     const bytevector& waveData)
 {
-    if ((waveData.size() < 12U) ||
+    const hal::boolean waveDataReinterpretCastCstringInvalid =
+        static_cast<hal::boolean>(
+            (waveData.size() < 12U) ||
         (string(reinterpret_cast<cstring>(waveData.data()), 4U) != "RIFF") ||
-        (string(reinterpret_cast<cstring>(waveData.data() + 8U), 4U) != "WAVE"))
+        (string(reinterpret_cast<cstring>(waveData.data() + 8U), 4U) != "WAVE"));
+    if (waveDataReinterpretCastCstringInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Espeak output is not a RIFF WAVE stream");
     }
@@ -257,8 +292,16 @@ XWalkTextToSpeechPcmData XWalkTextToSpeechEspeak::parseWave(
     size dataOffset{};
     size dataByteCount{};
     size offset = 12U;
-    while ((offset + 8U) <= waveData.size())
+    const hal::boolean waveChunkParsingRequested{true};
+    while (waveChunkParsingRequested)
     {
+        const hal::boolean waveChunkHeaderAvailable =
+            static_cast<hal::boolean>(
+                (offset + 8U) <= waveData.size());
+        if (waveChunkHeaderAvailable == false)
+        {
+            break;
+        }
         const string chunkName(
             reinterpret_cast<cstring>(waveData.data() + offset), 4U);
         const uint32 declaredSize = readUint32(waveData, offset + 4U);

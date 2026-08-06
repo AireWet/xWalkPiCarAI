@@ -61,7 +61,10 @@ void XWalkMusic::soundPlay(stringview filename, optionalfloat64 volumePercent)
 {
     validateFilename(filename);
     optionalfloat64 normalizedVolumeValue{};
-    if (volumePercent.has_value())
+    const hal::boolean volumePercentProvided =
+        static_cast<hal::boolean>(
+            volumePercent.has_value());
+    if (volumePercentProvided)
     {
         normalizedVolumeValue = normalizedVolume(*volumePercent);
     }
@@ -87,7 +90,10 @@ void XWalkMusic::soundPlayBackground(stringview filename, optionalfloat64 volume
 {
     validateFilename(filename);
     optionalfloat64 normalizedVolumeValue{};
-    if (volumePercent.has_value())
+    const hal::boolean volumePercentProvided =
+        static_cast<hal::boolean>(
+            volumePercent.has_value());
+    if (volumePercentProvided)
     {
         normalizedVolumeValue = normalizedVolume(*volumePercent);
     }
@@ -119,7 +125,10 @@ void XWalkMusic::musicPlay(stringview filename, int32 loops, float64 startSecond
     optionalfloat64 volumePercent)
 {
     validateFilename(filename);
-    if (!XHAL_IS_FINITE(startSeconds))
+    const hal::boolean startSecondsNotFinite =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(startSeconds));
+    if (startSecondsNotFinite)
     {
         XHAL_THROW_INVALID_ARGUMENT("Music playback offset must be finite");
     }
@@ -127,7 +136,10 @@ void XWalkMusic::musicPlay(stringview filename, int32 loops, float64 startSecond
     {
         XHAL_THROW_OUT_OF_RANGE("Music playback loops and offset must not be negative");
     }
-    if (volumePercent.has_value())
+    const hal::boolean volumePercentProvided =
+        static_cast<hal::boolean>(
+            volumePercent.has_value());
+    if (volumePercentProvided)
     {
         musicSetVolume(*volumePercent);
     }
@@ -214,7 +226,10 @@ float64 XWalkMusic::soundLength(stringview filename)
 {
     validateFilename(filename);
     const float64 durationSeconds = callbacks.getSoundLength(backendContext, filename);
-    if (!XHAL_IS_FINITE(durationSeconds) || (durationSeconds < 0.0))
+    const hal::boolean durationSecondsInvalid =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(durationSeconds) || (durationSeconds < 0.0));
+    if (durationSecondsInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Music backend returned an invalid sound duration");
     }
@@ -236,7 +251,10 @@ float64 XWalkMusic::soundLength(stringview filename)
  */
 void XWalkMusic::validateFilename(stringview filename)
 {
-    if (filename.empty())
+    const hal::boolean filenameEmpty =
+        static_cast<hal::boolean>(
+            filename.empty());
+    if (filenameEmpty)
     {
         XHAL_THROW_INVALID_ARGUMENT("Music filename must not be empty");
     }
@@ -259,7 +277,10 @@ void XWalkMusic::validateFilename(stringview filename)
  */
 float64 XWalkMusic::normalizedVolume(float64 volumePercent)
 {
-    if (!XHAL_IS_FINITE(volumePercent))
+    const hal::boolean volumePercentNotFinite =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(volumePercent));
+    if (volumePercentNotFinite)
     {
         XHAL_THROW_INVALID_ARGUMENT("Music volume must be finite");
     }

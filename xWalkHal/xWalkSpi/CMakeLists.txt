@@ -12,9 +12,9 @@ if((XWALK_SPI_BUILD_HARDWARE_TESTS OR XWALK_SPI_BUILD_LINUX_BACKEND)
     message(FATAL_ERROR "xWalkSpi Linux support requires Linux spidev")
 endif()
 
-if(NOT TARGET xWalkCommon)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon
-        ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common
+        ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
 
 add_library(xWalkSpi STATIC
@@ -23,7 +23,7 @@ add_library(xWalkSpi STATIC
 add_library(xWalk::Spi ALIAS xWalkSpi)
 target_include_directories(xWalkSpi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/core/include)
 target_compile_features(xWalkSpi PUBLIC cxx_std_17)
-target_link_libraries(xWalkSpi PUBLIC xWalkCommon)
+target_link_libraries(xWalkSpi PUBLIC xWalkLibraryCommon)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkSpi PRIVATE

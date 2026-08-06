@@ -88,9 +88,12 @@ int32 XWalkSequenceTestRunner::runButtonEvent(
     uint32 duration{};
     const std::from_chars_result parseResult = std::from_chars(
         durationText.data(), durationText.data() + durationText.size(), duration);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean durationInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != durationText.data() + durationText.size()) ||
-        (duration == 0U) || (duration > 3'600U))
+        (duration == 0U) || (duration > 3'600U));
+    if (durationInvalid)
     {
         std::cerr << "duration-seconds must be an integer from 1 to 3600\n";
         return 2;
@@ -148,10 +151,13 @@ int32 XWalkSequenceTestRunner::runRobotHat5Motor(
     uint32 cycleCount{};
     const std::from_chars_result parseResult = std::from_chars(
         cycleText.data(), cycleText.data() + cycleText.size(), cycleCount);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean parseResultEcPtrCycleTextCycleCountInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != cycleText.data() + cycleText.size()) ||
         (cycleCount == 0U) ||
-        (cycleCount > XHAL_RPI5CAR_ROBOTHAT5_MOTOR_MAX_CYCLES))
+        (cycleCount > XHAL_RPI5CAR_ROBOTHAT5_MOTOR_MAX_CYCLES));
+    if (parseResultEcPtrCycleTextCycleCountInvalid)
     {
         std::cerr << "cycles must be an integer from 1 to 100\n";
         return 2;
@@ -182,10 +188,13 @@ int32 XWalkSequenceTestRunner::runMotor(
     uint32 cycleCount{};
     const std::from_chars_result parseResult = std::from_chars(
         cycleText.data(), cycleText.data() + cycleText.size(), cycleCount);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean cycleCountInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != cycleText.data() + cycleText.size()) ||
         (cycleCount == 0U) ||
-        (cycleCount > XHAL_RPI5CAR_MOTOR_SEQUENCE_MAX_CYCLES))
+        (cycleCount > XHAL_RPI5CAR_MOTOR_SEQUENCE_MAX_CYCLES));
+    if (cycleCountInvalid)
     {
         std::cerr << "cycles must be an integer from 1 to 100\n";
         return 2;
@@ -217,10 +226,13 @@ int32 XWalkSequenceTestRunner::runServoHat(
     uint32 sampleCount{};
     const std::from_chars_result parseResult = std::from_chars(
         sampleText.data(), sampleText.data() + sampleText.size(), sampleCount);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean parseResultEcPtrSampleTextSampleCountInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != sampleText.data() + sampleText.size()) ||
         (sampleCount == 0U) ||
-        (sampleCount > XHAL_RPI5CAR_SERVO_HAT_MAX_SAMPLES))
+        (sampleCount > XHAL_RPI5CAR_SERVO_HAT_MAX_SAMPLES));
+    if (parseResultEcPtrSampleTextSampleCountInvalid)
     {
         std::cerr << "samples must be an integer from 1 to 3600\n";
         return 2;
@@ -252,10 +264,13 @@ int32 XWalkSequenceTestRunner::runServo(
     uint32 cycleCount{};
     const std::from_chars_result parseResult = std::from_chars(
         cycleText.data(), cycleText.data() + cycleText.size(), cycleCount);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean cycleCountInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != cycleText.data() + cycleText.size()) ||
         (cycleCount == 0U) ||
-        (cycleCount > XHAL_RPI5CAR_SERVO_SEQUENCE_MAX_CYCLES))
+        (cycleCount > XHAL_RPI5CAR_SERVO_SEQUENCE_MAX_CYCLES));
+    if (cycleCountInvalid)
     {
         std::cerr << "cycles must be an integer from 1 to 100\n";
         return 2;
@@ -352,7 +367,10 @@ int32 XWalkSequenceTestRunner::runConfigured(
     try
     {
         const YAML::Node root = YAML::LoadFile(string(configurationPath));
-        if (!root.IsMap())
+        const hal::boolean mapNotMatched =
+            static_cast<hal::boolean>(
+                !root.IsMap());
+        if (mapNotMatched)
         {
             std::cerr << "xSequenceTest YAML configuration is invalid for '"
                       << selection << "': " << configurationPath << '\n';
@@ -361,13 +379,19 @@ int32 XWalkSequenceTestRunner::runConfigured(
         const YAML::Node schemaVersion = root["schema_version"];
         const YAML::Node sequences = root["sequences"];
         YAML::Node sequence;
-        if (sequences.IsMap())
+        const hal::boolean mapMatched =
+            static_cast<hal::boolean>(
+                sequences.IsMap());
+        if (mapMatched)
         {
             for (YAML::const_iterator iterator = sequences.begin();
                  iterator != sequences.end(); ++iterator)
             {
-                if (iterator->first.IsScalar() &&
-                    (iterator->first.as<string>() == selection))
+                const hal::boolean selectionMatched =
+                    static_cast<hal::boolean>(
+                        iterator->first.IsScalar() &&
+                    (iterator->first.as<string>() == selection));
+                if (selectionMatched)
                 {
                     sequence = iterator->second;
                     break;
@@ -376,9 +400,12 @@ int32 XWalkSequenceTestRunner::runConfigured(
         }
         const YAML::Node arguments = sequence.IsMap()
             ? sequence["arguments"] : YAML::Node();
-        if (!schemaVersion.IsScalar() ||
+        const hal::boolean argumentsInvalid =
+            static_cast<hal::boolean>(
+                !schemaVersion.IsScalar() ||
             (schemaVersion.as<uint32>() != 1U) || !sequences.IsMap() ||
-            !sequence.IsMap() || !arguments.IsSequence())
+            !sequence.IsMap() || !arguments.IsSequence());
+        if (argumentsInvalid)
         {
             std::cerr << "xSequenceTest YAML configuration is invalid for '"
                       << selection << "': " << configurationPath << '\n';
@@ -388,7 +415,10 @@ int32 XWalkSequenceTestRunner::runConfigured(
         stringvector values{string(executable), string(selection)};
         for (const YAML::Node& argument : arguments)
         {
-            if (!argument.IsScalar())
+            const hal::boolean scalarNotMatched =
+                static_cast<hal::boolean>(
+                    !argument.IsScalar());
+            if (scalarNotMatched)
             {
                 std::cerr << "xSequenceTest YAML arguments must be scalar values: "
                           << configurationPath << '\n';
@@ -443,9 +473,15 @@ int32 XWalkSequenceTestRunner::run(
             ++index;
             continue;
         }
-        if ((index > 0) && (argument.rfind("--config=", 0U) == 0U))
+        const hal::boolean configAssignmentMatched =
+            static_cast<hal::boolean>(
+                (index > 0) && (argument.rfind("--config=", 0U) == 0U));
+        if (configAssignmentMatched)
         {
-            if (configurationSeen || (argument.size() == 9U))
+            const hal::boolean configurationInvalid =
+                static_cast<hal::boolean>(
+                    configurationSeen || (argument.size() == 9U));
+            if (configurationInvalid)
             {
                 std::cerr << "--config requires one YAML path and may appear once\n";
                 return 2;
@@ -457,12 +493,18 @@ int32 XWalkSequenceTestRunner::run(
         values.push_back(argument);
     }
 
-    if (values.size() < 2U)
+    const hal::boolean valuesTooSmall =
+        static_cast<hal::boolean>(
+            values.size() < 2U);
+    if (valuesTooSmall)
     {
         printUsage();
         return 2;
     }
-    if (values.size() == 2U)
+    const hal::boolean valuesMatched =
+        static_cast<hal::boolean>(
+            values.size() == 2U);
+    if (valuesMatched)
     {
         return runConfigured(values[0U], values[1U], configurationPath);
     }

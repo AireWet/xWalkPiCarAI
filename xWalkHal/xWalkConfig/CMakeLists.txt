@@ -3,8 +3,8 @@ project(xWalkConfig LANGUAGES CXX)
 
 option(XWALK_CONFIG_BUILD_HOST_TESTS "Build xWalkConfig host tests" OFF)
 
-if(NOT TARGET xWalkCommon)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
 
 add_library(xWalkConfig STATIC
@@ -16,7 +16,7 @@ add_library(xWalkConfig STATIC
 
 target_include_directories(xWalkConfig PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkConfig PUBLIC cxx_std_17)
-target_link_libraries(xWalkConfig PUBLIC xWalkCommon)
+target_link_libraries(xWalkConfig PUBLIC xWalkLibraryCommon)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkConfig PRIVATE

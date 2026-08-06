@@ -91,7 +91,8 @@ boolean XWalkI2cLinux::probeDevice(uint8 address)
     const mutexlock lock(mutex);
     for (uint32 attempt = 0U; attempt < retryCountValue; ++attempt)
     {
-        if (!selectAddress(address))
+        const hal::boolean addressSelected = selectAddress(address);
+        if (addressSelected == false)
         {
             continue;
         }
@@ -102,7 +103,10 @@ boolean XWalkI2cLinux::probeDevice(uint8 address)
         request.size = I2C_SMBUS_QUICK;
         request.data = nullptr;
 
-        if (::ioctl(fileDescriptor, I2C_SMBUS, &request) >= 0)
+        const hal::boolean transferSucceeded =
+            static_cast<hal::boolean>(
+                ::ioctl(fileDescriptor, I2C_SMBUS, &request) >= 0);
+        if (transferSucceeded)
         {
             return true;
         }
@@ -246,7 +250,8 @@ bytevector XWalkI2cLinux::readRegisterDevice(uint8 address, uint8 reg, size leng
     const mutexlock lock(mutex);
     for (uint32 attempt = 0U; attempt < retryCountValue; ++attempt)
     {
-        if (!selectAddress(address))
+        const hal::boolean addressSelected = selectAddress(address);
+        if (addressSelected == false)
         {
             continue;
         }
@@ -307,12 +312,19 @@ boolean XWalkI2cLinux::writeRegisterOnce(uint8 reg, const bytevector& payload)
     request.command = reg;
     request.data = &smbusData;
 
-    if (payload.size() == 1U)
+    const hal::boolean payloadMatched =
+        static_cast<hal::boolean>(
+            payload.size() == 1U);
+    if (payloadMatched)
     {
         smbusData.byte = payload[0U];
         request.size = I2C_SMBUS_BYTE_DATA;
     }
-    else if (payload.size() == 2U)
+    else {
+        const hal::boolean twoBytePayload =
+            static_cast<hal::boolean>(
+                payload.size() == 2U);
+            if (twoBytePayload)
     {
         const uint16 lowByteValue = static_cast<uint16>(payload[0U]);
         const uint16 highByteValue = static_cast<uint16>(payload[1U]);
@@ -329,6 +341,7 @@ boolean XWalkI2cLinux::writeRegisterOnce(uint8 reg, const bytevector& payload)
             smbusData.block[index + 1U] = payload[index];
         }
         request.size = I2C_SMBUS_I2C_BLOCK_DATA;
+    }
     }
 
     return ::ioctl(fileDescriptor, I2C_SMBUS, &request) >= 0;
@@ -367,12 +380,18 @@ boolean XWalkI2cLinux::writeRegisterOnce(uint8 reg, const bytevector& payload)
 void XWalkI2cLinux::writeRegisterDevice(uint8 address, uint8 reg, const bytevector& payload)
 {
     common::validateI2cAddress(address);
-    if (payload.empty())
+    const hal::boolean payloadEmpty =
+        static_cast<hal::boolean>(
+            payload.empty());
+    if (payloadEmpty)
     {
         XHAL_THROW_INVALID_ARGUMENT("I2C register data must not be empty");
     }
 
-    if (payload.size() > XHAL_RPI5CAR_I2C_SMBUS_BLOCK_MAX)
+    const hal::boolean payloadTooLarge =
+        static_cast<hal::boolean>(
+            payload.size() > XHAL_RPI5CAR_I2C_SMBUS_BLOCK_MAX);
+    if (payloadTooLarge)
     {
         XHAL_THROW_OUT_OF_RANGE("I2C register data exceeds SMBus block size");
     }
@@ -380,7 +399,10 @@ void XWalkI2cLinux::writeRegisterDevice(uint8 address, uint8 reg, const bytevect
     const mutexlock lock(mutex);
     for (uint32 attempt = 0U; attempt < retryCountValue; ++attempt)
     {
-        if (selectAddress(address) && writeRegisterOnce(reg, payload))
+        const hal::boolean registerWriteSucceeded =
+            static_cast<hal::boolean>(
+                selectAddress(address) && writeRegisterOnce(reg, payload));
+        if (registerWriteSucceeded)
         {
             return;
         }
@@ -396,15 +418,21 @@ void XWalkI2cLinux::writeRegisterDevice(uint8 address, uint8 reg, const bytevect
 boolean XWalkI2cLinux::tryWriteRegisterDevice(uint8 address, uint8 reg,
     const bytevector& payload) noexcept
 {
-    if ((address > common::I2C_MAXIMUM_SEVEN_BIT_ADDRESS) || payload.empty() ||
-        (payload.size() > XHAL_RPI5CAR_I2C_SMBUS_BLOCK_MAX))
+    const hal::boolean addressPayloadInvalid =
+        static_cast<hal::boolean>(
+            (address > common::I2C_MAXIMUM_SEVEN_BIT_ADDRESS) || payload.empty() ||
+        (payload.size() > XHAL_RPI5CAR_I2C_SMBUS_BLOCK_MAX));
+    if (addressPayloadInvalid)
     {
         return false;
     }
     const mutexlock lock(mutex);
     for (uint32 attempt = 0U; attempt < retryCountValue; ++attempt)
     {
-        if (selectAddress(address) && writeRegisterOnce(reg, payload))
+        const hal::boolean registerWriteSucceeded =
+            static_cast<hal::boolean>(
+                selectAddress(address) && writeRegisterOnce(reg, payload));
+        if (registerWriteSucceeded)
         {
             return true;
         }

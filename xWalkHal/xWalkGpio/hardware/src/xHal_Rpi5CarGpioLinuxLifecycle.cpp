@@ -80,16 +80,22 @@ int32 XWalkGpioLinux::openDevice(cstring devicePath, stringview expectedName,
         XHAL_THROW_RUNTIME_ERROR("Unable to open Linux GPIO device");
     }
     gpiochip_info information{};
-    if (::ioctl(descriptor, GPIO_GET_CHIPINFO_IOCTL, &information) < 0)
+    const hal::boolean chipInformationReadFailed =
+        static_cast<hal::boolean>(
+            ::ioctl(descriptor, GPIO_GET_CHIPINFO_IOCTL, &information) < 0);
+    if (chipInformationReadFailed)
     {
         static_cast<void>(::close(descriptor));
         XHAL_THROW_RUNTIME_ERROR("Unable to inspect Linux GPIO device");
     }
     const string chipName{information.name};
     const string chipLabel{information.label};
-    if ((!expectedName.empty() && (chipName != expectedName)) ||
+    const hal::boolean expectedNameChipNameExpectedLabelInvalid =
+        static_cast<hal::boolean>(
+            (!expectedName.empty() && (chipName != expectedName)) ||
         (!expectedLabel.empty() && (chipLabel != expectedLabel)) ||
-        (information.lines < minimumLineCount))
+        (information.lines < minimumLineCount));
+    if (expectedNameChipNameExpectedLabelInvalid)
     {
         static_cast<void>(::close(descriptor));
         XHAL_THROW_RUNTIME_ERROR("Linux GPIO device identity or line count does not match configuration");
@@ -153,7 +159,10 @@ XWalkGpioLinux::XWalkGpioLinux(cstring devicePath, stringview expectedName,
 XWalkGpioLinux::~XWalkGpioLinux()
 {
     stopRequested.store(true);
-    if (eventThread.joinable())
+    const hal::boolean eventThreadJoinable =
+        static_cast<hal::boolean>(
+            eventThread.joinable());
+    if (eventThreadJoinable)
     {
         eventThread.join();
     }

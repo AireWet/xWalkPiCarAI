@@ -88,7 +88,8 @@ void XWalkMotor::setSpeed(float64 speedPercent)
  */
 void XWalkMotor::stop()
 {
-    if (!stopSafely())
+    const hal::boolean stopped = stopSafely();
+    if (stopped == false)
     {
         XHAL_THROW_RUNTIME_ERROR("motor stop could not disable every PWM output");
     }

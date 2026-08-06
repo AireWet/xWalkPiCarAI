@@ -159,8 +159,11 @@ void wait(XWalkHal::contextpointer context,
         state.observedSpeeds.push_back(state.motors[index]->speed());
         state.observedDirections.push_back(state.directions[index]->value);
     }
-    if ((state.failureWait != 0U) &&
-        (state.durations.size() == state.failureWait))
+    const hal::boolean failureDelayObserved =
+        static_cast<hal::boolean>(
+            (state.failureWait != 0U) &&
+        (state.durations.size() == state.failureWait));
+    if (failureDelayObserved)
     {
         state.failureWait = 0U;
         XHAL_THROW_RUNTIME_ERROR("Simulated motor-sequence wait failure");

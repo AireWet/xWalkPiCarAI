@@ -61,7 +61,10 @@ namespace xwalk::hal
 void XWalkDevice::refresh()
 {
     const filesystempath hatPath = findSupportedHatPath();
-    if (hatPath.empty())
+    const hal::boolean hatPathEmpty =
+        static_cast<hal::boolean>(
+            hatPath.empty());
+    if (hatPathEmpty)
     {
         resetInformation();
         return;
@@ -132,13 +135,19 @@ filesystempath XWalkDevice::findSupportedHatPath() const
     const stringvector entryNames = listFilesystemEntryNames(deviceTreeRootValue);
     for (const string& entryName : entryNames)
     {
-        if (entryName.find(XHAL_RPI5CAR_DEVICE_HAT_NODE_MARKER) == string::npos)
+        const hal::boolean entryNameMatched =
+            static_cast<hal::boolean>(
+                entryName.find(XHAL_RPI5CAR_DEVICE_HAT_NODE_MARKER) == string::npos);
+        if (entryNameMatched)
         {
             continue;
         }
         const filesystempath candidatePath = deviceTreeRootValue / entryName;
         const filesystempath uuidPath = candidatePath / XHAL_RPI5CAR_DEVICE_UUID_PROPERTY;
-        if (!filesystemEntryExists(uuidPath) || !isRegularFile(uuidPath))
+        const hal::boolean uuidFileUnavailable =
+            static_cast<hal::boolean>(
+                !filesystemEntryExists(uuidPath) || !isRegularFile(uuidPath));
+        if (uuidFileUnavailable)
         {
             continue;
         }
@@ -174,12 +183,18 @@ string XWalkDevice::readProperty(const filesystempath& hatPath,
     stringview propertyName, boolean removeTrailingNull)
 {
     const filesystempath propertyPath = hatPath / string(propertyName);
-    if (!filesystemEntryExists(propertyPath) || !isRegularFile(propertyPath))
+    const hal::boolean propertyFileUnavailable =
+        static_cast<hal::boolean>(
+            !filesystemEntryExists(propertyPath) || !isRegularFile(propertyPath));
+    if (propertyFileUnavailable)
     {
         XHAL_THROW_RUNTIME_ERROR("Device-tree property is absent or not a regular file");
     }
     string propertyValue = readFileContents(propertyPath);
-    if (removeTrailingNull && !propertyValue.empty() && (propertyValue.back() == '\0'))
+    const hal::boolean trailingNullPresent =
+        static_cast<hal::boolean>(
+            removeTrailingNull && !propertyValue.empty() && (propertyValue.back() == '\0'));
+    if (trailingNullPresent)
     {
         propertyValue.pop_back();
     }
@@ -204,8 +219,11 @@ string XWalkDevice::readProperty(const filesystempath& hatPath,
 uint32 XWalkDevice::parseHexProperty(stringview text, cstring propertyName)
 {
     size firstDigit = 0U;
-    if ((text.size() >= 2U) && (text[0U] == '0') &&
-        ((text[1U] == 'x') || (text[1U] == 'X')))
+    const hal::boolean textXInvalid =
+        static_cast<hal::boolean>(
+            (text.size() >= 2U) && (text[0U] == '0') &&
+        ((text[1U] == 'x') || (text[1U] == 'X')));
+    if (textXInvalid)
     {
         firstDigit = 2U;
     }

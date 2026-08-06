@@ -90,7 +90,10 @@ string XWalkLanguageModelOllama::systemPostJson(contextpointer context,
         XHAL_THROW_RUNTIME_ERROR("Ollama libcurl header allocation failed");
     }
     const string authorizationHeaderCopy{authorizationHeader};
-    if (!authorizationHeaderCopy.empty())
+    const hal::boolean authorizationHeaderCopyAvailable =
+        static_cast<hal::boolean>(
+            !authorizationHeaderCopy.empty());
+    if (authorizationHeaderCopyAvailable)
     {
         curl_slist* authenticatedHeaders =
             ::curl_slist_append(headers, authorizationHeaderCopy.c_str());
@@ -167,17 +170,23 @@ string XWalkLanguageModelOllama::systemPostJson(contextpointer context,
 size XWalkLanguageModelOllama::systemWriteResponse(charpointer data,
     size itemSize, size itemCount, contextpointer userData)
 {
-    if ((data == nullptr) || (userData == nullptr) ||
+    const hal::boolean userDataItemCountItemSizeInvalid =
+        static_cast<hal::boolean>(
+            (data == nullptr) || (userData == nullptr) ||
         ((itemCount != 0U) &&
-        (itemSize > (std::numeric_limits<size>::max() / itemCount))))
+        (itemSize > (std::numeric_limits<size>::max() / itemCount))));
+    if (userDataItemCountItemSizeInvalid)
     {
         return 0U;
     }
     const size byteCount = itemSize * itemCount;
     XWalkLanguageModelOllamaResponseState& state =
         *static_cast<XWalkLanguageModelOllamaResponseState*>(userData);
-    if ((state.response.size() > state.maximumBytes) ||
-        (byteCount > (state.maximumBytes - state.response.size())))
+    const hal::boolean stateResponseMaximumBytesInvalid =
+        static_cast<hal::boolean>(
+            (state.response.size() > state.maximumBytes) ||
+        (byteCount > (state.maximumBytes - state.response.size())));
+    if (stateResponseMaximumBytesInvalid)
     {
         return 0U;
     }

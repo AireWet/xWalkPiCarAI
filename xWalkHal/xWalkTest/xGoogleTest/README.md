@@ -87,7 +87,7 @@ stored in `config/xHal_Rpi5CarGoogleTestConfig.yml`, copied beside `xGoogleTest`
 and may be overridden without editing the checked-in file:
 
 The generated default uses the target-selected ARM64 or x86-64 Vosk runtime
-and the shared small US English model under the root-level `xWalkLibrary/vosk`. Override
+and the shared small US English model under the root-level `xWalkLibrary/common/models`. Override
 `XWALK_VOSK_ARCHITECTURE`, `XWALK_VOSK_LIBRARY_PATH`, or
 `XWALK_VOSK_MODEL_PATH` during CMake configuration for another target or
 deployment layout.
@@ -111,19 +111,16 @@ cmake --build build-rpi --target xGoogleTest --parallel
 List all hardware cases without running them:
 
 ```sh
-./build-rpi/xGoogleTest --test-profile=hardware \
-    --gtest_filter='*' --gtest_list_tests
+./build-rpi/xGoogleTest --test-profile=hardware --gtest_filter='*' --gtest_list_tests
 ```
 
 Only after confirming the Raspberry Pi, Robot HAT, wiring, power, and
 mechanical clearance, run one selected suite or case:
 
 ```sh
-./build-rpi/xGoogleTest --test-profile=hardware \
-    TEST_SUITE_XWALK_I2C:1
+./build-rpi/xGoogleTest --test-profile=hardware TEST_SUITE_XWALK_I2C:1
 
-./build-rpi/xGoogleTest --test-profile=hardware \
-    TEST_SUITE_XWALK_I2C:Probe:1
+./build-rpi/xGoogleTest --test-profile=hardware TEST_SUITE_XWALK_I2C:Probe:1
 ```
 
 The override is temporary and does not edit either XML file. Running with only

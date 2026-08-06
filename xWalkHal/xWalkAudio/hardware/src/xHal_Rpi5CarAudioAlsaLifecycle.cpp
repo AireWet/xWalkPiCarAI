@@ -77,7 +77,10 @@ void XWalkAudioAlsa::validateConstruction(const XWalkAudioAlsaOperations& backen
     {
         XHAL_THROW_INVALID_ARGUMENT("ALSA audio operations must not be null");
     }
-    if (pcmDeviceName.empty() || mixerDeviceName.empty() || mixerElementName.empty())
+    const hal::boolean audioConfigurationInvalid =
+        static_cast<hal::boolean>(
+            pcmDeviceName.empty() || mixerDeviceName.empty() || mixerElementName.empty());
+    if (audioConfigurationInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("ALSA audio device and mixer names must not be empty");
     }

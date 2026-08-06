@@ -29,7 +29,7 @@ Complete this section later on the supported ARM target or with a verified ARM t
 
 - [ ] The package architecture is the target architecture, normally `arm64`.
 - [ ] `dpkg-deb --contents` shows only the documented `/usr`, `/etc`, `/var`, and `/run` layout.
-- [ ] `/etc/xwalk/picar-x.conf` and `/etc/xwalk/xwalk-service.conf` are Debian conffiles.
+- [ ] `/etc/xwalk/picar-x.conf`, its `picar-x.d` fragments, and `xwalk-service.conf` are Debian conffiles.
 - [ ] `lintian` has no unexplained error or warning.
 - [ ] Installation and removal succeed on a clean disposable Raspberry Pi image.
 - [ ] Upgrade preserves administrator configuration and mutable calibration state.

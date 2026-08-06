@@ -9,8 +9,8 @@ set(XWALK_GPT_BUILD_HARDWARE_TESTS ${XWALK_VOICE_ASSISTANT_BUILD_HARDWARE_TESTS}
 set(XWALK_LANGUAGE_MODEL_BUILD_HOST_TESTS ${XWALK_VOICE_ASSISTANT_BUILD_HOST_TESTS})
 set(XWALK_LANGUAGE_MODEL_BUILD_HARDWARE_TESTS ${XWALK_VOICE_ASSISTANT_BUILD_HARDWARE_TESTS})
 
-if(NOT TARGET xWalkCommon)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
 
 if(NOT TARGET xWalkGPT)
@@ -29,7 +29,7 @@ add_library(xWalkVoiceAssistant STATIC
 
 target_include_directories(xWalkVoiceAssistant PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkVoiceAssistant PUBLIC cxx_std_17)
-target_link_libraries(xWalkVoiceAssistant PUBLIC xWalkGPT xWalkLanguageModel xWalkCommon)
+target_link_libraries(xWalkVoiceAssistant PUBLIC xWalkGPT xWalkLanguageModel xWalkLibraryCommon)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkVoiceAssistant PRIVATE

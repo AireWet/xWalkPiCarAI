@@ -69,7 +69,10 @@ namespace xwalk::hal
  */
 void XWalkPwm::setFrequency(float64 frequencyHz)
 {
-    if (!XHAL_IS_FINITE(frequencyHz) || frequencyHz <= 0.0)
+    const hal::boolean frequencyHzInvalid =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(frequencyHz) || frequencyHz <= 0.0);
+    if (frequencyHzInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("frequency must be greater than zero");
     }

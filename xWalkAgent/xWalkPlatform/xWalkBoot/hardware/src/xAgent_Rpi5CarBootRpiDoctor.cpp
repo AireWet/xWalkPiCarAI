@@ -1,0 +1,44 @@
+/******************************************************************************
+ * @file        xAgent_Rpi5CarBootRpiDoctor.cpp
+ * @brief       Composes the passive Raspberry Pi Doctor mode.
+ *
+ * @details
+ * Produces the deployment inspection service without claiming actuator or
+ * media resources.
+ *
+ * @project     xWalk Firmware
+ * @module      xWalkBoot RPi
+ * @author      Joxy John
+ * @date        2026-08-06
+ * @version     1.0.0
+ * @copyright
+ * Copyright (c) 2026 Joxy John.
+ * All rights reserved.
+ * @note
+ * Developed using MISRA C++ coding guidelines.
+ ******************************************************************************/
+
+#include "xAgent_Rpi5CarBootRpi.h"
+
+#include "xAgent_Rpi5CarDoctorLinux.h"
+
+namespace xwalk::agent
+{
+
+/**
+ * @brief Runs the passive Doctor mode.
+ * @param[in,out] context Nullable caller-owned application context.
+ * @param[in] callback Non-null synchronous application callback.
+ * @return Status returned by `callback`.
+ */
+agent::int32 XWalkBootRpi::runDoctor(agent::contextpointer context,
+    bootapplicationcallback callback)
+{
+    const agent::stringvector doctorLines =
+        XWalkDoctorLinux::inspect(configurationFilePath);
+    XWalkBootServices services{};
+    services.doctorLines = &doctorLines;
+    return callback(context, services);
+}
+
+} /* namespace xwalk::agent */

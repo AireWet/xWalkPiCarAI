@@ -71,7 +71,10 @@ void XWalkAdxl345::configureMeasurement()
  */
 float64 XWalkAdxl345::convertSample(const bytevector& sampleBytes)
 {
-    if (sampleBytes.size() != XHAL_RPI5CAR_ADXL345_SAMPLE_LENGTH)
+    const hal::boolean sampleBytesDifferent =
+        static_cast<hal::boolean>(
+            sampleBytes.size() != XHAL_RPI5CAR_ADXL345_SAMPLE_LENGTH);
+    if (sampleBytesDifferent)
     {
         XHAL_THROW_RUNTIME_ERROR("ADXL345 read did not return two bytes");
     }

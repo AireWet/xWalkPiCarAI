@@ -15,8 +15,8 @@ if(XWALK_SPEAKER_NEEDS_ALSA AND NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     message(FATAL_ERROR "xWalkSpeaker ALSA adapter requires Linux")
 endif()
 
-if(NOT TARGET xWalkCommon)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
 
 if(XWALK_SPEAKER_NEEDS_ALSA AND NOT TARGET xWalkAudioAlsa)
@@ -33,7 +33,7 @@ add_library(xWalkSpeaker STATIC
 
 target_include_directories(xWalkSpeaker PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkSpeaker PUBLIC cxx_std_17)
-target_link_libraries(xWalkSpeaker PUBLIC xWalkCommon)
+target_link_libraries(xWalkSpeaker PUBLIC xWalkLibraryCommon)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkSpeaker PRIVATE

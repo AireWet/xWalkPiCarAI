@@ -169,8 +169,11 @@ boolean TestConfig::load(const filesystempath& path, const testsuiteconfigvector
     }
 
     const tinyxml2::XMLElement* root = document.FirstChildElement("testConfiguration");
-    if ((root == nullptr) || (root != document.RootElement()) ||
-        (root->NextSiblingElement() != nullptr))
+    const hal::boolean rootDocumentRootElementInvalid =
+        static_cast<hal::boolean>(
+            (root == nullptr) || (root != document.RootElement()) ||
+        (root->NextSiblingElement() != nullptr));
+    if (rootDocumentRootElementInvalid)
     {
         error = "test configuration must contain one testConfiguration root element";
         return false;
@@ -180,20 +183,29 @@ boolean TestConfig::load(const filesystempath& path, const testsuiteconfigvector
     for (const tinyxml2::XMLElement* suiteElement = root->FirstChildElement();
          suiteElement != nullptr; suiteElement = suiteElement->NextSiblingElement())
     {
-        if (stringview(suiteElement->Name()) != "testSuite")
+        const hal::boolean suiteElementNameTestSuiteDifferent =
+            static_cast<hal::boolean>(
+                stringview(suiteElement->Name()) != "testSuite");
+        if (suiteElementNameTestSuiteDifferent)
         {
             error = "unexpected XML element under testConfiguration: " +
                 string(suiteElement->Name());
             return false;
         }
         const char* suiteNameValue = suiteElement->Attribute("name");
-        if ((suiteNameValue == nullptr) || (stringview(suiteNameValue).empty()))
+        const hal::boolean suiteNameInvalid =
+            static_cast<hal::boolean>(
+                (suiteNameValue == nullptr) || (stringview(suiteNameValue).empty()));
+        if (suiteNameInvalid)
         {
             error = "testSuite requires a non-empty name attribute";
             return false;
         }
         const string suiteName(suiteNameValue);
-        if (seenSuites.count(suiteName) != 0U)
+        const hal::boolean seenSuitesCountSuiteNameDifferent =
+            static_cast<hal::boolean>(
+                seenSuites.count(suiteName) != 0U);
+        if (seenSuitesCountSuiteNameDifferent)
         {
             error = "duplicate test suite in XML: " + suiteName;
             return false;
@@ -207,7 +219,9 @@ boolean TestConfig::load(const filesystempath& path, const testsuiteconfigvector
 
         TestSuiteConfig configuredSuite;
         configuredSuite.name = suiteName;
-        if (!readEnabled(*suiteElement, configuredSuite.enabled))
+        const hal::boolean suiteEnabledRead =
+            readEnabled(*suiteElement, configuredSuite.enabled);
+        if (suiteEnabledRead == false)
         {
             error = "suite enabled attribute must be 0 or 1: " + suiteName;
             return false;
@@ -217,24 +231,36 @@ boolean TestConfig::load(const filesystempath& path, const testsuiteconfigvector
         for (const tinyxml2::XMLElement* caseElement = suiteElement->FirstChildElement();
              caseElement != nullptr; caseElement = caseElement->NextSiblingElement())
         {
-            if (stringview(caseElement->Name()) != "testCase")
+            const hal::boolean caseElementNameTestCaseDifferent =
+                static_cast<hal::boolean>(
+                    stringview(caseElement->Name()) != "testCase");
+            if (caseElementNameTestCaseDifferent)
             {
                 error = "unexpected XML element in suite " + suiteName + ": " + caseElement->Name();
                 return false;
             }
             const char* caseNameValue = caseElement->Attribute("name");
-            if ((caseNameValue == nullptr) || (stringview(caseNameValue).empty()))
+            const hal::boolean caseNameInvalid =
+                static_cast<hal::boolean>(
+                    (caseNameValue == nullptr) || (stringview(caseNameValue).empty()));
+            if (caseNameInvalid)
             {
                 error = "testCase requires a non-empty name in suite " + suiteName;
                 return false;
             }
             const string caseName(caseNameValue);
-            if (seenCases.count(caseName) != 0U)
+            const hal::boolean seenCasesCountCaseNameDifferent =
+                static_cast<hal::boolean>(
+                    seenCases.count(caseName) != 0U);
+            if (seenCasesCountCaseNameDifferent)
             {
                 error = "duplicate test case in XML: " + suiteName + "." + caseName;
                 return false;
             }
-            if (findCase(*availableSuite, caseName) == nullptr)
+            const hal::boolean findCaseAvailableSuiteCaseNameMatched =
+                static_cast<hal::boolean>(
+                    findCase(*availableSuite, caseName) == nullptr);
+            if (findCaseAvailableSuiteCaseNameMatched)
             {
                 error = "unknown test case in XML: " + suiteName + "." + caseName;
                 return false;
@@ -242,7 +268,9 @@ boolean TestConfig::load(const filesystempath& path, const testsuiteconfigvector
 
             TestCaseConfig configuredCase;
             configuredCase.name = caseName;
-            if (!readEnabled(*caseElement, configuredCase.enabled))
+            const hal::boolean caseEnabledRead =
+                readEnabled(*caseElement, configuredCase.enabled);
+            if (caseEnabledRead == false)
             {
                 error = "case enabled attribute must be 0 or 1: " + suiteName + "." + caseName;
                 return false;
@@ -251,7 +279,10 @@ boolean TestConfig::load(const filesystempath& path, const testsuiteconfigvector
             seenCases[caseName] = true;
         }
 
-        if (configuredSuite.cases.size() != availableSuite->cases.size())
+        const hal::boolean configuredSuiteCasesAvailableSuiteDifferent =
+            static_cast<hal::boolean>(
+                configuredSuite.cases.size() != availableSuite->cases.size());
+        if (configuredSuiteCasesAvailableSuiteDifferent)
         {
             error = "suite is missing one or more registered cases: " + suiteName;
             return false;
@@ -260,7 +291,10 @@ boolean TestConfig::load(const filesystempath& path, const testsuiteconfigvector
         seenSuites[suiteName] = true;
     }
 
-    if (suitesValue.size() != availableSuites.size())
+    const hal::boolean suitesAvailableSuitesDifferent =
+        static_cast<hal::boolean>(
+            suitesValue.size() != availableSuites.size());
+    if (suitesAvailableSuitesDifferent)
     {
         error = "test configuration is missing one or more registered suites";
         suitesValue.clear();

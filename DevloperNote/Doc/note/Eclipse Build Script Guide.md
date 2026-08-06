@@ -1,7 +1,7 @@
 # Eclipse Build Script Guide
 
 [`xWalkTool/shell/eclipse-build.sh`](../../../xWalkTool/shell/eclipse-build.sh)
-configures and builds the host CLI tree used by the repository's Eclipse
+configures, builds, and tests the host CLI tree used by the repository's Eclipse
 workflow. It does not configure Raspberry Pi backends or access physical hardware.
 
 ## Fixed configuration
@@ -10,14 +10,33 @@ The script always uses:
 
 | Setting | Value |
 | --- | --- |
-| Source tree | `xWalkCLI` |
-| Build tree | `xWalkCLI/build-eclipse-host` |
+| Source tree | `xWalkController` |
+| Build tree | `xWalkController/build-eclipse-host` |
 | Host option | `XWALK_CLI_BUILD_HOST=ON` |
 | Build type | `Debug` |
 | Compilation database | Enabled |
+| Host CTest inventory | Runs after a successful build |
 
 The source and build paths are resolved from the script location. Running it from another working directory
 does not redirect its output.
+
+## Eclipse project metadata
+
+Import the repository root as the Eclipse CDT project. The checked-in metadata
+provides the following workspace behavior:
+
+| File | Responsibility |
+| --- | --- |
+| `.project` | Project identity and the external host-build command |
+| `.cproject` | C++17 language, source exclusions, and workspace include paths |
+| `.settings/org.eclipse.cdt.core.prefs` | Fast Indexer and complete source/header indexing |
+| `.settings/org.eclipse.core.resources.prefs` | UTF-8 project text encoding |
+
+The CDT indexer covers source files outside the active build and unused C++
+headers. Generated `build*` and `CMakeFiles` directories remain excluded by
+`.cproject`, preventing generated build trees from being indexed as project
+source. CMake compilation and CTest results remain authoritative when an
+editor diagnostic differs from the configured build.
 
 ## Configure and build
 
@@ -25,8 +44,10 @@ does not redirect its output.
 xWalkTool/shell/eclipse-build.sh
 ```
 
-This command configures the existing or new build tree and then runs a parallel build. The generated
-`compile_commands.json` can be used by Eclipse, Clang-Tidy, and compatible editor tooling.
+This command configures the existing or new build tree, runs a parallel build, and executes every registered
+host test. This includes the root `xWalkAgentGoogleTest`, all seven Agent group suites, centralized CLI tests,
+and the module tests pulled into the CLI host composition. The generated `compile_commands.json` can be used
+by Eclipse, Clang-Tidy, and compatible editor tooling.
 
 ## Clean the configured build
 
@@ -34,8 +55,9 @@ This command configures the existing or new build tree and then runs a parallel 
 xWalkTool/shell/eclipse-build.sh clean
 ```
 
-The script still runs CMake configuration first, then invokes the configured `clean` target. It retains the
-build directory and CMake cache. Use the clean-build tool when the entire generated directory must be removed.
+The script removes the complete generated Eclipse build directory. This also removes stale compiler dependency
+metadata after source or header renames. Use the clean-build tool to preview or remove all recognized workspace
+build output instead.
 
 ```sh
 xWalkTool/shell/clean-build.sh --dry-run
@@ -47,8 +69,8 @@ The script currently has no `--help` option and parses only the first argument. 
 the no-argument build and the `clean` action. Any other first argument currently falls through to a normal
 build, so do not rely on unknown-argument rejection.
 
-Configuration or compilation failures stop the script with the failing CMake status. Existing output in
-`xWalkCLI/build-eclipse-host` is reused unless it is cleaned or removed explicitly.
+Configuration, compilation, or test failures stop the script with the failing status. Existing output in
+`xWalkController/build-eclipse-host` is reused until the `clean` action removes it explicitly.
 
 ## Verification
 
@@ -58,4 +80,4 @@ Syntax validation does not configure or build:
 bash -n xWalkTool/shell/eclipse-build.sh
 ```
 
-Running the script itself writes generated host output and performs compilation. It does not run CTest.
+Running the script itself writes generated host output, performs compilation, and runs CTest.

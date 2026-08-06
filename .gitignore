@@ -88,6 +88,7 @@ junit.xml
 __pycache__/
 *.py[cod]
 .codex/
+/.xWalkPyEnv/
 
 # OS and personal workspace metadata
 .DS_Store
@@ -97,7 +98,14 @@ Desktop.ini
 **/.obsidian/
 
 # Local deployment configuration and credentials
-/xWalkCLI/xWalkController/config/picar-x.local.conf
+/xWalkController/xWalkConfig/picar-x.local.conf
+**/xWalkLicense.*.json
+!/xWalkTool/environment/xWalkLicense.json
+**/xWalkLicense.decrypted.json
+**/decrypted-license*.json
+**/decrypted-environment*.json
+*.private.key
+*.secret
 .env
 .env.*
 !.env.example

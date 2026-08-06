@@ -6,11 +6,23 @@ The three voice Agents remain provider-neutral:
 - `xWalkVoiceActiveCar` adds sensors, camera input, and bounded actions.
 - `xWalkVoiceActiveCarGpt` supplies the Buddy English behavior profile.
 
-`xWalkBootRpi` selects the HTTP backend from the deployment configuration. The
-tracked template is
-`xWalkCLI/xWalkController/config/picar-x.conf`. An installed deployment normally
-uses `/var/lib/xwalk/picar-x.conf`; `/etc/xwalk/picar-x.conf` is the immutable
-administrator-controlled template.
+`xWalkBootRpi` selects the HTTP backend from the layered deployment
+configuration. The tracked `xWalkController/xWalkConfig/picar-x.conf` manifest
+includes functional fragments below `picar-x.d`. An installed deployment
+normally uses `/var/lib/xwalk/picar-x.conf` and `/var/lib/xwalk/picar-x.d`;
+`/etc/xwalk` contains the administrator-controlled templates.
+
+Generic provider profiles are separate files below `picar-x.d/ai/providers`:
+
+- `ollama.conf`;
+- `openai.conf`;
+- `gemini.conf`;
+- `anthropic.conf`;
+- `openai-compatible.conf`.
+
+Enable exactly one provider include in the manifest. Ollama is enabled by
+default. The adjacent `ai/features.conf` retains settings for commands with a
+fixed backend, including local voice chat, Rolly, GPT car, and text vision.
 
 ## Configuration keys
 
@@ -18,39 +30,66 @@ administrator-controlled template.
 | --- | --- |
 | `voice_language_model_provider` | Selects the HTTP dialect and validation policy |
 | `voice_language_model_endpoint` | Complete chat endpoint URL |
-| `voice_language_model_model` | Exact deployment-selected model identifier |
-| `voice_language_model_api_key` | Bearer credential; empty only for Ollama |
+| `voice_language_model_model_environment` | Environment variable containing the model identifier |
+| `voice_language_model_api_key_environment` | Environment variable containing the bearer credential |
 | `voice_language_model_maximum_output_tokens` | Non-zero requested response bound |
 
-The key is never included in model JSON, conversation history, or Doctor output.
-The configuration file itself contains the credential, so keep a populated copy
-out of source control and restrict it to the runtime user and administrator.
+The credential and generic model selection are not stored in controller
+configuration. Provider files contain only their environment-variable names.
+Neither value is added to conversation history or Doctor output. Calibration
+writes remain in the primary file; included defaults are never rewritten by
+`XWalkConfigStore`.
+
+`xWalkTool/shell/xWalkEnv.sh` is the reviewed environment-loader boundary. It
+uses `xWalkTool/python/xWalkLicenseTool` to authenticate and decrypt the
+fixed `xWalkLibrary/X_WALK_LICENSE.KEY` path. It validates every supported model
+and credential name before exporting anything, never evaluates values as shell
+syntax, and removes its mode-`0600` temporary JSON file. Source the loader so
+the variables remain in the calling shell:
+
+```sh
+source xWalkTool/shell/xWalkEnv.sh
+```
+
+Create the encrypted file from the committed empty template or repeated
+`--env` arguments by following the
+[licence-key workflow](License%20Key%20Workflow.md). Keep the generated
+decryption key outside the repository. The loader requests it interactively and
+rejects an unprovisioned, modified, incomplete, or group/world-readable file.
 
 For development, create the already-ignored local file and restrict its mode:
 
 ```sh
-cp xWalkCLI/xWalkController/config/picar-x.conf xWalkCLI/xWalkController/config/picar-x.local.conf
-chmod 0600 xWalkCLI/xWalkController/config/picar-x.local.conf
+cp xWalkController/xWalkConfig/picar-x.conf xWalkController/xWalkConfig/picar-x.local.conf
+chmod 0600 xWalkController/xWalkConfig/picar-x.local.conf
 ```
+
+Select a different provider include in `picar-x.local.conf`. Provision the
+complete licence template, then export its configured model and credential
+variables by sourcing `xWalkEnv.sh`.
 
 Run a voice command with that explicit absolute path:
 
 ```sh
-/usr/bin/xwalk-picarx-control --deployment-config /absolute/path/to/xWalkCLI/xWalkController/config/picar-x.local.conf voice-chat start
+/usr/bin/xwalk-picarx-control --deployment-config /absolute/path/to/xWalkController/xWalkConfig/picar-x.local.conf voice-chat start
 ```
 
-Do not add a real API key to `picar-x.conf`, documentation, tests, logs, shell
-history, or a service unit. Rotate a key immediately if it is exposed.
+Do not add a real API key to a tracked provider file, `picar-x.conf`,
+documentation, tests, logs, shell history, systemd environment file, or service
+unit. Rotate a key immediately if exposed.
 
 ## Provider values
 
-| Provider | Endpoint contract | API key |
+| Provider | Model environment | Credential environment |
 | --- | --- | --- |
-| `ollama` | HTTP or HTTPS URL ending in `/api/chat` | Must be empty |
-| `openai` or `chatgpt` | HTTPS URL ending in `/chat/completions` | Required |
-| `gemini` | Gemini OpenAI-compatible HTTPS chat endpoint | Required |
-| `claude` or `anthropic` | Claude OpenAI-compatible HTTPS chat endpoint | Required |
-| `openai_compatible` | Deployment-verified compatible HTTPS endpoint | Required |
+| `ollama` | `OLLAMA_MODEL` | Empty; no credential |
+| `openai` or `chatgpt` | `OPENAI_MODEL` | `OPENAI_API_KEY` |
+| `gemini` | `GEMINI_MODEL` | `GEMINI_API_KEY` |
+| `claude` or `anthropic` | `ANTHROPIC_MODEL` | `ANTHROPIC_API_KEY` |
+| `openai_compatible` | `XWALK_AI_MODEL` | `XWALK_AI_API_KEY` |
+
+Ollama uses an HTTP or HTTPS endpoint ending in `/api/chat`. Cloud providers
+use their configured OpenAI-compatible HTTPS chat endpoints.
 
 The firmware does not embed default cloud model names. Provider model catalogs
 change independently of this repository, so configure an exact model supported
@@ -73,8 +112,8 @@ Ollama:
 ```ini
 voice_language_model_provider = ollama
 voice_language_model_endpoint = http://127.0.0.1:11434/api/chat
-voice_language_model_model = qwen2.5:0.5b
-voice_language_model_api_key =
+voice_language_model_model_environment = OLLAMA_MODEL
+voice_language_model_api_key_environment =
 ```
 
 ChatGPT through OpenAI:
@@ -82,8 +121,8 @@ ChatGPT through OpenAI:
 ```ini
 voice_language_model_provider = openai
 voice_language_model_endpoint = https://api.openai.com/v1/chat/completions
-voice_language_model_model = DEPLOYMENT_SELECTED_MODEL
-voice_language_model_api_key = DEPLOYMENT_SECRET
+voice_language_model_model_environment = OPENAI_MODEL
+voice_language_model_api_key_environment = OPENAI_API_KEY
 ```
 
 Gemini compatibility endpoint:
@@ -91,8 +130,8 @@ Gemini compatibility endpoint:
 ```ini
 voice_language_model_provider = gemini
 voice_language_model_endpoint = https://generativelanguage.googleapis.com/v1beta/openai/chat/completions
-voice_language_model_model = DEPLOYMENT_SELECTED_MODEL
-voice_language_model_api_key = DEPLOYMENT_SECRET
+voice_language_model_model_environment = GEMINI_MODEL
+voice_language_model_api_key_environment = GEMINI_API_KEY
 ```
 
 Claude compatibility endpoint:
@@ -100,16 +139,16 @@ Claude compatibility endpoint:
 ```ini
 voice_language_model_provider = claude
 voice_language_model_endpoint = https://api.anthropic.com/v1/chat/completions
-voice_language_model_model = DEPLOYMENT_SELECTED_MODEL
-voice_language_model_api_key = DEPLOYMENT_SECRET
+voice_language_model_model_environment = ANTHROPIC_MODEL
+voice_language_model_api_key_environment = ANTHROPIC_API_KEY
 ```
 
 ## Validation
 
 Doctor validates configuration without contacting a model service. It verifies
 the native Ollama executable and configured model manifest, or validates that a
-cloud provider has HTTPS, a model, and a non-empty credential. It never prints
-the credential.
+cloud provider has HTTPS and non-empty values in the configured model and
+credential environment variables. It never prints the credential value.
 
 ```sh
 /usr/bin/xwalk-picarx-control --deployment-config /var/lib/xwalk/picar-x.conf doctor

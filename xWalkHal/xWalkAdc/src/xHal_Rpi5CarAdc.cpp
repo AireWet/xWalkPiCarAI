@@ -55,7 +55,10 @@ uint16 XWalkAdc::read()
     const bytevector commandPayload{0U, 0U};
     i2cObject->writeRegister(addressValue, commandValue, commandPayload);
     const bytevector sampleBytes = i2cObject->read(addressValue, XHAL_RPI5CAR_ADC_READ_LENGTH);
-    if (sampleBytes.size() != XHAL_RPI5CAR_ADC_READ_LENGTH)
+    const hal::boolean sampleBytesDifferent =
+        static_cast<hal::boolean>(
+            sampleBytes.size() != XHAL_RPI5CAR_ADC_READ_LENGTH);
+    if (sampleBytesDifferent)
     {
         XHAL_THROW_RUNTIME_ERROR("ADC read did not return two bytes");
     }

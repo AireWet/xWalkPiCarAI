@@ -13,8 +13,8 @@ if(XWALK_LED_BUILD_HARDWARE_TESTS AND NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     message(FATAL_ERROR "xWalkLed hardware tests require the Linux GPIO character-device API")
 endif()
 
-if(NOT TARGET xWalkCommon)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
 
 if(NOT TARGET xWalkGpio)
@@ -35,7 +35,7 @@ add_library(xWalkRgbLed ALIAS xWalkLed)
 
 target_include_directories(xWalkLed PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkLed PUBLIC cxx_std_17)
-target_link_libraries(xWalkLed PUBLIC xWalkCommon xWalkGpio xWalkPwm)
+target_link_libraries(xWalkLed PUBLIC xWalkLibraryCommon xWalkGpio xWalkPwm)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkLed PRIVATE

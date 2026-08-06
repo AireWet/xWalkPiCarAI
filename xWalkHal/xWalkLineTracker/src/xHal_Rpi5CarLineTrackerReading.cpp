@@ -215,7 +215,10 @@ float64 XWalkLineTracker::getLinePosition(const linetrackervalues& data)
     {
         return 0.0;
     }
-    if (!isOnLine(data))
+    const hal::boolean onLineNotMatched =
+        static_cast<hal::boolean>(
+            !isOnLine(data));
+    if (onLineNotMatched)
     {
         return 0.0;
     }
@@ -272,7 +275,10 @@ boolean XWalkLineTracker::isOnLine()
  */
 boolean XWalkLineTracker::isOnLine(const linetrackervalues& data) const noexcept
 {
-    if (isOnCliff(data))
+    const hal::boolean onCliffMatched =
+        static_cast<hal::boolean>(
+            isOnCliff(data));
+    if (onCliffMatched)
     {
         return false;
     }

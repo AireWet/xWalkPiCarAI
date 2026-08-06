@@ -12,6 +12,7 @@ cmake
 ninja-build
 pkg-config
 python3
+python3-nacl
 libasound2-dev
 libcurl4-openssl-dev
 libprotobuf-dev
@@ -50,6 +51,7 @@ cmake
 ninja-build
 pkg-config
 python3
+python3-nacl
 linux-libc-dev
 libasound2-dev
 alsa-utils
@@ -61,10 +63,13 @@ libgrpc++-dev
 libgtest-dev
 libtinyxml2-dev
 libyaml-cpp-dev
+libopencv-dev
+libboost-dev
 i2c-tools
 libi2c-dev
 gpiod
 espeak-ng
+libttspico-utils
 curl
 ca-certificates
 
@@ -82,114 +87,120 @@ XWALKHAL MODULE DEPENDENCY MAP
 # HOST BUILD AND TEST packages above unless another dependency is stated.
 
 xWalkHal aggregate target
-Internal: every xWalkHal module listed below, plus xWalkCommon
+Internal: every xWalkHal module listed below, plus xWalkLibraryCommon
 APT: the complete RASPBERRY PI BUILD AND RUNTIME list and one camera profile above
 
-xWalkCommon
+xWalkLibraryCommon
 Internal: none
 APT: none beyond the compiler and standard C++ runtime from build-essential
 
 xWalkI2c
-Internal: xWalkCommon
+Internal: xWalkLibraryCommon
 APT: linux-libc-dev, libi2c-dev, i2c-tools
 
 xWalkSpi
-Internal: xWalkCommon
+Internal: xWalkLibraryCommon
 APT: linux-libc-dev
 Runtime interface: the kernel must expose the configured /dev/spidevN.N device
 
 xWalkGpio
-Internal: xWalkCommon
+Internal: xWalkLibraryCommon
 APT: linux-libc-dev, gpiod
 
 xWalkAudio
-Internal: xWalkCommon
+Internal: xWalkLibraryCommon
 APT: libasound2-dev, alsa-utils
 
 xWalkConfig
-Internal: xWalkCommon
+Internal: xWalkLibraryCommon
 APT: none
 
 xWalkTrace
-Internal: xWalkCommon
+Internal: xWalkLibraryCommon
 APT: none
 
 xWalkUtils
-Internal: xWalkCommon
+Internal: xWalkLibraryCommon
 APT: none beyond the Linux/POSIX runtime supplied by the operating system
 
 xWalkLanguageModel
-Internal: xWalkCommon
+Internal: xWalkLibraryCommon
 APT: libcurl4-openssl-dev, curl, ca-certificates
 External runtime: Ollama executable and model when its provider is selected
 
 xWalkMusic
-Internal: xWalkCommon, xWalkAudio
+Internal: xWalkLibraryCommon, xWalkAudio
 APT: libasound2-dev, alsa-utils, libsndfile1-dev
 
 xWalkSpeaker
-Internal: xWalkCommon, xWalkAudio
+Internal: xWalkLibraryCommon, xWalkAudio
 APT: libasound2-dev, alsa-utils
 
 xWalkPwm
-Internal: xWalkCommon, xWalkI2c
+Internal: xWalkLibraryCommon, xWalkI2c
 APT: linux-libc-dev, libi2c-dev, i2c-tools
 
 xWalkAdc
-Internal: xWalkCommon, xWalkI2c
+Internal: xWalkLibraryCommon, xWalkI2c
 APT: linux-libc-dev, libi2c-dev, i2c-tools
 
 xWalkServo
-Internal: xWalkCommon, xWalkPwm
+Internal: xWalkLibraryCommon, xWalkPwm
 APT: linux-libc-dev, libi2c-dev, i2c-tools
 
 xWalkAdxl345
-Internal: xWalkCommon, xWalkI2c
+Internal: xWalkLibraryCommon, xWalkI2c
 APT: linux-libc-dev, libi2c-dev, i2c-tools
 
 xWalkLineTracker
-Internal: xWalkCommon, xWalkAdc
+Internal: xWalkLibraryCommon, xWalkAdc
 APT: linux-libc-dev, libi2c-dev, i2c-tools
 
 xWalkUltrasonic
-Internal: xWalkCommon, xWalkGpio
+Internal: xWalkLibraryCommon, xWalkGpio
 APT: linux-libc-dev, gpiod
 
 xWalkMotor
-Internal: xWalkCommon, xWalkPwm, xWalkGpio
+Internal: xWalkLibraryCommon, xWalkPwm, xWalkGpio
 APT: linux-libc-dev, libi2c-dev, i2c-tools, gpiod
 
 xWalkLed
-Internal: xWalkCommon, xWalkGpio, xWalkPwm
+Internal: xWalkLibraryCommon, xWalkGpio, xWalkPwm
 APT: linux-libc-dev, libi2c-dev, i2c-tools, gpiod
 
 xWalkBuzzer
-Internal: xWalkCommon, xWalkPwm, xWalkGpio
+Internal: xWalkLibraryCommon, xWalkPwm, xWalkGpio
 APT: linux-libc-dev, libi2c-dev, i2c-tools, gpiod
 
 xWalkCamera
-Internal: xWalkCommon
+Internal: xWalkLibraryCommon
 APT: rpicam-apps for CSI, or ffmpeg for USB
 
+xWalkComputerVision
+Internal: xWalkLibraryCommon
+APT: libopencv-dev
+Runtime interface: the configured Linux camera device and readable Haar cascade
+
 xWalkUserButton
-Internal: xWalkCommon, xWalkGpio
+Internal: xWalkLibraryCommon, xWalkGpio
 APT: linux-libc-dev, gpiod
 
 xWalkBoardControl
-Internal: xWalkAdc, xWalkCommon, xWalkGpio, xWalkI2c
+Internal: xWalkAdc, xWalkLibraryCommon, xWalkGpio, xWalkI2c
 APT: linux-libc-dev, libi2c-dev, i2c-tools, gpiod
 
 xWalkRobot
-Internal: xWalkCommon, xWalkServo, xWalkConfig
+Internal: xWalkLibraryCommon, xWalkServo, xWalkConfig
 APT: linux-libc-dev, libi2c-dev, i2c-tools
 
 xWalkGPT
-Internal: xWalkBoardControl, xWalkCommon, xWalkAudio
-APT: libasound2-dev, alsa-utils, libatomic1, espeak-ng, linux-libc-dev, libi2c-dev, i2c-tools, gpiod
-Project runtime: `xWalkLibrary/vosk` supplies ARM64/x86-64 Vosk libraries and one voice model
+Internal: xWalkBoardControl, xWalkLibraryCommon, xWalkAudio
+APT: libasound2-dev, alsa-utils, libatomic1, espeak-ng, libttspico-utils, linux-libc-dev, libi2c-dev,
+  i2c-tools, gpiod
+Project runtime: `xWalkLibrary/{aarch64,x86_64}` supplies Vosk and `common` supplies its voice model
 
 xWalkVoiceAssistant
-Internal: xWalkGPT, xWalkLanguageModel, xWalkCommon
+Internal: xWalkGPT, xWalkLanguageModel, xWalkLibraryCommon
 APT: dependencies inherited from xWalkGPT and xWalkLanguageModel
 External runtime: the configured Vosk and language-model providers
 
@@ -202,6 +213,7 @@ protobuf-compiler-grpc
 
 NOT MANAGED BY THIS APT MANIFEST
 # Reviewed ARM64/x86-64 Vosk libraries and a shared model are under root-level xWalkLibrary.
+# Other portable libraries may also use that project prefix; this manifest supplies the system fallback.
 # Ollama requires its executable and separately downloaded model manifests.
 # Neither optional component is installed into a system prefix by setup-rpi.sh; enable
 # its validation explicitly with --with-vosk or --with-ollama.
@@ -212,7 +224,7 @@ XWALK MACHINE-READABLE PACKAGE CATALOG V1
 # package|id|scope|targets|groups|apt|dnf|pacman|brew
 # A dash means that the dependency is unavailable or not applicable to that package family.
 
-group|workspace|xWalkHal,xWalkCommon,xWalkIW
+group|workspace|xWalkHal,xWalkLibraryCommon,xWalkIW
 group|spi|xWalkSpi
 group|i2c|xWalkI2c,xWalkPwm,xWalkAdc,xWalkServo,xWalkAdxl345
 group|i2c|xWalkLineTracker,xWalkMotor,xWalkLed,xWalkBuzzer,xWalkBoardControl,xWalkRobot
@@ -220,7 +232,7 @@ group|gpio|xWalkGpio,xWalkUltrasonic,xWalkMotor,xWalkLed,xWalkBuzzer
 group|gpio|xWalkUserButton,xWalkBoardControl,xWalkGPT
 group|audio|xWalkAudio,xWalkMusic,xWalkSpeaker,xWalkGPT,xWalkVoiceAssistant
 group|curl|xWalkLanguageModel,xWalkVoiceAssistant
-group|camera|xWalkCamera
+group|camera|xWalkCamera,xWalkComputerVision
 group|core|xWalkConfig,xWalkTrace,xWalkUtils
 group|quality|HostQuality
 group|release|DebianRelease
@@ -232,6 +244,7 @@ package|cmake|required|host,rpi|workspace|cmake|cmake|cmake|cmake
 package|ninja|required|host,rpi|workspace|ninja-build|ninja-build|ninja|ninja
 package|pkg-config|required|host,rpi|workspace|pkg-config|pkgconf-pkg-config|pkgconf|pkg-config
 package|python|required|host,rpi|workspace|python3|python3|python|python
+package|pynacl|required|host,rpi|workspace|python3-nacl|python3-pynacl|python-pynacl|-
 package|linux-uapi|required|rpi|i2c,gpio,spi|linux-libc-dev|kernel-headers|linux-api-headers|-
 package|alsa-dev|required|host,rpi|audio|libasound2-dev|alsa-lib-devel|alsa-lib|-
 package|alsa-utils|required|rpi|audio|alsa-utils|alsa-utils|alsa-utils|-
@@ -242,12 +255,15 @@ package|grpc-dev|required|host,rpi|workspace|libgrpc++-dev|grpc-devel|grpc|grpc
 package|gtest|required|host,rpi|workspace|libgtest-dev|gtest-devel|gtest|googletest
 package|tinyxml2|required|host,rpi|workspace|libtinyxml2-dev|tinyxml2-devel|tinyxml2|tinyxml2
 package|yaml-cpp|required|host,rpi|workspace|libyaml-cpp-dev|yaml-cpp-devel|yaml-cpp|yaml-cpp
+package|opencv|required|rpi|camera|libopencv-dev|opencv-devel|opencv|opencv
+package|boost|required|rpi|external|libboost-dev|boost-devel|boost|boost
 package|sndfile|required|rpi|audio|libsndfile1-dev|libsndfile-devel|libsndfile|libsndfile
 package|sndfile-host|audio|host|audio|libsndfile1-dev|libsndfile-devel|libsndfile|libsndfile
 package|i2c-tools|required|rpi|i2c|i2c-tools|i2c-tools|i2c-tools|-
 package|i2c-dev|required|rpi|i2c|libi2c-dev|i2c-tools-devel|i2c-tools|-
 package|gpio-tools|required|rpi|gpio|gpiod|libgpiod-utils|libgpiod|-
 package|espeak|required|rpi|audio|espeak-ng|espeak-ng|espeak-ng|-
+package|pico2wave|required|rpi|audio|libttspico-utils|-|-|-
 package|curl-cli|required|rpi|curl|curl|curl|curl|curl
 package|certificates|required|rpi|curl|ca-certificates|ca-certificates|ca-certificates|ca-certificates
 package|camera-csi|camera-csi|rpi|camera|rpicam-apps|-|-|-

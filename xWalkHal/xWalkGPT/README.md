@@ -14,6 +14,10 @@ libraries while retaining one focused class per header and source file:
   runtime without requiring vendor headers during compilation.
 - `XWalkTextToSpeechEspeak` runs Espeak without a shell and converts its WAV
   output into PCM for the shared ALSA playback adapter.
+- `XWalkTextToSpeechPiper` runs Piper and WAV playback without a shell using a
+  deployment-selected model.
+- `XWalkTextToSpeechPico2Wave` runs language-selected Pico2Wave synthesis and
+  WAV playback without a shell.
 
 ## Directory layout
 
@@ -37,6 +41,8 @@ xWalkGPT/
 │   │   ├── xHal_Rpi5CarSpeechToTextAlsa.h
 │   │   ├── xHal_Rpi5CarSpeechToTextAlsaTypes.h
 │   │   ├── xHal_Rpi5CarTextToSpeechEspeak.h
+│   │   ├── xHal_Rpi5CarTextToSpeechPico2Wave.h
+│   │   ├── xHal_Rpi5CarTextToSpeechPiper.h
 │   │   ├── xHal_Rpi5CarTextToSpeechAlsa.h
 │   │   └── xHal_Rpi5CarTextToSpeechAlsaTypes.h
 │   ├── src/
@@ -45,7 +51,9 @@ xWalkGPT/
 │   │   ├── xHal_Rpi5CarSpeechToTextAlsa.cpp
 │   │   ├── xHal_Rpi5CarSpeechToTextAlsaSystem.cpp
 │   │   ├── xHal_Rpi5CarTextToSpeechAlsa.cpp
-│   │   └── xHal_Rpi5CarTextToSpeechEspeak.cpp
+│   │   ├── xHal_Rpi5CarTextToSpeechEspeak.cpp
+│   │   ├── xHal_Rpi5CarTextToSpeechPico2Wave.cpp
+│   │   └── xHal_Rpi5CarTextToSpeechPiper.cpp
 │   └── test/src/
 ├── test/
 │   ├── hardware/src/
@@ -92,9 +100,12 @@ Espeak → XWalkTextToSpeechEspeak → XWalkTextToSpeechAlsa
 The Vosk provider resolves a caller-supplied shared-library path at runtime and
 therefore requires a target-compatible Vosk runtime plus a model directory.
 The aggregate repository provides separate ARM64 and x86-64 Vosk 0.3.45
-runtimes and one shared small US English 0.15 model under `../../xWalkLibrary/vosk`;
+runtimes under `../../xWalkLibrary/{aarch64,x86_64}` and one shared small US English 0.15 model under
+`../../xWalkLibrary/common/models`;
 deployments may override both paths. The Espeak provider requires `espeak-ng`
-executable. Neither provider uses a shell. A scope-bound Vosk recognizer guard
+executable, and the Pico2Wave provider requires `pico2wave` from
+`libttspico-utils` plus a WAV playback executable. None of these providers uses
+a shell. A scope-bound Vosk recognizer guard
 releases each recognizer during normal return and stack cleanup without
 exception interception.
 

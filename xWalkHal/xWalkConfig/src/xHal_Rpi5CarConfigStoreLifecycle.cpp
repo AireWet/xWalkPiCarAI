@@ -56,7 +56,10 @@ namespace xwalk::hal
  */
 void XWalkConfigStore::validateName(stringview name)
 {
-    if (name.empty() || (trim(name) != name) || (name.find_first_of("=\r\n") != stringview::npos))
+    const hal::boolean nameTrimFindFirstOfInvalid =
+        static_cast<hal::boolean>(
+            name.empty() || (trim(name) != name) || (name.find_first_of("=\r\n") != stringview::npos));
+    if (nameTrimFindFirstOfInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Configuration name is invalid");
     }
@@ -73,7 +76,10 @@ void XWalkConfigStore::validateName(stringview name)
  */
 void XWalkConfigStore::validateValue(stringview value)
 {
-    if (value.find_first_of("\r\n") != stringview::npos)
+    const hal::boolean valueFindFirstOfRDifferent =
+        static_cast<hal::boolean>(
+            value.find_first_of("\r\n") != stringview::npos);
+    if (valueFindFirstOfRDifferent)
     {
         XHAL_THROW_INVALID_ARGUMENT("Configuration value must be single-line");
     }
@@ -114,9 +120,15 @@ string XWalkConfigStore::trim(stringview text)
  */
 void XWalkConfigStore::ensureFileExists() const
 {
-    if (filesystemEntryExists(filePathValue))
+    const hal::boolean configurationFileExists =
+        static_cast<hal::boolean>(
+            filesystemEntryExists(filePathValue));
+    if (configurationFileExists)
     {
-        if (!isRegularFile(filePathValue))
+        const hal::boolean regularFileNotMatched =
+            static_cast<hal::boolean>(
+                !isRegularFile(filePathValue));
+        if (regularFileNotMatched)
         {
             XHAL_THROW_RUNTIME_ERROR("Configuration path is not a regular file");
         }
@@ -124,19 +136,28 @@ void XWalkConfigStore::ensureFileExists() const
     }
 
     const filesystempath parentPath = filePathValue.parent_path();
-    if (!parentPath.empty())
+    const hal::boolean parentPathAvailable =
+        static_cast<hal::boolean>(
+            !parentPath.empty());
+    if (parentPathAvailable)
     {
         static_cast<void>(createDirectories(parentPath));
     }
 
     outputfilestream configurationFile(filePathValue, FILE_OPEN_WRITE_TRUNCATE);
-    if (!configurationFile.is_open())
+    const hal::boolean openNotMatched =
+        static_cast<hal::boolean>(
+            !configurationFile.is_open());
+    if (openNotMatched)
     {
         XHAL_THROW_RUNTIME_ERROR("Configuration file creation failed");
     }
     configurationFile << "# robot-hat config and calibration value of robots\n\n";
     configurationFile.close();
-    if (configurationFile.fail())
+    const hal::boolean configurationWriteFailed =
+        static_cast<hal::boolean>(
+            configurationFile.fail());
+    if (configurationWriteFailed)
     {
         XHAL_THROW_RUNTIME_ERROR("Initial configuration write failed");
     }
@@ -166,7 +187,10 @@ void XWalkConfigStore::ensureFileExists() const
  */
 XWalkConfigStore::XWalkConfigStore(stringview filePath): filePathValue(string(filePath))
 {
-    if (filePath.empty())
+    const hal::boolean filePathEmpty =
+        static_cast<hal::boolean>(
+            filePath.empty());
+    if (filePathEmpty)
     {
         XHAL_THROW_INVALID_ARGUMENT("Configuration file path must not be empty");
     }

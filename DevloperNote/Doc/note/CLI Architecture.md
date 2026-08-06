@@ -4,7 +4,8 @@
 
 **Executable:** `xwalk-picarx-control`
 
-**Owning modules:** `xWalkCLI/xWalkController` and `xWalkAgent/xWalkBoot`
+**Owning modules:** `xWalkController/xWalkHandler`, `xWalkController/xWalkApp`, and
+`xWalkAgent/xWalkPlatform/xWalkBoot`
 
 **Document date:** 2026-08-02
 
@@ -21,7 +22,7 @@ CMake wiring, deployment configuration, and safe backend composition are impleme
 ## 2. Source layout
 
 ```text
-xWalkAgent/xWalkBoot/
+xWalkAgent/xWalkPlatform/xWalkBoot/
 ├── core/include/                       shared boot lifecycle and service types
 ├── core/src/                           shared one-shot boot lifecycle
 ├── hardware/include/                   Raspberry Pi boot contract
@@ -30,26 +31,59 @@ xWalkAgent/xWalkBoot/
 ├── stub/src/                           device-free host-stub implementation
 ├── stub/test/include/                  host-only fixture declarations
 └── stub/test/src/                      deterministic host lifecycle coverage
-xWalkAgent/xWalkLocalVoiceChatbot/
+xWalkAgent/xWalkVoice/xWalkLocalVoiceChatbot/
 ├── include/                            chatbot contract and application callbacks
 ├── src/                                foreground loop and response filtering
 └── test/src/                           deterministic voice-pipeline coverage
-xWalkAgent/xWalkVoiceActiveCar/         sensor, wake-word, speech, response, and action coordination
-xWalkAgent/xWalkVoiceActiveCarGpt/      English Buddy language profile
-xWalkCLI/xWalkController/
-├── app/xAgent_Rpi5CarControllerMain.cpp       boot-mode selection and CLI entry
-├── config/help.json                    generated help source
-├── config/picar-x.conf                 default PiCar-X calibration store
-├── include/xAgent_Rpi5CarController.h         parser and coordinator contract
-├── include/xAgent_Rpi5CarControllerTypes.h    callback and sound-operation types
-├── src/xAgent_Rpi5CarControllerCommands.cpp   command validation and dispatch
-├── src/xAgent_Rpi5CarControllerLifecycle.cpp  dependency and callback binding
-├── src/xAgent_Rpi5CarControllerParsing.cpp    option parsing and formatting
-└── test/src/xAgent_Rpi5CarControllerTest.cpp  deterministic host coverage
+xWalkAgent/xWalkVoice/xWalkVoiceActiveCar/     sensor, wake-word, speech, response, and action coordination
+xWalkAgent/xWalkVoice/xWalkVoiceActiveCarGpt/  English Buddy language profile
+xWalkAgent/xWalkVoice/xWalkGptCar/             upstream JSON GPT-car profile
+xWalkController/xWalkHandler/
+├── include/xController.h         parser and coordinator contract
+├── include/xControllerTypes.h    callback and sound-operation types
+├── src/xControllerLifecycle.cpp  dependency and callback binding
+├── src/common/                                shared command-safety support
+├── src/vehicle/                               movement and sensing handlers
+├── src/vision/                                camera and visual-control handlers
+├── src/voice/                                 speech and language-model handlers
+├── src/media/                                 sound and background-music handlers
+├── src/connectivity/                          application-control and SPI handlers
+├── src/calibration/                           calibration and verification handlers
+├── src/platform/                              passive platform handlers
+└── test/src/xControllerTest.cpp  deterministic handler coverage
+xWalkController/xWalkApp/
+├── CMakeLists.txt                              executable targets and CTest registration
+├── activate/include/                          command-activation declarations
+├── activate/src/                              validated command routing and usage
+├── activate/resources/help.json               generated help source
+├── boot/include/                              boot and application-support declarations
+├── boot/src/                                  callbacks, boot selection, and runner
+├── cli/hardware/src/xControllerMain.cpp       Raspberry Pi entry and boot composition
+├── cli/host/src/                              host entry and host-stub lifecycle
+├── parse/include/xControllerParsing.h         typed parser declarations
+├── parse/src/                                 option, command, request, and output parsing
+└── test/src/xControllerAppTest.cpp isolated host-application GoogleTest
+xWalkController/xWalkConfig/
+├── picar-x.conf                               manifest and mutable overrides
+└── picar-x.d/                                 functional and AI-provider fragments
 ```
 
 The CLI imports the Agent aggregate. Its Raspberry Pi executable links `xWalkBootRpi`, which privately owns
 board control, Linux I2C and GPIO, ALSA, native audio decoding, and command-specific Agent services.
+
+Controller-owned headers and sources use the compact `xController<Component>`
+filename convention. Generic shared types are qualified through `ctrl::`;
+Agent coordinator types use `agent::`, while hardware-specific contracts stay
+qualified through `hal::`. Build and editor metadata must reference the compact
+filenames so removed `xAgent_Rpi5CarController<Component>` paths do not survive
+in compilation databases.
+
+Both executables use `XWALK_parseControllerApplicationArguments()` from
+`parse/src/xControllerApplicationArguments.cpp`. This gives host and Raspberry Pi builds one
+validation contract for deployment and resource options. Host main delegates
+its complete behavior to `XWALK_runHostControllerApplication()`; Raspberry Pi
+main retains only signal installation, resource validation, boot-mode
+selection, and hardware composition.
 
 ## 3. Request lifecycle
 
@@ -117,6 +151,7 @@ The callback context is non-owning. All callbacks must remain valid for the CLI 
 | `voice-chat` | `start`, `stop` | Local voice-chat service boundary |
 | `voice-active-car` | `start`, `stop` | Sensor-aware voice-car service boundary |
 | `voice-active-car-gpt` | `start`, `stop` | English Buddy voice-car profile |
+| `gpt-car` | `start`, `stop` plus source flags | Upstream JSON GPT-car profile |
 | `voice-controlled-car` | `start`, `stop` | Wake-word movement-control service boundary |
 | `voice-prompt-car` | `start`, `stop` | Spoken movement-demonstration service boundary |
 | `calibrate` | No subcommand | Interactive steering, pan, and tilt calibration |
@@ -237,7 +272,7 @@ The coverage terms used here are:
 | `xWalkTrace` | Missing | No trace configuration or output composition |
 | `xWalkUtils` | Missing | No platform-information or utility commands |
 
-`xWalkCommon` is used throughout but is not itself an operational CLI feature.
+`xWalkLibraryCommon` is used throughout but is not itself an operational CLI feature.
 
 ## 10. Missing CLI modules
 
@@ -342,18 +377,27 @@ Until approved, focused constructor overloads remain the established pattern.
 
 ## 14. Command implementation structure
 
-As commands expand, split implementation by responsibility instead of growing one command source indefinitely:
+Each command handler has one source file, grouped by its owning functionality:
 
 ```text
-src/xAgent_Rpi5CarControllerCommands.cpp          top-level dispatch and shared behavior
-src/xAgent_Rpi5CarControllerDriveCommands.cpp     move, turn, camera, sensors, and calibration
-src/xAgent_Rpi5CarControllerActionCommands.cpp    line tracking, self-drive, robot, LED, and buzzer
-src/xAgent_Rpi5CarControllerAudioCommands.cpp     music, speaker, and volume
-src/xAgent_Rpi5CarControllerSpeechCommands.cpp    speech, model, and voice assistant
-src/xAgent_Rpi5CarControllerSystemCommands.cpp    board, platform, trace, and configuration
+xWalkController/xWalkApp/activate/src/                             command activation and routing
+xWalkController/xWalkApp/parse/src/                                typed parsing and output formatting
+xWalkController/xWalkApp/boot/src/                                 boot selection and service composition
+xWalkController/xWalkHandler/src/common/                                       shared safety support
+xWalkController/xWalkHandler/src/vehicle/                                      movement and sensing
+xWalkController/xWalkHandler/src/vision/                                       camera and vision
+xWalkController/xWalkHandler/src/voice/                                        voice and AI
+xWalkController/xWalkHandler/src/media/                                        audio operations
+xWalkController/xWalkHandler/src/connectivity/                                 external control
+xWalkController/xWalkHandler/src/calibration/                                  calibration operations
+xWalkController/xWalkHandler/src/platform/                                     platform diagnostics
 ```
 
-Each file must retain complete member-function documentation and must be added to the module CMake target.
+Every `XWALK_handler...` method remains isolated in its own translation unit.
+`XWALK_runPicarxControllerCommand()` is a separate application free function
+with friend access to route commands without publishing protected handlers.
+Each file retains complete function documentation and is listed explicitly in
+the controller CMake target.
 
 ## 15. Staged implementation plan
 

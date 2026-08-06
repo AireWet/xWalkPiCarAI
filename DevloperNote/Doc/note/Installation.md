@@ -42,15 +42,20 @@ the `linux-libc-dev` package.
 The offline voice-car commands additionally require these Raspberry Pi runtime
 components:
 
-- a Vosk shared library compatible with the C API;
-- an unpacked English Vosk model;
+- the architecture-selected Vosk shared library from `xWalkLibrary`;
+- the shared small English Vosk model from `xWalkLibrary`;
 - the `espeak-ng` executable;
+- the `pico2wave` executable from `libttspico-utils` for treasure hunt;
 - working ALSA capture, PCM playback, and mixer devices.
 
 Their paths and device names are configured in
-`xWalkCLI/xWalkController/config/picar-x.conf`. Vosk is loaded dynamically, so
+`xWalkController/xWalkConfig/picar-x.conf`. Vosk is loaded dynamically, so
 vendor development headers are not required to compile xWalk. Verify deployment
 package names and model locations for the Raspberry Pi operating-system release.
+
+The install target places the selected Vosk runtime at
+`/usr/lib/xwalk/libvosk.so` and the model below
+`/usr/share/xwalk/models/vosk`.
 
 After the complete receiver, actuator, Raspberry Pi, and Robot HAT setup is
 connected and verified safe, run every registered submodule hardware test:
@@ -67,7 +72,7 @@ when this directory is included with `add_subdirectory()`.
 
 ## Command-line application
 
-`xWalkCLI` is a standalone aggregate beside `xWalkAgent`. Its
+`xWalkController` is a standalone aggregate beside `xWalkAgent`. Its
 `xWalkController` submodule provides the `xwalk-picarx-control` Raspberry Pi
 application and imports the Agent coordinators through CMake.
 
@@ -91,12 +96,13 @@ cmake --build build-host/cmake --parallel
 DESTDIR="$PWD/build-host/deploy" cmake --install build-host/cmake
 ```
 
-The administrator template is `/etc/xwalk/picar-x.conf`; setup initializes the active
-`/var/lib/xwalk/picar-x.conf` once. See the [deployment guide](Deployment%20Guide.md) for staging,
+The administrator manifest is `/etc/xwalk/picar-x.conf`, with functional fragments
+under `/etc/xwalk/picar-x.d`. Setup initializes the active manifest and fragment
+tree under `/var/lib/xwalk` once. See the [deployment guide](Deployment%20Guide.md) for staging,
 Debian packaging, provisioning, service setup, permissions, analysis, coverage, and hardware acceptance.
 
-See the [xWalk CLI README](../../../xWalkCLI/README.md) for aggregate ownership
-and the [xWalk Controller README](../../../xWalkCLI/xWalkController/README.md)
+See the [xWalk Controller README](../../../xWalkController/README.md) for aggregate ownership
+and the [xWalkApp README](../../../xWalkController/xWalkApp/README.md)
 for every command, action, safety rule, and backend-composition detail.
 
 ## Clean generated build output

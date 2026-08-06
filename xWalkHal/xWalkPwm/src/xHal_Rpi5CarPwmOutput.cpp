@@ -65,7 +65,10 @@ namespace xwalk::hal
 void XWalkPwm::setPulseWidth(float64 pulseWidth)
 {
     const float64 maximumPulseWidth = static_cast<float64>(XHAL_RPI5CAR_UINT16_MAX);
-    if (!XHAL_IS_FINITE(pulseWidth))
+    const hal::boolean pulseWidthNotFinite =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(pulseWidth));
+    if (pulseWidthNotFinite)
     {
         XHAL_THROW_INVALID_ARGUMENT("pulse width must be finite");
     }
@@ -98,7 +101,10 @@ void XWalkPwm::setPulseWidth(float64 pulseWidth)
  */
 void XWalkPwm::setPulseWidthPercent(float64 percent)
 {
-    if (!XHAL_IS_FINITE(percent))
+    const hal::boolean percentNotFinite =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(percent));
+    if (percentNotFinite)
     {
         XHAL_THROW_INVALID_ARGUMENT("pulse width percent must be finite");
     }
@@ -122,7 +128,10 @@ void XWalkPwm::setPulseWidthPercent(float64 percent)
  */
 boolean XWalkPwm::trySetPulseWidthPercent(float64 percent) noexcept
 {
-    if (!XHAL_IS_FINITE(percent) || (percent < 0.0) || (percent > 100.0))
+    const hal::boolean percentInvalid =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(percent) || (percent < 0.0) || (percent > 100.0));
+    if (percentInvalid)
     {
         return false;
     }
@@ -132,7 +141,9 @@ boolean XWalkPwm::trySetPulseWidthPercent(float64 percent) noexcept
     const uint8 channelRegister = static_cast<uint8>(XHAL_RPI5CAR_PWM_CHANNEL_REG + channelValue);
     const bytevector data{static_cast<uint8>((pulseWidth >> 8U) & 0xFFU),
         static_cast<uint8>(pulseWidth & 0xFFU)};
-    if (!i2cObject->tryWriteRegister(addressValue, channelRegister, data))
+    const hal::boolean registerWritten =
+        i2cObject->tryWriteRegister(addressValue, channelRegister, data);
+    if (registerWritten == false)
     {
         return false;
     }

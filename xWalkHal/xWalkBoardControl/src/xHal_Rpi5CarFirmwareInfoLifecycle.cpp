@@ -56,11 +56,17 @@ namespace xwalk::hal
  */
 uint8 XWalkFirmwareInfo::selectAddress(XWalkI2c& i2c)
 {
-    if (i2c.probe(XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_1))
+    const hal::boolean candidateAddressAvailable =
+        static_cast<hal::boolean>(
+            i2c.probe(XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_1));
+    if (candidateAddressAvailable)
     {
         return XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_1;
     }
-    if (i2c.probe(XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_2))
+    const hal::boolean secondaryAddressAvailable =
+        static_cast<hal::boolean>(
+            i2c.probe(XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_2));
+    if (secondaryAddressAvailable)
     {
         return XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_2;
     }

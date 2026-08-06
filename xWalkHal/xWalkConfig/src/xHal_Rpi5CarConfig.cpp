@@ -66,11 +66,17 @@ configsections XWalkConfig::parseSections(const stringvector& lines)
     for (const string& originalLine : lines)
     {
         const string line = trim(originalLine);
-        if (line.empty() || (line.front() == '#'))
+        const hal::boolean lineInvalid =
+            static_cast<hal::boolean>(
+                line.empty() || (line.front() == '#'));
+        if (lineInvalid)
         {
             continue;
         }
-        if (line.front() == '[')
+        const hal::boolean lineMatched =
+            static_cast<hal::boolean>(
+                line.front() == '[');
+        if (lineMatched)
         {
             currentSection = parseSectionHeader(line);
             parsedSections[currentSection] = {};
@@ -107,7 +113,10 @@ void XWalkConfig::appendMissingOptions(stringvector& outputLines,
     configsections& remainingSections, const string& sectionName)
 {
     const auto sectionIterator = remainingSections.find(sectionName);
-    if (sectionIterator == remainingSections.end())
+    const hal::boolean sectionIteratorRemainingSectionsMatched =
+        static_cast<hal::boolean>(
+            sectionIterator == remainingSections.end());
+    if (sectionIteratorRemainingSectionsMatched)
     {
         return;
     }
@@ -140,7 +149,10 @@ stringvector XWalkConfig::mergeLines(const stringvector& originalLines) const
     for (const string& originalLine : originalLines)
     {
         const string line = trim(originalLine);
-        if (!line.empty() && (line.front() == '['))
+        const hal::boolean sectionHeaderFound =
+            static_cast<hal::boolean>(
+                !line.empty() && (line.front() == '['));
+        if (sectionHeaderFound)
         {
             appendMissingOptions(outputLines, remainingSections, currentSection);
             currentSection = parseSectionHeader(line);
@@ -150,12 +162,18 @@ stringvector XWalkConfig::mergeLines(const stringvector& originalLines) const
 
         const size separator = line.find('=');
         const auto sectionIterator = remainingSections.find(currentSection);
-        if (!line.empty() && (line.front() != '#') && (separator != string::npos) &&
-            (sectionIterator != remainingSections.end()))
+        const hal::boolean knownSectionOption =
+            static_cast<hal::boolean>(
+                !line.empty() && (line.front() != '#') && (separator != string::npos) &&
+            (sectionIterator != remainingSections.end()));
+        if (knownSectionOption)
         {
             const string optionName = trim(stringview(line).substr(0U, separator));
             const auto optionIterator = sectionIterator->second.find(optionName);
-            if (optionIterator != sectionIterator->second.end())
+            const hal::boolean optionIteratorSectionIteratorSecondDifferent =
+                static_cast<hal::boolean>(
+                    optionIterator != sectionIterator->second.end());
+            if (optionIteratorSectionIteratorSecondDifferent)
             {
                 outputLines.push_back(optionName + XHAL_RPI5CAR_CONFIG_ASSIGNMENT_SEPARATOR +
                     optionIterator->second);
@@ -169,11 +187,17 @@ stringvector XWalkConfig::mergeLines(const stringvector& originalLines) const
     appendMissingOptions(outputLines, remainingSections, currentSection);
     for (const auto& sectionEntry : remainingSections)
     {
-        if (!outputLines.empty() && !outputLines.back().empty())
+        const hal::boolean trailingBlankLine =
+            static_cast<hal::boolean>(
+                !outputLines.empty() && !outputLines.back().empty());
+        if (trailingBlankLine)
         {
             outputLines.emplace_back();
         }
-        if (!sectionEntry.first.empty())
+        const hal::boolean firstAvailable =
+            static_cast<hal::boolean>(
+                !sectionEntry.first.empty());
+        if (firstAvailable)
         {
             outputLines.push_back("[" + sectionEntry.first + "]");
         }
@@ -198,18 +222,32 @@ stringvector XWalkConfig::mergeLines(const stringvector& originalLines) const
 stringvector XWalkConfig::readLines() const
 {
     inputfilestream configurationFile(filePathValue);
-    if (!configurationFile.is_open())
+    const hal::boolean openNotMatched =
+        static_cast<hal::boolean>(
+            !configurationFile.is_open());
+    if (openNotMatched)
     {
         XHAL_THROW_RUNTIME_ERROR("Configuration file open failed");
     }
 
     stringvector lines;
     string line;
-    while (readFileLine(configurationFile, line))
+    const hal::boolean processingLoopRequested{true};
+    while (processingLoopRequested)
     {
+        const hal::boolean readFileLineSucceeded =
+            static_cast<hal::boolean>(
+                readFileLine(configurationFile, line));
+        if (readFileLineSucceeded == false)
+        {
+            break;
+        }
         lines.push_back(line);
     }
-    if (configurationFile.bad())
+    const hal::boolean streamReadFailed =
+        static_cast<hal::boolean>(
+            configurationFile.bad());
+    if (streamReadFailed)
     {
         XHAL_THROW_RUNTIME_ERROR("Configuration file read failed");
     }
@@ -234,7 +272,10 @@ void XWalkConfig::writeLines(const stringvector& lines) const
     replacementPath += XHAL_RPI5CAR_CONFIG_REPLACEMENT_SUFFIX;
 
     outputfilestream replacementFile(replacementPath, FILE_OPEN_WRITE_TRUNCATE);
-    if (!replacementFile.is_open())
+    const hal::boolean replacementFileUnavailable =
+        static_cast<hal::boolean>(
+            !replacementFile.is_open());
+    if (replacementFileUnavailable)
     {
         XHAL_THROW_RUNTIME_ERROR("Configuration replacement file creation failed");
     }
@@ -243,7 +284,10 @@ void XWalkConfig::writeLines(const stringvector& lines) const
         replacementFile << line << '\n';
     }
     replacementFile.close();
-    if (replacementFile.fail())
+    const hal::boolean replacementWriteFailed =
+        static_cast<hal::boolean>(
+            replacementFile.fail());
+    if (replacementWriteFailed)
     {
         errorcode removeError;
         static_cast<void>(removeFilesystemEntry(replacementPath, removeError));
@@ -347,7 +391,10 @@ void XWalkConfig::write()
  */
 string XWalkConfig::get(stringview sectionName, stringview optionName, stringview defaultValue)
 {
-    if (!sectionName.empty())
+    const hal::boolean sectionNameAvailable =
+        static_cast<hal::boolean>(
+            !sectionName.empty());
+    if (sectionNameAvailable)
     {
         validateSectionName(sectionName);
     }
@@ -356,12 +403,18 @@ string XWalkConfig::get(stringview sectionName, stringview optionName, stringvie
     const mutexlock lock(mutexObject);
 
     const auto sectionIterator = sectionsValue.find(string(sectionName));
-    if (sectionIterator == sectionsValue.end())
+    const hal::boolean sectionIteratorSectionsMatched =
+        static_cast<hal::boolean>(
+            sectionIterator == sectionsValue.end());
+    if (sectionIteratorSectionsMatched)
     {
         XHAL_THROW_OUT_OF_RANGE("Configuration section is not loaded");
     }
     auto optionIterator = sectionIterator->second.find(string(optionName));
-    if (optionIterator == sectionIterator->second.end())
+    const hal::boolean optionIteratorSectionIteratorSecondMatched =
+        static_cast<hal::boolean>(
+            optionIterator == sectionIterator->second.end());
+    if (optionIteratorSectionIteratorSecondMatched)
     {
         optionIterator = sectionIterator->second.emplace(string(optionName), string(defaultValue)).first;
     }
@@ -388,7 +441,10 @@ string XWalkConfig::get(stringview sectionName, stringview optionName, stringvie
  */
 void XWalkConfig::set(stringview sectionName, stringview optionName, stringview value)
 {
-    if (!sectionName.empty())
+    const hal::boolean sectionNameProvided =
+        static_cast<hal::boolean>(
+            !sectionName.empty());
+    if (sectionNameProvided)
     {
         validateSectionName(sectionName);
     }
@@ -397,7 +453,10 @@ void XWalkConfig::set(stringview sectionName, stringview optionName, stringview 
     const mutexlock lock(mutexObject);
 
     const auto sectionIterator = sectionsValue.find(string(sectionName));
-    if (sectionIterator == sectionsValue.end())
+    const hal::boolean sectionMissing =
+        static_cast<hal::boolean>(
+            sectionIterator == sectionsValue.end());
+    if (sectionMissing)
     {
         XHAL_THROW_OUT_OF_RANGE("Configuration section is not loaded");
     }
@@ -421,13 +480,19 @@ void XWalkConfig::set(stringview sectionName, stringview optionName, stringview 
  */
 configsection XWalkConfig::section(stringview sectionName) const
 {
-    if (!sectionName.empty())
+    const hal::boolean sectionNameProvided =
+        static_cast<hal::boolean>(
+            !sectionName.empty());
+    if (sectionNameProvided)
     {
         validateSectionName(sectionName);
     }
     const mutexlock lock(mutexObject);
     const auto sectionIterator = sectionsValue.find(string(sectionName));
-    if (sectionIterator == sectionsValue.end())
+    const hal::boolean sectionMissing =
+        static_cast<hal::boolean>(
+            sectionIterator == sectionsValue.end());
+    if (sectionMissing)
     {
         XHAL_THROW_OUT_OF_RANGE("Configuration section is not loaded");
     }
@@ -448,7 +513,10 @@ configsection XWalkConfig::section(stringview sectionName) const
  */
 void XWalkConfig::setSection(stringview sectionName, const configsection& sectionValue)
 {
-    if (!sectionName.empty())
+    const hal::boolean sectionNameProvided =
+        static_cast<hal::boolean>(
+            !sectionName.empty());
+    if (sectionNameProvided)
     {
         validateSectionName(sectionName);
     }

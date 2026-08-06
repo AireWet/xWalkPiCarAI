@@ -125,8 +125,16 @@ void XWalkGpioLinux::validateAssignedPin(uint8 pin) const
  */
 void XWalkGpioLinux::interruptLoop()
 {
-    while (!stopRequested.load())
+    const hal::boolean processingLoopRequested{true};
+    while (processingLoopRequested)
     {
+        const hal::boolean operationMayContinue =
+            static_cast<hal::boolean>(
+                !stopRequested.load());
+        if (operationMayContinue == false)
+        {
+            break;
+        }
         pollfd descriptorEvent{};
         descriptorEvent.fd = lineDescriptor;
         descriptorEvent.events = POLLIN;
@@ -191,7 +199,10 @@ void XWalkGpioLinux::configurePin(uint8 pin, XWalkGpioMode mode, XWalkGpioPull p
     request.consumer_label[3U] = 'l';
     request.consumer_label[4U] = 'k';
     request.lines = 1U;
-    if (::ioctl(chipDescriptor, GPIO_GET_LINEHANDLE_IOCTL, &request) < 0)
+    const hal::boolean lineRequestFailed =
+        static_cast<hal::boolean>(
+            ::ioctl(chipDescriptor, GPIO_GET_LINEHANDLE_IOCTL, &request) < 0);
+    if (lineRequestFailed)
     {
         XHAL_THROW_RUNTIME_ERROR("Linux GPIO line configuration failed");
     }
@@ -218,7 +229,10 @@ boolean XWalkGpioLinux::readPin(uint8 pin)
     const mutexlock lock(mutex);
     validateAssignedPin(pin);
     gpiohandle_data data{};
-    if (::ioctl(lineDescriptor, GPIOHANDLE_GET_LINE_VALUES_IOCTL, &data) < 0)
+    const hal::boolean lineReadFailed =
+        static_cast<hal::boolean>(
+            ::ioctl(lineDescriptor, GPIOHANDLE_GET_LINE_VALUES_IOCTL, &data) < 0);
+    if (lineReadFailed)
     {
         XHAL_THROW_RUNTIME_ERROR("Linux GPIO read failed");
     }
@@ -243,7 +257,10 @@ void XWalkGpioLinux::writePin(uint8 pin, boolean value)
     validateAssignedPin(pin);
     gpiohandle_data data{};
     data.values[0U] = value ? 1U : 0U;
-    if (::ioctl(lineDescriptor, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &data) < 0)
+    const hal::boolean lineWriteFailed =
+        static_cast<hal::boolean>(
+            ::ioctl(lineDescriptor, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &data) < 0);
+    if (lineWriteFailed)
     {
         XHAL_THROW_RUNTIME_ERROR("Linux GPIO write failed");
     }
@@ -293,7 +310,10 @@ void XWalkGpioLinux::registerInterrupt(uint8 pin, XWalkGpioEdge edge, uint32 deb
     request.consumer_label[2U] = 'a';
     request.consumer_label[3U] = 'l';
     request.consumer_label[4U] = 'k';
-    if (::ioctl(chipDescriptor, GPIO_GET_LINEEVENT_IOCTL, &request) < 0)
+    const hal::boolean interruptRegistrationFailed =
+        static_cast<hal::boolean>(
+            ::ioctl(chipDescriptor, GPIO_GET_LINEEVENT_IOCTL, &request) < 0);
+    if (interruptRegistrationFailed)
     {
         XHAL_THROW_RUNTIME_ERROR("Linux GPIO interrupt registration failed");
     }
@@ -329,7 +349,10 @@ void XWalkGpioLinux::cancelInterrupt(uint8 pin)
         XHAL_THROW_RUNTIME_ERROR("GPIO backend is assigned to a different pin");
     }
     stopRequested.store(true);
-    if (eventThread.joinable())
+    const hal::boolean eventThreadJoinable =
+        static_cast<hal::boolean>(
+            eventThread.joinable());
+    if (eventThreadJoinable)
     {
         eventThread.join();
         const mutexlock lock(mutex);

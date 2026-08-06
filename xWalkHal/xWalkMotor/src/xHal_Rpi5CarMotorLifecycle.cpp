@@ -61,7 +61,10 @@ namespace xwalk::hal
  */
 float64 XWalkMotor::validateSpeed(float64 speedPercent)
 {
-    if (!XHAL_IS_FINITE(speedPercent))
+    const hal::boolean speedPercentNotFinite =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(speedPercent));
+    if (speedPercentNotFinite)
     {
         XHAL_THROW_INVALID_ARGUMENT("motor speed must be finite");
     }
@@ -87,7 +90,10 @@ float64 XWalkMotor::validateSpeed(float64 speedPercent)
  */
 float64 XWalkMotor::validateFrequency(float64 frequencyHz)
 {
-    if ((!XHAL_IS_FINITE(frequencyHz)) || (frequencyHz <= 0.0))
+    const hal::boolean frequencyHzInvalid =
+        static_cast<hal::boolean>(
+            (!XHAL_IS_FINITE(frequencyHz)) || (frequencyHz <= 0.0));
+    if (frequencyHzInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("motor frequency must be finite and greater than zero");
     }

@@ -89,7 +89,10 @@ void XWalkSpeechToText::validateTimeout(uint32 timeoutMs)
  */
 void XWalkSpeechToText::validateFilePath(stringview filePath)
 {
-    if (filePath.empty())
+    const hal::boolean filePathEmpty =
+        static_cast<hal::boolean>(
+            filePath.empty());
+    if (filePathEmpty)
     {
         XHAL_THROW_INVALID_ARGUMENT("Speech-to-text audio-file path must not be empty");
     }

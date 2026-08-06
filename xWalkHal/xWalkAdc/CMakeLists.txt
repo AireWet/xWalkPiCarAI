@@ -11,8 +11,8 @@ if(XWALK_ADC_BUILD_HARDWARE_TESTS AND NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     message(FATAL_ERROR "xWalkAdc hardware tests require Linux i2c-dev")
 endif()
 
-if(NOT TARGET xWalkCommon)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
 
 if(NOT TARGET xWalkI2c)
@@ -26,7 +26,7 @@ add_library(xWalkAdc STATIC
 
 target_include_directories(xWalkAdc PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkAdc PUBLIC cxx_std_17)
-target_link_libraries(xWalkAdc PUBLIC xWalkCommon xWalkI2c)
+target_link_libraries(xWalkAdc PUBLIC xWalkLibraryCommon xWalkI2c)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkAdc PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)

@@ -13,7 +13,7 @@ reference to PWM. `XWalkPwm` stores non-owning pointers to both dependencies and
 does not own or construct them.
 
 Shared standard-library headers are provided by the sibling header-only
-`xWalkCommon` interface target through `xHal_Rpi5CarCommon.h`.
+`xWalkLibraryCommon` interface target through `xHal_Rpi5CarCommon.h`.
 
 A hardware composition root follows this pattern:
 
@@ -218,7 +218,7 @@ Remove the separate hardware build directory with:
 cmake -E remove_directory xWalkPwm/build-rpi
 ```
 
-These commands do not remove the `xWalkPwm`, `xWalkI2c`, or `xWalkCommon`
+These commands do not remove the `xWalkPwm`, `xWalkI2c`, or `xWalkLibraryCommon`
 source directories.
 
 Perform a clean rebuild and rerun all host tests with:

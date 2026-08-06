@@ -42,7 +42,7 @@ write failure; it does not intercept an exception.
 
 The module can be configured and built directly without building `xWalkPwm`
 and without Raspberry Pi hardware. Its CMake configuration automatically adds
-the adjacent `xWalkCommon` dependency.
+the adjacent `xWalkLibraryCommon` dependency.
 
 Run these commands from the repository root:
 
@@ -65,7 +65,7 @@ The resulting library is:
 |---|---|
 | `xWalkI2c/build-host/libxWalkI2c.a` | Hardware-independent I2C callback object |
 
-`xWalkCommon` is a header-only interface target, so it propagates shared types,
+`xWalkLibraryCommon` is a header-only interface target, so it propagates shared types,
 math operations, and exception helpers without producing a separate archive.
 
 To build the library without its host test:
@@ -98,7 +98,7 @@ an RPi.
 |---|---|
 | CTest name | `xWalkI2cHostTest` |
 | Required hardware | None |
-| Required sibling module | `xWalkCommon` |
+| Required sibling module | `xWalkLibraryCommon` |
 | Expected passing tests | `1` |
 
 ## Test on Raspberry Pi hardware
@@ -240,7 +240,7 @@ cmake -E remove_directory xWalkI2c/build-lib
 ```
 
 These commands remove only generated build directories. They do not remove
-`core`, `hardware`, `test`, `CMakeLists.txt`, or the workspace module `../../xWalkCommon`
+`core`, `hardware`, `test`, `CMakeLists.txt`, or the workspace module `../../xWalkLibrary/common`
 source directory.
 
 Perform a clean rebuild and rerun the host test with:

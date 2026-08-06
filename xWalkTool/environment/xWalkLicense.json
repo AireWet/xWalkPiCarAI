@@ -1,0 +1,18 @@
+{
+    "ANTHROPIC_API_KEY": "",
+    "ANTHROPIC_MODEL": "",
+    "DEEPSEEK_API_KEY": "",
+    "DOUBAO_API_KEY": "",
+    "GEMINI_API_KEY": "",
+    "GEMINI_MODEL": "",
+    "GROK_API_KEY": "",
+    "LLM_API_KEY": "",
+    "OLLAMA_MODEL": "",
+    "OPENAI_API_KEY": "",
+    "OPENAI_MODEL": "",
+    "OTHERS_API_KEY": "",
+    "QWEN_API_KEY": "",
+    "XAI_API_KEY": "",
+    "XWALK_AI_API_KEY": "",
+    "XWALK_AI_MODEL": ""
+}

@@ -18,7 +18,7 @@
                 </dictionary>
                 <dictionary>
                     <key>org.eclipse.cdt.make.core.build.arguments</key>
-                    <value>&quot;${workspace_loc:/${ProjName}/xWalkTool/eclipse-build.sh}&quot;</value>
+                    <value>&quot;${workspace_loc:/${ProjName}/xWalkTool/shell/eclipse-build.sh}&quot;</value>
                 </dictionary>
                 <dictionary>
                     <key>org.eclipse.cdt.make.core.build.target.auto</key>

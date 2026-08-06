@@ -47,6 +47,34 @@ class DependencyInstallerTest(unittest.TestCase):
         }
         self.assertTrue(source_modules.issubset(mapped_modules))
 
+    def test_catalog_declares_pynacl_for_supported_linux_families(self) -> None:
+        """The licence tool dependency must be part of normal host and RPi setup."""
+        catalog = INSTALLER.parse_catalog(
+            REPOSITORY_ROOT / "xWalkTool" / "apt-packages.txt"
+        )
+        pynacl = next(
+            package for package in catalog.packages if package.identifier == "pynacl"
+        )
+        self.assertEqual(pynacl.scope, "required")
+        self.assertEqual(pynacl.targets, ("host", "rpi"))
+        self.assertEqual(pynacl.packages["apt"], ("python3-nacl",))
+        self.assertEqual(pynacl.packages["dnf"], ("python3-pynacl",))
+        self.assertEqual(pynacl.packages["pacman"], ("python-pynacl",))
+
+    def test_project_managed_vosk_matches_native_architecture(self) -> None:
+        """The bundled Vosk check must select the normalized architecture prefix."""
+        with mock.patch.object(INSTALLER.platform, "machine", return_value="AMD64"):
+            installed, issue = INSTALLER.vosk_status(REPOSITORY_ROOT)
+        self.assertTrue(installed)
+        self.assertIn("project-managed Vosk", issue)
+
+    def test_project_managed_vosk_rejects_unsupported_architecture(self) -> None:
+        """A target without a reviewed native runtime must not be reported as ready."""
+        with mock.patch.object(INSTALLER.platform, "machine", return_value="armv7l"):
+            installed, issue = INSTALLER.vosk_status(REPOSITORY_ROOT)
+        self.assertFalse(installed)
+        self.assertIn("no Vosk runtime", issue)
+
     def test_boot_parser_ignores_commented_settings(self) -> None:
         """Commented settings must not satisfy or conflict with active settings."""
         lines = INSTALLER.active_boot_lines(

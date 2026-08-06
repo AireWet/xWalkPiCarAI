@@ -33,9 +33,9 @@ a workspace build.
 | GoogleTest development library | Provides the central HAL host-test framework |
 | TinyXML2 development library | Validates the central test selection file |
 | yaml-cpp development library | Loads board, AI, example, and hardware runtime values |
-| `../xWalkLibrary/vosk` | Project-managed ARM64/x86-64 Vosk runtimes and shared English model |
+| `../xWalkLibrary` | Architecture-selected portable dependencies and shared Vosk model |
 | `../xWalkIW` | Protobuf and gRPC interface module imported by the aggregate |
-| `../xWalkCLI` | Standalone CLI aggregate included by host and RPI aggregate builds |
+| `../xWalkController` | Standalone CLI aggregate included by host and RPI aggregate builds |
 | `../xWalkTool/dtoverlays` | Robot HAT and Servo HAT+ Raspberry Pi boot overlays |
 | Linux GPIO, I2C, and SPI UAPI headers | Required when `XWALK_BUILD_RPI=ON` |
 
@@ -138,9 +138,10 @@ the target. Neither retained library supports 32-bit Raspberry Pi OS.
 The xWalkIW schema validator and xWalkController tests are separate non-HAL
 CTest entries and continue to run through the complete root `ctest` command.
 
-The workspace-level `../xWalkCommon` module is a header-only interface library
-shared by HAL, agent, and other application layers. It does not currently
-register a separate executable test.
+The workspace-level `../xWalkLibrary/common` module is a header-only interface library
+shared by HAL, agent, and other application layers. It exports the public
+headers stored under `../xWalkLibrary/common` and does not register a separate
+executable test.
 
 ## Run one specific test case
 
@@ -243,7 +244,7 @@ ctest --test-dir build-host -L host --output-on-failure --parallel 4
 | Message | Cause | Resolution |
 |---|---|---|
 | Missing libsndfile development files | Native audio headers or library are absent | Install `libsndfile1-dev` |
-| `../xWalkCLI` does not exist | The standalone CLI aggregate is missing | Restore `xWalkCLI` |
+| `../xWalkController` does not exist | The standalone CLI aggregate is missing | Restore `xWalkController` |
 | Host/RPI modes conflict | Both aggregate flags were enabled | Use separate host and RPI builds |
 | Linux UAPI check fails | Linux development headers are missing | Install `linux-libc-dev` |
 | `No tests were found` | Verification flags are `OFF` | Enable the appropriate aggregate flag |

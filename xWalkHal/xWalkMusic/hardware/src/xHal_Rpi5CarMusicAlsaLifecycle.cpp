@@ -148,7 +148,10 @@ void XWalkMusicAlsa::stopSoundWorker()
         const mutexlock lock(stateMutex);
         soundStopRequested = true;
     }
-    if (soundWorker.joinable())
+    const hal::boolean soundWorkerJoinable =
+        static_cast<hal::boolean>(
+            soundWorker.joinable());
+    if (soundWorkerJoinable)
     {
         soundWorker.join();
     }
@@ -170,7 +173,10 @@ void XWalkMusicAlsa::stopMusicWorker()
         musicStopRequested = true;
         musicPauseRequested = false;
     }
-    if (musicWorker.joinable())
+    const hal::boolean musicWorkerJoinable =
+        static_cast<hal::boolean>(
+            musicWorker.joinable());
+    if (musicWorkerJoinable)
     {
         musicWorker.join();
     }

@@ -33,7 +33,7 @@ add_library(xWalkLedExample
     core/src/xHal_Rpi5CarLedExample.cpp)
 target_include_directories(xWalkLedExample PUBLIC core/include)
 target_compile_features(xWalkLedExample PUBLIC cxx_std_17)
-target_link_libraries(xWalkLedExample PUBLIC xWalkCommon)
+target_link_libraries(xWalkLedExample PUBLIC xWalkLibraryCommon)
 
 add_library(xWalkDeepseekExample
     core/src/xHal_Rpi5CarDeepseekExample.cpp)
@@ -111,79 +111,79 @@ add_library(xWalkPinInputExample
     core/src/xHal_Rpi5CarPinInputExample.cpp)
 target_include_directories(xWalkPinInputExample PUBLIC core/include)
 target_compile_features(xWalkPinInputExample PUBLIC cxx_std_17)
-target_link_libraries(xWalkPinInputExample PUBLIC xWalkCommon)
+target_link_libraries(xWalkPinInputExample PUBLIC xWalkLibraryCommon)
 
 add_library(xWalkUltrasonicExample
     core/src/xHal_Rpi5CarUltrasonicExample.cpp)
 target_include_directories(xWalkUltrasonicExample PUBLIC core/include)
 target_compile_features(xWalkUltrasonicExample PUBLIC cxx_std_17)
-target_link_libraries(xWalkUltrasonicExample PUBLIC xWalkCommon)
+target_link_libraries(xWalkUltrasonicExample PUBLIC xWalkLibraryCommon)
 
 add_library(xWalkVoiceAssistantExample
     core/src/xHal_Rpi5CarVoiceAssistantExample.cpp)
 target_include_directories(xWalkVoiceAssistantExample PUBLIC core/include)
 target_compile_features(xWalkVoiceAssistantExample PUBLIC cxx_std_17)
-target_link_libraries(xWalkVoiceAssistantExample PUBLIC xWalkCommon)
+target_link_libraries(xWalkVoiceAssistantExample PUBLIC xWalkLibraryCommon)
 
 add_library(xWalkServoExample
     core/src/xHal_Rpi5CarServoExample.cpp)
 target_include_directories(xWalkServoExample PUBLIC core/include)
 target_compile_features(xWalkServoExample PUBLIC cxx_std_17)
-target_link_libraries(xWalkServoExample PUBLIC xWalkCommon)
+target_link_libraries(xWalkServoExample PUBLIC xWalkLibraryCommon)
 
 add_library(xWalkSttVoskStreamExample
     core/src/xHal_Rpi5CarSttVoskStreamExample.cpp)
 target_include_directories(xWalkSttVoskStreamExample PUBLIC core/include)
 target_compile_features(xWalkSttVoskStreamExample PUBLIC cxx_std_17)
-target_link_libraries(xWalkSttVoskStreamExample PUBLIC xWalkCommon)
+target_link_libraries(xWalkSttVoskStreamExample PUBLIC xWalkLibraryCommon)
 
 add_library(xWalkSttVoskWakeWordThreadExample
     core/src/xHal_Rpi5CarSttVoskWakeWordThreadExample.cpp)
 target_include_directories(xWalkSttVoskWakeWordThreadExample PUBLIC core/include)
 target_compile_features(xWalkSttVoskWakeWordThreadExample PUBLIC cxx_std_17)
-target_link_libraries(xWalkSttVoskWakeWordThreadExample PUBLIC xWalkCommon)
+target_link_libraries(xWalkSttVoskWakeWordThreadExample PUBLIC xWalkLibraryCommon)
 
 add_library(xWalkSttVoskWakeWordExample
     core/src/xHal_Rpi5CarSttVoskWakeWordExample.cpp)
 target_include_directories(xWalkSttVoskWakeWordExample PUBLIC core/include)
 target_compile_features(xWalkSttVoskWakeWordExample PUBLIC cxx_std_17)
-target_link_libraries(xWalkSttVoskWakeWordExample PUBLIC xWalkCommon)
+target_link_libraries(xWalkSttVoskWakeWordExample PUBLIC xWalkLibraryCommon)
 
 add_library(xWalkSttVoskWithoutStreamExample
     core/src/xHal_Rpi5CarSttVoskWithoutStreamExample.cpp)
 target_include_directories(xWalkSttVoskWithoutStreamExample PUBLIC core/include)
 target_compile_features(xWalkSttVoskWithoutStreamExample PUBLIC cxx_std_17)
-target_link_libraries(xWalkSttVoskWithoutStreamExample PUBLIC xWalkCommon)
+target_link_libraries(xWalkSttVoskWithoutStreamExample PUBLIC xWalkLibraryCommon)
 
 add_library(xWalkTtsEdgeExample
     core/src/xHal_Rpi5CarTtsEdgeExample.cpp)
 target_include_directories(xWalkTtsEdgeExample PUBLIC core/include)
 target_compile_features(xWalkTtsEdgeExample PUBLIC cxx_std_17)
-target_link_libraries(xWalkTtsEdgeExample PUBLIC xWalkCommon)
+target_link_libraries(xWalkTtsEdgeExample PUBLIC xWalkLibraryCommon)
 
 add_library(xWalkTtsEspeakExample
     core/src/xHal_Rpi5CarTtsEspeakExample.cpp)
 target_include_directories(xWalkTtsEspeakExample PUBLIC core/include)
 target_compile_features(xWalkTtsEspeakExample PUBLIC cxx_std_17)
-target_link_libraries(xWalkTtsEspeakExample PUBLIC xWalkCommon)
+target_link_libraries(xWalkTtsEspeakExample PUBLIC xWalkLibraryCommon)
 
 add_library(xWalkTtsOpenAiExample
     core/src/xHal_Rpi5CarTtsOpenAiExample.cpp)
 target_include_directories(xWalkTtsOpenAiExample PUBLIC core/include)
 target_compile_features(xWalkTtsOpenAiExample PUBLIC cxx_std_17)
-target_link_libraries(xWalkTtsOpenAiExample PUBLIC xWalkCommon)
+target_link_libraries(xWalkTtsOpenAiExample PUBLIC xWalkLibraryCommon)
 
 add_library(xWalkTtsPico2WaveExample
     core/src/xHal_Rpi5CarTtsPico2WaveExample.cpp)
 target_include_directories(xWalkTtsPico2WaveExample PUBLIC core/include)
 target_compile_features(xWalkTtsPico2WaveExample PUBLIC cxx_std_17)
-target_link_libraries(xWalkTtsPico2WaveExample PUBLIC xWalkCommon)
+target_link_libraries(xWalkTtsPico2WaveExample PUBLIC xWalkLibraryCommon)
 
 add_library(xWalkTtsPiperExample
     core/src/xHal_Rpi5CarTtsPiperExample.cpp)
 target_include_directories(xWalkTtsPiperExample PUBLIC core/include)
 target_compile_features(xWalkTtsPiperExample PUBLIC cxx_std_17)
-target_link_libraries(xWalkTtsPiperExample PUBLIC xWalkCommon)
+target_link_libraries(xWalkTtsPiperExample PUBLIC xWalkLibraryCommon)
 
 if(XWALK_HAL_BUILD_RPI)
     find_package(yaml-cpp CONFIG REQUIRED)
@@ -417,7 +417,7 @@ if(XWALK_HAL_BUILD_RPI)
         PRIVATE ${XWALK_EXAMPLE_CONFIG_OUTPUT_DIRECTORY})
     target_compile_features(xWalkExampleRunner PUBLIC cxx_std_17)
     target_link_libraries(xWalkExampleRunner
-        PUBLIC xWalkCommon
+        PUBLIC xWalkLibraryCommon
         PRIVATE
         xWalkDeepseekExampleLinux
         xWalkDoubaoExampleLinux

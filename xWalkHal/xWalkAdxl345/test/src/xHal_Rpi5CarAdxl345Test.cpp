@@ -108,13 +108,19 @@ void writeRegister(XWalkHal::contextpointer context, XWalkHal::uint8 address,
     TestBus& bus = *static_cast<TestBus*>(context);
     bus.lastAddress = address;
     bus.lastRegister = reg;
-    if ((reg == XHAL_RPI5CAR_ADXL345_DATA_FORMAT_REGISTER) &&
-        (data == XWalkHal::bytevector({XHAL_RPI5CAR_ADXL345_DATA_FORMAT_VALUE})))
+    const hal::boolean dataFormatWrite =
+        static_cast<hal::boolean>(
+            (reg == XHAL_RPI5CAR_ADXL345_DATA_FORMAT_REGISTER) &&
+        (data == XWalkHal::bytevector({XHAL_RPI5CAR_ADXL345_DATA_FORMAT_VALUE})));
+    if (dataFormatWrite)
     {
         ++bus.formatWriteCount;
     }
-    if ((reg == XHAL_RPI5CAR_ADXL345_POWER_CONTROL_REGISTER) &&
-        (data == XWalkHal::bytevector({XHAL_RPI5CAR_ADXL345_MEASUREMENT_MODE_VALUE})))
+    const hal::boolean powerControlWrite =
+        static_cast<hal::boolean>(
+            (reg == XHAL_RPI5CAR_ADXL345_POWER_CONTROL_REGISTER) &&
+        (data == XWalkHal::bytevector({XHAL_RPI5CAR_ADXL345_MEASUREMENT_MODE_VALUE})));
+    if (powerControlWrite)
     {
         ++bus.powerWriteCount;
     }
@@ -170,7 +176,10 @@ XWalkHal::bytevector readRegister(XWalkHal::contextpointer context, XWalkHal::ui
     bus.lastRegister = reg;
     bus.lastLength = length;
     ++bus.registerReadCount;
-    if (bus.responseIndex >= bus.responses.size())
+    const hal::boolean responseUnavailable =
+        static_cast<hal::boolean>(
+            bus.responseIndex >= bus.responses.size());
+    if (responseUnavailable)
     {
         return {};
     }

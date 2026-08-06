@@ -59,7 +59,10 @@ namespace xwalk::hal
 XWalkSpeechRecognizerVosk::XWalkSpeechRecognizerVosk(
     stringview libraryName, stringview modelPath)
 {
-    if (libraryName.empty() || modelPath.empty())
+    const hal::boolean libraryNameModelPathInvalid =
+        static_cast<hal::boolean>(
+            libraryName.empty() || modelPath.empty());
+    if (libraryNameModelPathInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Vosk library and model path are required");
     }
@@ -169,7 +172,10 @@ FunctionType XWalkSpeechRecognizerVosk::loadFunction(
         "Vosk function pointers must match dynamic symbol pointer size");
     static_cast<void>(::dlerror());
     contextpointer symbol = ::dlsym(library, symbolName);
-    if ((symbol == nullptr) || (::dlerror() != nullptr))
+    const hal::boolean symbolInvalid =
+        static_cast<hal::boolean>(
+            (symbol == nullptr) || (::dlerror() != nullptr));
+    if (symbolInvalid)
     {
         return FunctionType{};
     }
@@ -200,11 +206,17 @@ string XWalkSpeechRecognizerVosk::recognizePcm(contextpointer context,
     {
         XHAL_THROW_INVALID_ARGUMENT("Vosk recognition requires positive-rate mono PCM");
     }
-    if (pcmData.size() > static_cast<size>(std::numeric_limits<int32>::max()))
+    const hal::boolean pcmDataTooLarge =
+        static_cast<hal::boolean>(
+            pcmData.size() > static_cast<size>(std::numeric_limits<int32>::max()));
+    if (pcmDataTooLarge)
     {
         XHAL_THROW_OUT_OF_RANGE("Vosk PCM exceeds the C API byte-count range");
     }
-    if (self.cancellationRequested.exchange(false) || pcmData.empty())
+    const hal::boolean selfCancellationRequestedExchangeInvalid =
+        static_cast<hal::boolean>(
+            self.cancellationRequested.exchange(false) || pcmData.empty());
+    if (selfCancellationRequestedExchangeInvalid)
     {
         return {};
     }
@@ -220,7 +232,10 @@ string XWalkSpeechRecognizerVosk::recognizePcm(contextpointer context,
         recognizer, pcmBytes, static_cast<int32>(pcmData.size())));
     const cstring finalJson = self.api.finalResult(recognizer);
     const string result = (finalJson == nullptr) ? string{} : extractText(finalJson);
-    if (self.cancellationRequested.exchange(false))
+    const hal::boolean exchangeSucceeded =
+        static_cast<hal::boolean>(
+            self.cancellationRequested.exchange(false));
+    if (exchangeSucceeded)
     {
         return {};
     }

@@ -201,7 +201,10 @@ boolean XWalkBuzzer::isPassive() const noexcept
  */
 uint32 XWalkBuzzer::halfDurationMicroseconds(float64 durationSeconds)
 {
-    if (!XHAL_IS_FINITE(durationSeconds))
+    const hal::boolean durationSecondsNotFinite =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(durationSeconds));
+    if (durationSecondsNotFinite)
     {
         XHAL_THROW_INVALID_ARGUMENT("Buzzer duration must be finite");
     }

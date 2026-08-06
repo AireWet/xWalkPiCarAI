@@ -155,18 +155,27 @@ void XWalkSpeakerAlsa::writeStream(contextpointer context,
         XHAL_THROW_INVALID_ARGUMENT("Speaker ALSA write has invalid frame metadata");
     }
     const size channelCount = static_cast<size>(audioData.channelCount);
-    if (firstFrame > (std::numeric_limits<size>::max() / channelCount))
+    const hal::boolean firstFrameOffsetOverflow =
+        static_cast<hal::boolean>(
+            firstFrame > (std::numeric_limits<size>::max() / channelCount));
+    if (firstFrameOffsetOverflow)
     {
         XHAL_THROW_INVALID_ARGUMENT("Speaker ALSA first frame is unrepresentable");
     }
     const size firstSample = firstFrame * channelCount;
-    if (frameCount > (std::numeric_limits<size>::max() / channelCount))
+    const hal::boolean sampleCountOverflow =
+        static_cast<hal::boolean>(
+            frameCount > (std::numeric_limits<size>::max() / channelCount));
+    if (sampleCountOverflow)
     {
         XHAL_THROW_INVALID_ARGUMENT("Speaker ALSA frame range is unrepresentable");
     }
     const size sampleCount = frameCount * channelCount;
-    if ((firstSample > audioData.samples.size()) ||
-        (sampleCount > (audioData.samples.size() - firstSample)))
+    const hal::boolean firstSampleAudioDataSamplesInvalid =
+        static_cast<hal::boolean>(
+            (firstSample > audioData.samples.size()) ||
+        (sampleCount > (audioData.samples.size() - firstSample)));
+    if (firstSampleAudioDataSamplesInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Speaker ALSA write exceeds decoded audio data");
     }
@@ -176,7 +185,10 @@ void XWalkSpeakerAlsa::writeStream(contextpointer context,
     for (size sampleOffset = 0U; sampleOffset < sampleCount; ++sampleOffset)
     {
         const float64 sampleValue = audioData.samples[firstSample + sampleOffset];
-        if (!XHAL_IS_FINITE(sampleValue) || (sampleValue < -1.0) || (sampleValue > 1.0))
+        const hal::boolean sampleInvalid =
+            static_cast<hal::boolean>(
+                !XHAL_IS_FINITE(sampleValue) || (sampleValue < -1.0) || (sampleValue > 1.0));
+        if (sampleInvalid)
         {
             XHAL_THROW_INVALID_ARGUMENT("Speaker ALSA sample is outside minus one through one");
         }
@@ -222,7 +234,10 @@ string XWalkSpeakerAlsa::createTaskId(contextpointer context)
 {
     XWalkSpeakerAlsa& self = adapter(context);
     const mutexlock lock(self.identifierMutex);
-    if (self.taskIdentifierValue == std::numeric_limits<uint64>::max())
+    const hal::boolean selfTaskIdentifierMatched =
+        static_cast<hal::boolean>(
+            self.taskIdentifierValue == std::numeric_limits<uint64>::max());
+    if (selfTaskIdentifierMatched)
     {
         XHAL_THROW_OUT_OF_RANGE("Speaker ALSA task identifier sequence is exhausted");
     }

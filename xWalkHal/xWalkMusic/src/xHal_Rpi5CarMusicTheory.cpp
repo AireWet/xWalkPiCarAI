@@ -123,12 +123,18 @@ void XWalkMusic::setKeySignature(int32 keySignature)
  */
 void XWalkMusic::setKeySignature(stringview keySignature)
 {
-    if (keySignature.empty())
+    const hal::boolean keySignatureEmpty =
+        static_cast<hal::boolean>(
+            keySignature.empty());
+    if (keySignatureEmpty)
     {
         setKeySignature(0);
         return;
     }
-    if (keySignature.size() > static_cast<size>(XHAL_RPI5CAR_MUSIC_MAXIMUM_KEY_SIGNATURE))
+    const hal::boolean keySignatureTooLarge =
+        static_cast<hal::boolean>(
+            keySignature.size() > static_cast<size>(XHAL_RPI5CAR_MUSIC_MAXIMUM_KEY_SIGNATURE));
+    if (keySignatureTooLarge)
     {
         XHAL_THROW_OUT_OF_RANGE("Music key signature supports at most seven markers");
     }
@@ -181,7 +187,10 @@ int32 XWalkMusic::keySignature() const noexcept
  */
 void XWalkMusic::setTempo(float64 beatsPerMinute, float64 noteValue)
 {
-    if (!XHAL_IS_FINITE(beatsPerMinute) || !XHAL_IS_FINITE(noteValue))
+    const hal::boolean beatsPerMinuteNoteInvalid =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(beatsPerMinute) || !XHAL_IS_FINITE(noteValue));
+    if (beatsPerMinuteNoteInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Music tempo values must be finite");
     }
@@ -222,7 +231,10 @@ musictempo XWalkMusic::tempo() const noexcept
  */
 float64 XWalkMusic::beatDurationSeconds(float64 beatValue) const
 {
-    if (!XHAL_IS_FINITE(beatValue))
+    const hal::boolean beatNotFinite =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(beatValue));
+    if (beatNotFinite)
     {
         XHAL_THROW_INVALID_ARGUMENT("Music beat value must be finite");
     }
@@ -320,7 +332,10 @@ float64 XWalkMusic::noteFrequencyHz(stringview noteName, boolean natural) const
  */
 int32 XWalkMusic::parseNoteIndex(stringview noteName)
 {
-    if ((noteName.size() != 2U) && (noteName.size() != 3U))
+    const hal::boolean noteNameLengthInvalid =
+        static_cast<hal::boolean>(
+            (noteName.size() != 2U) && (noteName.size() != 3U));
+    if (noteNameLengthInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Music note name has an unsupported length");
     }
@@ -354,7 +369,10 @@ int32 XWalkMusic::parseNoteIndex(stringview noteName)
     }
 
     size octaveCharacterIndex = 1U;
-    if (noteName.size() == 3U)
+    const hal::boolean noteNameMatched =
+        static_cast<hal::boolean>(
+            noteName.size() == 3U);
+    if (noteNameMatched)
     {
         if (noteName[1U] != '#')
         {

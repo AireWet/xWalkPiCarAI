@@ -134,7 +134,10 @@ XWalkHal::boolean readPrompt(
 {
     OllamaImageExampleState& state =
         *static_cast<OllamaImageExampleState*>(context);
-    if (state.inputIndex >= state.inputs.size())
+    const hal::boolean inputUnavailable =
+        static_cast<hal::boolean>(
+            state.inputIndex >= state.inputs.size());
+    if (inputUnavailable)
     {
         return false;
     }

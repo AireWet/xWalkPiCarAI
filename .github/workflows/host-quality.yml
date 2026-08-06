@@ -23,7 +23,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libtinyxml2-dev libyaml-cpp-dev
+          libgtest-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Select compiler
         run: |
@@ -48,10 +48,26 @@ jobs:
         run: >-
           ctest --test-dir build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
           --output-on-failure --no-tests=error
+      - name: Test xWalkAgent aggregate
+        run: >-
+          ctest --test-dir build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
+          --output-on-failure --no-tests=error -L agent-aggregate
+      - name: Test xWalkAgent functional groups
+        run: >-
+          ctest --test-dir build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
+          --output-on-failure --no-tests=error -L agent-group
       - name: Test host-safe HAL sequences
         run: >-
           build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}/xGoogleTest
           TEST_SUITE_XWALK_SEQUENCE:1 --gtest_brief=1
+      - name: Test centralized CLI controller cases
+        run: >-
+          build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}/xCliGoogleTest
+          --gtest_brief=1
+      - name: Test CLI controller-to-HAL sequences
+        run: >-
+          build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}/xCliSequenceTest
+          --gtest_brief=1
 
   sanitizers:
     runs-on: ubuntu-24.04
@@ -64,7 +80,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libtinyxml2-dev libyaml-cpp-dev
+          libgtest-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure
         run: cmake --fresh --preset sanitizers
@@ -84,7 +100,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libtinyxml2-dev libyaml-cpp-dev
+          libgtest-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure
         run: cmake --fresh --preset thread-sanitizer
@@ -101,7 +117,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libtinyxml2-dev libyaml-cpp-dev
+          libgtest-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure strict host build
         run: cmake --fresh --preset sanity
@@ -118,7 +134,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build clang-tidy cppcheck libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libtinyxml2-dev libyaml-cpp-dev
+          libgtest-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure
         run: cmake --fresh --preset clang-tidy
@@ -135,7 +151,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build gcovr libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libtinyxml2-dev libyaml-cpp-dev
+          libgtest-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Build, test, and generate coverage reports
         run: xWalkTool/shell/run-host-coverage.sh run
@@ -166,7 +182,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libtinyxml2-dev libyaml-cpp-dev
+          libgtest-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure release installation
         run: >-
@@ -179,7 +195,15 @@ jobs:
       - name: Verify staged resources and executable
         run: |
           test -x build-host/deploy/usr/bin/xwalk-picarx-control
+          test -x build-host/deploy/usr/lib/xwalk/xWalkTool/shell/xWalkEnv.sh
+          test -x build-host/deploy/usr/lib/xwalk/xWalkTool/python/xWalkLicenseTool
+          test -r build-host/deploy/usr/lib/xwalk/xWalkTool/environment/xWalkLicense.json
+          test ! -e build-host/deploy/usr/lib/xwalk/xWalkLibrary/X_WALK_LICENSE.KEY
           test -r build-host/deploy/etc/xwalk/picar-x.conf
+          test -r build-host/deploy/etc/xwalk/picar-x.d/hardware.conf
+          test -r build-host/deploy/etc/xwalk/picar-x.d/ai/providers/gemini.conf
+          test -r build-host/deploy/usr/lib/xwalk/libvosk.so
+          test -r build-host/deploy/usr/share/xwalk/models/vosk/vosk-model-small-en-us-0.15/am/final.mdl
           test -r build-host/deploy/usr/share/xwalk/sounds/car-double-horn.wav
           test -r build-host/deploy/usr/share/xwalk/sounds/car-start-engine.wav
           test -r build-host/deploy/usr/share/xwalk/music/slow-trail-Ahjay_Stelino.mp3

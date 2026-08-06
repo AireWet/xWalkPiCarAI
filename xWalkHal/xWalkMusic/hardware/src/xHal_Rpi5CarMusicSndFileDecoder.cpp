@@ -100,7 +100,10 @@ XWalkMusicAlsaAudioData XWalkMusicSndFileDecoder::decodeAudio(
     contextpointer context, stringview filename)
 {
     static_cast<void>(context);
-    if (filename.empty())
+    const hal::boolean filenameEmpty =
+        static_cast<hal::boolean>(
+            filename.empty());
+    if (filenameEmpty)
     {
         XHAL_THROW_INVALID_ARGUMENT("Music decoder requires an audio file path");
     }
@@ -113,10 +116,13 @@ XWalkMusicAlsaAudioData XWalkMusicSndFileDecoder::decodeAudio(
     {
         XHAL_THROW_RUNTIME_ERROR("Music audio file could not be opened by libsndfile");
     }
-    if ((fileInformation.samplerate <= 0) || (fileInformation.channels <= 0) ||
+    const hal::boolean fileInformationSamplerateChannelsInvalid =
+        static_cast<hal::boolean>(
+            (fileInformation.samplerate <= 0) || (fileInformation.channels <= 0) ||
         (fileInformation.channels > static_cast<int>(XHAL_RPI5CAR_AUDIO_MAXIMUM_CHANNEL_COUNT)) ||
         (static_cast<unsigned long long>(fileInformation.samplerate) >
-            static_cast<unsigned long long>(std::numeric_limits<uint32>::max())))
+            static_cast<unsigned long long>(std::numeric_limits<uint32>::max())));
+    if (fileInformationSamplerateChannelsInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Music decoder returned invalid audio metadata");
     }
@@ -142,9 +148,12 @@ XWalkMusicAlsaAudioData XWalkMusicSndFileDecoder::decodeAudio(
             break;
         }
         const size sampleCount = static_cast<size>(frameCount) * channelCount;
-        if ((sampleCount > maximumSampleCount) ||
+        const hal::boolean sampleBufferTooLarge =
+            static_cast<hal::boolean>(
+                (sampleCount > maximumSampleCount) ||
             (audioData.pcmData.size() >
-                ((maximumSampleCount - sampleCount) * decodedSampleBytes)))
+                ((maximumSampleCount - sampleCount) * decodedSampleBytes)));
+        if (sampleBufferTooLarge)
         {
             XHAL_THROW_OUT_OF_RANGE("Music decoded PCM exceeds the memory bound");
         }
@@ -155,7 +164,10 @@ XWalkMusicAlsaAudioData XWalkMusicSndFileDecoder::decodeAudio(
             audioData.pcmData.push_back(static_cast<uint8>((sampleBits >> 8U) & 0x00FFU));
         }
     }
-    if ((::sf_error(file.get()) != SF_ERR_NO_ERROR) || audioData.pcmData.empty())
+    const hal::boolean fileAudioDataPcmDataInvalid =
+        static_cast<hal::boolean>(
+            (::sf_error(file.get()) != SF_ERR_NO_ERROR) || audioData.pcmData.empty());
+    if (fileAudioDataPcmDataInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Music audio file contains no complete decoded frames");
     }

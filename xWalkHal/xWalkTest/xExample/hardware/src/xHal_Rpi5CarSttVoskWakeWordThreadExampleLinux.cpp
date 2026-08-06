@@ -44,7 +44,10 @@ XWalkSttVoskWakeWordThreadExampleLinux::~XWalkSttVoskWakeWordThreadExampleLinux(
             workerFailed.store(true);
         }
     }
-    if (worker.joinable())
+    const hal::boolean workerJoinable =
+        static_cast<hal::boolean>(
+            worker.joinable());
+    if (workerJoinable)
     {
         worker.join();
     }
@@ -78,7 +81,10 @@ void XWalkSttVoskWakeWordThreadExampleLinux::run(uint32 detectionCount,
     {
         stopRequested.store(true);
         speechToText.stop();
-        if (worker.joinable())
+        const hal::boolean workerJoinable =
+            static_cast<hal::boolean>(
+                worker.joinable());
+        if (workerJoinable)
         {
             worker.join();
         }
@@ -108,7 +114,10 @@ XWalkSttVoskWakeWordThreadExampleLinux::adapter(contextpointer context)
 void XWalkSttVoskWakeWordThreadExampleLinux::startListening(contextpointer context)
 {
     XWalkSttVoskWakeWordThreadExampleLinux& self = adapter(context);
-    if (self.worker.joinable())
+    const hal::boolean workerAlreadyRunning =
+        static_cast<hal::boolean>(
+            self.worker.joinable());
+    if (workerAlreadyRunning)
     {
         XHAL_THROW_RUNTIME_ERROR("Wake-word listener is already active");
     }
@@ -132,11 +141,17 @@ void XWalkSttVoskWakeWordThreadExampleLinux::stopListening(contextpointer contex
     XWalkSttVoskWakeWordThreadExampleLinux& self = adapter(context);
     self.stopRequested.store(true);
     self.speechToTextObject->stop();
-    if (self.worker.joinable())
+    const hal::boolean workerJoinable =
+        static_cast<hal::boolean>(
+            self.worker.joinable());
+    if (workerJoinable)
     {
         self.worker.join();
     }
-    if (self.workerFailed.exchange(false))
+    const hal::boolean exchangeSucceeded =
+        static_cast<hal::boolean>(
+            self.workerFailed.exchange(false));
+    if (exchangeSucceeded)
     {
         XHAL_THROW_RUNTIME_ERROR("Wake-word recognition worker failed");
     }
@@ -163,10 +178,21 @@ void XWalkSttVoskWakeWordThreadExampleLinux::listenForWakeWord() noexcept
 {
     try
     {
-        while (!stopRequested.load() && !wakeDetected.load())
+        const hal::boolean processingLoopRequested{true};
+        while (processingLoopRequested)
         {
+            const hal::boolean listeningMayContinue =
+                static_cast<hal::boolean>(
+                    !stopRequested.load() && !wakeDetected.load());
+            if (listeningMayContinue == false)
+            {
+                break;
+            }
             const string transcript = speechToTextObject->listen(listenTimeoutMsValue);
-            if (containsWakeWord(transcript))
+            const hal::boolean wakeWordDetected =
+                static_cast<hal::boolean>(
+                    containsWakeWord(transcript));
+            if (wakeWordDetected)
             {
                 wakeDetected.store(true);
             }

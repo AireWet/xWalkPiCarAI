@@ -26,7 +26,10 @@ XWalkHal::string recognizePcm(XWalkHal::contextpointer context,
     const XWalkHal::bytevector& pcm, XWalkHal::uint32 rate, XWalkHal::uint8 channels)
 {
     static_cast<void>(context);
-    if (pcm.empty() || rate != 16'000U || channels != 1U)
+    const hal::boolean pcmRateChannelsInvalid =
+        static_cast<hal::boolean>(
+            pcm.empty() || rate != 16'000U || channels != 1U);
+    if (pcmRateChannelsInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Speech hardware test received invalid microphone PCM");
     }
@@ -66,7 +69,10 @@ XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer argume
     recognizer.cancelRecognition = &cancel;
     XWalkHal::XWalkSpeechToTextAlsa adapter(argumentValues[1], nullptr, recognizer);
     XWalkHal::XWalkSpeechToText speech(&adapter, adapter.callbacks());
-    if (!speech.isReady() || speech.listen(100U).empty())
+    const hal::boolean speechIsReadyListenInvalid =
+        static_cast<hal::boolean>(
+            !speech.isReady() || speech.listen(100U).empty());
+    if (speechIsReadyListenInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Speech hardware test did not receive microphone PCM");
     }

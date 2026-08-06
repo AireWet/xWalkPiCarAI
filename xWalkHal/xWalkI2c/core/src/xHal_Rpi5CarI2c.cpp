@@ -181,8 +181,11 @@ void XWalkI2c::writeRegister(uint8 address, uint8 reg, const bytevector& data)
  */
 boolean XWalkI2c::tryWriteRegister(uint8 address, uint8 reg, const bytevector& data) noexcept
 {
-    if ((address > common::I2C_MAXIMUM_SEVEN_BIT_ADDRESS) || data.empty() ||
-        (tryWriteRegisterCallback == nullptr))
+    const hal::boolean addressTryWriteRegisterCallbackInvalid =
+        static_cast<hal::boolean>(
+            (address > common::I2C_MAXIMUM_SEVEN_BIT_ADDRESS) || data.empty() ||
+        (tryWriteRegisterCallback == nullptr));
+    if (addressTryWriteRegisterCallbackInvalid)
     {
         return false;
     }

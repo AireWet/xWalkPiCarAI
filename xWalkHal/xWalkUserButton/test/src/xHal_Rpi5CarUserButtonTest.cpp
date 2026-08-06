@@ -100,7 +100,10 @@ XWalkHal::boolean read(XWalkHal::contextpointer context, XWalkHal::uint8 pin)
 {
     TestBackend& backend = *static_cast<TestBackend*>(context);
     static_cast<void>(pin);
-    if (backend.failReads.load())
+    const hal::boolean simulatedReadFailure =
+        static_cast<hal::boolean>(
+            backend.failReads.load());
+    if (simulatedReadFailure)
     {
         XHAL_THROW_RUNTIME_ERROR("Simulated user-button GPIO failure");
     }

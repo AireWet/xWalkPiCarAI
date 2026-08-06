@@ -151,10 +151,13 @@ int32 XWalkExampleRunner::runDeepseek(
     uint32 maximumPrompts{};
     const std::from_chars_result parseResult = std::from_chars(
         countText.data(), countText.data() + countText.size(), maximumPrompts);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean maximumPromptsInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != countText.data() + countText.size()) ||
         (maximumPrompts == 0U) ||
-        (maximumPrompts > XHAL_RPI5CAR_DEEPSEEK_EXAMPLE_MAXIMUM_PROMPTS))
+        (maximumPrompts > XHAL_RPI5CAR_DEEPSEEK_EXAMPLE_MAXIMUM_PROMPTS));
+    if (maximumPromptsInvalid)
     {
         std::cerr << "maximum-prompts must be an integer from 1 to 100\n";
         return 2;
@@ -191,10 +194,13 @@ int32 XWalkExampleRunner::runDoubao(
     uint32 maximumPrompts{};
     const std::from_chars_result parseResult = std::from_chars(
         countText.data(), countText.data() + countText.size(), maximumPrompts);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean maximumPromptsInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != countText.data() + countText.size()) ||
         (maximumPrompts == 0U) ||
-        (maximumPrompts > XHAL_RPI5CAR_DOUBAO_EXAMPLE_MAXIMUM_PROMPTS))
+        (maximumPrompts > XHAL_RPI5CAR_DOUBAO_EXAMPLE_MAXIMUM_PROMPTS));
+    if (maximumPromptsInvalid)
     {
         std::cerr << "maximum-prompts must be an integer from 1 to 100\n";
         return 2;
@@ -232,10 +238,13 @@ int32 XWalkExampleRunner::runDoubaoImage(
     uint32 maximumPrompts{};
     const std::from_chars_result parseResult = std::from_chars(
         countText.data(), countText.data() + countText.size(), maximumPrompts);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean maximumPromptsInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != countText.data() + countText.size()) ||
         (maximumPrompts == 0U) ||
-        (maximumPrompts > XHAL_RPI5CAR_DOUBAO_IMAGE_EXAMPLE_MAXIMUM_PROMPTS))
+        (maximumPrompts > XHAL_RPI5CAR_DOUBAO_IMAGE_EXAMPLE_MAXIMUM_PROMPTS));
+    if (maximumPromptsInvalid)
     {
         std::cerr << "maximum-prompts must be an integer from 1 to 100\n";
         return 2;
@@ -273,10 +282,13 @@ int32 XWalkExampleRunner::runGemini(
     uint32 maximumPrompts{};
     const std::from_chars_result parseResult = std::from_chars(
         countText.data(), countText.data() + countText.size(), maximumPrompts);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean maximumPromptsInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != countText.data() + countText.size()) ||
         (maximumPrompts == 0U) ||
-        (maximumPrompts > XHAL_RPI5CAR_GEMINI_EXAMPLE_MAXIMUM_PROMPTS))
+        (maximumPrompts > XHAL_RPI5CAR_GEMINI_EXAMPLE_MAXIMUM_PROMPTS));
+    if (maximumPromptsInvalid)
     {
         std::cerr << "maximum-prompts must be an integer from 1 to 100\n";
         return 2;
@@ -313,10 +325,13 @@ int32 XWalkExampleRunner::runGrok(
     uint32 maximumPrompts{};
     const std::from_chars_result parseResult = std::from_chars(
         countText.data(), countText.data() + countText.size(), maximumPrompts);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean maximumPromptsInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != countText.data() + countText.size()) ||
         (maximumPrompts == 0U) ||
-        (maximumPrompts > XHAL_RPI5CAR_GROK_EXAMPLE_MAXIMUM_PROMPTS))
+        (maximumPrompts > XHAL_RPI5CAR_GROK_EXAMPLE_MAXIMUM_PROMPTS));
+    if (maximumPromptsInvalid)
     {
         std::cerr << "maximum-prompts must be an integer from 1 to 100\n";
         return 2;
@@ -353,10 +368,13 @@ int32 XWalkExampleRunner::runOllamaImage(
     uint32 maximumPrompts{};
     const std::from_chars_result parseResult = std::from_chars(
         countText.data(), countText.data() + countText.size(), maximumPrompts);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean maximumPromptsInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != countText.data() + countText.size()) ||
         (maximumPrompts == 0U) ||
-        (maximumPrompts > XHAL_RPI5CAR_OLLAMA_IMAGE_EXAMPLE_MAXIMUM_PROMPTS))
+        (maximumPrompts > XHAL_RPI5CAR_OLLAMA_IMAGE_EXAMPLE_MAXIMUM_PROMPTS));
+    if (maximumPromptsInvalid)
     {
         std::cerr << "maximum-prompts must be an integer from 1 to 100\n";
         return 2;
@@ -387,10 +405,13 @@ int32 XWalkExampleRunner::runOllama(
     uint32 maximumPrompts{};
     const std::from_chars_result parseResult = std::from_chars(
         countText.data(), countText.data() + countText.size(), maximumPrompts);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean maximumPromptsInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != countText.data() + countText.size()) ||
         (maximumPrompts == 0U) ||
-        (maximumPrompts > XHAL_RPI5CAR_OLLAMA_EXAMPLE_MAXIMUM_PROMPTS))
+        (maximumPrompts > XHAL_RPI5CAR_OLLAMA_EXAMPLE_MAXIMUM_PROMPTS));
+    if (maximumPromptsInvalid)
     {
         std::cerr << "maximum-prompts must be an integer from 1 to 100\n";
         return 2;
@@ -420,10 +441,13 @@ int32 XWalkExampleRunner::runOpenAiImage(
     uint32 maximumPrompts{};
     const std::from_chars_result parseResult = std::from_chars(
         countText.data(), countText.data() + countText.size(), maximumPrompts);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean maximumPromptsInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != countText.data() + countText.size()) ||
         (maximumPrompts == 0U) ||
-        (maximumPrompts > XHAL_RPI5CAR_OPEN_AI_IMAGE_EXAMPLE_MAXIMUM_PROMPTS))
+        (maximumPrompts > XHAL_RPI5CAR_OPEN_AI_IMAGE_EXAMPLE_MAXIMUM_PROMPTS));
+    if (maximumPromptsInvalid)
     {
         std::cerr << "maximum-prompts must be an integer from 1 to 100\n";
         return 2;
@@ -462,10 +486,13 @@ int32 XWalkExampleRunner::runOpenAi(
     uint32 maximumPrompts{};
     const std::from_chars_result parseResult = std::from_chars(
         countText.data(), countText.data() + countText.size(), maximumPrompts);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean maximumPromptsInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != countText.data() + countText.size()) ||
         (maximumPrompts == 0U) ||
-        (maximumPrompts > XHAL_RPI5CAR_OPEN_AI_EXAMPLE_MAXIMUM_PROMPTS))
+        (maximumPrompts > XHAL_RPI5CAR_OPEN_AI_EXAMPLE_MAXIMUM_PROMPTS));
+    if (maximumPromptsInvalid)
     {
         std::cerr << "maximum-prompts must be an integer from 1 to 100\n";
         return 2;
@@ -503,10 +530,13 @@ int32 XWalkExampleRunner::runOthers(
     uint32 maximumPrompts{};
     const std::from_chars_result parseResult = std::from_chars(
         countText.data(), countText.data() + countText.size(), maximumPrompts);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean maximumPromptsInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != countText.data() + countText.size()) ||
         (maximumPrompts == 0U) ||
-        (maximumPrompts > XHAL_RPI5CAR_OTHERS_EXAMPLE_MAXIMUM_PROMPTS))
+        (maximumPrompts > XHAL_RPI5CAR_OTHERS_EXAMPLE_MAXIMUM_PROMPTS));
+    if (maximumPromptsInvalid)
     {
         std::cerr << "maximum-prompts must be an integer from 1 to 100\n";
         return 2;
@@ -551,10 +581,13 @@ int32 XWalkExampleRunner::runQwen(
     uint32 maximumPrompts{};
     const std::from_chars_result parseResult = std::from_chars(
         countText.data(), countText.data() + countText.size(), maximumPrompts);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean maximumPromptsInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != countText.data() + countText.size()) ||
         (maximumPrompts == 0U) ||
-        (maximumPrompts > XHAL_RPI5CAR_QWEN_EXAMPLE_MAXIMUM_PROMPTS))
+        (maximumPrompts > XHAL_RPI5CAR_QWEN_EXAMPLE_MAXIMUM_PROMPTS));
+    if (maximumPromptsInvalid)
     {
         std::cerr << "maximum-prompts must be an integer from 1 to 100\n";
         return 2;
@@ -592,10 +625,13 @@ int32 XWalkExampleRunner::runPinInput(
     uint32 sampleCount{};
     const std::from_chars_result parseResult = std::from_chars(
         countText.data(), countText.data() + countText.size(), sampleCount);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean parseResultEcPtrCountTextSampleCountInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != countText.data() + countText.size()) ||
         (sampleCount == 0U) ||
-        (sampleCount > XHAL_RPI5CAR_PIN_INPUT_EXAMPLE_MAXIMUM_SAMPLES))
+        (sampleCount > XHAL_RPI5CAR_PIN_INPUT_EXAMPLE_MAXIMUM_SAMPLES));
+    if (parseResultEcPtrCountTextSampleCountInvalid)
     {
         std::cerr << "samples must be an integer from 1 to 36000\n";
         return 2;
@@ -621,10 +657,13 @@ int32 XWalkExampleRunner::runUltrasonic(
     uint32 sampleCount{};
     const std::from_chars_result parseResult = std::from_chars(
         sampleText.data(), sampleText.data() + sampleText.size(), sampleCount);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean parseResultEcPtrSampleTextSampleCountInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != sampleText.data() + sampleText.size()) ||
         (sampleCount == 0U) ||
-        (sampleCount > XHAL_RPI5CAR_ULTRASONIC_EXAMPLE_MAXIMUM_SAMPLES))
+        (sampleCount > XHAL_RPI5CAR_ULTRASONIC_EXAMPLE_MAXIMUM_SAMPLES));
+    if (parseResultEcPtrSampleTextSampleCountInvalid)
     {
         std::cerr << "samples must be an integer from 1 to 18000\n";
         return 2;
@@ -670,18 +709,24 @@ int32 XWalkExampleRunner::runVoiceAssistant(
         roundText.data(), roundText.data() + roundText.size(), maximumRounds);
     const std::from_chars_result timeoutResult = std::from_chars(
         timeoutText.data(), timeoutText.data() + timeoutText.size(), timeoutMs);
-    if ((roundResult.ec != std::errc{}) ||
+    const hal::boolean roundResultEcPtrInvalid =
+        static_cast<hal::boolean>(
+            (roundResult.ec != std::errc{}) ||
         (roundResult.ptr != roundText.data() + roundText.size()) ||
         (maximumRounds == 0U) ||
         (maximumRounds >
-        XHAL_RPI5CAR_VOICE_ASSISTANT_EXAMPLE_MAXIMUM_ROUNDS))
+        XHAL_RPI5CAR_VOICE_ASSISTANT_EXAMPLE_MAXIMUM_ROUNDS));
+    if (roundResultEcPtrInvalid)
     {
         std::cerr << "rounds must be an integer from 1 to 100\n";
         return 2;
     }
-    if ((timeoutResult.ec != std::errc{}) ||
+    const hal::boolean timeoutInvalid =
+        static_cast<hal::boolean>(
+            (timeoutResult.ec != std::errc{}) ||
         (timeoutResult.ptr != timeoutText.data() + timeoutText.size()) ||
-        (timeoutMs == 0U) || (timeoutMs > 300'000U))
+        (timeoutMs == 0U) || (timeoutMs > 300'000U));
+    if (timeoutInvalid)
     {
         std::cerr << "timeout-ms must be an integer from 1 to 300000\n";
         return 2;
@@ -722,10 +767,13 @@ int32 XWalkExampleRunner::runServo(
     uint32 cycleCount{};
     const std::from_chars_result parseResult = std::from_chars(
         countText.data(), countText.data() + countText.size(), cycleCount);
-    if ((parseResult.ec != std::errc{}) ||
+    const hal::boolean parseResultEcPtrCountTextCycleCountInvalid =
+        static_cast<hal::boolean>(
+            (parseResult.ec != std::errc{}) ||
         (parseResult.ptr != countText.data() + countText.size()) ||
         (cycleCount == 0U) ||
-        (cycleCount > XHAL_RPI5CAR_SERVO_EXAMPLE_MAXIMUM_CYCLES))
+        (cycleCount > XHAL_RPI5CAR_SERVO_EXAMPLE_MAXIMUM_CYCLES));
+    if (parseResultEcPtrCountTextCycleCountInvalid)
     {
         std::cerr << "cycles must be an integer from 1 to 100\n";
         return 2;
@@ -759,18 +807,24 @@ int32 XWalkExampleRunner::runSttVoskStream(
         sessionText.data(), sessionText.data() + sessionText.size(), sessionCount);
     const std::from_chars_result timeoutResult = std::from_chars(
         timeoutText.data(), timeoutText.data() + timeoutText.size(), timeoutMs);
-    if ((sessionResult.ec != std::errc{}) ||
+    const hal::boolean sessionResultEcPtrInvalid =
+        static_cast<hal::boolean>(
+            (sessionResult.ec != std::errc{}) ||
         (sessionResult.ptr != sessionText.data() + sessionText.size()) ||
         (sessionCount == 0U) ||
-        (sessionCount > XHAL_RPI5CAR_STT_VOSK_STREAM_EXAMPLE_MAXIMUM_SESSIONS))
+        (sessionCount > XHAL_RPI5CAR_STT_VOSK_STREAM_EXAMPLE_MAXIMUM_SESSIONS));
+    if (sessionResultEcPtrInvalid)
     {
         std::cerr << "sessions must be an integer from 1 to 100\n";
         return 2;
     }
-    if ((timeoutResult.ec != std::errc{}) ||
+    const hal::boolean timeoutInvalid =
+        static_cast<hal::boolean>(
+            (timeoutResult.ec != std::errc{}) ||
         (timeoutResult.ptr != timeoutText.data() + timeoutText.size()) ||
         (timeoutMs == 0U) ||
-        (timeoutMs > XHAL_RPI5CAR_SPEECH_TO_TEXT_MAXIMUM_TIMEOUT_MS))
+        (timeoutMs > XHAL_RPI5CAR_SPEECH_TO_TEXT_MAXIMUM_TIMEOUT_MS));
+    if (timeoutInvalid)
     {
         std::cerr << "timeout-ms must be an integer from 1 to 300000\n";
         return 2;
@@ -804,26 +858,35 @@ int32 XWalkExampleRunner::runSttVoskWakeWordThread(
         pollText.data(), pollText.data() + pollText.size(), maximumPolls);
     const std::from_chars_result timeoutResult = std::from_chars(
         timeoutText.data(), timeoutText.data() + timeoutText.size(), timeoutMs);
-    if ((detectionResult.ec != std::errc{}) ||
+    const hal::boolean detectionResultEcPtrInvalid =
+        static_cast<hal::boolean>(
+            (detectionResult.ec != std::errc{}) ||
         (detectionResult.ptr != detectionText.data() + detectionText.size()) ||
         (detectionCount == 0U) ||
-        (detectionCount > XHAL_RPI5CAR_STT_VOSK_WAKE_WORD_MAXIMUM_DETECTIONS))
+        (detectionCount > XHAL_RPI5CAR_STT_VOSK_WAKE_WORD_MAXIMUM_DETECTIONS));
+    if (detectionResultEcPtrInvalid)
     {
         std::cerr << "detections must be an integer from 1 to 100\n";
         return 2;
     }
-    if ((pollResult.ec != std::errc{}) ||
+    const hal::boolean pollResultEcPtrInvalid =
+        static_cast<hal::boolean>(
+            (pollResult.ec != std::errc{}) ||
         (pollResult.ptr != pollText.data() + pollText.size()) ||
         (maximumPolls == 0U) ||
-        (maximumPolls > XHAL_RPI5CAR_STT_VOSK_WAKE_WORD_MAXIMUM_POLLS))
+        (maximumPolls > XHAL_RPI5CAR_STT_VOSK_WAKE_WORD_MAXIMUM_POLLS));
+    if (pollResultEcPtrInvalid)
     {
         std::cerr << "maximum-polls must be an integer from 1 to 1200\n";
         return 2;
     }
-    if ((timeoutResult.ec != std::errc{}) ||
+    const hal::boolean timeoutInvalid =
+        static_cast<hal::boolean>(
+            (timeoutResult.ec != std::errc{}) ||
         (timeoutResult.ptr != timeoutText.data() + timeoutText.size()) ||
         (timeoutMs == 0U) ||
-        (timeoutMs > XHAL_RPI5CAR_SPEECH_TO_TEXT_MAXIMUM_TIMEOUT_MS))
+        (timeoutMs > XHAL_RPI5CAR_SPEECH_TO_TEXT_MAXIMUM_TIMEOUT_MS));
+    if (timeoutInvalid)
     {
         std::cerr << "listen-timeout-ms must be an integer from 1 to 300000\n";
         return 2;
@@ -853,18 +916,24 @@ int32 XWalkExampleRunner::runSttVoskWakeWord(
         attemptText.data(), attemptText.data() + attemptText.size(), maximumAttempts);
     const std::from_chars_result timeoutResult = std::from_chars(
         timeoutText.data(), timeoutText.data() + timeoutText.size(), timeoutMs);
-    if ((attemptResult.ec != std::errc{}) ||
+    const hal::boolean attemptResultEcPtrInvalid =
+        static_cast<hal::boolean>(
+            (attemptResult.ec != std::errc{}) ||
         (attemptResult.ptr != attemptText.data() + attemptText.size()) ||
         (maximumAttempts == 0U) ||
-        (maximumAttempts > XHAL_RPI5CAR_STT_VOSK_WAKE_WORD_EXAMPLE_MAXIMUM_ATTEMPTS))
+        (maximumAttempts > XHAL_RPI5CAR_STT_VOSK_WAKE_WORD_EXAMPLE_MAXIMUM_ATTEMPTS));
+    if (attemptResultEcPtrInvalid)
     {
         std::cerr << "maximum-attempts must be an integer from 1 to 1200\n";
         return 2;
     }
-    if ((timeoutResult.ec != std::errc{}) ||
+    const hal::boolean timeoutInvalid =
+        static_cast<hal::boolean>(
+            (timeoutResult.ec != std::errc{}) ||
         (timeoutResult.ptr != timeoutText.data() + timeoutText.size()) ||
         (timeoutMs == 0U) ||
-        (timeoutMs > XHAL_RPI5CAR_SPEECH_TO_TEXT_MAXIMUM_TIMEOUT_MS))
+        (timeoutMs > XHAL_RPI5CAR_SPEECH_TO_TEXT_MAXIMUM_TIMEOUT_MS));
+    if (timeoutInvalid)
     {
         std::cerr << "listen-timeout-ms must be an integer from 1 to 300000\n";
         return 2;
@@ -894,18 +963,24 @@ int32 XWalkExampleRunner::runSttVoskWithoutStream(
         sessionText.data(), sessionText.data() + sessionText.size(), sessionCount);
     const std::from_chars_result timeoutResult = std::from_chars(
         timeoutText.data(), timeoutText.data() + timeoutText.size(), timeoutMs);
-    if ((sessionResult.ec != std::errc{}) ||
+    const hal::boolean sessionCountInvalid =
+        static_cast<hal::boolean>(
+            (sessionResult.ec != std::errc{}) ||
         (sessionResult.ptr != sessionText.data() + sessionText.size()) ||
         (sessionCount == 0U) ||
-        (sessionCount > XHAL_RPI5CAR_STT_VOSK_WITHOUT_STREAM_EXAMPLE_MAXIMUM_SESSIONS))
+        (sessionCount > XHAL_RPI5CAR_STT_VOSK_WITHOUT_STREAM_EXAMPLE_MAXIMUM_SESSIONS));
+    if (sessionCountInvalid)
     {
         std::cerr << "sessions must be an integer from 1 to 100\n";
         return 2;
     }
-    if ((timeoutResult.ec != std::errc{}) ||
+    const hal::boolean timeoutInvalid =
+        static_cast<hal::boolean>(
+            (timeoutResult.ec != std::errc{}) ||
         (timeoutResult.ptr != timeoutText.data() + timeoutText.size()) ||
         (timeoutMs == 0U) ||
-        (timeoutMs > XHAL_RPI5CAR_SPEECH_TO_TEXT_MAXIMUM_TIMEOUT_MS))
+        (timeoutMs > XHAL_RPI5CAR_SPEECH_TO_TEXT_MAXIMUM_TIMEOUT_MS));
+    if (timeoutInvalid)
     {
         std::cerr << "listen-timeout-ms must be an integer from 1 to 300000\n";
         return 2;
@@ -1139,7 +1214,10 @@ int32 XWalkExampleRunner::runConfigured(
     try
     {
         const YAML::Node root = YAML::LoadFile(string(configurationPath));
-        if (!root.IsMap())
+        const hal::boolean mapNotMatched =
+            static_cast<hal::boolean>(
+                !root.IsMap());
+        if (mapNotMatched)
         {
             std::cerr << "xExample YAML configuration is invalid for '"
                       << selection << "': " << configurationPath << '\n';
@@ -1148,13 +1226,19 @@ int32 XWalkExampleRunner::runConfigured(
         const YAML::Node schemaVersion = root["schema_version"];
         const YAML::Node examples = root["examples"];
         YAML::Node example;
-        if (examples.IsMap())
+        const hal::boolean mapMatched =
+            static_cast<hal::boolean>(
+                examples.IsMap());
+        if (mapMatched)
         {
             for (YAML::const_iterator iterator = examples.begin();
                  iterator != examples.end(); ++iterator)
             {
-                if (iterator->first.IsScalar() &&
-                    (iterator->first.as<string>() == selection))
+                const hal::boolean selectionMatched =
+                    static_cast<hal::boolean>(
+                        iterator->first.IsScalar() &&
+                    (iterator->first.as<string>() == selection));
+                if (selectionMatched)
                 {
                     example = iterator->second;
                     break;
@@ -1163,9 +1247,12 @@ int32 XWalkExampleRunner::runConfigured(
         }
         const YAML::Node arguments = example.IsMap()
             ? example["arguments"] : YAML::Node();
-        if (!schemaVersion.IsScalar() ||
+        const hal::boolean argumentsInvalid =
+            static_cast<hal::boolean>(
+                !schemaVersion.IsScalar() ||
             (schemaVersion.as<uint32>() != 1U) || !examples.IsMap() ||
-            !example.IsMap() || !arguments.IsSequence())
+            !example.IsMap() || !arguments.IsSequence());
+        if (argumentsInvalid)
         {
             std::cerr << "xExample YAML configuration is invalid for '"
                       << selection << "': " << configurationPath << '\n';
@@ -1175,7 +1262,10 @@ int32 XWalkExampleRunner::runConfigured(
         stringvector values{string(executable), string(selection)};
         for (const YAML::Node& argument : arguments)
         {
-            if (!argument.IsScalar())
+            const hal::boolean scalarNotMatched =
+                static_cast<hal::boolean>(
+                    !argument.IsScalar());
+            if (scalarNotMatched)
             {
                 std::cerr << "xExample YAML arguments must be scalar values: "
                           << configurationPath << '\n';
@@ -1229,9 +1319,15 @@ int32 XWalkExampleRunner::run(int32 argumentCount, char* argumentValues[])
             ++index;
             continue;
         }
-        if ((index > 0) && (argument.rfind("--config=", 0U) == 0U))
+        const hal::boolean configAssignmentMatched =
+            static_cast<hal::boolean>(
+                (index > 0) && (argument.rfind("--config=", 0U) == 0U));
+        if (configAssignmentMatched)
         {
-            if (configurationSeen || (argument.size() == 9U))
+            const hal::boolean configurationInvalid =
+                static_cast<hal::boolean>(
+                    configurationSeen || (argument.size() == 9U));
+            if (configurationInvalid)
             {
                 std::cerr << "--config requires one YAML path and may appear once\n";
                 return 2;
@@ -1243,12 +1339,18 @@ int32 XWalkExampleRunner::run(int32 argumentCount, char* argumentValues[])
         values.push_back(argument);
     }
 
-    if (values.size() < 2U)
+    const hal::boolean valuesTooSmall =
+        static_cast<hal::boolean>(
+            values.size() < 2U);
+    if (valuesTooSmall)
     {
         printUsage();
         return 2;
     }
-    if (values.size() == 2U)
+    const hal::boolean valuesMatched =
+        static_cast<hal::boolean>(
+            values.size() == 2U);
+    if (valuesMatched)
     {
         return runConfigured(values[0U], values[1U], configurationPath);
     }

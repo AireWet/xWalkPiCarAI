@@ -12,10 +12,10 @@ if((XWALK_I2C_BUILD_HARDWARE_TESTS OR XWALK_I2C_BUILD_LINUX_BACKEND)
     message(FATAL_ERROR "xWalkI2c hardware tests require Linux i2c-dev")
 endif()
 
-if(NOT TARGET xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
     add_subdirectory(
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon
-        ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common
+        ${CMAKE_CURRENT_BINARY_DIR}/common
     )
 endif()
 
@@ -30,7 +30,7 @@ target_include_directories(xWalkI2c
 )
 
 target_compile_features(xWalkI2c PUBLIC cxx_std_17)
-target_link_libraries(xWalkI2c PUBLIC xWalkCommon)
+target_link_libraries(xWalkI2c PUBLIC xWalkLibraryCommon)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkI2c PRIVATE

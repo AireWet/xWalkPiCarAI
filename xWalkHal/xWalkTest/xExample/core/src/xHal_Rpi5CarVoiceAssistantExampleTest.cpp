@@ -55,7 +55,10 @@ XWalkHal::boolean readKeyboard(
 {
     VoiceAssistantExampleState& state =
         *static_cast<VoiceAssistantExampleState*>(context);
-    if (state.keyboardIndex >= state.keyboardInputs.size())
+    const hal::boolean keyboardInputUnavailable =
+        static_cast<hal::boolean>(
+            state.keyboardIndex >= state.keyboardInputs.size());
+    if (keyboardInputUnavailable)
     {
         return false;
     }

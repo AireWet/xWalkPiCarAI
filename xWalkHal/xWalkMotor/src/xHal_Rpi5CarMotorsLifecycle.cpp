@@ -82,7 +82,10 @@ uint8 XWalkMotors::validateMotorId(uint8 motorId)
  */
 void XWalkMotors::validateSpeeds(float64 leftSpeedPercent, float64 rightSpeedPercent)
 {
-    if ((!XHAL_IS_FINITE(leftSpeedPercent)) || (!XHAL_IS_FINITE(rightSpeedPercent)))
+    const hal::boolean leftSpeedPercentRightSpeedPercentInvalid =
+        static_cast<hal::boolean>(
+            (!XHAL_IS_FINITE(leftSpeedPercent)) || (!XHAL_IS_FINITE(rightSpeedPercent)));
+    if (leftSpeedPercentRightSpeedPercentInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("paired motor speeds must be finite");
     }

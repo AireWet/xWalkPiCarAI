@@ -54,17 +54,26 @@ namespace xwalk::hal
  */
 string XWalkLanguageModelOllama::encodeImage(stringview imagePath)
 {
-    if (imagePath.empty())
+    const hal::boolean imagePathEmpty =
+        static_cast<hal::boolean>(
+            imagePath.empty());
+    if (imagePathEmpty)
     {
         return {};
     }
     const filesystempath path{imagePath};
-    if (filesystemFileSize(path) > XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_IMAGE_BYTES)
+    const hal::boolean imageFileTooLarge =
+        static_cast<hal::boolean>(
+            filesystemFileSize(path) > XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_IMAGE_BYTES);
+    if (imageFileTooLarge)
     {
         XHAL_THROW_OUT_OF_RANGE("Ollama image exceeds its bounded byte count");
     }
     const string contents = readFileContents(path);
-    if (contents.size() > XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_IMAGE_BYTES)
+    const hal::boolean contentsTooLarge =
+        static_cast<hal::boolean>(
+            contents.size() > XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_IMAGE_BYTES);
+    if (contentsTooLarge)
     {
         XHAL_THROW_OUT_OF_RANGE("Ollama image changed beyond its bounded byte count");
     }
@@ -74,8 +83,16 @@ string XWalkLanguageModelOllama::encodeImage(stringview imagePath)
     string encoded{};
     encoded.reserve(encodedGroups * 4U);
     size byteOffset{};
-    while (byteOffset < contents.size())
+    const hal::boolean processingLoopRequested{true};
+    while (processingLoopRequested)
     {
+        const hal::boolean imageByteAvailable =
+            static_cast<hal::boolean>(
+                byteOffset < contents.size());
+        if (imageByteAvailable == false)
+        {
+            break;
+        }
         const uint32 first = static_cast<uint8>(
             static_cast<unsigned char>(contents[byteOffset]));
         const boolean hasSecond = (byteOffset + 1U) < contents.size();
@@ -123,11 +140,17 @@ string XWalkLanguageModelOllama::buildRequest(
         appendMessageJson(request, message);
         needsComma = true;
     };
-    if (!instructionsValue.empty())
+    const hal::boolean instructionsAvailable =
+        static_cast<hal::boolean>(
+            !instructionsValue.empty());
+    if (instructionsAvailable)
     {
         appendWithSeparator({XWalkLanguageModelRole::System, instructionsValue, {}});
     }
-    if (!welcomeValue.empty())
+    const hal::boolean welcomeAvailable =
+        static_cast<hal::boolean>(
+            !welcomeValue.empty());
+    if (welcomeAvailable)
     {
         appendWithSeparator({XWalkLanguageModelRole::Assistant, welcomeValue, {}});
     }
@@ -137,7 +160,10 @@ string XWalkLanguageModelOllama::buildRequest(
     }
     appendWithSeparator(currentPrompt);
     request += "]}";
-    if (request.size() > XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_REQUEST_BYTES)
+    const hal::boolean requestTooLarge =
+        static_cast<hal::boolean>(
+            request.size() > XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_REQUEST_BYTES);
+    if (requestTooLarge)
     {
         XHAL_THROW_OUT_OF_RANGE("Ollama request exceeds its bounded byte count");
     }
@@ -173,7 +199,10 @@ void XWalkLanguageModelOllama::appendJsonString(string& output, stringview value
         {
             output.push_back(character);
         }
-        if (output.size() > XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_REQUEST_BYTES)
+        const hal::boolean outputTooLarge =
+            static_cast<hal::boolean>(
+                output.size() > XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_REQUEST_BYTES);
+        if (outputTooLarge)
         {
             XHAL_THROW_OUT_OF_RANGE("Ollama request exceeds its bounded byte count");
         }
@@ -194,7 +223,10 @@ void XWalkLanguageModelOllama::appendMessageJson(string& output,
     output += "{\"role\":";
     appendJsonString(output, roleName(message.role));
     output += ",\"content\":";
-    if (message.imageBase64.empty())
+    const hal::boolean imageBase64Empty =
+        static_cast<hal::boolean>(
+            message.imageBase64.empty());
+    if (imageBase64Empty)
     {
         appendJsonString(output, message.content);
     }
@@ -215,7 +247,10 @@ void XWalkLanguageModelOllama::appendMessageJson(string& output,
         output += "}}]";
     }
     output.push_back('}');
-    if (output.size() > XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_REQUEST_BYTES)
+    const hal::boolean requestTooLarge =
+        static_cast<hal::boolean>(
+            output.size() > XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_REQUEST_BYTES);
+    if (requestTooLarge)
     {
         XHAL_THROW_OUT_OF_RANGE("Ollama request exceeds its bounded byte count");
     }
@@ -261,13 +296,24 @@ string XWalkLanguageModelOllama::extractResponseContent(stringview responseJson)
         XHAL_THROW_RUNTIME_ERROR("Ollama response has no assistant content");
     }
     size quoteOffset = colonOffset + 1U;
-    while ((quoteOffset < responseJson.size()) &&
-        ((responseJson[quoteOffset] == ' ') || (responseJson[quoteOffset] == '\t') ||
-        (responseJson[quoteOffset] == '\r') || (responseJson[quoteOffset] == '\n')))
+    const hal::boolean whitespaceParsingRequested{true};
+    while (whitespaceParsingRequested)
     {
+        const hal::boolean whitespaceAvailable =
+            static_cast<hal::boolean>(
+                (quoteOffset < responseJson.size()) &&
+        ((responseJson[quoteOffset] == ' ') || (responseJson[quoteOffset] == '\t') ||
+        (responseJson[quoteOffset] == '\r') || (responseJson[quoteOffset] == '\n')));
+        if (whitespaceAvailable == false)
+        {
+            break;
+        }
         ++quoteOffset;
     }
-    if ((quoteOffset >= responseJson.size()) || (responseJson[quoteOffset] != '"'))
+    const hal::boolean quoteOffsetResponseJsonInvalid =
+        static_cast<hal::boolean>(
+            (quoteOffset >= responseJson.size()) || (responseJson[quoteOffset] != '"'));
+    if (quoteOffsetResponseJsonInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Ollama assistant content is not a JSON string");
     }
@@ -286,8 +332,16 @@ string XWalkLanguageModelOllama::decodeJsonString(stringview json, size quoteOff
 {
     string output{};
     size byteOffset = quoteOffset + 1U;
-    while (byteOffset < json.size())
+    const hal::boolean jsonDecodingRequested{true};
+    while (jsonDecodingRequested)
     {
+        const hal::boolean jsonByteAvailable =
+            static_cast<hal::boolean>(
+                byteOffset < json.size());
+        if (jsonByteAvailable == false)
+        {
+            break;
+        }
         const char character = json[byteOffset];
         ++byteOffset;
         if (character == '"')
@@ -303,7 +357,10 @@ string XWalkLanguageModelOllama::decodeJsonString(stringview json, size quoteOff
             output.push_back(character);
             continue;
         }
-        if (byteOffset >= json.size())
+        const hal::boolean jsonEscapeIncomplete =
+            static_cast<hal::boolean>(
+                byteOffset >= json.size());
+        if (jsonEscapeIncomplete)
         {
             XHAL_THROW_RUNTIME_ERROR("Ollama response ends during JSON escaping");
         }
@@ -335,7 +392,10 @@ string XWalkLanguageModelOllama::decodeJsonString(stringview json, size quoteOff
         }
         else if (escape == 'u')
         {
-            if ((json.size() - byteOffset) < 4U)
+            const hal::boolean unicodeEscapeIncomplete =
+                static_cast<hal::boolean>(
+                    (json.size() - byteOffset) < 4U);
+            if (unicodeEscapeIncomplete)
             {
                 XHAL_THROW_RUNTIME_ERROR("Ollama response has incomplete Unicode escaping");
             }
@@ -347,8 +407,11 @@ string XWalkLanguageModelOllama::decodeJsonString(stringview json, size quoteOff
             byteOffset += 4U;
             if ((codePoint >= 0xD800U) && (codePoint <= 0xDBFFU))
             {
-                if (((json.size() - byteOffset) < 6U) || (json[byteOffset] != '\\') ||
-                    (json[byteOffset + 1U] != 'u'))
+                const hal::boolean jsonByteOffsetUInvalid =
+                    static_cast<hal::boolean>(
+                        ((json.size() - byteOffset) < 6U) || (json[byteOffset] != '\\') ||
+                    (json[byteOffset + 1U] != 'u'));
+                if (jsonByteOffsetUInvalid)
                 {
                     XHAL_THROW_RUNTIME_ERROR("Ollama response has incomplete Unicode pair");
                 }

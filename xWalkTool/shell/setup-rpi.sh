@@ -133,10 +133,10 @@ for setting in i2c_arm spi; do
 done
 
 required_packages=(
-    build-essential cmake ninja-build pkg-config python3 linux-libc-dev
+    build-essential cmake ninja-build pkg-config python3 python3-nacl linux-libc-dev
     libasound2-dev alsa-utils libatomic1 libcurl4-openssl-dev
-    libsndfile1-dev libyaml-cpp-dev i2c-tools libi2c-dev gpiod
-    espeak-ng curl ca-certificates
+    libsndfile1-dev libyaml-cpp-dev libopencv-dev libboost-dev i2c-tools libi2c-dev gpiod
+    espeak-ng libttspico-utils curl ca-certificates
 )
 if [ "$camera" = "csi" ]; then
     required_packages+=(rpicam-apps)
@@ -157,15 +157,41 @@ if [ ! -f "$effective_config" ]; then
 fi
 
 configuration_value() {
-    awk -F= -v key="$1" '
-        $1 ~ "^[[:space:]]*" key "[[:space:]]*$" {
-            value=$2
+    configuration_values_from_file "$1" "$effective_config" 0 | tail -n 1
+}
+
+configuration_values_from_file() {
+    local requested_key="$1"
+    local source_file="$2"
+    local include_depth="$3"
+    if [ "$include_depth" -gt 8 ] || [ ! -r "$source_file" ]; then
+        return
+    fi
+    while IFS="$(printf '\t')" read -r entry_type entry_value; do
+        if [ "$entry_type" = "include" ]; then
+            case "$entry_value" in
+                /*|..|../*|*/../*) continue ;;
+            esac
+            configuration_values_from_file "$requested_key" \
+                "$(dirname -- "$source_file")/$entry_value" "$((include_depth + 1))"
+        elif [ "$entry_type" = "value" ]; then
+            printf '%s\n' "$entry_value"
+        fi
+    done < <(awk -v key="$requested_key" '
+        /^[[:space:]]*#/ { next }
+        {
+            separator=index($0, "=")
+            if (separator == 0) { next }
+            name=substr($0, 1, separator - 1)
+            value=substr($0, separator + 1)
+            sub(/^[[:space:]]*/, "", name)
+            sub(/[[:space:]]*$/, "", name)
             sub(/^[[:space:]]*/, "", value)
             sub(/[[:space:]]*$/, "", value)
-            print value
-            exit
+            if (name == "include") { print "include\t" value }
+            else if (name == key) { print "value\t" value }
         }
-    ' "$effective_config"
+    ' "$source_file")
 }
 
 script_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
@@ -276,6 +302,11 @@ if [ "$config_ready" != "true" ]; then
         exit 2
     fi
 fi
+config_fragment_template="/etc/xwalk/picar-x.d"
+if [ ! -d "$config_fragment_template" ]; then
+    echo "Apply mode requires the installed configuration fragments at $config_fragment_template." >&2
+    exit 2
+fi
 
 if [ "$(id -u)" -eq 0 ]; then
     root_command=""
@@ -323,6 +354,13 @@ run_root install -d -m 0770 -o root -g xwalk "$config_directory"
 if [ ! -f "$config_file" ]; then
     run_root install -m 0660 -o root -g xwalk /etc/xwalk/picar-x.conf "$config_file"
 fi
+config_fragment_directory="$config_directory/picar-x.d"
+if [ ! -d "$config_fragment_directory" ]; then
+    run_root cp -a "$config_fragment_template" "$config_fragment_directory"
+fi
+run_root chown -R root:xwalk "$config_fragment_directory"
+run_root find "$config_fragment_directory" -type d -exec chmod 0750 {} +
+run_root find "$config_fragment_directory" -type f -name '*.conf' -exec chmod 0640 {} +
 if [ -f "$config_file" ]; then
     run_root chown root:xwalk "$config_file"
     run_root chmod 0660 "$config_file"

@@ -72,7 +72,10 @@ XWalkSpeakerAlsaOperations XWalkSpeakerAlsa::systemOperations() noexcept
  */
 uint16 XWalkSpeakerAlsa::readUint16(stringview data, size byteOffset)
 {
-    if ((byteOffset > data.size()) || ((data.size() - byteOffset) < 2U))
+    const hal::boolean byteOffsetInvalid =
+        static_cast<hal::boolean>(
+            (byteOffset > data.size()) || ((data.size() - byteOffset) < 2U));
+    if (byteOffsetInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Speaker WAVE file contains a truncated value");
     }
@@ -98,7 +101,10 @@ uint16 XWalkSpeakerAlsa::readUint16(stringview data, size byteOffset)
  */
 uint32 XWalkSpeakerAlsa::readUint32(stringview data, size byteOffset)
 {
-    if ((byteOffset > data.size()) || ((data.size() - byteOffset) < 4U))
+    const hal::boolean byteOffsetInvalid =
+        static_cast<hal::boolean>(
+            (byteOffset > data.size()) || ((data.size() - byteOffset) < 4U));
+    if (byteOffsetInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Speaker WAVE file contains a truncated value");
     }
@@ -149,8 +155,11 @@ XWalkSpeakerAudioData XWalkSpeakerAlsa::decodeWave(contextpointer context,
     }
     const string fileData = readFileContents(audioPath);
     const stringview data{fileData};
-    if ((data.size() < 12U) || (data.substr(0U, 4U) != "RIFF") ||
-        (data.substr(8U, 4U) != "WAVE"))
+    const hal::boolean predicateInvalid =
+        static_cast<hal::boolean>(
+            (data.size() < 12U) || (data.substr(0U, 4U) != "RIFF") ||
+        (data.substr(8U, 4U) != "WAVE"));
+    if (predicateInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Speaker built-in decoder requires a PCM WAVE file");
     }
@@ -161,12 +170,23 @@ XWalkSpeakerAudioData XWalkSpeakerAlsa::decodeWave(contextpointer context,
     uint16 sampleBits{};
     stringview pcmBytes{};
     size chunkOffset = 12U;
-    while ((chunkOffset <= data.size()) && ((data.size() - chunkOffset) >= 8U))
+    const hal::boolean processingLoopRequested{true};
+    while (processingLoopRequested)
     {
+        const hal::boolean chunkHeaderAvailable =
+            static_cast<hal::boolean>(
+                (chunkOffset <= data.size()) && ((data.size() - chunkOffset) >= 8U));
+        if (chunkHeaderAvailable == false)
+        {
+            break;
+        }
         const stringview chunkName = data.substr(chunkOffset, 4U);
         const size chunkBytes = static_cast<size>(readUint32(data, chunkOffset + 4U));
         const size payloadOffset = chunkOffset + 8U;
-        if ((payloadOffset > data.size()) || (chunkBytes > (data.size() - payloadOffset)))
+        const hal::boolean payloadOffsetChunkBytesInvalid =
+            static_cast<hal::boolean>(
+                (payloadOffset > data.size()) || (chunkBytes > (data.size() - payloadOffset)));
+        if (payloadOffsetChunkBytesInvalid)
         {
             XHAL_THROW_RUNTIME_ERROR("Speaker WAVE file contains a truncated chunk");
         }
@@ -195,10 +215,13 @@ XWalkSpeakerAudioData XWalkSpeakerAlsa::decodeWave(contextpointer context,
         chunkOffset = payloadOffset + chunkBytes + paddingBytes;
     }
 
-    if ((formatTag != XHAL_RPI5CAR_SPEAKER_WAVE_PCM_FORMAT) ||
+    const hal::boolean formatTagSampleBitsChannelCountInvalid =
+        static_cast<hal::boolean>(
+            (formatTag != XHAL_RPI5CAR_SPEAKER_WAVE_PCM_FORMAT) ||
         (sampleBits != XHAL_RPI5CAR_SPEAKER_WAVE_SAMPLE_BITS) ||
         (channelCount == 0U) || (channelCount > XHAL_RPI5CAR_AUDIO_MAXIMUM_CHANNEL_COUNT) ||
-        (sampleRateHz == 0U) || pcmBytes.empty() || ((pcmBytes.size() % 2U) != 0U))
+        (sampleRateHz == 0U) || pcmBytes.empty() || ((pcmBytes.size() % 2U) != 0U));
+    if (formatTagSampleBitsChannelCountInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Speaker WAVE decoder requires non-empty sixteen-bit PCM audio");
     }
@@ -244,22 +267,34 @@ void XWalkSpeakerAlsa::validateDecodedAudio(const XWalkSpeakerAudioData& audioDa
     {
         XHAL_THROW_RUNTIME_ERROR("Speaker decoder returned invalid audio metadata");
     }
-    if (audioData.samples.empty())
+    const hal::boolean samplesEmpty =
+        static_cast<hal::boolean>(
+            audioData.samples.empty());
+    if (samplesEmpty)
     {
         XHAL_THROW_RUNTIME_ERROR("Speaker decoder returned no audio samples");
     }
-    if (audioData.samples.size() > XHAL_RPI5CAR_SPEAKER_MAXIMUM_DECODED_SAMPLE_COUNT)
+    const hal::boolean samplesTooLarge =
+        static_cast<hal::boolean>(
+            audioData.samples.size() > XHAL_RPI5CAR_SPEAKER_MAXIMUM_DECODED_SAMPLE_COUNT);
+    if (samplesTooLarge)
     {
         XHAL_THROW_OUT_OF_RANGE("Speaker decoder returned an invalid bounded sample count");
     }
     const size channelCount = static_cast<size>(audioData.channelCount);
-    if ((audioData.samples.size() % channelCount) != 0U)
+    const hal::boolean audioDataSamplesChannelCountDifferent =
+        static_cast<hal::boolean>(
+            (audioData.samples.size() % channelCount) != 0U);
+    if (audioDataSamplesChannelCountDifferent)
     {
         XHAL_THROW_RUNTIME_ERROR("Speaker decoder returned incomplete interleaved frames");
     }
     for (const float64 sampleValue : audioData.samples)
     {
-        if (!XHAL_IS_FINITE(sampleValue) || (sampleValue < -1.0) || (sampleValue > 1.0))
+        const hal::boolean sampleInvalid =
+            static_cast<hal::boolean>(
+                !XHAL_IS_FINITE(sampleValue) || (sampleValue < -1.0) || (sampleValue > 1.0));
+        if (sampleInvalid)
         {
             XHAL_THROW_RUNTIME_ERROR("Speaker decoder returned a sample outside minus one through one");
         }

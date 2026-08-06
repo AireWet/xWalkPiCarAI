@@ -25,23 +25,29 @@ xWalkTool/
 ├── environment/
 │   ├── .clang-tidy
 │   ├── .cppcheck-suppressions
-│   └── gcovr.cfg
+│   ├── gcovr.cfg
+│   └── xWalkLicense.json
 ├── python/
+│   ├── README.md
 │   ├── xHal_Rpi5CarDependencyInstaller
-│   └── xHal_Rpi5CarIwGenerator
+│   ├── xHal_Rpi5CarIwGenerator
+│   ├── xWalkLicenseTool
+│   └── test/
 └── shell/
+    ├── README.md
     ├── clean-build.sh
     ├── eclipse-build.sh
     ├── provision-hardware.sh
     ├── run-host-coverage.sh
-    └── setup-rpi.sh
+    ├── setup-rpi.sh
+    └── xWalkEnv.sh
 ```
 
-The directory contains five Bash scripts, one package manifest, two executable
-Python tools, three quality-tool configurations, eight deployment assets and
-tests, two compiled Device Tree blobs, and this README. The applicable project
-and third-party license terms are in the workspace-root `LICENSE`; there is no
-separate `xWalkTool/LICENSE` file.
+The directory contains six Bash scripts, one package manifest, three Python
+tools, their host tests, three quality-tool configurations, deployment assets,
+two compiled Device Tree blobs, the empty licence JSON template, and this
+README. The applicable project and third-party license terms are in the
+workspace-root `LICENSE`; there is no separate `xWalkTool/LICENSE` file.
 
 ## Detailed guides
 
@@ -54,6 +60,11 @@ separate `xWalkTool/LICENSE` file.
 - [Raspberry Pi setup script](../DevloperNote/Doc/note/Raspberry%20Pi%20Setup%20Script%20Guide.md)
 - [Hardware provisioning script](../DevloperNote/Doc/note/Hardware%20Provisioning%20Script%20Guide.md)
 - [Device Tree overlay assets](../DevloperNote/Doc/note/Device%20Tree%20Overlay%20Assets%20Guide.md)
+- [Licence-key workflow](../DevloperNote/Doc/note/License%20Key%20Workflow.md)
+- [xWalk licence tool](../DevloperNote/Doc/note/xWalk%20Licence%20Tool%20Guide.md)
+- [xWalk environment loader](../DevloperNote/Doc/note/xWalk%20Environment%20Loader%20Guide.md)
+- [Python tools and virtual environment](python/README.md)
+- [Shell tools](shell/README.md)
 
 ## Responsibility summary
 
@@ -61,15 +72,57 @@ separate `xWalkTool/LICENSE` file.
 |---|---|---|
 | `apt-packages.txt` | Lists and maps host, Raspberry Pi, quality, packaging, and optional packages | Read-only |
 | `python/xHal_Rpi5CarDependencyInstaller` | Installs dependencies and configures verified v5 boot | Privileged |
+| `python/xWalkLicenseTool` | Authenticates and encrypts or decrypts environment JSON | Host-safe |
 | `shell/clean-build.sh` | Finds and optionally deletes generated output | Dry-run is non-destructive |
-| `shell/eclipse-build.sh` | Configures or cleans the Eclipse-oriented CLI host build | Does not access hardware |
+| `shell/eclipse-build.sh` | Configures, builds, tests, or cleans the Eclipse CLI host tree | Host-only |
 | `shell/run-host-coverage.sh` | Runs the root coverage preset, tests, and `gcovr` | Foreground and host-only |
 | `shell/setup-rpi.sh` | Inspects, plans, validates, or applies Raspberry Pi provisioning | Apply is privileged |
 | `shell/provision-hardware.sh` | Records selected GPIO, I2C, SPI, and board identity | Modifies one config file |
+| `shell/xWalkEnv.sh` | Safely exports authenticated AI model and credential values | Interactive decryption |
 | `python/xHal_Rpi5CarIwGenerator` | Validates and generates xWalkIW Protobuf/gRPC sources | Host-only generation |
-| `environment/` | Configures Clang-Tidy, Cppcheck suppressions, and gcovr reports | Host-only configuration |
+| `environment/` | Stores quality-tool settings and the empty licence template | Host-safe configuration |
 | `deployment/` | Stores packaging, service, permission, and test assets | Host validation and installation |
-| `dtoverlays/` | Stores unchanged SunFounder Robot HAT and Servo HAT+ blobs | Raspberry Pi boot assets |
+| `dtoverlays/` | Stores the unchanged Robot HAT Device Tree blobs | Raspberry Pi boot assets |
+
+## Licence environment
+
+Install PyNaCl through the supported dependency workflow (`python3-nacl` on
+Debian-family systems). Copy `environment/xWalkLicense.json` to a mode-`0600`
+location outside the repository and fill that copy. Never put values into the
+committed template.
+
+Encrypt the protected copy:
+
+```sh
+xWalkTool/python/xWalkLicenseTool encrypt --json /secure/location/xWalkLicense.json
+```
+
+Or supply repeated manual values, recognizing that they can be retained in
+shell history or exposed through process inspection:
+
+```sh
+xWalkTool/python/xWalkLicenseTool encrypt --env OPENAI_API_KEY='your-OpenAI-API-key' --env GEMINI_API_KEY='your-Gemini-API-key'
+```
+
+Replace the quoted example text with the real values. Do not type angle-bracket
+placeholders because the shell interprets `<` and `>` as redirection operators.
+
+Decrypt only to an explicit temporary path. The key is requested privately and
+the resulting JSON receives mode `0600`:
+
+```sh
+xWalkTool/python/xWalkLicenseTool decrypt --output /tmp/xWalkLicense.decrypted.json
+```
+
+The empty template and authenticated `xWalkLibrary/X_WALK_LICENSE.KEY` may be
+committed. Filled templates, decrypted files, and the generated decryption key
+must never be committed. See the detailed licence-key guide for deployment and
+security limitations.
+
+After the encrypted file is durable, encryption prints one
+`XWALK-<UTC_YEAR>-<8_HEX>` serial and the decryption key. The identical serial
+is stored as authenticated `X_WALK_LICENSE_SERIAL` payload metadata. It is an
+identifier only and never participates in key derivation.
 
 ## Dependency installation and host maintenance
 
@@ -104,6 +157,12 @@ does not download Vosk models or install Ollama through an unverified remote pip
 components are reported with a cross and an explanation. Use `--required-only` for the minimum normal
 build/runtime package set. Use `--include quality`, `--include release`, `--include generator`, or
 `--include external` with `--required-only` to add selected optional scopes.
+
+Portable libraries already reviewed under the architecture-selected `../xWalkLibrary` prefix are discovered
+by CMake before system locations. The installer retains package-manager entries as a fallback for portable
+libraries that are not bundled. Toolchains, build utilities, Linux and ALSA integration, device rules, camera
+tools, overlays, and services remain system-managed; the installer never extracts Debian packages into the
+project prefix.
 
 Specify a platform and device when automatic detection is not appropriate:
 
@@ -188,16 +247,17 @@ Configure and build the established Eclipse CLI host directory:
 xWalkTool/shell/eclipse-build.sh
 ```
 
-Clean that configured build without deleting its directory:
+Remove that generated build tree, including stale dependency metadata:
 
 ```sh
 xWalkTool/shell/eclipse-build.sh clean
 ```
 
-With no argument, the script configures and builds. The only meaningful argument is `clean`; the script does
-not currently provide a help option. It configures `xWalkCLI` with the host backend, a Debug build, and
-`compile_commands.json`. It writes only below `xWalkCLI/build-eclipse-host` and does not select Raspberry Pi
-backends.
+With no argument, the script configures, builds, and runs the complete host CTest inventory. The only
+meaningful argument is `clean`; the script does not currently provide a help option. A normal invocation configures
+`xWalkController`
+with the host backend, a Debug build, and `compile_commands.json`. It writes only below
+`xWalkController/build-eclipse-host` and does not select Raspberry Pi backends.
 
 ### Coverage
 
@@ -350,11 +410,15 @@ reviewed dry-run, reboot, and hardware acceptance.
 
 ## Installation behavior
 
-The release installation includes only the two target provisioning scripts:
+The release installation includes the environment loader and two target
+provisioning scripts:
 
 ```text
 /usr/lib/xwalk/setup-rpi.sh
 /usr/lib/xwalk/provision-hardware.sh
+/usr/lib/xwalk/xWalkTool/shell/xWalkEnv.sh
+/usr/lib/xwalk/xWalkTool/python/xWalkLicenseTool
+/usr/lib/xwalk/xWalkTool/environment/xWalkLicense.json
 ```
 
 The cleanup, Eclipse, coverage, generator, and overlay files remain source-development assets. They are not
@@ -373,6 +437,7 @@ xWalkTool/shell/setup-rpi.sh --help
 xWalkTool/shell/provision-hardware.sh --help
 xWalkTool/python/xHal_Rpi5CarIwGenerator --help
 bash xWalkTool/deployment/test/setup-rpi-test.sh
+bash xWalkTool/deployment/test/environment-loader-test.sh
 ```
 
 Do not run `setup-rpi.sh --apply`, direct overlay installation, hardware-labelled CTest targets, or actuator

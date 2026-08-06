@@ -81,7 +81,10 @@ void writeSilentWave(const XWalkHal::filesystempath& filePath)
     writeUint32(waveData, 40U, pcmByteCount);
     XWalkHal::outputfilestream file(filePath, XWalkHal::FILE_OPEN_WRITE_TRUNCATE);
     file << waveData;
-    if (!file.good())
+    const hal::boolean fixtureWriteFailed =
+        static_cast<hal::boolean>(
+            !file.good());
+    if (fixtureWriteFailed)
     {
         XHAL_THROW_RUNTIME_ERROR("Speaker hardware test could not write its WAVE fixture");
     }
@@ -130,7 +133,10 @@ XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer argume
     XWalkHal::boolean playbackComplete = false;
     for (XWalkHal::uint32 attempt = 0U; attempt < 200U; ++attempt)
     {
-        if (speaker.listTasks().empty())
+        const hal::boolean listTasksEmpty =
+            static_cast<hal::boolean>(
+                speaker.listTasks().empty());
+        if (listTasksEmpty)
         {
             playbackComplete = true;
             break;

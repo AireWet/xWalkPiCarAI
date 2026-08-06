@@ -118,7 +118,10 @@ XWalkHal::boolean readPrompt(
     XWalkHal::contextpointer context, XWalkHal::string& inputText)
 {
     DoubaoExampleState& state = *static_cast<DoubaoExampleState*>(context);
-    if (state.inputIndex >= state.inputs.size())
+    const hal::boolean inputUnavailable =
+        static_cast<hal::boolean>(
+            state.inputIndex >= state.inputs.size());
+    if (inputUnavailable)
     {
         return false;
     }

@@ -154,7 +154,10 @@ boolean XWalkSpeaker::stop(stringview taskId)
         taskSlots[taskIndex].joining = true;
     }
 
-    if (taskSlots[taskIndex].worker.joinable())
+    const hal::boolean workerJoinable =
+        static_cast<hal::boolean>(
+            taskSlots[taskIndex].worker.joinable());
+    if (workerJoinable)
     {
         taskSlots[taskIndex].worker.join();
     }
@@ -261,7 +264,10 @@ void XWalkSpeaker::reapFinishedTasks()
         }
         if (reapTask)
         {
-            if (taskSlots[taskIndex].worker.joinable())
+            const hal::boolean workerJoinable =
+                static_cast<hal::boolean>(
+                    taskSlots[taskIndex].worker.joinable());
+            if (workerJoinable)
             {
                 taskSlots[taskIndex].worker.join();
             }
@@ -293,7 +299,10 @@ void XWalkSpeaker::stopAllTasks()
         }
         if (stopTask)
         {
-            if (taskSlots[taskIndex].worker.joinable())
+            const hal::boolean workerJoinable =
+                static_cast<hal::boolean>(
+                    taskSlots[taskIndex].worker.joinable());
+            if (workerJoinable)
             {
                 taskSlots[taskIndex].worker.join();
             }

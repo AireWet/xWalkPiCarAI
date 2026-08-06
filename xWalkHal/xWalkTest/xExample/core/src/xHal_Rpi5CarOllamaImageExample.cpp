@@ -80,13 +80,17 @@ void XWalkOllamaImageExample::run(uint32 maximumPrompts, stringview imagePath)
     for (uint32 promptIndex = 0U; promptIndex < maximumPrompts; ++promptIndex)
     {
         string inputText;
-        if (!callbacks.readPrompt(consoleContext, inputText))
+        const hal::boolean promptRead = callbacks.readPrompt(consoleContext, inputText);
+        if (promptRead == false)
         {
             break;
         }
         const string capturedImagePath = cameraObject->capture(imagePath);
         const string response = languageModelObject->prompt(inputText, capturedImagePath);
-        if (!response.empty())
+        const hal::boolean responseAvailable =
+            static_cast<hal::boolean>(
+                !response.empty());
+        if (responseAvailable)
         {
             callbacks.write(consoleContext, response, false, true);
         }

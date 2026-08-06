@@ -72,7 +72,10 @@ XWalkMusicAlsaOperations XWalkMusicAlsa::systemOperations() noexcept
  */
 uint16 XWalkMusicAlsa::readUint16(stringview data, size byteOffset)
 {
-    if ((byteOffset > data.size()) || ((data.size() - byteOffset) < 2U))
+    const hal::boolean byteOffsetInvalid =
+        static_cast<hal::boolean>(
+            (byteOffset > data.size()) || ((data.size() - byteOffset) < 2U));
+    if (byteOffsetInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Music WAVE file contains a truncated value");
     }
@@ -98,7 +101,10 @@ uint16 XWalkMusicAlsa::readUint16(stringview data, size byteOffset)
  */
 uint32 XWalkMusicAlsa::readUint32(stringview data, size byteOffset)
 {
-    if ((byteOffset > data.size()) || ((data.size() - byteOffset) < 4U))
+    const hal::boolean byteOffsetInvalid =
+        static_cast<hal::boolean>(
+            (byteOffset > data.size()) || ((data.size() - byteOffset) < 4U));
+    if (byteOffsetInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Music WAVE file contains a truncated value");
     }
@@ -133,8 +139,11 @@ XWalkMusicAlsaAudioData XWalkMusicAlsa::decodeWave(contextpointer context,
     static_cast<void>(context);
     const string fileData = readFileContents(filesystempath{string(filename)});
     const stringview data{fileData};
-    if ((data.size() < 12U) || (data.substr(0U, 4U) != "RIFF") ||
-        (data.substr(8U, 4U) != "WAVE"))
+    const hal::boolean predicateInvalid =
+        static_cast<hal::boolean>(
+            (data.size() < 12U) || (data.substr(0U, 4U) != "RIFF") ||
+        (data.substr(8U, 4U) != "WAVE"));
+    if (predicateInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Music audio file is not a RIFF/WAVE stream");
     }
@@ -145,12 +154,23 @@ XWalkMusicAlsaAudioData XWalkMusicAlsa::decodeWave(contextpointer context,
     uint16 sampleBits{};
     stringview pcmBytes{};
     size chunkOffset = 12U;
-    while ((chunkOffset <= data.size()) && ((data.size() - chunkOffset) >= 8U))
+    const hal::boolean processingLoopRequested{true};
+    while (processingLoopRequested)
     {
+        const hal::boolean chunkHeaderAvailable =
+            static_cast<hal::boolean>(
+                (chunkOffset <= data.size()) && ((data.size() - chunkOffset) >= 8U));
+        if (chunkHeaderAvailable == false)
+        {
+            break;
+        }
         const stringview chunkName = data.substr(chunkOffset, 4U);
         const size chunkBytes = static_cast<size>(readUint32(data, chunkOffset + 4U));
         const size payloadOffset = chunkOffset + 8U;
-        if ((payloadOffset > data.size()) || (chunkBytes > (data.size() - payloadOffset)))
+        const hal::boolean payloadOffsetChunkBytesInvalid =
+            static_cast<hal::boolean>(
+                (payloadOffset > data.size()) || (chunkBytes > (data.size() - payloadOffset)));
+        if (payloadOffsetChunkBytesInvalid)
         {
             XHAL_THROW_RUNTIME_ERROR("Music WAVE file contains a truncated chunk");
         }
@@ -170,17 +190,23 @@ XWalkMusicAlsaAudioData XWalkMusicAlsa::decodeWave(contextpointer context,
             pcmBytes = data.substr(payloadOffset, chunkBytes);
         }
         const size paddingBytes = chunkBytes % 2U;
-        if (chunkBytes > (std::numeric_limits<size>::max() - payloadOffset - paddingBytes))
+        const hal::boolean chunkSizeOverflow =
+            static_cast<hal::boolean>(
+                chunkBytes > (std::numeric_limits<size>::max() - payloadOffset - paddingBytes));
+        if (chunkSizeOverflow)
         {
             XHAL_THROW_RUNTIME_ERROR("Music WAVE chunk size is unrepresentable");
         }
         chunkOffset = payloadOffset + chunkBytes + paddingBytes;
     }
 
-    if ((formatTag != XHAL_RPI5CAR_MUSIC_WAVE_PCM_FORMAT) ||
+    const hal::boolean formatTagSampleBitsChannelCountInvalid =
+        static_cast<hal::boolean>(
+            (formatTag != XHAL_RPI5CAR_MUSIC_WAVE_PCM_FORMAT) ||
         (sampleBits != XHAL_RPI5CAR_MUSIC_WAVE_SAMPLE_BITS) ||
         (channelCount == 0U) || (channelCount > XHAL_RPI5CAR_AUDIO_MAXIMUM_CHANNEL_COUNT) ||
-        (sampleRateHz == 0U) || pcmBytes.empty())
+        (sampleRateHz == 0U) || pcmBytes.empty());
+    if (formatTagSampleBitsChannelCountInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Music WAVE file requires non-empty sixteen-bit PCM audio");
     }
@@ -215,7 +241,10 @@ void XWalkMusicAlsa::validateAudioData(const XWalkMusicAlsaAudioData& audioData)
     }
     const size channelCount = static_cast<size>(audioData.channelCount);
     const size bytesPerFrame = channelCount * XHAL_RPI5CAR_MUSIC_SAMPLE_BYTES;
-    if (audioData.pcmData.empty() || ((audioData.pcmData.size() % bytesPerFrame) != 0U))
+    const hal::boolean audioDataPcmDataBytesPerFrameInvalid =
+        static_cast<hal::boolean>(
+            audioData.pcmData.empty() || ((audioData.pcmData.size() % bytesPerFrame) != 0U));
+    if (audioDataPcmDataBytesPerFrameInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Music decoder returned incomplete PCM frames");
     }

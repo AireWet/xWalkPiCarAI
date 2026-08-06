@@ -9,8 +9,8 @@ read and follow both knowledge-base documents:
 - [`.agents/gudlines/DOCUMENTATION_GUIDELINES.md`](.agents/gudlines/DOCUMENTATION_GUIDELINES.md)
 
 Treat these files as the coding, architecture, and documentation knowledge base
-for the complete `MyPiCarX` workspace, including `xWalkCommon`, `xWalkHal`,
-`xWalkAgent`, and `xWalkCLI`.
+for the complete `MyPiCarX` workspace, including `xWalkLibrary/common`, `xWalkHal`,
+`xWalkAgent`, and `xWalkController`.
 
 Apply the guide to every future implementation. Preserve intentional existing
 architecture, naming, dependency boundaries, validation behavior, test safety,

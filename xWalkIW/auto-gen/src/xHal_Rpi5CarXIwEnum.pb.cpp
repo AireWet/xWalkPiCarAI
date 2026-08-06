@@ -26,7 +26,7 @@ namespace v1 {
 }  // namespace v1
 }  // namespace iw
 }  // namespace xwalk
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_xHal_5fRpi5CarXIwEnum_2eproto[1];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_xHal_5fRpi5CarXIwEnum_2eproto[8];
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_xHal_5fRpi5CarXIwEnum_2eproto = nullptr;
 const uint32_t TableStruct_xHal_5fRpi5CarXIwEnum_2eproto::offsets[1] = {};
 static constexpr ::_pbi::MigrationSchema* schemas = nullptr;
@@ -38,12 +38,30 @@ const char descriptor_table_protodef_xHal_5fRpi5CarXIwEnum_2eproto[] PROTOBUF_SE
   "ATION_UNSPECIFIED\020\000\022\035\n\031XWALK_I2C_OPERATI"
   "ON_PROBE\020\001\022\034\n\030XWALK_I2C_OPERATION_READ\020\002"
   "\022%\n!XWALK_I2C_OPERATION_READ_REGISTER\020\003\022"
-  "&\n\"XWALK_I2C_OPERATION_WRITE_REGISTER\020\004b"
-  "\006proto3"
+  "&\n\"XWALK_I2C_OPERATION_WRITE_REGISTER\020\004*"
+  "\230\001\n\023XWalkSoundOperation\022\036\n\032XWALK_SOUND_O"
+  "PERATION_PLAY\020\000\022 \n\034XWALK_SOUND_OPERATION"
+  "_VOLUME\020\001\022\037\n\033XWALK_SOUND_OPERATION_MUSIC"
+  "\020\002\022\036\n\032XWALK_SOUND_OPERATION_STOP\020\003*Y\n\024XW"
+  "alkLifecycleAction\022 \n\034XWALK_LIFECYCLE_AC"
+  "TION_START\020\000\022\037\n\033XWALK_LIFECYCLE_ACTION_S"
+  "TOP\020\001*l\n\017XWalkMoveAction\022\035\n\031XWALK_MOVE_A"
+  "CTION_FORWARD\020\000\022\036\n\032XWALK_MOVE_ACTION_BAC"
+  "KWARD\020\001\022\032\n\026XWALK_MOVE_ACTION_DEMO\020\002*S\n\022X"
+  "WalkTurnDirection\022\035\n\031XWALK_TURN_DIRECTIO"
+  "N_LEFT\020\000\022\036\n\032XWALK_TURN_DIRECTION_RIGHT\020\001"
+  "*H\n\017XWalkCameraAxis\022\031\n\025XWALK_CAMERA_AXIS"
+  "_PAN\020\000\022\032\n\026XWALK_CAMERA_AXIS_TILT\020\001*R\n\017XW"
+  "alkSensorType\022\036\n\032XWALK_SENSOR_TYPE_DISTA"
+  "NCE\020\000\022\037\n\033XWALK_SENSOR_TYPE_GRAYSCALE\020\001*\211"
+  "\001\n\024XWalkCalibrationMode\022#\n\037XWALK_CALIBRA"
+  "TION_MODE_COMPLETE\020\000\022$\n XWALK_CALIBRATIO"
+  "N_MODE_GRAYSCALE\020\001\022&\n\"XWALK_CALIBRATION_"
+  "MODE_SERVO_MOTOR\020\002b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_xHal_5fRpi5CarXIwEnum_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_xHal_5fRpi5CarXIwEnum_2eproto = {
-    false, false, 247, descriptor_table_protodef_xHal_5fRpi5CarXIwEnum_2eproto,
+    false, false, 986, descriptor_table_protodef_xHal_5fRpi5CarXIwEnum_2eproto,
     "xHal_Rpi5CarXIwEnum.proto",
     &descriptor_table_xHal_5fRpi5CarXIwEnum_2eproto_once, nullptr, 0, 0,
     schemas, file_default_instances, TableStruct_xHal_5fRpi5CarXIwEnum_2eproto::offsets,
@@ -70,6 +88,108 @@ bool XWalkI2cOperation_IsValid(int value) {
     case 2:
     case 3:
     case 4:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* XWalkSoundOperation_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_xHal_5fRpi5CarXIwEnum_2eproto);
+  return file_level_enum_descriptors_xHal_5fRpi5CarXIwEnum_2eproto[1];
+}
+bool XWalkSoundOperation_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* XWalkLifecycleAction_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_xHal_5fRpi5CarXIwEnum_2eproto);
+  return file_level_enum_descriptors_xHal_5fRpi5CarXIwEnum_2eproto[2];
+}
+bool XWalkLifecycleAction_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* XWalkMoveAction_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_xHal_5fRpi5CarXIwEnum_2eproto);
+  return file_level_enum_descriptors_xHal_5fRpi5CarXIwEnum_2eproto[3];
+}
+bool XWalkMoveAction_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* XWalkTurnDirection_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_xHal_5fRpi5CarXIwEnum_2eproto);
+  return file_level_enum_descriptors_xHal_5fRpi5CarXIwEnum_2eproto[4];
+}
+bool XWalkTurnDirection_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* XWalkCameraAxis_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_xHal_5fRpi5CarXIwEnum_2eproto);
+  return file_level_enum_descriptors_xHal_5fRpi5CarXIwEnum_2eproto[5];
+}
+bool XWalkCameraAxis_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* XWalkSensorType_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_xHal_5fRpi5CarXIwEnum_2eproto);
+  return file_level_enum_descriptors_xHal_5fRpi5CarXIwEnum_2eproto[6];
+}
+bool XWalkSensorType_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* XWalkCalibrationMode_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_xHal_5fRpi5CarXIwEnum_2eproto);
+  return file_level_enum_descriptors_xHal_5fRpi5CarXIwEnum_2eproto[7];
+}
+bool XWalkCalibrationMode_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
       return true;
     default:
       return false;

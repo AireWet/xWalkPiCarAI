@@ -5,7 +5,7 @@ modules by responsibility.
 
 | Responsibility | Module documentation |
 |---|---|
-| Common types and free functions | [xWalkCommon](../../../xWalkCommon/README.md) |
+| Common types and free functions | [xWalk common library](../../../xWalkLibrary/common/README.md) |
 | I2C | [xWalkI2c](../../../xWalkHal/xWalkI2c/README.md) |
 | GPIO | [xWalkGpio](../../../xWalkHal/xWalkGpio/README.md) |
 | ADC | [xWalkAdc](../../../xWalkHal/xWalkAdc/README.md) |

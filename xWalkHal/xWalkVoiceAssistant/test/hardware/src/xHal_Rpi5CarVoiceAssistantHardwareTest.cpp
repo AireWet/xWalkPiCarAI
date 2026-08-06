@@ -155,7 +155,10 @@ XWalkHal::string recognizePcm(XWalkHal::contextpointer context,
     const XWalkHal::bytevector& pcmData, XWalkHal::uint32 sampleRateHz,
     XWalkHal::uint8 channelCount)
 {
-    if (pcmData.empty() || (sampleRateHz != 16'000U) || (channelCount != 1U))
+    const hal::boolean pcmDataSampleRateHzChannelCountInvalid =
+        static_cast<hal::boolean>(
+            pcmData.empty() || (sampleRateHz != 16'000U) || (channelCount != 1U));
+    if (pcmDataSampleRateHzChannelCountInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Voice-assistant smoke test received invalid microphone PCM");
     }
@@ -181,14 +184,20 @@ void cancelRecognition(XWalkHal::contextpointer context)
 XWalkHal::XWalkTextToSpeechPcmData synthesizeFixture(
     XWalkHal::contextpointer context, XWalkHal::stringview text)
 {
-    if (text.empty())
+    const hal::boolean textEmpty =
+        static_cast<hal::boolean>(
+            text.empty());
+    if (textEmpty)
     {
         XHAL_THROW_INVALID_ARGUMENT("Voice-assistant smoke response must not be empty");
     }
     const SmokeProviders& providers = *static_cast<SmokeProviders*>(context);
     const XWalkHal::string contents = XWalkHal::readFileContents(
         providers.synthesisFixture);
-    if (contents.empty() || ((contents.size() % 2U) != 0U))
+    const hal::boolean contentsInvalid =
+        static_cast<hal::boolean>(
+            contents.empty() || ((contents.size() % 2U) != 0U));
+    if (contentsInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT(
             "Voice-assistant smoke fixture must contain complete mono PCM frames");
@@ -229,7 +238,10 @@ XWalkHal::int32 main(XWalkHal::int32 argumentCount,
     }
 
     SmokeProviders providers{argumentValues[7], argumentValues[8], false};
-    if (providers.prompt.empty())
+    const hal::boolean promptEmpty =
+        static_cast<hal::boolean>(
+            providers.prompt.empty());
+    if (promptEmpty)
     {
         XHAL_THROW_INVALID_ARGUMENT("Voice-assistant hardware prompt must not be empty");
     }
@@ -270,7 +282,10 @@ XWalkHal::int32 main(XWalkHal::int32 argumentCount,
     assistant.start();
     const XWalkHal::string response = assistant.runRound(100U);
     assistant.stop();
-    if (response.empty())
+    const hal::boolean responseEmpty =
+        static_cast<hal::boolean>(
+            response.empty());
+    if (responseEmpty)
     {
         XHAL_THROW_RUNTIME_ERROR("Voice-assistant hardware response is empty");
     }

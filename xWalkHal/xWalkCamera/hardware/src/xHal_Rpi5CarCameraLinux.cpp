@@ -26,11 +26,14 @@ XWalkCameraLinux::XWalkCameraLinux(XWalkCameraConnection connection,
     stringview executable, stringview usbDevice):
     connectionValue(connection), executableName(executable), usbDevicePath(usbDevice)
 {
-    if (executableName.empty())
+    const hal::boolean executableNameEmpty = executableName.empty();
+    if (executableNameEmpty)
     {
         XHAL_THROW_INVALID_ARGUMENT("Camera executable must not be empty");
     }
-    if ((connectionValue == XWalkCameraConnection::Usb) && usbDevicePath.empty())
+    const hal::boolean usbDevicePathMissing =
+        (connectionValue == XWalkCameraConnection::Usb) && usbDevicePath.empty();
+    if (usbDevicePathMissing)
     {
         XHAL_THROW_INVALID_ARGUMENT("USB camera device path must not be empty");
     }
@@ -132,8 +135,14 @@ boolean XWalkCameraLinux::waitForProcess(int32 processId, uint32 timeoutMs) noex
     constexpr uint32 pollIntervalMilliseconds{10U};
     int processStatus{};
     const steadytimestamp deadline = steadyclock::now() + millisecondduration(timeoutMs);
-    while (steadyclock::now() < deadline)
+    const hal::boolean waitLoopRequested{true};
+    while (waitLoopRequested)
     {
+        const hal::boolean deadlinePending = steadyclock::now() < deadline;
+        if (deadlinePending == false)
+        {
+            break;
+        }
         const auto waitResult = ::waitpid(processId, &processStatus, WNOHANG);
         if (waitResult == processId)
         {
@@ -158,7 +167,8 @@ boolean XWalkCameraLinux::waitForProcess(int32 processId, uint32 timeoutMs) noex
 boolean XWalkCameraLinux::validOutput(stringview outputPath)
 {
     const filesystempath path{outputPath};
-    if (!filesystemEntryExists(path) || !isRegularFile(path))
+    const hal::boolean validFile = filesystemEntryExists(path) && isRegularFile(path);
+    if (validFile == false)
     {
         return false;
     }

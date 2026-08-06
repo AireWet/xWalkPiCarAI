@@ -9,4 +9,13 @@ throwInNoexceptFunction:*xWalkHal/xWalkGPT/hardware/src/xHal_Rpi5CarTextToSpeech
 
 # The preceding action appends a known number of delay records and the test
 # checks that postcondition before indexing. Cppcheck does not model the Agent.
-containerOutOfBounds:*xWalkAgent/xWalkSelfDrive/test/src/xAgent_Rpi5CarSelfDriveTest.cpp
+containerOutOfBounds:*xWalkAgent/xWalkVehicle/xWalkSelfDrive/test/src/xAgent_Rpi5CarSelfDriveTest.cpp
+
+# Cppcheck does not expand GoogleTest's TEST macro from the system header and
+# reports the resulting valid test declarations as parser syntax errors. The
+# compiler and Clang-Tidy still validate these translation units in CI.
+syntaxError:*xWalkAgent/test/src/xAgent_Rpi5CarAgentGoogleTest.cpp
+syntaxError:*xWalkAgent/*/test/src/xAgent_Rpi5Car*GroupTest.cpp
+syntaxError:*xWalkController/xWalkApp/test/src/*.cpp
+syntaxError:*xWalkController/xWalkTest/xSequenceTest/main.cpp
+syntaxError:*xWalkController/xWalkTest/xGoogleTest/src/main.cpp

@@ -134,7 +134,10 @@ XWalkHal::boolean readPrompt(
 {
     OpenAiImageExampleState& state =
         *static_cast<OpenAiImageExampleState*>(context);
-    if (state.inputIndex >= state.inputs.size())
+    const hal::boolean inputUnavailable =
+        static_cast<hal::boolean>(
+            state.inputIndex >= state.inputs.size());
+    if (inputUnavailable)
     {
         return false;
     }

@@ -233,7 +233,10 @@ string XWalkUtils::ipAddress(const stringvector& interfaces) const
     for (const string& interfaceName : interfaces)
     {
         const string address = callbacks.ipAddress(backendContextPointer, interfaceName);
-        if (!address.empty())
+        const hal::boolean addressAvailable =
+            static_cast<hal::boolean>(
+                !address.empty());
+        if (addressAvailable)
         {
             return address;
         }
@@ -302,9 +305,12 @@ string XWalkUtils::username() const
 float64 XWalkUtils::mapping(float64 input, float64 inputMinimum,
     float64 inputMaximum, float64 outputMinimum, float64 outputMaximum)
 {
-    if ((!XHAL_IS_FINITE(input)) || (!XHAL_IS_FINITE(inputMinimum)) ||
+    const hal::boolean inputInputMinimumInputMaximumInvalid =
+        static_cast<hal::boolean>(
+            (!XHAL_IS_FINITE(input)) || (!XHAL_IS_FINITE(inputMinimum)) ||
         (!XHAL_IS_FINITE(inputMaximum)) || (!XHAL_IS_FINITE(outputMinimum)) ||
-        (!XHAL_IS_FINITE(outputMaximum)) || (inputMinimum == inputMaximum))
+        (!XHAL_IS_FINITE(outputMaximum)) || (inputMinimum == inputMaximum));
+    if (inputInputMinimumInputMaximumInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Utility mapping requires finite values and a non-zero input range");
     }

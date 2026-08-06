@@ -43,7 +43,9 @@ The implementation is designed to provide:
 
 ```text
 MyPiCarX/
-├── xWalkCommon/                  shared types and reusable facilities
+├── xWalkLibrary/                reviewed project-managed dependencies
+│   └── common/               common interface target, headers, and portable assets
+├── xWalkAudioResources/         packaged sound effects, music, and provenance
 ├── xWalkHal/                     hardware abstraction and provider-neutral features
 │   ├── xWalkI2c/                 hardware front end plus Linux backend
 │   ├── xWalkGpio/                hardware front end plus Linux backend
@@ -52,11 +54,19 @@ MyPiCarX/
 │   ├── xWalk*/                   independently configurable HAL modules
 │   └── CMakeLists.txt            aggregate HAL composition
 ├── xWalkAgent/                   application-level robot coordinators
-│   ├── xWalkPicarx/
-│   ├── xWalkLineTracking/
-│   └── xWalkSelfDrive/
-├── xWalkCLI/                     standalone command-line aggregate
-│   └── xWalkController/          CLI library and Raspberry Pi executable
+│   ├── xWalkVehicle/             movement, sensing, and autonomous behavior
+│   ├── xWalkCalibration/         sensor, servo, and motor calibration
+│   ├── xWalkVision/              camera, detection, tracking, and video
+│   ├── xWalkMedia/               sound and background-music coordination
+│   ├── xWalkVoice/               speech and conversational AI
+│   ├── xWalkConnectivity/        external control and SPI transactions
+│   └── xWalkPlatform/            boot and platform composition
+├── xWalkController/              standalone command-line aggregate
+│   ├── xWalkHandler/             parser and command-handler implementation
+│   ├── xWalkApp/                 executable targets, entry points, generated help, and GoogleTest
+│   ├── xWalkConfig/              layered runtime and provider configuration
+│   └── xWalkTest/                centralized CLI and sequence verification
+├── xWalkTool/                    maintenance, deployment, licence, and verification tools
 ├── Doc/note/                     cross-module C++ documentation index
 └── DevloperNote/                 architecture and implementation notes
 ```
@@ -93,13 +103,24 @@ front ends do not construct target-specific backends.
 
 | Module | High-level responsibility |
 | --- | --- |
-| `xWalkCommon` | Project types, constants, errors, math, files, and common functions |
+| `xWalkLibraryCommon` | Project types, constants, errors, math, files, and common functions |
 | `xWalkConfig` | Section-aware and flat key-value configuration persistence |
 | `xWalkTrace` | Filtered diagnostics through a caller-provided output callback |
 | `xWalkUtils` | Platform utilities, lazy reads, and standard-error restoration |
 
-`xWalkCommon` is the shared dependency beneath the workspace. Production modules use its fixed-width and
-standard-library aliases rather than introducing unrelated type spellings.
+`xWalkLibraryCommon` is the shared dependency beneath the workspace. Its interface target exports the public
+headers stored in `xWalkLibrary/common`. Production modules use its fixed-width and standard-library aliases
+rather than introducing unrelated type spellings.
+
+The common header exports the same generic type vocabulary through separate
+layer namespaces. HAL code uses `hal::`, Agent code uses `agent::`, and
+Controller code uses `ctrl::`. Hardware-specific classes and callback
+contracts remain in `hal`; higher layers do not qualify generic types through
+the HAL namespace.
+
+`xWalkAudioResources` combines repository-owned audio assets under `sounds/`
+and `music/`. The `xWalkHal/xWalkAudio` directory remains a separate ALSA
+implementation module and does not own packaged media files.
 
 ## 6. Primitive hardware modules
 
@@ -177,7 +198,7 @@ Representative dependencies are:
 
 ```mermaid
 flowchart TD
-    I2C[xWalkI2c] --> COMMON[xWalkCommon]
+    I2C[xWalkI2c] --> COMMON[xWalkLibraryCommon]
     GPIO[xWalkGpio] --> COMMON
     SPI[xWalkSpi] --> COMMON
     PWM[xWalkPwm] --> I2C

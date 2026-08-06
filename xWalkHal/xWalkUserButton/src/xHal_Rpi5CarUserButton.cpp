@@ -56,7 +56,10 @@ namespace xwalk::hal
  */
 void XWalkUserButton::start()
 {
-    if (monitorRunning.load())
+    const hal::boolean monitorAlreadyRunning =
+        static_cast<hal::boolean>(
+            monitorRunning.load());
+    if (monitorAlreadyRunning)
     {
         return;
     }
@@ -282,8 +285,16 @@ boolean XWalkUserButton::isRunning() const noexcept
 void XWalkUserButton::monitorLoop() noexcept
 {
     boolean previousLevel = gpioObject->read();
-    while (monitorRunning.load())
+    const hal::boolean processingLoopRequested{true};
+    while (processingLoopRequested)
     {
+        const hal::boolean monitorShouldRun =
+            static_cast<hal::boolean>(
+                monitorRunning.load());
+        if (monitorShouldRun == false)
+        {
+            break;
+        }
         const boolean currentLevel = gpioObject->read();
         if (currentLevel != previousLevel)
         {
@@ -437,7 +448,10 @@ void XWalkUserButton::handleLongPress()
 void XWalkUserButton::stopWorker()
 {
     monitorRunning.store(false);
-    if (monitorThread.joinable())
+    const hal::boolean monitorThreadJoinable =
+        static_cast<hal::boolean>(
+            monitorThread.joinable());
+    if (monitorThreadJoinable)
     {
         monitorThread.join();
     }
@@ -458,7 +472,10 @@ void XWalkUserButton::stopWorker()
  */
 float64 XWalkUserButton::validatedLongPressDuration(float64 durationSeconds)
 {
-    if (!XHAL_IS_FINITE(durationSeconds))
+    const hal::boolean durationSecondsNotFinite =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(durationSeconds));
+    if (durationSecondsNotFinite)
     {
         XHAL_THROW_INVALID_ARGUMENT("User button long-press duration must be finite");
     }

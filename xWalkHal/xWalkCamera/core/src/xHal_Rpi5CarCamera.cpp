@@ -32,12 +32,17 @@ XWalkCamera::~XWalkCamera() = default;
 /** @brief Captures one JPEG image at a caller-selected destination. */
 string XWalkCamera::capture(stringview outputPath)
 {
-    if (outputPath.empty() || (outputPath.find('\n') != stringview::npos) ||
-        (outputPath.find('\r') != stringview::npos))
+    const hal::boolean outputPathNRInvalid =
+        static_cast<hal::boolean>(
+            outputPath.empty() || (outputPath.find('\n') != stringview::npos) ||
+        (outputPath.find('\r') != stringview::npos));
+    if (outputPathNRInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Camera output path must be non-empty and single-line");
     }
-    if (!captureCallback(backendContext, outputPath, configurationValue))
+    const hal::boolean imageCaptured =
+        captureCallback(backendContext, outputPath, configurationValue);
+    if (imageCaptured == false)
     {
         XHAL_THROW_RUNTIME_ERROR("Camera backend failed to capture an image");
     }

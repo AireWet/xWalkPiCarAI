@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(xWalk VERSION 1.0.0 LANGUAGES CXX)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/xWalkLibrary/XWalkDependencies.cmake)
 include(CTest)
 include(GNUInstallDirs)
 
@@ -170,6 +171,10 @@ set(XWALK_GPT_BUILD_VOSK_PROVIDER ${XWALK_HAL_BUILD_RPI} CACHE BOOL
     "Build the Vosk provider" FORCE)
 set(XWALK_GPT_BUILD_ESPEAK_PROVIDER ${XWALK_HAL_BUILD_RPI} CACHE BOOL
     "Build the Espeak provider" FORCE)
+set(XWALK_GPT_BUILD_PIPER_PROVIDER ${XWALK_HAL_BUILD_RPI} CACHE BOOL
+    "Build the Piper provider" FORCE)
+set(XWALK_GPT_BUILD_PICO2WAVE_PROVIDER ${XWALK_HAL_BUILD_RPI} CACHE BOOL
+    "Build the Pico2Wave provider" FORCE)
 set(XWALK_GPT_BUILD_STT_ALSA_BACKEND ${XWALK_HAL_BUILD_RPI} CACHE BOOL
     "Build ALSA speech capture" FORCE)
 set(XWALK_GPT_BUILD_TTS_ALSA_BACKEND ${XWALK_HAL_BUILD_RPI} CACHE BOOL
@@ -197,6 +202,8 @@ endif()
 mark_as_advanced(
     XWALK_GPT_BUILD_VOSK_PROVIDER
     XWALK_GPT_BUILD_ESPEAK_PROVIDER
+    XWALK_GPT_BUILD_PIPER_PROVIDER
+    XWALK_GPT_BUILD_PICO2WAVE_PROVIDER
     XWALK_GPT_BUILD_STT_ALSA_BACKEND
     XWALK_GPT_BUILD_TTS_ALSA_BACKEND
     XWALK_MUSIC_BUILD_ALSA_BACKEND
@@ -215,7 +222,7 @@ else()
     message(STATUS "xWalk HAL production mode: verification targets are disabled")
 endif()
 
-add_subdirectory(xWalkCommon)
+add_subdirectory(xWalkLibrary/common)
 add_subdirectory(xWalkIW)
 add_subdirectory(xWalkHal/xWalkI2c)
 add_subdirectory(xWalkHal/xWalkSpi)
@@ -250,7 +257,7 @@ if(BUILD_TESTING)
     add_subdirectory(xWalkHal/xWalkTest/xSequenceTest)
 endif()
 if(XWALK_HAL_BUILD_CLI OR XWALK_HAL_BUILD_HOST OR XWALK_HAL_BUILD_RPI)
-    add_subdirectory(xWalkCLI)
+    add_subdirectory(xWalkController)
 endif()
 
 add_library(xWalkHal INTERFACE)
@@ -263,7 +270,7 @@ target_link_libraries(xWalkHal INTERFACE
     xWalkBoardControl
     xWalkBuzzer
     xWalkCamera
-    xWalkCommon
+    xWalkLibraryCommon
     xWalkConfig
     xWalkGpio
     xWalkGPT
@@ -298,6 +305,7 @@ if(XWALK_HAL_BUILD_RPI)
         xWalkSpeechRecognizerVosk
         xWalkTextToSpeechAlsa
         xWalkTextToSpeechEspeak
+        xWalkTextToSpeechPico2Wave
         xWalkUtilsLinux)
 endif()
 if(XWALK_HAL_BUILD_CENTRAL_TESTS)
@@ -315,11 +323,43 @@ if(BUILD_TESTING)
             "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/deployment/test/language-model-config-test.sh")
     set_tests_properties(xWalkLanguageModelConfigHostTest PROPERTIES
         LABELS "host;deployment")
+    add_test(NAME xWalkEnvironmentLoaderHostTest
+        COMMAND bash
+            "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/deployment/test/environment-loader-test.sh")
+    set_tests_properties(xWalkEnvironmentLoaderHostTest PROPERTIES
+        LABELS "host;deployment")
+    add_test(NAME xWalkLicenseToolHostTest
+        COMMAND "${Python3_EXECUTABLE}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/python/test/test_xWalkLicenseTool.py")
+    set_tests_properties(xWalkLicenseToolHostTest PROPERTIES
+        LABELS "host;deployment;security")
     add_test(NAME xHal_Rpi5CarDependencyInstallerHostTest
         COMMAND "${Python3_EXECUTABLE}"
             "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/deployment/test/dependency-installer-test.py")
     set_tests_properties(xHal_Rpi5CarDependencyInstallerHostTest PROPERTIES
         LABELS "host;deployment")
+    add_test(NAME xWalkLibraryX86ArchitectureHostTest
+        COMMAND "${CMAKE_COMMAND}"
+            -DCMAKE_SYSTEM_PROCESSOR=x86_64
+            -DXWALK_EXPECTED_ARCHITECTURE=x86_64
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/xWalkLibrary/test/xWalkLibraryArchitectureTest.cmake")
+    add_test(NAME xWalkLibraryAarch64ArchitectureHostTest
+        COMMAND "${CMAKE_COMMAND}"
+            -DCMAKE_SYSTEM_PROCESSOR=aarch64
+            -DXWALK_EXPECTED_ARCHITECTURE=aarch64
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/xWalkLibrary/test/xWalkLibraryArchitectureTest.cmake")
+    add_test(NAME xWalkLibraryUnsupportedArchitectureHostTest
+        COMMAND "${CMAKE_COMMAND}"
+            -DCMAKE_SYSTEM_PROCESSOR=armv7l
+            -DXWALK_EXPECTED_ARCHITECTURE=unsupported
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/xWalkLibrary/test/xWalkLibraryArchitectureTest.cmake")
+    set_tests_properties(
+        xWalkLibraryX86ArchitectureHostTest
+        xWalkLibraryAarch64ArchitectureHostTest
+        PROPERTIES LABELS "host;dependency")
+    set_tests_properties(xWalkLibraryUnsupportedArchitectureHostTest PROPERTIES
+        LABELS "host;dependency"
+        WILL_FAIL TRUE)
 endif()
 
 find_program(XWALK_CPPCHECK_EXECUTABLE cppcheck)
@@ -368,7 +408,8 @@ if(XWALK_ENABLE_PACKAGING)
     set(CPACK_DEBIAN_PACKAGE_SECTION "utils")
     set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
     set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "espeak-ng, i2c-tools, gpiod")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS
+        "espeak-ng, i2c-tools, gpiod, python3, python3-nacl")
     set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "rpicam-apps | ffmpeg")
     set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA
         "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/deployment/debian/conffiles")

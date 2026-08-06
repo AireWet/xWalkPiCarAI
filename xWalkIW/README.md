@@ -1,10 +1,12 @@
 # xWalkIW
 
-C++17 Protobuf and gRPC definitions for the `xWalkI2c` HAL module.
+C++17 Protobuf definitions for xWalk Controller requests and the `xWalkI2c`
+gRPC service.
 
-The enum schema defines stable I2C operation values. The message schema defines
-one request payload, one successful-confirmation payload, and one rejection
-payload. The service schema defines one generic request-confirmation RPC.
+The enum schema defines stable I2C and Controller selections. The message schema
+defines the I2C payloads and mirrors the plain Controller types declared in
+`../xWalkLibrary/common/include/xWalkControllerConfigTypes.h`. The service
+schema defines one generic I2C request-confirmation RPC.
 
 ## Directory layout
 
@@ -29,6 +31,8 @@ must not be edited manually. CMake validates the source schemas on every build.
 
 ## Protocol contract
 
+### I2C service
+
 | Category | Message | Fields | Signal |
 |---|---|---|---|
 | Request | `XWalkI2cRequestPayload` | Operation, address, register, length, data | `0x1081` |
@@ -43,6 +47,44 @@ The three message signal identifiers are stable protocol values.
 `XWalkI2cRequestPayload` and returns `XWalkI2cConfirmPayload` after a successful
 probe, direct read, register read, or register write. Rejections use a non-OK
 gRPC status, with `XWalkI2cRejectPayload` available for structured details.
+
+### Controller messages
+
+The following Protobuf messages mirror the Controller-owned structures. They
+are transport DTOs and do not contain callbacks, service pointers, hardware
+objects, or runtime state.
+
+| C++ structure | Protobuf message | Signal |
+|---|---|---|
+| `XWalkAppConfig` | `XWalkAppConfig` | `0x2081` |
+| `XWalkControllerApplicationArguments` | `XWalkControllerApplicationArguments` | `0x2082` |
+| `XWalkControllerCommandRequest` | `XWalkControllerCommandRequest` | `0x2083` |
+| `XWalkNoArgumentRequest` | `XWalkNoArgumentRequest` | `0x2084` |
+| `XWalkLifecycleRequest` | `XWalkLifecycleRequest` | `0x2085` |
+| `XWalkMoveRequest` | `XWalkMoveRequest` | `0x2086` |
+| `XWalkTurnRequest` | `XWalkTurnRequest` | `0x2087` |
+| `XWalkCameraRequest` | `XWalkCameraRequest` | `0x2088` |
+| `XWalkSensorRequest` | `XWalkSensorRequest` | `0x2089` |
+| `XWalkSelfDriveRequest` | `XWalkSelfDriveRequest` | `0x208A` |
+| `XWalkSpiRequest` | `XWalkSpiRequest` | `0x208B` |
+| `XWalkGptCarRequest` | `XWalkGptCarRequest` | `0x208C` |
+| `XWalkCalibrationRequest` | `XWalkCalibrationRequest` | `0x208D` |
+| `XWalkSoundRequest` | `XWalkSoundRequest` | `0x208E` |
+| `XWalkServoCalibrationConfig` | `XWalkServoCalibrationConfig` | `0x208F` |
+
+The shared Controller DTO signals occupy the contiguous range `0x2081` through
+`0x208F`. Every message carries the same value through its `(xwalkSignal)`
+option and the YAML signal registry.
+
+The Controller enumeration values preserve the C++ declaration order. The
+command field remains an unsigned integer because the Controller source owns
+those signals as `XWALK_CNTRL_*_REQ` macros rather than a C++ enum. The macros
+and their command-specific request messages share the contiguous signal range
+`0x2000` through `0x201F`.
+
+Proto3 optional presence is retained for fields whose C++ defaults are not the
+scalar wire defaults. A protocol adapter must apply the documented C++ defaults
+when those fields are absent and validate every value before invoking a handler.
 
 ## Validate and generate
 

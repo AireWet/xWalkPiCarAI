@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(xWalkMusic LANGUAGES CXX)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/XWalkDependencies.cmake)
+
 option(XWALK_MUSIC_BUILD_HOST_TESTS "Build xWalkMusic host tests" OFF)
 option(XWALK_MUSIC_BUILD_HARDWARE_TESTS "Build the xWalkMusic ALSA hardware test" OFF)
 option(XWALK_MUSIC_BUILD_ALSA_BACKEND "Build the xWalkMusic shared ALSA adapter" OFF)
@@ -20,8 +22,8 @@ if(XWALK_MUSIC_BUILD_SNDFILE_DECODER AND NOT XWALK_MUSIC_NEEDS_ALSA)
     message(FATAL_ERROR "xWalkMusic libsndfile decoder requires the ALSA adapter")
 endif()
 
-if(NOT TARGET xWalkCommon)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
 
 if(XWALK_MUSIC_NEEDS_ALSA AND NOT TARGET xWalkAudioAlsa)
@@ -38,7 +40,7 @@ add_library(xWalkMusic STATIC
 
 target_include_directories(xWalkMusic PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkMusic PUBLIC cxx_std_17)
-target_link_libraries(xWalkMusic PUBLIC xWalkCommon)
+target_link_libraries(xWalkMusic PUBLIC xWalkLibraryCommon)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkMusic PRIVATE
@@ -102,7 +104,7 @@ if(XWALK_MUSIC_NEEDS_ALSA)
                 xWalkMusicSndFileDecoder)
             add_test(NAME xWalkMusicSndFileDecoderHostTest
                 COMMAND xWalkMusicSndFileDecoderTest
-                    ${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkMusics/slow-trail-Ahjay_Stelino.mp3)
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkAudioResources/music/slow-trail-Ahjay_Stelino.mp3)
             set_tests_properties(xWalkMusicSndFileDecoderHostTest PROPERTIES LABELS "host")
         endif()
     endif()

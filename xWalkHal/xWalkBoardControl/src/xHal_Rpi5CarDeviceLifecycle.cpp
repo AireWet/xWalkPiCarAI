@@ -63,7 +63,10 @@ namespace xwalk::hal
 XWalkDevice::XWalkDevice(stringview deviceTreeRoot):
     deviceTreeRootValue(string(deviceTreeRoot))
 {
-    if (deviceTreeRoot.empty())
+    const hal::boolean deviceTreeRootEmpty =
+        static_cast<hal::boolean>(
+            deviceTreeRoot.empty());
+    if (deviceTreeRootEmpty)
     {
         XHAL_THROW_INVALID_ARGUMENT("Device-tree root must not be empty");
     }

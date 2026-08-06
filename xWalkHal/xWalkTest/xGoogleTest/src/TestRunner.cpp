@@ -328,9 +328,12 @@ legacytestdefinitionvector buildHardwareDefinitions(
     const YAML::Node board = root["board"];
     const YAML::Node ai = root["ai"];
     const YAML::Node configuredTests = root["hardware_tests"];
-    if (!root.IsMap() || !schemaVersion.IsScalar() ||
+    const hal::boolean rootIsMapSchemaVersionInvalid =
+        static_cast<hal::boolean>(
+            !root.IsMap() || !schemaVersion.IsScalar() ||
         (schemaVersion.as<xwalk::hal::uint32>() != 1U) || !board.IsMap() ||
-        !ai.IsMap() || !configuredTests.IsMap())
+        !ai.IsMap() || !configuredTests.IsMap());
+    if (rootIsMapSchemaVersionInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR(
             "xGoogleTest hardware runtime YAML must contain schema_version 1, board, ai, and hardware_tests");
@@ -343,7 +346,10 @@ legacytestdefinitionvector buildHardwareDefinitions(
         const YAML::Node arguments =
             configuredTests[xwalk::hal::string(suiteName)]
                            [xwalk::hal::string(caseName)]["arguments"];
-        if (!arguments || !arguments.IsSequence())
+        const hal::boolean argumentsInvalid =
+            static_cast<hal::boolean>(
+                !arguments || !arguments.IsSequence());
+        if (argumentsInvalid)
         {
             XHAL_THROW_RUNTIME_ERROR("missing hardware runtime YAML arguments for " +
                 xwalk::hal::string(suiteName) + "." + xwalk::hal::string(caseName));
@@ -351,7 +357,10 @@ legacytestdefinitionvector buildHardwareDefinitions(
         xwalk::hal::stringvector values;
         for (const YAML::Node& argument : arguments)
         {
-            if (!argument.IsScalar())
+            const hal::boolean scalarNotMatched =
+                static_cast<hal::boolean>(
+                    !argument.IsScalar());
+            if (scalarNotMatched)
             {
                 XHAL_THROW_RUNTIME_ERROR("hardware runtime YAML arguments must be scalar values");
             }
@@ -543,7 +552,10 @@ const xwalk::hal::test::TestCaseConfig* findCase(
  */
 int invokeLegacyTest(const LegacyTestDefinition& definition)
 {
-    if (!definition.executablePath.empty())
+    const hal::boolean executablePathAvailable =
+        static_cast<hal::boolean>(
+            !definition.executablePath.empty());
+    if (executablePathAvailable)
     {
         xwalk::hal::stringvector arguments;
         arguments.push_back(definition.executablePath);
@@ -638,7 +650,10 @@ protected:
         int childStatus{};
         const pid_t completedProcess = ::waitpid(childProcess, &childStatus, 0);
         ASSERT_EQ(completedProcess, childProcess) << "waitpid failed for legacy test";
-        if (WIFSIGNALED(childStatus))
+        const hal::boolean childTerminatedBySignal =
+            static_cast<hal::boolean>(
+                WIFSIGNALED(childStatus));
+        if (childTerminatedBySignal)
         {
             ADD_FAILURE() << "legacy test terminated by signal " << WTERMSIG(childStatus);
             return;
@@ -782,9 +797,15 @@ boolean TestRunner::processProfile(int32& argumentCount, charpointer argumentVal
             ++index;
             continue;
         }
-        if (argument.rfind("--runtime-config=", 0U) == 0U)
+        const hal::boolean runtimeConfigAssignmentMatched =
+            static_cast<hal::boolean>(
+                argument.rfind("--runtime-config=", 0U) == 0U);
+        if (runtimeConfigAssignmentMatched)
         {
-            if (runtimeConfigurationSeen || (argument.size() == 17U))
+            const hal::boolean runtimeConfigurationSeenArgumentInvalid =
+                static_cast<hal::boolean>(
+                    runtimeConfigurationSeen || (argument.size() == 17U));
+            if (runtimeConfigurationSeenArgumentInvalid)
             {
                 error = "--runtime-config requires one YAML path and may appear once";
                 return false;
@@ -793,7 +814,10 @@ boolean TestRunner::processProfile(int32& argumentCount, charpointer argumentVal
             runtimeConfigurationSeen = true;
             continue;
         }
-        if (argument.rfind("--test-profile=", 0U) != 0U)
+        const hal::boolean differentTestProfileAssignmentMatched =
+            static_cast<hal::boolean>(
+                argument.rfind("--test-profile=", 0U) != 0U);
+        if (differentTestProfileAssignmentMatched)
         {
             argumentValues[outputIndex] = argumentValues[index];
             ++outputIndex;
@@ -853,7 +877,10 @@ boolean TestRunner::hasStandardFilter(int32 argumentCount, charpointer argumentV
     for (int32 index = 1; index < argumentCount; ++index)
     {
         const stringview argument(argumentValues[index]);
-        if ((argument == "--gtest_filter") || argument.rfind("--gtest_filter=", 0U) == 0U)
+        const hal::boolean argumentGtestFilterInvalid =
+            static_cast<hal::boolean>(
+                (argument == "--gtest_filter") || argument.rfind("--gtest_filter=", 0U) == 0U);
+        if (argumentGtestFilterInvalid)
         {
             return true;
         }
@@ -913,7 +940,10 @@ boolean TestRunner::processSelections(
             error = "unknown test suite: " + suiteName;
             return false;
         }
-        if (!caseName.empty() && (findCase(*suite, caseName) == nullptr))
+        const hal::boolean requestedCaseMissing =
+            static_cast<hal::boolean>(
+                !caseName.empty() && (findCase(*suite, caseName) == nullptr));
+        if (requestedCaseMissing)
         {
             error = "unknown test case: " + suiteName + "." + caseName;
             return false;
@@ -936,13 +966,19 @@ boolean TestRunner::processSelections(
  */
 void TestRunner::applyFilter(const TestConfig& configuration, boolean standardFilterSelected) const
 {
-    if (selections.empty() && standardFilterSelected)
+    const hal::boolean standardFilterOnly =
+        static_cast<hal::boolean>(
+            selections.empty() && standardFilterSelected);
+    if (standardFilterOnly)
     {
         return;
     }
 
     testsuiteconfigvector selectedSuites = configuration.suites();
-    if (!selections.empty())
+    const hal::boolean selectionsAvailable =
+        static_cast<hal::boolean>(
+            !selections.empty());
+    if (selectionsAvailable)
     {
         boolean hasEnabledSelection = false;
         for (const TestSelection& selection : selections)
@@ -964,7 +1000,10 @@ void TestRunner::applyFilter(const TestConfig& configuration, boolean standardFi
         for (const TestSelection& selection : selections)
         {
             TestSuiteConfig* suite = findSuite(selectedSuites, selection.suiteName);
-            if (selection.caseName.empty())
+            const hal::boolean caseNameEmpty =
+                static_cast<hal::boolean>(
+                    selection.caseName.empty());
+            if (caseNameEmpty)
             {
                 suite->enabled = selection.enabled;
                 for (TestCaseConfig& testCase : suite->cases)
@@ -997,14 +1036,20 @@ void TestRunner::applyFilter(const TestConfig& configuration, boolean standardFi
             {
                 continue;
             }
-            if (!filter.empty())
+            const hal::boolean filterAvailable =
+                static_cast<hal::boolean>(
+                    !filter.empty());
+            if (filterAvailable)
             {
                 filter += ':';
             }
             filter += suite.name + "." + testCase.name;
         }
     }
-    if (filter.empty())
+    const hal::boolean filterEmpty =
+        static_cast<hal::boolean>(
+            filter.empty());
+    if (filterEmpty)
     {
         filter = "-*";
     }

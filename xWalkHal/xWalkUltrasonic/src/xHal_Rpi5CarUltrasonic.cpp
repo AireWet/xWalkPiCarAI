@@ -66,8 +66,16 @@ float64 XWalkUltrasonic::readOnce()
     const uint64 timeoutStartMicroseconds = common::monotonicMicroseconds();
     const uint64 timeoutLimitMicroseconds = static_cast<uint64>(timeoutMicrosecondsValue);
 
-    while (!echoPin->read())
+    const hal::boolean processingLoopRequested{true};
+    while (processingLoopRequested)
     {
+        const hal::boolean echoLow =
+            static_cast<hal::boolean>(
+                !echoPin->read());
+        if (echoLow == false)
+        {
+            break;
+        }
         pulseStartMicroseconds = common::monotonicMicroseconds();
         const uint64 elapsedMicroseconds = pulseStartMicroseconds - timeoutStartMicroseconds;
         if (elapsedMicroseconds > timeoutLimitMicroseconds)
@@ -76,8 +84,16 @@ float64 XWalkUltrasonic::readOnce()
         }
     }
 
-    while (echoPin->read())
+    const hal::boolean echoCompletionWaitRequested{true};
+    while (echoCompletionWaitRequested)
     {
+        const hal::boolean readSucceeded =
+            static_cast<hal::boolean>(
+                echoPin->read());
+        if (readSucceeded == false)
+        {
+            break;
+        }
         pulseEndMicroseconds = common::monotonicMicroseconds();
         const uint64 elapsedMicroseconds = pulseEndMicroseconds - timeoutStartMicroseconds;
         if (elapsedMicroseconds > timeoutLimitMicroseconds)

@@ -262,8 +262,7 @@ Override the text-only endpoint at configuration time when Ollama runs on
 another approved host:
 
 ```sh
-cmake -S . -B build-rpi -DXWALK_BUILD_RPI=ON \
-  -DXWALK_EXAMPLE_OLLAMA_TEXT_ENDPOINT=http://localhost:11434/api/chat
+cmake -S . -B build-rpi -DXWALK_BUILD_RPI=ON -DXWALK_EXAMPLE_OLLAMA_TEXT_ENDPOINT=http://localhost:11434/api/chat
 ```
 
 After installing Ollama, pulling `deepseek-r1:1.5b`, starting the service, and
@@ -289,8 +288,7 @@ The upstream endpoint is retained as the default CMake setting. Override it at
 configuration time when Ollama runs elsewhere:
 
 ```sh
-cmake -S . -B build-rpi -DXWALK_BUILD_RPI=ON \
-  -DXWALK_EXAMPLE_OLLAMA_ENDPOINT=http://192.168.100.145:11434/api/chat
+cmake -S . -B build-rpi -DXWALK_BUILD_RPI=ON -DXWALK_EXAMPLE_OLLAMA_ENDPOINT=http://192.168.100.145:11434/api/chat
 ```
 
 After confirming the camera and local-network endpoint are safe, run:
@@ -341,9 +339,7 @@ Configure the endpoint and model used by the direct example command when
 building the Raspberry Pi profile:
 
 ```sh
-cmake -S . -B build-rpi -DXWALK_BUILD_RPI=ON \
-  -DXWALK_EXAMPLE_OTHERS_ENDPOINT=https://provider.example/v1/chat/completions \
-  -DXWALK_EXAMPLE_OTHERS_MODEL=deployment-model
+cmake -S . -B build-rpi -DXWALK_BUILD_RPI=ON -DXWALK_EXAMPLE_OTHERS_ENDPOINT=https://provider.example/v1/chat/completions -DXWALK_EXAMPLE_OTHERS_MODEL=deployment-model
 ```
 
 The credential is read only from `LLM_API_KEY`. A required prompt limit from
@@ -368,8 +364,7 @@ Override the endpoint at configuration time when the key belongs to another
 supported deployment region:
 
 ```sh
-cmake -S . -B build-rpi -DXWALK_BUILD_RPI=ON \
-  -DXWALK_EXAMPLE_QWEN_ENDPOINT=https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions
+cmake -S . -B build-rpi -DXWALK_BUILD_RPI=ON -DXWALK_EXAMPLE_QWEN_ENDPOINT=https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions
 ```
 
 The credential is read only from `QWEN_API_KEY`. A required prompt limit from
@@ -411,7 +406,7 @@ For an explicitly approved Raspberry Pi microphone run:
 ```
 
 The default YAML uses the architecture-selected Vosk 0.3.45 runtime and shared
-small US English 0.15 model under the root-level `xWalkLibrary/vosk`. Set
+small US English 0.15 model under the root-level `xWalkLibrary/common/models`. Set
 `XWALK_VOSK_ARCHITECTURE`, `XWALK_VOSK_LIBRARY_PATH`, or
 `XWALK_VOSK_MODEL_PATH` when configuring a deployment to override the detected
 target or either asset. The existing HAL Vosk provider returns final results

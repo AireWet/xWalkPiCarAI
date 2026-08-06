@@ -56,7 +56,10 @@ XWalkFirmwareVersion XWalkFirmwareInfo::read()
     const bytevector versionBytes = i2cPointer->readRegister(addressValue,
         XHAL_RPI5CAR_FIRMWARE_INFO_VERSION_REGISTER,
         XHAL_RPI5CAR_FIRMWARE_INFO_VERSION_BYTE_COUNT);
-    if (versionBytes.size() != XHAL_RPI5CAR_FIRMWARE_INFO_VERSION_BYTE_COUNT)
+    const hal::boolean versionBytesDifferent =
+        static_cast<hal::boolean>(
+            versionBytes.size() != XHAL_RPI5CAR_FIRMWARE_INFO_VERSION_BYTE_COUNT);
+    if (versionBytesDifferent)
     {
         XHAL_THROW_RUNTIME_ERROR("Firmware version read returned an invalid length");
     }

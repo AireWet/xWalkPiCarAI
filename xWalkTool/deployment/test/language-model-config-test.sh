@@ -3,19 +3,63 @@
 set -eu
 
 repository_root="$(CDPATH='' cd -- "$(dirname -- "$0")/../../.." && pwd)"
-configuration_file="$repository_root/xWalkCLI/xWalkController/config/picar-x.conf"
+configuration_file="$repository_root/xWalkController/xWalkConfig/picar-x.conf"
+configuration_directory="$repository_root/xWalkController/xWalkConfig/picar-x.d"
+ollama_file="$configuration_directory/ai/providers/ollama.conf"
 
 test -r "$configuration_file"
-grep -q '^voice_language_model_provider = ollama$' "$configuration_file"
+test -r "$configuration_directory/voice.conf"
+test -r "$configuration_directory/ai/providers/openai.conf"
+test -r "$configuration_directory/ai/providers/gemini.conf"
+test -r "$configuration_directory/ai/providers/anthropic.conf"
+test -r "$configuration_directory/ai/providers/openai-compatible.conf"
+test -r "$repository_root/xWalkLibrary/x86_64/lib/libvosk.so"
+test -r "$repository_root/xWalkLibrary/aarch64/lib/libvosk.so"
+test -d \
+    "$repository_root/xWalkLibrary/common/models/vosk/vosk-model-small-en-us-0.15"
+grep -q '^voice_vosk_library = /usr/lib/xwalk/libvosk.so$' \
+    "$configuration_directory/voice.conf"
+grep -q '^voice_vosk_model = /usr/share/xwalk/models/vosk/vosk-model-small-en-us-0.15$' \
+    "$configuration_directory/voice.conf"
+grep -q '^include = picar-x.d/ai/providers/ollama.conf$' "$configuration_file"
+grep -q '^voice_language_model_provider = ollama$' "$ollama_file"
 grep -q '^voice_language_model_endpoint = http://127.0.0.1:11434/api/chat$' \
-    "$configuration_file"
-grep -q '^voice_language_model_model = qwen2.5:0.5b$' "$configuration_file"
-grep -q '^voice_language_model_api_key =$' "$configuration_file"
+    "$ollama_file"
+grep -q '^voice_language_model_model_environment = OLLAMA_MODEL$' "$ollama_file"
+grep -q '^voice_language_model_api_key_environment =$' "$ollama_file"
 grep -q '^voice_language_model_maximum_output_tokens = 1024$' \
-    "$configuration_file"
+    "$ollama_file"
 
-if grep -Eq '^voice_language_model_api_key = .+' "$configuration_file"; then
-    echo "Tracked language-model configuration contains a credential." >&2
+grep -q '^voice_language_model_api_key_environment = OPENAI_API_KEY$' \
+    "$configuration_directory/ai/providers/openai.conf"
+grep -q '^voice_language_model_model_environment = OPENAI_MODEL$' \
+    "$configuration_directory/ai/providers/openai.conf"
+grep -q '^voice_language_model_api_key_environment = GEMINI_API_KEY$' \
+    "$configuration_directory/ai/providers/gemini.conf"
+grep -q '^voice_language_model_model_environment = GEMINI_MODEL$' \
+    "$configuration_directory/ai/providers/gemini.conf"
+grep -q '^voice_language_model_api_key_environment = ANTHROPIC_API_KEY$' \
+    "$configuration_directory/ai/providers/anthropic.conf"
+grep -q '^voice_language_model_model_environment = ANTHROPIC_MODEL$' \
+    "$configuration_directory/ai/providers/anthropic.conf"
+grep -q '^voice_language_model_api_key_environment = XWALK_AI_API_KEY$' \
+    "$configuration_directory/ai/providers/openai-compatible.conf"
+grep -q '^voice_language_model_model_environment = XWALK_AI_MODEL$' \
+    "$configuration_directory/ai/providers/openai-compatible.conf"
+
+if grep -ERq '^voice_language_model_api_key[[:space:]]*=' "$configuration_directory/ai/providers"; then
+    echo "Tracked language-model configuration contains a direct credential field." >&2
+    exit 1
+fi
+if grep -ERq '^voice_language_model_model[[:space:]]*=' "$configuration_directory/ai/providers"; then
+    echo "Tracked language-model configuration contains a direct model field." >&2
+    exit 1
+fi
+
+service_environment="$repository_root/xWalkTool/deployment/systemd/xwalk-service.conf"
+if grep -Eq '^(OPENAI|GEMINI|ANTHROPIC|XWALK_AI|OLLAMA)_(API_KEY|MODEL)=' \
+    "$service_environment"; then
+    echo "Tracked service configuration bypasses the encrypted licence loader." >&2
     exit 1
 fi
 

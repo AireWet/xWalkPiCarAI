@@ -12,17 +12,31 @@ For the Python command-line interface, see
 The workspace uses target-based CMake dependencies. Project modules are imported with `add_subdirectory()`
 and linked through named targets. External libraries are discovered only where their targets are needed.
 
-Do not add global include paths, global linker paths, or manually assembled `-l` flags. Install the matching
-development package and allow CMake to provide the imported target.
+Do not add global include paths, global linker paths, or manually assembled `-l` flags. Portable reviewed
+packages may be installed under the selected `xWalkLibrary` prefix; otherwise install the matching system
+development package. In both cases, allow CMake to provide the imported target.
+
+The workspace uses a hybrid dependency model. `xWalkLibrary/XWalkDependencies.cmake` maps the CMake target
+processor to `xWalkLibrary/x86_64` or `xWalkLibrary/aarch64`, prepends that prefix and `xWalkLibrary/common`
+to `CMAKE_PREFIX_PATH`, and adds the native library directories to the build-tree RPATH. A compatible local
+package is therefore preferred, while ordinary system discovery remains available for a portable dependency
+that has not been reviewed into the repository.
+
+Workspace-wide `xWalkLibraryCommon` public headers, architecture-independent models, and configuration live under
+`xWalkLibrary/common`. Each native prefix uses the conventional `bin`, `include`, `lib`, and `share` layout.
+Compilers, build tools, Linux kernel interfaces, ALSA integration, udev rules, camera tools, Device Tree
+overlays, system services, and package managers remain system-installed. See
+[`xWalkLibrary/README.md`](../../../xWalkLibrary/README.md) for inventory and overrides.
 
 The root build follows this dependency flow:
 
 ```text
 MyPiCarX
-├── xWalkCommon
+├── xWalkLibrary
+│   └── common
 ├── xWalkIW
 ├── xWalkHal modules and aggregate target
-└── xWalkCLI
+└── xWalkController
     └── xWalkAgent
         └── HAL targets
 ```
@@ -144,10 +158,16 @@ To regenerate the checked-in Protobuf and gRPC sources, additionally install:
 sudo apt-get install protobuf-compiler protobuf-compiler-grpc
 ```
 
-Runtime utilities such as `alsa-utils`, `espeak-ng`, `i2c-tools`, `gpiod`, `rpicam-apps`, `ffmpeg`, Ollama,
-and Vosk are deployment dependencies, not CMake library-discovery requirements. See
+Runtime utilities such as `alsa-utils`, `espeak-ng`, `libttspico-utils`, `i2c-tools`, `gpiod`,
+`rpicam-apps`, `ffmpeg`, Ollama, and Vosk are deployment dependencies, not CMake library-discovery
+requirements. See
 [`xWalkTool/apt-packages.txt`](../../../xWalkTool/apt-packages.txt) for the complete build and runtime package
 map.
+
+The package commands above are the system fallback. GoogleTest, TinyXML2, yaml-cpp, Protobuf, gRPC, and
+libsndfile can instead be supplied as relocatable CMake packages under the selected native `xWalkLibrary`
+prefix. Vosk is already present there. APT packages are not extracted into `xWalkLibrary`, because their
+transitive dependencies, absolute paths, post-install scripts, and metadata can require the system prefix.
 
 ## Root build modes
 
@@ -198,7 +218,7 @@ Enabling a backend or test option can expand the external dependency surface.
 | `xWalkGpio` | Hardware tests or Linux backend | Threads and Linux GPIO headers |
 | Hardware-dependent HAL modules | Hardware-test option | Linux and inherited backend dependencies |
 
-Project-library dependencies such as `xWalkCommon`, `xWalkI2c`, `xWalkPwm`, `xWalkGpio`, and `xWalkAudio`
+Project-library dependencies such as `xWalkLibraryCommon`, `xWalkI2c`, `xWalkPwm`, `xWalkGpio`, and `xWalkAudio`
 are imported by the owning CMake files. Do not install them as operating-system packages.
 
 ## Quality and packaging tools
@@ -220,8 +240,8 @@ enabled. Absence of Cppcheck does not break an ordinary host build.
 
 ### Protobuf not found
 
-Install the Protobuf development package. The compiler package alone is insufficient because CMake needs the
-headers and link library.
+Install a reviewed Protobuf build under the selected `xWalkLibrary` prefix or install the system development
+package. The compiler package alone is insufficient because CMake needs the headers and link library.
 
 ### gRPC configuration not found
 

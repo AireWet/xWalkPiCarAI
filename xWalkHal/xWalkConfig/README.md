@@ -67,7 +67,10 @@ writers, require application-level synchronization.
 - Missing keys return the supplied default.
 - ASCII spaces are removed from retrieved values to preserve the established file contract.
 - The last duplicate key wins during retrieval.
+- `include = relative/path.conf` recursively inserts a `.conf` file at that
+  position; absolute paths, parent traversal, cycles, and depth above eight are rejected.
 - Updates replace every matching duplicate entry or append an absent key.
+- Updates affect only the primary file, allowing it to override read-only included defaults.
 - Comments and malformed unrelated lines remain unchanged.
 
 The module does not accept ownership and permission arguments or invoke shell commands. Apply

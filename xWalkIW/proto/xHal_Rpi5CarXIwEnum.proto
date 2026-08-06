@@ -1,9 +1,9 @@
 /******************************************************************************
  * @file        xHal_Rpi5CarXIwEnum.proto
- * @brief       Defines the public Protobuf enumeration for xWalk I2C.
+ * @brief       Defines public Protobuf enumerations for xWalk interfaces.
  *
  * @details
- * Defines the stable operation values selected by an xWalk I2C request.
+ * Defines stable I2C operation values and Controller request selections.
  *
  * @project     xWalk Firmware
  * @module      xWalkIW
@@ -42,4 +42,146 @@ enum XWalkI2cOperation
     XWALK_I2C_OPERATION_READ = 2;
     XWALK_I2C_OPERATION_READ_REGISTER = 3;
     XWALK_I2C_OPERATION_WRITE_REGISTER = 4;
+}
+
+/**
+ * @brief Selects one Controller audio operation.
+ *
+ * @details
+ * Values match `xwalk::ctrl::XWalkSoundOperation` declaration order.
+ */
+enum XWalkSoundOperation
+{
+    /**
+     * @brief Plays one blocking sound-effect file.
+     */
+    XWALK_SOUND_OPERATION_PLAY = 0;
+    /**
+     * @brief Changes the shared audio volume.
+     */
+    XWALK_SOUND_OPERATION_VOLUME = 1;
+    /**
+     * @brief Starts one streamed music file.
+     */
+    XWALK_SOUND_OPERATION_MUSIC = 2;
+    /**
+     * @brief Stops current music playback.
+     */
+    XWALK_SOUND_OPERATION_STOP = 3;
+}
+
+/**
+ * @brief Selects whether a long-running Controller operation starts or stops.
+ *
+ * @details
+ * Values match `xwalk::ctrl::XWalkLifecycleAction` declaration order.
+ */
+enum XWalkLifecycleAction
+{
+    /**
+     * @brief Starts and runs the selected operation.
+     */
+    XWALK_LIFECYCLE_ACTION_START = 0;
+    /**
+     * @brief Stops the selected operation without starting work.
+     */
+    XWALK_LIFECYCLE_ACTION_STOP = 1;
+}
+
+/**
+ * @brief Selects one direct Controller vehicle movement operation.
+ *
+ * @details
+ * Values match `xwalk::ctrl::XWalkMoveAction` declaration order.
+ */
+enum XWalkMoveAction
+{
+    /**
+     * @brief Moves the vehicle forward.
+     */
+    XWALK_MOVE_ACTION_FORWARD = 0;
+    /**
+     * @brief Moves the vehicle backward.
+     */
+    XWALK_MOVE_ACTION_BACKWARD = 1;
+    /**
+     * @brief Runs the bounded movement demonstration.
+     */
+    XWALK_MOVE_ACTION_DEMO = 2;
+}
+
+/**
+ * @brief Selects one Controller steering direction.
+ *
+ * @details
+ * Values match `xwalk::ctrl::XWalkTurnDirection` declaration order.
+ */
+enum XWalkTurnDirection
+{
+    /**
+     * @brief Steers toward the left side.
+     */
+    XWALK_TURN_DIRECTION_LEFT = 0;
+    /**
+     * @brief Steers toward the right side.
+     */
+    XWALK_TURN_DIRECTION_RIGHT = 1;
+}
+
+/**
+ * @brief Selects one Controller camera-servo axis.
+ *
+ * @details
+ * Values match `xwalk::ctrl::XWalkCameraAxis` declaration order.
+ */
+enum XWalkCameraAxis
+{
+    /**
+     * @brief Selects the horizontal camera servo.
+     */
+    XWALK_CAMERA_AXIS_PAN = 0;
+    /**
+     * @brief Selects the vertical camera servo.
+     */
+    XWALK_CAMERA_AXIS_TILT = 1;
+}
+
+/**
+ * @brief Selects one Controller vehicle-sensor report.
+ *
+ * @details
+ * Values match `xwalk::ctrl::XWalkSensorType` declaration order.
+ */
+enum XWalkSensorType
+{
+    /**
+     * @brief Reads the ultrasonic distance in centimeters.
+     */
+    XWALK_SENSOR_TYPE_DISTANCE = 0;
+    /**
+     * @brief Samples and reports the three grayscale channels.
+     */
+    XWALK_SENSOR_TYPE_GRAYSCALE = 1;
+}
+
+/**
+ * @brief Selects one interactive Controller calibration workflow.
+ *
+ * @details
+ * Values match `xwalk::ctrl::XWalkCalibrationMode` declaration order.
+ */
+enum XWalkCalibrationMode
+{
+    /**
+     * @brief Calibrates actuators and grayscale references.
+     */
+    XWALK_CALIBRATION_MODE_COMPLETE = 0;
+    /**
+     * @brief Calibrates only grayscale references.
+     */
+    XWALK_CALIBRATION_MODE_GRAYSCALE = 1;
+    /**
+     * @brief Calibrates only servos and motors.
+     */
+    XWALK_CALIBRATION_MODE_SERVO_MOTOR = 2;
 }

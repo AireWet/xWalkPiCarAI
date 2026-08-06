@@ -129,7 +129,10 @@ void write(XWalkHal::contextpointer context, XWalkHal::uint8 pin,
 {
     TestBackend& backend = *static_cast<TestBackend*>(context);
     static_cast<void>(pin);
-    if (backend.failWrites.load())
+    const hal::boolean simulatedWriteFailure =
+        static_cast<hal::boolean>(
+            backend.failWrites.load());
+    if (simulatedWriteFailure)
     {
         XHAL_THROW_RUNTIME_ERROR("Simulated LED GPIO failure");
     }

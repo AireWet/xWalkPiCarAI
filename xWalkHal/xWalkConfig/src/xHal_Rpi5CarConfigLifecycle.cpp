@@ -56,8 +56,11 @@ namespace xwalk::hal
  */
 void XWalkConfig::validateSectionName(stringview sectionName)
 {
-    if (sectionName.empty() || (trim(sectionName) != sectionName) ||
-        (sectionName.find_first_of("[]\r\n") != stringview::npos))
+    const hal::boolean sectionNameTrimFindFirstOfInvalid =
+        static_cast<hal::boolean>(
+            sectionName.empty() || (trim(sectionName) != sectionName) ||
+        (sectionName.find_first_of("[]\r\n") != stringview::npos));
+    if (sectionNameTrimFindFirstOfInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Configuration section name is invalid");
     }
@@ -74,8 +77,11 @@ void XWalkConfig::validateSectionName(stringview sectionName)
  */
 void XWalkConfig::validateOptionName(stringview optionName)
 {
-    if (optionName.empty() || (trim(optionName) != optionName) ||
-        (optionName.find_first_of("=[]\r\n") != stringview::npos))
+    const hal::boolean optionNameTrimFindFirstOfInvalid =
+        static_cast<hal::boolean>(
+            optionName.empty() || (trim(optionName) != optionName) ||
+        (optionName.find_first_of("=[]\r\n") != stringview::npos));
+    if (optionNameTrimFindFirstOfInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Configuration option name is invalid");
     }
@@ -92,7 +98,10 @@ void XWalkConfig::validateOptionName(stringview optionName)
  */
 void XWalkConfig::validateValue(stringview value)
 {
-    if (value.find_first_of("\r\n") != stringview::npos)
+    const hal::boolean valueFindFirstOfRDifferent =
+        static_cast<hal::boolean>(
+            value.find_first_of("\r\n") != stringview::npos);
+    if (valueFindFirstOfRDifferent)
     {
         XHAL_THROW_INVALID_ARGUMENT("Configuration value must be single-line");
     }
@@ -133,7 +142,10 @@ string XWalkConfig::trim(stringview text)
  */
 string XWalkConfig::parseSectionHeader(stringview line)
 {
-    if ((line.size() < 3U) || (line.front() != '[') || (line.back() != ']'))
+    const hal::boolean lineInvalid =
+        static_cast<hal::boolean>(
+            (line.size() < 3U) || (line.front() != '[') || (line.back() != ']'));
+    if (lineInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Configuration section header is malformed");
     }
@@ -160,9 +172,15 @@ string XWalkConfig::parseSectionHeader(stringview line)
  */
 void XWalkConfig::ensureFileExists(stringview description) const
 {
-    if (filesystemEntryExists(filePathValue))
+    const hal::boolean configurationFileExists =
+        static_cast<hal::boolean>(
+            filesystemEntryExists(filePathValue));
+    if (configurationFileExists)
     {
-        if (!isRegularFile(filePathValue))
+        const hal::boolean regularFileNotMatched =
+            static_cast<hal::boolean>(
+                !isRegularFile(filePathValue));
+        if (regularFileNotMatched)
         {
             XHAL_THROW_RUNTIME_ERROR("Configuration path is not a regular file");
         }
@@ -170,26 +188,43 @@ void XWalkConfig::ensureFileExists(stringview description) const
     }
 
     const filesystempath parentPath = filePathValue.parent_path();
-    if (!parentPath.empty())
+    const hal::boolean parentPathAvailable =
+        static_cast<hal::boolean>(
+            !parentPath.empty());
+    if (parentPathAvailable)
     {
         static_cast<void>(createDirectories(parentPath));
     }
 
     outputfilestream configurationFile(filePathValue, FILE_OPEN_WRITE_TRUNCATE);
-    if (!configurationFile.is_open())
+    const hal::boolean openNotMatched =
+        static_cast<hal::boolean>(
+            !configurationFile.is_open());
+    if (openNotMatched)
     {
         XHAL_THROW_RUNTIME_ERROR("Configuration file creation failed");
     }
 
     size lineStart = 0U;
-    while (lineStart < description.size())
+    const hal::boolean processingLoopRequested{true};
+    while (processingLoopRequested)
     {
+        const hal::boolean descriptionTextAvailable =
+            static_cast<hal::boolean>(
+                lineStart < description.size());
+        if (descriptionTextAvailable == false)
+        {
+            break;
+        }
         const size lineEnd = description.find('\n', lineStart);
         const size lineLength = (lineEnd == stringview::npos)
             ? (description.size() - lineStart)
             : (lineEnd - lineStart);
         string descriptionLine(description.substr(lineStart, lineLength));
-        if (!descriptionLine.empty() && (descriptionLine.back() == '\r'))
+        const hal::boolean carriageReturnPresent =
+            static_cast<hal::boolean>(
+                !descriptionLine.empty() && (descriptionLine.back() == '\r'));
+        if (carriageReturnPresent)
         {
             descriptionLine.pop_back();
         }
@@ -200,13 +235,19 @@ void XWalkConfig::ensureFileExists(stringview description) const
         }
         lineStart = lineEnd + 1U;
     }
-    if (!description.empty())
+    const hal::boolean descriptionAvailable =
+        static_cast<hal::boolean>(
+            !description.empty());
+    if (descriptionAvailable)
     {
         configurationFile << '\n';
     }
 
     configurationFile.close();
-    if (configurationFile.fail())
+    const hal::boolean configurationWriteFailed =
+        static_cast<hal::boolean>(
+            configurationFile.fail());
+    if (configurationWriteFailed)
     {
         XHAL_THROW_RUNTIME_ERROR("Initial configuration write failed");
     }
@@ -240,7 +281,10 @@ void XWalkConfig::ensureFileExists(stringview description) const
 XWalkConfig::XWalkConfig(stringview filePath, stringview description):
     filePathValue(string(filePath))
 {
-    if (filePath.empty())
+    const hal::boolean filePathEmpty =
+        static_cast<hal::boolean>(
+            filePath.empty());
+    if (filePathEmpty)
     {
         XHAL_THROW_INVALID_ARGUMENT("Configuration file path must not be empty");
     }

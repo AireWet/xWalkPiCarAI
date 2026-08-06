@@ -24,6 +24,10 @@ review whether it is read-only, writes generated output, changes configuration, 
 - `python/xHal_Rpi5CarIwGenerator` validates or generates the active xWalkIW
   schema outputs. The [module README](../../../xWalkIW/README.md)
   documents its protocol and build contract.
+- `python/xWalkLicenseTool` creates and opens the authenticated licence. See the
+  [licence tool guide](xWalk%20Licence%20Tool%20Guide.md).
+- `shell/xWalkEnv.sh` sources authenticated values into the current shell. See the
+  [environment loader guide](xWalk%20Environment%20Loader%20Guide.md).
 - `environment/` contains the checked-in Clang-Tidy, Cppcheck-suppression, and
   gcovr configurations used by the host quality workflows.
 - `deployment/` contains Debian metadata, systemd and tmpfiles definitions, the
@@ -32,6 +36,9 @@ review whether it is read-only, writes generated output, changes configuration, 
   [overlay assets guide](Device%20Tree%20Overlay%20Assets%20Guide.md).
 
 The authoritative source-level inventory remains [`xWalkTool/README.md`](../../../xWalkTool/README.md).
+Authenticated environment encryption and loading are summarized in the
+[licence-key workflow](License%20Key%20Workflow.md), with executable-specific
+contracts in the two guides above.
 
 ## Safety classes
 
@@ -58,6 +65,8 @@ xWalkTool/shell/setup-rpi.sh --help
 xWalkTool/shell/provision-hardware.sh --help
 xWalkTool/python/xHal_Rpi5CarDependencyInstaller --device host --check
 xWalkTool/python/xHal_Rpi5CarIwGenerator --help
+xWalkTool/python/xWalkLicenseTool --help
+python3 -m unittest xWalkTool/python/test/test_xWalkLicenseTool.py
 bash xWalkTool/deployment/test/setup-rpi-test.sh
 ```
 

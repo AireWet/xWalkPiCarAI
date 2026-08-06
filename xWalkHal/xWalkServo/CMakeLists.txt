@@ -13,10 +13,10 @@ if(XWALK_SERVO_BUILD_HARDWARE_TESTS AND NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     message(FATAL_ERROR "xWalkServo hardware tests require Linux i2c-dev")
 endif()
 
-if(NOT TARGET xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
     add_subdirectory(
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon
-        ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common
+        ${CMAKE_CURRENT_BINARY_DIR}/common
     )
 endif()
 
@@ -37,7 +37,7 @@ target_include_directories(xWalkServo
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 target_compile_features(xWalkServo PUBLIC cxx_std_17)
-target_link_libraries(xWalkServo PUBLIC xWalkCommon xWalkPwm)
+target_link_libraries(xWalkServo PUBLIC xWalkLibraryCommon xWalkPwm)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkServo PRIVATE

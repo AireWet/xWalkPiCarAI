@@ -15,8 +15,8 @@ if(XWALK_BOARD_CONTROL_BUILD_HARDWARE_TESTS AND NOT CMAKE_SYSTEM_NAME STREQUAL "
     message(FATAL_ERROR "xWalkBoardControl hardware tests require Linux GPIO and I2C APIs")
 endif()
 
-if(NOT TARGET xWalkCommon)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
 
 if(NOT TARGET xWalkAdc)
@@ -42,7 +42,7 @@ add_library(xWalkBoardControl STATIC
 
 target_include_directories(xWalkBoardControl PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkBoardControl PUBLIC cxx_std_17)
-target_link_libraries(xWalkBoardControl PUBLIC xWalkAdc xWalkCommon xWalkGpio xWalkI2c)
+target_link_libraries(xWalkBoardControl PUBLIC xWalkAdc xWalkLibraryCommon xWalkGpio xWalkI2c)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkBoardControl PRIVATE

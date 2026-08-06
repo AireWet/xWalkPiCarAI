@@ -50,6 +50,7 @@ DNF_SYSTEMS = frozenset(
 )
 PACMAN_SYSTEMS = frozenset({"arch", "manjaro", "endeavouros"})
 MACOS_SYSTEMS = frozenset({"macos", "darwin", "osx"})
+REPOSITORY_ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 
 @dataclasses.dataclass(frozen=True)
@@ -266,6 +267,46 @@ def run_process(
     )
 
 
+def native_architecture(machine_name: str) -> str | None:
+    """Map one machine name to an xWalkLibrary native prefix."""
+    normalized = machine_name.lower()
+    if normalized in {"aarch64", "arm64"}:
+        return "aarch64"
+    if normalized in {"x86_64", "amd64"}:
+        return "x86_64"
+    return None
+
+
+def vosk_status(repository_root: pathlib.Path = REPOSITORY_ROOT) -> tuple[bool, str]:
+    """Check the selected or architecture-local Vosk runtime and shared model."""
+    architecture = native_architecture(platform.machine())
+    configured_library = os.environ.get(
+        "XWALK_VOSK_LIBRARY_PATH", os.environ.get("XWALK_VOSK_LIBRARY", "")
+    )
+    configured_model = os.environ.get("XWALK_VOSK_MODEL_PATH", "")
+    if configured_library:
+        library_path = pathlib.Path(configured_library)
+    elif architecture is not None:
+        library_path = repository_root / "xWalkLibrary" / architecture / "lib" / "libvosk.so"
+    else:
+        return False, f"xWalkLibrary has no Vosk runtime for {platform.machine()}"
+    model_path = (
+        pathlib.Path(configured_model)
+        if configured_model
+        else repository_root
+        / "xWalkLibrary"
+        / "common"
+        / "models"
+        / "vosk"
+        / "vosk-model-small-en-us-0.15"
+    )
+    if not library_path.is_file():
+        return False, f"Vosk library is missing: {library_path}"
+    if not model_path.is_dir():
+        return False, f"Vosk model is missing: {model_path}"
+    return True, f"project-managed Vosk runtime and model ({architecture or 'override'})"
+
+
 def special_status(package: str) -> tuple[bool, str]:
     """Check a dependency that is not managed as a normal package."""
     if package == "@xcode-clt":
@@ -277,10 +318,7 @@ def special_status(package: str) -> tuple[bool, str]:
     if package == "@ollama":
         return shutil.which("ollama") is not None, "external Ollama executable"
     if package == "@vosk":
-        library_name = os.environ.get("XWALK_VOSK_LIBRARY", "")
-        library_path = pathlib.Path(library_name) if library_name else None
-        installed = library_path is not None and library_path.is_file()
-        return installed, "external Vosk library selected by XWALK_VOSK_LIBRARY"
+        return vosk_status()
     return False, f"unknown special dependency: {package}"
 
 

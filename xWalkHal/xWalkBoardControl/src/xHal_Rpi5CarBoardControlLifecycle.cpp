@@ -64,7 +64,10 @@ void XWalkBoardControl::validateDependencies(const XWalkGpio& mcuResetGpio,
     const XWalkGpio& speakerEnableGpio, const XWalkAdc& batteryAdc,
     boardspeakerprimecallback speakerPrimeCallback)
 {
-    if (mcuResetGpio.pin() != XHAL_RPI5CAR_BOARD_CONTROL_MCU_RESET_PIN)
+    const hal::boolean mcuResetGpioPinDifferent =
+        static_cast<hal::boolean>(
+            mcuResetGpio.pin() != XHAL_RPI5CAR_BOARD_CONTROL_MCU_RESET_PIN);
+    if (mcuResetGpioPinDifferent)
     {
         XHAL_THROW_INVALID_ARGUMENT("Board control requires the MCU-reset GPIO");
     }
@@ -79,7 +82,10 @@ void XWalkBoardControl::validateDependencies(const XWalkGpio& mcuResetGpio,
         XHAL_THROW_INVALID_ARGUMENT("Board control speaker GPIO is unsupported");
     }
 
-    if (batteryAdc.channel() != XHAL_RPI5CAR_BOARD_CONTROL_BATTERY_ADC_CHANNEL)
+    const hal::boolean batteryAdcChannelDifferent =
+        static_cast<hal::boolean>(
+            batteryAdc.channel() != XHAL_RPI5CAR_BOARD_CONTROL_BATTERY_ADC_CHANNEL);
+    if (batteryAdcChannelDifferent)
     {
         XHAL_THROW_INVALID_ARGUMENT("Board control requires battery ADC channel A4");
     }

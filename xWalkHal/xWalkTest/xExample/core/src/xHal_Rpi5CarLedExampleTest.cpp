@@ -90,7 +90,10 @@ void wait(XWalkHal::contextpointer context, XWalkHal::uint32 durationMillisecond
 {
     LedExampleState& state = *static_cast<LedExampleState*>(context);
     state.waits.push_back(durationMilliseconds);
-    if (static_cast<XWalkHal::size>(state.failingWait) == state.waits.size())
+    const hal::boolean xWalkHalStateFailingWaitMatched =
+        static_cast<hal::boolean>(
+            static_cast<XWalkHal::size>(state.failingWait) == state.waits.size());
+    if (xWalkHalStateFailingWaitMatched)
     {
         XHAL_THROW_RUNTIME_ERROR("Simulated LED example wait failure");
     }

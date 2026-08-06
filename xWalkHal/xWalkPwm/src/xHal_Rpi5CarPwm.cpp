@@ -63,7 +63,10 @@ uint32 XWalkPwm::parseChannel(stringview channel)
 {
     uint32 parsedChannel = 0U;
 
-    if (channel.size() < 2U || channel.front() != 'P')
+    const hal::boolean channelInvalid =
+        static_cast<hal::boolean>(
+            channel.size() < 2U || channel.front() != 'P');
+    if (channelInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("PWM channel must have the form P0..P19");
     }
@@ -142,7 +145,10 @@ uint8 XWalkPwm::selectAddress(optionaluint8 requested)
 
     for (const uint8 candidate : candidates)
     {
-        if (i2cObject->probe(candidate))
+        const hal::boolean candidateAddressAvailable =
+            static_cast<hal::boolean>(
+                i2cObject->probe(candidate));
+        if (candidateAddressAvailable)
         {
             return candidate;
         }

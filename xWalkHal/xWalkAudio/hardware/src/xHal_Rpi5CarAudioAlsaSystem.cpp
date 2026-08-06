@@ -74,7 +74,10 @@ audiopcmhandle XWalkAudioAlsa::systemOpenPcm(contextpointer context, stringview 
     static_cast<void>(context);
     snd_pcm_t* pcmHandle{nullptr};
     const string ownedDeviceName{deviceName};
-    if (::snd_pcm_open(&pcmHandle, ownedDeviceName.c_str(), SND_PCM_STREAM_PLAYBACK, 0) < 0)
+    const hal::boolean pcmOpenFailed =
+        static_cast<hal::boolean>(
+            ::snd_pcm_open(&pcmHandle, ownedDeviceName.c_str(), SND_PCM_STREAM_PLAYBACK, 0) < 0);
+    if (pcmOpenFailed)
     {
         return nullptr;
     }
@@ -276,7 +279,10 @@ boolean XWalkAudioAlsa::systemSetMixerVolume(contextpointer context,
     ::snd_mixer_selem_id_set_name(elementIdentifier, ownedElementName.c_str());
     snd_mixer_elem_t* const mixerElement =
         ::snd_mixer_find_selem(nativeHandle, elementIdentifier);
-    if ((mixerElement == nullptr) || (!::snd_mixer_selem_has_playback_volume(mixerElement)))
+    const hal::boolean mixerElementInvalid =
+        static_cast<hal::boolean>(
+            (mixerElement == nullptr) || (!::snd_mixer_selem_has_playback_volume(mixerElement)));
+    if (mixerElementInvalid)
     {
         return false;
     }

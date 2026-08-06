@@ -96,6 +96,70 @@ void testCompatibility(const XWalkHal::filesystempath& filePath)
 }
 
 /**
+ * @brief Verifies recursive relative includes, ordering, and root-only persistence.
+ *
+ * @param[in] filePath
+ * Test-owned primary configuration path.
+ */
+void testIncludes(const XWalkHal::filesystempath& filePath)
+{
+    const XWalkHal::filesystempath includeDirectory = filePath.parent_path() / "picar-x.d";
+    const XWalkHal::filesystempath providerDirectory = includeDirectory / "ai";
+    xwalk::hal::createDirectories(providerDirectory);
+
+    XWalkHal::outputfilestream providerFile(providerDirectory / "ollama.conf",
+        xwalk::hal::FILE_OPEN_WRITE_TRUNCATE);
+    providerFile << "provider = ollama\n";
+    providerFile.close();
+    assert(!providerFile.fail());
+
+    XWalkHal::outputfilestream voiceFile(includeDirectory / "voice.conf",
+        xwalk::hal::FILE_OPEN_WRITE_TRUNCATE);
+    voiceFile << "include = ai/ollama.conf\n";
+    voiceFile << "shared = included\n";
+    voiceFile.close();
+    assert(!voiceFile.fail());
+
+    XWalkHal::outputfilestream primaryFile(filePath, xwalk::hal::FILE_OPEN_WRITE_TRUNCATE);
+    primaryFile << "include = picar-x.d/voice.conf\n";
+    primaryFile << "shared = primary\n";
+    primaryFile.close();
+    assert(!primaryFile.fail());
+
+    xwalk::hal::XWalkConfigStore store(filePath.string());
+    assert(store.get("provider") == "ollama");
+    assert(store.get("shared") == "primary");
+    store.set("calibration", "verified");
+    assert(store.get("calibration") == "verified");
+    const XWalkHal::string primaryContents = xwalk::hal::readFileContents(filePath);
+    assert(primaryContents.find("include = picar-x.d/voice.conf") != XWalkHal::string::npos);
+    assert(primaryContents.find("provider = ollama") == XWalkHal::string::npos);
+
+    primaryFile.open(filePath, xwalk::hal::FILE_OPEN_WRITE_TRUNCATE);
+    primaryFile << "include = picar-x.conf\n";
+    primaryFile.close();
+    assert(!primaryFile.fail());
+    xwalk::hal::test::expectFailure([&]()
+    {
+        static_cast<void>(store.get("provider"));
+    });
+
+    primaryFile.open(filePath, xwalk::hal::FILE_OPEN_WRITE_TRUNCATE);
+    primaryFile << "include = ../outside.conf\n";
+    primaryFile.close();
+    assert(!primaryFile.fail());
+    xwalk::hal::test::expectFailure([&]()
+    {
+        static_cast<void>(store.get("provider"));
+    });
+
+    static_cast<void>(xwalk::hal::removeFilesystemEntry(providerDirectory / "ollama.conf"));
+    static_cast<void>(xwalk::hal::removeFilesystemEntry(includeDirectory / "voice.conf"));
+    static_cast<void>(xwalk::hal::removeFilesystemEntry(providerDirectory));
+    static_cast<void>(xwalk::hal::removeFilesystemEntry(includeDirectory));
+}
+
+/**
  * @brief Verifies rejection of paths, keys, and values that violate the text format.
  *
  * @param[in] filePath
@@ -172,6 +236,7 @@ xwalk::hal::int32 main(xwalk::hal::int32 argumentCount, xwalk::hal::charpointer 
     static_cast<void>(xwalk::hal::removeFilesystemEntry(replacementPath));
     testPersistence(filePath);
     testCompatibility(filePath);
+    testIncludes(filePath);
     testValidation(filePath);
     testRecreation(filePath);
     static_cast<void>(xwalk::hal::removeFilesystemEntry(filePath));

@@ -104,7 +104,10 @@ void XWalkSpeechToTextAlsa::validateOperations(
         (backendOperations.recognizePcm == nullptr) ||
         (backendOperations.recognizeFile == nullptr) ||
         (backendOperations.cancelRecognition == nullptr);
-    if (captureMissing || recognizerMissing || deviceName.empty())
+    const hal::boolean speechConfigurationInvalid =
+        static_cast<hal::boolean>(
+            captureMissing || recognizerMissing || deviceName.empty());
+    if (speechConfigurationInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Speech ALSA backend requires complete operations and a device");
     }
@@ -167,8 +170,16 @@ string XWalkSpeechToTextAlsa::listenCallback(contextpointer context, uint32 time
     capturedPcm.reserve(static_cast<size>(maximumBytes));
     uint64 capturedFrames{};
     uint32 recoveryCount{};
-    while ((capturedFrames < maximumFrames) && !self.cancellationRequested.load())
+    const hal::boolean processingLoopRequested{true};
+    while (processingLoopRequested)
     {
+        const hal::boolean captureMayContinue =
+            static_cast<hal::boolean>(
+                (capturedFrames < maximumFrames) && !self.cancellationRequested.load());
+        if (captureMayContinue == false)
+        {
+            break;
+        }
         const uint64 remainingFrames = maximumFrames - capturedFrames;
         const uint64 periodFrames = XHAL_RPI5CAR_SPEECH_CAPTURE_PERIOD_FRAMES;
         const size readFrames = static_cast<size>(std::min(remainingFrames, periodFrames));
@@ -179,7 +190,10 @@ string XWalkSpeechToTextAlsa::listenCallback(contextpointer context, uint32 time
         {
             const size completedFrames = static_cast<size>(result);
             const size expectedBytes = completedFrames * XHAL_RPI5CAR_SPEECH_CAPTURE_SAMPLE_BYTES;
-            if ((completedFrames > readFrames) || (periodData.size() != expectedBytes))
+            const hal::boolean completedFramesReadFramesPeriodDataInvalid =
+                static_cast<hal::boolean>(
+                    (completedFrames > readFrames) || (periodData.size() != expectedBytes));
+            if (completedFramesReadFramesPeriodDataInvalid)
             {
                 self.operations.closeCapture(self.operationContext, capture);
                 XHAL_THROW_RUNTIME_ERROR("Speech ALSA capture returned malformed PCM");
@@ -190,9 +204,12 @@ string XWalkSpeechToTextAlsa::listenCallback(contextpointer context, uint32 time
         else
         {
             ++recoveryCount;
-            if ((result == 0) ||
+            const hal::boolean resultInvalid =
+                static_cast<hal::boolean>(
+                    (result == 0) ||
                 (recoveryCount > XHAL_RPI5CAR_AUDIO_RECOVERY_ATTEMPT_COUNT) ||
-                !self.operations.recoverCapture(self.operationContext, capture, result))
+                !self.operations.recoverCapture(self.operationContext, capture, result));
+            if (resultInvalid)
             {
                 self.operations.closeCapture(self.operationContext, capture);
                 XHAL_THROW_RUNTIME_ERROR("Speech ALSA capture recovery failed");
@@ -200,7 +217,10 @@ string XWalkSpeechToTextAlsa::listenCallback(contextpointer context, uint32 time
         }
     }
     self.operations.closeCapture(self.operationContext, capture);
-    if (self.cancellationRequested.load() || capturedPcm.empty())
+    const hal::boolean selfCancellationRequestedCapturedPcmInvalid =
+        static_cast<hal::boolean>(
+            self.cancellationRequested.load() || capturedPcm.empty());
+    if (selfCancellationRequestedCapturedPcmInvalid)
     {
         return {};
     }

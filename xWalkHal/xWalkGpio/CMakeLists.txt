@@ -16,8 +16,8 @@ if((XWALK_GPIO_BUILD_HARDWARE_TESTS OR XWALK_GPIO_BUILD_LINUX_BACKEND)
     message(FATAL_ERROR "xWalkGpio hardware tests require the Linux GPIO character-device API")
 endif()
 
-if(NOT TARGET xWalkCommon)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
 
 add_library(xWalkGpio STATIC
@@ -27,7 +27,7 @@ add_library(xWalkGpio STATIC
 
 target_include_directories(xWalkGpio PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/core/include)
 target_compile_features(xWalkGpio PUBLIC cxx_std_17)
-target_link_libraries(xWalkGpio PUBLIC xWalkCommon)
+target_link_libraries(xWalkGpio PUBLIC xWalkLibraryCommon)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkGpio PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)

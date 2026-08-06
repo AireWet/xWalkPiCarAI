@@ -167,8 +167,8 @@ Apply mode can perform these operations:
 3. Create the system groups `xwalk`, `i2c`, `gpio`, and `spi` when absent.
 4. Add the runtime user to those groups and to existing `audio`, `video`, and `render` groups.
 5. Create the selected configuration directory with owner `root:xwalk` and mode `0770`.
-6. Create the runtime configuration from `/etc/xwalk/picar-x.conf` when it does not exist.
-7. Set the runtime configuration owner to `root:xwalk` and mode to `0660`.
+6. Create the runtime manifest and `picar-x.d` fragments from `/etc/xwalk` when absent.
+7. Set the manifest to `0660` and included configuration files to `0640`, owned by `root:xwalk`.
 8. Install `/etc/udev/rules.d/99-xwalk-picarx.rules` for only the selected device names.
 9. Reload udev rules and trigger the I2C, GPIO, and SPI subsystems.
 10. Run `provision-hardware.sh` when it is executable and the selected GPIO device exists.
@@ -186,15 +186,17 @@ The common package set is:
 
 ```text
 build-essential cmake ninja-build pkg-config python3 linux-libc-dev libasound2-dev alsa-utils
-libcurl4-openssl-dev libsndfile1-dev i2c-tools libi2c-dev gpiod espeak-ng curl ca-certificates
+libcurl4-openssl-dev libsndfile1-dev i2c-tools libi2c-dev gpiod espeak-ng libttspico-utils
+curl ca-certificates
 ```
 
 CSI camera selection additionally requires `rpicam-apps`. USB camera selection instead requires `ffmpeg`.
 
 ## Configuration behavior
 
-The default mutable configuration is `/var/lib/xwalk/picar-x.conf`. If it does not exist during apply mode,
-the script requires the installed administrator template at `/etc/xwalk/picar-x.conf` and copies it once.
+The default mutable configuration is `/var/lib/xwalk/picar-x.conf`. During apply
+mode, the script copies a missing manifest and missing `picar-x.d` fragment tree
+once from the installed administrator templates under `/etc/xwalk`.
 Existing mutable configuration is retained rather than replaced from the template.
 
 Hardware provisioning records the selected board profile, GPIO device, GPIO chip name and label, I2C device,

@@ -23,6 +23,7 @@
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/arena.h>
 #include <google/protobuf/arenastring.h>
+#include <google/protobuf/generated_message_bases.h>
 #include <google/protobuf/generated_message_util.h>
 #include <google/protobuf/metadata_lite.h>
 #include <google/protobuf/generated_message_reflection.h>
@@ -49,6 +50,54 @@ extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table
 namespace xwalk {
 namespace iw {
 namespace v1 {
+class XWalkAppConfig;
+struct XWalkAppConfigDefaultTypeInternal;
+extern XWalkAppConfigDefaultTypeInternal _XWalkAppConfig_default_instance_;
+class XWalkAppControlCommandRequest;
+struct XWalkAppControlCommandRequestDefaultTypeInternal;
+extern XWalkAppControlCommandRequestDefaultTypeInternal _XWalkAppControlCommandRequest_default_instance_;
+class XWalkAvoidObstaclesCommandRequest;
+struct XWalkAvoidObstaclesCommandRequestDefaultTypeInternal;
+extern XWalkAvoidObstaclesCommandRequestDefaultTypeInternal _XWalkAvoidObstaclesCommandRequest_default_instance_;
+class XWalkBullFightCommandRequest;
+struct XWalkBullFightCommandRequestDefaultTypeInternal;
+extern XWalkBullFightCommandRequestDefaultTypeInternal _XWalkBullFightCommandRequest_default_instance_;
+class XWalkCalibrateCommandRequest;
+struct XWalkCalibrateCommandRequestDefaultTypeInternal;
+extern XWalkCalibrateCommandRequestDefaultTypeInternal _XWalkCalibrateCommandRequest_default_instance_;
+class XWalkCalibrationRequest;
+struct XWalkCalibrationRequestDefaultTypeInternal;
+extern XWalkCalibrationRequestDefaultTypeInternal _XWalkCalibrationRequest_default_instance_;
+class XWalkCameraCommandRequest;
+struct XWalkCameraCommandRequestDefaultTypeInternal;
+extern XWalkCameraCommandRequestDefaultTypeInternal _XWalkCameraCommandRequest_default_instance_;
+class XWalkCameraRequest;
+struct XWalkCameraRequestDefaultTypeInternal;
+extern XWalkCameraRequestDefaultTypeInternal _XWalkCameraRequest_default_instance_;
+class XWalkCliffDetectionCommandRequest;
+struct XWalkCliffDetectionCommandRequestDefaultTypeInternal;
+extern XWalkCliffDetectionCommandRequestDefaultTypeInternal _XWalkCliffDetectionCommandRequest_default_instance_;
+class XWalkComputerVisionCommandRequest;
+struct XWalkComputerVisionCommandRequestDefaultTypeInternal;
+extern XWalkComputerVisionCommandRequestDefaultTypeInternal _XWalkComputerVisionCommandRequest_default_instance_;
+class XWalkControllerApplicationArguments;
+struct XWalkControllerApplicationArgumentsDefaultTypeInternal;
+extern XWalkControllerApplicationArgumentsDefaultTypeInternal _XWalkControllerApplicationArguments_default_instance_;
+class XWalkControllerCommandRequest;
+struct XWalkControllerCommandRequestDefaultTypeInternal;
+extern XWalkControllerCommandRequestDefaultTypeInternal _XWalkControllerCommandRequest_default_instance_;
+class XWalkDoctorCommandRequest;
+struct XWalkDoctorCommandRequestDefaultTypeInternal;
+extern XWalkDoctorCommandRequestDefaultTypeInternal _XWalkDoctorCommandRequest_default_instance_;
+class XWalkGptCarCommandRequest;
+struct XWalkGptCarCommandRequestDefaultTypeInternal;
+extern XWalkGptCarCommandRequestDefaultTypeInternal _XWalkGptCarCommandRequest_default_instance_;
+class XWalkGptCarRequest;
+struct XWalkGptCarRequestDefaultTypeInternal;
+extern XWalkGptCarRequestDefaultTypeInternal _XWalkGptCarRequest_default_instance_;
+class XWalkHelpCommandRequest;
+struct XWalkHelpCommandRequestDefaultTypeInternal;
+extern XWalkHelpCommandRequestDefaultTypeInternal _XWalkHelpCommandRequest_default_instance_;
 class XWalkI2cConfirmPayload;
 struct XWalkI2cConfirmPayloadDefaultTypeInternal;
 extern XWalkI2cConfirmPayloadDefaultTypeInternal _XWalkI2cConfirmPayload_default_instance_;
@@ -58,13 +107,153 @@ extern XWalkI2cRejectPayloadDefaultTypeInternal _XWalkI2cRejectPayload_default_i
 class XWalkI2cRequestPayload;
 struct XWalkI2cRequestPayloadDefaultTypeInternal;
 extern XWalkI2cRequestPayloadDefaultTypeInternal _XWalkI2cRequestPayload_default_instance_;
+class XWalkKeyboardControlCommandRequest;
+struct XWalkKeyboardControlCommandRequestDefaultTypeInternal;
+extern XWalkKeyboardControlCommandRequestDefaultTypeInternal _XWalkKeyboardControlCommandRequest_default_instance_;
+class XWalkLifecycleRequest;
+struct XWalkLifecycleRequestDefaultTypeInternal;
+extern XWalkLifecycleRequestDefaultTypeInternal _XWalkLifecycleRequest_default_instance_;
+class XWalkLineTrackCommandRequest;
+struct XWalkLineTrackCommandRequestDefaultTypeInternal;
+extern XWalkLineTrackCommandRequestDefaultTypeInternal _XWalkLineTrackCommandRequest_default_instance_;
+class XWalkMoveCommandRequest;
+struct XWalkMoveCommandRequestDefaultTypeInternal;
+extern XWalkMoveCommandRequestDefaultTypeInternal _XWalkMoveCommandRequest_default_instance_;
+class XWalkMoveRequest;
+struct XWalkMoveRequestDefaultTypeInternal;
+extern XWalkMoveRequestDefaultTypeInternal _XWalkMoveRequest_default_instance_;
+class XWalkNoArgumentRequest;
+struct XWalkNoArgumentRequestDefaultTypeInternal;
+extern XWalkNoArgumentRequestDefaultTypeInternal _XWalkNoArgumentRequest_default_instance_;
+class XWalkOnlineLlmTestCommandRequest;
+struct XWalkOnlineLlmTestCommandRequestDefaultTypeInternal;
+extern XWalkOnlineLlmTestCommandRequestDefaultTypeInternal _XWalkOnlineLlmTestCommandRequest_default_instance_;
+class XWalkRecordVideoCommandRequest;
+struct XWalkRecordVideoCommandRequestDefaultTypeInternal;
+extern XWalkRecordVideoCommandRequestDefaultTypeInternal _XWalkRecordVideoCommandRequest_default_instance_;
+class XWalkSelfDriveCommandRequest;
+struct XWalkSelfDriveCommandRequestDefaultTypeInternal;
+extern XWalkSelfDriveCommandRequestDefaultTypeInternal _XWalkSelfDriveCommandRequest_default_instance_;
+class XWalkSelfDriveRequest;
+struct XWalkSelfDriveRequestDefaultTypeInternal;
+extern XWalkSelfDriveRequestDefaultTypeInternal _XWalkSelfDriveRequest_default_instance_;
+class XWalkSensorCommandRequest;
+struct XWalkSensorCommandRequestDefaultTypeInternal;
+extern XWalkSensorCommandRequestDefaultTypeInternal _XWalkSensorCommandRequest_default_instance_;
+class XWalkSensorRequest;
+struct XWalkSensorRequestDefaultTypeInternal;
+extern XWalkSensorRequestDefaultTypeInternal _XWalkSensorRequest_default_instance_;
+class XWalkServoCalibrationConfig;
+struct XWalkServoCalibrationConfigDefaultTypeInternal;
+extern XWalkServoCalibrationConfigDefaultTypeInternal _XWalkServoCalibrationConfig_default_instance_;
+class XWalkServoZeroingCommandRequest;
+struct XWalkServoZeroingCommandRequestDefaultTypeInternal;
+extern XWalkServoZeroingCommandRequestDefaultTypeInternal _XWalkServoZeroingCommandRequest_default_instance_;
+class XWalkSoundBackgroundMusicCommandRequest;
+struct XWalkSoundBackgroundMusicCommandRequestDefaultTypeInternal;
+extern XWalkSoundBackgroundMusicCommandRequestDefaultTypeInternal _XWalkSoundBackgroundMusicCommandRequest_default_instance_;
+class XWalkSoundCommandRequest;
+struct XWalkSoundCommandRequestDefaultTypeInternal;
+extern XWalkSoundCommandRequestDefaultTypeInternal _XWalkSoundCommandRequest_default_instance_;
+class XWalkSoundRequest;
+struct XWalkSoundRequestDefaultTypeInternal;
+extern XWalkSoundRequestDefaultTypeInternal _XWalkSoundRequest_default_instance_;
+class XWalkSpiCommandRequest;
+struct XWalkSpiCommandRequestDefaultTypeInternal;
+extern XWalkSpiCommandRequestDefaultTypeInternal _XWalkSpiCommandRequest_default_instance_;
+class XWalkSpiRequest;
+struct XWalkSpiRequestDefaultTypeInternal;
+extern XWalkSpiRequestDefaultTypeInternal _XWalkSpiRequest_default_instance_;
+class XWalkStareAtYouCommandRequest;
+struct XWalkStareAtYouCommandRequestDefaultTypeInternal;
+extern XWalkStareAtYouCommandRequestDefaultTypeInternal _XWalkStareAtYouCommandRequest_default_instance_;
+class XWalkStorytellingRobotCommandRequest;
+struct XWalkStorytellingRobotCommandRequestDefaultTypeInternal;
+extern XWalkStorytellingRobotCommandRequestDefaultTypeInternal _XWalkStorytellingRobotCommandRequest_default_instance_;
+class XWalkTextVisionTalkCommandRequest;
+struct XWalkTextVisionTalkCommandRequestDefaultTypeInternal;
+extern XWalkTextVisionTalkCommandRequestDefaultTypeInternal _XWalkTextVisionTalkCommandRequest_default_instance_;
+class XWalkTreasureHuntCommandRequest;
+struct XWalkTreasureHuntCommandRequestDefaultTypeInternal;
+extern XWalkTreasureHuntCommandRequestDefaultTypeInternal _XWalkTreasureHuntCommandRequest_default_instance_;
+class XWalkTurnCommandRequest;
+struct XWalkTurnCommandRequestDefaultTypeInternal;
+extern XWalkTurnCommandRequestDefaultTypeInternal _XWalkTurnCommandRequest_default_instance_;
+class XWalkTurnRequest;
+struct XWalkTurnRequestDefaultTypeInternal;
+extern XWalkTurnRequestDefaultTypeInternal _XWalkTurnRequest_default_instance_;
+class XWalkUnknownCommandRequest;
+struct XWalkUnknownCommandRequestDefaultTypeInternal;
+extern XWalkUnknownCommandRequestDefaultTypeInternal _XWalkUnknownCommandRequest_default_instance_;
+class XWalkVideoCarCommandRequest;
+struct XWalkVideoCarCommandRequestDefaultTypeInternal;
+extern XWalkVideoCarCommandRequestDefaultTypeInternal _XWalkVideoCarCommandRequest_default_instance_;
+class XWalkVoiceActiveCarCommandRequest;
+struct XWalkVoiceActiveCarCommandRequestDefaultTypeInternal;
+extern XWalkVoiceActiveCarCommandRequestDefaultTypeInternal _XWalkVoiceActiveCarCommandRequest_default_instance_;
+class XWalkVoiceChatCommandRequest;
+struct XWalkVoiceChatCommandRequestDefaultTypeInternal;
+extern XWalkVoiceChatCommandRequestDefaultTypeInternal _XWalkVoiceChatCommandRequest_default_instance_;
+class XWalkVoiceControlledCarCommandRequest;
+struct XWalkVoiceControlledCarCommandRequestDefaultTypeInternal;
+extern XWalkVoiceControlledCarCommandRequestDefaultTypeInternal _XWalkVoiceControlledCarCommandRequest_default_instance_;
+class XWalkVoicePromptCarCommandRequest;
+struct XWalkVoicePromptCarCommandRequestDefaultTypeInternal;
+extern XWalkVoicePromptCarCommandRequestDefaultTypeInternal _XWalkVoicePromptCarCommandRequest_default_instance_;
 }  // namespace v1
 }  // namespace iw
 }  // namespace xwalk
 PROTOBUF_NAMESPACE_OPEN
+template<> ::xwalk::iw::v1::XWalkAppConfig* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkAppConfig>(Arena*);
+template<> ::xwalk::iw::v1::XWalkAppControlCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkAppControlCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkAvoidObstaclesCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkBullFightCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkBullFightCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkCalibrateCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkCalibrateCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkCalibrationRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkCalibrationRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkCameraCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkCameraCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkCameraRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkCameraRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkCliffDetectionCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkCliffDetectionCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkComputerVisionCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkComputerVisionCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkControllerApplicationArguments* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkControllerApplicationArguments>(Arena*);
+template<> ::xwalk::iw::v1::XWalkControllerCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkControllerCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkDoctorCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkDoctorCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkGptCarCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkGptCarCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkGptCarRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkGptCarRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkHelpCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkHelpCommandRequest>(Arena*);
 template<> ::xwalk::iw::v1::XWalkI2cConfirmPayload* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkI2cConfirmPayload>(Arena*);
 template<> ::xwalk::iw::v1::XWalkI2cRejectPayload* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkI2cRejectPayload>(Arena*);
 template<> ::xwalk::iw::v1::XWalkI2cRequestPayload* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkI2cRequestPayload>(Arena*);
+template<> ::xwalk::iw::v1::XWalkKeyboardControlCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkKeyboardControlCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkLifecycleRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkLifecycleRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkLineTrackCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkLineTrackCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkMoveCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkMoveCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkMoveRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkMoveRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkNoArgumentRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkNoArgumentRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkOnlineLlmTestCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkRecordVideoCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkRecordVideoCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkSelfDriveCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkSelfDriveCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkSelfDriveRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkSelfDriveRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkSensorCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkSensorCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkSensorRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkSensorRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkServoCalibrationConfig* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkServoCalibrationConfig>(Arena*);
+template<> ::xwalk::iw::v1::XWalkServoZeroingCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkServoZeroingCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkSoundCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkSoundCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkSoundRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkSoundRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkSpiCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkSpiCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkSpiRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkSpiRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkStareAtYouCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkStareAtYouCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkTextVisionTalkCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkTreasureHuntCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkTurnCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkTurnCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkTurnRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkTurnRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkUnknownCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkUnknownCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkVideoCarCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkVideoCarCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkVoiceChatCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace xwalk {
 namespace iw {
@@ -595,6 +784,7097 @@ class XWalkI2cRejectPayload final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
 };
+// -------------------------------------------------------------------
+
+class XWalkAppConfig final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkAppConfig) */ {
+ public:
+  inline XWalkAppConfig() : XWalkAppConfig(nullptr) {}
+  ~XWalkAppConfig() override;
+  explicit PROTOBUF_CONSTEXPR XWalkAppConfig(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkAppConfig(const XWalkAppConfig& from);
+  XWalkAppConfig(XWalkAppConfig&& from) noexcept
+    : XWalkAppConfig() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkAppConfig& operator=(const XWalkAppConfig& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkAppConfig& operator=(XWalkAppConfig&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkAppConfig& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkAppConfig* internal_default_instance() {
+    return reinterpret_cast<const XWalkAppConfig*>(
+               &_XWalkAppConfig_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(XWalkAppConfig& a, XWalkAppConfig& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkAppConfig* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkAppConfig* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkAppConfig* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkAppConfig>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkAppConfig& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkAppConfig& from) {
+    XWalkAppConfig::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkAppConfig* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkAppConfig";
+  }
+  protected:
+  explicit XWalkAppConfig(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kConfigurationFilePathFieldNumber = 1,
+    kResourceDirectoryFieldNumber = 2,
+  };
+  // string configuration_file_path = 1;
+  void clear_configuration_file_path();
+  const std::string& configuration_file_path() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_configuration_file_path(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_configuration_file_path();
+  PROTOBUF_NODISCARD std::string* release_configuration_file_path();
+  void set_allocated_configuration_file_path(std::string* configuration_file_path);
+  private:
+  const std::string& _internal_configuration_file_path() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_configuration_file_path(const std::string& value);
+  std::string* _internal_mutable_configuration_file_path();
+  public:
+
+  // string resource_directory = 2;
+  void clear_resource_directory();
+  const std::string& resource_directory() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_resource_directory(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_resource_directory();
+  PROTOBUF_NODISCARD std::string* release_resource_directory();
+  void set_allocated_resource_directory(std::string* resource_directory);
+  private:
+  const std::string& _internal_resource_directory() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_resource_directory(const std::string& value);
+  std::string* _internal_mutable_resource_directory();
+  public:
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkAppConfig)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr configuration_file_path_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr resource_directory_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkControllerApplicationArguments final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkControllerApplicationArguments) */ {
+ public:
+  inline XWalkControllerApplicationArguments() : XWalkControllerApplicationArguments(nullptr) {}
+  ~XWalkControllerApplicationArguments() override;
+  explicit PROTOBUF_CONSTEXPR XWalkControllerApplicationArguments(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkControllerApplicationArguments(const XWalkControllerApplicationArguments& from);
+  XWalkControllerApplicationArguments(XWalkControllerApplicationArguments&& from) noexcept
+    : XWalkControllerApplicationArguments() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkControllerApplicationArguments& operator=(const XWalkControllerApplicationArguments& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkControllerApplicationArguments& operator=(XWalkControllerApplicationArguments&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkControllerApplicationArguments& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkControllerApplicationArguments* internal_default_instance() {
+    return reinterpret_cast<const XWalkControllerApplicationArguments*>(
+               &_XWalkControllerApplicationArguments_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(XWalkControllerApplicationArguments& a, XWalkControllerApplicationArguments& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkControllerApplicationArguments* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkControllerApplicationArguments* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkControllerApplicationArguments* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkControllerApplicationArguments>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkControllerApplicationArguments& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkControllerApplicationArguments& from) {
+    XWalkControllerApplicationArguments::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkControllerApplicationArguments* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkControllerApplicationArguments";
+  }
+  protected:
+  explicit XWalkControllerApplicationArguments(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kCommandArgumentsFieldNumber = 1,
+    kAppConfigFieldNumber = 2,
+  };
+  // repeated string command_arguments = 1;
+  int command_arguments_size() const;
+  private:
+  int _internal_command_arguments_size() const;
+  public:
+  void clear_command_arguments();
+  const std::string& command_arguments(int index) const;
+  std::string* mutable_command_arguments(int index);
+  void set_command_arguments(int index, const std::string& value);
+  void set_command_arguments(int index, std::string&& value);
+  void set_command_arguments(int index, const char* value);
+  void set_command_arguments(int index, const char* value, size_t size);
+  std::string* add_command_arguments();
+  void add_command_arguments(const std::string& value);
+  void add_command_arguments(std::string&& value);
+  void add_command_arguments(const char* value);
+  void add_command_arguments(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& command_arguments() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_command_arguments();
+  private:
+  const std::string& _internal_command_arguments(int index) const;
+  std::string* _internal_add_command_arguments();
+  public:
+
+  // .xwalk.iw.v1.XWalkAppConfig app_config = 2;
+  bool has_app_config() const;
+  private:
+  bool _internal_has_app_config() const;
+  public:
+  void clear_app_config();
+  const ::xwalk::iw::v1::XWalkAppConfig& app_config() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkAppConfig* release_app_config();
+  ::xwalk::iw::v1::XWalkAppConfig* mutable_app_config();
+  void set_allocated_app_config(::xwalk::iw::v1::XWalkAppConfig* app_config);
+  private:
+  const ::xwalk::iw::v1::XWalkAppConfig& _internal_app_config() const;
+  ::xwalk::iw::v1::XWalkAppConfig* _internal_mutable_app_config();
+  public:
+  void unsafe_arena_set_allocated_app_config(
+      ::xwalk::iw::v1::XWalkAppConfig* app_config);
+  ::xwalk::iw::v1::XWalkAppConfig* unsafe_arena_release_app_config();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkControllerApplicationArguments)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> command_arguments_;
+    ::xwalk::iw::v1::XWalkAppConfig* app_config_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkControllerCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkControllerCommandRequest) */ {
+ public:
+  inline XWalkControllerCommandRequest() : XWalkControllerCommandRequest(nullptr) {}
+  ~XWalkControllerCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkControllerCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkControllerCommandRequest(const XWalkControllerCommandRequest& from);
+  XWalkControllerCommandRequest(XWalkControllerCommandRequest&& from) noexcept
+    : XWalkControllerCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkControllerCommandRequest& operator=(const XWalkControllerCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkControllerCommandRequest& operator=(XWalkControllerCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkControllerCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkControllerCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkControllerCommandRequest*>(
+               &_XWalkControllerCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(XWalkControllerCommandRequest& a, XWalkControllerCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkControllerCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkControllerCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkControllerCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkControllerCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkControllerCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkControllerCommandRequest& from) {
+    XWalkControllerCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkControllerCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkControllerCommandRequest";
+  }
+  protected:
+  explicit XWalkControllerCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kArgumentsFieldNumber = 2,
+    kCommandFieldNumber = 1,
+  };
+  // repeated string arguments = 2;
+  int arguments_size() const;
+  private:
+  int _internal_arguments_size() const;
+  public:
+  void clear_arguments();
+  const std::string& arguments(int index) const;
+  std::string* mutable_arguments(int index);
+  void set_arguments(int index, const std::string& value);
+  void set_arguments(int index, std::string&& value);
+  void set_arguments(int index, const char* value);
+  void set_arguments(int index, const char* value, size_t size);
+  std::string* add_arguments();
+  void add_arguments(const std::string& value);
+  void add_arguments(std::string&& value);
+  void add_arguments(const char* value);
+  void add_arguments(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& arguments() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_arguments();
+  private:
+  const std::string& _internal_arguments(int index) const;
+  std::string* _internal_add_arguments();
+  public:
+
+  // uint32 command = 1;
+  void clear_command();
+  uint32_t command() const;
+  void set_command(uint32_t value);
+  private:
+  uint32_t _internal_command() const;
+  void _internal_set_command(uint32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkControllerCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> arguments_;
+    uint32_t command_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkNoArgumentRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkNoArgumentRequest) */ {
+ public:
+  inline XWalkNoArgumentRequest() : XWalkNoArgumentRequest(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR XWalkNoArgumentRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkNoArgumentRequest(const XWalkNoArgumentRequest& from);
+  XWalkNoArgumentRequest(XWalkNoArgumentRequest&& from) noexcept
+    : XWalkNoArgumentRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkNoArgumentRequest& operator=(const XWalkNoArgumentRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkNoArgumentRequest& operator=(XWalkNoArgumentRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkNoArgumentRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkNoArgumentRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkNoArgumentRequest*>(
+               &_XWalkNoArgumentRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    6;
+
+  friend void swap(XWalkNoArgumentRequest& a, XWalkNoArgumentRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkNoArgumentRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkNoArgumentRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkNoArgumentRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkNoArgumentRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const XWalkNoArgumentRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const XWalkNoArgumentRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkNoArgumentRequest";
+  }
+  protected:
+  explicit XWalkNoArgumentRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkNoArgumentRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkLifecycleRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkLifecycleRequest) */ {
+ public:
+  inline XWalkLifecycleRequest() : XWalkLifecycleRequest(nullptr) {}
+  ~XWalkLifecycleRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkLifecycleRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkLifecycleRequest(const XWalkLifecycleRequest& from);
+  XWalkLifecycleRequest(XWalkLifecycleRequest&& from) noexcept
+    : XWalkLifecycleRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkLifecycleRequest& operator=(const XWalkLifecycleRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkLifecycleRequest& operator=(XWalkLifecycleRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkLifecycleRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkLifecycleRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkLifecycleRequest*>(
+               &_XWalkLifecycleRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    7;
+
+  friend void swap(XWalkLifecycleRequest& a, XWalkLifecycleRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkLifecycleRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkLifecycleRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkLifecycleRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkLifecycleRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkLifecycleRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkLifecycleRequest& from) {
+    XWalkLifecycleRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkLifecycleRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkLifecycleRequest";
+  }
+  protected:
+  explicit XWalkLifecycleRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kActionFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkLifecycleAction action = 1;
+  void clear_action();
+  ::xwalk::iw::v1::XWalkLifecycleAction action() const;
+  void set_action(::xwalk::iw::v1::XWalkLifecycleAction value);
+  private:
+  ::xwalk::iw::v1::XWalkLifecycleAction _internal_action() const;
+  void _internal_set_action(::xwalk::iw::v1::XWalkLifecycleAction value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkLifecycleRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int action_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkMoveRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkMoveRequest) */ {
+ public:
+  inline XWalkMoveRequest() : XWalkMoveRequest(nullptr) {}
+  ~XWalkMoveRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkMoveRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkMoveRequest(const XWalkMoveRequest& from);
+  XWalkMoveRequest(XWalkMoveRequest&& from) noexcept
+    : XWalkMoveRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkMoveRequest& operator=(const XWalkMoveRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkMoveRequest& operator=(XWalkMoveRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkMoveRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkMoveRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkMoveRequest*>(
+               &_XWalkMoveRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    8;
+
+  friend void swap(XWalkMoveRequest& a, XWalkMoveRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkMoveRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkMoveRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkMoveRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkMoveRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkMoveRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkMoveRequest& from) {
+    XWalkMoveRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkMoveRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkMoveRequest";
+  }
+  protected:
+  explicit XWalkMoveRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kSpeedPercentFieldNumber = 2,
+    kActionFieldNumber = 1,
+    kDurationMsFieldNumber = 3,
+  };
+  // optional double speed_percent = 2;
+  bool has_speed_percent() const;
+  private:
+  bool _internal_has_speed_percent() const;
+  public:
+  void clear_speed_percent();
+  double speed_percent() const;
+  void set_speed_percent(double value);
+  private:
+  double _internal_speed_percent() const;
+  void _internal_set_speed_percent(double value);
+  public:
+
+  // .xwalk.iw.v1.XWalkMoveAction action = 1;
+  void clear_action();
+  ::xwalk::iw::v1::XWalkMoveAction action() const;
+  void set_action(::xwalk::iw::v1::XWalkMoveAction value);
+  private:
+  ::xwalk::iw::v1::XWalkMoveAction _internal_action() const;
+  void _internal_set_action(::xwalk::iw::v1::XWalkMoveAction value);
+  public:
+
+  // optional uint32 duration_ms = 3;
+  bool has_duration_ms() const;
+  private:
+  bool _internal_has_duration_ms() const;
+  public:
+  void clear_duration_ms();
+  uint32_t duration_ms() const;
+  void set_duration_ms(uint32_t value);
+  private:
+  uint32_t _internal_duration_ms() const;
+  void _internal_set_duration_ms(uint32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkMoveRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    double speed_percent_;
+    int action_;
+    uint32_t duration_ms_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkTurnRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkTurnRequest) */ {
+ public:
+  inline XWalkTurnRequest() : XWalkTurnRequest(nullptr) {}
+  ~XWalkTurnRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkTurnRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkTurnRequest(const XWalkTurnRequest& from);
+  XWalkTurnRequest(XWalkTurnRequest&& from) noexcept
+    : XWalkTurnRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkTurnRequest& operator=(const XWalkTurnRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkTurnRequest& operator=(XWalkTurnRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkTurnRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkTurnRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkTurnRequest*>(
+               &_XWalkTurnRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    9;
+
+  friend void swap(XWalkTurnRequest& a, XWalkTurnRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkTurnRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkTurnRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkTurnRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkTurnRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkTurnRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkTurnRequest& from) {
+    XWalkTurnRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkTurnRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkTurnRequest";
+  }
+  protected:
+  explicit XWalkTurnRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kAngleDegreesFieldNumber = 2,
+    kDirectionFieldNumber = 1,
+  };
+  // optional double angle_degrees = 2;
+  bool has_angle_degrees() const;
+  private:
+  bool _internal_has_angle_degrees() const;
+  public:
+  void clear_angle_degrees();
+  double angle_degrees() const;
+  void set_angle_degrees(double value);
+  private:
+  double _internal_angle_degrees() const;
+  void _internal_set_angle_degrees(double value);
+  public:
+
+  // .xwalk.iw.v1.XWalkTurnDirection direction = 1;
+  void clear_direction();
+  ::xwalk::iw::v1::XWalkTurnDirection direction() const;
+  void set_direction(::xwalk::iw::v1::XWalkTurnDirection value);
+  private:
+  ::xwalk::iw::v1::XWalkTurnDirection _internal_direction() const;
+  void _internal_set_direction(::xwalk::iw::v1::XWalkTurnDirection value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkTurnRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    double angle_degrees_;
+    int direction_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkCameraRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkCameraRequest) */ {
+ public:
+  inline XWalkCameraRequest() : XWalkCameraRequest(nullptr) {}
+  ~XWalkCameraRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkCameraRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkCameraRequest(const XWalkCameraRequest& from);
+  XWalkCameraRequest(XWalkCameraRequest&& from) noexcept
+    : XWalkCameraRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkCameraRequest& operator=(const XWalkCameraRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkCameraRequest& operator=(XWalkCameraRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkCameraRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkCameraRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkCameraRequest*>(
+               &_XWalkCameraRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    10;
+
+  friend void swap(XWalkCameraRequest& a, XWalkCameraRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkCameraRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkCameraRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkCameraRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkCameraRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkCameraRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkCameraRequest& from) {
+    XWalkCameraRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkCameraRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkCameraRequest";
+  }
+  protected:
+  explicit XWalkCameraRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kAngleDegreesFieldNumber = 2,
+    kAxisFieldNumber = 1,
+  };
+  // double angle_degrees = 2;
+  void clear_angle_degrees();
+  double angle_degrees() const;
+  void set_angle_degrees(double value);
+  private:
+  double _internal_angle_degrees() const;
+  void _internal_set_angle_degrees(double value);
+  public:
+
+  // .xwalk.iw.v1.XWalkCameraAxis axis = 1;
+  void clear_axis();
+  ::xwalk::iw::v1::XWalkCameraAxis axis() const;
+  void set_axis(::xwalk::iw::v1::XWalkCameraAxis value);
+  private:
+  ::xwalk::iw::v1::XWalkCameraAxis _internal_axis() const;
+  void _internal_set_axis(::xwalk::iw::v1::XWalkCameraAxis value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkCameraRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    double angle_degrees_;
+    int axis_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkSensorRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkSensorRequest) */ {
+ public:
+  inline XWalkSensorRequest() : XWalkSensorRequest(nullptr) {}
+  ~XWalkSensorRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkSensorRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkSensorRequest(const XWalkSensorRequest& from);
+  XWalkSensorRequest(XWalkSensorRequest&& from) noexcept
+    : XWalkSensorRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkSensorRequest& operator=(const XWalkSensorRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkSensorRequest& operator=(XWalkSensorRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkSensorRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkSensorRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkSensorRequest*>(
+               &_XWalkSensorRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    11;
+
+  friend void swap(XWalkSensorRequest& a, XWalkSensorRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkSensorRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkSensorRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkSensorRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkSensorRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkSensorRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkSensorRequest& from) {
+    XWalkSensorRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkSensorRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkSensorRequest";
+  }
+  protected:
+  explicit XWalkSensorRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTypeFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkSensorType type = 1;
+  void clear_type();
+  ::xwalk::iw::v1::XWalkSensorType type() const;
+  void set_type(::xwalk::iw::v1::XWalkSensorType value);
+  private:
+  ::xwalk::iw::v1::XWalkSensorType _internal_type() const;
+  void _internal_set_type(::xwalk::iw::v1::XWalkSensorType value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSensorRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int type_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkSelfDriveRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkSelfDriveRequest) */ {
+ public:
+  inline XWalkSelfDriveRequest() : XWalkSelfDriveRequest(nullptr) {}
+  ~XWalkSelfDriveRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkSelfDriveRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkSelfDriveRequest(const XWalkSelfDriveRequest& from);
+  XWalkSelfDriveRequest(XWalkSelfDriveRequest&& from) noexcept
+    : XWalkSelfDriveRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkSelfDriveRequest& operator=(const XWalkSelfDriveRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkSelfDriveRequest& operator=(XWalkSelfDriveRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkSelfDriveRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkSelfDriveRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkSelfDriveRequest*>(
+               &_XWalkSelfDriveRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    12;
+
+  friend void swap(XWalkSelfDriveRequest& a, XWalkSelfDriveRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkSelfDriveRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkSelfDriveRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkSelfDriveRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkSelfDriveRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkSelfDriveRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkSelfDriveRequest& from) {
+    XWalkSelfDriveRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkSelfDriveRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkSelfDriveRequest";
+  }
+  protected:
+  explicit XWalkSelfDriveRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kActionFieldNumber = 1,
+  };
+  // string action = 1;
+  void clear_action();
+  const std::string& action() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_action(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_action();
+  PROTOBUF_NODISCARD std::string* release_action();
+  void set_allocated_action(std::string* action);
+  private:
+  const std::string& _internal_action() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_action(const std::string& value);
+  std::string* _internal_mutable_action();
+  public:
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSelfDriveRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr action_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkSpiRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkSpiRequest) */ {
+ public:
+  inline XWalkSpiRequest() : XWalkSpiRequest(nullptr) {}
+  ~XWalkSpiRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkSpiRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkSpiRequest(const XWalkSpiRequest& from);
+  XWalkSpiRequest(XWalkSpiRequest&& from) noexcept
+    : XWalkSpiRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkSpiRequest& operator=(const XWalkSpiRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkSpiRequest& operator=(XWalkSpiRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkSpiRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkSpiRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkSpiRequest*>(
+               &_XWalkSpiRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    13;
+
+  friend void swap(XWalkSpiRequest& a, XWalkSpiRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkSpiRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkSpiRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkSpiRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkSpiRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkSpiRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkSpiRequest& from) {
+    XWalkSpiRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkSpiRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkSpiRequest";
+  }
+  protected:
+  explicit XWalkSpiRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTransmitDataFieldNumber = 1,
+  };
+  // bytes transmit_data = 1;
+  void clear_transmit_data();
+  const std::string& transmit_data() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_transmit_data(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_transmit_data();
+  PROTOBUF_NODISCARD std::string* release_transmit_data();
+  void set_allocated_transmit_data(std::string* transmit_data);
+  private:
+  const std::string& _internal_transmit_data() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_transmit_data(const std::string& value);
+  std::string* _internal_mutable_transmit_data();
+  public:
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSpiRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr transmit_data_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkGptCarRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkGptCarRequest) */ {
+ public:
+  inline XWalkGptCarRequest() : XWalkGptCarRequest(nullptr) {}
+  ~XWalkGptCarRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkGptCarRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkGptCarRequest(const XWalkGptCarRequest& from);
+  XWalkGptCarRequest(XWalkGptCarRequest&& from) noexcept
+    : XWalkGptCarRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkGptCarRequest& operator=(const XWalkGptCarRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkGptCarRequest& operator=(XWalkGptCarRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkGptCarRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkGptCarRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkGptCarRequest*>(
+               &_XWalkGptCarRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    14;
+
+  friend void swap(XWalkGptCarRequest& a, XWalkGptCarRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkGptCarRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkGptCarRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkGptCarRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkGptCarRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkGptCarRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkGptCarRequest& from) {
+    XWalkGptCarRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkGptCarRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkGptCarRequest";
+  }
+  protected:
+  explicit XWalkGptCarRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kActionFieldNumber = 1,
+    kKeyboardInputFieldNumber = 2,
+    kWithImageFieldNumber = 3,
+  };
+  // .xwalk.iw.v1.XWalkLifecycleAction action = 1;
+  void clear_action();
+  ::xwalk::iw::v1::XWalkLifecycleAction action() const;
+  void set_action(::xwalk::iw::v1::XWalkLifecycleAction value);
+  private:
+  ::xwalk::iw::v1::XWalkLifecycleAction _internal_action() const;
+  void _internal_set_action(::xwalk::iw::v1::XWalkLifecycleAction value);
+  public:
+
+  // bool keyboard_input = 2;
+  void clear_keyboard_input();
+  bool keyboard_input() const;
+  void set_keyboard_input(bool value);
+  private:
+  bool _internal_keyboard_input() const;
+  void _internal_set_keyboard_input(bool value);
+  public:
+
+  // optional bool with_image = 3;
+  bool has_with_image() const;
+  private:
+  bool _internal_has_with_image() const;
+  public:
+  void clear_with_image();
+  bool with_image() const;
+  void set_with_image(bool value);
+  private:
+  bool _internal_with_image() const;
+  void _internal_set_with_image(bool value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkGptCarRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    int action_;
+    bool keyboard_input_;
+    bool with_image_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkCalibrationRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkCalibrationRequest) */ {
+ public:
+  inline XWalkCalibrationRequest() : XWalkCalibrationRequest(nullptr) {}
+  ~XWalkCalibrationRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkCalibrationRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkCalibrationRequest(const XWalkCalibrationRequest& from);
+  XWalkCalibrationRequest(XWalkCalibrationRequest&& from) noexcept
+    : XWalkCalibrationRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkCalibrationRequest& operator=(const XWalkCalibrationRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkCalibrationRequest& operator=(XWalkCalibrationRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkCalibrationRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkCalibrationRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkCalibrationRequest*>(
+               &_XWalkCalibrationRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    15;
+
+  friend void swap(XWalkCalibrationRequest& a, XWalkCalibrationRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkCalibrationRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkCalibrationRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkCalibrationRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkCalibrationRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkCalibrationRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkCalibrationRequest& from) {
+    XWalkCalibrationRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkCalibrationRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkCalibrationRequest";
+  }
+  protected:
+  explicit XWalkCalibrationRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kModeFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkCalibrationMode mode = 1;
+  void clear_mode();
+  ::xwalk::iw::v1::XWalkCalibrationMode mode() const;
+  void set_mode(::xwalk::iw::v1::XWalkCalibrationMode value);
+  private:
+  ::xwalk::iw::v1::XWalkCalibrationMode _internal_mode() const;
+  void _internal_set_mode(::xwalk::iw::v1::XWalkCalibrationMode value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkCalibrationRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int mode_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkSoundRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkSoundRequest) */ {
+ public:
+  inline XWalkSoundRequest() : XWalkSoundRequest(nullptr) {}
+  ~XWalkSoundRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkSoundRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkSoundRequest(const XWalkSoundRequest& from);
+  XWalkSoundRequest(XWalkSoundRequest&& from) noexcept
+    : XWalkSoundRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkSoundRequest& operator=(const XWalkSoundRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkSoundRequest& operator=(XWalkSoundRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkSoundRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkSoundRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkSoundRequest*>(
+               &_XWalkSoundRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    16;
+
+  friend void swap(XWalkSoundRequest& a, XWalkSoundRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkSoundRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkSoundRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkSoundRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkSoundRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkSoundRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkSoundRequest& from) {
+    XWalkSoundRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkSoundRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkSoundRequest";
+  }
+  protected:
+  explicit XWalkSoundRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kFilePathFieldNumber = 2,
+    kVolumePercentFieldNumber = 3,
+    kOperationFieldNumber = 1,
+  };
+  // string file_path = 2;
+  void clear_file_path();
+  const std::string& file_path() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_file_path(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_file_path();
+  PROTOBUF_NODISCARD std::string* release_file_path();
+  void set_allocated_file_path(std::string* file_path);
+  private:
+  const std::string& _internal_file_path() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_file_path(const std::string& value);
+  std::string* _internal_mutable_file_path();
+  public:
+
+  // optional double volume_percent = 3;
+  bool has_volume_percent() const;
+  private:
+  bool _internal_has_volume_percent() const;
+  public:
+  void clear_volume_percent();
+  double volume_percent() const;
+  void set_volume_percent(double value);
+  private:
+  double _internal_volume_percent() const;
+  void _internal_set_volume_percent(double value);
+  public:
+
+  // optional .xwalk.iw.v1.XWalkSoundOperation operation = 1;
+  bool has_operation() const;
+  private:
+  bool _internal_has_operation() const;
+  public:
+  void clear_operation();
+  ::xwalk::iw::v1::XWalkSoundOperation operation() const;
+  void set_operation(::xwalk::iw::v1::XWalkSoundOperation value);
+  private:
+  ::xwalk::iw::v1::XWalkSoundOperation _internal_operation() const;
+  void _internal_set_operation(::xwalk::iw::v1::XWalkSoundOperation value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSoundRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr file_path_;
+    double volume_percent_;
+    int operation_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkServoCalibrationConfig final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkServoCalibrationConfig) */ {
+ public:
+  inline XWalkServoCalibrationConfig() : XWalkServoCalibrationConfig(nullptr) {}
+  ~XWalkServoCalibrationConfig() override;
+  explicit PROTOBUF_CONSTEXPR XWalkServoCalibrationConfig(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkServoCalibrationConfig(const XWalkServoCalibrationConfig& from);
+  XWalkServoCalibrationConfig(XWalkServoCalibrationConfig&& from) noexcept
+    : XWalkServoCalibrationConfig() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkServoCalibrationConfig& operator=(const XWalkServoCalibrationConfig& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkServoCalibrationConfig& operator=(XWalkServoCalibrationConfig&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkServoCalibrationConfig& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkServoCalibrationConfig* internal_default_instance() {
+    return reinterpret_cast<const XWalkServoCalibrationConfig*>(
+               &_XWalkServoCalibrationConfig_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    17;
+
+  friend void swap(XWalkServoCalibrationConfig& a, XWalkServoCalibrationConfig& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkServoCalibrationConfig* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkServoCalibrationConfig* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkServoCalibrationConfig* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkServoCalibrationConfig>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkServoCalibrationConfig& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkServoCalibrationConfig& from) {
+    XWalkServoCalibrationConfig::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkServoCalibrationConfig* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkServoCalibrationConfig";
+  }
+  protected:
+  explicit XWalkServoCalibrationConfig(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTitleFieldNumber = 1,
+    kPromptFieldNumber = 2,
+    kMinimumAngleDegreesFieldNumber = 3,
+    kMaximumAngleDegreesFieldNumber = 4,
+    kServoIdFieldNumber = 5,
+  };
+  // string title = 1;
+  void clear_title();
+  const std::string& title() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_title(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_title();
+  PROTOBUF_NODISCARD std::string* release_title();
+  void set_allocated_title(std::string* title);
+  private:
+  const std::string& _internal_title() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_title(const std::string& value);
+  std::string* _internal_mutable_title();
+  public:
+
+  // string prompt = 2;
+  void clear_prompt();
+  const std::string& prompt() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_prompt(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_prompt();
+  PROTOBUF_NODISCARD std::string* release_prompt();
+  void set_allocated_prompt(std::string* prompt);
+  private:
+  const std::string& _internal_prompt() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_prompt(const std::string& value);
+  std::string* _internal_mutable_prompt();
+  public:
+
+  // double minimum_angle_degrees = 3;
+  void clear_minimum_angle_degrees();
+  double minimum_angle_degrees() const;
+  void set_minimum_angle_degrees(double value);
+  private:
+  double _internal_minimum_angle_degrees() const;
+  void _internal_set_minimum_angle_degrees(double value);
+  public:
+
+  // double maximum_angle_degrees = 4;
+  void clear_maximum_angle_degrees();
+  double maximum_angle_degrees() const;
+  void set_maximum_angle_degrees(double value);
+  private:
+  double _internal_maximum_angle_degrees() const;
+  void _internal_set_maximum_angle_degrees(double value);
+  public:
+
+  // uint32 servo_id = 5;
+  void clear_servo_id();
+  uint32_t servo_id() const;
+  void set_servo_id(uint32_t value);
+  private:
+  uint32_t _internal_servo_id() const;
+  void _internal_set_servo_id(uint32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkServoCalibrationConfig)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr title_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr prompt_;
+    double minimum_angle_degrees_;
+    double maximum_angle_degrees_;
+    uint32_t servo_id_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkUnknownCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkUnknownCommandRequest) */ {
+ public:
+  inline XWalkUnknownCommandRequest() : XWalkUnknownCommandRequest(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR XWalkUnknownCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkUnknownCommandRequest(const XWalkUnknownCommandRequest& from);
+  XWalkUnknownCommandRequest(XWalkUnknownCommandRequest&& from) noexcept
+    : XWalkUnknownCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkUnknownCommandRequest& operator=(const XWalkUnknownCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkUnknownCommandRequest& operator=(XWalkUnknownCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkUnknownCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkUnknownCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkUnknownCommandRequest*>(
+               &_XWalkUnknownCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    18;
+
+  friend void swap(XWalkUnknownCommandRequest& a, XWalkUnknownCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkUnknownCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkUnknownCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkUnknownCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkUnknownCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const XWalkUnknownCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const XWalkUnknownCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkUnknownCommandRequest";
+  }
+  protected:
+  explicit XWalkUnknownCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkUnknownCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkHelpCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkHelpCommandRequest) */ {
+ public:
+  inline XWalkHelpCommandRequest() : XWalkHelpCommandRequest(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR XWalkHelpCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkHelpCommandRequest(const XWalkHelpCommandRequest& from);
+  XWalkHelpCommandRequest(XWalkHelpCommandRequest&& from) noexcept
+    : XWalkHelpCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkHelpCommandRequest& operator=(const XWalkHelpCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkHelpCommandRequest& operator=(XWalkHelpCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkHelpCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkHelpCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkHelpCommandRequest*>(
+               &_XWalkHelpCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    19;
+
+  friend void swap(XWalkHelpCommandRequest& a, XWalkHelpCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkHelpCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkHelpCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkHelpCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkHelpCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const XWalkHelpCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const XWalkHelpCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkHelpCommandRequest";
+  }
+  protected:
+  explicit XWalkHelpCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkHelpCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkSpiCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkSpiCommandRequest) */ {
+ public:
+  inline XWalkSpiCommandRequest() : XWalkSpiCommandRequest(nullptr) {}
+  ~XWalkSpiCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkSpiCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkSpiCommandRequest(const XWalkSpiCommandRequest& from);
+  XWalkSpiCommandRequest(XWalkSpiCommandRequest&& from) noexcept
+    : XWalkSpiCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkSpiCommandRequest& operator=(const XWalkSpiCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkSpiCommandRequest& operator=(XWalkSpiCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkSpiCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkSpiCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkSpiCommandRequest*>(
+               &_XWalkSpiCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    20;
+
+  friend void swap(XWalkSpiCommandRequest& a, XWalkSpiCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkSpiCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkSpiCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkSpiCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkSpiCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkSpiCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkSpiCommandRequest& from) {
+    XWalkSpiCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkSpiCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkSpiCommandRequest";
+  }
+  protected:
+  explicit XWalkSpiCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkSpiRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkSpiRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkSpiRequest* release_request();
+  ::xwalk::iw::v1::XWalkSpiRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkSpiRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkSpiRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkSpiRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkSpiRequest* request);
+  ::xwalk::iw::v1::XWalkSpiRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSpiCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkSpiRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkDoctorCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkDoctorCommandRequest) */ {
+ public:
+  inline XWalkDoctorCommandRequest() : XWalkDoctorCommandRequest(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR XWalkDoctorCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkDoctorCommandRequest(const XWalkDoctorCommandRequest& from);
+  XWalkDoctorCommandRequest(XWalkDoctorCommandRequest&& from) noexcept
+    : XWalkDoctorCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkDoctorCommandRequest& operator=(const XWalkDoctorCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkDoctorCommandRequest& operator=(XWalkDoctorCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkDoctorCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkDoctorCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkDoctorCommandRequest*>(
+               &_XWalkDoctorCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    21;
+
+  friend void swap(XWalkDoctorCommandRequest& a, XWalkDoctorCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkDoctorCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkDoctorCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkDoctorCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkDoctorCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const XWalkDoctorCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const XWalkDoctorCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkDoctorCommandRequest";
+  }
+  protected:
+  explicit XWalkDoctorCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkDoctorCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkServoZeroingCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkServoZeroingCommandRequest) */ {
+ public:
+  inline XWalkServoZeroingCommandRequest() : XWalkServoZeroingCommandRequest(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR XWalkServoZeroingCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkServoZeroingCommandRequest(const XWalkServoZeroingCommandRequest& from);
+  XWalkServoZeroingCommandRequest(XWalkServoZeroingCommandRequest&& from) noexcept
+    : XWalkServoZeroingCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkServoZeroingCommandRequest& operator=(const XWalkServoZeroingCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkServoZeroingCommandRequest& operator=(XWalkServoZeroingCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkServoZeroingCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkServoZeroingCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkServoZeroingCommandRequest*>(
+               &_XWalkServoZeroingCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    22;
+
+  friend void swap(XWalkServoZeroingCommandRequest& a, XWalkServoZeroingCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkServoZeroingCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkServoZeroingCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkServoZeroingCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkServoZeroingCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const XWalkServoZeroingCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const XWalkServoZeroingCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkServoZeroingCommandRequest";
+  }
+  protected:
+  explicit XWalkServoZeroingCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkServoZeroingCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkComputerVisionCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkComputerVisionCommandRequest) */ {
+ public:
+  inline XWalkComputerVisionCommandRequest() : XWalkComputerVisionCommandRequest(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR XWalkComputerVisionCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkComputerVisionCommandRequest(const XWalkComputerVisionCommandRequest& from);
+  XWalkComputerVisionCommandRequest(XWalkComputerVisionCommandRequest&& from) noexcept
+    : XWalkComputerVisionCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkComputerVisionCommandRequest& operator=(const XWalkComputerVisionCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkComputerVisionCommandRequest& operator=(XWalkComputerVisionCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkComputerVisionCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkComputerVisionCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkComputerVisionCommandRequest*>(
+               &_XWalkComputerVisionCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    23;
+
+  friend void swap(XWalkComputerVisionCommandRequest& a, XWalkComputerVisionCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkComputerVisionCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkComputerVisionCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkComputerVisionCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkComputerVisionCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const XWalkComputerVisionCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const XWalkComputerVisionCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkComputerVisionCommandRequest";
+  }
+  protected:
+  explicit XWalkComputerVisionCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkComputerVisionCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkRecordVideoCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkRecordVideoCommandRequest) */ {
+ public:
+  inline XWalkRecordVideoCommandRequest() : XWalkRecordVideoCommandRequest(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR XWalkRecordVideoCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkRecordVideoCommandRequest(const XWalkRecordVideoCommandRequest& from);
+  XWalkRecordVideoCommandRequest(XWalkRecordVideoCommandRequest&& from) noexcept
+    : XWalkRecordVideoCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkRecordVideoCommandRequest& operator=(const XWalkRecordVideoCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkRecordVideoCommandRequest& operator=(XWalkRecordVideoCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkRecordVideoCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkRecordVideoCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkRecordVideoCommandRequest*>(
+               &_XWalkRecordVideoCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    24;
+
+  friend void swap(XWalkRecordVideoCommandRequest& a, XWalkRecordVideoCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkRecordVideoCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkRecordVideoCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkRecordVideoCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkRecordVideoCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const XWalkRecordVideoCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const XWalkRecordVideoCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkRecordVideoCommandRequest";
+  }
+  protected:
+  explicit XWalkRecordVideoCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkRecordVideoCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkSoundBackgroundMusicCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkSoundBackgroundMusicCommandRequest) */ {
+ public:
+  inline XWalkSoundBackgroundMusicCommandRequest() : XWalkSoundBackgroundMusicCommandRequest(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR XWalkSoundBackgroundMusicCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkSoundBackgroundMusicCommandRequest(const XWalkSoundBackgroundMusicCommandRequest& from);
+  XWalkSoundBackgroundMusicCommandRequest(XWalkSoundBackgroundMusicCommandRequest&& from) noexcept
+    : XWalkSoundBackgroundMusicCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkSoundBackgroundMusicCommandRequest& operator=(const XWalkSoundBackgroundMusicCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkSoundBackgroundMusicCommandRequest& operator=(XWalkSoundBackgroundMusicCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkSoundBackgroundMusicCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkSoundBackgroundMusicCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkSoundBackgroundMusicCommandRequest*>(
+               &_XWalkSoundBackgroundMusicCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    25;
+
+  friend void swap(XWalkSoundBackgroundMusicCommandRequest& a, XWalkSoundBackgroundMusicCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkSoundBackgroundMusicCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkSoundBackgroundMusicCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkSoundBackgroundMusicCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkSoundBackgroundMusicCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const XWalkSoundBackgroundMusicCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const XWalkSoundBackgroundMusicCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkSoundBackgroundMusicCommandRequest";
+  }
+  protected:
+  explicit XWalkSoundBackgroundMusicCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSoundBackgroundMusicCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkTextVisionTalkCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkTextVisionTalkCommandRequest) */ {
+ public:
+  inline XWalkTextVisionTalkCommandRequest() : XWalkTextVisionTalkCommandRequest(nullptr) {}
+  ~XWalkTextVisionTalkCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkTextVisionTalkCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkTextVisionTalkCommandRequest(const XWalkTextVisionTalkCommandRequest& from);
+  XWalkTextVisionTalkCommandRequest(XWalkTextVisionTalkCommandRequest&& from) noexcept
+    : XWalkTextVisionTalkCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkTextVisionTalkCommandRequest& operator=(const XWalkTextVisionTalkCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkTextVisionTalkCommandRequest& operator=(XWalkTextVisionTalkCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkTextVisionTalkCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkTextVisionTalkCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkTextVisionTalkCommandRequest*>(
+               &_XWalkTextVisionTalkCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    26;
+
+  friend void swap(XWalkTextVisionTalkCommandRequest& a, XWalkTextVisionTalkCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkTextVisionTalkCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkTextVisionTalkCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkTextVisionTalkCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkTextVisionTalkCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkTextVisionTalkCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkTextVisionTalkCommandRequest& from) {
+    XWalkTextVisionTalkCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkTextVisionTalkCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkTextVisionTalkCommandRequest";
+  }
+  protected:
+  explicit XWalkTextVisionTalkCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkLifecycleRequest* release_request();
+  ::xwalk::iw::v1::XWalkLifecycleRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  ::xwalk::iw::v1::XWalkLifecycleRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkTextVisionTalkCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkOnlineLlmTestCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkOnlineLlmTestCommandRequest) */ {
+ public:
+  inline XWalkOnlineLlmTestCommandRequest() : XWalkOnlineLlmTestCommandRequest(nullptr) {}
+  ~XWalkOnlineLlmTestCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkOnlineLlmTestCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkOnlineLlmTestCommandRequest(const XWalkOnlineLlmTestCommandRequest& from);
+  XWalkOnlineLlmTestCommandRequest(XWalkOnlineLlmTestCommandRequest&& from) noexcept
+    : XWalkOnlineLlmTestCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkOnlineLlmTestCommandRequest& operator=(const XWalkOnlineLlmTestCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkOnlineLlmTestCommandRequest& operator=(XWalkOnlineLlmTestCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkOnlineLlmTestCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkOnlineLlmTestCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkOnlineLlmTestCommandRequest*>(
+               &_XWalkOnlineLlmTestCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    27;
+
+  friend void swap(XWalkOnlineLlmTestCommandRequest& a, XWalkOnlineLlmTestCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkOnlineLlmTestCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkOnlineLlmTestCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkOnlineLlmTestCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkOnlineLlmTestCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkOnlineLlmTestCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkOnlineLlmTestCommandRequest& from) {
+    XWalkOnlineLlmTestCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkOnlineLlmTestCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkOnlineLlmTestCommandRequest";
+  }
+  protected:
+  explicit XWalkOnlineLlmTestCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkLifecycleRequest* release_request();
+  ::xwalk::iw::v1::XWalkLifecycleRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  ::xwalk::iw::v1::XWalkLifecycleRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkOnlineLlmTestCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkMoveCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkMoveCommandRequest) */ {
+ public:
+  inline XWalkMoveCommandRequest() : XWalkMoveCommandRequest(nullptr) {}
+  ~XWalkMoveCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkMoveCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkMoveCommandRequest(const XWalkMoveCommandRequest& from);
+  XWalkMoveCommandRequest(XWalkMoveCommandRequest&& from) noexcept
+    : XWalkMoveCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkMoveCommandRequest& operator=(const XWalkMoveCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkMoveCommandRequest& operator=(XWalkMoveCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkMoveCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkMoveCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkMoveCommandRequest*>(
+               &_XWalkMoveCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    28;
+
+  friend void swap(XWalkMoveCommandRequest& a, XWalkMoveCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkMoveCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkMoveCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkMoveCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkMoveCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkMoveCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkMoveCommandRequest& from) {
+    XWalkMoveCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkMoveCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkMoveCommandRequest";
+  }
+  protected:
+  explicit XWalkMoveCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkMoveRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkMoveRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkMoveRequest* release_request();
+  ::xwalk::iw::v1::XWalkMoveRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkMoveRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkMoveRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkMoveRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkMoveRequest* request);
+  ::xwalk::iw::v1::XWalkMoveRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkMoveCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkMoveRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkKeyboardControlCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkKeyboardControlCommandRequest) */ {
+ public:
+  inline XWalkKeyboardControlCommandRequest() : XWalkKeyboardControlCommandRequest(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR XWalkKeyboardControlCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkKeyboardControlCommandRequest(const XWalkKeyboardControlCommandRequest& from);
+  XWalkKeyboardControlCommandRequest(XWalkKeyboardControlCommandRequest&& from) noexcept
+    : XWalkKeyboardControlCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkKeyboardControlCommandRequest& operator=(const XWalkKeyboardControlCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkKeyboardControlCommandRequest& operator=(XWalkKeyboardControlCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkKeyboardControlCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkKeyboardControlCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkKeyboardControlCommandRequest*>(
+               &_XWalkKeyboardControlCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    29;
+
+  friend void swap(XWalkKeyboardControlCommandRequest& a, XWalkKeyboardControlCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkKeyboardControlCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkKeyboardControlCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkKeyboardControlCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkKeyboardControlCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const XWalkKeyboardControlCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const XWalkKeyboardControlCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkKeyboardControlCommandRequest";
+  }
+  protected:
+  explicit XWalkKeyboardControlCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkKeyboardControlCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkAvoidObstaclesCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkAvoidObstaclesCommandRequest) */ {
+ public:
+  inline XWalkAvoidObstaclesCommandRequest() : XWalkAvoidObstaclesCommandRequest(nullptr) {}
+  ~XWalkAvoidObstaclesCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkAvoidObstaclesCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkAvoidObstaclesCommandRequest(const XWalkAvoidObstaclesCommandRequest& from);
+  XWalkAvoidObstaclesCommandRequest(XWalkAvoidObstaclesCommandRequest&& from) noexcept
+    : XWalkAvoidObstaclesCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkAvoidObstaclesCommandRequest& operator=(const XWalkAvoidObstaclesCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkAvoidObstaclesCommandRequest& operator=(XWalkAvoidObstaclesCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkAvoidObstaclesCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkAvoidObstaclesCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkAvoidObstaclesCommandRequest*>(
+               &_XWalkAvoidObstaclesCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    30;
+
+  friend void swap(XWalkAvoidObstaclesCommandRequest& a, XWalkAvoidObstaclesCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkAvoidObstaclesCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkAvoidObstaclesCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkAvoidObstaclesCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkAvoidObstaclesCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkAvoidObstaclesCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkAvoidObstaclesCommandRequest& from) {
+    XWalkAvoidObstaclesCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkAvoidObstaclesCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkAvoidObstaclesCommandRequest";
+  }
+  protected:
+  explicit XWalkAvoidObstaclesCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkLifecycleRequest* release_request();
+  ::xwalk::iw::v1::XWalkLifecycleRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  ::xwalk::iw::v1::XWalkLifecycleRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkAvoidObstaclesCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkCliffDetectionCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkCliffDetectionCommandRequest) */ {
+ public:
+  inline XWalkCliffDetectionCommandRequest() : XWalkCliffDetectionCommandRequest(nullptr) {}
+  ~XWalkCliffDetectionCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkCliffDetectionCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkCliffDetectionCommandRequest(const XWalkCliffDetectionCommandRequest& from);
+  XWalkCliffDetectionCommandRequest(XWalkCliffDetectionCommandRequest&& from) noexcept
+    : XWalkCliffDetectionCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkCliffDetectionCommandRequest& operator=(const XWalkCliffDetectionCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkCliffDetectionCommandRequest& operator=(XWalkCliffDetectionCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkCliffDetectionCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkCliffDetectionCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkCliffDetectionCommandRequest*>(
+               &_XWalkCliffDetectionCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    31;
+
+  friend void swap(XWalkCliffDetectionCommandRequest& a, XWalkCliffDetectionCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkCliffDetectionCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkCliffDetectionCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkCliffDetectionCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkCliffDetectionCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkCliffDetectionCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkCliffDetectionCommandRequest& from) {
+    XWalkCliffDetectionCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkCliffDetectionCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkCliffDetectionCommandRequest";
+  }
+  protected:
+  explicit XWalkCliffDetectionCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkLifecycleRequest* release_request();
+  ::xwalk::iw::v1::XWalkLifecycleRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  ::xwalk::iw::v1::XWalkLifecycleRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkCliffDetectionCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkStareAtYouCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkStareAtYouCommandRequest) */ {
+ public:
+  inline XWalkStareAtYouCommandRequest() : XWalkStareAtYouCommandRequest(nullptr) {}
+  ~XWalkStareAtYouCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkStareAtYouCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkStareAtYouCommandRequest(const XWalkStareAtYouCommandRequest& from);
+  XWalkStareAtYouCommandRequest(XWalkStareAtYouCommandRequest&& from) noexcept
+    : XWalkStareAtYouCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkStareAtYouCommandRequest& operator=(const XWalkStareAtYouCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkStareAtYouCommandRequest& operator=(XWalkStareAtYouCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkStareAtYouCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkStareAtYouCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkStareAtYouCommandRequest*>(
+               &_XWalkStareAtYouCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    32;
+
+  friend void swap(XWalkStareAtYouCommandRequest& a, XWalkStareAtYouCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkStareAtYouCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkStareAtYouCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkStareAtYouCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkStareAtYouCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkStareAtYouCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkStareAtYouCommandRequest& from) {
+    XWalkStareAtYouCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkStareAtYouCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkStareAtYouCommandRequest";
+  }
+  protected:
+  explicit XWalkStareAtYouCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkLifecycleRequest* release_request();
+  ::xwalk::iw::v1::XWalkLifecycleRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  ::xwalk::iw::v1::XWalkLifecycleRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkStareAtYouCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkBullFightCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkBullFightCommandRequest) */ {
+ public:
+  inline XWalkBullFightCommandRequest() : XWalkBullFightCommandRequest(nullptr) {}
+  ~XWalkBullFightCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkBullFightCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkBullFightCommandRequest(const XWalkBullFightCommandRequest& from);
+  XWalkBullFightCommandRequest(XWalkBullFightCommandRequest&& from) noexcept
+    : XWalkBullFightCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkBullFightCommandRequest& operator=(const XWalkBullFightCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkBullFightCommandRequest& operator=(XWalkBullFightCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkBullFightCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkBullFightCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkBullFightCommandRequest*>(
+               &_XWalkBullFightCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    33;
+
+  friend void swap(XWalkBullFightCommandRequest& a, XWalkBullFightCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkBullFightCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkBullFightCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkBullFightCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkBullFightCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkBullFightCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkBullFightCommandRequest& from) {
+    XWalkBullFightCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkBullFightCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkBullFightCommandRequest";
+  }
+  protected:
+  explicit XWalkBullFightCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkLifecycleRequest* release_request();
+  ::xwalk::iw::v1::XWalkLifecycleRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  ::xwalk::iw::v1::XWalkLifecycleRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkBullFightCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkTreasureHuntCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkTreasureHuntCommandRequest) */ {
+ public:
+  inline XWalkTreasureHuntCommandRequest() : XWalkTreasureHuntCommandRequest(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR XWalkTreasureHuntCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkTreasureHuntCommandRequest(const XWalkTreasureHuntCommandRequest& from);
+  XWalkTreasureHuntCommandRequest(XWalkTreasureHuntCommandRequest&& from) noexcept
+    : XWalkTreasureHuntCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkTreasureHuntCommandRequest& operator=(const XWalkTreasureHuntCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkTreasureHuntCommandRequest& operator=(XWalkTreasureHuntCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkTreasureHuntCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkTreasureHuntCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkTreasureHuntCommandRequest*>(
+               &_XWalkTreasureHuntCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    34;
+
+  friend void swap(XWalkTreasureHuntCommandRequest& a, XWalkTreasureHuntCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkTreasureHuntCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkTreasureHuntCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkTreasureHuntCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkTreasureHuntCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const XWalkTreasureHuntCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const XWalkTreasureHuntCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkTreasureHuntCommandRequest";
+  }
+  protected:
+  explicit XWalkTreasureHuntCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkTreasureHuntCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkVideoCarCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkVideoCarCommandRequest) */ {
+ public:
+  inline XWalkVideoCarCommandRequest() : XWalkVideoCarCommandRequest(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR XWalkVideoCarCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkVideoCarCommandRequest(const XWalkVideoCarCommandRequest& from);
+  XWalkVideoCarCommandRequest(XWalkVideoCarCommandRequest&& from) noexcept
+    : XWalkVideoCarCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkVideoCarCommandRequest& operator=(const XWalkVideoCarCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkVideoCarCommandRequest& operator=(XWalkVideoCarCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkVideoCarCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkVideoCarCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkVideoCarCommandRequest*>(
+               &_XWalkVideoCarCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    35;
+
+  friend void swap(XWalkVideoCarCommandRequest& a, XWalkVideoCarCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkVideoCarCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkVideoCarCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkVideoCarCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkVideoCarCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const XWalkVideoCarCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const XWalkVideoCarCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkVideoCarCommandRequest";
+  }
+  protected:
+  explicit XWalkVideoCarCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkVideoCarCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkAppControlCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkAppControlCommandRequest) */ {
+ public:
+  inline XWalkAppControlCommandRequest() : XWalkAppControlCommandRequest(nullptr) {}
+  ~XWalkAppControlCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkAppControlCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkAppControlCommandRequest(const XWalkAppControlCommandRequest& from);
+  XWalkAppControlCommandRequest(XWalkAppControlCommandRequest&& from) noexcept
+    : XWalkAppControlCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkAppControlCommandRequest& operator=(const XWalkAppControlCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkAppControlCommandRequest& operator=(XWalkAppControlCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkAppControlCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkAppControlCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkAppControlCommandRequest*>(
+               &_XWalkAppControlCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    36;
+
+  friend void swap(XWalkAppControlCommandRequest& a, XWalkAppControlCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkAppControlCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkAppControlCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkAppControlCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkAppControlCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkAppControlCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkAppControlCommandRequest& from) {
+    XWalkAppControlCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkAppControlCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkAppControlCommandRequest";
+  }
+  protected:
+  explicit XWalkAppControlCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkLifecycleRequest* release_request();
+  ::xwalk::iw::v1::XWalkLifecycleRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  ::xwalk::iw::v1::XWalkLifecycleRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkAppControlCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkTurnCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkTurnCommandRequest) */ {
+ public:
+  inline XWalkTurnCommandRequest() : XWalkTurnCommandRequest(nullptr) {}
+  ~XWalkTurnCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkTurnCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkTurnCommandRequest(const XWalkTurnCommandRequest& from);
+  XWalkTurnCommandRequest(XWalkTurnCommandRequest&& from) noexcept
+    : XWalkTurnCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkTurnCommandRequest& operator=(const XWalkTurnCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkTurnCommandRequest& operator=(XWalkTurnCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkTurnCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkTurnCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkTurnCommandRequest*>(
+               &_XWalkTurnCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    37;
+
+  friend void swap(XWalkTurnCommandRequest& a, XWalkTurnCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkTurnCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkTurnCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkTurnCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkTurnCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkTurnCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkTurnCommandRequest& from) {
+    XWalkTurnCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkTurnCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkTurnCommandRequest";
+  }
+  protected:
+  explicit XWalkTurnCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkTurnRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkTurnRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkTurnRequest* release_request();
+  ::xwalk::iw::v1::XWalkTurnRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkTurnRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkTurnRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkTurnRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkTurnRequest* request);
+  ::xwalk::iw::v1::XWalkTurnRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkTurnCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkTurnRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkCameraCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkCameraCommandRequest) */ {
+ public:
+  inline XWalkCameraCommandRequest() : XWalkCameraCommandRequest(nullptr) {}
+  ~XWalkCameraCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkCameraCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkCameraCommandRequest(const XWalkCameraCommandRequest& from);
+  XWalkCameraCommandRequest(XWalkCameraCommandRequest&& from) noexcept
+    : XWalkCameraCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkCameraCommandRequest& operator=(const XWalkCameraCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkCameraCommandRequest& operator=(XWalkCameraCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkCameraCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkCameraCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkCameraCommandRequest*>(
+               &_XWalkCameraCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    38;
+
+  friend void swap(XWalkCameraCommandRequest& a, XWalkCameraCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkCameraCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkCameraCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkCameraCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkCameraCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkCameraCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkCameraCommandRequest& from) {
+    XWalkCameraCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkCameraCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkCameraCommandRequest";
+  }
+  protected:
+  explicit XWalkCameraCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkCameraRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkCameraRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkCameraRequest* release_request();
+  ::xwalk::iw::v1::XWalkCameraRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkCameraRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkCameraRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkCameraRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkCameraRequest* request);
+  ::xwalk::iw::v1::XWalkCameraRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkCameraCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkCameraRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkSensorCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkSensorCommandRequest) */ {
+ public:
+  inline XWalkSensorCommandRequest() : XWalkSensorCommandRequest(nullptr) {}
+  ~XWalkSensorCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkSensorCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkSensorCommandRequest(const XWalkSensorCommandRequest& from);
+  XWalkSensorCommandRequest(XWalkSensorCommandRequest&& from) noexcept
+    : XWalkSensorCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkSensorCommandRequest& operator=(const XWalkSensorCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkSensorCommandRequest& operator=(XWalkSensorCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkSensorCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkSensorCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkSensorCommandRequest*>(
+               &_XWalkSensorCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    39;
+
+  friend void swap(XWalkSensorCommandRequest& a, XWalkSensorCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkSensorCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkSensorCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkSensorCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkSensorCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkSensorCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkSensorCommandRequest& from) {
+    XWalkSensorCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkSensorCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkSensorCommandRequest";
+  }
+  protected:
+  explicit XWalkSensorCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkSensorRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkSensorRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkSensorRequest* release_request();
+  ::xwalk::iw::v1::XWalkSensorRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkSensorRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkSensorRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkSensorRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkSensorRequest* request);
+  ::xwalk::iw::v1::XWalkSensorRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSensorCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkSensorRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkLineTrackCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkLineTrackCommandRequest) */ {
+ public:
+  inline XWalkLineTrackCommandRequest() : XWalkLineTrackCommandRequest(nullptr) {}
+  ~XWalkLineTrackCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkLineTrackCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkLineTrackCommandRequest(const XWalkLineTrackCommandRequest& from);
+  XWalkLineTrackCommandRequest(XWalkLineTrackCommandRequest&& from) noexcept
+    : XWalkLineTrackCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkLineTrackCommandRequest& operator=(const XWalkLineTrackCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkLineTrackCommandRequest& operator=(XWalkLineTrackCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkLineTrackCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkLineTrackCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkLineTrackCommandRequest*>(
+               &_XWalkLineTrackCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    40;
+
+  friend void swap(XWalkLineTrackCommandRequest& a, XWalkLineTrackCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkLineTrackCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkLineTrackCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkLineTrackCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkLineTrackCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkLineTrackCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkLineTrackCommandRequest& from) {
+    XWalkLineTrackCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkLineTrackCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkLineTrackCommandRequest";
+  }
+  protected:
+  explicit XWalkLineTrackCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkLifecycleRequest* release_request();
+  ::xwalk::iw::v1::XWalkLifecycleRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  ::xwalk::iw::v1::XWalkLifecycleRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkLineTrackCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkSelfDriveCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkSelfDriveCommandRequest) */ {
+ public:
+  inline XWalkSelfDriveCommandRequest() : XWalkSelfDriveCommandRequest(nullptr) {}
+  ~XWalkSelfDriveCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkSelfDriveCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkSelfDriveCommandRequest(const XWalkSelfDriveCommandRequest& from);
+  XWalkSelfDriveCommandRequest(XWalkSelfDriveCommandRequest&& from) noexcept
+    : XWalkSelfDriveCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkSelfDriveCommandRequest& operator=(const XWalkSelfDriveCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkSelfDriveCommandRequest& operator=(XWalkSelfDriveCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkSelfDriveCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkSelfDriveCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkSelfDriveCommandRequest*>(
+               &_XWalkSelfDriveCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    41;
+
+  friend void swap(XWalkSelfDriveCommandRequest& a, XWalkSelfDriveCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkSelfDriveCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkSelfDriveCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkSelfDriveCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkSelfDriveCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkSelfDriveCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkSelfDriveCommandRequest& from) {
+    XWalkSelfDriveCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkSelfDriveCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkSelfDriveCommandRequest";
+  }
+  protected:
+  explicit XWalkSelfDriveCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkSelfDriveRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkSelfDriveRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkSelfDriveRequest* release_request();
+  ::xwalk::iw::v1::XWalkSelfDriveRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkSelfDriveRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkSelfDriveRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkSelfDriveRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkSelfDriveRequest* request);
+  ::xwalk::iw::v1::XWalkSelfDriveRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSelfDriveCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkSelfDriveRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkSoundCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkSoundCommandRequest) */ {
+ public:
+  inline XWalkSoundCommandRequest() : XWalkSoundCommandRequest(nullptr) {}
+  ~XWalkSoundCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkSoundCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkSoundCommandRequest(const XWalkSoundCommandRequest& from);
+  XWalkSoundCommandRequest(XWalkSoundCommandRequest&& from) noexcept
+    : XWalkSoundCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkSoundCommandRequest& operator=(const XWalkSoundCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkSoundCommandRequest& operator=(XWalkSoundCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkSoundCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkSoundCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkSoundCommandRequest*>(
+               &_XWalkSoundCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    42;
+
+  friend void swap(XWalkSoundCommandRequest& a, XWalkSoundCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkSoundCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkSoundCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkSoundCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkSoundCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkSoundCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkSoundCommandRequest& from) {
+    XWalkSoundCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkSoundCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkSoundCommandRequest";
+  }
+  protected:
+  explicit XWalkSoundCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkSoundRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkSoundRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkSoundRequest* release_request();
+  ::xwalk::iw::v1::XWalkSoundRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkSoundRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkSoundRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkSoundRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkSoundRequest* request);
+  ::xwalk::iw::v1::XWalkSoundRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSoundCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkSoundRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkVoiceChatCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkVoiceChatCommandRequest) */ {
+ public:
+  inline XWalkVoiceChatCommandRequest() : XWalkVoiceChatCommandRequest(nullptr) {}
+  ~XWalkVoiceChatCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkVoiceChatCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkVoiceChatCommandRequest(const XWalkVoiceChatCommandRequest& from);
+  XWalkVoiceChatCommandRequest(XWalkVoiceChatCommandRequest&& from) noexcept
+    : XWalkVoiceChatCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkVoiceChatCommandRequest& operator=(const XWalkVoiceChatCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkVoiceChatCommandRequest& operator=(XWalkVoiceChatCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkVoiceChatCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkVoiceChatCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkVoiceChatCommandRequest*>(
+               &_XWalkVoiceChatCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    43;
+
+  friend void swap(XWalkVoiceChatCommandRequest& a, XWalkVoiceChatCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkVoiceChatCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkVoiceChatCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkVoiceChatCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkVoiceChatCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkVoiceChatCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkVoiceChatCommandRequest& from) {
+    XWalkVoiceChatCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkVoiceChatCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkVoiceChatCommandRequest";
+  }
+  protected:
+  explicit XWalkVoiceChatCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkLifecycleRequest* release_request();
+  ::xwalk::iw::v1::XWalkLifecycleRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  ::xwalk::iw::v1::XWalkLifecycleRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkVoiceChatCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkVoiceActiveCarCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkVoiceActiveCarCommandRequest) */ {
+ public:
+  inline XWalkVoiceActiveCarCommandRequest() : XWalkVoiceActiveCarCommandRequest(nullptr) {}
+  ~XWalkVoiceActiveCarCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkVoiceActiveCarCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkVoiceActiveCarCommandRequest(const XWalkVoiceActiveCarCommandRequest& from);
+  XWalkVoiceActiveCarCommandRequest(XWalkVoiceActiveCarCommandRequest&& from) noexcept
+    : XWalkVoiceActiveCarCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkVoiceActiveCarCommandRequest& operator=(const XWalkVoiceActiveCarCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkVoiceActiveCarCommandRequest& operator=(XWalkVoiceActiveCarCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkVoiceActiveCarCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkVoiceActiveCarCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkVoiceActiveCarCommandRequest*>(
+               &_XWalkVoiceActiveCarCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    44;
+
+  friend void swap(XWalkVoiceActiveCarCommandRequest& a, XWalkVoiceActiveCarCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkVoiceActiveCarCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkVoiceActiveCarCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkVoiceActiveCarCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkVoiceActiveCarCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkVoiceActiveCarCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkVoiceActiveCarCommandRequest& from) {
+    XWalkVoiceActiveCarCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkVoiceActiveCarCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkVoiceActiveCarCommandRequest";
+  }
+  protected:
+  explicit XWalkVoiceActiveCarCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkLifecycleRequest* release_request();
+  ::xwalk::iw::v1::XWalkLifecycleRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  ::xwalk::iw::v1::XWalkLifecycleRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkVoiceActiveCarCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkGptCarCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkGptCarCommandRequest) */ {
+ public:
+  inline XWalkGptCarCommandRequest() : XWalkGptCarCommandRequest(nullptr) {}
+  ~XWalkGptCarCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkGptCarCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkGptCarCommandRequest(const XWalkGptCarCommandRequest& from);
+  XWalkGptCarCommandRequest(XWalkGptCarCommandRequest&& from) noexcept
+    : XWalkGptCarCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkGptCarCommandRequest& operator=(const XWalkGptCarCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkGptCarCommandRequest& operator=(XWalkGptCarCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkGptCarCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkGptCarCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkGptCarCommandRequest*>(
+               &_XWalkGptCarCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    45;
+
+  friend void swap(XWalkGptCarCommandRequest& a, XWalkGptCarCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkGptCarCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkGptCarCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkGptCarCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkGptCarCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkGptCarCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkGptCarCommandRequest& from) {
+    XWalkGptCarCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkGptCarCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkGptCarCommandRequest";
+  }
+  protected:
+  explicit XWalkGptCarCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkGptCarRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkGptCarRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkGptCarRequest* release_request();
+  ::xwalk::iw::v1::XWalkGptCarRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkGptCarRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkGptCarRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkGptCarRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkGptCarRequest* request);
+  ::xwalk::iw::v1::XWalkGptCarRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkGptCarCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkGptCarRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkVoiceControlledCarCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkVoiceControlledCarCommandRequest) */ {
+ public:
+  inline XWalkVoiceControlledCarCommandRequest() : XWalkVoiceControlledCarCommandRequest(nullptr) {}
+  ~XWalkVoiceControlledCarCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkVoiceControlledCarCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkVoiceControlledCarCommandRequest(const XWalkVoiceControlledCarCommandRequest& from);
+  XWalkVoiceControlledCarCommandRequest(XWalkVoiceControlledCarCommandRequest&& from) noexcept
+    : XWalkVoiceControlledCarCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkVoiceControlledCarCommandRequest& operator=(const XWalkVoiceControlledCarCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkVoiceControlledCarCommandRequest& operator=(XWalkVoiceControlledCarCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkVoiceControlledCarCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkVoiceControlledCarCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkVoiceControlledCarCommandRequest*>(
+               &_XWalkVoiceControlledCarCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    46;
+
+  friend void swap(XWalkVoiceControlledCarCommandRequest& a, XWalkVoiceControlledCarCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkVoiceControlledCarCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkVoiceControlledCarCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkVoiceControlledCarCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkVoiceControlledCarCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkVoiceControlledCarCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkVoiceControlledCarCommandRequest& from) {
+    XWalkVoiceControlledCarCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkVoiceControlledCarCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkVoiceControlledCarCommandRequest";
+  }
+  protected:
+  explicit XWalkVoiceControlledCarCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkLifecycleRequest* release_request();
+  ::xwalk::iw::v1::XWalkLifecycleRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  ::xwalk::iw::v1::XWalkLifecycleRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkVoiceControlledCarCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkVoicePromptCarCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkVoicePromptCarCommandRequest) */ {
+ public:
+  inline XWalkVoicePromptCarCommandRequest() : XWalkVoicePromptCarCommandRequest(nullptr) {}
+  ~XWalkVoicePromptCarCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkVoicePromptCarCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkVoicePromptCarCommandRequest(const XWalkVoicePromptCarCommandRequest& from);
+  XWalkVoicePromptCarCommandRequest(XWalkVoicePromptCarCommandRequest&& from) noexcept
+    : XWalkVoicePromptCarCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkVoicePromptCarCommandRequest& operator=(const XWalkVoicePromptCarCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkVoicePromptCarCommandRequest& operator=(XWalkVoicePromptCarCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkVoicePromptCarCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkVoicePromptCarCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkVoicePromptCarCommandRequest*>(
+               &_XWalkVoicePromptCarCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    47;
+
+  friend void swap(XWalkVoicePromptCarCommandRequest& a, XWalkVoicePromptCarCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkVoicePromptCarCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkVoicePromptCarCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkVoicePromptCarCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkVoicePromptCarCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkVoicePromptCarCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkVoicePromptCarCommandRequest& from) {
+    XWalkVoicePromptCarCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkVoicePromptCarCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkVoicePromptCarCommandRequest";
+  }
+  protected:
+  explicit XWalkVoicePromptCarCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkLifecycleRequest* release_request();
+  ::xwalk::iw::v1::XWalkLifecycleRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  ::xwalk::iw::v1::XWalkLifecycleRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkVoicePromptCarCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkStorytellingRobotCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkStorytellingRobotCommandRequest) */ {
+ public:
+  inline XWalkStorytellingRobotCommandRequest() : XWalkStorytellingRobotCommandRequest(nullptr) {}
+  ~XWalkStorytellingRobotCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkStorytellingRobotCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkStorytellingRobotCommandRequest(const XWalkStorytellingRobotCommandRequest& from);
+  XWalkStorytellingRobotCommandRequest(XWalkStorytellingRobotCommandRequest&& from) noexcept
+    : XWalkStorytellingRobotCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkStorytellingRobotCommandRequest& operator=(const XWalkStorytellingRobotCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkStorytellingRobotCommandRequest& operator=(XWalkStorytellingRobotCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkStorytellingRobotCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkStorytellingRobotCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkStorytellingRobotCommandRequest*>(
+               &_XWalkStorytellingRobotCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    48;
+
+  friend void swap(XWalkStorytellingRobotCommandRequest& a, XWalkStorytellingRobotCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkStorytellingRobotCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkStorytellingRobotCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkStorytellingRobotCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkStorytellingRobotCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkStorytellingRobotCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkStorytellingRobotCommandRequest& from) {
+    XWalkStorytellingRobotCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkStorytellingRobotCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkStorytellingRobotCommandRequest";
+  }
+  protected:
+  explicit XWalkStorytellingRobotCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkLifecycleRequest* release_request();
+  ::xwalk::iw::v1::XWalkLifecycleRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkLifecycleRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkLifecycleRequest* request);
+  ::xwalk::iw::v1::XWalkLifecycleRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkStorytellingRobotCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class XWalkCalibrateCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkCalibrateCommandRequest) */ {
+ public:
+  inline XWalkCalibrateCommandRequest() : XWalkCalibrateCommandRequest(nullptr) {}
+  ~XWalkCalibrateCommandRequest() override;
+  explicit PROTOBUF_CONSTEXPR XWalkCalibrateCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkCalibrateCommandRequest(const XWalkCalibrateCommandRequest& from);
+  XWalkCalibrateCommandRequest(XWalkCalibrateCommandRequest&& from) noexcept
+    : XWalkCalibrateCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkCalibrateCommandRequest& operator=(const XWalkCalibrateCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkCalibrateCommandRequest& operator=(XWalkCalibrateCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkCalibrateCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkCalibrateCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkCalibrateCommandRequest*>(
+               &_XWalkCalibrateCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    49;
+
+  friend void swap(XWalkCalibrateCommandRequest& a, XWalkCalibrateCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkCalibrateCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkCalibrateCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkCalibrateCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkCalibrateCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkCalibrateCommandRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkCalibrateCommandRequest& from) {
+    XWalkCalibrateCommandRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkCalibrateCommandRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkCalibrateCommandRequest";
+  }
+  protected:
+  explicit XWalkCalibrateCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRequestFieldNumber = 1,
+  };
+  // .xwalk.iw.v1.XWalkCalibrationRequest request = 1;
+  bool has_request() const;
+  private:
+  bool _internal_has_request() const;
+  public:
+  void clear_request();
+  const ::xwalk::iw::v1::XWalkCalibrationRequest& request() const;
+  PROTOBUF_NODISCARD ::xwalk::iw::v1::XWalkCalibrationRequest* release_request();
+  ::xwalk::iw::v1::XWalkCalibrationRequest* mutable_request();
+  void set_allocated_request(::xwalk::iw::v1::XWalkCalibrationRequest* request);
+  private:
+  const ::xwalk::iw::v1::XWalkCalibrationRequest& _internal_request() const;
+  ::xwalk::iw::v1::XWalkCalibrationRequest* _internal_mutable_request();
+  public:
+  void unsafe_arena_set_allocated_request(
+      ::xwalk::iw::v1::XWalkCalibrationRequest* request);
+  ::xwalk::iw::v1::XWalkCalibrationRequest* unsafe_arena_release_request();
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkCalibrateCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::xwalk::iw::v1::XWalkCalibrationRequest* request_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessage_2eproto;
+};
 // ===================================================================
 
 static const int kXwalkSignalFieldNumber = 50001;
@@ -622,7 +7902,7 @@ inline uint32_t XWalkI2cRequestPayload::address() const {
   return _internal_address();
 }
 inline void XWalkI2cRequestPayload::_internal_set_address(uint32_t value) {
-  
+
   _impl_.address_ = value;
 }
 inline void XWalkI2cRequestPayload::set_address(uint32_t value) {
@@ -642,7 +7922,7 @@ inline uint32_t XWalkI2cRequestPayload::register_address() const {
   return _internal_register_address();
 }
 inline void XWalkI2cRequestPayload::_internal_set_register_address(uint32_t value) {
-  
+
   _impl_.register_address_ = value;
 }
 inline void XWalkI2cRequestPayload::set_register_address(uint32_t value) {
@@ -662,7 +7942,7 @@ inline uint32_t XWalkI2cRequestPayload::length() const {
   return _internal_length();
 }
 inline void XWalkI2cRequestPayload::_internal_set_length(uint32_t value) {
-  
+
   _impl_.length_ = value;
 }
 inline void XWalkI2cRequestPayload::set_length(uint32_t value) {
@@ -681,7 +7961,7 @@ inline const std::string& XWalkI2cRequestPayload::data() const {
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void XWalkI2cRequestPayload::set_data(ArgT0&& arg0, ArgT... args) {
- 
+
  _impl_.data_.SetBytes(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkI2cRequestPayload.data)
 }
@@ -694,11 +7974,11 @@ inline const std::string& XWalkI2cRequestPayload::_internal_data() const {
   return _impl_.data_.Get();
 }
 inline void XWalkI2cRequestPayload::_internal_set_data(const std::string& value) {
-  
+
   _impl_.data_.Set(value, GetArenaForAllocation());
 }
 inline std::string* XWalkI2cRequestPayload::_internal_mutable_data() {
-  
+
   return _impl_.data_.Mutable(GetArenaForAllocation());
 }
 inline std::string* XWalkI2cRequestPayload::release_data() {
@@ -707,9 +7987,9 @@ inline std::string* XWalkI2cRequestPayload::release_data() {
 }
 inline void XWalkI2cRequestPayload::set_allocated_data(std::string* data) {
   if (data != nullptr) {
-    
+
   } else {
-    
+
   }
   _impl_.data_.SetAllocated(data, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -732,7 +8012,7 @@ inline ::xwalk::iw::v1::XWalkI2cOperation XWalkI2cRequestPayload::operation() co
   return _internal_operation();
 }
 inline void XWalkI2cRequestPayload::_internal_set_operation(::xwalk::iw::v1::XWalkI2cOperation value) {
-  
+
   _impl_.operation_ = value;
 }
 inline void XWalkI2cRequestPayload::set_operation(::xwalk::iw::v1::XWalkI2cOperation value) {
@@ -755,7 +8035,7 @@ inline const std::string& XWalkI2cConfirmPayload::data() const {
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void XWalkI2cConfirmPayload::set_data(ArgT0&& arg0, ArgT... args) {
- 
+
  _impl_.data_.SetBytes(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkI2cConfirmPayload.data)
 }
@@ -768,11 +8048,11 @@ inline const std::string& XWalkI2cConfirmPayload::_internal_data() const {
   return _impl_.data_.Get();
 }
 inline void XWalkI2cConfirmPayload::_internal_set_data(const std::string& value) {
-  
+
   _impl_.data_.Set(value, GetArenaForAllocation());
 }
 inline std::string* XWalkI2cConfirmPayload::_internal_mutable_data() {
-  
+
   return _impl_.data_.Mutable(GetArenaForAllocation());
 }
 inline std::string* XWalkI2cConfirmPayload::release_data() {
@@ -781,9 +8061,9 @@ inline std::string* XWalkI2cConfirmPayload::release_data() {
 }
 inline void XWalkI2cConfirmPayload::set_allocated_data(std::string* data) {
   if (data != nullptr) {
-    
+
   } else {
-    
+
   }
   _impl_.data_.SetAllocated(data, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -806,7 +8086,7 @@ inline bool XWalkI2cConfirmPayload::responding() const {
   return _internal_responding();
 }
 inline void XWalkI2cConfirmPayload::_internal_set_responding(bool value) {
-  
+
   _impl_.responding_ = value;
 }
 inline void XWalkI2cConfirmPayload::set_responding(bool value) {
@@ -830,7 +8110,7 @@ inline uint32_t XWalkI2cRejectPayload::reason() const {
   return _internal_reason();
 }
 inline void XWalkI2cRejectPayload::_internal_set_reason(uint32_t value) {
-  
+
   _impl_.reason_ = value;
 }
 inline void XWalkI2cRejectPayload::set_reason(uint32_t value) {
@@ -849,7 +8129,7 @@ inline const std::string& XWalkI2cRejectPayload::detail() const {
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void XWalkI2cRejectPayload::set_detail(ArgT0&& arg0, ArgT... args) {
- 
+
  _impl_.detail_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkI2cRejectPayload.detail)
 }
@@ -862,11 +8142,11 @@ inline const std::string& XWalkI2cRejectPayload::_internal_detail() const {
   return _impl_.detail_.Get();
 }
 inline void XWalkI2cRejectPayload::_internal_set_detail(const std::string& value) {
-  
+
   _impl_.detail_.Set(value, GetArenaForAllocation());
 }
 inline std::string* XWalkI2cRejectPayload::_internal_mutable_detail() {
-  
+
   return _impl_.detail_.Mutable(GetArenaForAllocation());
 }
 inline std::string* XWalkI2cRejectPayload::release_detail() {
@@ -875,9 +8155,9 @@ inline std::string* XWalkI2cRejectPayload::release_detail() {
 }
 inline void XWalkI2cRejectPayload::set_allocated_detail(std::string* detail) {
   if (detail != nullptr) {
-    
+
   } else {
-    
+
   }
   _impl_.detail_.SetAllocated(detail, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -888,9 +8168,3289 @@ inline void XWalkI2cRejectPayload::set_allocated_detail(std::string* detail) {
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkI2cRejectPayload.detail)
 }
 
+// -------------------------------------------------------------------
+
+// XWalkAppConfig
+
+// string configuration_file_path = 1;
+inline void XWalkAppConfig::clear_configuration_file_path() {
+  _impl_.configuration_file_path_.ClearToEmpty();
+}
+inline const std::string& XWalkAppConfig::configuration_file_path() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkAppConfig.configuration_file_path)
+  return _internal_configuration_file_path();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void XWalkAppConfig::set_configuration_file_path(ArgT0&& arg0, ArgT... args) {
+
+ _impl_.configuration_file_path_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkAppConfig.configuration_file_path)
+}
+inline std::string* XWalkAppConfig::mutable_configuration_file_path() {
+  std::string* _s = _internal_mutable_configuration_file_path();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkAppConfig.configuration_file_path)
+  return _s;
+}
+inline const std::string& XWalkAppConfig::_internal_configuration_file_path() const {
+  return _impl_.configuration_file_path_.Get();
+}
+inline void XWalkAppConfig::_internal_set_configuration_file_path(const std::string& value) {
+
+  _impl_.configuration_file_path_.Set(value, GetArenaForAllocation());
+}
+inline std::string* XWalkAppConfig::_internal_mutable_configuration_file_path() {
+
+  return _impl_.configuration_file_path_.Mutable(GetArenaForAllocation());
+}
+inline std::string* XWalkAppConfig::release_configuration_file_path() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkAppConfig.configuration_file_path)
+  return _impl_.configuration_file_path_.Release();
+}
+inline void XWalkAppConfig::set_allocated_configuration_file_path(std::string* configuration_file_path) {
+  if (configuration_file_path != nullptr) {
+
+  } else {
+
+  }
+  _impl_.configuration_file_path_.SetAllocated(configuration_file_path, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.configuration_file_path_.IsDefault()) {
+    _impl_.configuration_file_path_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkAppConfig.configuration_file_path)
+}
+
+// string resource_directory = 2;
+inline void XWalkAppConfig::clear_resource_directory() {
+  _impl_.resource_directory_.ClearToEmpty();
+}
+inline const std::string& XWalkAppConfig::resource_directory() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkAppConfig.resource_directory)
+  return _internal_resource_directory();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void XWalkAppConfig::set_resource_directory(ArgT0&& arg0, ArgT... args) {
+
+ _impl_.resource_directory_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkAppConfig.resource_directory)
+}
+inline std::string* XWalkAppConfig::mutable_resource_directory() {
+  std::string* _s = _internal_mutable_resource_directory();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkAppConfig.resource_directory)
+  return _s;
+}
+inline const std::string& XWalkAppConfig::_internal_resource_directory() const {
+  return _impl_.resource_directory_.Get();
+}
+inline void XWalkAppConfig::_internal_set_resource_directory(const std::string& value) {
+
+  _impl_.resource_directory_.Set(value, GetArenaForAllocation());
+}
+inline std::string* XWalkAppConfig::_internal_mutable_resource_directory() {
+
+  return _impl_.resource_directory_.Mutable(GetArenaForAllocation());
+}
+inline std::string* XWalkAppConfig::release_resource_directory() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkAppConfig.resource_directory)
+  return _impl_.resource_directory_.Release();
+}
+inline void XWalkAppConfig::set_allocated_resource_directory(std::string* resource_directory) {
+  if (resource_directory != nullptr) {
+
+  } else {
+
+  }
+  _impl_.resource_directory_.SetAllocated(resource_directory, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.resource_directory_.IsDefault()) {
+    _impl_.resource_directory_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkAppConfig.resource_directory)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkControllerApplicationArguments
+
+// repeated string command_arguments = 1;
+inline int XWalkControllerApplicationArguments::_internal_command_arguments_size() const {
+  return _impl_.command_arguments_.size();
+}
+inline int XWalkControllerApplicationArguments::command_arguments_size() const {
+  return _internal_command_arguments_size();
+}
+inline void XWalkControllerApplicationArguments::clear_command_arguments() {
+  _impl_.command_arguments_.Clear();
+}
+inline std::string* XWalkControllerApplicationArguments::add_command_arguments() {
+  std::string* _s = _internal_add_command_arguments();
+  // @@protoc_insertion_point(field_add_mutable:xwalk.iw.v1.XWalkControllerApplicationArguments.command_arguments)
+  return _s;
+}
+inline const std::string& XWalkControllerApplicationArguments::_internal_command_arguments(int index) const {
+  return _impl_.command_arguments_.Get(index);
+}
+inline const std::string& XWalkControllerApplicationArguments::command_arguments(int index) const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkControllerApplicationArguments.command_arguments)
+  return _internal_command_arguments(index);
+}
+inline std::string* XWalkControllerApplicationArguments::mutable_command_arguments(int index) {
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkControllerApplicationArguments.command_arguments)
+  return _impl_.command_arguments_.Mutable(index);
+}
+inline void XWalkControllerApplicationArguments::set_command_arguments(int index, const std::string& value) {
+  _impl_.command_arguments_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkControllerApplicationArguments.command_arguments)
+}
+inline void XWalkControllerApplicationArguments::set_command_arguments(int index, std::string&& value) {
+  _impl_.command_arguments_.Mutable(index)->assign(std::move(value));
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkControllerApplicationArguments.command_arguments)
+}
+inline void XWalkControllerApplicationArguments::set_command_arguments(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _impl_.command_arguments_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:xwalk.iw.v1.XWalkControllerApplicationArguments.command_arguments)
+}
+inline void XWalkControllerApplicationArguments::set_command_arguments(int index, const char* value, size_t size) {
+  _impl_.command_arguments_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:xwalk.iw.v1.XWalkControllerApplicationArguments.command_arguments)
+}
+inline std::string* XWalkControllerApplicationArguments::_internal_add_command_arguments() {
+  return _impl_.command_arguments_.Add();
+}
+inline void XWalkControllerApplicationArguments::add_command_arguments(const std::string& value) {
+  _impl_.command_arguments_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:xwalk.iw.v1.XWalkControllerApplicationArguments.command_arguments)
+}
+inline void XWalkControllerApplicationArguments::add_command_arguments(std::string&& value) {
+  _impl_.command_arguments_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:xwalk.iw.v1.XWalkControllerApplicationArguments.command_arguments)
+}
+inline void XWalkControllerApplicationArguments::add_command_arguments(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _impl_.command_arguments_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:xwalk.iw.v1.XWalkControllerApplicationArguments.command_arguments)
+}
+inline void XWalkControllerApplicationArguments::add_command_arguments(const char* value, size_t size) {
+  _impl_.command_arguments_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:xwalk.iw.v1.XWalkControllerApplicationArguments.command_arguments)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+XWalkControllerApplicationArguments::command_arguments() const {
+  // @@protoc_insertion_point(field_list:xwalk.iw.v1.XWalkControllerApplicationArguments.command_arguments)
+  return _impl_.command_arguments_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+XWalkControllerApplicationArguments::mutable_command_arguments() {
+  // @@protoc_insertion_point(field_mutable_list:xwalk.iw.v1.XWalkControllerApplicationArguments.command_arguments)
+  return &_impl_.command_arguments_;
+}
+
+// .xwalk.iw.v1.XWalkAppConfig app_config = 2;
+inline bool XWalkControllerApplicationArguments::_internal_has_app_config() const {
+  return this != internal_default_instance() && _impl_.app_config_ != nullptr;
+}
+inline bool XWalkControllerApplicationArguments::has_app_config() const {
+  return _internal_has_app_config();
+}
+inline void XWalkControllerApplicationArguments::clear_app_config() {
+  if (GetArenaForAllocation() == nullptr && _impl_.app_config_ != nullptr) {
+    delete _impl_.app_config_;
+  }
+  _impl_.app_config_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkAppConfig& XWalkControllerApplicationArguments::_internal_app_config() const {
+  const ::xwalk::iw::v1::XWalkAppConfig* p = _impl_.app_config_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkAppConfig&>(
+      ::xwalk::iw::v1::_XWalkAppConfig_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkAppConfig& XWalkControllerApplicationArguments::app_config() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkControllerApplicationArguments.app_config)
+  return _internal_app_config();
+}
+inline void XWalkControllerApplicationArguments::unsafe_arena_set_allocated_app_config(
+    ::xwalk::iw::v1::XWalkAppConfig* app_config) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.app_config_);
+  }
+  _impl_.app_config_ = app_config;
+  if (app_config) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkControllerApplicationArguments.app_config)
+}
+inline ::xwalk::iw::v1::XWalkAppConfig* XWalkControllerApplicationArguments::release_app_config() {
+
+  ::xwalk::iw::v1::XWalkAppConfig* temp = _impl_.app_config_;
+  _impl_.app_config_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkAppConfig* XWalkControllerApplicationArguments::unsafe_arena_release_app_config() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkControllerApplicationArguments.app_config)
+
+  ::xwalk::iw::v1::XWalkAppConfig* temp = _impl_.app_config_;
+  _impl_.app_config_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkAppConfig* XWalkControllerApplicationArguments::_internal_mutable_app_config() {
+
+  if (_impl_.app_config_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkAppConfig>(GetArenaForAllocation());
+    _impl_.app_config_ = p;
+  }
+  return _impl_.app_config_;
+}
+inline ::xwalk::iw::v1::XWalkAppConfig* XWalkControllerApplicationArguments::mutable_app_config() {
+  ::xwalk::iw::v1::XWalkAppConfig* _msg = _internal_mutable_app_config();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkControllerApplicationArguments.app_config)
+  return _msg;
+}
+inline void XWalkControllerApplicationArguments::set_allocated_app_config(::xwalk::iw::v1::XWalkAppConfig* app_config) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.app_config_;
+  }
+  if (app_config) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(app_config);
+    if (message_arena != submessage_arena) {
+      app_config = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, app_config, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.app_config_ = app_config;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkControllerApplicationArguments.app_config)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkControllerCommandRequest
+
+// uint32 command = 1;
+inline void XWalkControllerCommandRequest::clear_command() {
+  _impl_.command_ = 0u;
+}
+inline uint32_t XWalkControllerCommandRequest::_internal_command() const {
+  return _impl_.command_;
+}
+inline uint32_t XWalkControllerCommandRequest::command() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkControllerCommandRequest.command)
+  return _internal_command();
+}
+inline void XWalkControllerCommandRequest::_internal_set_command(uint32_t value) {
+
+  _impl_.command_ = value;
+}
+inline void XWalkControllerCommandRequest::set_command(uint32_t value) {
+  _internal_set_command(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkControllerCommandRequest.command)
+}
+
+// repeated string arguments = 2;
+inline int XWalkControllerCommandRequest::_internal_arguments_size() const {
+  return _impl_.arguments_.size();
+}
+inline int XWalkControllerCommandRequest::arguments_size() const {
+  return _internal_arguments_size();
+}
+inline void XWalkControllerCommandRequest::clear_arguments() {
+  _impl_.arguments_.Clear();
+}
+inline std::string* XWalkControllerCommandRequest::add_arguments() {
+  std::string* _s = _internal_add_arguments();
+  // @@protoc_insertion_point(field_add_mutable:xwalk.iw.v1.XWalkControllerCommandRequest.arguments)
+  return _s;
+}
+inline const std::string& XWalkControllerCommandRequest::_internal_arguments(int index) const {
+  return _impl_.arguments_.Get(index);
+}
+inline const std::string& XWalkControllerCommandRequest::arguments(int index) const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkControllerCommandRequest.arguments)
+  return _internal_arguments(index);
+}
+inline std::string* XWalkControllerCommandRequest::mutable_arguments(int index) {
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkControllerCommandRequest.arguments)
+  return _impl_.arguments_.Mutable(index);
+}
+inline void XWalkControllerCommandRequest::set_arguments(int index, const std::string& value) {
+  _impl_.arguments_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkControllerCommandRequest.arguments)
+}
+inline void XWalkControllerCommandRequest::set_arguments(int index, std::string&& value) {
+  _impl_.arguments_.Mutable(index)->assign(std::move(value));
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkControllerCommandRequest.arguments)
+}
+inline void XWalkControllerCommandRequest::set_arguments(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _impl_.arguments_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:xwalk.iw.v1.XWalkControllerCommandRequest.arguments)
+}
+inline void XWalkControllerCommandRequest::set_arguments(int index, const char* value, size_t size) {
+  _impl_.arguments_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:xwalk.iw.v1.XWalkControllerCommandRequest.arguments)
+}
+inline std::string* XWalkControllerCommandRequest::_internal_add_arguments() {
+  return _impl_.arguments_.Add();
+}
+inline void XWalkControllerCommandRequest::add_arguments(const std::string& value) {
+  _impl_.arguments_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:xwalk.iw.v1.XWalkControllerCommandRequest.arguments)
+}
+inline void XWalkControllerCommandRequest::add_arguments(std::string&& value) {
+  _impl_.arguments_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:xwalk.iw.v1.XWalkControllerCommandRequest.arguments)
+}
+inline void XWalkControllerCommandRequest::add_arguments(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _impl_.arguments_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:xwalk.iw.v1.XWalkControllerCommandRequest.arguments)
+}
+inline void XWalkControllerCommandRequest::add_arguments(const char* value, size_t size) {
+  _impl_.arguments_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:xwalk.iw.v1.XWalkControllerCommandRequest.arguments)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+XWalkControllerCommandRequest::arguments() const {
+  // @@protoc_insertion_point(field_list:xwalk.iw.v1.XWalkControllerCommandRequest.arguments)
+  return _impl_.arguments_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+XWalkControllerCommandRequest::mutable_arguments() {
+  // @@protoc_insertion_point(field_mutable_list:xwalk.iw.v1.XWalkControllerCommandRequest.arguments)
+  return &_impl_.arguments_;
+}
+
+// -------------------------------------------------------------------
+
+// XWalkNoArgumentRequest
+
+// -------------------------------------------------------------------
+
+// XWalkLifecycleRequest
+
+// .xwalk.iw.v1.XWalkLifecycleAction action = 1;
+inline void XWalkLifecycleRequest::clear_action() {
+  _impl_.action_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleAction XWalkLifecycleRequest::_internal_action() const {
+  return static_cast< ::xwalk::iw::v1::XWalkLifecycleAction >(_impl_.action_);
+}
+inline ::xwalk::iw::v1::XWalkLifecycleAction XWalkLifecycleRequest::action() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkLifecycleRequest.action)
+  return _internal_action();
+}
+inline void XWalkLifecycleRequest::_internal_set_action(::xwalk::iw::v1::XWalkLifecycleAction value) {
+
+  _impl_.action_ = value;
+}
+inline void XWalkLifecycleRequest::set_action(::xwalk::iw::v1::XWalkLifecycleAction value) {
+  _internal_set_action(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkLifecycleRequest.action)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkMoveRequest
+
+// .xwalk.iw.v1.XWalkMoveAction action = 1;
+inline void XWalkMoveRequest::clear_action() {
+  _impl_.action_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkMoveAction XWalkMoveRequest::_internal_action() const {
+  return static_cast< ::xwalk::iw::v1::XWalkMoveAction >(_impl_.action_);
+}
+inline ::xwalk::iw::v1::XWalkMoveAction XWalkMoveRequest::action() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkMoveRequest.action)
+  return _internal_action();
+}
+inline void XWalkMoveRequest::_internal_set_action(::xwalk::iw::v1::XWalkMoveAction value) {
+
+  _impl_.action_ = value;
+}
+inline void XWalkMoveRequest::set_action(::xwalk::iw::v1::XWalkMoveAction value) {
+  _internal_set_action(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkMoveRequest.action)
+}
+
+// optional double speed_percent = 2;
+inline bool XWalkMoveRequest::_internal_has_speed_percent() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool XWalkMoveRequest::has_speed_percent() const {
+  return _internal_has_speed_percent();
+}
+inline void XWalkMoveRequest::clear_speed_percent() {
+  _impl_.speed_percent_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline double XWalkMoveRequest::_internal_speed_percent() const {
+  return _impl_.speed_percent_;
+}
+inline double XWalkMoveRequest::speed_percent() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkMoveRequest.speed_percent)
+  return _internal_speed_percent();
+}
+inline void XWalkMoveRequest::_internal_set_speed_percent(double value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.speed_percent_ = value;
+}
+inline void XWalkMoveRequest::set_speed_percent(double value) {
+  _internal_set_speed_percent(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkMoveRequest.speed_percent)
+}
+
+// optional uint32 duration_ms = 3;
+inline bool XWalkMoveRequest::_internal_has_duration_ms() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool XWalkMoveRequest::has_duration_ms() const {
+  return _internal_has_duration_ms();
+}
+inline void XWalkMoveRequest::clear_duration_ms() {
+  _impl_.duration_ms_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline uint32_t XWalkMoveRequest::_internal_duration_ms() const {
+  return _impl_.duration_ms_;
+}
+inline uint32_t XWalkMoveRequest::duration_ms() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkMoveRequest.duration_ms)
+  return _internal_duration_ms();
+}
+inline void XWalkMoveRequest::_internal_set_duration_ms(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.duration_ms_ = value;
+}
+inline void XWalkMoveRequest::set_duration_ms(uint32_t value) {
+  _internal_set_duration_ms(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkMoveRequest.duration_ms)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkTurnRequest
+
+// .xwalk.iw.v1.XWalkTurnDirection direction = 1;
+inline void XWalkTurnRequest::clear_direction() {
+  _impl_.direction_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkTurnDirection XWalkTurnRequest::_internal_direction() const {
+  return static_cast< ::xwalk::iw::v1::XWalkTurnDirection >(_impl_.direction_);
+}
+inline ::xwalk::iw::v1::XWalkTurnDirection XWalkTurnRequest::direction() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkTurnRequest.direction)
+  return _internal_direction();
+}
+inline void XWalkTurnRequest::_internal_set_direction(::xwalk::iw::v1::XWalkTurnDirection value) {
+
+  _impl_.direction_ = value;
+}
+inline void XWalkTurnRequest::set_direction(::xwalk::iw::v1::XWalkTurnDirection value) {
+  _internal_set_direction(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkTurnRequest.direction)
+}
+
+// optional double angle_degrees = 2;
+inline bool XWalkTurnRequest::_internal_has_angle_degrees() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool XWalkTurnRequest::has_angle_degrees() const {
+  return _internal_has_angle_degrees();
+}
+inline void XWalkTurnRequest::clear_angle_degrees() {
+  _impl_.angle_degrees_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline double XWalkTurnRequest::_internal_angle_degrees() const {
+  return _impl_.angle_degrees_;
+}
+inline double XWalkTurnRequest::angle_degrees() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkTurnRequest.angle_degrees)
+  return _internal_angle_degrees();
+}
+inline void XWalkTurnRequest::_internal_set_angle_degrees(double value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.angle_degrees_ = value;
+}
+inline void XWalkTurnRequest::set_angle_degrees(double value) {
+  _internal_set_angle_degrees(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkTurnRequest.angle_degrees)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkCameraRequest
+
+// .xwalk.iw.v1.XWalkCameraAxis axis = 1;
+inline void XWalkCameraRequest::clear_axis() {
+  _impl_.axis_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkCameraAxis XWalkCameraRequest::_internal_axis() const {
+  return static_cast< ::xwalk::iw::v1::XWalkCameraAxis >(_impl_.axis_);
+}
+inline ::xwalk::iw::v1::XWalkCameraAxis XWalkCameraRequest::axis() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkCameraRequest.axis)
+  return _internal_axis();
+}
+inline void XWalkCameraRequest::_internal_set_axis(::xwalk::iw::v1::XWalkCameraAxis value) {
+
+  _impl_.axis_ = value;
+}
+inline void XWalkCameraRequest::set_axis(::xwalk::iw::v1::XWalkCameraAxis value) {
+  _internal_set_axis(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkCameraRequest.axis)
+}
+
+// double angle_degrees = 2;
+inline void XWalkCameraRequest::clear_angle_degrees() {
+  _impl_.angle_degrees_ = 0;
+}
+inline double XWalkCameraRequest::_internal_angle_degrees() const {
+  return _impl_.angle_degrees_;
+}
+inline double XWalkCameraRequest::angle_degrees() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkCameraRequest.angle_degrees)
+  return _internal_angle_degrees();
+}
+inline void XWalkCameraRequest::_internal_set_angle_degrees(double value) {
+
+  _impl_.angle_degrees_ = value;
+}
+inline void XWalkCameraRequest::set_angle_degrees(double value) {
+  _internal_set_angle_degrees(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkCameraRequest.angle_degrees)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkSensorRequest
+
+// .xwalk.iw.v1.XWalkSensorType type = 1;
+inline void XWalkSensorRequest::clear_type() {
+  _impl_.type_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkSensorType XWalkSensorRequest::_internal_type() const {
+  return static_cast< ::xwalk::iw::v1::XWalkSensorType >(_impl_.type_);
+}
+inline ::xwalk::iw::v1::XWalkSensorType XWalkSensorRequest::type() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSensorRequest.type)
+  return _internal_type();
+}
+inline void XWalkSensorRequest::_internal_set_type(::xwalk::iw::v1::XWalkSensorType value) {
+
+  _impl_.type_ = value;
+}
+inline void XWalkSensorRequest::set_type(::xwalk::iw::v1::XWalkSensorType value) {
+  _internal_set_type(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkSensorRequest.type)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkSelfDriveRequest
+
+// string action = 1;
+inline void XWalkSelfDriveRequest::clear_action() {
+  _impl_.action_.ClearToEmpty();
+}
+inline const std::string& XWalkSelfDriveRequest::action() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSelfDriveRequest.action)
+  return _internal_action();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void XWalkSelfDriveRequest::set_action(ArgT0&& arg0, ArgT... args) {
+
+ _impl_.action_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkSelfDriveRequest.action)
+}
+inline std::string* XWalkSelfDriveRequest::mutable_action() {
+  std::string* _s = _internal_mutable_action();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkSelfDriveRequest.action)
+  return _s;
+}
+inline const std::string& XWalkSelfDriveRequest::_internal_action() const {
+  return _impl_.action_.Get();
+}
+inline void XWalkSelfDriveRequest::_internal_set_action(const std::string& value) {
+
+  _impl_.action_.Set(value, GetArenaForAllocation());
+}
+inline std::string* XWalkSelfDriveRequest::_internal_mutable_action() {
+
+  return _impl_.action_.Mutable(GetArenaForAllocation());
+}
+inline std::string* XWalkSelfDriveRequest::release_action() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkSelfDriveRequest.action)
+  return _impl_.action_.Release();
+}
+inline void XWalkSelfDriveRequest::set_allocated_action(std::string* action) {
+  if (action != nullptr) {
+
+  } else {
+
+  }
+  _impl_.action_.SetAllocated(action, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.action_.IsDefault()) {
+    _impl_.action_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkSelfDriveRequest.action)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkSpiRequest
+
+// bytes transmit_data = 1;
+inline void XWalkSpiRequest::clear_transmit_data() {
+  _impl_.transmit_data_.ClearToEmpty();
+}
+inline const std::string& XWalkSpiRequest::transmit_data() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSpiRequest.transmit_data)
+  return _internal_transmit_data();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void XWalkSpiRequest::set_transmit_data(ArgT0&& arg0, ArgT... args) {
+
+ _impl_.transmit_data_.SetBytes(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkSpiRequest.transmit_data)
+}
+inline std::string* XWalkSpiRequest::mutable_transmit_data() {
+  std::string* _s = _internal_mutable_transmit_data();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkSpiRequest.transmit_data)
+  return _s;
+}
+inline const std::string& XWalkSpiRequest::_internal_transmit_data() const {
+  return _impl_.transmit_data_.Get();
+}
+inline void XWalkSpiRequest::_internal_set_transmit_data(const std::string& value) {
+
+  _impl_.transmit_data_.Set(value, GetArenaForAllocation());
+}
+inline std::string* XWalkSpiRequest::_internal_mutable_transmit_data() {
+
+  return _impl_.transmit_data_.Mutable(GetArenaForAllocation());
+}
+inline std::string* XWalkSpiRequest::release_transmit_data() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkSpiRequest.transmit_data)
+  return _impl_.transmit_data_.Release();
+}
+inline void XWalkSpiRequest::set_allocated_transmit_data(std::string* transmit_data) {
+  if (transmit_data != nullptr) {
+
+  } else {
+
+  }
+  _impl_.transmit_data_.SetAllocated(transmit_data, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.transmit_data_.IsDefault()) {
+    _impl_.transmit_data_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkSpiRequest.transmit_data)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkGptCarRequest
+
+// .xwalk.iw.v1.XWalkLifecycleAction action = 1;
+inline void XWalkGptCarRequest::clear_action() {
+  _impl_.action_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleAction XWalkGptCarRequest::_internal_action() const {
+  return static_cast< ::xwalk::iw::v1::XWalkLifecycleAction >(_impl_.action_);
+}
+inline ::xwalk::iw::v1::XWalkLifecycleAction XWalkGptCarRequest::action() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkGptCarRequest.action)
+  return _internal_action();
+}
+inline void XWalkGptCarRequest::_internal_set_action(::xwalk::iw::v1::XWalkLifecycleAction value) {
+
+  _impl_.action_ = value;
+}
+inline void XWalkGptCarRequest::set_action(::xwalk::iw::v1::XWalkLifecycleAction value) {
+  _internal_set_action(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkGptCarRequest.action)
+}
+
+// bool keyboard_input = 2;
+inline void XWalkGptCarRequest::clear_keyboard_input() {
+  _impl_.keyboard_input_ = false;
+}
+inline bool XWalkGptCarRequest::_internal_keyboard_input() const {
+  return _impl_.keyboard_input_;
+}
+inline bool XWalkGptCarRequest::keyboard_input() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkGptCarRequest.keyboard_input)
+  return _internal_keyboard_input();
+}
+inline void XWalkGptCarRequest::_internal_set_keyboard_input(bool value) {
+
+  _impl_.keyboard_input_ = value;
+}
+inline void XWalkGptCarRequest::set_keyboard_input(bool value) {
+  _internal_set_keyboard_input(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkGptCarRequest.keyboard_input)
+}
+
+// optional bool with_image = 3;
+inline bool XWalkGptCarRequest::_internal_has_with_image() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool XWalkGptCarRequest::has_with_image() const {
+  return _internal_has_with_image();
+}
+inline void XWalkGptCarRequest::clear_with_image() {
+  _impl_.with_image_ = false;
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline bool XWalkGptCarRequest::_internal_with_image() const {
+  return _impl_.with_image_;
+}
+inline bool XWalkGptCarRequest::with_image() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkGptCarRequest.with_image)
+  return _internal_with_image();
+}
+inline void XWalkGptCarRequest::_internal_set_with_image(bool value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.with_image_ = value;
+}
+inline void XWalkGptCarRequest::set_with_image(bool value) {
+  _internal_set_with_image(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkGptCarRequest.with_image)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkCalibrationRequest
+
+// .xwalk.iw.v1.XWalkCalibrationMode mode = 1;
+inline void XWalkCalibrationRequest::clear_mode() {
+  _impl_.mode_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkCalibrationMode XWalkCalibrationRequest::_internal_mode() const {
+  return static_cast< ::xwalk::iw::v1::XWalkCalibrationMode >(_impl_.mode_);
+}
+inline ::xwalk::iw::v1::XWalkCalibrationMode XWalkCalibrationRequest::mode() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkCalibrationRequest.mode)
+  return _internal_mode();
+}
+inline void XWalkCalibrationRequest::_internal_set_mode(::xwalk::iw::v1::XWalkCalibrationMode value) {
+
+  _impl_.mode_ = value;
+}
+inline void XWalkCalibrationRequest::set_mode(::xwalk::iw::v1::XWalkCalibrationMode value) {
+  _internal_set_mode(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkCalibrationRequest.mode)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkSoundRequest
+
+// optional .xwalk.iw.v1.XWalkSoundOperation operation = 1;
+inline bool XWalkSoundRequest::_internal_has_operation() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool XWalkSoundRequest::has_operation() const {
+  return _internal_has_operation();
+}
+inline void XWalkSoundRequest::clear_operation() {
+  _impl_.operation_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline ::xwalk::iw::v1::XWalkSoundOperation XWalkSoundRequest::_internal_operation() const {
+  return static_cast< ::xwalk::iw::v1::XWalkSoundOperation >(_impl_.operation_);
+}
+inline ::xwalk::iw::v1::XWalkSoundOperation XWalkSoundRequest::operation() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSoundRequest.operation)
+  return _internal_operation();
+}
+inline void XWalkSoundRequest::_internal_set_operation(::xwalk::iw::v1::XWalkSoundOperation value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.operation_ = value;
+}
+inline void XWalkSoundRequest::set_operation(::xwalk::iw::v1::XWalkSoundOperation value) {
+  _internal_set_operation(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkSoundRequest.operation)
+}
+
+// string file_path = 2;
+inline void XWalkSoundRequest::clear_file_path() {
+  _impl_.file_path_.ClearToEmpty();
+}
+inline const std::string& XWalkSoundRequest::file_path() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSoundRequest.file_path)
+  return _internal_file_path();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void XWalkSoundRequest::set_file_path(ArgT0&& arg0, ArgT... args) {
+
+ _impl_.file_path_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkSoundRequest.file_path)
+}
+inline std::string* XWalkSoundRequest::mutable_file_path() {
+  std::string* _s = _internal_mutable_file_path();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkSoundRequest.file_path)
+  return _s;
+}
+inline const std::string& XWalkSoundRequest::_internal_file_path() const {
+  return _impl_.file_path_.Get();
+}
+inline void XWalkSoundRequest::_internal_set_file_path(const std::string& value) {
+
+  _impl_.file_path_.Set(value, GetArenaForAllocation());
+}
+inline std::string* XWalkSoundRequest::_internal_mutable_file_path() {
+
+  return _impl_.file_path_.Mutable(GetArenaForAllocation());
+}
+inline std::string* XWalkSoundRequest::release_file_path() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkSoundRequest.file_path)
+  return _impl_.file_path_.Release();
+}
+inline void XWalkSoundRequest::set_allocated_file_path(std::string* file_path) {
+  if (file_path != nullptr) {
+
+  } else {
+
+  }
+  _impl_.file_path_.SetAllocated(file_path, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.file_path_.IsDefault()) {
+    _impl_.file_path_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkSoundRequest.file_path)
+}
+
+// optional double volume_percent = 3;
+inline bool XWalkSoundRequest::_internal_has_volume_percent() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool XWalkSoundRequest::has_volume_percent() const {
+  return _internal_has_volume_percent();
+}
+inline void XWalkSoundRequest::clear_volume_percent() {
+  _impl_.volume_percent_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline double XWalkSoundRequest::_internal_volume_percent() const {
+  return _impl_.volume_percent_;
+}
+inline double XWalkSoundRequest::volume_percent() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSoundRequest.volume_percent)
+  return _internal_volume_percent();
+}
+inline void XWalkSoundRequest::_internal_set_volume_percent(double value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.volume_percent_ = value;
+}
+inline void XWalkSoundRequest::set_volume_percent(double value) {
+  _internal_set_volume_percent(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkSoundRequest.volume_percent)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkServoCalibrationConfig
+
+// string title = 1;
+inline void XWalkServoCalibrationConfig::clear_title() {
+  _impl_.title_.ClearToEmpty();
+}
+inline const std::string& XWalkServoCalibrationConfig::title() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkServoCalibrationConfig.title)
+  return _internal_title();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void XWalkServoCalibrationConfig::set_title(ArgT0&& arg0, ArgT... args) {
+
+ _impl_.title_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkServoCalibrationConfig.title)
+}
+inline std::string* XWalkServoCalibrationConfig::mutable_title() {
+  std::string* _s = _internal_mutable_title();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkServoCalibrationConfig.title)
+  return _s;
+}
+inline const std::string& XWalkServoCalibrationConfig::_internal_title() const {
+  return _impl_.title_.Get();
+}
+inline void XWalkServoCalibrationConfig::_internal_set_title(const std::string& value) {
+
+  _impl_.title_.Set(value, GetArenaForAllocation());
+}
+inline std::string* XWalkServoCalibrationConfig::_internal_mutable_title() {
+
+  return _impl_.title_.Mutable(GetArenaForAllocation());
+}
+inline std::string* XWalkServoCalibrationConfig::release_title() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkServoCalibrationConfig.title)
+  return _impl_.title_.Release();
+}
+inline void XWalkServoCalibrationConfig::set_allocated_title(std::string* title) {
+  if (title != nullptr) {
+
+  } else {
+
+  }
+  _impl_.title_.SetAllocated(title, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.title_.IsDefault()) {
+    _impl_.title_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkServoCalibrationConfig.title)
+}
+
+// string prompt = 2;
+inline void XWalkServoCalibrationConfig::clear_prompt() {
+  _impl_.prompt_.ClearToEmpty();
+}
+inline const std::string& XWalkServoCalibrationConfig::prompt() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkServoCalibrationConfig.prompt)
+  return _internal_prompt();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void XWalkServoCalibrationConfig::set_prompt(ArgT0&& arg0, ArgT... args) {
+
+ _impl_.prompt_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkServoCalibrationConfig.prompt)
+}
+inline std::string* XWalkServoCalibrationConfig::mutable_prompt() {
+  std::string* _s = _internal_mutable_prompt();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkServoCalibrationConfig.prompt)
+  return _s;
+}
+inline const std::string& XWalkServoCalibrationConfig::_internal_prompt() const {
+  return _impl_.prompt_.Get();
+}
+inline void XWalkServoCalibrationConfig::_internal_set_prompt(const std::string& value) {
+
+  _impl_.prompt_.Set(value, GetArenaForAllocation());
+}
+inline std::string* XWalkServoCalibrationConfig::_internal_mutable_prompt() {
+
+  return _impl_.prompt_.Mutable(GetArenaForAllocation());
+}
+inline std::string* XWalkServoCalibrationConfig::release_prompt() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkServoCalibrationConfig.prompt)
+  return _impl_.prompt_.Release();
+}
+inline void XWalkServoCalibrationConfig::set_allocated_prompt(std::string* prompt) {
+  if (prompt != nullptr) {
+
+  } else {
+
+  }
+  _impl_.prompt_.SetAllocated(prompt, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.prompt_.IsDefault()) {
+    _impl_.prompt_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkServoCalibrationConfig.prompt)
+}
+
+// double minimum_angle_degrees = 3;
+inline void XWalkServoCalibrationConfig::clear_minimum_angle_degrees() {
+  _impl_.minimum_angle_degrees_ = 0;
+}
+inline double XWalkServoCalibrationConfig::_internal_minimum_angle_degrees() const {
+  return _impl_.minimum_angle_degrees_;
+}
+inline double XWalkServoCalibrationConfig::minimum_angle_degrees() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkServoCalibrationConfig.minimum_angle_degrees)
+  return _internal_minimum_angle_degrees();
+}
+inline void XWalkServoCalibrationConfig::_internal_set_minimum_angle_degrees(double value) {
+
+  _impl_.minimum_angle_degrees_ = value;
+}
+inline void XWalkServoCalibrationConfig::set_minimum_angle_degrees(double value) {
+  _internal_set_minimum_angle_degrees(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkServoCalibrationConfig.minimum_angle_degrees)
+}
+
+// double maximum_angle_degrees = 4;
+inline void XWalkServoCalibrationConfig::clear_maximum_angle_degrees() {
+  _impl_.maximum_angle_degrees_ = 0;
+}
+inline double XWalkServoCalibrationConfig::_internal_maximum_angle_degrees() const {
+  return _impl_.maximum_angle_degrees_;
+}
+inline double XWalkServoCalibrationConfig::maximum_angle_degrees() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkServoCalibrationConfig.maximum_angle_degrees)
+  return _internal_maximum_angle_degrees();
+}
+inline void XWalkServoCalibrationConfig::_internal_set_maximum_angle_degrees(double value) {
+
+  _impl_.maximum_angle_degrees_ = value;
+}
+inline void XWalkServoCalibrationConfig::set_maximum_angle_degrees(double value) {
+  _internal_set_maximum_angle_degrees(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkServoCalibrationConfig.maximum_angle_degrees)
+}
+
+// uint32 servo_id = 5;
+inline void XWalkServoCalibrationConfig::clear_servo_id() {
+  _impl_.servo_id_ = 0u;
+}
+inline uint32_t XWalkServoCalibrationConfig::_internal_servo_id() const {
+  return _impl_.servo_id_;
+}
+inline uint32_t XWalkServoCalibrationConfig::servo_id() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkServoCalibrationConfig.servo_id)
+  return _internal_servo_id();
+}
+inline void XWalkServoCalibrationConfig::_internal_set_servo_id(uint32_t value) {
+
+  _impl_.servo_id_ = value;
+}
+inline void XWalkServoCalibrationConfig::set_servo_id(uint32_t value) {
+  _internal_set_servo_id(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkServoCalibrationConfig.servo_id)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkUnknownCommandRequest
+
+// -------------------------------------------------------------------
+
+// XWalkHelpCommandRequest
+
+// -------------------------------------------------------------------
+
+// XWalkSpiCommandRequest
+
+// .xwalk.iw.v1.XWalkSpiRequest request = 1;
+inline bool XWalkSpiCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkSpiCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkSpiCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkSpiRequest& XWalkSpiCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkSpiRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkSpiRequest&>(
+      ::xwalk::iw::v1::_XWalkSpiRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkSpiRequest& XWalkSpiCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSpiCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkSpiCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkSpiRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkSpiCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkSpiRequest* XWalkSpiCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkSpiRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkSpiRequest* XWalkSpiCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkSpiCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkSpiRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkSpiRequest* XWalkSpiCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkSpiRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkSpiRequest* XWalkSpiCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkSpiRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkSpiCommandRequest.request)
+  return _msg;
+}
+inline void XWalkSpiCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkSpiRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkSpiCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkDoctorCommandRequest
+
+// -------------------------------------------------------------------
+
+// XWalkServoZeroingCommandRequest
+
+// -------------------------------------------------------------------
+
+// XWalkComputerVisionCommandRequest
+
+// -------------------------------------------------------------------
+
+// XWalkRecordVideoCommandRequest
+
+// -------------------------------------------------------------------
+
+// XWalkSoundBackgroundMusicCommandRequest
+
+// -------------------------------------------------------------------
+
+// XWalkTextVisionTalkCommandRequest
+
+// .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+inline bool XWalkTextVisionTalkCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkTextVisionTalkCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkTextVisionTalkCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkTextVisionTalkCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkLifecycleRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkLifecycleRequest&>(
+      ::xwalk::iw::v1::_XWalkLifecycleRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkTextVisionTalkCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkTextVisionTalkCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkTextVisionTalkCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkTextVisionTalkCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkTextVisionTalkCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkTextVisionTalkCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkTextVisionTalkCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkTextVisionTalkCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkLifecycleRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkTextVisionTalkCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkTextVisionTalkCommandRequest.request)
+  return _msg;
+}
+inline void XWalkTextVisionTalkCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkTextVisionTalkCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkOnlineLlmTestCommandRequest
+
+// .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+inline bool XWalkOnlineLlmTestCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkOnlineLlmTestCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkOnlineLlmTestCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkOnlineLlmTestCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkLifecycleRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkLifecycleRequest&>(
+      ::xwalk::iw::v1::_XWalkLifecycleRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkOnlineLlmTestCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkOnlineLlmTestCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkOnlineLlmTestCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkOnlineLlmTestCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkOnlineLlmTestCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkOnlineLlmTestCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkOnlineLlmTestCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkOnlineLlmTestCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkLifecycleRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkOnlineLlmTestCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkOnlineLlmTestCommandRequest.request)
+  return _msg;
+}
+inline void XWalkOnlineLlmTestCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkOnlineLlmTestCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkMoveCommandRequest
+
+// .xwalk.iw.v1.XWalkMoveRequest request = 1;
+inline bool XWalkMoveCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkMoveCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkMoveCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkMoveRequest& XWalkMoveCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkMoveRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkMoveRequest&>(
+      ::xwalk::iw::v1::_XWalkMoveRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkMoveRequest& XWalkMoveCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkMoveCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkMoveCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkMoveRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkMoveCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkMoveRequest* XWalkMoveCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkMoveRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkMoveRequest* XWalkMoveCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkMoveCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkMoveRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkMoveRequest* XWalkMoveCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkMoveRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkMoveRequest* XWalkMoveCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkMoveRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkMoveCommandRequest.request)
+  return _msg;
+}
+inline void XWalkMoveCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkMoveRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkMoveCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkKeyboardControlCommandRequest
+
+// -------------------------------------------------------------------
+
+// XWalkAvoidObstaclesCommandRequest
+
+// .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+inline bool XWalkAvoidObstaclesCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkAvoidObstaclesCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkAvoidObstaclesCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkAvoidObstaclesCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkLifecycleRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkLifecycleRequest&>(
+      ::xwalk::iw::v1::_XWalkLifecycleRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkAvoidObstaclesCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkAvoidObstaclesCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkAvoidObstaclesCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkAvoidObstaclesCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkAvoidObstaclesCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkAvoidObstaclesCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkAvoidObstaclesCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkAvoidObstaclesCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkLifecycleRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkAvoidObstaclesCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkAvoidObstaclesCommandRequest.request)
+  return _msg;
+}
+inline void XWalkAvoidObstaclesCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkAvoidObstaclesCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkCliffDetectionCommandRequest
+
+// .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+inline bool XWalkCliffDetectionCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkCliffDetectionCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkCliffDetectionCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkCliffDetectionCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkLifecycleRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkLifecycleRequest&>(
+      ::xwalk::iw::v1::_XWalkLifecycleRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkCliffDetectionCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkCliffDetectionCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkCliffDetectionCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkCliffDetectionCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkCliffDetectionCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkCliffDetectionCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkCliffDetectionCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkCliffDetectionCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkLifecycleRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkCliffDetectionCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkCliffDetectionCommandRequest.request)
+  return _msg;
+}
+inline void XWalkCliffDetectionCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkCliffDetectionCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkStareAtYouCommandRequest
+
+// .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+inline bool XWalkStareAtYouCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkStareAtYouCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkStareAtYouCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkStareAtYouCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkLifecycleRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkLifecycleRequest&>(
+      ::xwalk::iw::v1::_XWalkLifecycleRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkStareAtYouCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkStareAtYouCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkStareAtYouCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkStareAtYouCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkStareAtYouCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkStareAtYouCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkStareAtYouCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkStareAtYouCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkLifecycleRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkStareAtYouCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkStareAtYouCommandRequest.request)
+  return _msg;
+}
+inline void XWalkStareAtYouCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkStareAtYouCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkBullFightCommandRequest
+
+// .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+inline bool XWalkBullFightCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkBullFightCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkBullFightCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkBullFightCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkLifecycleRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkLifecycleRequest&>(
+      ::xwalk::iw::v1::_XWalkLifecycleRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkBullFightCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkBullFightCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkBullFightCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkBullFightCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkBullFightCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkBullFightCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkBullFightCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkBullFightCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkLifecycleRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkBullFightCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkBullFightCommandRequest.request)
+  return _msg;
+}
+inline void XWalkBullFightCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkBullFightCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkTreasureHuntCommandRequest
+
+// -------------------------------------------------------------------
+
+// XWalkVideoCarCommandRequest
+
+// -------------------------------------------------------------------
+
+// XWalkAppControlCommandRequest
+
+// .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+inline bool XWalkAppControlCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkAppControlCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkAppControlCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkAppControlCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkLifecycleRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkLifecycleRequest&>(
+      ::xwalk::iw::v1::_XWalkLifecycleRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkAppControlCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkAppControlCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkAppControlCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkAppControlCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkAppControlCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkAppControlCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkAppControlCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkAppControlCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkLifecycleRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkAppControlCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkAppControlCommandRequest.request)
+  return _msg;
+}
+inline void XWalkAppControlCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkAppControlCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkTurnCommandRequest
+
+// .xwalk.iw.v1.XWalkTurnRequest request = 1;
+inline bool XWalkTurnCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkTurnCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkTurnCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkTurnRequest& XWalkTurnCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkTurnRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkTurnRequest&>(
+      ::xwalk::iw::v1::_XWalkTurnRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkTurnRequest& XWalkTurnCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkTurnCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkTurnCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkTurnRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkTurnCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkTurnRequest* XWalkTurnCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkTurnRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkTurnRequest* XWalkTurnCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkTurnCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkTurnRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkTurnRequest* XWalkTurnCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkTurnRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkTurnRequest* XWalkTurnCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkTurnRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkTurnCommandRequest.request)
+  return _msg;
+}
+inline void XWalkTurnCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkTurnRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkTurnCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkCameraCommandRequest
+
+// .xwalk.iw.v1.XWalkCameraRequest request = 1;
+inline bool XWalkCameraCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkCameraCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkCameraCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkCameraRequest& XWalkCameraCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkCameraRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkCameraRequest&>(
+      ::xwalk::iw::v1::_XWalkCameraRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkCameraRequest& XWalkCameraCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkCameraCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkCameraCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkCameraRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkCameraCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkCameraRequest* XWalkCameraCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkCameraRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkCameraRequest* XWalkCameraCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkCameraCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkCameraRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkCameraRequest* XWalkCameraCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkCameraRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkCameraRequest* XWalkCameraCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkCameraRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkCameraCommandRequest.request)
+  return _msg;
+}
+inline void XWalkCameraCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkCameraRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkCameraCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkSensorCommandRequest
+
+// .xwalk.iw.v1.XWalkSensorRequest request = 1;
+inline bool XWalkSensorCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkSensorCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkSensorCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkSensorRequest& XWalkSensorCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkSensorRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkSensorRequest&>(
+      ::xwalk::iw::v1::_XWalkSensorRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkSensorRequest& XWalkSensorCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSensorCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkSensorCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkSensorRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkSensorCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkSensorRequest* XWalkSensorCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkSensorRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkSensorRequest* XWalkSensorCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkSensorCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkSensorRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkSensorRequest* XWalkSensorCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkSensorRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkSensorRequest* XWalkSensorCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkSensorRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkSensorCommandRequest.request)
+  return _msg;
+}
+inline void XWalkSensorCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkSensorRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkSensorCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkLineTrackCommandRequest
+
+// .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+inline bool XWalkLineTrackCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkLineTrackCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkLineTrackCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkLineTrackCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkLifecycleRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkLifecycleRequest&>(
+      ::xwalk::iw::v1::_XWalkLifecycleRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkLineTrackCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkLineTrackCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkLineTrackCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkLineTrackCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkLineTrackCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkLineTrackCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkLineTrackCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkLineTrackCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkLifecycleRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkLineTrackCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkLineTrackCommandRequest.request)
+  return _msg;
+}
+inline void XWalkLineTrackCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkLineTrackCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkSelfDriveCommandRequest
+
+// .xwalk.iw.v1.XWalkSelfDriveRequest request = 1;
+inline bool XWalkSelfDriveCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkSelfDriveCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkSelfDriveCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkSelfDriveRequest& XWalkSelfDriveCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkSelfDriveRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkSelfDriveRequest&>(
+      ::xwalk::iw::v1::_XWalkSelfDriveRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkSelfDriveRequest& XWalkSelfDriveCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSelfDriveCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkSelfDriveCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkSelfDriveRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkSelfDriveCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkSelfDriveRequest* XWalkSelfDriveCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkSelfDriveRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkSelfDriveRequest* XWalkSelfDriveCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkSelfDriveCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkSelfDriveRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkSelfDriveRequest* XWalkSelfDriveCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkSelfDriveRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkSelfDriveRequest* XWalkSelfDriveCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkSelfDriveRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkSelfDriveCommandRequest.request)
+  return _msg;
+}
+inline void XWalkSelfDriveCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkSelfDriveRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkSelfDriveCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkSoundCommandRequest
+
+// .xwalk.iw.v1.XWalkSoundRequest request = 1;
+inline bool XWalkSoundCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkSoundCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkSoundCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkSoundRequest& XWalkSoundCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkSoundRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkSoundRequest&>(
+      ::xwalk::iw::v1::_XWalkSoundRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkSoundRequest& XWalkSoundCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSoundCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkSoundCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkSoundRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkSoundCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkSoundRequest* XWalkSoundCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkSoundRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkSoundRequest* XWalkSoundCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkSoundCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkSoundRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkSoundRequest* XWalkSoundCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkSoundRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkSoundRequest* XWalkSoundCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkSoundRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkSoundCommandRequest.request)
+  return _msg;
+}
+inline void XWalkSoundCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkSoundRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkSoundCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkVoiceChatCommandRequest
+
+// .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+inline bool XWalkVoiceChatCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkVoiceChatCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkVoiceChatCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkVoiceChatCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkLifecycleRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkLifecycleRequest&>(
+      ::xwalk::iw::v1::_XWalkLifecycleRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkVoiceChatCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkVoiceChatCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkVoiceChatCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkVoiceChatCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkVoiceChatCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkVoiceChatCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkVoiceChatCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkVoiceChatCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkLifecycleRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkVoiceChatCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkVoiceChatCommandRequest.request)
+  return _msg;
+}
+inline void XWalkVoiceChatCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkVoiceChatCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkVoiceActiveCarCommandRequest
+
+// .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+inline bool XWalkVoiceActiveCarCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkVoiceActiveCarCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkVoiceActiveCarCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkVoiceActiveCarCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkLifecycleRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkLifecycleRequest&>(
+      ::xwalk::iw::v1::_XWalkLifecycleRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkVoiceActiveCarCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkVoiceActiveCarCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkVoiceActiveCarCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkVoiceActiveCarCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkVoiceActiveCarCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkVoiceActiveCarCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkVoiceActiveCarCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkVoiceActiveCarCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkLifecycleRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkVoiceActiveCarCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkVoiceActiveCarCommandRequest.request)
+  return _msg;
+}
+inline void XWalkVoiceActiveCarCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkVoiceActiveCarCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkGptCarCommandRequest
+
+// .xwalk.iw.v1.XWalkGptCarRequest request = 1;
+inline bool XWalkGptCarCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkGptCarCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkGptCarCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkGptCarRequest& XWalkGptCarCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkGptCarRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkGptCarRequest&>(
+      ::xwalk::iw::v1::_XWalkGptCarRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkGptCarRequest& XWalkGptCarCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkGptCarCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkGptCarCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkGptCarRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkGptCarCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkGptCarRequest* XWalkGptCarCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkGptCarRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkGptCarRequest* XWalkGptCarCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkGptCarCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkGptCarRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkGptCarRequest* XWalkGptCarCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkGptCarRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkGptCarRequest* XWalkGptCarCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkGptCarRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkGptCarCommandRequest.request)
+  return _msg;
+}
+inline void XWalkGptCarCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkGptCarRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkGptCarCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkVoiceControlledCarCommandRequest
+
+// .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+inline bool XWalkVoiceControlledCarCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkVoiceControlledCarCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkVoiceControlledCarCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkVoiceControlledCarCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkLifecycleRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkLifecycleRequest&>(
+      ::xwalk::iw::v1::_XWalkLifecycleRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkVoiceControlledCarCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkVoiceControlledCarCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkVoiceControlledCarCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkVoiceControlledCarCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkVoiceControlledCarCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkVoiceControlledCarCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkVoiceControlledCarCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkVoiceControlledCarCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkLifecycleRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkVoiceControlledCarCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkVoiceControlledCarCommandRequest.request)
+  return _msg;
+}
+inline void XWalkVoiceControlledCarCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkVoiceControlledCarCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkVoicePromptCarCommandRequest
+
+// .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+inline bool XWalkVoicePromptCarCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkVoicePromptCarCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkVoicePromptCarCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkVoicePromptCarCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkLifecycleRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkLifecycleRequest&>(
+      ::xwalk::iw::v1::_XWalkLifecycleRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkVoicePromptCarCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkVoicePromptCarCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkVoicePromptCarCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkVoicePromptCarCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkVoicePromptCarCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkVoicePromptCarCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkVoicePromptCarCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkVoicePromptCarCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkLifecycleRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkVoicePromptCarCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkVoicePromptCarCommandRequest.request)
+  return _msg;
+}
+inline void XWalkVoicePromptCarCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkVoicePromptCarCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkStorytellingRobotCommandRequest
+
+// .xwalk.iw.v1.XWalkLifecycleRequest request = 1;
+inline bool XWalkStorytellingRobotCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkStorytellingRobotCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkStorytellingRobotCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkStorytellingRobotCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkLifecycleRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkLifecycleRequest&>(
+      ::xwalk::iw::v1::_XWalkLifecycleRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkLifecycleRequest& XWalkStorytellingRobotCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkStorytellingRobotCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkStorytellingRobotCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkStorytellingRobotCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkStorytellingRobotCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkStorytellingRobotCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkStorytellingRobotCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkLifecycleRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkStorytellingRobotCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkLifecycleRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkLifecycleRequest* XWalkStorytellingRobotCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkLifecycleRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkStorytellingRobotCommandRequest.request)
+  return _msg;
+}
+inline void XWalkStorytellingRobotCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkLifecycleRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkStorytellingRobotCommandRequest.request)
+}
+
+// -------------------------------------------------------------------
+
+// XWalkCalibrateCommandRequest
+
+// .xwalk.iw.v1.XWalkCalibrationRequest request = 1;
+inline bool XWalkCalibrateCommandRequest::_internal_has_request() const {
+  return this != internal_default_instance() && _impl_.request_ != nullptr;
+}
+inline bool XWalkCalibrateCommandRequest::has_request() const {
+  return _internal_has_request();
+}
+inline void XWalkCalibrateCommandRequest::clear_request() {
+  if (GetArenaForAllocation() == nullptr && _impl_.request_ != nullptr) {
+    delete _impl_.request_;
+  }
+  _impl_.request_ = nullptr;
+}
+inline const ::xwalk::iw::v1::XWalkCalibrationRequest& XWalkCalibrateCommandRequest::_internal_request() const {
+  const ::xwalk::iw::v1::XWalkCalibrationRequest* p = _impl_.request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::xwalk::iw::v1::XWalkCalibrationRequest&>(
+      ::xwalk::iw::v1::_XWalkCalibrationRequest_default_instance_);
+}
+inline const ::xwalk::iw::v1::XWalkCalibrationRequest& XWalkCalibrateCommandRequest::request() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkCalibrateCommandRequest.request)
+  return _internal_request();
+}
+inline void XWalkCalibrateCommandRequest::unsafe_arena_set_allocated_request(
+    ::xwalk::iw::v1::XWalkCalibrationRequest* request) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.request_);
+  }
+  _impl_.request_ = request;
+  if (request) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:xwalk.iw.v1.XWalkCalibrateCommandRequest.request)
+}
+inline ::xwalk::iw::v1::XWalkCalibrationRequest* XWalkCalibrateCommandRequest::release_request() {
+
+  ::xwalk::iw::v1::XWalkCalibrationRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkCalibrationRequest* XWalkCalibrateCommandRequest::unsafe_arena_release_request() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkCalibrateCommandRequest.request)
+
+  ::xwalk::iw::v1::XWalkCalibrationRequest* temp = _impl_.request_;
+  _impl_.request_ = nullptr;
+  return temp;
+}
+inline ::xwalk::iw::v1::XWalkCalibrationRequest* XWalkCalibrateCommandRequest::_internal_mutable_request() {
+
+  if (_impl_.request_ == nullptr) {
+    auto* p = CreateMaybeMessage<::xwalk::iw::v1::XWalkCalibrationRequest>(GetArenaForAllocation());
+    _impl_.request_ = p;
+  }
+  return _impl_.request_;
+}
+inline ::xwalk::iw::v1::XWalkCalibrationRequest* XWalkCalibrateCommandRequest::mutable_request() {
+  ::xwalk::iw::v1::XWalkCalibrationRequest* _msg = _internal_mutable_request();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkCalibrateCommandRequest.request)
+  return _msg;
+}
+inline void XWalkCalibrateCommandRequest::set_allocated_request(::xwalk::iw::v1::XWalkCalibrationRequest* request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.request_;
+  }
+  if (request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(request);
+    if (message_arena != submessage_arena) {
+      request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, request, submessage_arena);
+    }
+
+  } else {
+
+  }
+  _impl_.request_ = request;
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkCalibrateCommandRequest.request)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

@@ -8,4 +8,4 @@ The [xWalkUtils](../../../xWalkHal/xWalkUtils/README.md) module contains:
 
 Generic utilities do not create hardware or platform services. Callers provide
 callbacks and contexts explicitly. Common non-member functions remain in the
-`xwalk::hal::common` namespace under `xWalkCommon`.
+`xwalk::hal::common` namespace under `xWalkLibraryCommon`.

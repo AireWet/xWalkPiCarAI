@@ -120,7 +120,10 @@ void writeWaveFixture(XWalkHal::stringview filename)
     XWalkHal::outputfilestream file(XWalkHal::filesystempath{XWalkHal::string(filename)},
         XWalkHal::FILE_OPEN_WRITE_TRUNCATE);
     file << waveData;
-    if (!file.good())
+    const hal::boolean fixtureWriteFailed =
+        static_cast<hal::boolean>(
+            !file.good());
+    if (fixtureWriteFailed)
     {
         XHAL_THROW_RUNTIME_ERROR("Music ALSA test could not write its WAVE fixture");
     }

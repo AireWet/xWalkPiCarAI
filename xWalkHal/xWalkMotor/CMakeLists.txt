@@ -13,8 +13,8 @@ if(XWALK_MOTOR_BUILD_HARDWARE_TESTS AND NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     message(FATAL_ERROR "xWalkMotor hardware tests require Linux I2C and GPIO support")
 endif()
 
-if(NOT TARGET xWalkCommon)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
 
 if(NOT TARGET xWalkPwm)
@@ -34,7 +34,7 @@ add_library(xWalkMotor STATIC
 
 target_include_directories(xWalkMotor PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkMotor PUBLIC cxx_std_17)
-target_link_libraries(xWalkMotor PUBLIC xWalkCommon xWalkPwm xWalkGpio)
+target_link_libraries(xWalkMotor PUBLIC xWalkLibraryCommon xWalkPwm xWalkGpio)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkMotor PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)

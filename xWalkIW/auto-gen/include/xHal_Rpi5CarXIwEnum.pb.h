@@ -77,6 +77,185 @@ inline bool XWalkI2cOperation_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<XWalkI2cOperation>(
     XWalkI2cOperation_descriptor(), name, value);
 }
+enum XWalkSoundOperation : int {
+  XWALK_SOUND_OPERATION_PLAY = 0,
+  XWALK_SOUND_OPERATION_VOLUME = 1,
+  XWALK_SOUND_OPERATION_MUSIC = 2,
+  XWALK_SOUND_OPERATION_STOP = 3,
+  XWalkSoundOperation_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  XWalkSoundOperation_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool XWalkSoundOperation_IsValid(int value);
+constexpr XWalkSoundOperation XWalkSoundOperation_MIN = XWALK_SOUND_OPERATION_PLAY;
+constexpr XWalkSoundOperation XWalkSoundOperation_MAX = XWALK_SOUND_OPERATION_STOP;
+constexpr int XWalkSoundOperation_ARRAYSIZE = XWalkSoundOperation_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* XWalkSoundOperation_descriptor();
+template<typename T>
+inline const std::string& XWalkSoundOperation_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, XWalkSoundOperation>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function XWalkSoundOperation_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    XWalkSoundOperation_descriptor(), enum_t_value);
+}
+inline bool XWalkSoundOperation_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, XWalkSoundOperation* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<XWalkSoundOperation>(
+    XWalkSoundOperation_descriptor(), name, value);
+}
+enum XWalkLifecycleAction : int {
+  XWALK_LIFECYCLE_ACTION_START = 0,
+  XWALK_LIFECYCLE_ACTION_STOP = 1,
+  XWalkLifecycleAction_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  XWalkLifecycleAction_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool XWalkLifecycleAction_IsValid(int value);
+constexpr XWalkLifecycleAction XWalkLifecycleAction_MIN = XWALK_LIFECYCLE_ACTION_START;
+constexpr XWalkLifecycleAction XWalkLifecycleAction_MAX = XWALK_LIFECYCLE_ACTION_STOP;
+constexpr int XWalkLifecycleAction_ARRAYSIZE = XWalkLifecycleAction_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* XWalkLifecycleAction_descriptor();
+template<typename T>
+inline const std::string& XWalkLifecycleAction_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, XWalkLifecycleAction>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function XWalkLifecycleAction_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    XWalkLifecycleAction_descriptor(), enum_t_value);
+}
+inline bool XWalkLifecycleAction_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, XWalkLifecycleAction* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<XWalkLifecycleAction>(
+    XWalkLifecycleAction_descriptor(), name, value);
+}
+enum XWalkMoveAction : int {
+  XWALK_MOVE_ACTION_FORWARD = 0,
+  XWALK_MOVE_ACTION_BACKWARD = 1,
+  XWALK_MOVE_ACTION_DEMO = 2,
+  XWalkMoveAction_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  XWalkMoveAction_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool XWalkMoveAction_IsValid(int value);
+constexpr XWalkMoveAction XWalkMoveAction_MIN = XWALK_MOVE_ACTION_FORWARD;
+constexpr XWalkMoveAction XWalkMoveAction_MAX = XWALK_MOVE_ACTION_DEMO;
+constexpr int XWalkMoveAction_ARRAYSIZE = XWalkMoveAction_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* XWalkMoveAction_descriptor();
+template<typename T>
+inline const std::string& XWalkMoveAction_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, XWalkMoveAction>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function XWalkMoveAction_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    XWalkMoveAction_descriptor(), enum_t_value);
+}
+inline bool XWalkMoveAction_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, XWalkMoveAction* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<XWalkMoveAction>(
+    XWalkMoveAction_descriptor(), name, value);
+}
+enum XWalkTurnDirection : int {
+  XWALK_TURN_DIRECTION_LEFT = 0,
+  XWALK_TURN_DIRECTION_RIGHT = 1,
+  XWalkTurnDirection_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  XWalkTurnDirection_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool XWalkTurnDirection_IsValid(int value);
+constexpr XWalkTurnDirection XWalkTurnDirection_MIN = XWALK_TURN_DIRECTION_LEFT;
+constexpr XWalkTurnDirection XWalkTurnDirection_MAX = XWALK_TURN_DIRECTION_RIGHT;
+constexpr int XWalkTurnDirection_ARRAYSIZE = XWalkTurnDirection_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* XWalkTurnDirection_descriptor();
+template<typename T>
+inline const std::string& XWalkTurnDirection_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, XWalkTurnDirection>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function XWalkTurnDirection_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    XWalkTurnDirection_descriptor(), enum_t_value);
+}
+inline bool XWalkTurnDirection_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, XWalkTurnDirection* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<XWalkTurnDirection>(
+    XWalkTurnDirection_descriptor(), name, value);
+}
+enum XWalkCameraAxis : int {
+  XWALK_CAMERA_AXIS_PAN = 0,
+  XWALK_CAMERA_AXIS_TILT = 1,
+  XWalkCameraAxis_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  XWalkCameraAxis_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool XWalkCameraAxis_IsValid(int value);
+constexpr XWalkCameraAxis XWalkCameraAxis_MIN = XWALK_CAMERA_AXIS_PAN;
+constexpr XWalkCameraAxis XWalkCameraAxis_MAX = XWALK_CAMERA_AXIS_TILT;
+constexpr int XWalkCameraAxis_ARRAYSIZE = XWalkCameraAxis_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* XWalkCameraAxis_descriptor();
+template<typename T>
+inline const std::string& XWalkCameraAxis_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, XWalkCameraAxis>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function XWalkCameraAxis_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    XWalkCameraAxis_descriptor(), enum_t_value);
+}
+inline bool XWalkCameraAxis_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, XWalkCameraAxis* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<XWalkCameraAxis>(
+    XWalkCameraAxis_descriptor(), name, value);
+}
+enum XWalkSensorType : int {
+  XWALK_SENSOR_TYPE_DISTANCE = 0,
+  XWALK_SENSOR_TYPE_GRAYSCALE = 1,
+  XWalkSensorType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  XWalkSensorType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool XWalkSensorType_IsValid(int value);
+constexpr XWalkSensorType XWalkSensorType_MIN = XWALK_SENSOR_TYPE_DISTANCE;
+constexpr XWalkSensorType XWalkSensorType_MAX = XWALK_SENSOR_TYPE_GRAYSCALE;
+constexpr int XWalkSensorType_ARRAYSIZE = XWalkSensorType_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* XWalkSensorType_descriptor();
+template<typename T>
+inline const std::string& XWalkSensorType_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, XWalkSensorType>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function XWalkSensorType_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    XWalkSensorType_descriptor(), enum_t_value);
+}
+inline bool XWalkSensorType_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, XWalkSensorType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<XWalkSensorType>(
+    XWalkSensorType_descriptor(), name, value);
+}
+enum XWalkCalibrationMode : int {
+  XWALK_CALIBRATION_MODE_COMPLETE = 0,
+  XWALK_CALIBRATION_MODE_GRAYSCALE = 1,
+  XWALK_CALIBRATION_MODE_SERVO_MOTOR = 2,
+  XWalkCalibrationMode_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  XWalkCalibrationMode_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool XWalkCalibrationMode_IsValid(int value);
+constexpr XWalkCalibrationMode XWalkCalibrationMode_MIN = XWALK_CALIBRATION_MODE_COMPLETE;
+constexpr XWalkCalibrationMode XWalkCalibrationMode_MAX = XWALK_CALIBRATION_MODE_SERVO_MOTOR;
+constexpr int XWalkCalibrationMode_ARRAYSIZE = XWalkCalibrationMode_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* XWalkCalibrationMode_descriptor();
+template<typename T>
+inline const std::string& XWalkCalibrationMode_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, XWalkCalibrationMode>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function XWalkCalibrationMode_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    XWalkCalibrationMode_descriptor(), enum_t_value);
+}
+inline bool XWalkCalibrationMode_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, XWalkCalibrationMode* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<XWalkCalibrationMode>(
+    XWalkCalibrationMode_descriptor(), name, value);
+}
 // ===================================================================
 
 
@@ -105,6 +284,41 @@ template <> struct is_proto_enum< ::xwalk::iw::v1::XWalkI2cOperation> : ::std::t
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::xwalk::iw::v1::XWalkI2cOperation>() {
   return ::xwalk::iw::v1::XWalkI2cOperation_descriptor();
+}
+template <> struct is_proto_enum< ::xwalk::iw::v1::XWalkSoundOperation> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::xwalk::iw::v1::XWalkSoundOperation>() {
+  return ::xwalk::iw::v1::XWalkSoundOperation_descriptor();
+}
+template <> struct is_proto_enum< ::xwalk::iw::v1::XWalkLifecycleAction> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::xwalk::iw::v1::XWalkLifecycleAction>() {
+  return ::xwalk::iw::v1::XWalkLifecycleAction_descriptor();
+}
+template <> struct is_proto_enum< ::xwalk::iw::v1::XWalkMoveAction> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::xwalk::iw::v1::XWalkMoveAction>() {
+  return ::xwalk::iw::v1::XWalkMoveAction_descriptor();
+}
+template <> struct is_proto_enum< ::xwalk::iw::v1::XWalkTurnDirection> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::xwalk::iw::v1::XWalkTurnDirection>() {
+  return ::xwalk::iw::v1::XWalkTurnDirection_descriptor();
+}
+template <> struct is_proto_enum< ::xwalk::iw::v1::XWalkCameraAxis> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::xwalk::iw::v1::XWalkCameraAxis>() {
+  return ::xwalk::iw::v1::XWalkCameraAxis_descriptor();
+}
+template <> struct is_proto_enum< ::xwalk::iw::v1::XWalkSensorType> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::xwalk::iw::v1::XWalkSensorType>() {
+  return ::xwalk::iw::v1::XWalkSensorType_descriptor();
+}
+template <> struct is_proto_enum< ::xwalk::iw::v1::XWalkCalibrationMode> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::xwalk::iw::v1::XWalkCalibrationMode>() {
+  return ::xwalk::iw::v1::XWalkCalibrationMode_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

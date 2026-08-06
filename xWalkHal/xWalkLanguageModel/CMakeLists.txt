@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(xWalkLanguageModel LANGUAGES CXX)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/XWalkDependencies.cmake)
+
 option(XWALK_LANGUAGE_MODEL_BUILD_HOST_TESTS "Build xWalkLanguageModel host tests" OFF)
 option(XWALK_LANGUAGE_MODEL_BUILD_HARDWARE_TESTS "Build xWalkLanguageModel target tests" OFF)
 option(XWALK_LANGUAGE_MODEL_BUILD_OLLAMA_PROVIDER "Build the Ollama provider backend" OFF)
@@ -12,8 +14,8 @@ if(XWALK_LANGUAGE_MODEL_BUILD_HOST_TESTS OR
     set(XWALK_LANGUAGE_MODEL_NEEDS_OLLAMA ON)
 endif()
 
-if(NOT TARGET xWalkCommon)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
 
 add_library(xWalkLanguageModel STATIC
@@ -23,7 +25,7 @@ add_library(xWalkLanguageModel STATIC
 
 target_include_directories(xWalkLanguageModel PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkLanguageModel PUBLIC cxx_std_17)
-target_link_libraries(xWalkLanguageModel PUBLIC xWalkCommon)
+target_link_libraries(xWalkLanguageModel PUBLIC xWalkLibraryCommon)
 
 if(XWALK_LANGUAGE_MODEL_NEEDS_OLLAMA)
     find_package(CURL REQUIRED)

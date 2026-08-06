@@ -46,7 +46,10 @@ namespace xwalk::hal
 string XWalkVoiceAssistant::listen(uint32 timeoutMs)
 {
     requireRunning();
-    if (!speechToTextPointer->isReady())
+    const hal::boolean readyNotMatched =
+        static_cast<hal::boolean>(
+            !speechToTextPointer->isReady());
+    if (readyNotMatched)
     {
         XHAL_THROW_RUNTIME_ERROR("Speech-to-text backend is not ready");
     }
@@ -71,7 +74,10 @@ string XWalkVoiceAssistant::think(stringview text, stringview imagePath)
 void XWalkVoiceAssistant::say(stringview text)
 {
     requireRunning();
-    if (!text.empty())
+    const hal::boolean textAvailable =
+        static_cast<hal::boolean>(
+            !text.empty());
+    if (textAvailable)
     {
         invokeText(callbacks.beforeSay, text);
         textToSpeechPointer->speak(text);
@@ -95,7 +101,10 @@ string XWalkVoiceAssistant::runRound(uint32 timeoutMs, stringview imagePath)
 {
     requireRunning();
     const string recognizedText = listen(timeoutMs);
-    if (recognizedText.empty())
+    const hal::boolean recognizedTextEmpty =
+        static_cast<hal::boolean>(
+            recognizedText.empty());
+    if (recognizedTextEmpty)
     {
         invokeEvent(callbacks.onRoundComplete);
         return {};

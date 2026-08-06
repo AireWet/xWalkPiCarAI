@@ -11,8 +11,8 @@ if(XWALK_USER_BUTTON_BUILD_HARDWARE_TESTS AND NOT CMAKE_SYSTEM_NAME STREQUAL "Li
     message(FATAL_ERROR "xWalkUserButton hardware tests require the Linux GPIO API")
 endif()
 
-if(NOT TARGET xWalkCommon)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
 
 if(NOT TARGET xWalkGpio)
@@ -26,7 +26,7 @@ add_library(xWalkUserButton STATIC
 
 target_include_directories(xWalkUserButton PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkUserButton PUBLIC cxx_std_17)
-target_link_libraries(xWalkUserButton PUBLIC xWalkCommon xWalkGpio)
+target_link_libraries(xWalkUserButton PUBLIC xWalkLibraryCommon xWalkGpio)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkUserButton PRIVATE

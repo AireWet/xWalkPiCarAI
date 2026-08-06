@@ -47,6 +47,14 @@ current C++ implementation.
 - [Ultrasonic distance](Project%20Ultrasonic.md)
 - [Community adaptations](Community%20Tutorials.md)
 
+### Tooling and deployment
+
+- [xWalkTool overview](xWalkTool%20Overview.md)
+- [Licence-key workflow](License%20Key%20Workflow.md)
+- [xWalk licence tool](xWalk%20Licence%20Tool%20Guide.md)
+- [xWalk environment loader](xWalk%20Environment%20Loader%20Guide.md)
+- [Raspberry Pi deployment](Deployment%20Guide.md)
+
 ## Image: Robot HAT overview
 
 ![Robot HAT overview](../image/robot_hat_pic.png)

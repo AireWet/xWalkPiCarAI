@@ -78,8 +78,11 @@ void XWalkLineTracker::validateCalibration(const XWalkLineCalibration& calibrati
 {
     for (uint32 channel = 0U; channel < XHAL_RPI5CAR_LINE_TRACKER_CHANNEL_COUNT; ++channel)
     {
-        if (!XHAL_IS_FINITE(calibration.slopes[channel]) ||
-            !XHAL_IS_FINITE(calibration.offsets[channel]))
+        const hal::boolean calibrationSlopesChannelInvalid =
+            static_cast<hal::boolean>(
+                !XHAL_IS_FINITE(calibration.slopes[channel]) ||
+            !XHAL_IS_FINITE(calibration.offsets[channel]));
+        if (calibrationSlopesChannelInvalid)
         {
             XHAL_THROW_INVALID_ARGUMENT("Line-tracker calibration values must be finite");
         }
@@ -103,7 +106,10 @@ void XWalkLineTracker::validateCalibration(const XWalkLineCalibration& calibrati
  */
 int32 XWalkLineTracker::roundReading(float64 value)
 {
-    if (!XHAL_IS_FINITE(value))
+    const hal::boolean valueNotFinite =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(value));
+    if (valueNotFinite)
     {
         XHAL_THROW_INVALID_ARGUMENT("Calibrated line-tracker value must be finite");
     }

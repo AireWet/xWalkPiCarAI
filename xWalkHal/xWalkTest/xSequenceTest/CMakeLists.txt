@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.16)
 
 project(xSequenceTest LANGUAGES CXX)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkLibrary/XWalkDependencies.cmake)
+
 set(XWALK_SEQUENCE_TEST_CONFIG_OUTPUT_DIRECTORY
     ${CMAKE_CURRENT_BINARY_DIR}/config)
 set(XWALK_SEQUENCE_TEST_YAML_OUTPUT
@@ -59,7 +61,7 @@ add_library(xWalkPiperStreamSequence
     core/src/xHal_Rpi5CarPiperStreamSequence.cpp)
 target_include_directories(xWalkPiperStreamSequence PUBLIC core/include)
 target_compile_features(xWalkPiperStreamSequence PUBLIC cxx_std_17)
-target_link_libraries(xWalkPiperStreamSequence PUBLIC xWalkCommon)
+target_link_libraries(xWalkPiperStreamSequence PUBLIC xWalkLibraryCommon)
 
 add_library(xWalkToneSequence
     core/src/xHal_Rpi5CarToneSequence.cpp)
@@ -135,7 +137,7 @@ if(XWALK_HAL_BUILD_RPI)
     target_compile_definitions(xWalkSequenceTestRunner PRIVATE
         XHAL_RPI5CAR_SEQUENCE_TEST_YAML_PATH="${XWALK_SEQUENCE_TEST_YAML_OUTPUT}")
     target_link_libraries(xWalkSequenceTestRunner
-        PUBLIC xWalkCommon
+        PUBLIC xWalkLibraryCommon
         PRIVATE
         xWalkButtonEventSequenceLinux
         xWalkGpioLinux

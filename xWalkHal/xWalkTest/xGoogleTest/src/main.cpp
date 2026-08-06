@@ -51,7 +51,10 @@ int main(int argumentCount, char* argumentValues[])
     std::error_code pathError;
     const xwalk::hal::filesystempath executablePath =
         std::filesystem::read_symlink("/proc/self/exe", pathError);
-    if (pathError || executablePath.empty())
+    const hal::boolean pathErrorExecutablePathInvalid =
+        static_cast<hal::boolean>(
+            pathError || executablePath.empty());
+    if (pathErrorExecutablePathInvalid)
     {
         std::cerr << "xGoogleTest path error: cannot resolve /proc/self/exe: "
                   << pathError.message() << '\n';
@@ -64,9 +67,10 @@ int main(int argumentCount, char* argumentValues[])
     xwalk::hal::filesystempath runtimeConfigurationPath =
         executableDirectory / "xHal_Rpi5CarGoogleTestConfig.yml";
     xwalk::hal::string error;
-    if (!xwalk::hal::test::TestRunner::processProfile(
-            argumentCount, argumentValues, profile,
-            runtimeConfigurationPath, error))
+    const xwalk::hal::boolean profileProcessed =
+        xwalk::hal::test::TestRunner::processProfile(argumentCount,
+            argumentValues, profile, runtimeConfigurationPath, error);
+    if (profileProcessed == false)
     {
         std::cerr << "xGoogleTest profile error: " << error << '\n';
         return EXIT_FAILURE;
@@ -97,14 +101,17 @@ int main(int argumentCount, char* argumentValues[])
             executableDirectory /
             (profile == xwalk::hal::test::TestProfile::Hardware
                     ? "hardware_test_config.xml" : "test_config.xml"));
-        if (!configuration.load(
-                configurationPath, runner.availableTests(), error))
+        const xwalk::hal::boolean configurationLoaded = configuration.load(
+            configurationPath, runner.availableTests(), error);
+        if (configurationLoaded == false)
         {
             std::cerr << "xGoogleTest configuration error: " << error << '\n';
             std::cerr << runner.validTestsText();
             return EXIT_FAILURE;
         }
-        if (!runner.processSelections(argumentCount, argumentValues, error))
+        const xwalk::hal::boolean selectionsProcessed =
+            runner.processSelections(argumentCount, argumentValues, error);
+        if (selectionsProcessed == false)
         {
             std::cerr << "xGoogleTest selection error: " << error << '\n';
             std::cerr << runner.validTestsText();

@@ -72,7 +72,10 @@ boolean XWalkTrace::accepts(XWalkTraceLevel level) const noexcept
  */
 void XWalkTrace::write(XWalkTraceLevel level, stringview message) const
 {
-    if (accepts(level))
+    const hal::boolean levelAccepted =
+        static_cast<hal::boolean>(
+            accepts(level));
+    if (levelAccepted)
     {
         outputCallback(outputContextPointer, level, message);
     }

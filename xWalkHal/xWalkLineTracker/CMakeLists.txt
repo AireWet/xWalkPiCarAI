@@ -15,8 +15,8 @@ if(XWALK_LINE_TRACKER_BUILD_HOST_TESTS OR XWALK_LINE_TRACKER_BUILD_HARDWARE_TEST
     include(CTest)
 endif()
 
-if(NOT TARGET xWalkCommon)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
 
 if(NOT TARGET xWalkAdc)
@@ -32,7 +32,7 @@ add_library(xWalkLineTracker STATIC
 
 target_include_directories(xWalkLineTracker PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkLineTracker PUBLIC cxx_std_17)
-target_link_libraries(xWalkLineTracker PUBLIC xWalkAdc xWalkCommon)
+target_link_libraries(xWalkLineTracker PUBLIC xWalkAdc xWalkLibraryCommon)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkLineTracker PRIVATE

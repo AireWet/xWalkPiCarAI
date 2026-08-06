@@ -1,12 +1,16 @@
 cmake_minimum_required(VERSION 3.16)
 project(xWalkGPT LANGUAGES CXX)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/XWalkDependencies.cmake)
+
 option(XWALK_GPT_BUILD_HOST_TESTS "Build xWalkGPT host tests" OFF)
 option(XWALK_GPT_BUILD_HARDWARE_TESTS "Build xWalkGPT target tests" OFF)
 option(XWALK_GPT_BUILD_STT_ALSA_BACKEND "Build the ALSA speech-to-text backend" OFF)
 option(XWALK_GPT_BUILD_TTS_ALSA_BACKEND "Build the ALSA text-to-speech backend" OFF)
 option(XWALK_GPT_BUILD_VOSK_PROVIDER "Build the runtime-loaded Vosk provider" OFF)
 option(XWALK_GPT_BUILD_ESPEAK_PROVIDER "Build the Espeak process provider" OFF)
+option(XWALK_GPT_BUILD_PIPER_PROVIDER "Build the Piper process provider" OFF)
+option(XWALK_GPT_BUILD_PICO2WAVE_PROVIDER "Build the Pico2Wave process provider" OFF)
 
 set(XWALK_GPT_NEEDS_STT_ALSA OFF)
 if(XWALK_GPT_BUILD_HOST_TESTS OR XWALK_GPT_BUILD_HARDWARE_TESTS OR
@@ -20,7 +24,8 @@ if(XWALK_GPT_BUILD_HOST_TESTS OR XWALK_GPT_BUILD_HARDWARE_TESTS OR
     set(XWALK_GPT_NEEDS_TTS_ALSA ON)
 endif()
 
-if((XWALK_GPT_BUILD_VOSK_PROVIDER OR XWALK_GPT_BUILD_ESPEAK_PROVIDER) AND
+if((XWALK_GPT_BUILD_VOSK_PROVIDER OR XWALK_GPT_BUILD_ESPEAK_PROVIDER OR
+    XWALK_GPT_BUILD_PIPER_PROVIDER OR XWALK_GPT_BUILD_PICO2WAVE_PROVIDER) AND
     NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     message(FATAL_ERROR "xWalkGPT offline voice providers require Linux")
 endif()
@@ -32,8 +37,8 @@ endif()
 
 set(XWALK_BOARD_CONTROL_BUILD_HOST_TESTS ${XWALK_GPT_BUILD_HOST_TESTS})
 
-if(NOT TARGET xWalkCommon)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
 
 if(NOT TARGET xWalkBoardControl)
@@ -60,7 +65,7 @@ add_library(xWalkGPT STATIC
 
 target_include_directories(xWalkGPT PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkGPT PUBLIC cxx_std_17)
-target_link_libraries(xWalkGPT PUBLIC xWalkBoardControl xWalkCommon)
+target_link_libraries(xWalkGPT PUBLIC xWalkBoardControl xWalkLibraryCommon)
 
 if(XWALK_GPT_NEEDS_STT_ALSA)
     find_package(ALSA REQUIRED)
@@ -114,6 +119,32 @@ if(XWALK_GPT_BUILD_ESPEAK_PROVIDER)
     target_link_libraries(xWalkTextToSpeechEspeak PUBLIC xWalkTextToSpeechAlsa)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         target_compile_options(xWalkTextToSpeechEspeak PRIVATE
+            -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
+    endif()
+endif()
+
+if(XWALK_GPT_BUILD_PIPER_PROVIDER)
+    add_library(xWalkTextToSpeechPiper STATIC
+        hardware/src/xHal_Rpi5CarTextToSpeechPiper.cpp)
+    target_include_directories(xWalkTextToSpeechPiper PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/hardware/include)
+    target_compile_features(xWalkTextToSpeechPiper PUBLIC cxx_std_17)
+    target_link_libraries(xWalkTextToSpeechPiper PUBLIC xWalkGPT)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(xWalkTextToSpeechPiper PRIVATE
+            -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
+    endif()
+endif()
+
+if(XWALK_GPT_BUILD_PICO2WAVE_PROVIDER)
+    add_library(xWalkTextToSpeechPico2Wave STATIC
+        hardware/src/xHal_Rpi5CarTextToSpeechPico2Wave.cpp)
+    target_include_directories(xWalkTextToSpeechPico2Wave PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/hardware/include)
+    target_compile_features(xWalkTextToSpeechPico2Wave PUBLIC cxx_std_17)
+    target_link_libraries(xWalkTextToSpeechPico2Wave PUBLIC xWalkGPT)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(xWalkTextToSpeechPico2Wave PRIVATE
             -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
     endif()
 endif()

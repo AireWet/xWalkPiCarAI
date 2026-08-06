@@ -206,26 +206,38 @@ void XWalkLanguageModelOllama::validateConstruction(
     {
         XHAL_THROW_INVALID_ARGUMENT("Language-model HTTP dialect is invalid");
     }
-    if (endpoint.empty() || model.empty() || (!httpEndpoint && !httpsEndpoint) || !hasChatSuffix ||
+    const hal::boolean endpointModelHttpEndpointInvalid =
+        static_cast<hal::boolean>(
+            endpoint.empty() || model.empty() || (!httpEndpoint && !httpsEndpoint) || !hasChatSuffix ||
         (endpoint.find('\0') != stringview::npos) || (endpoint.find('\n') != stringview::npos) ||
-        (endpoint.find('\r') != stringview::npos))
+        (endpoint.find('\r') != stringview::npos));
+    if (endpointModelHttpEndpointInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Ollama endpoint or model is invalid");
     }
-    if ((dialect == XWalkLanguageModelHttpDialect::OpenAiChatCompletions) &&
-        (!httpsEndpoint || apiKey.empty()))
+    const hal::boolean secureEndpointConfigurationInvalid =
+        static_cast<hal::boolean>(
+            (dialect == XWalkLanguageModelHttpDialect::OpenAiChatCompletions) &&
+        (!httpsEndpoint || apiKey.empty()));
+    if (secureEndpointConfigurationInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT(
             "OpenAI-compatible providers require HTTPS and a non-empty API key");
     }
-    if ((dialect == XWalkLanguageModelHttpDialect::Ollama) && !apiKey.empty())
+    const hal::boolean ollamaCredentialConfigured =
+        static_cast<hal::boolean>(
+            (dialect == XWalkLanguageModelHttpDialect::Ollama) && !apiKey.empty());
+    if (ollamaCredentialConfigured)
     {
         XHAL_THROW_INVALID_ARGUMENT("Ollama does not accept a configured API key");
     }
-    if ((apiKey.size() > XHAL_RPI5CAR_LANGUAGE_MODEL_HTTP_MAXIMUM_API_KEY_BYTES) ||
+    const hal::boolean apiKeyNRInvalid =
+        static_cast<hal::boolean>(
+            (apiKey.size() > XHAL_RPI5CAR_LANGUAGE_MODEL_HTTP_MAXIMUM_API_KEY_BYTES) ||
         (apiKey.find('\0') != stringview::npos) ||
         (apiKey.find('\n') != stringview::npos) ||
-        (apiKey.find('\r') != stringview::npos))
+        (apiKey.find('\r') != stringview::npos));
+    if (apiKeyNRInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Language-model API key is invalid");
     }
@@ -265,7 +277,10 @@ void XWalkLanguageModelOllama::validateRole(XWalkLanguageModelRole role)
  */
 void XWalkLanguageModelOllama::validateText(stringview text)
 {
-    if (text.size() > XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_TEXT_BYTES)
+    const hal::boolean textTooLarge =
+        static_cast<hal::boolean>(
+            text.size() > XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_TEXT_BYTES);
+    if (textTooLarge)
     {
         XHAL_THROW_OUT_OF_RANGE("Ollama text exceeds its bounded byte count");
     }

@@ -59,7 +59,10 @@ namespace xwalk::hal
  */
 uint8 XWalkMusicAlsa::volumePercent(float64 normalizedVolume)
 {
-    if (!XHAL_IS_FINITE(normalizedVolume))
+    const hal::boolean normalizedVolumeNotFinite =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(normalizedVolume));
+    if (normalizedVolumeNotFinite)
     {
         XHAL_THROW_INVALID_ARGUMENT("Music ALSA volume must be finite");
     }
@@ -108,7 +111,10 @@ void XWalkMusicAlsa::playSound(contextpointer context, stringview filename,
     XWalkMusicAlsaAudioData audioData =
         self.operations.decodeAudio(self.decoderContext, filename);
     validateAudioData(audioData);
-    if (normalizedVolume.has_value())
+    const hal::boolean normalizedVolumeProvided =
+        static_cast<hal::boolean>(
+            normalizedVolume.has_value());
+    if (normalizedVolumeProvided)
     {
         self.audioBackend->setVolume(volumePercent(*normalizedVolume));
     }
@@ -135,7 +141,10 @@ void XWalkMusicAlsa::playSoundBackground(contextpointer context,
     XWalkMusicAlsaAudioData audioData =
         self.operations.decodeAudio(self.decoderContext, filename);
     validateAudioData(audioData);
-    if (normalizedVolume.has_value())
+    const hal::boolean normalizedVolumeProvided =
+        static_cast<hal::boolean>(
+            normalizedVolume.has_value());
+    if (normalizedVolumeProvided)
     {
         self.audioBackend->setVolume(volumePercent(*normalizedVolume));
     }
@@ -174,7 +183,10 @@ void XWalkMusicAlsa::playMusic(contextpointer context, stringview filename,
     const float64 startFrameValue = startSeconds * sampleRateHz;
     const float64 maximumStartFrame =
         static_cast<float64>(std::numeric_limits<size>::max());
-    if (!XHAL_IS_FINITE(startFrameValue) || (startFrameValue > maximumStartFrame))
+    const hal::boolean startFrameMaximumStartFrameInvalid =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(startFrameValue) || (startFrameValue > maximumStartFrame));
+    if (startFrameMaximumStartFrameInvalid)
     {
         XHAL_THROW_OUT_OF_RANGE("Music ALSA playback offset is unrepresentable");
     }
@@ -293,7 +305,10 @@ float64 XWalkMusicAlsa::getSoundLength(contextpointer context, stringview filena
 void XWalkMusicAlsa::playTone(contextpointer context, const bytevector& pcmData,
     uint32 sampleRateHz, uint8 channelCount)
 {
-    if (pcmData.empty())
+    const hal::boolean pcmDataEmpty =
+        static_cast<hal::boolean>(
+            pcmData.empty());
+    if (pcmDataEmpty)
     {
         return;
     }

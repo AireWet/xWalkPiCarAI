@@ -91,13 +91,19 @@ float64vector XWalkRobot::newList(float64 defaultValue) const
  */
 void XWalkRobot::validateAngles(const float64vector& angles, stringview description) const
 {
-    if (angles.size() != servoCountValue)
+    const hal::boolean anglesServoCountDifferent =
+        static_cast<hal::boolean>(
+            angles.size() != servoCountValue);
+    if (anglesServoCountDifferent)
     {
         XHAL_THROW_INVALID_ARGUMENT_DETAIL(description, " count must match registered servos");
     }
     for (const float64 angle : angles)
     {
-        if (!XHAL_IS_FINITE(angle))
+        const hal::boolean angleNotFinite =
+            static_cast<hal::boolean>(
+                !XHAL_IS_FINITE(angle));
+        if (angleNotFinite)
         {
             XHAL_THROW_INVALID_ARGUMENT_DETAIL(description, " values must be finite");
         }
@@ -121,8 +127,11 @@ void XWalkRobot::validateAngles(const float64vector& angles, stringview descript
  */
 float64vector XWalkRobot::parseOffsets(stringview serializedOffsets) const
 {
-    if ((serializedOffsets.size() < 2U) || (serializedOffsets.front() != '[') ||
-        (serializedOffsets.back() != ']'))
+    const hal::boolean serializedOffsetsInvalid =
+        static_cast<hal::boolean>(
+            (serializedOffsets.size() < 2U) || (serializedOffsets.front() != '[') ||
+        (serializedOffsets.back() != ']'));
+    if (serializedOffsetsInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Robot offset configuration is malformed");
     }
@@ -130,19 +139,33 @@ float64vector XWalkRobot::parseOffsets(stringview serializedOffsets) const
     const string content(serializedOffsets.substr(1U, serializedOffsets.size() - 2U));
     float64vector parsedOffsets;
     size tokenStart = 0U;
-    while (tokenStart <= content.size())
+    const hal::boolean processingLoopRequested{true};
+    while (processingLoopRequested)
     {
+        const hal::boolean tokenAvailable =
+            static_cast<hal::boolean>(
+                tokenStart <= content.size());
+        if (tokenAvailable == false)
+        {
+            break;
+        }
         const size separator = content.find(',', tokenStart);
         const size tokenLength = (separator == string::npos) ? string::npos : separator - tokenStart;
         const string token = content.substr(tokenStart, tokenLength);
-        if (token.empty())
+        const hal::boolean tokenEmpty =
+            static_cast<hal::boolean>(
+                token.empty());
+        if (tokenEmpty)
         {
             XHAL_THROW_INVALID_ARGUMENT("Robot offset configuration contains an empty value");
         }
 
         size parsedLength = 0U;
         const float64 parsedValue = common::parseFloat64(token, parsedLength);
-        if ((parsedLength != token.size()) || !XHAL_IS_FINITE(parsedValue))
+        const hal::boolean parsedLengthTokenParsedInvalid =
+            static_cast<hal::boolean>(
+                (parsedLength != token.size()) || !XHAL_IS_FINITE(parsedValue));
+        if (parsedLengthTokenParsedInvalid)
         {
             XHAL_THROW_INVALID_ARGUMENT("Robot offset configuration contains an invalid value");
         }
@@ -219,7 +242,10 @@ XWalkRobot::XWalkRobot(XWalkConfigStore& store, stringview name, uint32 initiali
     configStore(&store), nameValue(name), offsetKeyValue(string(name) + "_servo_offset_list"),
     initializationDelayMsValue(initializationDelayMs)
 {
-    if (name.empty())
+    const hal::boolean nameEmpty =
+        static_cast<hal::boolean>(
+            name.empty());
+    if (nameEmpty)
     {
         XHAL_THROW_INVALID_ARGUMENT("Robot name must not be empty");
     }
@@ -255,7 +281,10 @@ XWalkRobot::~XWalkRobot() = default;
  */
 void XWalkRobot::addServo(XWalkServo& servo, float64 initialAngleDegrees)
 {
-    if (initializedValue || !XHAL_IS_FINITE(initialAngleDegrees))
+    const hal::boolean initializedInitialAngleDegreesInvalid =
+        static_cast<hal::boolean>(
+            initializedValue || !XHAL_IS_FINITE(initialAngleDegrees));
+    if (initializedInitialAngleDegreesInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Robot servo registration is invalid");
     }
@@ -293,7 +322,10 @@ void XWalkRobot::initialize(const uint32vector& initializationOrder)
     }
 
     uint32vector order = initializationOrder;
-    if (order.empty())
+    const hal::boolean orderEmpty =
+        static_cast<hal::boolean>(
+            order.empty());
+    if (orderEmpty)
     {
         for (uint32 index = 0U; index < servoCountValue; ++index)
         {

@@ -92,9 +92,12 @@ void XWalkSpiLinux::configure(const XWalkSpiConfiguration& configuration)
     uint8 mode = configuration.mode;
     uint8 bitsPerWord = configuration.bitsPerWord;
     uint32 speedHz = configuration.speedHz;
-    if ((::ioctl(fileDescriptor, SPI_IOC_WR_MODE, &mode) < 0) ||
+    const hal::boolean fileDescriptorModeBitsPerWordInvalid =
+        static_cast<hal::boolean>(
+            (::ioctl(fileDescriptor, SPI_IOC_WR_MODE, &mode) < 0) ||
         (::ioctl(fileDescriptor, SPI_IOC_WR_BITS_PER_WORD, &bitsPerWord) < 0) ||
-        (::ioctl(fileDescriptor, SPI_IOC_WR_MAX_SPEED_HZ, &speedHz) < 0))
+        (::ioctl(fileDescriptor, SPI_IOC_WR_MAX_SPEED_HZ, &speedHz) < 0));
+    if (fileDescriptorModeBitsPerWordInvalid)
     {
         ::close(fileDescriptor);
         fileDescriptor = -1;

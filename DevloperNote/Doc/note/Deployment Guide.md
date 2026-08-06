@@ -8,7 +8,9 @@ peripheral must still be verified on the target. A source build is not proof tha
 
 Required build and runtime components are a C++ compiler, CMake, Ninja, ALSA, libcurl, libsndfile, I2C tools,
 the Linux I2C/SPI/GPIO interfaces, Espeak NG, and `gpiod`. Camera commands use either `rpicam-apps` for CSI or
-`ffmpeg` for USB. Vosk and Ollama are optional and are never installed unless their setup options are selected.
+`ffmpeg` for USB. The reviewed Vosk runtime and model are installed from
+`xWalkLibrary`; Ollama remains optional and is never installed unless its setup
+option is selected.
 
 Inspect the target without changing it:
 
@@ -139,6 +141,9 @@ The `Host quality` workflow runs GCC and Clang Debug and Release verification, s
 coverage generation, shell validation, provisioning tests, and staged-install checks. Hardware-labelled
 tests are never run by this workflow.
 
+Each compiler and build-type matrix entry also runs the CLI centralized controller suite and the complete
+CLI controller-to-HAL sequence suite as explicit GitHub Actions steps after aggregate CTest verification.
+
 The workflow also runs ThreadSanitizer in its own build, repeats the complete host suite under load, rejects
 unsafe installed file permissions, and retains a checksum manifest for the staged installation. See
 [Host Production Readiness Work](Host%20Production%20Readiness%20Work.md) for local commands and the evidence
@@ -155,13 +160,19 @@ resources rather than separate project shared objects.
 | Path | Purpose |
 | --- | --- |
 | `/usr/bin/xwalk-picarx-control` | CLI executable |
-| `/etc/xwalk/picar-x.conf` | Administrator-controlled default configuration |
-| `/var/lib/xwalk/picar-x.conf` | Writable active configuration, created once by setup |
+| `/usr/lib/xwalk/xWalkTool/shell/xWalkEnv.sh` | Authenticated licence environment loader |
+| `/usr/lib/xwalk/xWalkTool/python/xWalkLicenseTool` | Licence encryption and decryption tool |
+| `/usr/lib/xwalk/xWalkTool/environment/xWalkLicense.json` | Empty licence input template |
+| `/etc/xwalk/picar-x.conf` | Administrator-controlled configuration manifest |
+| `/etc/xwalk/picar-x.d/` | Functional defaults and separate AI-provider profiles |
+| `/var/lib/xwalk/picar-x.conf` | Writable active manifest, created once by setup |
+| `/var/lib/xwalk/picar-x.d/` | Active functional and AI configuration fragments |
 | `/var/cache/xwalk/` | Runtime cache |
 | `/run/xwalk/` | Volatile runtime state |
 | `/usr/share/xwalk/config/` | Immutable v4 and v5 profile templates |
 | `/usr/share/xwalk/sounds/` | Packaged sounds |
 | `/usr/share/xwalk/music/` | Packaged music |
+| `/usr/share/doc/xwalk/audio-resources/README.md` | Combined audio provenance and integrity hashes |
 | `/usr/share/doc/xwalk/` | Deployment documentation |
 
 Test the exact package layout without modifying the development host:
@@ -189,8 +200,9 @@ dpkg-deb --contents xwalk-picarx_*.deb
 lintian xwalk-picarx_*.deb
 ```
 
-The package installs under normal system paths; `/etc/xwalk/picar-x.conf` is a Debian conffile and is not
-silently replaced on upgrade. Runtime state remains under `/var`, never `/usr/share`.
+The package installs under normal system paths. The manifest and every file below
+`/etc/xwalk/picar-x.d` are Debian conffiles and are not silently replaced on
+upgrade. Runtime state remains under `/var`, never `/usr/share`.
 
 ## Runtime user and device permissions
 
@@ -220,6 +232,19 @@ udev rule and will intentionally fail validation.
 
 The package supplies `xwalk.service` and an environment file. Its default non-moving command is `doctor`;
 select a reviewed foreground command in `/etc/xwalk/xwalk-service.conf` before enabling a persistent service.
+The environment file contains only the reviewed service command. AI models and
+credentials are never duplicated there. The package installs `xWalkEnv.sh`,
+`xWalkLicenseTool`, and the empty JSON template under the matching
+`/usr/lib/xwalk/xWalkTool` subdirectories. An explicitly provisioned package may
+also install `X_WALK_LICENSE.KEY` under `/usr/lib/xwalk/xWalkLibrary`; normal
+packages omit the deployment-specific ciphertext. See the
+[licence-key workflow](License%20Key%20Workflow.md).
+
+An operator may source the installed loader for an interactive process. The
+loader requests the separate decryption key, rejects incomplete or unexpected
+fields, never prints values, and removes temporary plaintext. The service does
+not embed or automatically retrieve that key; unattended integration requires
+a separately reviewed operating-system credential mechanism.
 The unit uses the unprivileged `xwalk` user, explicit executable/configuration/working-directory paths,
 bounded restart, a 10-second stop timeout, SIGTERM, and device-compatible hardening.
 
@@ -242,9 +267,11 @@ activation, and an escaping application failure. Host fakes exercise those paths
 
 ## Optional voice/model setup
 
-`--with-vosk` and `--with-ollama` add validation and provisioning reminders, not remote installer pipelines.
-Deploy approved Vosk libraries/models and Ollama/model data separately, then set their absolute paths in the
-active configuration. `doctor` reports availability without recording audio or contacting a model service.
+`--with-vosk` validates the architecture-selected runtime and model installed
+from `xWalkLibrary`. `--with-ollama` adds validation and provisioning reminders,
+not a remote installer pipeline. Deploy Ollama model data separately, then set
+its absolute manifest path in the active configuration. `doctor` reports
+availability without recording audio or contacting a model service.
 
 ## Uninstall
 

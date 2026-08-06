@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(xWalkAudio LANGUAGES CXX)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/XWalkDependencies.cmake)
+
 option(XWALK_AUDIO_BUILD_HOST_TESTS "Build xWalkAudio ALSA software tests" OFF)
 option(XWALK_AUDIO_BUILD_HARDWARE_TESTS "Build xWalkAudio ALSA hardware test" OFF)
 option(XWALK_AUDIO_BUILD_LINUX_BACKEND "Build the shared xWalkAudio ALSA backend" OFF)
@@ -10,17 +12,17 @@ if((XWALK_AUDIO_BUILD_HOST_TESTS OR XWALK_AUDIO_BUILD_HARDWARE_TESTS OR
     message(FATAL_ERROR "xWalkAudio ALSA backend requires Linux")
 endif()
 
-if(NOT TARGET xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
     add_subdirectory(
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon
-        ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common
+        ${CMAKE_CURRENT_BINARY_DIR}/common
     )
 endif()
 
 add_library(xWalkAudio INTERFACE)
 target_include_directories(xWalkAudio INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkAudio INTERFACE cxx_std_17)
-target_link_libraries(xWalkAudio INTERFACE xWalkCommon)
+target_link_libraries(xWalkAudio INTERFACE xWalkLibraryCommon)
 
 if(XWALK_AUDIO_BUILD_HOST_TESTS OR XWALK_AUDIO_BUILD_HARDWARE_TESTS OR
     XWALK_AUDIO_BUILD_LINUX_BACKEND)

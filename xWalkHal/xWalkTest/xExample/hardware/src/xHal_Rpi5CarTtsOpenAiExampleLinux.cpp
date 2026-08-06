@@ -37,7 +37,10 @@ XWalkTtsOpenAiExampleLinux::XWalkTtsOpenAiExampleLinux(stringview apiKey,
     stringview executable, stringview endpoint):
     apiKeyValue(apiKey), endpointValue(endpoint), executableName(executable)
 {
-    if (apiKeyValue.empty() || endpointValue.empty() || executableName.empty())
+    const hal::boolean apiKeyEndpointExecutableNameInvalid =
+        static_cast<hal::boolean>(
+            apiKeyValue.empty() || endpointValue.empty() || executableName.empty());
+    if (apiKeyEndpointExecutableNameInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT(
             "OpenAI TTS key, endpoint, and playback executable are required");
@@ -94,17 +97,23 @@ string XWalkTtsOpenAiExampleLinux::escapeJson(stringview value)
 size XWalkTtsOpenAiExampleLinux::writeResponse(charpointer data,
     size itemSize, size itemCount, contextpointer context)
 {
-    if ((data == nullptr) || (context == nullptr) ||
+    const hal::boolean contextItemCountItemSizeInvalid =
+        static_cast<hal::boolean>(
+            (data == nullptr) || (context == nullptr) ||
         ((itemCount != 0U) &&
-        (itemSize > (std::numeric_limits<size>::max() / itemCount))))
+        (itemSize > (std::numeric_limits<size>::max() / itemCount))));
+    if (contextItemCountItemSizeInvalid)
     {
         return 0U;
     }
     XWalkTtsOpenAiExampleLinux& self = adapter(context);
     const size byteCount = itemSize * itemCount;
-    if ((self.responseData.size() > XWALK_TTS_OPEN_AI_MAXIMUM_RESPONSE_BYTES) ||
+    const hal::boolean selfResponseDataByteCountInvalid =
+        static_cast<hal::boolean>(
+            (self.responseData.size() > XWALK_TTS_OPEN_AI_MAXIMUM_RESPONSE_BYTES) ||
         (byteCount > (XWALK_TTS_OPEN_AI_MAXIMUM_RESPONSE_BYTES -
-        self.responseData.size())))
+        self.responseData.size())));
+    if (selfResponseDataByteCountInvalid)
     {
         return 0U;
     }
@@ -140,7 +149,10 @@ void XWalkTtsOpenAiExampleLinux::requestSpeech(stringview model,
     requestJson.append(escapeJson(voice));
     requestJson.append("\",\"input\":\"");
     requestJson.append(escapeJson(text));
-    if (!instructions.empty())
+    const hal::boolean instructionsAvailable =
+        static_cast<hal::boolean>(
+            !instructions.empty());
+    if (instructionsAvailable)
     {
         requestJson.append("\",\"instructions\":\"");
         requestJson.append(escapeJson(instructions));
@@ -228,8 +240,11 @@ void XWalkTtsOpenAiExampleLinux::requestSpeech(stringview model,
     {
         XHAL_THROW_RUNTIME_ERROR("OpenAI TTS request failed");
     }
-    if ((statusResult != CURLE_OK) || (statusCode < 200L) ||
-        (statusCode >= 300L) || responseData.empty())
+    const hal::boolean statusResultStatusCodeResponseDataInvalid =
+        static_cast<hal::boolean>(
+            (statusResult != CURLE_OK) || (statusCode < 200L) ||
+        (statusCode >= 300L) || responseData.empty());
+    if (statusResultStatusCodeResponseDataInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("OpenAI TTS response is unsuccessful");
     }
@@ -245,8 +260,16 @@ void XWalkTtsOpenAiExampleLinux::playResponse()
         XHAL_THROW_RUNTIME_ERROR("OpenAI TTS temporary file creation failed");
     }
     size writtenBytes{};
-    while (writtenBytes < responseData.size())
+    const hal::boolean processingLoopRequested{true};
+    while (processingLoopRequested)
     {
+        const hal::boolean responseBytesRemaining =
+            static_cast<hal::boolean>(
+                writtenBytes < responseData.size());
+        if (responseBytesRemaining == false)
+        {
+            break;
+        }
         const ssize_t result = ::write(descriptor,
             responseData.data() + writtenBytes,
             responseData.size() - writtenBytes);
@@ -262,7 +285,10 @@ void XWalkTtsOpenAiExampleLinux::playResponse()
         }
         writtenBytes += static_cast<size>(result);
     }
-    if (::close(descriptor) != 0)
+    const hal::boolean descriptorDifferent =
+        static_cast<hal::boolean>(
+            ::close(descriptor) != 0);
+    if (descriptorDifferent)
     {
         static_cast<void>(::unlink(temporaryPath));
         XHAL_THROW_RUNTIME_ERROR("OpenAI TTS temporary file close failed");
@@ -289,8 +315,11 @@ void XWalkTtsOpenAiExampleLinux::playResponse()
         waitResult = ::waitpid(childProcess, &processStatus, 0);
     }
     const int32 removeResult = ::unlink(temporaryPath);
-    if ((removeResult != 0) || (waitResult != childProcess) ||
-        !WIFEXITED(processStatus) || (WEXITSTATUS(processStatus) != 0))
+    const hal::boolean removeResultWaitResultChildProcessInvalid =
+        static_cast<hal::boolean>(
+            (removeResult != 0) || (waitResult != childProcess) ||
+        !WIFEXITED(processStatus) || (WEXITSTATUS(processStatus) != 0));
+    if (removeResultWaitResultChildProcessInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("OpenAI TTS playback executable failed");
     }

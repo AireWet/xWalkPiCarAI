@@ -67,13 +67,19 @@ namespace xwalk::hal
 string XWalkSpeaker::play(stringview filePath)
 {
     reapFinishedTasks();
-    if (filePath.empty())
+    const hal::boolean filePathEmpty =
+        static_cast<hal::boolean>(
+            filePath.empty());
+    if (filePathEmpty)
     {
         XHAL_THROW_INVALID_ARGUMENT("Speaker audio-file path must not be empty");
     }
 
     const filesystempath audioPath{string(filePath)};
-    if (!filesystemEntryExists(audioPath) || !isRegularFile(audioPath))
+    const hal::boolean audioFileUnavailable =
+        static_cast<hal::boolean>(
+            !filesystemEntryExists(audioPath) || !isRegularFile(audioPath));
+    if (audioFileUnavailable)
     {
         XHAL_THROW_RUNTIME_ERROR("Speaker audio-file path must identify an existing regular file");
     }
@@ -82,14 +88,20 @@ string XWalkSpeaker::play(stringview filePath)
     XWalkSpeakerAudioData audioData = callbacks.decodeAudio(backendContext, filePath, handler);
     validateAudioData(audioData);
     string taskId = callbacks.createTaskId(backendContext);
-    if (taskId.empty())
+    const hal::boolean taskIdEmpty =
+        static_cast<hal::boolean>(
+            taskId.empty());
+    if (taskIdEmpty)
     {
         XHAL_THROW_RUNTIME_ERROR("Speaker backend returned an empty task identifier");
     }
 
     size selectedIndex = XHAL_RPI5CAR_SPEAKER_INVALID_TASK_INDEX;
     const mutexlock lock(stateMutex);
-    if (findTaskSlot(taskId) != XHAL_RPI5CAR_SPEAKER_INVALID_TASK_INDEX)
+    const hal::boolean findTaskSlotTaskIdDifferent =
+        static_cast<hal::boolean>(
+            findTaskSlot(taskId) != XHAL_RPI5CAR_SPEAKER_INVALID_TASK_INDEX);
+    if (findTaskSlotTaskIdDifferent)
     {
         XHAL_THROW_RUNTIME_ERROR("Speaker backend returned a duplicate task identifier");
     }
@@ -144,7 +156,10 @@ XWalkSpeakerAudioHandler XWalkSpeaker::audioHandler(stringview filePath)
         (extensionSeparator == stringview::npos) ||
         ((directorySeparator != stringview::npos) &&
             (extensionSeparator < directorySeparator));
-    if (extensionMissing || ((extensionSeparator + 1U) >= filePath.size()))
+    const hal::boolean audioExtensionInvalid =
+        static_cast<hal::boolean>(
+            extensionMissing || ((extensionSeparator + 1U) >= filePath.size()));
+    if (audioExtensionInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Speaker audio file requires a supported extension");
     }
@@ -185,13 +200,19 @@ void XWalkSpeaker::validateAudioData(const XWalkSpeakerAudioData& audioData)
         XHAL_THROW_RUNTIME_ERROR("Speaker backend returned zero-valued audio metadata");
     }
     const size channelCount = static_cast<size>(audioData.channelCount);
-    if ((audioData.samples.size() % channelCount) != 0U)
+    const hal::boolean audioDataSamplesChannelCountDifferent =
+        static_cast<hal::boolean>(
+            (audioData.samples.size() % channelCount) != 0U);
+    if (audioDataSamplesChannelCountDifferent)
     {
         XHAL_THROW_RUNTIME_ERROR("Speaker backend returned incomplete interleaved frames");
     }
     for (const float64 sample : audioData.samples)
     {
-        if (!XHAL_IS_FINITE(sample))
+        const hal::boolean sampleNotFinite =
+            static_cast<hal::boolean>(
+                !XHAL_IS_FINITE(sample));
+        if (sampleNotFinite)
         {
             XHAL_THROW_RUNTIME_ERROR("Speaker backend returned a non-finite audio sample");
         }

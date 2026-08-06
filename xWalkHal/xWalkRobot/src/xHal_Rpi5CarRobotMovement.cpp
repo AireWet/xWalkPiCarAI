@@ -68,12 +68,18 @@ void XWalkRobot::servoMove(const float64vector& targets, float64 speedPercent,
 {
     requireInitialized();
     validateAngles(targets, "Robot movement target");
-    if (!XHAL_IS_FINITE(speedPercent))
+    const hal::boolean speedPercentNotFinite =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(speedPercent));
+    if (speedPercentNotFinite)
     {
         XHAL_THROW_INVALID_ARGUMENT("Robot movement speed must be finite");
     }
-    if (beatsPerMinute.has_value() &&
-        (!XHAL_IS_FINITE(beatsPerMinute.value()) || (beatsPerMinute.value() <= 0.0)))
+    const hal::boolean beatsPerMinuteHasValueValueInvalid =
+        static_cast<hal::boolean>(
+            beatsPerMinute.has_value() &&
+        (!XHAL_IS_FINITE(beatsPerMinute.value()) || (beatsPerMinute.value() <= 0.0)));
+    if (beatsPerMinuteHasValueValueInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Robot movement BPM must be finite and positive");
     }
@@ -108,7 +114,10 @@ void XWalkRobot::servoMove(const float64vector& targets, float64 speedPercent,
     }
 
     float64 totalTimeMs = 0.0;
-    if (beatsPerMinute.has_value())
+    const hal::boolean beatsPerMinuteProvided =
+        static_cast<hal::boolean>(
+            beatsPerMinute.has_value());
+    if (beatsPerMinuteProvided)
     {
         const float64 minuteMs = 60'000.0;
         totalTimeMs = minuteMs / beatsPerMinute.value();
@@ -130,7 +139,10 @@ void XWalkRobot::servoMove(const float64vector& targets, float64 speedPercent,
 
     const float64 stepTimeMs = static_cast<float64>(XHAL_RPI5CAR_ROBOT_STEP_TIME_MS);
     const float64 calculatedStepCount = totalTimeMs / stepTimeMs;
-    if (!XHAL_IS_FINITE(calculatedStepCount) || (calculatedStepCount > maximumUint32))
+    const hal::boolean calculatedStepCountMaximumUint32Invalid =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(calculatedStepCount) || (calculatedStepCount > maximumUint32));
+    if (calculatedStepCountMaximumUint32Invalid)
     {
         XHAL_THROW_OUT_OF_RANGE("Robot movement duration exceeds its supported range");
     }
@@ -184,7 +196,10 @@ void XWalkRobot::servoMove(const float64vector& targets, float64 speedPercent,
 void XWalkRobot::setAction(stringview actionName, const float64vectorvector& motions)
 {
     requireInitialized();
-    if (actionName.empty())
+    const hal::boolean actionNameEmpty =
+        static_cast<hal::boolean>(
+            actionName.empty());
+    if (actionNameEmpty)
     {
         XHAL_THROW_INVALID_ARGUMENT("Robot action name must not be empty");
     }
@@ -220,7 +235,10 @@ void XWalkRobot::doAction(stringview actionName, uint32 repetitions, float64 spe
 {
     requireInitialized();
     const auto action = actions.find(string(actionName));
-    if (action == actions.end())
+    const hal::boolean actionActionsMatched =
+        static_cast<hal::boolean>(
+            action == actions.end());
+    if (actionActionsMatched)
     {
         XHAL_THROW_OUT_OF_RANGE("Robot action was not found");
     }

@@ -201,18 +201,32 @@ void XWalkLed::blinkLoop(uint32 cycleCount, uint32 toggleDelayUs, uint32 pauseUs
     outputValue.store(false);
     const uint32 toggleCount = cycleCount * XHAL_RPI5CAR_LED_TOGGLES_PER_CYCLE;
 
-    while (blinkRunning.load())
+    const hal::boolean processingLoopRequested{true};
+    while (processingLoopRequested)
     {
+        const hal::boolean blinkRequested =
+            static_cast<hal::boolean>(
+                blinkRunning.load());
+        if (blinkRequested == false)
+        {
+            break;
+        }
         for (uint32 toggleIndex = 0U;
             (toggleIndex < toggleCount) && blinkRunning.load(); ++toggleIndex)
         {
-            if (waitWhileBlinking(toggleDelayUs))
+            const hal::boolean waitWhileBlinkingSucceeded =
+                static_cast<hal::boolean>(
+                    waitWhileBlinking(toggleDelayUs));
+            if (waitWhileBlinkingSucceeded)
             {
                 toggleFromWorker();
             }
         }
 
-        if (blinkRunning.load())
+        const hal::boolean blinkStillActive =
+            static_cast<hal::boolean>(
+                blinkRunning.load());
+        if (blinkStillActive)
         {
             static_cast<void>(waitWhileBlinking(pauseUs));
             static_cast<void>(waitWhileBlinking(XHAL_RPI5CAR_LED_STOP_POLL_INTERVAL_US));
@@ -236,8 +250,16 @@ void XWalkLed::blinkLoop(uint32 cycleCount, uint32 toggleDelayUs, uint32 pauseUs
 boolean XWalkLed::waitWhileBlinking(uint32 durationUs) const
 {
     uint32 remainingUs = durationUs;
-    while ((remainingUs > 0U) && blinkRunning.load())
+    const hal::boolean blinkWaitRequested{true};
+    while (blinkWaitRequested)
     {
+        const hal::boolean blinkMayContinue =
+            static_cast<hal::boolean>(
+                (remainingUs > 0U) && blinkRunning.load());
+        if (blinkMayContinue == false)
+        {
+            break;
+        }
         const uint32 delayUs = remainingUs > XHAL_RPI5CAR_LED_STOP_POLL_INTERVAL_US
             ? XHAL_RPI5CAR_LED_STOP_POLL_INTERVAL_US : remainingUs;
         common::sleepMicroseconds(delayUs);
@@ -265,7 +287,10 @@ void XWalkLed::toggleFromWorker()
 void XWalkLed::stopWorker()
 {
     blinkRunning.store(false);
-    if (blinkThread.joinable())
+    const hal::boolean blinkThreadJoinable =
+        static_cast<hal::boolean>(
+            blinkThread.joinable());
+    if (blinkThreadJoinable)
     {
         blinkThread.join();
     }
@@ -292,7 +317,10 @@ void XWalkLed::stopWorker()
  */
 uint32 XWalkLed::durationMicroseconds(float64 durationSeconds, cstring parameterName)
 {
-    if (!XHAL_IS_FINITE(durationSeconds))
+    const hal::boolean durationSecondsNotFinite =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(durationSeconds));
+    if (durationSecondsNotFinite)
     {
         XHAL_THROW_INVALID_ARGUMENT_DETAIL(parameterName, " must be finite");
     }

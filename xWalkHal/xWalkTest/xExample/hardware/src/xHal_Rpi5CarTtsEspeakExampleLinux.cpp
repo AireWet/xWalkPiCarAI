@@ -28,7 +28,10 @@ namespace xwalk::hal::example
 XWalkTtsEspeakExampleLinux::XWalkTtsEspeakExampleLinux(stringview executable):
     executableName(executable)
 {
-    if (executableName.empty())
+    const hal::boolean executableNameEmpty =
+        static_cast<hal::boolean>(
+            executableName.empty());
+    if (executableNameEmpty)
     {
         XHAL_THROW_INVALID_ARGUMENT("Espeak playback executable is required");
     }
@@ -82,8 +85,11 @@ void XWalkTtsEspeakExampleLinux::speak(contextpointer context, uint8 amplitude,
     {
         waitResult = ::waitpid(childProcess, &processStatus, 0);
     }
-    if ((waitResult != childProcess) || !WIFEXITED(processStatus) ||
-        (WEXITSTATUS(processStatus) != 0))
+    const hal::boolean waitResultChildProcessProcessStatusInvalid =
+        static_cast<hal::boolean>(
+            (waitResult != childProcess) || !WIFEXITED(processStatus) ||
+        (WEXITSTATUS(processStatus) != 0));
+    if (waitResultChildProcessProcessStatusInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Espeak playback executable failed");
     }

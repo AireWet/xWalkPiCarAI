@@ -50,7 +50,8 @@ namespace xwalk::hal
  */
 void XWalkMotors::stop()
 {
-    if (!stopSafely())
+    const hal::boolean stopped = stopSafely();
+    if (stopped == false)
     {
         XHAL_THROW_RUNTIME_ERROR("paired motor stop could not disable every PWM output");
     }
@@ -83,7 +84,10 @@ boolean XWalkMotors::stopSafely() noexcept
  */
 void XWalkMotors::brake()
 {
-    if ((motorOne->mode() != XWalkMotorMode::DualPwm) || (motorTwo->mode() != XWalkMotorMode::DualPwm))
+    const hal::boolean motorOneModeXWalkMotorModeInvalid =
+        static_cast<hal::boolean>(
+            (motorOne->mode() != XWalkMotorMode::DualPwm) || (motorTwo->mode() != XWalkMotorMode::DualPwm));
+    if (motorOneModeXWalkMotorModeInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("paired braking requires two dual-PWM motors");
     }

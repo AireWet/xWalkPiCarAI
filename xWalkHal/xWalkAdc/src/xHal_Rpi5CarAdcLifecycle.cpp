@@ -55,8 +55,11 @@ namespace xwalk::hal
  */
 uint8 XWalkAdc::parseChannel(stringview channel)
 {
-    if ((channel.size() != 2U) || (channel[0U] != 'A') || (channel[1U] < '0') ||
-        (channel[1U] > '7'))
+    const hal::boolean channelInvalid =
+        static_cast<hal::boolean>(
+            (channel.size() != 2U) || (channel[0U] != 'A') || (channel[1U] < '0') ||
+        (channel[1U] > '7'));
+    if (channelInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("ADC channel name must be A0 through A7");
     }
@@ -80,16 +83,25 @@ uint8 XWalkAdc::parseChannel(stringview channel)
  */
 uint8 XWalkAdc::selectAddress(XWalkI2c& i2c, optionaluint8 address)
 {
-    if (address.has_value())
+    const hal::boolean addressProvided =
+        static_cast<hal::boolean>(
+            address.has_value());
+    if (addressProvided)
     {
         common::validateI2cAddress(address.value());
         return address.value();
     }
-    if (i2c.probe(XHAL_RPI5CAR_ADC_ADDRESS_1))
+    const hal::boolean candidateAddressAvailable =
+        static_cast<hal::boolean>(
+            i2c.probe(XHAL_RPI5CAR_ADC_ADDRESS_1));
+    if (candidateAddressAvailable)
     {
         return XHAL_RPI5CAR_ADC_ADDRESS_1;
     }
-    if (i2c.probe(XHAL_RPI5CAR_ADC_ADDRESS_2))
+    const hal::boolean secondaryAddressAvailable =
+        static_cast<hal::boolean>(
+            i2c.probe(XHAL_RPI5CAR_ADC_ADDRESS_2));
+    if (secondaryAddressAvailable)
     {
         return XHAL_RPI5CAR_ADC_ADDRESS_2;
     }

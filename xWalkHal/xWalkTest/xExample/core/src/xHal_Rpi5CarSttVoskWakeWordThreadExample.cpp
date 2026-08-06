@@ -58,7 +58,10 @@ void XWalkSttVoskWakeWordThreadExample::run(
         boolean detected{false};
         for (uint32 pollIndex = 0U; pollIndex < maximumPolls; ++pollIndex)
         {
-            if (callbacks.isWaked(callbackContext))
+            const hal::boolean wakedMatched =
+                static_cast<hal::boolean>(
+                    callbacks.isWaked(callbackContext));
+            if (wakedMatched)
             {
                 detected = true;
                 break;

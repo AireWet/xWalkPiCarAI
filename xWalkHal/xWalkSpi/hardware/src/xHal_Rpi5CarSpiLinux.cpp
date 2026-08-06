@@ -55,11 +55,17 @@ namespace xwalk::hal
  */
 bytevector XWalkSpiLinux::transfer(const bytevector& transmitData)
 {
-    if (transmitData.empty())
+    const hal::boolean transmitDataEmpty =
+        static_cast<hal::boolean>(
+            transmitData.empty());
+    if (transmitDataEmpty)
     {
         XHAL_THROW_INVALID_ARGUMENT("SPI transfer payload must not be empty");
     }
-    if (transmitData.size() > XHAL_RPI5CAR_SPI_MAXIMUM_TRANSFER_BYTES)
+    const hal::boolean transmitDataTooLarge =
+        static_cast<hal::boolean>(
+            transmitData.size() > XHAL_RPI5CAR_SPI_MAXIMUM_TRANSFER_BYTES);
+    if (transmitDataTooLarge)
     {
         XHAL_THROW_OUT_OF_RANGE("SPI transfer payload exceeds 256 bytes");
     }
@@ -79,7 +85,10 @@ bytevector XWalkSpiLinux::transfer(const bytevector& transmitData)
     {
         XHAL_THROW_RUNTIME_ERROR("Linux SPI transfer failed");
     }
-    if (static_cast<size>(transferredBytes) != transmitData.size())
+    const hal::boolean transferredBytesTransmitDataDifferent =
+        static_cast<hal::boolean>(
+            static_cast<size>(transferredBytes) != transmitData.size());
+    if (transferredBytesTransmitDataDifferent)
     {
         XHAL_THROW_RUNTIME_ERROR("Linux SPI transfer was incomplete");
     }

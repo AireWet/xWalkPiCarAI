@@ -87,7 +87,10 @@ void XWalkLanguageModelOllama::setMaximumMessages(contextpointer context,
     XWalkLanguageModelOllama& self = provider(context);
     self.maximumMessagesValue = maximumMessages;
     const size maximumSize = static_cast<size>(maximumMessages);
-    if (self.history.size() > maximumSize)
+    const hal::boolean historyTooLarge =
+        static_cast<hal::boolean>(
+            self.history.size() > maximumSize);
+    if (historyTooLarge)
     {
         const size eraseCount = self.history.size() - maximumSize;
         self.history.erase(self.history.begin(), self.history.begin() +
@@ -135,7 +138,10 @@ string XWalkLanguageModelOllama::prompt(contextpointer context,
         XWalkLanguageModelRole::User, string(promptText), encodeImage(imagePath)};
     const string requestJson = self.buildRequest(currentPrompt);
     string authorizationHeader{};
-    if (!self.apiKeyValue.empty())
+    const hal::boolean apiKeyAvailable =
+        static_cast<hal::boolean>(
+            !self.apiKeyValue.empty());
+    if (apiKeyAvailable)
     {
         authorizationHeader = "Authorization: Bearer ";
         authorizationHeader += self.apiKeyValue;
@@ -143,7 +149,10 @@ string XWalkLanguageModelOllama::prompt(contextpointer context,
     const string responseJson = self.operations.postJson(self.transportContext,
         self.endpointValue, requestJson, authorizationHeader, self.timeoutMsValue,
         XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_RESPONSE_BYTES);
-    if (responseJson.size() > XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_RESPONSE_BYTES)
+    const hal::boolean responseJsonTooLarge =
+        static_cast<hal::boolean>(
+            responseJson.size() > XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_RESPONSE_BYTES);
+    if (responseJsonTooLarge)
     {
         XHAL_THROW_OUT_OF_RANGE("Ollama response exceeds its bounded byte count");
     }
@@ -165,7 +174,10 @@ void XWalkLanguageModelOllama::storeMessage(
 {
     history.push_back(message);
     const size maximumSize = static_cast<size>(maximumMessagesValue);
-    if (history.size() > maximumSize)
+    const hal::boolean historyLimitExceeded =
+        static_cast<hal::boolean>(
+            history.size() > maximumSize);
+    if (historyLimitExceeded)
     {
         history.erase(history.begin());
     }

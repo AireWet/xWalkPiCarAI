@@ -64,7 +64,10 @@ void XWalkSttVoskWakeWordExample::run(
     callbacks.report(callbackContext, "Wake me with :\"Hey robot\"");
     for (uint32 attemptIndex = 0U; attemptIndex < maximumAttempts; ++attemptIndex)
     {
-        if (containsWakeWord(callbacks.listen(callbackContext, timeoutMs)))
+        const hal::boolean containsWakeWordCallbacksListenSet =
+            static_cast<hal::boolean>(
+                containsWakeWord(callbacks.listen(callbackContext, timeoutMs)));
+        if (containsWakeWordCallbacksListenSet)
         {
             callbacks.report(callbackContext, "Wake word detected");
             return;

@@ -54,7 +54,10 @@ boolean XWalkVoiceAssistantExample::acquirePrompt(
     {
         return false;
     }
-    if (!configurationValue.answerOnWake.empty())
+    const hal::boolean answerOnWakeAvailable =
+        static_cast<hal::boolean>(
+            !configurationValue.answerOnWake.empty());
+    if (answerOnWakeAvailable)
     {
         callbacks.speak(callbackContext, configurationValue.ttsModel,
             configurationValue.answerOnWake);
@@ -76,11 +79,14 @@ void XWalkVoiceAssistantExample::run(
         XHAL_THROW_OUT_OF_RANGE(
             "Voice-assistant round count or timeout is outside its range");
     }
-    if (((inputMode == XWalkVoiceAssistantExampleInputMode::Keyboard) &&
+    const hal::boolean configurationInvalid =
+        static_cast<hal::boolean>(
+            ((inputMode == XWalkVoiceAssistantExampleInputMode::Keyboard) &&
         !configurationValue.keyboardEnabled) ||
         ((inputMode == XWalkVoiceAssistantExampleInputMode::WakeWord) &&
         !configurationValue.wakeEnabled) ||
-        (configurationValue.withImage && imagePath.empty()))
+        (configurationValue.withImage && imagePath.empty()));
+    if (configurationInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT(
             "Voice-assistant input mode or image path is invalid");
@@ -93,7 +99,9 @@ void XWalkVoiceAssistantExample::run(
     for (uint32 roundIndex = 0U; roundIndex < maximumRounds; ++roundIndex)
     {
         string promptText;
-        if (!acquirePrompt(inputMode, timeoutMs, promptText))
+        const hal::boolean promptAcquired =
+            acquirePrompt(inputMode, timeoutMs, promptText);
+        if (promptAcquired == false)
         {
             if (inputMode == XWalkVoiceAssistantExampleInputMode::Keyboard)
             {
@@ -104,7 +112,9 @@ void XWalkVoiceAssistantExample::run(
         stringview selectedImagePath{};
         if (configurationValue.withImage)
         {
-            if (!callbacks.capture(callbackContext, imagePath))
+            const hal::boolean imageCaptured =
+                callbacks.capture(callbackContext, imagePath);
+            if (imageCaptured == false)
             {
                 XHAL_THROW_RUNTIME_ERROR(
                     "Voice-assistant image capture failed");
@@ -114,7 +124,10 @@ void XWalkVoiceAssistantExample::run(
         const string response = callbacks.prompt(callbackContext,
             configurationValue.languageModel, promptText, selectedImagePath);
         callbacks.report(callbackContext, response);
-        if (!response.empty())
+        const hal::boolean responseAvailable =
+            static_cast<hal::boolean>(
+                !response.empty());
+        if (responseAvailable)
         {
             callbacks.speak(callbackContext, configurationValue.ttsModel,
                 response);

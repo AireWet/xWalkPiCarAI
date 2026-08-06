@@ -4,8 +4,8 @@ project(xWalkTrace LANGUAGES CXX)
 option(XWALK_TRACE_BUILD_HOST_TESTS "Build xWalkTrace host tests" OFF)
 option(XWALK_TRACE_BUILD_HARDWARE_TESTS "Build xWalkTrace target compile tests" OFF)
 
-if(NOT TARGET xWalkCommon)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
 
 add_library(xWalkTrace STATIC
@@ -15,7 +15,7 @@ add_library(xWalkTrace STATIC
 
 target_include_directories(xWalkTrace PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkTrace PUBLIC cxx_std_17)
-target_link_libraries(xWalkTrace PUBLIC xWalkCommon)
+target_link_libraries(xWalkTrace PUBLIC xWalkLibraryCommon)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkTrace PRIVATE

@@ -21,7 +21,7 @@
 # Developed using MISRA C++ coding guidelines.
 ###############################################################################
 
-"""Validate and generate the xWalkIW I2C gRPC schema."""
+"""Validate and generate the xWalkIW I2C and Controller schemas."""
 
 from __future__ import annotations
 
@@ -38,17 +38,258 @@ PAYLOAD_NAMES = (
     "XWalkI2cRequestPayload",
     "XWalkI2cConfirmPayload",
     "XWalkI2cRejectPayload",
+    "XWalkAppConfig",
+    "XWalkControllerApplicationArguments",
+    "XWalkControllerCommandRequest",
+    "XWalkNoArgumentRequest",
+    "XWalkLifecycleRequest",
+    "XWalkMoveRequest",
+    "XWalkTurnRequest",
+    "XWalkCameraRequest",
+    "XWalkSensorRequest",
+    "XWalkSelfDriveRequest",
+    "XWalkSpiRequest",
+    "XWalkGptCarRequest",
+    "XWalkCalibrationRequest",
+    "XWalkSoundRequest",
+    "XWalkServoCalibrationConfig",
+    "XWalkUnknownCommandRequest",
+    "XWalkHelpCommandRequest",
+    "XWalkSpiCommandRequest",
+    "XWalkDoctorCommandRequest",
+    "XWalkServoZeroingCommandRequest",
+    "XWalkComputerVisionCommandRequest",
+    "XWalkRecordVideoCommandRequest",
+    "XWalkSoundBackgroundMusicCommandRequest",
+    "XWalkTextVisionTalkCommandRequest",
+    "XWalkOnlineLlmTestCommandRequest",
+    "XWalkMoveCommandRequest",
+    "XWalkKeyboardControlCommandRequest",
+    "XWalkAvoidObstaclesCommandRequest",
+    "XWalkCliffDetectionCommandRequest",
+    "XWalkStareAtYouCommandRequest",
+    "XWalkBullFightCommandRequest",
+    "XWalkTreasureHuntCommandRequest",
+    "XWalkVideoCarCommandRequest",
+    "XWalkAppControlCommandRequest",
+    "XWalkTurnCommandRequest",
+    "XWalkCameraCommandRequest",
+    "XWalkSensorCommandRequest",
+    "XWalkLineTrackCommandRequest",
+    "XWalkSelfDriveCommandRequest",
+    "XWalkSoundCommandRequest",
+    "XWalkVoiceChatCommandRequest",
+    "XWalkVoiceActiveCarCommandRequest",
+    "XWalkGptCarCommandRequest",
+    "XWalkVoiceControlledCarCommandRequest",
+    "XWalkVoicePromptCarCommandRequest",
+    "XWalkStorytellingRobotCommandRequest",
+    "XWalkCalibrateCommandRequest",
 )
-ENUM_NAMES = ("XWalkI2cOperation",)
+ENUM_NAMES = (
+    "XWalkI2cOperation",
+    "XWalkSoundOperation",
+    "XWalkLifecycleAction",
+    "XWalkMoveAction",
+    "XWalkTurnDirection",
+    "XWalkCameraAxis",
+    "XWalkSensorType",
+    "XWalkCalibrationMode",
+)
 ENUM_PATTERN = re.compile(r"^enum\s+(\w+)", re.MULTILINE)
 MESSAGE_PATTERN = re.compile(r"^message\s+(\w+)", re.MULTILINE)
 SERVICE_PATTERN = re.compile(r"^service\s+(\w+)", re.MULTILINE)
 RPC_PATTERN = re.compile(r"^\s+rpc\s+(\w+)", re.MULTILINE)
 YAML_PAYLOAD_PATTERN = re.compile(r"^\s+message:\s+(\w+)\s*$", re.MULTILINE)
+CPP_SIGNAL_PATTERN = re.compile(
+    r"^#define\s+(XWALK_CNTRL_[A-Z0-9_]+_REQ)\s+"
+    r"\(::ctrl::uint16\{(0x[0-9A-F]+)U\}\)$",
+    re.MULTILINE,
+)
+PAYLOAD_SIGNAL_BINDINGS = (
+    ("XWalkI2cRequestPayload", "XWALK_I2C_RPI5CAR_REQ", "0x1081", None),
+    ("XWalkI2cConfirmPayload", "XWALK_I2C_RPI5CAR_CFM", "0x1082", None),
+    ("XWalkI2cRejectPayload", "XWALK_I2C_RPI5CAR_REJ", "0x1083", None),
+    ("XWalkAppConfig", "XWALK_CONTROLLER_APP_CONFIG", "0x2081", None),
+    (
+        "XWalkControllerApplicationArguments",
+        "XWALK_CONTROLLER_APPLICATION_ARGUMENTS",
+        "0x2082",
+        None,
+    ),
+    (
+        "XWalkControllerCommandRequest",
+        "XWALK_CONTROLLER_COMMAND_REQ",
+        "0x2083",
+        None,
+    ),
+    (
+        "XWalkNoArgumentRequest",
+        "XWALK_CONTROLLER_NO_ARGUMENT_REQ",
+        "0x2084",
+        None,
+    ),
+    (
+        "XWalkLifecycleRequest",
+        "XWALK_CONTROLLER_LIFECYCLE_REQ",
+        "0x2085",
+        None,
+    ),
+    (
+        "XWalkMoveRequest",
+        "XWALK_CONTROLLER_MOVE_REQ",
+        "0x2086",
+        None,
+    ),
+    (
+        "XWalkTurnRequest",
+        "XWALK_CONTROLLER_TURN_REQ",
+        "0x2087",
+        None,
+    ),
+    (
+        "XWalkCameraRequest",
+        "XWALK_CONTROLLER_CAMERA_REQ",
+        "0x2088",
+        None,
+    ),
+    (
+        "XWalkSensorRequest",
+        "XWALK_CONTROLLER_SENSOR_REQ",
+        "0x2089",
+        None,
+    ),
+    (
+        "XWalkSelfDriveRequest",
+        "XWALK_CONTROLLER_SELF_DRIVE_REQ",
+        "0x208A",
+        None,
+    ),
+    (
+        "XWalkSpiRequest",
+        "XWALK_CONTROLLER_SPI_REQ",
+        "0x208B",
+        None,
+    ),
+    (
+        "XWalkGptCarRequest",
+        "XWALK_CONTROLLER_GPT_CAR_REQ",
+        "0x208C",
+        None,
+    ),
+    (
+        "XWalkCalibrationRequest",
+        "XWALK_CONTROLLER_CALIBRATION_REQ",
+        "0x208D",
+        None,
+    ),
+    (
+        "XWalkSoundRequest",
+        "XWALK_CONTROLLER_SOUND_REQ",
+        "0x208E",
+        None,
+    ),
+    (
+        "XWalkServoCalibrationConfig",
+        "XWALK_CONTROLLER_SERVO_CALIBRATION_CONFIG",
+        "0x208F",
+        None,
+    ),
+)
+
+COMMAND_SIGNAL_BINDINGS = (
+    ("XWalkUnknownCommandRequest", "XWALK_CNTRL_UNKNOWN_REQ", "0x2000"),
+    ("XWalkHelpCommandRequest", "XWALK_CNTRL_HELP_REQ", "0x2001"),
+    ("XWalkSpiCommandRequest", "XWALK_CNTRL_SPI_REQ", "0x2002"),
+    ("XWalkDoctorCommandRequest", "XWALK_CNTRL_DOCTOR_REQ", "0x2003"),
+    (
+        "XWalkServoZeroingCommandRequest",
+        "XWALK_CNTRL_SERVO_ZEROING_REQ",
+        "0x2004",
+    ),
+    (
+        "XWalkComputerVisionCommandRequest",
+        "XWALK_CNTRL_COMPUTER_VISION_REQ",
+        "0x2005",
+    ),
+    ("XWalkRecordVideoCommandRequest", "XWALK_CNTRL_RECORD_VIDEO_REQ", "0x2006"),
+    (
+        "XWalkSoundBackgroundMusicCommandRequest",
+        "XWALK_CNTRL_SOUND_BACKGROUND_MUSIC_REQ",
+        "0x2007",
+    ),
+    (
+        "XWalkTextVisionTalkCommandRequest",
+        "XWALK_CNTRL_TEXT_VISION_TALK_REQ",
+        "0x2008",
+    ),
+    (
+        "XWalkOnlineLlmTestCommandRequest",
+        "XWALK_CNTRL_ONLINE_LLM_TEST_REQ",
+        "0x2009",
+    ),
+    ("XWalkMoveCommandRequest", "XWALK_CNTRL_MOVE_REQ", "0x200A"),
+    (
+        "XWalkKeyboardControlCommandRequest",
+        "XWALK_CNTRL_KEYBOARD_CONTROL_REQ",
+        "0x200B",
+    ),
+    (
+        "XWalkAvoidObstaclesCommandRequest",
+        "XWALK_CNTRL_AVOID_OBSTACLES_REQ",
+        "0x200C",
+    ),
+    (
+        "XWalkCliffDetectionCommandRequest",
+        "XWALK_CNTRL_CLIFF_DETECTION_REQ",
+        "0x200D",
+    ),
+    ("XWalkStareAtYouCommandRequest", "XWALK_CNTRL_STARE_AT_YOU_REQ", "0x200E"),
+    ("XWalkBullFightCommandRequest", "XWALK_CNTRL_BULL_FIGHT_REQ", "0x200F"),
+    (
+        "XWalkTreasureHuntCommandRequest",
+        "XWALK_CNTRL_TREASURE_HUNT_REQ",
+        "0x2010",
+    ),
+    ("XWalkVideoCarCommandRequest", "XWALK_CNTRL_VIDEO_CAR_REQ", "0x2011"),
+    ("XWalkAppControlCommandRequest", "XWALK_CNTRL_APP_CONTROL_REQ", "0x2012"),
+    ("XWalkTurnCommandRequest", "XWALK_CNTRL_TURN_REQ", "0x2013"),
+    ("XWalkCameraCommandRequest", "XWALK_CNTRL_CAMERA_REQ", "0x2014"),
+    ("XWalkSensorCommandRequest", "XWALK_CNTRL_SENSOR_REQ", "0x2015"),
+    ("XWalkLineTrackCommandRequest", "XWALK_CNTRL_LINE_TRACK_REQ", "0x2016"),
+    ("XWalkSelfDriveCommandRequest", "XWALK_CNTRL_SELF_DRIVE_REQ", "0x2017"),
+    ("XWalkSoundCommandRequest", "XWALK_CNTRL_SOUND_REQ", "0x2018"),
+    ("XWalkVoiceChatCommandRequest", "XWALK_CNTRL_VOICE_CHAT_REQ", "0x2019"),
+    (
+        "XWalkVoiceActiveCarCommandRequest",
+        "XWALK_CNTRL_VOICE_ACTIVE_CAR_REQ",
+        "0x201A",
+    ),
+    ("XWalkGptCarCommandRequest", "XWALK_CNTRL_GPT_CAR_REQ", "0x201B"),
+    (
+        "XWalkVoiceControlledCarCommandRequest",
+        "XWALK_CNTRL_VOICE_CONTROLLED_CAR_REQ",
+        "0x201C",
+    ),
+    (
+        "XWalkVoicePromptCarCommandRequest",
+        "XWALK_CNTRL_VOICE_PROMPT_CAR_REQ",
+        "0x201D",
+    ),
+    (
+        "XWalkStorytellingRobotCommandRequest",
+        "XWALK_CNTRL_STORYTELLING_ROBOT_REQ",
+        "0x201E",
+    ),
+    ("XWalkCalibrateCommandRequest", "XWALK_CNTRL_CALIBRATE_REQ", "0x201F"),
+)
+
 SIGNAL_BINDINGS = (
-    ("XWalkI2cRequestPayload", "XWALK_I2C_RPI5CAR_REQ", "0x1081"),
-    ("XWalkI2cConfirmPayload", "XWALK_I2C_RPI5CAR_CFM", "0x1082"),
-    ("XWalkI2cRejectPayload", "XWALK_I2C_RPI5CAR_REJ", "0x1083"),
+    *PAYLOAD_SIGNAL_BINDINGS,
+    *(
+        (message_name, signal_name, signal_number, signal_name)
+        for message_name, signal_name, signal_number in COMMAND_SIGNAL_BINDINGS
+    ),
 )
 
 
@@ -89,7 +330,7 @@ def route_generated_cpp(
     include_directory: pathlib.Path,
     source_directory: pathlib.Path,
 ) -> None:
-    """Copy generated C++ headers and sources into separate directories.
+    """Route normalized generated C++ headers and sources by file type.
 
     Args:
         staging_directory: Temporary directory populated by ``protoc``.
@@ -97,16 +338,25 @@ def route_generated_cpp(
         source_directory: Destination for generated ``.cpp`` files.
 
     Raises:
-        OSError: If an output directory or generated file cannot be written.
+        OSError: If an output directory or generated file cannot be read or written.
     """
     include_directory.mkdir(parents=True, exist_ok=True)
     source_directory.mkdir(parents=True, exist_ok=True)
     for generated_path in staging_directory.iterdir():
+        destination_path: pathlib.Path | None = None
         if generated_path.suffix == ".h":
-            shutil.copyfile(generated_path, include_directory / generated_path.name)
+            destination_path = include_directory / generated_path.name
         elif generated_path.suffix == ".cc":
             source_name = generated_path.with_suffix(".cpp").name
-            shutil.copyfile(generated_path, source_directory / source_name)
+            destination_path = source_directory / source_name
+        if destination_path is not None:
+            generated_text = generated_path.read_text(encoding="utf-8")
+            normalized_text = "\n".join(
+                line.rstrip() for line in generated_text.splitlines()
+            )
+            destination_path.write_text(
+                f"{normalized_text}\n", encoding="utf-8", newline="\n"
+            )
 
 
 def validate_inputs(
@@ -114,6 +364,7 @@ def validate_inputs(
     message_proto: pathlib.Path,
     service_proto: pathlib.Path,
     yaml_path: pathlib.Path,
+    controller_command_header: pathlib.Path,
 ) -> None:
     """Validate the enum, message, gRPC service, and YAML schemas.
 
@@ -122,6 +373,7 @@ def validate_inputs(
         message_proto: Proto3 payload-message schema.
         service_proto: Proto3 gRPC service schema.
         yaml_path: YAML payload-name mapping.
+        controller_command_header: C++ Controller command and signal constants.
 
     Raises:
         OSError: If an input cannot be read.
@@ -131,6 +383,7 @@ def validate_inputs(
     message_text = message_proto.read_text(encoding="utf-8")
     service_text = service_proto.read_text(encoding="utf-8")
     yaml_text = yaml_path.read_text(encoding="utf-8")
+    controller_command_text = controller_command_header.read_text(encoding="utf-8")
 
     enum_names = tuple(ENUM_PATTERN.findall(enum_text))
     enum_messages = tuple(MESSAGE_PATTERN.findall(enum_text))
@@ -144,6 +397,8 @@ def validate_inputs(
     grpc_services = tuple(SERVICE_PATTERN.findall(service_text))
     grpc_rpcs = tuple(RPC_PATTERN.findall(service_text))
     mapped_payloads = tuple(YAML_PAYLOAD_PATTERN.findall(yaml_text))
+    cpp_signals = dict(CPP_SIGNAL_PATTERN.findall(controller_command_text))
+    signal_numbers = tuple(binding[2] for binding in SIGNAL_BINDINGS)
 
     if enum_names != ENUM_NAMES:
         raise ValueError(f"unexpected Protobuf enumerations: {enum_names}")
@@ -178,9 +433,11 @@ def validate_inputs(
         raise ValueError("XWalkI2cRequestPayload is missing its operation selector")
     if mapped_payloads != PAYLOAD_NAMES:
         raise ValueError(f"unexpected YAML payload mapping: {mapped_payloads}")
+    if len(set(signal_numbers)) != len(signal_numbers):
+        raise ValueError("duplicate xWalk signal numbers are configured")
     if "mode: grpc_single_rpc" not in yaml_text:
         raise ValueError("xHal_Rpi5CarGrpcSig.yml must declare grpc_single_rpc mode")
-    for message_name, signal_name, signal_number in SIGNAL_BINDINGS:
+    for message_name, signal_name, signal_number, cpp_signal_name in SIGNAL_BINDINGS:
         message_pattern = re.compile(
             rf"message\s+{message_name}\s*\{{.*?"
             rf"option\s+\(xwalkSignal\)\s*=\s*{signal_number}\s*;",
@@ -197,6 +454,10 @@ def validate_inputs(
         if yaml_signal_pattern.search(yaml_text) is None:
             raise ValueError(
                 f"YAML signal {signal_name} is not bound to signal number {signal_number}"
+            )
+        if cpp_signal_name is not None and cpp_signals.get(cpp_signal_name) != signal_number:
+            raise ValueError(
+                f"C++ signal {cpp_signal_name} is not bound to signal number {signal_number}"
             )
 
 
@@ -274,7 +535,7 @@ def main() -> int:
     component_directory = repository_directory / "xWalkIW"
     generated_directory = component_directory / "auto-gen"
     parser = argparse.ArgumentParser(
-        description="Validate or generate the xWalkIW I2C gRPC schema."
+        description="Validate or generate the xWalkIW I2C and Controller schemas."
     )
     parser.add_argument(
         "--enum-proto",
@@ -295,6 +556,17 @@ def main() -> int:
         "--yaml",
         type=pathlib.Path,
         default=component_directory / "config" / "xHal_Rpi5CarGrpcSig.yml",
+    )
+    parser.add_argument(
+        "--controller-command-header",
+        type=pathlib.Path,
+        default=(
+            repository_directory
+            / "xWalkLibrary"
+            / "common"
+            / "include"
+            / "xControllerCommand.h"
+        ),
     )
     action_group = parser.add_mutually_exclusive_group(required=True)
     action_group.add_argument(
@@ -327,6 +599,7 @@ def main() -> int:
             arguments.message_proto,
             arguments.service_proto,
             arguments.yaml,
+            arguments.controller_command_header,
         )
         if arguments.generate_cpp:
             generate_grpc_cpp(
@@ -339,7 +612,7 @@ def main() -> int:
                 arguments.protobuf_include,
             )
         else:
-            print("validated xWalkIW single-RPC gRPC schema")
+            print("validated xWalkIW I2C and Controller schemas")
     except (OSError, subprocess.CalledProcessError, ValueError) as error:
         print(f"xWalkIW generation failed: {error}", file=sys.stderr)
         return 1

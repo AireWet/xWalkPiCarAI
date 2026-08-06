@@ -19,16 +19,16 @@ if((XWALK_CAMERA_BUILD_HARDWARE_TESTS OR XWALK_CAMERA_BUILD_LINUX_BACKEND)
     message(FATAL_ERROR "xWalkCamera Linux capture requires Linux process support")
 endif()
 
-if(NOT TARGET xWalkCommon)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon
-        ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common
+        ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
 
 add_library(xWalkCamera STATIC core/src/xHal_Rpi5CarCamera.cpp)
 add_library(xWalk::Camera ALIAS xWalkCamera)
 target_include_directories(xWalkCamera PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/core/include)
 target_compile_features(xWalkCamera PUBLIC cxx_std_17)
-target_link_libraries(xWalkCamera PUBLIC xWalkCommon)
+target_link_libraries(xWalkCamera PUBLIC xWalkLibraryCommon)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkCamera PRIVATE

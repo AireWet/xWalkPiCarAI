@@ -72,7 +72,9 @@ audiopcmhandle XWalkAudioAlsa::openStream(
     {
         XHAL_THROW_RUNTIME_ERROR("ALSA audio PCM device could not be opened");
     }
-    if (!operations.configurePcm(operationContextPointer, pcmHandle, validatedConfiguration))
+    const hal::boolean pcmConfigured = operations.configurePcm(
+        operationContextPointer, pcmHandle, validatedConfiguration);
+    if (pcmConfigured == false)
     {
         operations.closePcm(operationContextPointer, pcmHandle);
         XHAL_THROW_RUNTIME_ERROR("ALSA audio PCM configuration failed");
@@ -119,8 +121,11 @@ void XWalkAudioAlsa::writeFrames(audiopcmhandle streamHandle,
     const size sampleBytes = bytesPerSample(configuration.format);
     const size channelCount = static_cast<size>(configuration.channelCount);
     const size bytesPerFrame = sampleBytes * channelCount;
-    if ((frameCount > (std::numeric_limits<size>::max() / bytesPerFrame)) ||
-        (pcmData.size() != (frameCount * bytesPerFrame)))
+    const hal::boolean frameCountBytesPerFramePcmDataInvalid =
+        static_cast<hal::boolean>(
+            (frameCount > (std::numeric_limits<size>::max() / bytesPerFrame)) ||
+        (pcmData.size() != (frameCount * bytesPerFrame)));
+    if (frameCountBytesPerFramePcmDataInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("ALSA audio payload must contain complete configured frames");
     }
@@ -151,8 +156,13 @@ void XWalkAudioAlsa::writeFrames(audiopcmhandle streamHandle,
         else
         {
             ++recoveryAttemptCount;
-            if ((recoveryAttemptCount > XHAL_RPI5CAR_AUDIO_RECOVERY_ATTEMPT_COUNT) ||
-                (!operations.recoverPcm(operationContextPointer, streamHandle, writeResult)))
+            if (recoveryAttemptCount > XHAL_RPI5CAR_AUDIO_RECOVERY_ATTEMPT_COUNT)
+            {
+                XHAL_THROW_RUNTIME_ERROR("ALSA audio write recovery failed");
+            }
+            const hal::boolean recovered = operations.recoverPcm(
+                operationContextPointer, streamHandle, writeResult);
+            if (recovered == false)
             {
                 XHAL_THROW_RUNTIME_ERROR("ALSA audio write recovery failed");
             }
@@ -200,8 +210,9 @@ void XWalkAudioAlsa::setVolume(uint8 volumePercent)
         XHAL_THROW_OUT_OF_RANGE("ALSA audio volume exceeds one hundred percent");
     }
     const mutexlock lock(mutex);
-    if (!operations.setMixerVolume(operationContextPointer,
-        mixerHandle, mixerElementNameValue, volumePercent))
+    const hal::boolean volumeApplied = operations.setMixerVolume(
+        operationContextPointer, mixerHandle, mixerElementNameValue, volumePercent);
+    if (volumeApplied == false)
     {
         XHAL_THROW_RUNTIME_ERROR("ALSA audio mixer volume update failed");
     }

@@ -91,7 +91,10 @@ float64 XWalkServo::angleToPulseWidth(float64 angleDegrees) noexcept
  */
 void XWalkServo::setAngle(float64 angleDegrees)
 {
-    if (!XHAL_IS_FINITE(angleDegrees))
+    const hal::boolean angleDegreesNotFinite =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(angleDegrees));
+    if (angleDegreesNotFinite)
     {
         XHAL_THROW_INVALID_ARGUMENT("servo angle must be finite");
     }
@@ -125,7 +128,10 @@ void XWalkServo::setAngle(float64 angleDegrees)
  */
 void XWalkServo::setPulseWidthTime(float64 pulseWidthUs)
 {
-    if (!XHAL_IS_FINITE(pulseWidthUs))
+    const hal::boolean pulseWidthUsNotFinite =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(pulseWidthUs));
+    if (pulseWidthUsNotFinite)
     {
         XHAL_THROW_INVALID_ARGUMENT("servo pulse width must be finite");
     }

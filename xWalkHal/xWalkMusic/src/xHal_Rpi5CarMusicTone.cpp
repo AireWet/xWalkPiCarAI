@@ -157,7 +157,10 @@ void XWalkMusic::playToneFor(float64 frequencyHz, float64 durationSeconds)
  */
 void XWalkMusic::validateTone(float64 frequencyHz, float64 durationSeconds)
 {
-    if (!XHAL_IS_FINITE(frequencyHz) || !XHAL_IS_FINITE(durationSeconds))
+    const hal::boolean frequencyHzDurationSecondsInvalid =
+        static_cast<hal::boolean>(
+            !XHAL_IS_FINITE(frequencyHz) || !XHAL_IS_FINITE(durationSeconds));
+    if (frequencyHzDurationSecondsInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT("Music tone frequency and duration must be finite");
     }

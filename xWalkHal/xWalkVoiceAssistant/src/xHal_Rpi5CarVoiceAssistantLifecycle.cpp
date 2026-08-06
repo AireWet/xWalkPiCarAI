@@ -102,7 +102,10 @@ void XWalkVoiceAssistant::start()
     {
         runningValue = true;
         invokeEvent(callbacks.onStart);
-        if (!configuration.welcome.empty())
+        const hal::boolean welcomeAvailable =
+            static_cast<hal::boolean>(
+                !configuration.welcome.empty());
+        if (welcomeAvailable)
         {
             textToSpeechPointer->speak(configuration.welcome);
         }

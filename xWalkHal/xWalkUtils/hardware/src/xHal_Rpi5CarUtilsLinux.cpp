@@ -96,8 +96,16 @@ cstring XWalkUtilsLinux::colorCode(XWalkUtilityColor color)
 void XWalkUtilsLinux::writeAll(int32 descriptor, stringview bytes)
 {
     size writtenByteCount{};
-    while (writtenByteCount < bytes.size())
+    const hal::boolean processingLoopRequested{true};
+    while (processingLoopRequested)
     {
+        const hal::boolean bytesRemaining =
+            static_cast<hal::boolean>(
+                writtenByteCount < bytes.size());
+        if (bytesRemaining == false)
+        {
+            break;
+        }
         const size remainingByteCount = bytes.size() - writtenByteCount;
         const auto writeResult = ::write(descriptor, bytes.data() + writtenByteCount,
             remainingByteCount);
@@ -224,7 +232,10 @@ XWalkCommandResult XWalkUtilsLinux::runCommandProcess(stringview command,
     uint32 groupId{};
 
     const string ownedUser{user};
-    if (!ownedUser.empty())
+    const hal::boolean ownedUserAvailable =
+        static_cast<hal::boolean>(
+            !ownedUser.empty());
+    if (ownedUserAvailable)
     {
         const passwd* const userInformation = ::getpwnam(ownedUser.c_str());
         if (userInformation == nullptr)
@@ -236,7 +247,10 @@ XWalkCommandResult XWalkUtilsLinux::runCommandProcess(stringview command,
     }
 
     const string ownedGroup{group};
-    if (!ownedGroup.empty())
+    const hal::boolean ownedGroupAvailable =
+        static_cast<hal::boolean>(
+            !ownedGroup.empty());
+    if (ownedGroupAvailable)
     {
         const struct group* const groupInformation = ::getgrnam(ownedGroup.c_str());
         if (groupInformation == nullptr)
@@ -248,7 +262,10 @@ XWalkCommandResult XWalkUtilsLinux::runCommandProcess(stringview command,
     }
 
     fixedarray<int32, 2U> outputPipe{};
-    if (::pipe2(outputPipe.data(), O_CLOEXEC) != 0)
+    const hal::boolean outputPipeDifferent =
+        static_cast<hal::boolean>(
+            ::pipe2(outputPipe.data(), O_CLOEXEC) != 0);
+    if (outputPipeDifferent)
     {
         XHAL_THROW_RUNTIME_ERROR("Linux utility command pipe creation failed");
     }
@@ -265,18 +282,27 @@ XWalkCommandResult XWalkUtilsLinux::runCommandProcess(stringview command,
     if (childProcess == 0)
     {
         static_cast<void>(::close(outputPipe[0U]));
-        if ((::dup2(outputPipe[1U], STDOUT_FILENO) < 0) ||
-            (::dup2(outputPipe[1U], STDERR_FILENO) < 0))
+        const hal::boolean outputPipeInvalid =
+            static_cast<hal::boolean>(
+                (::dup2(outputPipe[1U], STDOUT_FILENO) < 0) ||
+            (::dup2(outputPipe[1U], STDERR_FILENO) < 0));
+        if (outputPipeInvalid)
         {
             ::_exit(127);
         }
         static_cast<void>(::close(outputPipe[1U]));
 
-        if (changeGroup && (::setgid(static_cast<gid_t>(groupId)) != 0))
+        const hal::boolean groupChangeFailed =
+            static_cast<hal::boolean>(
+                changeGroup && (::setgid(static_cast<gid_t>(groupId)) != 0));
+        if (groupChangeFailed)
         {
             ::_exit(127);
         }
-        if (changeUser && (::setuid(static_cast<uid_t>(userId)) != 0))
+        const hal::boolean userChangeFailed =
+            static_cast<hal::boolean>(
+                changeUser && (::setuid(static_cast<uid_t>(userId)) != 0));
+        if (userChangeFailed)
         {
             ::_exit(127);
         }
@@ -325,17 +351,26 @@ XWalkCommandResult XWalkUtilsLinux::runCommandProcess(stringview command,
     }
 
     int32 status{127};
-    if (WIFEXITED(childStatus))
+    const hal::boolean childExitedNormally =
+        static_cast<hal::boolean>(
+            WIFEXITED(childStatus));
+    if (childExitedNormally)
     {
         status = static_cast<int32>(WEXITSTATUS(childStatus));
     }
-    else if (WIFSIGNALED(childStatus))
-    {
-        status = static_cast<int32>(128 + WTERMSIG(childStatus));
-    }
     else
     {
-        /* Retain the conventional command-launch failure status. */
+        const hal::boolean childTerminatedBySignal =
+            static_cast<hal::boolean>(
+                WIFSIGNALED(childStatus));
+        if (childTerminatedBySignal)
+        {
+            status = static_cast<int32>(128 + WTERMSIG(childStatus));
+        }
+        else
+        {
+            /* Retain the conventional command-launch failure status. */
+        }
     }
     return {status, output};
 }
@@ -351,13 +386,19 @@ XWalkCommandResult XWalkUtilsLinux::runCommandProcess(stringview command,
  */
 boolean XWalkUtilsLinux::executableExists(stringview executable) const
 {
-    if (executable.empty())
+    const hal::boolean executableEmpty =
+        static_cast<hal::boolean>(
+            executable.empty());
+    if (executableEmpty)
     {
         return false;
     }
 
     const string ownedExecutable{executable};
-    if (ownedExecutable.find('/') != string::npos)
+    const hal::boolean ownedExecutableDifferent =
+        static_cast<hal::boolean>(
+            ownedExecutable.find('/') != string::npos);
+    if (ownedExecutableDifferent)
     {
         return isExecutableFile(ownedExecutable);
     }
@@ -370,20 +411,34 @@ boolean XWalkUtilsLinux::executableExists(stringview executable) const
 
     const string searchPath{pathEnvironment};
     size pathStart{};
-    while (pathStart <= searchPath.size())
+    const hal::boolean pathSearchRequested{true};
+    while (pathSearchRequested)
     {
+        const hal::boolean pathEntryAvailable =
+            static_cast<hal::boolean>(
+                pathStart <= searchPath.size());
+        if (pathEntryAvailable == false)
+        {
+            break;
+        }
         const size separator = searchPath.find(':', pathStart);
         const size pathLength = (separator == string::npos) ?
             searchPath.size() - pathStart : separator - pathStart;
         string directory = searchPath.substr(pathStart, pathLength);
-        if (directory.empty())
+        const hal::boolean directoryEmpty =
+            static_cast<hal::boolean>(
+                directory.empty());
+        if (directoryEmpty)
         {
             directory = ".";
         }
         string candidate = directory;
         candidate += '/';
         candidate += ownedExecutable;
-        if (isExecutableFile(candidate))
+        const hal::boolean executableFileMatched =
+            static_cast<hal::boolean>(
+                isExecutableFile(candidate));
+        if (executableFileMatched)
         {
             return true;
         }
@@ -408,7 +463,10 @@ boolean XWalkUtilsLinux::executableExists(stringview executable) const
 string XWalkUtilsLinux::interfaceIpv4(stringview interfaceName) const
 {
     ifaddrs* interfaceList{nullptr};
-    if (::getifaddrs(&interfaceList) != 0)
+    const hal::boolean interfaceListDifferent =
+        static_cast<hal::boolean>(
+            ::getifaddrs(&interfaceList) != 0);
+    if (interfaceListDifferent)
     {
         return {};
     }
@@ -425,7 +483,10 @@ string XWalkUtilsLinux::interfaceIpv4(stringview interfaceName) const
         const sockaddr_in* const ipv4Address =
             reinterpret_cast<const sockaddr_in*>(entry->ifa_addr);
         fixedarray<char, INET_ADDRSTRLEN> text{};
-        if (::inet_ntop(AF_INET, &ipv4Address->sin_addr, text.data(), text.size()) != nullptr)
+        const hal::boolean ipv4AddressSinAddrTextDifferent =
+            static_cast<hal::boolean>(
+                ::inet_ntop(AF_INET, &ipv4Address->sin_addr, text.data(), text.size()) != nullptr);
+        if (ipv4AddressSinAddrTextDifferent)
         {
             address = text.data();
             break;
@@ -488,7 +549,10 @@ int32 XWalkUtilsLinux::redirectStandardError() const
         XHAL_THROW_RUNTIME_ERROR("Linux utility could not duplicate standard error");
     }
 
-    if (::dup2(nullDescriptor, STDERR_FILENO) < 0)
+    const hal::boolean stderrRedirectFailed =
+        static_cast<hal::boolean>(
+            ::dup2(nullDescriptor, STDERR_FILENO) < 0);
+    if (stderrRedirectFailed)
     {
         static_cast<void>(::close(restoreToken));
         static_cast<void>(::close(nullDescriptor));

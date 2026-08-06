@@ -118,10 +118,46 @@ class XWalkConfigStore
         static string trim(stringview text);
 
         /**
-         * @brief Reads all configuration lines without newline characters.
+         * @brief Reads one configuration file without expanding includes.
+         *
+         * @param[in] filePath
+         * Readable regular configuration file.
          *
          * @return
          * Lines in their original order.
+         *
+         * @throws std::runtime_error
+         * If the file cannot be opened or completely read.
+         */
+        static stringvector readFileLines(const filesystempath& filePath);
+
+        /**
+         * @brief Appends one configuration file and its relative includes.
+         *
+         * @param[in] filePath
+         * Configuration file resolved by its owning file.
+         *
+         * @param[in,out] activePaths
+         * Canonical path strings used to reject an active include cycle.
+         *
+         * @param[out] lines
+         * Flattened non-include lines in declaration order.
+         *
+         * @param[in] depth
+         * Current include depth in the range zero through eight.
+         *
+         * @throws std::runtime_error
+         * If an include is invalid, cyclic, too deep, missing, or unreadable.
+         */
+        static void appendConfigurationLines(const filesystempath& filePath,
+            stringvector& activePaths, stringvector& lines, uint32 depth);
+
+        /**
+         * @brief Reads all configuration lines without newline characters.
+         *
+         * @return
+         * Lines in include-expansion order. Each `include = relative/path.conf`
+         * directive is replaced by the referenced file's lines.
          *
          * @throws std::runtime_error
          * If the configuration file cannot be opened or completely read.

@@ -37,7 +37,10 @@ speechcapturehandle XWalkSpeechToTextAlsa::systemOpenCapture(contextpointer cont
     static_cast<void>(context);
     snd_pcm_t* capture{nullptr};
     const string ownedName{deviceName};
-    if (snd_pcm_open(&capture, ownedName.c_str(), SND_PCM_STREAM_CAPTURE, 0) < 0)
+    const hal::boolean captureOpenFailed =
+        static_cast<hal::boolean>(
+            snd_pcm_open(&capture, ownedName.c_str(), SND_PCM_STREAM_CAPTURE, 0) < 0);
+    if (captureOpenFailed)
     {
         return nullptr;
     }

@@ -58,7 +58,10 @@ namespace xwalk::hal
  */
 uint32 XWalkPwmTimerState::getPeriod(uint32 timerIndex) const
 {
-    if (timerIndex >= periods.size())
+    const hal::boolean timerIndexInvalid =
+        static_cast<hal::boolean>(
+            timerIndex >= periods.size());
+    if (timerIndexInvalid)
     {
         XHAL_THROW_OUT_OF_RANGE("PWM timer index must be in range 0..6");
     }
@@ -85,7 +88,10 @@ uint32 XWalkPwmTimerState::getPeriod(uint32 timerIndex) const
  */
 void XWalkPwmTimerState::updatePeriod(uint32 timerIndex, uint32 period)
 {
-    if (timerIndex >= periods.size())
+    const hal::boolean timerIndexInvalid =
+        static_cast<hal::boolean>(
+            timerIndex >= periods.size());
+    if (timerIndexInvalid)
     {
         XHAL_THROW_OUT_OF_RANGE("PWM timer index must be in range 0..6");
     }

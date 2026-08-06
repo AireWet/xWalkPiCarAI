@@ -55,7 +55,10 @@ XWalkTtsPiperExampleLinux::XWalkTtsPiperExampleLinux(
     synthesisExecutableName(synthesisExecutable),
     playbackExecutableName(playbackExecutable)
 {
-    if (synthesisExecutableName.empty() || playbackExecutableName.empty())
+    const hal::boolean ttsConfigurationInvalid =
+        static_cast<hal::boolean>(
+            synthesisExecutableName.empty() || playbackExecutableName.empty());
+    if (ttsConfigurationInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT(
             "Piper synthesis and playback executables are required");
@@ -80,7 +83,10 @@ void XWalkTtsPiperExampleLinux::run()
 void XWalkTtsPiperExampleLinux::speakText(
     stringview model, stringview text)
 {
-    if (model.empty() || text.empty())
+    const hal::boolean modelTextInvalid =
+        static_cast<hal::boolean>(
+            model.empty() || text.empty());
+    if (modelTextInvalid)
     {
         XHAL_THROW_INVALID_ARGUMENT(
             "Piper model and speech text must not be empty");
@@ -129,7 +135,10 @@ void XWalkTtsPiperExampleLinux::speak(contextpointer context,
         XHAL_THROW_RUNTIME_ERROR(
             "Piper temporary file creation failed");
     }
-    if (::close(descriptor) != 0)
+    const hal::boolean descriptorDifferent =
+        static_cast<hal::boolean>(
+            ::close(descriptor) != 0);
+    if (descriptorDifferent)
     {
         static_cast<void>(::unlink(temporaryPath));
         XHAL_THROW_RUNTIME_ERROR("Piper temporary file close failed");
@@ -156,8 +165,11 @@ void XWalkTtsPiperExampleLinux::speak(contextpointer context,
     {
         synthesisWait = ::waitpid(synthesisProcess, &synthesisStatus, 0);
     }
-    if ((synthesisWait != synthesisProcess) ||
-        !WIFEXITED(synthesisStatus) || (WEXITSTATUS(synthesisStatus) != 0))
+    const hal::boolean synthesisFailed =
+        static_cast<hal::boolean>(
+            (synthesisWait != synthesisProcess) ||
+        !WIFEXITED(synthesisStatus) || (WEXITSTATUS(synthesisStatus) != 0));
+    if (synthesisFailed)
     {
         static_cast<void>(::unlink(temporaryPath));
         XHAL_THROW_RUNTIME_ERROR("Piper synthesis executable failed");
@@ -184,8 +196,11 @@ void XWalkTtsPiperExampleLinux::speak(contextpointer context,
         playbackWait = ::waitpid(playbackProcess, &playbackStatus, 0);
     }
     const int32 removeResult = ::unlink(temporaryPath);
-    if ((removeResult != 0) || (playbackWait != playbackProcess) ||
-        !WIFEXITED(playbackStatus) || (WEXITSTATUS(playbackStatus) != 0))
+    const hal::boolean playbackFailed =
+        static_cast<hal::boolean>(
+            (removeResult != 0) || (playbackWait != playbackProcess) ||
+        !WIFEXITED(playbackStatus) || (WEXITSTATUS(playbackStatus) != 0));
+    if (playbackFailed)
     {
         XHAL_THROW_RUNTIME_ERROR("Piper playback executable failed");
     }

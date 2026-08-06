@@ -51,8 +51,7 @@ run the sequence directly for 30 seconds:
 Or select it through the central hardware profile:
 
 ```sh
-./build-rpi/xGoogleTest --test-profile=hardware \
-    TEST_SUITE_XWALK_SEQUENCE:ButtonEvent:1
+./build-rpi/xGoogleTest --test-profile=hardware TEST_SUITE_XWALK_SEQUENCE:ButtonEvent:1
 ```
 
 Run the deterministic in-memory host version through the same suite and case:
@@ -89,15 +88,13 @@ After confirming power, mechanical clearance, servo connections, PWM channels,
 and the correct Raspberry Pi/Robot HAT, select the physical sequence with:
 
 ```sh
-./build-rpi/xGoogleTest --test-profile=hardware \
-    TEST_SUITE_XWALK_SEQUENCE:InitAngles:1
+./build-rpi/xGoogleTest --test-profile=hardware TEST_SUITE_XWALK_SEQUENCE:InitAngles:1
 ```
 
 The equivalent direct command is:
 
 ```sh
-./build-rpi/xSequenceTest init-angles \
-    /dev/i2c-1 /dev/gpiochip0 "" "" ./build-rpi/init-angles.config
+./build-rpi/xSequenceTest init-angles /dev/i2c-1 /dev/gpiochip0 "" "" ./build-rpi/init-angles.config
 ```
 
 This operation resets the MCU and moves three servos. The hardware XML keeps it
@@ -125,8 +122,7 @@ After confirming Robot HAT v5, motor wiring, external motor power, mechanical
 clearance, and a safe raised-wheel setup, select one physical cycle with:
 
 ```sh
-./build-rpi/xGoogleTest --test-profile=hardware \
-    TEST_SUITE_XWALK_SEQUENCE:RobotHat5Motor:1
+./build-rpi/xGoogleTest --test-profile=hardware TEST_SUITE_XWALK_SEQUENCE:RobotHat5Motor:1
 ```
 
 The equivalent direct command is:
@@ -227,15 +223,13 @@ external motor power, mechanical clearance, and a safe raised-wheel setup,
 select one physical cycle with:
 
 ```sh
-./build-rpi/xGoogleTest --test-profile=hardware \
-    TEST_SUITE_XWALK_SEQUENCE:Motor:1
+./build-rpi/xGoogleTest --test-profile=hardware TEST_SUITE_XWALK_SEQUENCE:Motor:1
 ```
 
 The equivalent direct command is:
 
 ```sh
-./build-rpi/xSequenceTest motor 1 \
-    /dev/i2c-1 /dev/gpiochip0 "" ""
+./build-rpi/xSequenceTest motor 1 /dev/i2c-1 /dev/gpiochip0 "" ""
 ```
 
 The hardware XML keeps this motor-moving sequence disabled until explicitly
@@ -283,8 +277,7 @@ speaker, ALSA devices, and a safe playback environment, it can be selected
 explicitly with:
 
 ```sh
-./build-rpi/xGoogleTest --test-profile=hardware \
-    TEST_SUITE_XWALK_SEQUENCE:Tone:1
+./build-rpi/xGoogleTest --test-profile=hardware TEST_SUITE_XWALK_SEQUENCE:Tone:1
 ```
 
 The equivalent direct command is:

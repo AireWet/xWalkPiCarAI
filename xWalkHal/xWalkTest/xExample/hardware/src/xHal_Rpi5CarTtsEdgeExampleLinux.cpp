@@ -28,7 +28,10 @@ namespace xwalk::hal::example
 XWalkTtsEdgeExampleLinux::XWalkTtsEdgeExampleLinux(stringview executable):
     executableName(executable)
 {
-    if (executableName.empty())
+    const hal::boolean executableNameEmpty =
+        static_cast<hal::boolean>(
+            executableName.empty());
+    if (executableNameEmpty)
     {
         XHAL_THROW_INVALID_ARGUMENT("Edge TTS playback executable is required");
     }
@@ -77,8 +80,11 @@ void XWalkTtsEdgeExampleLinux::speak(
     {
         waitResult = ::waitpid(childProcess, &processStatus, 0);
     }
-    if ((waitResult != childProcess) || !WIFEXITED(processStatus) ||
-        (WEXITSTATUS(processStatus) != 0))
+    const hal::boolean waitResultChildProcessProcessStatusInvalid =
+        static_cast<hal::boolean>(
+            (waitResult != childProcess) || !WIFEXITED(processStatus) ||
+        (WEXITSTATUS(processStatus) != 0));
+    if (waitResultChildProcessProcessStatusInvalid)
     {
         XHAL_THROW_RUNTIME_ERROR("Edge TTS playback executable failed");
     }

@@ -5,10 +5,11 @@ options, backend ownership, safety constraints, and verification commands remain
 
 ## Workspace architecture
 
-- [xWalkCommon](../xWalkCommon/README.md): shared types, constants, exceptions, and reusable facilities.
+- [xWalk common library](../xWalkLibrary/common/README.md): shared interface target for public headers in
+  `xWalkLibrary/common`.
 - [xWalkHal](../xWalkHal/README.md): aggregate hardware-abstraction architecture and build options.
 - [xWalkAgent](../xWalkAgent/README.md): application coordinators and aggregate Agent verification.
-- [xWalkCLI](../xWalkCLI/README.md): standalone CLI aggregate and Controller composition.
+- [xWalkController](../xWalkController/README.md): standalone CLI aggregate and Controller composition.
 - [High-level architecture](Doc/note/HAL%20Arcithure.md): workspace layers and ownership rules.
 - [Hardware architecture](Doc/note/HAL%20Hardware%20Architecture.md): devices and backends.
 - [CLI architecture](Doc/note/CLI%20Architecture.md): command coverage and implementation plan.
@@ -24,6 +25,10 @@ options, backend ownership, safety constraints, and verification commands remain
   coverage, clean-environment, and staged-install verification.
 - [Language-model provider configuration](Doc/note/Language%20Model%20Provider%20Configuration.md): Ollama,
   ChatGPT, Gemini, Claude, credential handling, and model selection.
+- [Licence-key workflow](Doc/note/License%20Key%20Workflow.md): authenticated encryption, protected input,
+  environment loading, deployment, and secret-handling boundaries.
+- [Audio resources](../xWalkAudioResources/README.md): combined sound-effect and background-music assets,
+  provenance, layout, and integrity hashes.
 
 ## Scripts
 
@@ -39,6 +44,10 @@ options, backend ownership, safety constraints, and verification commands remain
   coverage reporting, and enforced thresholds.
 - [Raspberry Pi setup script guide](Doc/note/Raspberry%20Pi%20Setup%20Script%20Guide.md): safe dry-run, target
   validation, privileged apply behavior, and troubleshooting.
+- [xWalk licence tool guide](Doc/note/xWalk%20Licence%20Tool%20Guide.md): protected input, authenticated
+  encryption, serial generation, decryption, output, and exit behavior.
+- [xWalk environment loader guide](Doc/note/xWalk%20Environment%20Loader%20Guide.md): sourced-shell loading,
+  template validation, temporary-file cleanup, and environment security.
 
 ## Robot HAT board diagram
 
@@ -50,13 +59,18 @@ notes.
 
 ## Agent modules
 
-- [xWalkController](../xWalkCLI/xWalkController/README.md): commands, backend boot, and RPi composition.
-- [xWalkBoot](../xWalkAgent/xWalkBoot/README.md): host stub and RPi process hardware ownership.
-- [xWalkLineTracking](../xWalkAgent/xWalkLineTracking/README.md): bounded line-following coordination.
-- [xWalkPicarx](../xWalkAgent/xWalkPicarx/README.md): movement, calibration, and sensor coordination.
-- [xWalkSelfDrive](../xWalkAgent/xWalkSelfDrive/README.md): preset gestures, sounds, and action queue.
-- [xWalkSpiTransfer](../xWalkAgent/xWalkSpiTransfer/README.md): bounded SPI transaction coordination.
-- [xWalkVoiceActiveCar](../xWalkAgent/xWalkVoiceActiveCar/README.md): sensor, wake-word, and spoken-demo cars.
+- [xWalkHandler](../xWalkController/xWalkHandler/README.md): controller contract, parsing, and command handlers.
+- [xWalkApp](../xWalkController/xWalkApp/README.md): executable targets, process entry points, generated help,
+  application tests, and Raspberry Pi composition.
+- [Controller command flow](Doc/note/Controller%20Command%20Flow.md): Mermaid traces from every CLI
+  command through boot selection, typed handlers, Agent and HAL services, and final endpoints.
+- [xWalkBoot](../xWalkAgent/xWalkPlatform/xWalkBoot/README.md): host stub and RPi process hardware ownership.
+- [xWalkLineTracking](../xWalkAgent/xWalkVehicle/xWalkLineTracking/README.md): bounded line following.
+- [xWalkPicarx](../xWalkAgent/xWalkVehicle/xWalkPicarx/README.md): movement, calibration, and sensing.
+- [xWalkSelfDrive](../xWalkAgent/xWalkVehicle/xWalkSelfDrive/README.md): gestures, sounds, and action queue.
+- [xWalkSpiTransfer](../xWalkAgent/xWalkConnectivity/xWalkSpiTransfer/README.md): bounded SPI transactions.
+- [xWalkVoiceActiveCar](../xWalkAgent/xWalkVoice/xWalkVoiceActiveCar/README.md): sensor-aware voice car.
+- [xWalkGptCar](../xWalkAgent/xWalkVoice/xWalkGptCar/README.md): upstream JSON GPT-car assistant.
 
 ## HAL modules
 
@@ -69,7 +83,7 @@ notes.
 - [xWalkGpio](../xWalkHal/xWalkGpio/README.md): GPIO abstraction and Linux backend.
 - [xWalkGPT](../xWalkHal/xWalkGPT/README.md): speech coordination plus Vosk and Espeak providers.
 - [xWalkI2c](../xWalkHal/xWalkI2c/README.md): I2C abstraction and Linux backend.
-- [xWalkIW](../xWalkIW/README.md): Protobuf and gRPC interface definitions for xWalkI2c.
+- [xWalkIW](../xWalkIW/README.md): Controller Protobuf DTOs and the xWalkI2c gRPC interface.
 - [xWalkLanguageModel](../xWalkHal/xWalkLanguageModel/README.md): provider-neutral language-model access.
 - [xWalkLed](../xWalkHal/xWalkLed/README.md): GPIO and PWM LED control.
 - [xWalkLineTracker](../xWalkHal/xWalkLineTracker/README.md): grayscale line-position estimation.

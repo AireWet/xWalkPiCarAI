@@ -55,15 +55,24 @@ XWalkHal::int32 main(XWalkHal::int32 argumentCount,
         XHAL_I2C_WRITE_REGISTER_CALLBACK(xwalk::hal::XWalkI2cLinux),
         XHAL_I2C_READ_CALLBACK(xwalk::hal::XWalkI2cLinux));
 
-    if (i2c.probe(XHAL_RPI5CAR_I2C_ADDRESS_1))
+    const hal::boolean primaryAddressAvailable =
+        static_cast<hal::boolean>(
+            i2c.probe(XHAL_RPI5CAR_I2C_ADDRESS_1));
+    if (primaryAddressAvailable)
     {
         return 0;
     }
-    if (i2c.probe(XHAL_RPI5CAR_I2C_ADDRESS_2))
+    const hal::boolean secondaryAddressAvailable =
+        static_cast<hal::boolean>(
+            i2c.probe(XHAL_RPI5CAR_I2C_ADDRESS_2));
+    if (secondaryAddressAvailable)
     {
         return 0;
     }
-    if (i2c.probe(XHAL_RPI5CAR_I2C_ADDRESS_3))
+    const hal::boolean secondaryAddressAvailable =
+        static_cast<hal::boolean>(
+            i2c.probe(XHAL_RPI5CAR_I2C_ADDRESS_3));
+    if (secondaryAddressAvailable)
     {
         return 0;
     }

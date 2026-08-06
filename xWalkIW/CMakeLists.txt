@@ -2,16 +2,18 @@ cmake_minimum_required(VERSION 3.16)
 
 project(xWalkIW LANGUAGES CXX)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/../xWalkLibrary/XWalkDependencies.cmake)
+
 option(XWALK_IW_BUILD_HOST_TESTS "Build xWalkIW host schema validation" OFF)
 
 find_package(Protobuf REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
-if(NOT TARGET xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
     add_subdirectory(
-        ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkCommon
-        ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkLibrary/common
+        ${CMAKE_CURRENT_BINARY_DIR}/common
     )
 endif()
 
@@ -62,7 +64,7 @@ target_link_libraries(xWalkIwGrpc
         gRPC::grpc++
         protobuf::libprotobuf
     PRIVATE
-        xWalkCommon
+        xWalkLibraryCommon
 )
 
 add_library(xWalkIW INTERFACE)

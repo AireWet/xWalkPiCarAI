@@ -103,11 +103,17 @@ texttospeechspeakcallback XWalkTextToSpeechAlsa::callback() const noexcept
  */
 void XWalkTextToSpeechAlsa::validateAudioData(const XWalkTextToSpeechPcmData& audioData)
 {
-    if (audioData.pcmData.size() > XHAL_RPI5CAR_TEXT_TO_SPEECH_MAXIMUM_PCM_BYTES)
+    const hal::boolean pcmDataTooLarge =
+        static_cast<hal::boolean>(
+            audioData.pcmData.size() > XHAL_RPI5CAR_TEXT_TO_SPEECH_MAXIMUM_PCM_BYTES);
+    if (pcmDataTooLarge)
     {
         XHAL_THROW_OUT_OF_RANGE("Text-to-speech PCM exceeds bounded byte count");
     }
-    if (audioData.pcmData.empty())
+    const hal::boolean pcmDataEmpty =
+        static_cast<hal::boolean>(
+            audioData.pcmData.empty());
+    if (pcmDataEmpty)
     {
         return;
     }
@@ -118,7 +124,10 @@ void XWalkTextToSpeechAlsa::validateAudioData(const XWalkTextToSpeechPcmData& au
     }
     const size channelCount = static_cast<size>(audioData.channelCount);
     const size bytesPerFrame = channelCount * XHAL_RPI5CAR_TEXT_TO_SPEECH_SAMPLE_BYTES;
-    if ((audioData.pcmData.size() % bytesPerFrame) != 0U)
+    const hal::boolean audioDataPcmDataBytesPerFrameDifferent =
+        static_cast<hal::boolean>(
+            (audioData.pcmData.size() % bytesPerFrame) != 0U);
+    if (audioDataPcmDataBytesPerFrameDifferent)
     {
         XHAL_THROW_INVALID_ARGUMENT("Text-to-speech PCM has an incomplete frame");
     }
@@ -155,7 +164,10 @@ void XWalkTextToSpeechAlsa::speak(contextpointer context, stringview text)
     const XWalkTextToSpeechPcmData audioData =
         self.operations.synthesize(self.providerContext, text);
     validateAudioData(audioData);
-    if (audioData.pcmData.empty())
+    const hal::boolean audioDataEmpty =
+        static_cast<hal::boolean>(
+            audioData.pcmData.empty());
+    if (audioDataEmpty)
     {
         return;
     }

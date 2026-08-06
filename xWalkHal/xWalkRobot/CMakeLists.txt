@@ -16,8 +16,8 @@ if(XWALK_ROBOT_BUILD_HOST_TESTS OR XWALK_ROBOT_BUILD_HARDWARE_TESTS)
     include(CTest)
 endif()
 
-if(NOT TARGET xWalkCommon)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkCommon ${CMAKE_CURRENT_BINARY_DIR}/xWalkCommon)
+if(NOT TARGET xWalkLibraryCommon)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
 
 if(NOT TARGET xWalkServo)
@@ -37,7 +37,7 @@ add_library(xWalkRobot STATIC
 
 target_include_directories(xWalkRobot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkRobot PUBLIC cxx_std_17)
-target_link_libraries(xWalkRobot PUBLIC xWalkCommon xWalkServo xWalkConfig)
+target_link_libraries(xWalkRobot PUBLIC xWalkLibraryCommon xWalkServo xWalkConfig)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkRobot PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
