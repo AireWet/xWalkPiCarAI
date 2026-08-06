@@ -84,8 +84,7 @@ os.write(1, b"XWALK_LICENSE_RECORDS_COMPLETE\0")' \
         decoded_values[$name]="$value"
     done
     for name in "${!decoded_values[@]}"; do
-        printf -v "$name" '%s' "${decoded_values[$name]}"
-        export "$name"
+        export "$name=${decoded_values[$name]}"
     done
     return 0
 }
