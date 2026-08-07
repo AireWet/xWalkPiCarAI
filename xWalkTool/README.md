@@ -376,8 +376,9 @@ The Raspberry Pi deployment guide remains the authoritative end-to-end procedure
 
 ## xWalkIW generator status
 
-`xHal_Rpi5CarIwGenerator` is an executable Python 3 tool for validating xWalkIW Protobuf/YAML contracts and
-generating routed C++ Protobuf and gRPC sources. Its supported actions are:
+`xHal_Rpi5CarIwGenerator` is an executable Python 3 tool for validating xWalkIW
+Protobuf/XML contracts and generating routed C++ Protobuf and gRPC sources. Its
+supported actions are:
 
 ```sh
 xWalkTool/python/xHal_Rpi5CarIwGenerator --help

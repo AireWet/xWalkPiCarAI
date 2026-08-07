@@ -28,8 +28,8 @@
 #include <google/protobuf/generated_message_reflection.h>
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
-#include "xHal_Rpi5CarXIwMessage.pb.h"
-#include <google/protobuf/empty.pb.h>
+#include "xHal_Rpi5CarXIwMessageReq.pb.h"
+#include "xHal_Rpi5CarXIwMessageCfm.pb.h"
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_xHal_5fRpi5CarXIwGrpc_2eproto
