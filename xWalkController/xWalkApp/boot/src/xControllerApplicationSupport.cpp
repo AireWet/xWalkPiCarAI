@@ -82,7 +82,7 @@ void XWALK_resetOperationRequest() noexcept
 void XWALK_outputLine(::ctrl::contextpointer context, ::ctrl::stringview line)
 {
     static_cast<void>(context);
-    std::cout << line << std::endl;
+    std::cout << line << '\n';
 }
 
 /**
@@ -173,7 +173,7 @@ void XWALK_requestOperationStop(int signalNumber) noexcept
                 !hal::isReadableRegularFile(resolved));
         if (readableRegularFileNotMatched)
         {
-            std::cerr << "Unreadable sound resource: " << resolvedFilePath << std::endl;
+            std::cerr << "Unreadable sound resource: " << resolvedFilePath << '\n';
             return false;
         }
     }

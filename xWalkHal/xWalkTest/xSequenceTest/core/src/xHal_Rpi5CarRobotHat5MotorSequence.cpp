@@ -27,6 +27,8 @@
 
 #include "xHal_Rpi5CarRobotHat5MotorSequence.h"
 
+#include <cstdio>
+
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -91,7 +93,9 @@ void XWalkRobotHat5MotorSequence::run(uint32 cycleCount)
         }
         catch (...)
         {
-            /* Preserve the original sequence failure after the cleanup attempt. */
+            stopAllSafely();
+            static_cast<void>(std::fputs(
+                "Robot HAT v5 motor-sequence cleanup delay failed\n", stderr));
         }
         throw;
     }

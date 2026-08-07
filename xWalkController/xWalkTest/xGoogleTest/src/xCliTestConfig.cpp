@@ -362,7 +362,10 @@ clitestsuiteconfigvector availableCliSequenceTests()
                     seenCases.count(caseName) != 0U);
             if (seenCasesCountCaseNameDifferent)
             {
-                error = "duplicate CLI test case in XML: " + suiteName + "." + caseName;
+                error = "duplicate CLI test case in XML: ";
+                error += suiteName;
+                error += ".";
+                error += caseName;
                 return false;
             }
             const ::ctrl::boolean findCaseAvailableSuiteCaseNameMatched =
@@ -370,7 +373,10 @@ clitestsuiteconfigvector availableCliSequenceTests()
                     findCase(*availableSuite, caseName) == nullptr);
             if (findCaseAvailableSuiteCaseNameMatched)
             {
-                error = "unknown CLI test case in XML: " + suiteName + "." + caseName;
+                error = "unknown CLI test case in XML: ";
+                error += suiteName;
+                error += ".";
+                error += caseName;
                 return false;
             }
 
@@ -380,7 +386,10 @@ clitestsuiteconfigvector availableCliSequenceTests()
                 readEnabled(*caseElement, configuredCase.enabled);
             if (caseEnabledRead == false)
             {
-                error = "case enabled attribute must be 0 or 1: " + suiteName + "." + caseName;
+                error = "case enabled attribute must be 0 or 1: ";
+                error += suiteName;
+                error += ".";
+                error += caseName;
                 return false;
             }
             configuredSuite.cases.push_back(configuredCase);

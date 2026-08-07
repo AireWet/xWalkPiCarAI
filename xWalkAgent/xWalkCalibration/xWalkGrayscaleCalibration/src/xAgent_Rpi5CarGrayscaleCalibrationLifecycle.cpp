@@ -28,6 +28,8 @@
 
 #include "xHal_Rpi5CarExceptions.h"
 
+#include <cstdio>
+
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -89,6 +91,8 @@ void XWalkGrayscaleCalibration::stop() noexcept
     }
     catch (...)
     {
+        static_cast<void>(std::fputs(
+            "Grayscale-calibration cleanup failed\n", stderr));
     }
 }
 

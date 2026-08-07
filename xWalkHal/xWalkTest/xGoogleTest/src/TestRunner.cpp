@@ -744,6 +744,8 @@ void TestRunner::registerTests() const
          buildDefinitions(profileValue, binaryDirectoryValue,
              runtimeConfigurationPathValue))
     {
+        // GoogleTest owns the registered factory; Clang Analyzer does not model that transfer.
+        // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
         static_cast<void>(::testing::RegisterTest(
             definition.suiteName.c_str(), definition.caseName.c_str(), nullptr, nullptr,
             __FILE__, __LINE__, [definition]() -> LegacyGoogleTest*
@@ -945,7 +947,10 @@ boolean TestRunner::processSelections(
                 !caseName.empty() && (findCase(*suite, caseName) == nullptr));
         if (requestedCaseMissing)
         {
-            error = "unknown test case: " + suiteName + "." + caseName;
+            error = "unknown test case: ";
+            error += suiteName;
+            error += ".";
+            error += caseName;
             return false;
         }
         selections.push_back({suiteName, caseName, state == "1"});

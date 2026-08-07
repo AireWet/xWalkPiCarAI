@@ -254,7 +254,10 @@ boolean TestConfig::load(const filesystempath& path, const testsuiteconfigvector
                     seenCases.count(caseName) != 0U);
             if (seenCasesCountCaseNameDifferent)
             {
-                error = "duplicate test case in XML: " + suiteName + "." + caseName;
+                error = "duplicate test case in XML: ";
+                error += suiteName;
+                error += ".";
+                error += caseName;
                 return false;
             }
             const hal::boolean findCaseAvailableSuiteCaseNameMatched =
@@ -262,7 +265,10 @@ boolean TestConfig::load(const filesystempath& path, const testsuiteconfigvector
                     findCase(*availableSuite, caseName) == nullptr);
             if (findCaseAvailableSuiteCaseNameMatched)
             {
-                error = "unknown test case in XML: " + suiteName + "." + caseName;
+                error = "unknown test case in XML: ";
+                error += suiteName;
+                error += ".";
+                error += caseName;
                 return false;
             }
 
@@ -272,7 +278,10 @@ boolean TestConfig::load(const filesystempath& path, const testsuiteconfigvector
                 readEnabled(*caseElement, configuredCase.enabled);
             if (caseEnabledRead == false)
             {
-                error = "case enabled attribute must be 0 or 1: " + suiteName + "." + caseName;
+                error = "case enabled attribute must be 0 or 1: ";
+                error += suiteName;
+                error += ".";
+                error += caseName;
                 return false;
             }
             configuredSuite.cases.push_back(configuredCase);

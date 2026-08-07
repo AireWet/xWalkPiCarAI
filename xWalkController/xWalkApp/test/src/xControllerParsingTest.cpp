@@ -106,9 +106,9 @@ TEST(XWalkAppParsingGroup, SpecializedRequests)
 
     EXPECT_EQ(play.operation, xwalk::ctrl::XWalkSoundOperation::Play);
     ASSERT_TRUE(play.volumePercent.has_value());
-    EXPECT_DOUBLE_EQ(*play.volumePercent, 80.0);
+    EXPECT_DOUBLE_EQ(play.volumePercent.value_or(-1.0), 80.0);
     ASSERT_TRUE(music.volumePercent.has_value());
-    EXPECT_DOUBLE_EQ(*music.volumePercent, 20.0);
+    EXPECT_DOUBLE_EQ(music.volumePercent.value_or(-1.0), 20.0);
     EXPECT_EQ(volume.operation, xwalk::ctrl::XWalkSoundOperation::Volume);
     ASSERT_EQ(spi.transmitData.size(), 2U);
     EXPECT_EQ(spi.transmitData[1U], 0xABU);

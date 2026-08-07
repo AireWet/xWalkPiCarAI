@@ -12,6 +12,8 @@
 
 #include "xHal_Rpi5CarExceptions.h"
 
+#include <cstdio>
+
 namespace xwalk::agent
 {
 
@@ -97,6 +99,9 @@ void XWalkVideoRecording::stop() noexcept
             }
             catch (...)
             {
+                stateValue = XWalkVideoRecordingState::Stopped;
+                static_cast<void>(std::fputs(
+                    "Video-recording cleanup failed\n", stderr));
             }
         }
         callbacks.stopCamera(callbackContext);

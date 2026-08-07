@@ -27,6 +27,8 @@
 
 #include "xHal_Rpi5CarMotorSequence.h"
 
+#include <cstdio>
+
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -97,7 +99,9 @@ void XWalkMotorSequence::run(uint32 cycleCount)
         }
         catch (...)
         {
-            /* Preserve the original sequence failure after the cleanup attempt. */
+            stopBothSafely();
+            static_cast<void>(std::fputs(
+                "Motor-sequence cleanup delay failed\n", stderr));
         }
         throw;
     }

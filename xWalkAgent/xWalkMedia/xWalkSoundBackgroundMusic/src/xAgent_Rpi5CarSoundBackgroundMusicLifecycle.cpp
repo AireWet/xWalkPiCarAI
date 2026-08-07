@@ -14,6 +14,7 @@
 #include "xHal_Rpi5CarFileFunctions.h"
 
 #include <cmath>
+#include <cstdio>
 
 namespace xwalk::agent
 {
@@ -45,7 +46,9 @@ XWalkSoundBackgroundMusic::~XWalkSoundBackgroundMusic() noexcept
         }
         catch (...)
         {
-            /* Destruction cannot report an audio-backend cleanup failure. */
+            musicPlayingValue = false;
+            static_cast<void>(std::fputs(
+                "Background-music cleanup failed\n", stderr));
         }
     }
 }

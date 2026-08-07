@@ -25,6 +25,8 @@
 
 #include "xHal_Rpi5CarExceptions.h"
 
+#include <cstdio>
+
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -98,6 +100,8 @@ void XWalkServoMotorCalibration::stop() noexcept
     }
     catch (...)
     {
+        static_cast<void>(std::fputs(
+            "Servo/motor-calibration cleanup failed\n", stderr));
     }
 }
 

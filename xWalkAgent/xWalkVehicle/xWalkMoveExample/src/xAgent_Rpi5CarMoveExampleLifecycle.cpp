@@ -12,6 +12,8 @@
 
 #include "xHal_Rpi5CarExceptions.h"
 
+#include <cstdio>
+
 namespace xwalk::agent
 {
 
@@ -59,6 +61,7 @@ void XWalkMoveExample::stop() noexcept
     }
     catch (...)
     {
+        static_cast<void>(std::fputs("Move-example cleanup failed\n", stderr));
     }
 }
 
