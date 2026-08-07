@@ -1,0 +1,754 @@
+/******************************************************************************
+ * @file        xHal_Rpi5CarXIwMessageCfm.proto
+ * @brief       Defines public Protobuf confirmation messages for xWalk interfaces.
+ *
+ * @details
+ * Defines one successful confirmation counterpart for every request message in
+ * xHal_Rpi5CarXIwMessageReq.proto.
+ *
+ * @project     xWalk Firmware
+ * @module      xWalkIW
+ *
+ * @author      Joxy John
+ * @date        2026-08-07
+ * @version     1.0.0
+ *
+ * @copyright
+ * Copyright (c) 2026 Joxy John.
+ * All rights reserved.
+ *
+ * @note
+ * Developed using MISRA C++ coding guidelines.
+ ******************************************************************************/
+syntax = "proto3";
+package xwalk.iw.v1;
+
+/******************************************************************************
+ * Imports
+ ******************************************************************************/
+
+import "xHal_Rpi5CarXIwMessageReq.proto";
+
+/******************************************************************************
+ * Confirmation message declarations
+ ******************************************************************************/
+
+/**
+ * @brief Confirms successful handling of XWalkI2cRequestPayload.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkI2cCfmPayload
+{
+    option (xwalkSignal) = 0x1082;
+
+    bytes data = 1; //@@ Bytes returned by a successful read operation in bus order.
+    bool responding = 2; //@@ Indicates whether the addressed device responded to a probe.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkControllerCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkControllerCommandCfm
+{
+    option (xwalkSignal) = 0x2183;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkNoArgumentRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkNoArgumentCfm
+{
+    option (xwalkSignal) = 0x2184;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkLifecycleRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkLifecycleCfm
+{
+    option (xwalkSignal) = 0x2185;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkMoveRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkMoveCfm
+{
+    option (xwalkSignal) = 0x2186;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkTurnRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkTurnCfm
+{
+    option (xwalkSignal) = 0x2187;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkCameraRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkCameraCfm
+{
+    option (xwalkSignal) = 0x2188;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkSensorRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkSensorCfm
+{
+    option (xwalkSignal) = 0x2189;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkSelfDriveRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkSelfDriveCfm
+{
+    option (xwalkSignal) = 0x218A;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkSpiRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkSpiCfm
+{
+    option (xwalkSignal) = 0x218B;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkGptCarRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkGptCarCfm
+{
+    option (xwalkSignal) = 0x218C;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkCalibrationRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkCalibrationCfm
+{
+    option (xwalkSignal) = 0x218D;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkSoundRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkSoundCfm
+{
+    option (xwalkSignal) = 0x218E;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkUnknownCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkUnknownCommandCfm
+{
+    option (xwalkSignal) = 0x2100;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkHelpCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkHelpCommandCfm
+{
+    option (xwalkSignal) = 0x2101;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkSpiCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkSpiCommandCfm
+{
+    option (xwalkSignal) = 0x2102;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkDoctorCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkDoctorCommandCfm
+{
+    option (xwalkSignal) = 0x2103;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkServoZeroingCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkServoZeroingCommandCfm
+{
+    option (xwalkSignal) = 0x2104;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkComputerVisionCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkComputerVisionCommandCfm
+{
+    option (xwalkSignal) = 0x2105;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkRecordVideoCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkRecordVideoCommandCfm
+{
+    option (xwalkSignal) = 0x2106;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkSoundBackgroundMusicCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkSoundBackgroundMusicCommandCfm
+{
+    option (xwalkSignal) = 0x2107;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkTextVisionTalkCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkTextVisionTalkCommandCfm
+{
+    option (xwalkSignal) = 0x2108;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkOnlineLlmTestCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkOnlineLlmTestCommandCfm
+{
+    option (xwalkSignal) = 0x2109;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkMoveCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkMoveCommandCfm
+{
+    option (xwalkSignal) = 0x210A;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkKeyboardControlCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkKeyboardControlCommandCfm
+{
+    option (xwalkSignal) = 0x210B;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkAvoidObstaclesCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkAvoidObstaclesCommandCfm
+{
+    option (xwalkSignal) = 0x210C;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkCliffDetectionCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkCliffDetectionCommandCfm
+{
+    option (xwalkSignal) = 0x210D;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkStareAtYouCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkStareAtYouCommandCfm
+{
+    option (xwalkSignal) = 0x210E;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkBullFightCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkBullFightCommandCfm
+{
+    option (xwalkSignal) = 0x210F;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkTreasureHuntCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkTreasureHuntCommandCfm
+{
+    option (xwalkSignal) = 0x2110;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkVideoCarCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkVideoCarCommandCfm
+{
+    option (xwalkSignal) = 0x2111;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkAppControlCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkAppControlCommandCfm
+{
+    option (xwalkSignal) = 0x2112;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkTurnCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkTurnCommandCfm
+{
+    option (xwalkSignal) = 0x2113;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkCameraCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkCameraCommandCfm
+{
+    option (xwalkSignal) = 0x2114;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkSensorCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkSensorCommandCfm
+{
+    option (xwalkSignal) = 0x2115;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkLineTrackCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkLineTrackCommandCfm
+{
+    option (xwalkSignal) = 0x2116;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkSelfDriveCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkSelfDriveCommandCfm
+{
+    option (xwalkSignal) = 0x2117;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkSoundCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkSoundCommandCfm
+{
+    option (xwalkSignal) = 0x2118;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkVoiceChatCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkVoiceChatCommandCfm
+{
+    option (xwalkSignal) = 0x2119;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkVoiceActiveCarCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkVoiceActiveCarCommandCfm
+{
+    option (xwalkSignal) = 0x211A;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkGptCarCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkGptCarCommandCfm
+{
+    option (xwalkSignal) = 0x211B;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkVoiceControlledCarCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkVoiceControlledCarCommandCfm
+{
+    option (xwalkSignal) = 0x211C;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkVoicePromptCarCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkVoicePromptCarCommandCfm
+{
+    option (xwalkSignal) = 0x211D;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkStorytellingRobotCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkStorytellingRobotCommandCfm
+{
+    option (xwalkSignal) = 0x211E;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}
+
+/**
+ * @brief Confirms successful handling of XWalkCalibrateCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the corresponding request.
+ */
+message XWalkCalibrateCommandCfm
+{
+    option (xwalkSignal) = 0x211F;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the addressed service or device responded.
+    bool flag = 3; //@@ Indicates whether the request completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}

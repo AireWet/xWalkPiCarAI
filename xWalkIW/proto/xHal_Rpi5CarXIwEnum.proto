@@ -19,9 +19,7 @@
  * @note
  * Developed using MISRA C++ coding guidelines.
  ******************************************************************************/
-
 syntax = "proto3";
-
 package xwalk.iw.v1;
 
 /******************************************************************************
@@ -37,11 +35,11 @@ package xwalk.iw.v1;
  */
 enum XWalkI2cOperation
 {
-    XWALK_I2C_OPERATION_UNSPECIFIED = 0;
-    XWALK_I2C_OPERATION_PROBE = 1;
-    XWALK_I2C_OPERATION_READ = 2;
-    XWALK_I2C_OPERATION_READ_REGISTER = 3;
-    XWALK_I2C_OPERATION_WRITE_REGISTER = 4;
+    XWALK_I2C_OPERATION_UNSPECIFIED = 0; //@@ Selects i2c operation unspecified.
+    XWALK_I2C_OPERATION_PROBE = 1; //@@ Selects i2c operation probe.
+    XWALK_I2C_OPERATION_READ = 2; //@@ Selects i2c operation read.
+    XWALK_I2C_OPERATION_READ_REGISTER = 3; //@@ Selects i2c operation read register.
+    XWALK_I2C_OPERATION_WRITE_REGISTER = 4; //@@ Selects i2c operation write register.
 }
 
 /**
@@ -52,22 +50,10 @@ enum XWalkI2cOperation
  */
 enum XWalkSoundOperation
 {
-    /**
-     * @brief Plays one blocking sound-effect file.
-     */
-    XWALK_SOUND_OPERATION_PLAY = 0;
-    /**
-     * @brief Changes the shared audio volume.
-     */
-    XWALK_SOUND_OPERATION_VOLUME = 1;
-    /**
-     * @brief Starts one streamed music file.
-     */
-    XWALK_SOUND_OPERATION_MUSIC = 2;
-    /**
-     * @brief Stops current music playback.
-     */
-    XWALK_SOUND_OPERATION_STOP = 3;
+    XWALK_SOUND_OPERATION_PLAY = 0; //@@ Plays one blocking sound-effect file.
+    XWALK_SOUND_OPERATION_VOLUME = 1; //@@ Changes the shared audio volume.
+    XWALK_SOUND_OPERATION_MUSIC = 2; //@@ Starts one streamed music file.
+    XWALK_SOUND_OPERATION_STOP = 3; //@@ Stops current music playback.
 }
 
 /**
@@ -78,14 +64,8 @@ enum XWalkSoundOperation
  */
 enum XWalkLifecycleAction
 {
-    /**
-     * @brief Starts and runs the selected operation.
-     */
-    XWALK_LIFECYCLE_ACTION_START = 0;
-    /**
-     * @brief Stops the selected operation without starting work.
-     */
-    XWALK_LIFECYCLE_ACTION_STOP = 1;
+    XWALK_LIFECYCLE_ACTION_START = 0; //@@ Starts and runs the selected operation.
+    XWALK_LIFECYCLE_ACTION_STOP = 1; //@@ Stops the selected operation without starting work.
 }
 
 /**
@@ -96,18 +76,9 @@ enum XWalkLifecycleAction
  */
 enum XWalkMoveAction
 {
-    /**
-     * @brief Moves the vehicle forward.
-     */
-    XWALK_MOVE_ACTION_FORWARD = 0;
-    /**
-     * @brief Moves the vehicle backward.
-     */
-    XWALK_MOVE_ACTION_BACKWARD = 1;
-    /**
-     * @brief Runs the bounded movement demonstration.
-     */
-    XWALK_MOVE_ACTION_DEMO = 2;
+    XWALK_MOVE_ACTION_FORWARD = 0; //@@ Moves the vehicle forward.
+    XWALK_MOVE_ACTION_BACKWARD = 1; //@@ Moves the vehicle backward.
+    XWALK_MOVE_ACTION_DEMO = 2; //@@ Runs the bounded movement demonstration.
 }
 
 /**
@@ -118,14 +89,8 @@ enum XWalkMoveAction
  */
 enum XWalkTurnDirection
 {
-    /**
-     * @brief Steers toward the left side.
-     */
-    XWALK_TURN_DIRECTION_LEFT = 0;
-    /**
-     * @brief Steers toward the right side.
-     */
-    XWALK_TURN_DIRECTION_RIGHT = 1;
+    XWALK_TURN_DIRECTION_LEFT = 0; //@@ Steers toward the left side.
+    XWALK_TURN_DIRECTION_RIGHT = 1; //@@ Steers toward the right side.
 }
 
 /**
@@ -136,14 +101,8 @@ enum XWalkTurnDirection
  */
 enum XWalkCameraAxis
 {
-    /**
-     * @brief Selects the horizontal camera servo.
-     */
-    XWALK_CAMERA_AXIS_PAN = 0;
-    /**
-     * @brief Selects the vertical camera servo.
-     */
-    XWALK_CAMERA_AXIS_TILT = 1;
+    XWALK_CAMERA_AXIS_PAN = 0; //@@ Selects the horizontal camera servo.
+    XWALK_CAMERA_AXIS_TILT = 1; //@@ Selects the vertical camera servo.
 }
 
 /**
@@ -154,14 +113,8 @@ enum XWalkCameraAxis
  */
 enum XWalkSensorType
 {
-    /**
-     * @brief Reads the ultrasonic distance in centimeters.
-     */
-    XWALK_SENSOR_TYPE_DISTANCE = 0;
-    /**
-     * @brief Samples and reports the three grayscale channels.
-     */
-    XWALK_SENSOR_TYPE_GRAYSCALE = 1;
+    XWALK_SENSOR_TYPE_DISTANCE = 0; //@@ Reads the ultrasonic distance in centimeters.
+    XWALK_SENSOR_TYPE_GRAYSCALE = 1; //@@ Samples and reports the three grayscale channels.
 }
 
 /**
@@ -172,16 +125,7 @@ enum XWalkSensorType
  */
 enum XWalkCalibrationMode
 {
-    /**
-     * @brief Calibrates actuators and grayscale references.
-     */
-    XWALK_CALIBRATION_MODE_COMPLETE = 0;
-    /**
-     * @brief Calibrates only grayscale references.
-     */
-    XWALK_CALIBRATION_MODE_GRAYSCALE = 1;
-    /**
-     * @brief Calibrates only servos and motors.
-     */
-    XWALK_CALIBRATION_MODE_SERVO_MOTOR = 2;
+    XWALK_CALIBRATION_MODE_COMPLETE = 0; //@@ Calibrates actuators and grayscale references.
+    XWALK_CALIBRATION_MODE_GRAYSCALE = 1; //@@ Calibrates only grayscale references.
+    XWALK_CALIBRATION_MODE_SERVO_MOTOR = 2; //@@ Calibrates only servos and motors.
 }

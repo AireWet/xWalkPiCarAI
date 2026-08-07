@@ -26,11 +26,15 @@ set(XWALK_IW_GENERATED_SOURCE_DIRECTORY
 
 set(XWALK_IW_GENERATED_FILES
     ${XWALK_IW_GENERATED_INCLUDE_DIRECTORY}/xHal_Rpi5CarXIwEnum.pb.h
-    ${XWALK_IW_GENERATED_INCLUDE_DIRECTORY}/xHal_Rpi5CarXIwMessage.pb.h
+    ${XWALK_IW_GENERATED_INCLUDE_DIRECTORY}/xHal_Rpi5CarXIwMessageReq.pb.h
+    ${XWALK_IW_GENERATED_INCLUDE_DIRECTORY}/xHal_Rpi5CarXIwMessageCfm.pb.h
+    ${XWALK_IW_GENERATED_INCLUDE_DIRECTORY}/xHal_Rpi5CarXIwMessageRej.pb.h
     ${XWALK_IW_GENERATED_INCLUDE_DIRECTORY}/xHal_Rpi5CarXIwGrpc.pb.h
     ${XWALK_IW_GENERATED_INCLUDE_DIRECTORY}/xHal_Rpi5CarXIwGrpc.grpc.pb.h
     ${XWALK_IW_GENERATED_SOURCE_DIRECTORY}/xHal_Rpi5CarXIwEnum.pb.cpp
-    ${XWALK_IW_GENERATED_SOURCE_DIRECTORY}/xHal_Rpi5CarXIwMessage.pb.cpp
+    ${XWALK_IW_GENERATED_SOURCE_DIRECTORY}/xHal_Rpi5CarXIwMessageReq.pb.cpp
+    ${XWALK_IW_GENERATED_SOURCE_DIRECTORY}/xHal_Rpi5CarXIwMessageCfm.pb.cpp
+    ${XWALK_IW_GENERATED_SOURCE_DIRECTORY}/xHal_Rpi5CarXIwMessageRej.pb.cpp
     ${XWALK_IW_GENERATED_SOURCE_DIRECTORY}/xHal_Rpi5CarXIwGrpc.pb.cpp
     ${XWALK_IW_GENERATED_SOURCE_DIRECTORY}/xHal_Rpi5CarXIwGrpc.grpc.pb.cpp
 )
@@ -46,7 +50,7 @@ endforeach()
 add_custom_target(xWalkIwSchemaCheck ALL
     COMMAND ${Python3_EXECUTABLE} ${XWALK_IW_GENERATOR} --check
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/..
-    COMMENT "Validating the xWalkIW Protobuf and YAML contract"
+    COMMENT "Validating the xWalkIW Protobuf and XML contract"
     VERBATIM)
 
 add_library(xWalkIwGrpc STATIC

@@ -3,8 +3,8 @@
  * @brief       Defines the public gRPC services for xWalk interfaces.
  *
  * @details
- * Defines the I2C request-confirmation exchange and typed Controller command
- * RPCs using the payload messages from `xHal_Rpi5CarXIwMessage.proto`.
+ * Defines typed Controller command RPCs using the split request and
+ * confirmation message schemas.
  *
  * @project     xWalk Firmware
  * @module      xWalkIW
@@ -20,89 +20,136 @@
  * @note
  * Developed using MISRA C++ coding guidelines.
  ******************************************************************************/
-
 syntax = "proto3";
-
 package xwalk.iw.v1;
 
 /******************************************************************************
  * Imports
  ******************************************************************************/
 
-import "xHal_Rpi5CarXIwMessage.proto";
-import "google/protobuf/empty.proto";
+import "xHal_Rpi5CarXIwMessageReq.proto";
+import "xHal_Rpi5CarXIwMessageCfm.proto";
 
 /******************************************************************************
  * Service declarations
  ******************************************************************************/
-
 /**
- * @brief Provides one generic request-confirmation exchange for xWalk I2C.
+ * @brief Provides the generic I2C transaction RPC.
  *
  * @details
- * The request operation selects probe, direct read, register read, or register
- * write. A successful call returns the shared confirmation payload. A rejected
- * call returns a non-OK gRPC status with rejection details.
+ * Accepts the shared I2C request payload and returns its matching confirmation.
+ * Rejected transactions return a non-OK gRPC status with rejection details.
  */
-service XWalkI2cService
+service XWalkCtrlI2cService
 {
-    rpc Execute(XWalkI2cRequestPayload) returns (XWalkI2cConfirmPayload);
+    rpc Execute(XWalkI2cRequestPayload) returns (XWalkI2cCfmPayload); //@@ Handles the execute request.
 }
 
 /**
- * @brief Provides typed RPC entry points for Controller command signals.
+ * @brief Provides Controller RPCs for vehicle movement and sensing.
  *
  * @details
- * Each method accepts the command-specific message carrying the same stable
- * signal number as its matching `XWALK_CNTRL_*_REQ` definition. Successful
- * dispatch returns an empty acknowledgement. Validation or execution failures
- * return a non-OK gRPC status without exposing Controller runtime objects.
+ * Groups direct driving, keyboard control, autonomous movement, and sensor
+ * requests owned by the Controller vehicle functionality.
  */
-service XWalkControllerService
+service XWalkCtrlVehicleService
 {
-    rpc Unknown(XWalkUnknownCommandRequest) returns (google.protobuf.Empty);
-    rpc Help(XWalkHelpCommandRequest) returns (google.protobuf.Empty);
-    rpc Spi(XWalkSpiCommandRequest) returns (google.protobuf.Empty);
-    rpc Doctor(XWalkDoctorCommandRequest) returns (google.protobuf.Empty);
-    rpc ServoZeroing(XWalkServoZeroingCommandRequest)
-        returns (google.protobuf.Empty);
-    rpc ComputerVision(XWalkComputerVisionCommandRequest)
-        returns (google.protobuf.Empty);
-    rpc RecordVideo(XWalkRecordVideoCommandRequest) returns (google.protobuf.Empty);
-    rpc SoundBackgroundMusic(XWalkSoundBackgroundMusicCommandRequest)
-        returns (google.protobuf.Empty);
-    rpc TextVisionTalk(XWalkTextVisionTalkCommandRequest)
-        returns (google.protobuf.Empty);
-    rpc OnlineLlmTest(XWalkOnlineLlmTestCommandRequest)
-        returns (google.protobuf.Empty);
-    rpc Move(XWalkMoveCommandRequest) returns (google.protobuf.Empty);
-    rpc KeyboardControl(XWalkKeyboardControlCommandRequest)
-        returns (google.protobuf.Empty);
-    rpc AvoidObstacles(XWalkAvoidObstaclesCommandRequest)
-        returns (google.protobuf.Empty);
-    rpc CliffDetection(XWalkCliffDetectionCommandRequest)
-        returns (google.protobuf.Empty);
-    rpc StareAtYou(XWalkStareAtYouCommandRequest) returns (google.protobuf.Empty);
-    rpc BullFight(XWalkBullFightCommandRequest) returns (google.protobuf.Empty);
-    rpc TreasureHunt(XWalkTreasureHuntCommandRequest)
-        returns (google.protobuf.Empty);
-    rpc VideoCar(XWalkVideoCarCommandRequest) returns (google.protobuf.Empty);
-    rpc AppControl(XWalkAppControlCommandRequest) returns (google.protobuf.Empty);
-    rpc Turn(XWalkTurnCommandRequest) returns (google.protobuf.Empty);
-    rpc Camera(XWalkCameraCommandRequest) returns (google.protobuf.Empty);
-    rpc Sensor(XWalkSensorCommandRequest) returns (google.protobuf.Empty);
-    rpc LineTrack(XWalkLineTrackCommandRequest) returns (google.protobuf.Empty);
-    rpc SelfDrive(XWalkSelfDriveCommandRequest) returns (google.protobuf.Empty);
-    rpc Sound(XWalkSoundCommandRequest) returns (google.protobuf.Empty);
-    rpc VoiceChat(XWalkVoiceChatCommandRequest) returns (google.protobuf.Empty);
-    rpc VoiceActiveCar(XWalkVoiceActiveCarCommandRequest)
-        returns (google.protobuf.Empty);
-    rpc GptCar(XWalkGptCarCommandRequest) returns (google.protobuf.Empty);
-    rpc VoiceControlledCar(XWalkVoiceControlledCarCommandRequest)
-        returns (google.protobuf.Empty);
-    rpc VoicePromptCar(XWalkVoicePromptCarCommandRequest)
-        returns (google.protobuf.Empty);
-    rpc StorytellingRobot(XWalkStorytellingRobotCommandRequest)
-        returns (google.protobuf.Empty);
-    rpc Calibrate(XWalkCalibrateCommandRequest) returns (google.protobuf.Empty);
+    rpc Move(XWalkMoveCommandRequest) returns (XWalkMoveCommandCfm); //@@ Handles the move request.
+    rpc KeyboardControl(XWalkKeyboardControlCommandRequest) returns (XWalkKeyboardControlCommandCfm); //@@ Handles the keyboard control request.
+    rpc AvoidObstacles(XWalkAvoidObstaclesCommandRequest) returns (XWalkAvoidObstaclesCommandCfm); //@@ Handles the avoid obstacles request.
+    rpc CliffDetection(XWalkCliffDetectionCommandRequest) returns (XWalkCliffDetectionCommandCfm); //@@ Handles the cliff detection request.
+    rpc Turn(XWalkTurnCommandRequest) returns (XWalkTurnCommandCfm); //@@ Handles the turn request.
+    rpc Sensor(XWalkSensorCommandRequest) returns (XWalkSensorCommandCfm); //@@ Handles the sensor request.
+    rpc LineTrack(XWalkLineTrackCommandRequest) returns (XWalkLineTrackCommandCfm); //@@ Handles the line track request.
+    rpc SelfDrive(XWalkSelfDriveCommandRequest) returns (XWalkSelfDriveCommandCfm); //@@ Handles the self drive request.
+}
+
+/**
+ * @brief Provides Controller RPCs for camera and computer-vision operations.
+ *
+ * @details
+ * Groups camera positioning, capture, recording, tracking, and visual game
+ * requests owned by the Controller vision functionality.
+ */
+service XWalkCtrlVisionService
+{
+    rpc ComputerVision(XWalkComputerVisionCommandRequest) returns (XWalkComputerVisionCommandCfm); //@@ Handles the computer vision request.
+    rpc RecordVideo(XWalkRecordVideoCommandRequest) returns (XWalkRecordVideoCommandCfm); //@@ Handles the record video request.
+    rpc StareAtYou(XWalkStareAtYouCommandRequest) returns (XWalkStareAtYouCommandCfm); //@@ Handles the stare at you request.
+    rpc BullFight(XWalkBullFightCommandRequest) returns (XWalkBullFightCommandCfm); //@@ Handles the bull fight request.
+    rpc TreasureHunt(XWalkTreasureHuntCommandRequest) returns (XWalkTreasureHuntCommandCfm); //@@ Handles the treasure hunt request.
+    rpc VideoCar(XWalkVideoCarCommandRequest) returns (XWalkVideoCarCommandCfm); //@@ Handles the video car request.
+    rpc Camera(XWalkCameraCommandRequest) returns (XWalkCameraCommandCfm); //@@ Handles the camera request.
+}
+
+/**
+ * @brief Provides Controller RPCs for speech and language-model operations.
+ *
+ * @details
+ * Groups conversational, voice-controlled, and narrated robot requests owned
+ * by the Controller voice functionality.
+ */
+service XWalkCtrlVoiceService
+{
+    rpc TextVisionTalk(XWalkTextVisionTalkCommandRequest) returns (XWalkTextVisionTalkCommandCfm); //@@ Handles the text vision talk request.
+    rpc OnlineLlmTest(XWalkOnlineLlmTestCommandRequest) returns (XWalkOnlineLlmTestCommandCfm); //@@ Handles the online llm test request.
+    rpc VoiceChat(XWalkVoiceChatCommandRequest) returns (XWalkVoiceChatCommandCfm); //@@ Handles the voice chat request.
+    rpc VoiceActiveCar(XWalkVoiceActiveCarCommandRequest) returns (XWalkVoiceActiveCarCommandCfm); //@@ Handles the voice active car request.
+    rpc GptCar(XWalkGptCarCommandRequest) returns (XWalkGptCarCommandCfm); //@@ Handles the gpt car request.
+    rpc VoiceControlledCar(XWalkVoiceControlledCarCommandRequest) returns (XWalkVoiceControlledCarCommandCfm); //@@ Handles the voice controlled car request.
+    rpc VoicePromptCar(XWalkVoicePromptCarCommandRequest) returns (XWalkVoicePromptCarCommandCfm); //@@ Handles the voice prompt car request.
+    rpc StorytellingRobot(XWalkStorytellingRobotCommandRequest) returns (XWalkStorytellingRobotCommandCfm); //@@ Handles the storytelling robot request.
+}
+
+/**
+ * @brief Provides Controller RPCs for sound and music operations.
+ *
+ * @details
+ * Groups direct sound control and background-music requests owned by the
+ * Controller media functionality.
+ */
+service XWalkCtrlMediaService
+{
+    rpc SoundBackgroundMusic(XWalkSoundBackgroundMusicCommandRequest) returns (XWalkSoundBackgroundMusicCommandCfm); //@@ Handles the sound background music request.
+    rpc Sound(XWalkSoundCommandRequest) returns (XWalkSoundCommandCfm); //@@ Handles the sound request.
+}
+
+/**
+ * @brief Provides Controller RPCs for external connectivity operations.
+ *
+ * @details
+ * Groups SPI transactions and mobile-application control requests owned by the
+ * Controller connectivity functionality.
+ */
+service XWalkCtrlConnectivityService
+{
+    rpc Spi(XWalkSpiCommandRequest) returns (XWalkSpiCommandCfm); //@@ Handles the spi request.
+    rpc AppControl(XWalkAppControlCommandRequest) returns (XWalkAppControlCommandCfm); //@@ Handles the app control request.
+}
+
+/**
+ * @brief Provides Controller RPCs for calibration operations.
+ *
+ * @details
+ * Groups servo zeroing and complete calibration requests owned by the
+ * Controller calibration functionality.
+ */
+service XWalkCtrlCalibrationService
+{
+    rpc ServoZeroing(XWalkServoZeroingCommandRequest) returns (XWalkServoZeroingCommandCfm); //@@ Handles the servo zeroing request.
+    rpc Calibrate(XWalkCalibrateCommandRequest) returns (XWalkCalibrateCommandCfm); //@@ Handles the calibrate request.
+}
+
+/**
+ * @brief Provides Controller RPCs for platform-level operations.
+ *
+ * @details
+ * Groups command discovery, generated help, and passive diagnostics owned by
+ * the Controller platform functionality.
+ */
+service XWalkCtrlPlatformService
+{
+    rpc Unknown(XWalkUnknownCommandRequest) returns (XWalkUnknownCommandCfm); //@@ Handles the unknown request.
+    rpc Help(XWalkHelpCommandRequest) returns (XWalkHelpCommandCfm); //@@ Handles the help request.
+    rpc Doctor(XWalkDoctorCommandRequest) returns (XWalkDoctorCommandCfm); //@@ Handles the doctor request.
 }

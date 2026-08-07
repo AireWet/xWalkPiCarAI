@@ -263,12 +263,19 @@ Document the responsibility of every enumeration and structure. Document
 enumerators and structure members when their value or unit matters. Document
 every type alias and function-pointer alias.
 
-For protocol-mirrored enums and payload structures, give every enumerator and
-data member a preceding multi-line Doxygen block matching the function-contract
-form. Include `@brief` and add non-empty `@details` when ranges, wire types,
-presence, ownership, units, or value semantics need explanation. Do not use a
-trailing `/**< ... */` comment or single-line `/** @brief ... */` comment for
-these protocol declarations.
+For C++ protocol-mirrored enums and payload structures, give every enumerator
+and data member a preceding multi-line Doxygen block matching the
+function-contract form. Include `@brief` and add non-empty `@details` when
+ranges, wire types, presence, ownership, units, or value semantics need
+explanation. Do not use a trailing `/**< ... */` comment or single-line
+`/** @brief ... */` comment for these C++ protocol declarations.
+
+For Protocol Buffer schemas, keep a multi-line Doxygen block immediately above
+every message, enum, and service declaration. Include a concise `@brief` and
+use `@details` for useful protocol behavior or known C++ relationships. Put the
+documentation for every message field, enum value, and RPC declaration after
+its semicolon as a same-line `//@@` comment. Do not use a Doxygen block for
+those schema members.
 
 Callback alias documentation states parameter direction, context ownership and
 lifetime, valid ranges, side effects, and return-value meaning. A `void*`

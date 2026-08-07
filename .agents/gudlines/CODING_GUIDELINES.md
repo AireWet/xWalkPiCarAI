@@ -361,11 +361,15 @@ retaining normal compiler warnings and compilation checks.
   whitespace.
 - Keep related declarations together and separate logical groups with one blank
   line. Avoid repeated blank lines.
-- In protocol-mirrored enums and payload structures, place a complete
+- In C++ protocol-mirrored enums and payload structures, place a complete
   multi-line Doxygen block before every enumerator and data member. Use the same
   `/**`, `@brief`, optional non-empty `@details`, and `*/` form used for function
   contracts. Do not use trailing `/**< ... */` comments or single-line
-  `/** @brief ... */` comments for these declarations.
+  `/** @brief ... */` comments for these C++ declarations.
+- In Protocol Buffer schemas, place a multi-line Doxygen block with `@brief` and
+  useful `@details` immediately above every message, enum, and service. Document
+  every message field, enum value, and RPC declaration with a same-line `//@@`
+  comment after its semicolon. Do not use a Doxygen block for those members.
 - Wrap long parameter lists and expressions onto continuation lines. Align for
   readability without depending on tabs.
 - Use aligned assignments only for a short, closely related block when it makes
@@ -1617,7 +1621,7 @@ As of 2026-08-06:
   foreground line tracking, and preset self-drive actions. External-service
   commands remain unavailable until their safe process-level backends are composed.
 - The I2C Linux backend and `xWalkI2cLinuxHardwareTest` compile successfully.
-- The xWalkIW Protobuf/YAML contract validates, its generated gRPC C++ library
+- The xWalkIW Protobuf/XML contract validates, its generated gRPC C++ library
   compiles, and its host schema test passes in the aggregate suite.
 - The SPI core, Agent transaction service, and CLI dispatch host tests pass with
   injected transfers; the Linux spidev backend and opt-in hardware test compile.
