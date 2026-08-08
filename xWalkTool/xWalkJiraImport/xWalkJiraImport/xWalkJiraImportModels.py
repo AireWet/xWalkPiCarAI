@@ -135,6 +135,10 @@ class ImportRecord:
     final_jira_status: str = ""
     result: str = "skipped"
     error_details: str = ""
+    planned_start_date: str = ""
+    planned_due_date: str = ""
+    sprint_name: str = ""
+    parent_issue_key: str = ""
 
     def as_dict(self) -> dict[str, Any]:
         """Return a stable serializable representation."""
@@ -151,7 +155,11 @@ class ImportSummary:
     manual_review: int = 0
     existing_skipped: int = 0
     jira_created: int = 0
-    transitioned_done: int = 0
+    created_todo: int = 0
+    estimates_updated: int = 0
+    planning_updated: int = 0
+    sprints_updated: int = 0
+    epic_links_updated: int = 0
     failures: int = 0
     fields_discovered: list[str] = field(default_factory=list)
     limitations: list[str] = field(default_factory=list)

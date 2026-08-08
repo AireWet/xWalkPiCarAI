@@ -32,7 +32,11 @@ DISPLAY_COMPONENTS = {
     "YOLO or AI model": "YOLO",
     "Dataset or preprocessing": "Dataset",
     "Build or CMake": "Build",
+    "CI/CD": "CD/CI",
+    "Configuration": "Config",
+    "Hardware abstraction": "HW",
     "Raspberry Pi 5": "Raspberry Pi 5",
+    "V2X": "V2X",
 }
 
 EXCLUDED_DIRECTORY_PARTS = {
@@ -170,7 +174,19 @@ def _generated_summary(
 ) -> str:
     """Generate a clear component-prefixed summary from message and diff evidence."""
     cleaned = _clean_title(commit.title)
-    display_component = DISPLAY_COMPONENTS.get(component, component)
+    message = f"{commit.title} {commit.body}".casefold()
+    if "controller" in message and "agent" in message and "architecture" in message:
+        display_component = "HW"
+    elif component == "Testing" and "host" in message:
+        display_component = "Host"
+    elif component == "Testing":
+        display_component = "HOST-TEST"
+    elif component == "Other" and "host" in message:
+        display_component = "Host"
+    elif component == "Other" and any(value in message for value in ("agent", "controller", "architecture")):
+        display_component = "HW"
+    else:
+        display_component = DISPLAY_COMPONENTS.get(component, component)
     if _is_vague_title(cleaned):
         body_candidates = [_clean_title(line.lstrip("- ")) for line in commit.body.splitlines() if line.strip()]
         body_detail = next((value for value in body_candidates if not _is_vague_title(value)), "")

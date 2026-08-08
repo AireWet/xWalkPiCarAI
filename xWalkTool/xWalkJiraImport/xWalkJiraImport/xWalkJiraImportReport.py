@@ -30,6 +30,10 @@ CSV_FIELDS = (
     "final_jira_status",
     "result",
     "error_details",
+    "planned_start_date",
+    "planned_due_date",
+    "sprint_name",
+    "parent_issue_key",
 )
 
 

@@ -8,7 +8,12 @@ from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
 from test_xWalkJiraImportCommitAnalyser import make_commit
-from xWalkJiraImport.xWalkJiraImportDateCalculator import calculate_historical_dates, subtract_work_minutes
+from xWalkJiraImport.xWalkJiraImportDateCalculator import (
+    calculate_historical_dates,
+    calculate_planned_due_date,
+    next_workday,
+    subtract_work_minutes,
+)
 from xWalkJiraImport.xWalkJiraImportModels import ChangedFile, EffortEstimate
 
 
@@ -43,6 +48,13 @@ class HistoricalDateCalculatorTest(unittest.TestCase):
         start = subtract_work_minutes(completion, 120)
         self.assertEqual(start.weekday(), 4)
         self.assertEqual((start.hour, start.minute), (16, 0))
+
+    def test_planned_schedule_rounds_to_whole_non_overlapping_workdays(self) -> None:
+        """Date-only Jira planning consumes at least one day and skips weekends."""
+        start = datetime(2026, 9, 4, tzinfo=STOCKHOLM).date()
+        self.assertEqual(calculate_planned_due_date(start, 30), start)
+        self.assertEqual(calculate_planned_due_date(start, 960).isoformat(), "2026-09-07")
+        self.assertEqual(next_workday(datetime(2026, 9, 4).date()).isoformat(), "2026-09-07")
 
     def test_uses_author_date_and_stockholm_timezone(self) -> None:
         """The author timestamp is the preferred historical completion date."""

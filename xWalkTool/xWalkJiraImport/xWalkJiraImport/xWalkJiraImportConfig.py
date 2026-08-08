@@ -54,6 +54,11 @@ class ImportConfig:
     apply_manual_review: bool
     output_report: Path
     verbose: bool
+    update_existing_estimates: bool = False
+    update_existing_planning_after: str | None = None
+    update_existing_planning_start: date | None = None
+    update_existing_sprints: bool = False
+    update_existing_epic: str | None = None
 
     @property
     def dry_run(self) -> bool:
@@ -124,6 +129,32 @@ def create_argument_parser() -> argparse.ArgumentParser:
         help="allow --apply to create broad commits while retaining low-confidence estimates",
     )
     parser.add_argument(
+        "--update-existing-estimates",
+        action="store_true",
+        help="allow --apply to update Original estimate on exact-SHA existing imports",
+    )
+    parser.add_argument(
+        "--update-existing-planning-after",
+        metavar="ISSUE_KEY",
+        help="update summary, Start date, and Due date sequentially after an existing Jira issue",
+    )
+    parser.add_argument(
+        "--update-existing-planning-start",
+        type=parse_date,
+        metavar="YYYY-MM-DD",
+        help="update summary, Start date, and Due date from an explicit first Start date",
+    )
+    parser.add_argument(
+        "--update-existing-sprints",
+        action="store_true",
+        help="assign exact-SHA existing imports to board sprints selected by Due date",
+    )
+    parser.add_argument(
+        "--update-existing-epic",
+        metavar="ISSUE_KEY",
+        help="attach exact-SHA existing imports to a validated Epic parent",
+    )
+    parser.add_argument(
         "--output-report",
         type=Path,
         default=Path("build/jira-import-preview"),
@@ -148,6 +179,18 @@ def load_config(
         parser.error("--since must not be later than --until")
     if options.apply_manual_review and not options.apply:
         parser.error("--apply-manual-review requires --apply")
+    if options.update_existing_estimates and not options.apply:
+        parser.error("--update-existing-estimates requires --apply")
+    if options.update_existing_planning_after and not options.apply:
+        parser.error("--update-existing-planning-after requires --apply")
+    if options.update_existing_planning_start and not options.apply:
+        parser.error("--update-existing-planning-start requires --apply")
+    if options.update_existing_sprints and not options.apply:
+        parser.error("--update-existing-sprints requires --apply")
+    if options.update_existing_epic and not options.apply:
+        parser.error("--update-existing-epic requires --apply")
+    if options.update_existing_planning_after and options.update_existing_planning_start:
+        parser.error("select only one existing-planning anchor")
 
     repository = (
         options.github_repository or values.get("GITHUB_REPOSITORY", DEFAULT_GITHUB_REPOSITORY)
@@ -169,6 +212,16 @@ def load_config(
         raise ConfigurationError("JIRA_URL must not contain credentials.")
     if re.fullmatch(r"[A-Z][A-Z0-9_]*", project_key) is None:
         raise ConfigurationError("JIRA_PROJECT_KEY is invalid.")
+    schedule_after = options.update_existing_planning_after
+    if schedule_after is not None:
+        schedule_after = schedule_after.strip().upper()
+        if re.fullmatch(rf"{re.escape(project_key)}-[1-9][0-9]*", schedule_after) is None:
+            raise ConfigurationError("The planning anchor must be an issue key in the selected Jira project.")
+    epic_key = options.update_existing_epic
+    if epic_key is not None:
+        epic_key = epic_key.strip().upper()
+        if re.fullmatch(rf"{re.escape(project_key)}-[1-9][0-9]*", epic_key) is None:
+            raise ConfigurationError("The Epic parent must be an issue key in the selected Jira project.")
 
     netrc_file = resolve_netrc_path(options.netrc_file)
     try:
@@ -202,4 +255,9 @@ def load_config(
         apply_manual_review=bool(options.apply_manual_review),
         output_report=options.output_report,
         verbose=bool(options.verbose),
+        update_existing_estimates=bool(options.update_existing_estimates),
+        update_existing_planning_after=schedule_after,
+        update_existing_planning_start=options.update_existing_planning_start,
+        update_existing_sprints=bool(options.update_existing_sprints),
+        update_existing_epic=epic_key,
     )

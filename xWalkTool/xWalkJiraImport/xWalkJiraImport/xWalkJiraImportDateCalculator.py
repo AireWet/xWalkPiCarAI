@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, time, timedelta
+from datetime import date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
 from .xWalkJiraImportModels import CommitRecord, EffortEstimate, HistoricalDates
@@ -11,6 +11,28 @@ from .xWalkJiraImportModels import CommitRecord, EffortEstimate, HistoricalDates
 STOCKHOLM = ZoneInfo("Europe/Stockholm")
 WORK_START = time(9, 0)
 WORK_END = time(17, 0)
+WORKDAY_MINUTES = 480
+
+
+def next_workday(value: date) -> date:
+    """Return the first Monday-through-Friday date after one schedule date."""
+    candidate = value + timedelta(days=1)
+    while candidate.weekday() >= 5:
+        candidate += timedelta(days=1)
+    return candidate
+
+
+def calculate_planned_due_date(start: date, effort_minutes: int) -> date:
+    """Round effort up to whole Jira work dates and return the inclusive due date."""
+    if effort_minutes <= 0:
+        raise ValueError("Planned effort minutes must be greater than zero.")
+    workdays = max((effort_minutes + WORKDAY_MINUTES - 1) // WORKDAY_MINUTES, 1)
+    due = start
+    remaining = workdays - 1
+    while remaining > 0:
+        due = next_workday(due)
+        remaining -= 1
+    return due
 
 
 def completion_timestamp(commit: CommitRecord) -> datetime:

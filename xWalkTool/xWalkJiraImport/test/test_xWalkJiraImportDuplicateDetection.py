@@ -94,6 +94,140 @@ class DuplicateAndWorkflowTest(unittest.TestCase):
             client.create_issue({"fields": {}})
         with self.assertRaises(JiraSafetyError):
             client.transition_to_done("TARS-1")
+        with self.assertRaises(JiraSafetyError):
+            client.update_original_estimate("TARS-1", "8h")
+        with self.assertRaises(JiraSafetyError):
+            client.update_planning("TARS-1", "[HW] Work", "customfield_1", date(2026, 9, 1), date(2026, 9, 1))
+        with self.assertRaises(JiraSafetyError):
+            client.assign_issue_to_sprint("TARS-1", 35)
+        with self.assertRaises(JiraSafetyError):
+            client.update_parent("TARS-1", "TARS-15")
+
+    def test_updates_original_estimate_with_guarded_jira_payload(self) -> None:
+        """Apply-enabled clients update only Jira's time-tracking estimate field."""
+        session = QueueSession([FakeResponse(204)])
+        client = JiraClient(
+            "https://example.atlassian.net",
+            "fake",
+            "fake",
+            "TARS",
+            3,
+            allow_writes=True,
+            session=session,
+        )
+        client.update_original_estimate("TARS-1", "24h")
+        method, url, arguments = session.requests[0]
+        self.assertEqual(method, "PUT")
+        self.assertEqual(url, "https://example.atlassian.net/rest/api/3/issue/TARS-1")
+        self.assertEqual(
+            arguments["json"],
+            {"fields": {"timetracking": {"originalEstimate": "24h"}}},
+        )
+
+    def test_reads_anchor_due_date_and_updates_sequential_planning(self) -> None:
+        """Planning updates use the anchor Due date and dynamically discovered Start date field."""
+        session = QueueSession([FakeResponse(200, {"fields": {"duedate": "2026-08-31"}}), FakeResponse(204)])
+        client = JiraClient(
+            "https://example.atlassian.net",
+            "fake",
+            "fake",
+            "TARS",
+            3,
+            allow_writes=True,
+            session=session,
+        )
+        self.assertEqual(client.get_due_date("TARS-15"), date(2026, 8, 31))
+        client.update_planning(
+            "TARS-17",
+            "[HW] Reorganize Controller and Agent architecture",
+            "customfield_10015",
+            date(2026, 9, 1),
+            date(2026, 9, 14),
+        )
+        method, url, arguments = session.requests[1]
+        self.assertEqual(method, "PUT")
+        self.assertEqual(url, "https://example.atlassian.net/rest/api/3/issue/TARS-17")
+        self.assertEqual(
+            arguments["json"],
+            {
+                "fields": {
+                    "summary": "[HW] Reorganize Controller and Agent architecture",
+                    "customfield_10015": "2026-09-01",
+                    "duedate": "2026-09-14",
+                }
+            },
+        )
+
+    def test_selects_sprint_by_due_date_and_verifies_assignment(self) -> None:
+        """Sprint assignment follows the board's existing half-open date ranges."""
+        session = QueueSession(
+            [
+                FakeResponse(
+                    200,
+                    {
+                        "values": [
+                            {
+                                "id": 34,
+                                "name": "TARS PHASE I-2026-W16-W18-S7",
+                                "startDate": "2026-07-07T22:00:00.000Z",
+                                "endDate": "2026-07-28T22:00:00.000Z",
+                            },
+                            {
+                                "id": 35,
+                                "name": "TARS PHASE I-2026-W16-W18-S8",
+                                "startDate": "2026-07-28T22:00:00.000Z",
+                                "endDate": "2026-08-18T22:00:00.000Z",
+                            },
+                        ],
+                        "isLast": True,
+                        "total": 2,
+                    },
+                ),
+                FakeResponse(204),
+                FakeResponse(200, {"issues": [{"key": "TARS-18"}]}),
+            ]
+        )
+        client = JiraClient(
+            "https://example.atlassian.net",
+            "fake",
+            "fake",
+            "TARS",
+            3,
+            allow_writes=True,
+            session=session,
+        )
+        sprint_id, name = client.find_sprint_for_date(date(2026, 8, 6))
+        self.assertEqual((sprint_id, name), (35, "TARS PHASE I-2026-W16-W18-S8"))
+        client.assign_issue_to_sprint("TARS-18", sprint_id)
+        self.assertTrue(client.issue_matches_sprint("TARS-18", sprint_id))
+        self.assertEqual(session.requests[1][0], "POST")
+        self.assertEqual(session.requests[1][2]["json"], {"issues": ["TARS-18"]})
+
+    def test_validates_epic_and_verifies_parent_relationship(self) -> None:
+        """Existing imports use Jira's standard parent field only after Epic validation."""
+        session = QueueSession(
+            [
+                FakeResponse(200, {"fields": {"issuetype": {"name": "Epic"}}}),
+                FakeResponse(204),
+                FakeResponse(200, {"fields": {"parent": {"key": "TARS-15"}}}),
+            ]
+        )
+        client = JiraClient(
+            "https://example.atlassian.net",
+            "fake",
+            "fake",
+            "TARS",
+            3,
+            allow_writes=True,
+            session=session,
+        )
+        client.require_epic("TARS-15")
+        client.update_parent("TARS-18", "TARS-15")
+        self.assertTrue(client.issue_has_parent("TARS-18", "TARS-15"))
+        self.assertEqual(
+            session.requests[1][2]["json"],
+            {"fields": {"parent": {"key": "TARS-15"}}},
+        )
 
     def test_board_membership_uses_board_issue_endpoint(self) -> None:
         """Board verification delegates saved-filter evaluation to Jira Agile."""
@@ -110,6 +244,23 @@ class DuplicateAndWorkflowTest(unittest.TestCase):
         method, url, arguments = session.requests[0]
         self.assertEqual(method, "GET")
         self.assertEqual(url, "https://example.atlassian.net/rest/agile/1.0/board/3/issue")
+        self.assertEqual(arguments["params"]["jql"], 'key = "TARS-1"')
+
+    def test_backlog_membership_uses_board_backlog_endpoint(self) -> None:
+        """Backlog verification rejects issues that Jira does not expose in the board backlog."""
+        session = QueueSession([FakeResponse(200, {"issues": [{"key": "TARS-1"}]})])
+        client = JiraClient(
+            "https://example.atlassian.net",
+            "fake",
+            "fake",
+            "TARS",
+            3,
+            session=session,
+        )
+        self.assertTrue(client.issue_matches_backlog("TARS-1"))
+        method, url, arguments = session.requests[0]
+        self.assertEqual(method, "GET")
+        self.assertEqual(url, "https://example.atlassian.net/rest/agile/1.0/board/3/backlog")
         self.assertEqual(arguments["params"]["jql"], 'key = "TARS-1"')
 
     def test_selects_direct_done_transition(self) -> None:
@@ -314,6 +465,138 @@ class DryRunOrchestrationTest(unittest.TestCase):
         self.assertEqual(offline_records[0].result, "skipped")
         self.assertTrue(any("Jira credentials are unavailable" in value for value in offline_summary.limitations))
 
+    def test_apply_keeps_created_issue_in_todo_backlog(self) -> None:
+        """Apply mode verifies To Do and backlog placement without transitioning the created issue."""
+        commit = make_commit(
+            "Enhance Jira importer planning",
+            [ChangedFile("xWalkTool/xWalkJiraImport/importer.py", "modified", 10, 2, 12, patch="+planning")],
+        )
+
+        class FakeGitHub:
+            def collect_commits(self, *args: object, **kwargs: object) -> list[object]:
+                return [commit]
+
+        class FakeJira:
+            transition_calls = 0
+
+            def discover_metadata(self) -> JiraMetadata:
+                fields = {"labels": JiraField("labels", "Labels", "array", "", False)}
+                return JiraMetadata({"Task": "1"}, {"1": fields}, fields)
+
+            def get_board_filter_jql(self) -> str:
+                return "project = TARS"
+
+            def find_existing_import(self, sha: str) -> None:
+                return None
+
+            def create_issue(self, payload: object) -> tuple[str, str]:
+                return "TARS-23", "https://example.atlassian.net/browse/TARS-23"
+
+            def get_status(self, issue_key: str) -> tuple[str, str, str]:
+                return "10000", "To Do", "new"
+
+            def issue_matches_board(self, issue_key: str) -> bool:
+                return True
+
+            def issue_matches_backlog(self, issue_key: str) -> bool:
+                return True
+
+            def transition_to_done(self, issue_key: str) -> None:
+                self.transition_calls += 1
+                raise AssertionError("created issue was transitioned out of To Do")
+
+        config = ImportConfig(
+            jira_url="https://example.atlassian.net",
+            jira_project_key="TARS",
+            jira_board_id=3,
+            github_repository="owner/repository",
+            github_branch="master",
+            credentials=Credentials(None, None, "fake", "fake"),
+            netrc_file=Path("fake.netrc"),
+            credential_source="test fixture",
+            credential_warnings=(),
+            apply=True,
+            since=None,
+            until=None,
+            author=None,
+            max_commits=1,
+            include_merges=False,
+            include_insignificant=False,
+            apply_manual_review=False,
+            output_report=Path("build/test"),
+            verbose=False,
+        )
+        fake_jira = FakeJira()
+        records, summary = run_import(config, github_client=FakeGitHub(), jira_client=fake_jira)
+        self.assertEqual(summary.jira_created, 1)
+        self.assertEqual(summary.created_todo, 1)
+        self.assertEqual(summary.failures, 0)
+        self.assertEqual(records[0].final_jira_status, "To Do")
+        self.assertEqual(records[0].result, "created")
+        self.assertEqual(fake_jira.transition_calls, 0)
+
+    def test_apply_updates_estimate_on_exact_existing_import(self) -> None:
+        """The explicit update option changes an existing import without creating another issue."""
+        commit = make_commit(
+            "Stabilize host quality gates",
+            [
+                ChangedFile("xWalkTool/environment/gcovr.cfg", "modified", 4, 3, 7, patch="+coverage"),
+                ChangedFile("xWalkTool/shell/xWalkEnv.sh", "modified", 2, 2, 4, patch="+export"),
+            ],
+        )
+
+        class FakeGitHub:
+            def collect_commits(self, *args: object, **kwargs: object) -> list[object]:
+                return [commit]
+
+        class FakeJira:
+            updated: list[tuple[str, str]]
+
+            def __init__(self) -> None:
+                self.updated = []
+
+            def discover_metadata(self) -> JiraMetadata:
+                fields = {"timetracking": JiraField("timetracking", "Time tracking", "", "", False)}
+                return JiraMetadata({"Task": "1"}, {"1": fields}, fields)
+
+            def get_board_filter_jql(self) -> str:
+                return "project = TARS"
+
+            def find_existing_import(self, sha: str) -> tuple[str, str]:
+                return "TARS-20", "Done"
+
+            def update_original_estimate(self, issue_key: str, jira_time: str) -> None:
+                self.updated.append((issue_key, jira_time))
+
+        config = ImportConfig(
+            jira_url="https://example.atlassian.net",
+            jira_project_key="TARS",
+            jira_board_id=3,
+            github_repository="owner/repository",
+            github_branch="master",
+            credentials=Credentials(None, None, "fake", "fake"),
+            netrc_file=Path("fake.netrc"),
+            credential_source="test fixture",
+            credential_warnings=(),
+            apply=True,
+            since=None,
+            until=None,
+            author=None,
+            max_commits=1,
+            include_merges=False,
+            include_insignificant=False,
+            apply_manual_review=False,
+            output_report=Path("build/test"),
+            verbose=False,
+            update_existing_estimates=True,
+        )
+        fake_jira = FakeJira()
+        records, summary = run_import(config, github_client=FakeGitHub(), jira_client=fake_jira)
+        self.assertEqual(fake_jira.updated, [("TARS-20", "2h")])
+        self.assertEqual(summary.estimates_updated, 1)
+        self.assertEqual(summary.jira_created, 0)
+        self.assertEqual(records[0].result, "updated")
+
     def test_manual_review_override_requires_apply_mode(self) -> None:
         """Broad-commit creation cannot be enabled without the explicit write mode."""
         with TemporaryDirectory() as directory:
@@ -321,6 +604,68 @@ class DryRunOrchestrationTest(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 load_config(
                     ["--dry-run", "--apply-manual-review", "--netrc-file", str(netrc_path)],
+                    {},
+                )
+
+    def test_existing_estimate_update_requires_apply_mode(self) -> None:
+        """Existing Jira estimates cannot be changed from preview mode."""
+        with TemporaryDirectory() as directory:
+            netrc_path = Path(directory) / "missing.netrc"
+            with self.assertRaises(SystemExit):
+                load_config(
+                    ["--dry-run", "--update-existing-estimates", "--netrc-file", str(netrc_path)],
+                    {},
+                )
+
+    def test_existing_planning_update_requires_apply_mode(self) -> None:
+        """Sequential planning cannot mutate Jira from preview mode."""
+        with TemporaryDirectory() as directory:
+            netrc_path = Path(directory) / "missing.netrc"
+            with self.assertRaises(SystemExit):
+                load_config(
+                    [
+                        "--dry-run",
+                        "--update-existing-planning-after",
+                        "TARS-15",
+                        "--netrc-file",
+                        str(netrc_path),
+                    ],
+                    {},
+                )
+
+    def test_explicit_existing_planning_start_requires_apply_mode(self) -> None:
+        """An explicit first Start date cannot mutate Jira from preview mode."""
+        with TemporaryDirectory() as directory:
+            netrc_path = Path(directory) / "missing.netrc"
+            with self.assertRaises(SystemExit):
+                load_config(
+                    [
+                        "--dry-run",
+                        "--update-existing-planning-start",
+                        "2026-07-23",
+                        "--netrc-file",
+                        str(netrc_path),
+                    ],
+                    {},
+                )
+
+    def test_existing_sprint_update_requires_apply_mode(self) -> None:
+        """Sprint assignment cannot mutate Jira from preview mode."""
+        with TemporaryDirectory() as directory:
+            netrc_path = Path(directory) / "missing.netrc"
+            with self.assertRaises(SystemExit):
+                load_config(
+                    ["--dry-run", "--update-existing-sprints", "--netrc-file", str(netrc_path)],
+                    {},
+                )
+
+    def test_existing_epic_update_requires_apply_mode(self) -> None:
+        """Epic-parent attachment cannot mutate Jira from preview mode."""
+        with TemporaryDirectory() as directory:
+            netrc_path = Path(directory) / "missing.netrc"
+            with self.assertRaises(SystemExit):
+                load_config(
+                    ["--dry-run", "--update-existing-epic", "TARS-15", "--netrc-file", str(netrc_path)],
                     {},
                 )
 

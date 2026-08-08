@@ -4,13 +4,18 @@
 from __future__ import annotations
 
 import sys
-from datetime import datetime
+from datetime import date, datetime
 from typing import Sequence
 
 from .xWalkJiraImportCommitAnalyser import analyse_commit
 from .xWalkJiraImportConfig import ConfigurationError, ImportConfig, load_config
 from .xWalkJiraImportCredentials import mask_email
-from .xWalkJiraImportDateCalculator import calculate_historical_dates, completion_timestamp
+from .xWalkJiraImportDateCalculator import (
+    calculate_historical_dates,
+    calculate_planned_due_date,
+    completion_timestamp,
+    next_workday,
+)
 from .xWalkJiraImportEstimator import estimate_effort
 from .xWalkJiraImportGitHubClient import ApiError, GitHubClient
 from .xWalkJiraImportJiraClient import JiraClient, build_issue_payload
@@ -120,6 +125,24 @@ def run_import(
     analysed = [(commit, analyse_commit(commit, config.include_insignificant)) for commit in commits]
     records: list[ImportRecord] = []
     previous_relevant: datetime | None = None
+    planned_start: date | None = None
+    start_field_id = ""
+    if config.update_existing_planning_after is not None:
+        anchor_due = jira.get_due_date(config.update_existing_planning_after)
+        planned_start = next_workday(anchor_due)
+    elif config.update_existing_planning_start is not None:
+        planned_start = config.update_existing_planning_start
+    if planned_start is not None:
+        start_fields = [
+            field.field_id
+            for field in metadata.all_fields.values()
+            if field.name.casefold() == "start date"
+        ]
+        if not start_fields:
+            raise ConfigurationError("Sequential planning requires a Jira Start date field.")
+        start_field_id = sorted(start_fields)[0]
+    if config.update_existing_epic is not None:
+        jira.require_epic(config.update_existing_epic)
 
     for commit, analysis in analysed:
         try:
@@ -154,6 +177,13 @@ def run_import(
         estimate = estimate_effort(commit, analysis)
         dates = calculate_historical_dates(commit, estimate, previous_relevant)
         previous_relevant = completion
+        planned_due: date | None = None
+        current_planned_start = planned_start
+        if current_planned_start is not None:
+            if estimate.effort_minutes is None:
+                raise ConfigurationError("Sequential planning requires an effort estimate for every commit.")
+            planned_due = calculate_planned_due_date(current_planned_start, estimate.effort_minutes)
+            planned_start = next_workday(planned_due)
         issue_type_name = analysis.issue_type
         issue_type_id = ""
         create_fields = {}
@@ -173,6 +203,9 @@ def run_import(
             dates.confidence,
         )
         records.append(row)
+        if current_planned_start is not None and planned_due is not None:
+            row.planned_start_date = current_planned_start.isoformat()
+            row.planned_due_date = planned_due.isoformat()
 
         requires_manual_review = estimate.manual_review or analysis.manual_review
         if requires_manual_review:
@@ -191,11 +224,90 @@ def run_import(
                 row.error_details = str(error)
                 continue
             if existing is not None:
-                summary.existing_skipped += 1
                 row.jira_issue_key, row.final_jira_status = existing
                 row.jira_issue_url = f"{config.jira_url}/browse/{row.jira_issue_key}"
-                row.result = "skipped"
-                row.error_details = "already imported"
+                if config.update_existing_estimates:
+                    try:
+                        jira.update_original_estimate(row.jira_issue_key, estimate.jira_time or "")
+                    except (ApiError, ValueError) as error:
+                        summary.failures += 1
+                        row.result = "failed"
+                        row.error_details = str(error)
+                        continue
+                    summary.estimates_updated += 1
+                if current_planned_start is not None and planned_due is not None:
+                    try:
+                        jira.update_planning(
+                            row.jira_issue_key,
+                            analysis.summary,
+                            start_field_id,
+                            current_planned_start,
+                            planned_due,
+                        )
+                    except (ApiError, ValueError) as error:
+                        summary.failures += 1
+                        row.result = "failed"
+                        row.error_details = str(error)
+                        continue
+                    summary.planning_updated += 1
+                if config.update_existing_sprints:
+                    sprint_due = planned_due
+                    if sprint_due is None:
+                        try:
+                            sprint_due = jira.get_due_date(row.jira_issue_key)
+                        except (ApiError, ValueError) as error:
+                            summary.failures += 1
+                            row.result = "failed"
+                            row.error_details = str(error)
+                            continue
+                    try:
+                        sprint_id, sprint_name = jira.find_sprint_for_date(sprint_due)
+                        jira.assign_issue_to_sprint(row.jira_issue_key, sprint_id)
+                        if not jira.issue_matches_sprint(row.jira_issue_key, sprint_id):
+                            raise ApiError("Updated issue does not match the selected sprint.")
+                        if not jira.issue_matches_board(row.jira_issue_key):
+                            raise ApiError("Updated issue does not match the configured Jira board.")
+                    except (ApiError, ValueError) as error:
+                        summary.failures += 1
+                        row.result = "failed"
+                        row.error_details = str(error)
+                        continue
+                    row.sprint_name = sprint_name
+                    summary.sprints_updated += 1
+                if config.update_existing_epic is not None:
+                    try:
+                        jira.update_parent(row.jira_issue_key, config.update_existing_epic)
+                        if not jira.issue_has_parent(row.jira_issue_key, config.update_existing_epic):
+                            raise ApiError("Updated issue does not match the requested Epic parent.")
+                    except (ApiError, ValueError) as error:
+                        summary.failures += 1
+                        row.result = "failed"
+                        row.error_details = str(error)
+                        continue
+                    row.parent_issue_key = config.update_existing_epic
+                    summary.epic_links_updated += 1
+                existing_updated = (
+                    config.update_existing_estimates
+                    or current_planned_start is not None
+                    or config.update_existing_sprints
+                    or config.update_existing_epic is not None
+                )
+                if existing_updated:
+                    row.result = "updated"
+                    updates = []
+                    if config.update_existing_estimates:
+                        updates.append("Original estimate")
+                    if current_planned_start is not None:
+                        updates.append("summary and planning dates")
+                    if config.update_existing_sprints:
+                        updates.append("Sprint")
+                    if config.update_existing_epic is not None:
+                        updates.append("Epic parent")
+                    row.error_details = f"Updated {'; '.join(updates)} on existing import"
+                else:
+                    summary.existing_skipped += 1
+                    row.result = "skipped"
+                    row.error_details = "already imported"
                 continue
 
         if config.dry_run:
@@ -221,15 +333,17 @@ def run_import(
             summary.jira_created += 1
             row.jira_issue_key = issue_key
             row.jira_issue_url = issue_url
-            status, done = jira.transition_to_done(issue_key)
-            row.final_jira_status = status
-            if not done:
-                raise ApiError("Created issue has no valid transition path to a Done status.")
-            summary.transitioned_done += 1
+            _, status_name, status_category = jira.get_status(issue_key)
+            row.final_jira_status = status_name
+            if status_name.casefold() != "to do" or status_category.casefold() != "new":
+                raise ApiError("Created issue did not enter the To Do status.")
             if board_jql is None:
                 raise ApiError("Created issue could not be checked against the board filter.")
             if not jira.issue_matches_board(issue_key):
                 raise ApiError("Created issue does not match the existing board filter.")
+            if not jira.issue_matches_backlog(issue_key):
+                raise ApiError("Created issue does not appear in the configured Jira backlog.")
+            summary.created_todo += 1
             row.result = "created"
         except (ApiError, ValueError) as error:
             summary.failures += 1
@@ -246,7 +360,11 @@ def print_summary(summary: ImportSummary) -> None:
     print(f"Items requiring manual review: {summary.manual_review}")
     print(f"Existing Jira items skipped: {summary.existing_skipped}")
     print(f"Jira items created: {summary.jira_created}")
-    print(f"Items transitioned to Done: {summary.transitioned_done}")
+    print(f"Created items retained in To Do backlog: {summary.created_todo}")
+    print(f"Original estimates updated: {summary.estimates_updated}")
+    print(f"Summaries and planning dates updated: {summary.planning_updated}")
+    print(f"Sprint assignments updated: {summary.sprints_updated}")
+    print(f"Epic parent links updated: {summary.epic_links_updated}")
     print(f"Failures: {summary.failures}")
     if summary.fields_discovered:
         print(f"Relevant Jira fields discovered: {', '.join(summary.fields_discovered)}")

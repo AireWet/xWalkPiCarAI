@@ -2,13 +2,13 @@
 
 ## Purpose
 
-This host-only Python tool reconstructs completed Jira work items from meaningful commits on
+This host-only Python tool reconstructs Jira backlog work items from meaningful commits on
 `jochuuu/xWalkPiCarAI`. It supports thesis planning and traceability for YOLO, vulnerable road-user detection,
 Raspberry Pi 5 integration, camera and hardware control, testing, deployment, and documentation work.
 
 The tool reads commit history through the GitHub REST API. In explicit apply mode, it creates missing issues in
-the Jira `TARS` project and follows available transitions until Jira reports a Done status category. It never
-modifies Git history, repository branches, tags, files, or remotes.
+the Jira `TARS` project, retains their initial To Do status, and verifies that they appear in the configured board
+backlog. It never modifies Git history, repository branches, tags, files, or remotes.
 
 Commits are processed in branch-history order from oldest to newest. Jira therefore assigns `TARS-1` to the
 earliest created import, `TARS-2` to the next created import, and so on when importing into an empty project.
@@ -148,7 +148,7 @@ provided.
 | --- | --- | --- |
 | `-h`, `--help` | Not applicable | Show command usage and exit without running an import. |
 | `--dry-run` | Selected implicitly | Analyse commits and write reports without creating or changing Jira items. |
-| `--apply` | Disabled | Create missing Jira items and transition them to Done after duplicate checks. |
+| `--apply` | Disabled | Create missing Jira items in the board backlog with To Do status. |
 | `--since YYYY-MM-DD` | No lower limit | Include commits on or after this ISO calendar date. |
 | `--until YYYY-MM-DD` | No upper limit | Include commits on or before this ISO calendar date. |
 | `--author NAME_OR_EMAIL` | All authors | Match author name, email, or GitHub login case-insensitively. |
@@ -161,6 +161,11 @@ provided.
 | `--include-merges` | Disabled | Include merge commits, which are otherwise excluded. |
 | `--include-insignificant` | Disabled | Include formatting-only and insignificant typo-only commits. |
 | `--apply-manual-review` | Disabled | Create broad low-confidence commits; requires `--apply`. |
+| `--update-existing-estimates` | Disabled | Update Original estimate on exact-SHA imports; requires `--apply`. |
+| `--update-existing-planning-after ISSUE_KEY` | Disabled | Sequence imports after an anchor; apply only. |
+| `--update-existing-planning-start YYYY-MM-DD` | Disabled | Sequence imports from an explicit date; apply only. |
+| `--update-existing-sprints` | Disabled | Assign imports to board sprints by Due date; apply only. |
+| `--update-existing-epic ISSUE_KEY` | Disabled | Attach imports to a validated Epic parent; apply only. |
 | `--output-report PATH` | `build/jira-import-preview` | Set the JSON and CSV report base path. |
 | `--verbose` | Disabled | Print additional progress diagnostics without credentials or authorization headers. |
 
@@ -271,11 +276,35 @@ Tiny documentation or configuration corrections can remain Trivial. Semantic sou
 engineering overhead, Bugs include investigation, user-facing Stories include design and validation, and complex
 hardware, camera, computer-vision, or AI work receives an integration-risk adjustment. Tested implementation work
 includes the effort to design, implement, and run the tests. Broad or ambiguous commits remain manual-review items
-rather than receiving invented precision.
+and receive a conservative 24, 40, or 80 man-hour scope-band estimate with Low confidence.
 
 Apply mode normally skips those records. After reviewing them, an operator may explicitly retain their
-low-confidence classification and create them with `--apply --apply-manual-review`. Their descriptions continue
-to state that precise dates and effort require manual review; the override does not invent missing evidence.
+low-confidence classification and create them with `--apply --apply-manual-review`. The override accepts the
+scope-band planning value without presenting it as precise elapsed time.
+
+Existing exact-SHA imports remain unchanged by default. After reviewing recalculated estimates, use
+`--apply --update-existing-estimates` to update only Jira's time-tracking `Original estimate` field. Combine it
+with `--apply-manual-review` when the selected history includes broad records.
+
+Use `--apply --update-existing-planning-after ISSUE_KEY` to align existing exact-SHA imports with the established
+short summary tags and schedule them after an anchor ticket. The anchor must have a Due date. The first selected
+commit starts on the next weekday; each Due date rounds Original estimate up to whole eight-hour Jira workdays,
+and the next selected commit starts on the following weekday. This prevents overlapping date-only schedules.
+Use `--update-existing-planning-start YYYY-MM-DD` instead when the first selected import has an explicit Start
+date. The explicit-date and issue-anchor options are mutually exclusive.
+
+Use `--apply --update-existing-sprints` to select the configured board sprint whose date range contains each
+existing import's Due date. The importer assigns the issue through Jira Software, then verifies both sprint and
+board membership. Future-sprint issues are represented in Jira's sprint-planning backlog; completed issues remain
+Done and may be hidden by Jira backlog views that exclude completed statuses.
+
+Jira dashboards do not directly contain issues. Dashboard gadgets display issues through project filters,
+assignees, sprint membership, and status. The importer verifies the configured board filter and sprint membership;
+it does not rewrite dashboard layouts or reopen completed historical work to bypass backlog status filtering.
+
+Use `--apply --update-existing-epic ISSUE_KEY` to attach exact-SHA existing imports to the same Epic hierarchy as
+the earlier Jira history. The importer verifies that the requested parent is an Epic before any child mutation,
+sets Jira's standard `parent` field, and confirms the saved relationship for every updated issue.
 
 ## Apply after approval
 
@@ -291,12 +320,13 @@ Apply mode performs these actions for each accepted non-manual commit, plus revi
 1. Search TARS for the exact full-SHA marker.
 2. Skip an existing marker as `already imported`.
 3. Create one issue using fields supported by the selected issue type.
-4. Follow valid available transitions until the issue has a Done status category.
-5. Verify the final status and confirm the issue matches board 3's saved filter.
+4. Verify that the initial workflow status is To Do.
+5. Confirm the issue matches board 3's saved filter and appears in its backlog.
 6. Record the issue key, URL, final status, and result in JSON and CSV.
 
-It never edits or deletes an existing issue. If creation succeeds but a later transition or board check fails, the
-report retains the new Jira key. A repeat run finds the permanent full-SHA marker and does not create a duplicate.
+It edits an existing exact-SHA issue only when an explicit existing-item update option is supplied, and it never
+deletes an issue. If creation succeeds but a later status, board, or backlog check fails, the report retains the
+new Jira key. A repeat run finds the permanent full-SHA marker and does not create a duplicate.
 
 ## Expected Jira fields
 
@@ -337,7 +367,7 @@ cd xWalkTool/xWalkJiraImport && python3 -m unittest discover -s test -p 'test_xW
 ```
 
 The suite covers netrc paths, parsing, precedence, permissions, redaction, session isolation, classification, Jira
-types, generated-file exclusion, estimates, working dates, ADF, field discovery, duplicates, transitions,
+types, generated-file exclusion, estimates, working dates, ADF, field discovery, duplicates, backlog verification,
 pagination, retries, authentication failures, and dry-run mutation protection. Every credential fixture is a fake
 temporary file; tests never read the developer's real `~/.netrc`.
 
@@ -353,7 +383,7 @@ temporary file; tests never read the developer's real `~/.netrc`.
 - GitHub rate limit or `HTTP 429`: wait for reset or configure the optional GitHub token; retries are bounded.
 - No Story type: the importer safely falls back to Task.
 - Missing estimates or date fields: ensure those fields are on the create screen for the selected issue type.
-- No Done path: inspect the TARS workflow conditions and permissions; the tool does not change the workflow.
+- Missing To Do backlog item: inspect the initial workflow status, board filter, and sprint assignment.
 - Board mismatch: inspect board 3's saved filter and status-column mapping; the tool does not alter either.
 - Manual review: split the historical work conceptually or approve a conservative Jira record by hand before
-  importing; the tool does not invent a precise estimate for a broad commit.
+  importing; broad records use a Low-confidence man-hour scope band rather than a precise elapsed-time claim.

@@ -58,6 +58,17 @@ class EffortEstimatorTest(unittest.TestCase):
         estimate = estimate_effort(commit, analyse_commit(commit))
         self.assertGreaterEqual(estimate.story_points, 3)
 
+    def test_large_estimates_are_expressed_as_man_hours(self) -> None:
+        """Jira Original estimates use explicit hours instead of site-dependent workdays."""
+        files = [
+            ChangedFile(f"src/module_{index}.py", "modified", 20, 5, 25, patch="+change")
+            for index in range(7)
+        ]
+        commit = make_commit("Refactor application command routing", files)
+        estimate = estimate_effort(commit, analyse_commit(commit))
+        self.assertEqual(estimate.jira_time, "8h")
+        self.assertEqual(estimate.effort_minutes, 480)
+
     def test_generated_volume_does_not_inflate_estimate(self) -> None:
         """A large generated file is removed before estimating semantic effort."""
         files = [
@@ -70,8 +81,8 @@ class EffortEstimatorTest(unittest.TestCase):
         self.assertEqual(len(analysis.meaningful_files), 1)
         self.assertEqual(estimate.level, "Medium")
 
-    def test_unusually_broad_commit_requires_manual_review(self) -> None:
-        """A broad semantic commit receives no invented Jira time estimate."""
+    def test_unusually_broad_commit_receives_reviewed_man_hour_estimate(self) -> None:
+        """A broad semantic commit receives a conservative planning value and remains review-gated."""
         files = [
             ChangedFile(f"src/module_{index}.py", "modified", 50, 20, 70, patch="+change")
             for index in range(31)
@@ -79,9 +90,23 @@ class EffortEstimatorTest(unittest.TestCase):
         commit = make_commit("Restructure application", files)
         estimate = estimate_effort(commit, analyse_commit(commit))
         self.assertTrue(estimate.manual_review)
-        self.assertIsNone(estimate.jira_time)
+        self.assertEqual(estimate.jira_time, "24h")
+        self.assertEqual(estimate.effort_minutes, 1_440)
         self.assertEqual(estimate.story_points, 13)
         self.assertEqual(estimate.confidence, "Low")
+        self.assertIn("conservative man-hour planning value", estimate.rationale)
+
+    def test_program_scale_commit_uses_largest_reviewed_scope_band(self) -> None:
+        """A program-scale semantic change is not capped at the normal sixteen-hour level."""
+        files = [
+            ChangedFile(f"area_{index}/module.py", "modified", 100, 20, 120, patch="+change")
+            for index in range(151)
+        ]
+        commit = make_commit("Reorganize complete application architecture", files)
+        estimate = estimate_effort(commit, analyse_commit(commit))
+        self.assertTrue(estimate.manual_review)
+        self.assertEqual(estimate.jira_time, "80h")
+        self.assertEqual(estimate.effort_minutes, 4_800)
 
 
 if __name__ == "__main__":

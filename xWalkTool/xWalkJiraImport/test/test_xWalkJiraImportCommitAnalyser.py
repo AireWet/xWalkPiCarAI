@@ -100,7 +100,7 @@ class CommitAnalyserTest(unittest.TestCase):
         )
         analysis = analyse_commit(commit)
         self.assertEqual(analysis.component, "Testing")
-        self.assertEqual(analysis.summary, "[Testing] Update motor control test coverage")
+        self.assertEqual(analysis.summary, "[HOST-TEST] Update motor control test coverage")
 
     def test_uses_detailed_commit_body_for_vague_title(self) -> None:
         """A useful body statement takes priority over a generic commit title."""
@@ -120,6 +120,24 @@ class CommitAnalyserTest(unittest.TestCase):
         )
         analysis = analyse_commit(commit)
         self.assertEqual(analysis.summary, "[Camera] Add frame recovery")
+
+    def test_uses_established_short_tags_for_historical_xwalk_work(self) -> None:
+        """Configuration, host, and hardware summaries follow the existing Jira tag vocabulary."""
+        configuration = make_commit(
+            "Restore architecture-specific Vosk runtimes",
+            [ChangedFile("config/runtime.yml", "modified", 2, 1, 3, patch="+runtime")],
+        )
+        host = make_commit(
+            "Resolve host static-analysis warnings",
+            [ChangedFile("test/static_analysis.cpp", "modified", 3, 1, 4, patch="+check")],
+        )
+        hardware = make_commit(
+            "Reorganize Controller and Agent architecture",
+            [ChangedFile("src/controller.cpp", "modified", 3, 1, 4, patch="+route")],
+        )
+        self.assertTrue(analyse_commit(configuration).summary.startswith("[Config]"))
+        self.assertTrue(analyse_commit(host).summary.startswith("[Host]"))
+        self.assertTrue(analyse_commit(hardware).summary.startswith("[HW]"))
 
 
 if __name__ == "__main__":

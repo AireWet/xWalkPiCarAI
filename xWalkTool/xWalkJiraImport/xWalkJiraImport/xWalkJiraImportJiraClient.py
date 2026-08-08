@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any, Iterable, Mapping
+from zoneinfo import ZoneInfo
 
 import requests
 
@@ -26,6 +27,7 @@ NOTICE = (
     "and traceability. Jira's system creation and resolution timestamps represent the import operation, "
     "while the historical development dates are recorded below."
 )
+STOCKHOLM = ZoneInfo("Europe/Stockholm")
 
 
 class JiraSafetyError(Exception):
@@ -466,6 +468,171 @@ class JiraClient:
         key = str(result["key"])
         return key, f"{self.base_url}/browse/{key}"
 
+    def update_original_estimate(self, issue_key: str, jira_time: str) -> None:
+        """Update one exact existing issue's human-effort Original estimate."""
+        self._require_writes()
+        if not issue_key.strip() or not jira_time.strip():
+            raise ValueError("The Jira issue key and Original estimate must not be empty.")
+        request_json(
+            self.session,
+            "PUT",
+            self._url(f"/rest/api/3/issue/{issue_key}"),
+            json={"fields": {"timetracking": {"originalEstimate": jira_time}}},
+            expected=(204,),
+        )
+
+    def get_due_date(self, issue_key: str) -> date:
+        """Return the configured Due date for one existing planning anchor."""
+        result = request_json(
+            self.session,
+            "GET",
+            self._url(f"/rest/api/3/issue/{issue_key}"),
+            params={"fields": "duedate"},
+        )
+        fields = result.get("fields", {}) if isinstance(result, dict) else {}
+        value = fields.get("duedate") if isinstance(fields, dict) else None
+        if not isinstance(value, str):
+            raise ValueError(f"Jira issue {issue_key} has no Due date for sequential planning.")
+        try:
+            return date.fromisoformat(value)
+        except ValueError as error:
+            raise ValueError(f"Jira issue {issue_key} returned an invalid Due date.") from error
+
+    def update_planning(
+        self,
+        issue_key: str,
+        summary: str,
+        start_field_id: str,
+        start: date,
+        due: date,
+    ) -> None:
+        """Update one exact existing import's summary and sequential planning dates."""
+        self._require_writes()
+        if not issue_key.strip() or not summary.strip() or not start_field_id.strip():
+            raise ValueError("The issue key, summary, and Start date field must not be empty.")
+        if due < start:
+            raise ValueError("The planned Due date must not precede the Start date.")
+        request_json(
+            self.session,
+            "PUT",
+            self._url(f"/rest/api/3/issue/{issue_key}"),
+            json={
+                "fields": {
+                    "summary": summary,
+                    start_field_id: start.isoformat(),
+                    "duedate": due.isoformat(),
+                }
+            },
+            expected=(204,),
+        )
+
+    @staticmethod
+    def _sprint_boundary(value: object) -> date | None:
+        """Convert one Jira sprint timestamp to its Stockholm calendar date."""
+        if not isinstance(value, str):
+            return None
+        try:
+            parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        except ValueError:
+            return None
+        if parsed.tzinfo is None:
+            return None
+        return parsed.astimezone(STOCKHOLM).date()
+
+    def find_sprint_for_date(self, value: date) -> tuple[int, str]:
+        """Select the board sprint whose half-open date range contains one Due date."""
+        start_at = 0
+        candidates: list[tuple[date, date, int, str]] = []
+        while True:
+            result = request_json(
+                self.session,
+                "GET",
+                self._url(f"/rest/agile/1.0/board/{self.board_id}/sprint"),
+                params={"state": "active,closed,future", "startAt": start_at, "maxResults": 50},
+            )
+            values = result.get("values", []) if isinstance(result, dict) else []
+            if not isinstance(values, list):
+                raise ApiError("Jira sprint discovery returned an unexpected response.")
+            for item in values:
+                if not isinstance(item, dict):
+                    continue
+                start = self._sprint_boundary(item.get("startDate"))
+                end = self._sprint_boundary(item.get("endDate"))
+                sprint_id = item.get("id")
+                name = item.get("name")
+                if start is not None and end is not None and sprint_id is not None and isinstance(name, str):
+                    candidates.append((start, end, int(sprint_id), name))
+            start_at += len(values)
+            if not values or bool(result.get("isLast", start_at >= int(result.get("total", start_at)))):
+                break
+        for start, end, sprint_id, name in sorted(candidates):
+            if start <= value < end:
+                return sprint_id, name
+        raise ValueError(f"No board sprint contains Due date {value.isoformat()}.")
+
+    def assign_issue_to_sprint(self, issue_key: str, sprint_id: int) -> None:
+        """Move one exact existing issue into the selected Jira Software sprint."""
+        self._require_writes()
+        if not issue_key.strip() or sprint_id <= 0:
+            raise ValueError("The issue key and sprint ID must be valid.")
+        request_json(
+            self.session,
+            "POST",
+            self._url(f"/rest/agile/1.0/sprint/{sprint_id}/issue"),
+            json={"issues": [issue_key]},
+            expected=(204,),
+        )
+
+    def issue_matches_sprint(self, issue_key: str, sprint_id: int) -> bool:
+        """Confirm one issue belongs to the selected sprint."""
+        result = request_json(
+            self.session,
+            "GET",
+            self._url(f"/rest/agile/1.0/sprint/{sprint_id}/issue"),
+            params={"jql": f'key = "{issue_key}"', "fields": "key", "maxResults": 1},
+        )
+        issues = result.get("issues", []) if isinstance(result, dict) else []
+        return bool(issues)
+
+    def require_epic(self, issue_key: str) -> None:
+        """Reject a requested parent unless Jira reports that it is an Epic."""
+        result = request_json(
+            self.session,
+            "GET",
+            self._url(f"/rest/api/3/issue/{issue_key}"),
+            params={"fields": "issuetype"},
+        )
+        fields = result.get("fields", {}) if isinstance(result, dict) else {}
+        issue_type = fields.get("issuetype", {}) if isinstance(fields, dict) else {}
+        name = str(issue_type.get("name", "")) if isinstance(issue_type, dict) else ""
+        if name.casefold() != "epic":
+            raise ValueError(f"Jira issue {issue_key} is not an Epic.")
+
+    def update_parent(self, issue_key: str, parent_key: str) -> None:
+        """Attach one exact existing import to a validated Epic parent."""
+        self._require_writes()
+        if not issue_key.strip() or not parent_key.strip():
+            raise ValueError("The issue key and Epic parent key must not be empty.")
+        request_json(
+            self.session,
+            "PUT",
+            self._url(f"/rest/api/3/issue/{issue_key}"),
+            json={"fields": {"parent": {"key": parent_key}}},
+            expected=(204,),
+        )
+
+    def issue_has_parent(self, issue_key: str, parent_key: str) -> bool:
+        """Confirm one issue has the requested Epic parent."""
+        result = request_json(
+            self.session,
+            "GET",
+            self._url(f"/rest/api/3/issue/{issue_key}"),
+            params={"fields": "parent"},
+        )
+        fields = result.get("fields", {}) if isinstance(result, dict) else {}
+        parent = fields.get("parent", {}) if isinstance(fields, dict) else {}
+        return isinstance(parent, dict) and str(parent.get("key", "")) == parent_key
+
     def get_status(self, issue_key: str) -> tuple[str, str, str]:
         """Return status ID, name, and category for one issue."""
         result = request_json(
@@ -549,6 +716,17 @@ class JiraClient:
             self.session,
             "GET",
             self._url(f"/rest/agile/1.0/board/{self.board_id}/issue"),
+            params={"jql": f'key = "{issue_key}"', "fields": "key", "maxResults": 1},
+        )
+        issues = payload.get("issues", []) if isinstance(payload, dict) else []
+        return bool(issues)
+
+    def issue_matches_backlog(self, issue_key: str) -> bool:
+        """Confirm one created issue appears in the configured board backlog."""
+        payload = request_json(
+            self.session,
+            "GET",
+            self._url(f"/rest/agile/1.0/board/{self.board_id}/backlog"),
             params={"jql": f'key = "{issue_key}"', "fields": "key", "maxResults": 1},
         )
         issues = payload.get("issues", []) if isinstance(payload, dict) else []
