@@ -197,7 +197,7 @@ jobs:
           test -x build-host/deploy/usr/bin/xwalk-picarx-control
           test -x build-host/deploy/usr/lib/xwalk/xWalkTool/shell/xWalkEnv.sh
           test -x build-host/deploy/usr/lib/xwalk/xWalkTool/python/xWalkLicenseTool
-          test -r build-host/deploy/usr/lib/xwalk/xWalkTool/environment/xWalkLicense.json
+          test -r build-host/deploy/usr/lib/xwalk/xWalkTool/environment/xWalkLicense.cfg
           test ! -e build-host/deploy/usr/lib/xwalk/xWalkLibrary/X_WALK_LICENSE.KEY
           test -r build-host/deploy/etc/xwalk/picar-x.conf
           test -r build-host/deploy/etc/xwalk/picar-x.d/hardware.conf
