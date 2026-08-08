@@ -333,6 +333,12 @@ if(BUILD_TESTING)
             "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/python/test/test_xWalkLicenseTool.py")
     set_tests_properties(xWalkLicenseToolHostTest PROPERTIES
         LABELS "host;deployment;security")
+    add_test(NAME xWalkJiraImportHostTest
+        COMMAND "${Python3_EXECUTABLE}" -m unittest discover
+            -s test -p "test_xWalkJiraImport*.py")
+    set_tests_properties(xWalkJiraImportHostTest PROPERTIES
+        LABELS "host;tooling;network-free"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/xWalkJiraImport")
     add_test(NAME xHal_Rpi5CarDependencyInstallerHostTest
         COMMAND "${Python3_EXECUTABLE}"
             "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/deployment/test/dependency-installer-test.py")

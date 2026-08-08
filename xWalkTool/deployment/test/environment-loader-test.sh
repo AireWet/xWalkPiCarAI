@@ -12,35 +12,35 @@ cp "$repository_root/xWalkTool/python/xWalkLicenseTool" \
     "$fixture_root/xWalkTool/python/xWalkLicenseTool"
 cp "$repository_root/xWalkTool/shell/xWalkEnv.sh" \
     "$fixture_root/xWalkTool/shell/xWalkEnv.sh"
-cp "$repository_root/xWalkTool/environment/xWalkLicense.json" \
-    "$fixture_root/xWalkTool/environment/xWalkLicense.json"
+cp "$repository_root/xWalkTool/environment/xWalkLicense.cfg" \
+    "$fixture_root/xWalkTool/environment/xWalkLicense.cfg"
 
-fixture_json="$fixture_root/private-license.json"
-cat > "$fixture_json" <<'EOF'
-{
-    "ANTHROPIC_API_KEY": "anthropic-fake-value",
-    "ANTHROPIC_MODEL": "claude-fake-model",
-    "DEEPSEEK_API_KEY": "deepseek-fake-value",
-    "DOUBAO_API_KEY": "doubao-fake-value",
-    "GEMINI_API_KEY": "gemini-fake-value",
-    "GEMINI_MODEL": "gemini-fake-model",
-    "GROK_API_KEY": "grok-fake-value",
-    "LLM_API_KEY": "generic-fake-value",
-    "OLLAMA_MODEL": "ollama-fake-model",
-    "OPENAI_API_KEY": "openai-fake-value",
-    "OPENAI_MODEL": "openai-fake-model",
-    "OTHERS_API_KEY": "others-fake-value",
-    "QWEN_API_KEY": "qwen-fake-value",
-    "XAI_API_KEY": "xai-fake-value",
-    "XWALK_AI_API_KEY": "compatible-fake-value",
-    "XWALK_AI_MODEL": "$(touch should-not-run)"
-}
+fixture_config="$fixture_root/private-license.cfg"
+cat > "$fixture_config" <<'EOF'
+[models]
+ANTHROPIC_MODEL = claude-fake-model
+GEMINI_MODEL = gemini-fake-model
+OLLAMA_MODEL = ollama-fake-model
+OPENAI_MODEL = openai-fake-model
+XWALK_AI_MODEL = $(touch should-not-run)
 EOF
-chmod 0600 "$fixture_json"
+chmod 0600 "$fixture_config"
+
+fixture_netrc="$fixture_root/fake.netrc"
+cat > "$fixture_netrc" <<'EOF'
+machine api.anthropic.com login "" password anthropic-fake-value
+machine api.deepseek.com login "" password deepseek-fake-value
+machine ark.cn-beijing.volces.com login "" password doubao-fake-value
+machine generativelanguage.googleapis.com login "" password gemini-fake-value
+machine api.x.ai login "" password xai-fake-value
+machine api.openai.com login "" password openai-fake-value
+machine dashscope-intl.aliyuncs.com login "" password qwen-fake-value
+EOF
+chmod 0600 "$fixture_netrc"
 
 encryption_output="$(
     python3 "$fixture_root/xWalkTool/python/xWalkLicenseTool" encrypt \
-        --json "$fixture_json"
+        --config "$fixture_config"
 )"
 decryption_key="$(
     printf '%s\n' "$encryption_output" | sed -n '/^Decryption key:$/ {n;p;}'
@@ -49,7 +49,20 @@ test -n "$decryption_key"
 license_file="$fixture_root/xWalkLibrary/X_WALK_LICENSE.KEY"
 test "$(stat -c '%a' "$license_file")" = 600
 
-printf '%s\n' "$decryption_key" | PYTHONWARNINGS=ignore bash -c '
+decrypted_fixture="$fixture_root/decrypted-models.json"
+printf '%s\n' "$decryption_key" | python3 \
+    "$fixture_root/xWalkTool/python/xWalkLicenseTool" decrypt \
+    --output "$decrypted_fixture" > /dev/null 2>&1
+python3 -c 'import json, sys
+with open(sys.argv[1], encoding="utf-8") as input_file:
+    values = json.load(input_file)
+if any(name.endswith("_API_KEY") for name in values):
+    raise SystemExit("encrypted licence retained an API credential")' \
+    "$decrypted_fixture"
+rm -f "$decrypted_fixture"
+
+printf '%s\n' "$decryption_key" | XWALK_NETRC_FILE="$fixture_netrc" \
+    PYTHONWARNINGS=ignore bash -c '
     source "$1"
     test "$OPENAI_API_KEY" = openai-fake-value
     test "$OPENAI_MODEL" = openai-fake-model
@@ -57,20 +70,56 @@ printf '%s\n' "$decryption_key" | PYTHONWARNINGS=ignore bash -c '
     test "$GEMINI_MODEL" = gemini-fake-model
     test "$ANTHROPIC_API_KEY" = anthropic-fake-value
     test "$ANTHROPIC_MODEL" = claude-fake-model
-    test "$XWALK_AI_API_KEY" = compatible-fake-value
+    test "$DEEPSEEK_API_KEY" = deepseek-fake-value
+    test "$DOUBAO_API_KEY" = doubao-fake-value
+    test "$GROK_API_KEY" = xai-fake-value
+    test "$QWEN_API_KEY" = qwen-fake-value
+    test "$XAI_API_KEY" = xai-fake-value
+    test -z "${LLM_API_KEY+x}"
+    test -z "${OTHERS_API_KEY+x}"
+    test -z "${XWALK_AI_API_KEY+x}"
     test "$XWALK_AI_MODEL" = "\$(touch should-not-run)"
     test "$OLLAMA_MODEL" = ollama-fake-model
     test -z "${X_WALK_LICENSE_SERIAL+x}"
 ' _ "$fixture_root/xWalkTool/shell/xWalkEnv.sh" 2> "$fixture_root/loader.err"
-if grep -Eq '(openai|gemini|anthropic|compatible)-fake-value' \
-    "$fixture_root/loader.err"; then
+if grep -q 'fake-value' "$fixture_root/loader.err"; then
     echo "xWalkEnv.sh exposed a fake credential in diagnostics." >&2
     exit 1
 fi
 test ! -e "$fixture_root/should-not-run"
 
+chmod 0644 "$fixture_netrc"
+if printf '%s\n' "$decryption_key" | XWALK_NETRC_FILE="$fixture_netrc" \
+    PYTHONWARNINGS=ignore bash -c 'source "$1"' _ \
+    "$fixture_root/xWalkTool/shell/xWalkEnv.sh" > /dev/null 2>&1; then
+    echo "xWalkEnv.sh accepted a group/world-readable netrc file." >&2
+    exit 1
+fi
+chmod 0600 "$fixture_netrc"
+
+incomplete_netrc="$fixture_root/incomplete.netrc"
+grep -v '^machine api.openai.com ' "$fixture_netrc" > "$incomplete_netrc"
+chmod 0600 "$incomplete_netrc"
+printf '%s\n' "$decryption_key" | XWALK_NETRC_FILE="$incomplete_netrc" \
+    PYTHONWARNINGS=ignore bash -c '
+    source "$1"
+    test -z "${OPENAI_API_KEY+x}"
+    test "$GEMINI_API_KEY" = gemini-fake-value
+' _ "$fixture_root/xWalkTool/shell/xWalkEnv.sh" > /dev/null 2>&1
+
+empty_netrc="$fixture_root/empty-password.netrc"
+sed 's/password openai-fake-value/password ""/' "$fixture_netrc" > "$empty_netrc"
+chmod 0600 "$empty_netrc"
+printf '%s\n' "$decryption_key" | XWALK_NETRC_FILE="$empty_netrc" \
+    PYTHONWARNINGS=ignore bash -c '
+    source "$1"
+    test -z "${OPENAI_API_KEY+x}"
+    test "$ANTHROPIC_API_KEY" = anthropic-fake-value
+' _ "$fixture_root/xWalkTool/shell/xWalkEnv.sh" > /dev/null 2>&1
+
 chmod 0644 "$license_file"
-if printf '%s\n' "$decryption_key" | PYTHONWARNINGS=ignore \
+if printf '%s\n' "$decryption_key" | XWALK_NETRC_FILE="$fixture_netrc" \
+    PYTHONWARNINGS=ignore \
     bash -c 'source "$1"' _ "$fixture_root/xWalkTool/shell/xWalkEnv.sh" \
     > /dev/null 2>&1; then
     echo "xWalkEnv.sh accepted a group/world-readable encrypted licence." >&2
@@ -80,12 +129,13 @@ chmod 0600 "$license_file"
 
 incomplete_output="$(
     python3 "$fixture_root/xWalkTool/python/xWalkLicenseTool" encrypt \
-        --env OPENAI_API_KEY=incomplete-fake-value
+        --env OPENAI_MODEL=incomplete-fake-value
 )"
 incomplete_key="$(
     printf '%s\n' "$incomplete_output" | sed -n '/^Decryption key:$/ {n;p;}'
 )"
-printf '%s\n' "$incomplete_key" | PYTHONWARNINGS=ignore bash -c '
+printf '%s\n' "$incomplete_key" | XWALK_NETRC_FILE="$fixture_netrc" \
+    PYTHONWARNINGS=ignore bash -c '
     export OPENAI_API_KEY=original-value
     if source "$1" > /dev/null 2>&1; then
         exit 1

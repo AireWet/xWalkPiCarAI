@@ -29,7 +29,7 @@ The recommended Python environment is documented in the
 | `run-host-coverage.sh` | Builds, tests, and creates the host coverage report | Host-only |
 | `provision-hardware.sh` | Writes verified hardware identities to one configuration file | Hardware-specific |
 | `setup-rpi.sh` | Checks, previews, or applies Raspberry Pi provisioning | `--apply` is privileged |
-| `xWalkEnv.sh` | Decrypts and exports authenticated licence environment values | Must be sourced |
+| `xWalkEnv.sh` | Combines authenticated models with private netrc credentials | Must be sourced |
 
 ## Host maintenance
 
@@ -106,12 +106,14 @@ source xWalkTool/shell/xWalkEnv.sh
 
 The loader authenticates `xWalkLibrary/X_WALK_LICENSE.KEY` with
 `xWalkTool/python/xWalkLicenseTool`. It privately requests the decryption key,
-validates the decrypted variable names against
-`xWalkTool/environment/xWalkLicense.json`, and exports the configured values.
-It does not export `X_WALK_LICENSE_SERIAL` or print API-key values.
+validates the decrypted model names against
+`xWalkTool/environment/xWalkLicense.cfg`, loads API credentials from the
+developer's mode-`0600` `~/.netrc`, and exports the combined values.
+Missing hosts and empty passwords are skipped so unused providers do not need
+keys. It does not export `X_WALK_LICENSE_SERIAL` or print API-key values.
 
 Decryption uses a temporary mode-`0600` JSON file, which the loader removes
-before returning. The encrypted licence file itself must also have mode
+before returning. The encrypted licence and netrc files must also have mode
 `0600`. Executing the script instead of sourcing it fails because a child
 process cannot update its parent shell environment.
 

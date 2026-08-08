@@ -42,18 +42,19 @@ writes remain in the primary file; included defaults are never rewritten by
 
 `xWalkTool/shell/xWalkEnv.sh` is the reviewed environment-loader boundary. It
 uses `xWalkTool/python/xWalkLicenseTool` to authenticate and decrypt the
-fixed `xWalkLibrary/X_WALK_LICENSE.KEY` path. It validates every supported model
-and credential name before exporting anything, never evaluates values as shell
-syntax, and removes its mode-`0600` temporary JSON file. Source the loader so
-the variables remain in the calling shell:
+fixed `xWalkLibrary/X_WALK_LICENSE.KEY` model settings, then reads API
+credentials from the developer's mode-`0600` `~/.netrc`. It validates every
+supported model and credential name before exporting anything, never evaluates
+values as shell syntax, and removes its mode-`0600` temporary JSON file. Source
+the loader so the variables remain in the calling shell:
 
 ```sh
 source xWalkTool/shell/xWalkEnv.sh
 ```
 
-Create the encrypted file from the committed empty template or repeated
-`--env` arguments by following the
-[licence-key workflow](License%20Key%20Workflow.md). Keep the generated
+Create the encrypted model file from the committed empty template or repeated
+model-only `--env` arguments, and configure actual provider hosts by following
+the [licence-key workflow](License%20Key%20Workflow.md). Keep the generated
 decryption key outside the repository. The loader requests it interactively and
 rejects an unprovisioned, modified, incomplete, or group/world-readable file.
 
@@ -65,7 +66,7 @@ chmod 0600 xWalkController/xWalkConfig/picar-x.local.conf
 ```
 
 Select a different provider include in `picar-x.local.conf`. Provision the
-complete licence template, then export its configured model and credential
+complete model template and private netrc credentials, then export the combined
 variables by sourcing `xWalkEnv.sh`.
 
 Run a voice command with that explicit absolute path:
@@ -74,7 +75,7 @@ Run a voice command with that explicit absolute path:
 /usr/bin/xwalk-picarx-control --deployment-config /absolute/path/to/xWalkController/xWalkConfig/picar-x.local.conf voice-chat start
 ```
 
-Do not add a real API key to a tracked provider file, `picar-x.conf`,
+Do not add `.netrc` or a real API key to a tracked provider file, `picar-x.conf`,
 documentation, tests, logs, shell history, systemd environment file, or service
 unit. Rotate a key immediately if exposed.
 
@@ -91,9 +92,98 @@ unit. Rotate a key immediately if exposed.
 Ollama uses an HTTP or HTTPS endpoint ending in `/api/chat`. Cloud providers
 use their configured OpenAI-compatible HTTPS chat endpoints.
 
+`xWalkEnv.sh` loads only credentials whose fixed provider hostname is documented
+in the licence-key workflow. It does not load `XWALK_AI_API_KEY` for the generic
+`openai_compatible` profile until that deployment selects and documents its
+actual endpoint hostname. The same restriction applies to generic
+`LLM_API_KEY` and `OTHERS_API_KEY` example credentials.
+
 The firmware does not embed default cloud model names. Provider model catalogs
 change independently of this repository, so configure an exact model supported
 by the selected account and endpoint.
+
+## Obtain provider API keys
+
+Create keys only for the models and providers the deployment plans to use. Most
+paid providers require billing details, prepaid credit, or an active balance
+before a new key can make successful requests.
+
+| Provider | Official key page | Setup action |
+| --- | --- | --- |
+| OpenAI | [API keys][openai-keys] | Create a secret key in the selected project and copy it once |
+| Anthropic/Claude | [Console keys][anthropic-keys] | Open API Keys and create a key |
+| Google Gemini | [AI Studio keys][gemini-keys] | Create a key in a new or existing Cloud project |
+| DeepSeek | [Platform keys][deepseek-keys] | Register, add balance when required, and create a key |
+| Grok/xAI | [xAI Console][xai-keys] | Create a team, configure billing or credits, and create a key |
+| Qwen | [Model Studio][qwen-keys] | Select the required region and workspace, then create a key |
+| Doubao | [Ark Console][doubao-keys] | Activate Ark, enable a model, and create a key |
+
+Provider-specific considerations:
+
+- An OpenAI ChatGPT Plus or Pro subscription does not automatically include
+  OpenAI API credit; API billing is managed separately.
+- Grok is an xAI model family. One xAI key supplies both `GROK_API_KEY` and
+  `XAI_API_KEY` in the current environment loader.
+- Qwen API keys and hostnames are region-specific. A Swedish deployment should
+  select an international or European region when the account offers one, then
+  use the hostname assigned to that region or workspace.
+- Volcengine Ark can require regional account verification. International users
+  may need the corresponding BytePlus ModelArk offering.
+- Google AI Studio can offer a limited Gemini free quota. Availability, models,
+  and regional limits are controlled by Google and can change independently.
+
+### Custom credential variables
+
+The following variables do not identify external providers and therefore have
+no official key-download page:
+
+```text
+LLM_API_KEY
+OTHERS_API_KEY
+XWALK_AI_API_KEY
+```
+
+Use `LLM_API_KEY` only as an explicitly configured default-provider credential.
+Use `OTHERS_API_KEY` only after naming and configuring another provider. Use
+`XWALK_AI_API_KEY` only when a deployment-owned xWalk-compatible service
+authenticates clients. Generate a strong credential for such a service with:
+
+```sh
+openssl rand -hex 32
+```
+
+These generic variables remain unsupported by `xWalkEnv.sh` until the deployment
+selects and documents their actual endpoint hostnames.
+
+### Store a created key
+
+After creating an OpenAI key, for example, update the existing host entry in
+the developer's private `~/.netrc`:
+
+```netrc
+machine api.openai.com
+    login OPENAI_API_KEY
+    password sk-your-real-openai-key
+```
+
+Protect the file after editing it:
+
+```sh
+chmod 600 ~/.netrc
+```
+
+API secrets are commonly displayed only once. If a key is lost, revoke it and
+create a replacement. Never paste a real key into an AI conversation,
+screenshot, GitHub issue, source file, tracked configuration, documentation,
+test fixture, or publicly shared terminal output.
+
+[openai-keys]: https://platform.openai.com/api-keys
+[anthropic-keys]: https://console.anthropic.com/settings/keys
+[gemini-keys]: https://aistudio.google.com/app/apikey
+[deepseek-keys]: https://platform.deepseek.com/api_keys
+[xai-keys]: https://console.x.ai/
+[qwen-keys]: https://bailian.console.aliyun.com/?apiKey=1
+[doubao-keys]: https://console.volcengine.com/ark/
 
 Claude's OpenAI compatibility interface is useful for compatibility testing,
 but Anthropic does not recommend it as the long-term production path for most

@@ -78,6 +78,7 @@ DevloperNote/Doc/note/       C++ Markdown documentation mirroring upstream pages
 DevloperNote/index.md        C++ architecture and module documentation index
 Doc/image/                   hardware and project images referenced by documentation
 xWalkTool/                   workspace maintenance, verification, provisioning, and overlay resources
+xWalkTool/xWalkJiraImport/   installable host-only historical Git-to-Jira importer
 xWalkAgent/                  application coordinators composed from caller-owned HAL objects
 xWalkAgent/xWalkVehicle/     movement and autonomous-response Agent group
 xWalkAgent/xWalkVehicle/xWalkPicarx/ complete PiCar-X movement and sensing coordinator
@@ -541,16 +542,21 @@ retaining normal compiler warnings and compilation checks.
   variables, and runtime composition reads their values without logging or
   persisting credentials. Do not duplicate AI values in the tracked systemd
   environment file.
-- Store the complete AI model-and-credential environment only in the
-  authenticated `xWalkLibrary/X_WALK_LICENSE.KEY` file produced by
-  `xWalkTool/python/xWalkLicenseTool`. Use a fresh SecretBox key and nonce,
-  retain the versioned `XWL1` header, and keep the decryption key outside the
-  repository. The committed `xWalkTool/environment/xWalkLicense.json` remains an
-  empty template. `xWalkEnv.sh` must validate the complete variable allowlist
-  before exporting anything, must never evaluate or print decrypted values,
-  and must remove its mode-`0600` temporary plaintext. Never use Base64, XOR,
-  `.obj` files, compiled objects, generated source, or hardcoded keys as secret
-  protection.
+- Store AI model selections only in the authenticated
+  `xWalkLibrary/X_WALK_LICENSE.KEY` file produced by
+  `xWalkTool/python/xWalkLicenseTool`. Store API credentials only in the
+  developer's mode-`0600` `~/.netrc` under the documented actual provider
+  hostnames. Use a fresh SecretBox key and nonce, retain the versioned `XWL1` header,
+  and keep the decryption key outside the repository. The committed
+  `xWalkTool/environment/xWalkLicense.cfg` remains an empty model template.
+  Keep `xWalkLibrary/X_WALK_LICENSE.KEY` ignored and untracked because its
+  authenticated ciphertext and serial are deployment-specific.
+  `xWalkEnv.sh` must validate the complete model allowlist and supported netrc
+  entries before exporting anything, skip missing or empty unused-provider
+  credentials, never evaluate or print decrypted values, and remove its
+  mode-`0600` temporary plaintext. Never use Base64,
+  XOR, `.obj` files, compiled objects, generated source, or hardcoded keys as
+  secret protection.
 - Generate one licence serial per successful encryption in
   `XWALK-<UTC_YEAR>-<8_UPPERCASE_HEX>` form through `secrets.token_hex(4)`.
   Store that same value as authenticated `X_WALK_LICENSE_SERIAL` payload

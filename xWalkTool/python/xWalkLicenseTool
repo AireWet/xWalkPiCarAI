@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Encrypt and decrypt xWalk environment variables with authenticated encryption."""
+"""Encrypt and decrypt xWalk model settings with authenticated encryption."""
 
 from __future__ import annotations
 
 import argparse
+import configparser
 import datetime
 import getpass
 import json
@@ -33,11 +34,12 @@ class XWalkEncryptionResult:
 
 
 class XWalkLicenseTool:
-    """Protect xWalk environment variables in the project licence file."""
+    """Protect xWalk model settings in the project licence file."""
 
     MAGIC_HEADER = b"XWL1"
     SERIAL_VARIABLE_NAME = "X_WALK_LICENSE_SERIAL"
     ENVIRONMENT_NAME_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+    CREDENTIAL_NAME_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*_API_KEY$")
     SERIAL_NUMBER_PATTERN = re.compile(r"^XWALK-[0-9]{4}-[0-9A-F]{8}$")
 
     def __init__(self, project_root: Path | None = None) -> None:
@@ -51,13 +53,14 @@ class XWalkLicenseTool:
 
     @classmethod
     def validate_variables(cls, variables: object) -> dict[str, str]:
-        """Validate an environment-variable JSON object without revealing values."""
+        """Validate a model-variable mapping without revealing values."""
         if not isinstance(variables, dict):
-            raise XWalkLicenseError("The JSON root must be an object.")
+            raise XWalkLicenseError("The model configuration must contain a mapping.")
         if not variables:
-            raise XWalkLicenseError("Cannot encrypt: no environment variables were provided.")
+            raise XWalkLicenseError("Cannot encrypt: no model variables were provided.")
 
         validated: dict[str, str] = {}
+        credential_names: list[str] = []
         empty_names: list[str] = []
         unsupported_names: list[str] = []
         for name, value in variables.items():
@@ -67,12 +70,19 @@ class XWalkLicenseTool:
                 raise XWalkLicenseError(
                     f"Cannot encrypt: {name} must have a string value."
                 )
+            if cls.CREDENTIAL_NAME_PATTERN.fullmatch(name):
+                credential_names.append(name)
             if not value:
                 empty_names.append(name)
             if "\0" in value:
                 unsupported_names.append(name)
             validated[name] = value
 
+        if credential_names:
+            joined_names = cls._join_names(sorted(credential_names))
+            raise XWalkLicenseError(
+                f"Credential variables are not supported in licence payloads: store {joined_names} in ~/.netrc."
+            )
         if empty_names:
             joined_names = cls._join_names(sorted(empty_names))
             raise XWalkLicenseError(
@@ -86,22 +96,29 @@ class XWalkLicenseTool:
         return validated
 
     @classmethod
-    def load_json_variables(cls, path: Path) -> dict[str, str]:
-        """Load and validate variables from one protected JSON file."""
+    def load_config_variables(cls, path: Path) -> dict[str, str]:
+        """Load and validate variables from one protected INI-style configuration file."""
+        parser = configparser.ConfigParser(interpolation=None, strict=True)
+        parser.optionxform = str
         try:
             with path.open("r", encoding="utf-8") as input_file:
-                variables = json.load(input_file)
-        except json.JSONDecodeError as error:
-            raise XWalkLicenseError("Cannot encrypt: the JSON input is malformed.") from error
+                parser.read_file(input_file)
+        except configparser.Error as error:
+            raise XWalkLicenseError("Cannot encrypt: the configuration input is malformed.") from error
         except OSError as error:
-            raise XWalkLicenseError(f"Cannot read the JSON input: {error.strerror}.") from error
+            raise XWalkLicenseError(f"Cannot read the configuration input: {error.strerror}.") from error
+        if parser.defaults() or parser.sections() != ["models"]:
+            raise XWalkLicenseError(
+                "Cannot encrypt: the configuration must contain only one [models] section."
+            )
+        variables = dict(parser.items("models", raw=True))
         return cls.validate_variables(variables)
 
     @classmethod
     def load_environment_arguments(cls, entries: Sequence[str]) -> dict[str, str]:
         """Load and validate repeated NAME=VALUE command-line entries."""
         if not entries:
-            raise XWalkLicenseError("Cannot encrypt: no environment variables were provided.")
+            raise XWalkLicenseError("Cannot encrypt: no model variables were provided.")
 
         variables: dict[str, str] = {}
         for entry in entries:
@@ -226,18 +243,18 @@ class XWalkLicenseTool:
 def create_argument_parser() -> argparse.ArgumentParser:
     """Create the licence-tool command-line parser."""
     parser = argparse.ArgumentParser(
-        description="Encrypt or decrypt the xWalk environment licence file."
+        description="Encrypt or decrypt the xWalk model-selection licence file."
     )
     commands = parser.add_subparsers(dest="command", required=True)
 
-    encrypt_parser = commands.add_parser("encrypt", help="encrypt environment variables")
+    encrypt_parser = commands.add_parser("encrypt", help="encrypt model variables")
     input_group = encrypt_parser.add_mutually_exclusive_group(required=True)
-    input_group.add_argument("--json", type=Path, help="protected JSON input file")
+    input_group.add_argument("--config", type=Path, help="protected model configuration input file")
     input_group.add_argument(
         "--env",
         action="append",
         metavar="NAME=VALUE",
-        help="environment variable; repeat for additional values",
+        help="model environment variable; repeat for additional values",
     )
 
     decrypt_parser = commands.add_parser("decrypt", help="decrypt to a private JSON file")
@@ -253,8 +270,8 @@ def main(arguments: Sequence[str] | None = None) -> int:
     try:
         if options.command == "encrypt":
             variables = (
-                tool.load_json_variables(options.json)
-                if options.json is not None
+                tool.load_config_variables(options.config)
+                if options.config is not None
                 else tool.load_environment_arguments(options.env)
             )
             result = tool.encrypt(variables)

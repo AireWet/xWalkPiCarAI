@@ -13,7 +13,7 @@ _xwalk_load_environment() {
     repository_root="$(CDPATH='' cd -- "$script_directory/../.." && pwd)"
     license_file="$repository_root/xWalkLibrary/X_WALK_LICENSE.KEY"
     license_tool="$repository_root/xWalkTool/python/xWalkLicenseTool"
-    template_file="$repository_root/xWalkTool/environment/xWalkLicense.json"
+    template_file="$repository_root/xWalkTool/environment/xWalkLicense.cfg"
 
     if [ ! -f "$license_file" ] || [ ! -r "$license_file" ]; then
         echo "xWalk environment: encrypted licence file is unreadable: $license_file" >&2
@@ -45,14 +45,23 @@ _xwalk_load_environment() {
     fi
 
     mapfile -d '' -t decoded_records < <(
-        python3 -c 'import json, os, re, sys
+        python3 -c 'import configparser, json, netrc, os, re, sys
+from pathlib import Path
 with open(sys.argv[1], encoding="utf-8") as input_file:
     values = json.load(input_file)
-with open(sys.argv[2], encoding="utf-8") as input_file:
-    template = json.load(input_file)
+template_parser = configparser.ConfigParser(interpolation=None, strict=True)
+template_parser.optionxform = str
+try:
+    with open(sys.argv[2], encoding="utf-8") as input_file:
+        template_parser.read_file(input_file)
+except configparser.Error:
+    raise SystemExit("licence template configuration is malformed")
+if template_parser.defaults() or template_parser.sections() != ["models"]:
+    raise SystemExit("licence template must contain only one [models] section")
+template = dict(template_parser.items("models", raw=True))
 valid_name = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$").fullmatch
-if not isinstance(template, dict) or not template:
-    raise SystemExit("licence template root must be a non-empty object")
+if not template:
+    raise SystemExit("licence template [models] section must not be empty")
 if any(not isinstance(name, str) or not valid_name(name) for name in template):
     raise SystemExit("licence template contains an invalid variable name")
 if any(not isinstance(value, str) or value for value in template.values()):
@@ -63,8 +72,40 @@ if not isinstance(values.get(serial_name), str) or not serial_pattern(values[ser
     raise SystemExit("decrypted licence contains an invalid serial number")
 if set(values) - {serial_name} != set(template):
     raise SystemExit("decrypted licence does not match the template variable names")
-for name in sorted(template):
-    os.write(1, name.encode("utf-8") + b"\0" + values[name].encode("utf-8") + b"\0")
+credential_machines = {
+    "api.anthropic.com": ("ANTHROPIC_API_KEY",),
+    "api.deepseek.com": ("DEEPSEEK_API_KEY",),
+    "ark.cn-beijing.volces.com": ("DOUBAO_API_KEY",),
+    "generativelanguage.googleapis.com": ("GEMINI_API_KEY",),
+    "api.x.ai": ("GROK_API_KEY", "XAI_API_KEY"),
+    "api.openai.com": ("OPENAI_API_KEY",),
+    "dashscope-intl.aliyuncs.com": ("QWEN_API_KEY",),
+}
+override_path = os.environ.get("XWALK_NETRC_FILE")
+netrc_path = Path(override_path).expanduser() if override_path else Path.home() / ".netrc"
+netrc_path = netrc_path.resolve()
+try:
+    mode = netrc_path.stat().st_mode
+except OSError:
+    raise SystemExit("xWalk credential file is unavailable")
+if os.name != "nt" and mode & 0o077:
+    raise SystemExit("xWalk credential file must have mode 0600")
+try:
+    parsed_netrc = netrc.netrc(str(netrc_path))
+except (netrc.NetrcParseError, OSError, UnicodeError):
+    raise SystemExit("xWalk credential file is malformed or unreadable")
+environment_values = {name: values[name] for name in template}
+for machine, names in credential_machines.items():
+    authentication = parsed_netrc.hosts.get(machine)
+    if authentication is None:
+        continue
+    _, _, password = authentication
+    if not password:
+        continue
+    for name in names:
+        environment_values[name] = password
+for name in sorted(environment_values):
+    os.write(1, name.encode("utf-8") + b"\0" + environment_values[name].encode("utf-8") + b"\0")
 os.write(1, b"XWALK_LICENSE_RECORDS_COMPLETE\0")' \
             "$decrypted_file" "$template_file"
     )

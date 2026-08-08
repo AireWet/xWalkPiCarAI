@@ -12,7 +12,9 @@ The loader requires:
 - Bash with indexed and associative array support;
 - Python 3 and PyNaCl;
 - the executable `xWalkTool/python/xWalkLicenseTool`;
-- the empty `xWalkTool/environment/xWalkLicense.json` template; and
+- the empty model-only `xWalkTool/environment/xWalkLicense.cfg` template;
+- a per-user mode-`0600` `~/.netrc` containing any fixed-provider credentials
+  selected by the deployment; and
 - a provisioned `xWalkLibrary/X_WALK_LICENSE.KEY` file with mode `0600`.
 
 The tool and files may be in the repository layout or the matching installed
@@ -27,9 +29,9 @@ source xWalkTool/shell/xWalkEnv.sh
 ```
 
 It requests the decryption key through the licence tool's private prompt. On
-success, the paid-provider and model variables from the committed template are
-exported into the current shell. The authenticated `X_WALK_LICENSE_SERIAL`
-value is validated but is not exported.
+success, model variables from the authenticated licence and paid-provider API
+credentials from `~/.netrc` are exported into the current shell. The
+authenticated `X_WALK_LICENSE_SERIAL` value is validated but is not exported.
 
 Executing the file is an error:
 
@@ -47,11 +49,14 @@ The loader performs these operations before exporting any value:
 2. Requires the encrypted licence file to be readable and have mode `0600`.
 3. Creates a temporary JSON file and restricts it to mode `0600`.
 4. Authenticates and decrypts the licence through `xWalkLicenseTool`.
-5. Validates the serial and requires the decrypted variable-name set to match
-   the committed empty template exactly.
-6. Transfers names and values as null-delimited records without evaluating
-   plaintext as shell commands.
-7. Removes the temporary decrypted file before exporting validated values.
+5. Validates the serial and requires the decrypted model-name set to match the
+   committed empty template exactly.
+6. Loads `Path.home() / ".netrc"`, requires mode `0600` on POSIX, and reads
+   supported fixed-provider hosts. Missing hosts and empty passwords are skipped;
+   the login field is ignored.
+7. Transfers model and credential names and values as null-delimited records
+   without evaluating plaintext as shell commands.
+8. Removes the temporary decrypted file before exporting validated values.
 
 Failure returns `2`, removes the temporary file, and does not print API values.
 Existing values already present in the calling shell are not cleared by a
@@ -78,7 +83,9 @@ bash -n xWalkTool/shell/xWalkEnv.sh
 bash xWalkTool/deployment/test/environment-loader-test.sh
 ```
 
-The integration test uses temporary files and does not expose a real API key.
+The integration test sets `XWALK_NETRC_FILE` to a temporary fake netrc file and
+does not read or expose a real API key.
+
 See the [licence tool guide](xWalk%20Licence%20Tool%20Guide.md) for licence
 creation and the [licence-key workflow](License%20Key%20Workflow.md) for the
 complete deployment and commit policy.

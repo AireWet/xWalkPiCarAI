@@ -14,6 +14,8 @@ review whether it is read-only, writes generated output, changes configuration, 
   [Eclipse build guide](Eclipse%20Build%20Script%20Guide.md).
 - `shell/run-host-coverage.sh` runs host coverage in the foreground. See the
   [host coverage guide](Host%20Coverage%20Script%20Guide.md).
+- `xWalkJiraImport/` is the installable, host-only historical Git-to-Jira importer. Its
+  [package README](../../../xWalkTool/xWalkJiraImport/README.md) documents installation and dry-run safety.
 - `python/xHal_Rpi5CarDependencyInstaller` checks and installs mapped packages. Its guarded v5 mode can also
   back up and update the Raspberry Pi boot configuration and install the verified v5 overlay. See the
   [complete flag reference](Dependency%20Installer%20Script%20Flags.md).
@@ -24,7 +26,8 @@ review whether it is read-only, writes generated output, changes configuration, 
 - `python/xHal_Rpi5CarIwGenerator` validates or generates the active xWalkIW
   schema outputs. The [module README](../../../xWalkIW/README.md)
   documents its protocol and build contract.
-- `python/xWalkLicenseTool` creates and opens the authenticated licence. See the
+- `python/xWalkLicenseTool` creates and opens authenticated model settings;
+  `shell/xWalkEnv.sh` adds API credentials from `~/.netrc`. See the
   [licence tool guide](xWalk%20Licence%20Tool%20Guide.md).
 - `shell/xWalkEnv.sh` sources authenticated values into the current shell. See the
   [environment loader guide](xWalk%20Environment%20Loader%20Guide.md).
@@ -44,7 +47,7 @@ contracts in the two guides above.
 
 | Class | Tools | Expected effects |
 | --- | --- | --- |
-| Read-only | Script help, `clean-build.sh --dry-run`, `setup-rpi.sh --dry-run` | Reports information only |
+| Read-only | Script help and dry-run tools, including `xWalkJiraImport` | Reports information only |
 | Host generated output | `eclipse-build.sh`, `run-host-coverage.sh run` | Creates or updates build output |
 | Destructive host maintenance | `clean-build.sh --yes` | Deletes discovered CMake and Python output |
 | Target configuration | `provision-hardware.sh` | Replaces one selected writable configuration atomically |

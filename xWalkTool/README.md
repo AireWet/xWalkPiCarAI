@@ -13,6 +13,12 @@ confirmed.
 xWalkTool/
 ├── README.md
 ├── apt-packages.txt
+├── xWalkJiraImport/
+│   ├── pyproject.toml
+│   ├── README.md
+│   ├── requirements.txt
+│   ├── test/
+│   └── xWalkJiraImport/
 ├── deployment/
 │   ├── debian/
 │   ├── systemd/
@@ -26,7 +32,7 @@ xWalkTool/
 │   ├── .clang-tidy
 │   ├── .cppcheck-suppressions
 │   ├── gcovr.cfg
-│   └── xWalkLicense.json
+│   └── xWalkLicense.cfg
 ├── python/
 │   ├── README.md
 │   ├── xHal_Rpi5CarDependencyInstaller
@@ -43,15 +49,16 @@ xWalkTool/
     └── xWalkEnv.sh
 ```
 
-The directory contains six Bash scripts, one package manifest, three Python
+The directory contains six Bash scripts, one package manifest, four Python
 tools, their host tests, three quality-tool configurations, deployment assets,
-two compiled Device Tree blobs, the empty licence JSON template, and this
+two compiled Device Tree blobs, the empty model-selection configuration, and this
 README. The applicable project and third-party license terms are in the
 workspace-root `LICENSE`; there is no separate `xWalkTool/LICENSE` file.
 
 ## Detailed guides
 
 - [xWalkTool overview](../DevloperNote/Doc/note/xWalkTool%20Overview.md)
+- [Jira history importer](xWalkJiraImport/README.md)
 - [Clean build script](../DevloperNote/Doc/note/Clean%20Build%20Script%20Guide.md)
 - [Eclipse build script](../DevloperNote/Doc/note/Eclipse%20Build%20Script%20Guide.md)
 - [Host coverage script](../DevloperNote/Doc/note/Host%20Coverage%20Script%20Guide.md)
@@ -71,37 +78,39 @@ workspace-root `LICENSE`; there is no separate `xWalkTool/LICENSE` file.
 | Path | Responsibility | Host safety |
 |---|---|---|
 | `apt-packages.txt` | Lists and maps host, Raspberry Pi, quality, packaging, and optional packages | Read-only |
+| `xWalkJiraImport` | Installs the historical Git-to-Jira importer | Dry-run by default |
 | `python/xHal_Rpi5CarDependencyInstaller` | Installs dependencies and configures verified v5 boot | Privileged |
-| `python/xWalkLicenseTool` | Authenticates and encrypts or decrypts environment JSON | Host-safe |
+| `python/xWalkLicenseTool` | Authenticates model settings without storing API credentials | Host-safe |
 | `shell/clean-build.sh` | Finds and optionally deletes generated output | Dry-run is non-destructive |
 | `shell/eclipse-build.sh` | Configures, builds, tests, or cleans the Eclipse CLI host tree | Host-only |
 | `shell/run-host-coverage.sh` | Runs the root coverage preset, tests, and `gcovr` | Foreground and host-only |
 | `shell/setup-rpi.sh` | Inspects, plans, validates, or applies Raspberry Pi provisioning | Apply is privileged |
 | `shell/provision-hardware.sh` | Records selected GPIO, I2C, SPI, and board identity | Modifies one config file |
-| `shell/xWalkEnv.sh` | Safely exports authenticated AI model and credential values | Interactive decryption |
+| `shell/xWalkEnv.sh` | Exports authenticated models and private netrc credentials | Interactive decryption |
 | `python/xHal_Rpi5CarIwGenerator` | Validates and generates xWalkIW Protobuf/gRPC sources | Host-only generation |
-| `environment/` | Stores quality-tool settings and the empty licence template | Host-safe configuration |
+| `environment/` | Stores quality settings and the empty model template | Host-safe configuration |
 | `deployment/` | Stores packaging, service, permission, and test assets | Host validation and installation |
 | `dtoverlays/` | Stores the unchanged Robot HAT Device Tree blobs | Raspberry Pi boot assets |
 
 ## Licence environment
 
 Install PyNaCl through the supported dependency workflow (`python3-nacl` on
-Debian-family systems). Copy `environment/xWalkLicense.json` to a mode-`0600`
-location outside the repository and fill that copy. Never put values into the
-committed template.
+Debian-family systems). Copy `environment/xWalkLicense.cfg` to a mode-`0600`
+location outside the repository and fill only the model settings in that copy.
+Never put values into the committed template. Store fixed-provider API credentials only in the developer's
+mode-`0600` `~/.netrc` using the documented actual provider hostnames.
 
 Encrypt the protected copy:
 
 ```sh
-xWalkTool/python/xWalkLicenseTool encrypt --json /secure/location/xWalkLicense.json
+xWalkTool/python/xWalkLicenseTool encrypt --config /secure/location/xWalkLicense.cfg
 ```
 
 Or supply repeated manual values, recognizing that they can be retained in
 shell history or exposed through process inspection:
 
 ```sh
-xWalkTool/python/xWalkLicenseTool encrypt --env OPENAI_API_KEY='your-OpenAI-API-key' --env GEMINI_API_KEY='your-Gemini-API-key'
+xWalkTool/python/xWalkLicenseTool encrypt --env OPENAI_MODEL='gpt-model' --env GEMINI_MODEL='gemini-model'
 ```
 
 Replace the quoted example text with the real values. Do not type angle-bracket
@@ -114,10 +123,11 @@ the resulting JSON receives mode `0600`:
 xWalkTool/python/xWalkLicenseTool decrypt --output /tmp/xWalkLicense.decrypted.json
 ```
 
-The empty template and authenticated `xWalkLibrary/X_WALK_LICENSE.KEY` may be
-committed. Filled templates, decrypted files, and the generated decryption key
-must never be committed. See the detailed licence-key guide for deployment and
-security limitations.
+Only the empty model template may be committed. The repository ignores
+`xWalkLibrary/X_WALK_LICENSE.KEY`; authenticated ciphertext is deployment-specific
+and must never be committed or pushed. Filled templates, decrypted files, and
+the generated decryption key must also remain outside Git. See the detailed
+licence-key guide for deployment and security limitations.
 
 After the encrypted file is durable, encryption prints one
 `XWALK-<UTC_YEAR>-<8_HEX>` serial and the decryption key. The identical serial
@@ -419,7 +429,7 @@ provisioning scripts:
 /usr/lib/xwalk/provision-hardware.sh
 /usr/lib/xwalk/xWalkTool/shell/xWalkEnv.sh
 /usr/lib/xwalk/xWalkTool/python/xWalkLicenseTool
-/usr/lib/xwalk/xWalkTool/environment/xWalkLicense.json
+/usr/lib/xwalk/xWalkTool/environment/xWalkLicense.cfg
 ```
 
 The cleanup, Eclipse, coverage, generator, and overlay files remain source-development assets. They are not

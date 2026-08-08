@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import contextlib
+import configparser
 import datetime
 import importlib.machinery
 import importlib.util
@@ -38,57 +39,82 @@ class XWalkLicenseToolTest(unittest.TestCase):
         self.project_root = Path(self.temporary_directory.name)
         self.tool = MODULE.XWalkLicenseTool(self.project_root)
         self.variables = {
-            "GEMINI_API_KEY": "gemini-fake-secret",
-            "OPENAI_API_KEY": "openai-fake-secret",
+            "GEMINI_MODEL": "gemini-fake-model",
+            "OPENAI_MODEL": "openai-fake-model",
         }
 
-    def write_json(self, name: str, content: object) -> Path:
-        """Write one test JSON fixture under the isolated directory."""
+    def write_config(self, name: str, content: dict[str, str]) -> Path:
+        """Write one test model-configuration fixture under the isolated directory."""
         path = self.project_root / name
-        path.write_text(json.dumps(content), encoding="utf-8")
+        parser = configparser.ConfigParser(interpolation=None)
+        parser.optionxform = str
+        parser["models"] = content
+        with path.open("w", encoding="utf-8") as output_file:
+            parser.write(output_file)
         return path
 
-    def test_loads_valid_variables_from_json(self) -> None:
-        """A JSON object with string values is accepted."""
-        path = self.write_json("valid.json", self.variables)
-        self.assertEqual(self.tool.load_json_variables(path), self.variables)
+    def test_committed_template_contains_only_model_variables(self) -> None:
+        """The repository template cannot regain an API credential field."""
+        template_path = SCRIPT_PATH.parents[1] / "environment" / "xWalkLicense.cfg"
+        parser = configparser.ConfigParser(interpolation=None)
+        parser.optionxform = str
+        parser.read(template_path, encoding="utf-8")
+        self.assertEqual(parser.sections(), ["models"])
+        values = dict(parser.items("models", raw=True))
+        self.assertEqual(
+            set(values),
+            {
+                "ANTHROPIC_MODEL",
+                "GEMINI_MODEL",
+                "OLLAMA_MODEL",
+                "OPENAI_MODEL",
+                "XWALK_AI_MODEL",
+            },
+        )
+        self.assertTrue(all(value == "" for value in values.values()))
+
+    def test_loads_valid_variables_from_config(self) -> None:
+        """A models configuration section with string values is accepted."""
+        path = self.write_config("valid.cfg", self.variables)
+        self.assertEqual(self.tool.load_config_variables(path), self.variables)
 
     def test_loads_repeated_environment_arguments(self) -> None:
         """Repeated NAME=VALUE entries retain values containing equals signs."""
         loaded = self.tool.load_environment_arguments(
-            ["OPENAI_API_KEY=fake=value", "GEMINI_API_KEY=gemini-fake"]
+            ["OPENAI_MODEL=fake=value", "GEMINI_MODEL=gemini-fake"]
         )
-        self.assertEqual(loaded["OPENAI_API_KEY"], "fake=value")
-        self.assertEqual(loaded["GEMINI_API_KEY"], "gemini-fake")
+        self.assertEqual(loaded["OPENAI_MODEL"], "fake=value")
+        self.assertEqual(loaded["GEMINI_MODEL"], "gemini-fake")
 
-    def test_rejects_empty_json_object(self) -> None:
-        """Encryption input must contain at least one variable."""
-        with self.assertRaisesRegex(MODULE.XWalkLicenseError, "no environment"):
-            self.tool.load_json_variables(self.write_json("empty.json", {}))
+    def test_rejects_empty_model_section(self) -> None:
+        """The configuration must contain at least one model variable."""
+        with self.assertRaisesRegex(MODULE.XWalkLicenseError, "no model"):
+            self.tool.load_config_variables(self.write_config("empty.cfg", {}))
 
-    def test_rejects_empty_api_key_values_without_printing_them(self) -> None:
+    def test_rejects_empty_model_values_without_printing_them(self) -> None:
         """Every selected variable must contain a non-empty value."""
-        path = self.write_json(
-            "empty-values.json", {"OPENAI_API_KEY": "", "GEMINI_API_KEY": ""}
+        path = self.write_config(
+            "empty-values.cfg", {"OPENAI_MODEL": "", "GEMINI_MODEL": ""}
         )
         with self.assertRaisesRegex(
             MODULE.XWalkLicenseError,
-            "GEMINI_API_KEY and OPENAI_API_KEY contain empty values",
+            "GEMINI_MODEL and OPENAI_MODEL contain empty values",
         ):
-            self.tool.load_json_variables(path)
+            self.tool.load_config_variables(path)
 
-    def test_rejects_non_string_json_value(self) -> None:
-        """JSON numbers, booleans, arrays, objects, and null are not credentials."""
-        path = self.write_json("non-string.json", {"OPENAI_API_KEY": 123})
-        with self.assertRaisesRegex(MODULE.XWalkLicenseError, "string value"):
-            self.tool.load_json_variables(path)
+    def test_rejects_unexpected_configuration_section(self) -> None:
+        """Only the case-sensitive models section is accepted."""
+        path = self.project_root / "unexpected.cfg"
+        path.write_text("[credentials]\nOPENAI_MODEL = fake-model\n", encoding="utf-8")
+        with self.assertRaisesRegex(MODULE.XWalkLicenseError, "only one.*models"):
+            self.tool.load_config_variables(path)
 
-    def test_rejects_malformed_json(self) -> None:
-        """Malformed JSON produces a safe message without echoing input."""
-        path = self.project_root / "malformed.json"
-        path.write_text('{"OPENAI_API_KEY": "fake-secret"', encoding="utf-8")
+    def test_rejects_malformed_config(self) -> None:
+        """Malformed configuration produces a safe message without echoing input."""
+        path = self.project_root / "malformed.cfg"
+        path.write_text("OPENAI_MODEL = fake-model\n", encoding="utf-8")
         with self.assertRaisesRegex(MODULE.XWalkLicenseError, "malformed"):
-            self.tool.load_json_variables(path)
+            self.tool.load_config_variables(path)
 
     def test_rejects_invalid_environment_variable_name(self) -> None:
         """Names must follow the portable process-environment syntax."""
@@ -99,8 +125,16 @@ class XWalkLicenseToolTest(unittest.TestCase):
         """Repeated names cannot silently replace earlier command-line values."""
         with self.assertRaisesRegex(MODULE.XWalkLicenseError, "duplicate"):
             self.tool.load_environment_arguments(
-                ["OPENAI_API_KEY=first-fake", "OPENAI_API_KEY=second-fake"]
+                ["OPENAI_MODEL=first-fake", "OPENAI_MODEL=second-fake"]
             )
+
+    def test_rejects_credentials_from_config_and_environment_arguments(self) -> None:
+        """API credentials must be supplied only through the developer netrc file."""
+        path = self.write_config("credential.cfg", {"OPENAI_API_KEY": "fake-secret"})
+        with self.assertRaisesRegex(MODULE.XWalkLicenseError, "~/.netrc"):
+            self.tool.load_config_variables(path)
+        with self.assertRaisesRegex(MODULE.XWalkLicenseError, "~/.netrc"):
+            self.tool.load_environment_arguments(["OPENAI_API_KEY=fake-secret"])
 
     def test_rejects_user_supplied_serial_number(self) -> None:
         """Callers cannot replace the serial generated for this encryption."""
@@ -193,15 +227,15 @@ class XWalkLicenseToolTest(unittest.TestCase):
                             [
                                 "encrypt",
                                 "--env",
-                                "OPENAI_API_KEY=openai-fake-secret",
+                                "OPENAI_MODEL=openai-fake-model",
                                 "--env",
-                                "GEMINI_API_KEY=gemini-fake-secret",
+                                "GEMINI_MODEL=gemini-fake-model",
                             ]
                         )
         combined_output = standard_output.getvalue() + error_output.getvalue()
         self.assertEqual(status, 0)
-        self.assertNotIn("openai-fake-secret", combined_output)
-        self.assertNotIn("gemini-fake-secret", combined_output)
+        self.assertNotIn("openai-fake-model", combined_output)
+        self.assertNotIn("gemini-fake-model", combined_output)
         current_year = datetime.datetime.now(datetime.timezone.utc).year
         serial_number = f"XWALK-{current_year}-A7F3C92D"
         expected_prefix = (
@@ -226,15 +260,15 @@ class XWalkLicenseToolTest(unittest.TestCase):
                         [
                             "encrypt",
                             "--env",
-                            "OPENAI_API_KEY=first-fake-secret",
+                            "OPENAI_MODEL=first-fake-model",
                             "--env",
-                            "OPENAI_API_KEY=second-fake-secret",
+                            "OPENAI_MODEL=second-fake-model",
                         ]
                     )
         combined_output = standard_output.getvalue() + error_output.getvalue()
         self.assertEqual(status, 2)
-        self.assertNotIn("first-fake-secret", combined_output)
-        self.assertNotIn("second-fake-secret", combined_output)
+        self.assertNotIn("first-fake-model", combined_output)
+        self.assertNotIn("second-fake-model", combined_output)
 
     def test_write_failure_prints_neither_serial_nor_decryption_key(self) -> None:
         """Generated metadata remains hidden unless encrypted output is durable."""
@@ -249,7 +283,7 @@ class XWalkLicenseToolTest(unittest.TestCase):
                 with contextlib.redirect_stdout(standard_output):
                     with contextlib.redirect_stderr(error_output):
                         status = MODULE.main(
-                            ["encrypt", "--env", "OPENAI_API_KEY=fake-secret"]
+                            ["encrypt", "--env", "OPENAI_MODEL=fake-model"]
                         )
         self.assertEqual(status, 2)
         self.assertEqual(standard_output.getvalue(), "")

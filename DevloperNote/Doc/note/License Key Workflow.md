@@ -1,8 +1,9 @@
 # Licence-Key Workflow
 
-xWalk stores selected model names and paid-provider API credentials in one
-authenticated encrypted file. The decryption key is separate from the project;
-the repository never stores, derives, or embeds it.
+xWalk stores selected model names in one authenticated encrypted file. Each
+developer stores paid-provider API credentials separately in the standard
+mode-`0600` `~/.netrc`. The repository never stores, derives, or embeds those
+credentials or the licence decryption key.
 
 ## Directory structure
 
@@ -12,17 +13,30 @@ MyPiCarX/
 │   └── X_WALK_LICENSE.KEY
 └── xWalkTool/
     ├── environment/
-    │   └── xWalkLicense.json
+    │   └── xWalkLicense.cfg
     └── python/
         └── xWalkLicenseTool
+
+~/.netrc                         per-developer API credentials, never committed
 ```
 
-`xWalkTool/environment/xWalkLicense.json` is the committed empty template.
-Every key is an environment-variable name and every value is an empty string.
+`xWalkTool/environment/xWalkLicense.cfg` is the committed empty model template.
+Every key is a model environment-variable name and every value is an empty string.
 Never fill this tracked file in place. `xWalkLibrary/X_WALK_LICENSE.KEY` is the
-only encrypted licence path; its repository version is an unprovisioned `XWL1`
-marker until an operator performs encryption. The generated
-`X_WALK_LICENSE_SERIAL` metadata is not an input-template field.
+only encrypted licence path and is ignored by Git because every generated file
+is deployment-specific. The generated `X_WALK_LICENSE_SERIAL` metadata is not
+an input-template field.
+
+The configuration uses one case-sensitive INI-style section:
+
+```ini
+[models]
+ANTHROPIC_MODEL =
+GEMINI_MODEL =
+OLLAMA_MODEL =
+OPENAI_MODEL =
+XWALK_AI_MODEL =
+```
 
 ## Dependency
 
@@ -42,40 +56,98 @@ python3 -m pip install PyNaCl
 The xWalk dependency manifest, Raspberry Pi setup script, Debian package
 metadata, and host CI all declare `python3-nacl`.
 
-## Prepare protected input
+## Prepare model input
 
 Copy the empty template to a secure location outside the repository, restrict
-it to its owner, and fill every value required by the environment loader:
+it to its owner, and fill every model value required by the environment loader:
 
 ```sh
-install -m 0600 xWalkTool/environment/xWalkLicense.json \
-    /secure/location/xWalkLicense.json
+install -m 0600 xWalkTool/environment/xWalkLicense.cfg \
+    /secure/location/xWalkLicense.cfg
 ```
 
-Encryption rejects an empty object, non-string values, invalid environment
-names, and any empty value. Running it against the committed template therefore
-fails safely and names the empty variables without printing their values.
+Encryption requires exactly one case-sensitive `[models]` section. It rejects
+an empty section, additional sections, invalid environment names, empty values,
+and every `*_API_KEY` credential. Running it against the committed template
+therefore fails safely and names the empty model variables without printing
+their values.
+
+## Prepare API credentials
+
+Create the standard per-user `~/.netrc` outside the repository. The filename is
+`.netrc`, not `.netric`. Each `machine` is the actual hostname contacted by the
+corresponding fixed provider:
+
+```text
+machine api.anthropic.com
+    login ""
+    password ""
+machine api.deepseek.com
+    login ""
+    password ""
+machine ark.cn-beijing.volces.com
+    login ""
+    password ""
+machine generativelanguage.googleapis.com
+    login ""
+    password ""
+machine api.x.ai
+    login ""
+    password ""
+machine api.openai.com
+    login ""
+    password ""
+machine dashscope-intl.aliyuncs.com
+    login ""
+    password ""
+```
+
+Replace an empty password only for a provider the deployment plans to use.
+Missing hosts and empty passwords are skipped, so unused providers do not need
+accounts, billing, or API keys. The loader does not use or export the login
+field, so it may remain empty unless the developer's credential policy requires
+an account identifier. The one `api.x.ai` password supplies both
+`GROK_API_KEY` and `XAI_API_KEY`.
+
+`LLM_API_KEY`, `OTHERS_API_KEY`, and `XWALK_AI_API_KEY` are not loaded because
+their providers have deployment-selected endpoints rather than fixed hosts.
+Add support only after selecting and documenting their actual hostnames. These
+provider entries may coexist with `api.github.com` and the Jira site.
+
+See [provider-key setup](Language%20Model%20Provider%20Configuration.md#obtain-provider-api-keys)
+for official key pages, billing and regional considerations, and key-rotation guidance.
+
+Protect the file before loading the environment:
+
+```sh
+chmod 600 ~/.netrc
+```
+
+`xWalkEnv.sh` uses `Path.home() / ".netrc"` automatically. The
+`XWALK_NETRC_FILE` path override exists for isolated tests, CI, or an exceptional
+protected location; it must never contain credential values itself.
 
 ## Encrypt
 
-The preferred command reads the protected external JSON file:
+The preferred command reads the protected external configuration file:
 
 ```sh
 python3 xWalkTool/python/xWalkLicenseTool encrypt \
-    --json /secure/location/xWalkLicense.json
+    --config /secure/location/xWalkLicense.cfg
 ```
 
-For a small manual selection, repeat `--env`:
+For a small manual model selection, repeat `--env`:
 
 ```sh
 python3 xWalkTool/python/xWalkLicenseTool encrypt \
-    --env OPENAI_API_KEY=<value> \
-    --env GEMINI_API_KEY=<value>
+    --env OPENAI_MODEL=<model-name> \
+    --env GEMINI_MODEL=<model-name>
 ```
 
 Values supplied through `--env` can appear in shell history and process
-listings. A protected JSON file outside the repository is preferred. The two
-input methods are mutually exclusive, and duplicate `--env` names are rejected.
+listings. A protected configuration outside the repository is preferred. API keys
+are rejected from both input methods. The two model-input methods are mutually
+exclusive, and duplicate `--env` names are rejected.
 
 Successful encryption writes only `xWalkLibrary/X_WALK_LICENSE.KEY`. It uses a
 new random 256-bit key, a fresh random nonce, the `XWL1` version header, and a
@@ -130,24 +202,29 @@ temporary file:
 source xWalkTool/shell/xWalkEnv.sh
 ```
 
-The loader requires every name in the committed template. The encryption tool
-can protect a smaller valid object for other consumers, but the complete xWalk
-runtime environment will reject an incomplete object. The loader authenticates
-and validates `X_WALK_LICENSE_SERIAL` but does not export it as an environment
-variable.
+The loader requires every model name in the committed template and every
+credential machine listed above. It validates netrc mode `0600`, exact machine
+names, matching login names, and non-empty passwords before exporting anything.
+The encryption tool can protect a smaller valid model object for other
+consumers, but the complete xWalk runtime environment rejects incomplete input.
+The loader authenticates and validates `X_WALK_LICENSE_SERIAL` but does not
+export it as an environment variable.
 
 ## Commit and deployment policy
 
 The following files may be committed:
 
-- the empty `xWalkTool/environment/xWalkLicense.json` template;
-- `xWalkLibrary/X_WALK_LICENSE.KEY` after it contains authenticated ciphertext;
+- the empty model-only `xWalkTool/environment/xWalkLicense.cfg` template;
 - the licence tool, loader, tests, and documentation.
 
-Never commit a filled JSON copy, decrypted JSON or environment file, private
-key, decryption key, shell history containing values, or plaintext secret.
-Generated licence copies and common private-file suffixes are ignored by Git,
-while the empty template and encrypted output path remain trackable.
+Never commit `xWalkLibrary/X_WALK_LICENSE.KEY`, `.netrc`, `*.netrc`, a filled
+JSON copy, decrypted JSON or environment output, the decryption key, shell
+history containing plaintext, or an unencrypted credential. The root
+`.gitignore` excludes the encrypted licence and common private-file patterns
+without excluding the empty template. Review staged changes manually before
+every commit; ignore rules do not remove a secret that is already tracked. If a
+secret enters Git history, revoke or rotate it and rewrite history through the
+repository's approved incident process. Do not rely on a later deletion.
 
 Installation always includes the tool, loader, and empty template under
 `lib/xwalk` with the same `xWalkTool` subdirectories. The encrypted licence is
@@ -163,11 +240,11 @@ fixed nonces, hardcoded keys, and disguising data as `.obj` files are also not
 secure encryption. The build never compiles a licence file into a C or C++
 object and never generates source code containing a decryption key.
 
-Authenticated encryption detects accidental or malicious modification, but it
-cannot protect a device after both the encrypted file and its decryption key
-are obtained. Anyone possessing both can recover every stored API key. When
-xWalk is distributed to untrusted devices, keep high-value paid API keys on a
-backend service and expose only a narrowly scoped device-facing interface.
+Authenticated encryption detects accidental or malicious model-setting
+modification. Netrc permission checks reduce accidental local disclosure but do
+not encrypt its API keys. When xWalk is distributed to untrusted devices, keep
+high-value paid API keys on a backend service and expose only a narrowly scoped
+device-facing interface.
 
 The supplied systemd service does not embed or non-interactively retrieve a
 decryption key. Automated service startup requires a separate operating-system

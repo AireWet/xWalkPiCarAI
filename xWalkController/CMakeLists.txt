@@ -149,7 +149,7 @@ if(XWALK_CLI_INSTALL_RUNTIME)
         "${CMAKE_CURRENT_SOURCE_DIR}/../xWalkTool/python/xWalkLicenseTool"
         DESTINATION "lib/xwalk/xWalkTool/python")
     install(FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/../xWalkTool/environment/xWalkLicense.json"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../xWalkTool/environment/xWalkLicense.cfg"
         DESTINATION "lib/xwalk/xWalkTool/environment")
     if(XWALK_INSTALL_ENCRYPTED_LICENSE)
         set(xwalk_encrypted_license

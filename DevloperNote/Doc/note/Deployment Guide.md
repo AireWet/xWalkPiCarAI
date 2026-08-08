@@ -162,7 +162,7 @@ resources rather than separate project shared objects.
 | `/usr/bin/xwalk-picarx-control` | CLI executable |
 | `/usr/lib/xwalk/xWalkTool/shell/xWalkEnv.sh` | Authenticated licence environment loader |
 | `/usr/lib/xwalk/xWalkTool/python/xWalkLicenseTool` | Licence encryption and decryption tool |
-| `/usr/lib/xwalk/xWalkTool/environment/xWalkLicense.json` | Empty licence input template |
+| `/usr/lib/xwalk/xWalkTool/environment/xWalkLicense.cfg` | Empty model-selection input template |
 | `/etc/xwalk/picar-x.conf` | Administrator-controlled configuration manifest |
 | `/etc/xwalk/picar-x.d/` | Functional defaults and separate AI-provider profiles |
 | `/var/lib/xwalk/picar-x.conf` | Writable active manifest, created once by setup |
@@ -234,7 +234,7 @@ The package supplies `xwalk.service` and an environment file. Its default non-mo
 select a reviewed foreground command in `/etc/xwalk/xwalk-service.conf` before enabling a persistent service.
 The environment file contains only the reviewed service command. AI models and
 credentials are never duplicated there. The package installs `xWalkEnv.sh`,
-`xWalkLicenseTool`, and the empty JSON template under the matching
+`xWalkLicenseTool`, and the empty model configuration under the matching
 `/usr/lib/xwalk/xWalkTool` subdirectories. An explicitly provisioned package may
 also install `X_WALK_LICENSE.KEY` under `/usr/lib/xwalk/xWalkLibrary`; normal
 packages omit the deployment-specific ciphertext. See the
