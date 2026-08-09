@@ -127,7 +127,7 @@
                 <pathentry include="xWalkHal/xWalkTest/xGoogleTest/include" kind="inc" path="" system="false"/>
                 <pathentry include="xWalkHal/xWalkTest/xSequenceTest/core/include" kind="inc" path="" system="false"/>
                 <pathentry include="xWalkHal/xWalkTest/xSequenceTest/hardware/include" kind="inc" path="" system="false"/>
-                <pathentry include="xWalkHal/xWalkTrace/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkTrace/include" kind="inc" path="" system="false"/>
                 <pathentry include="xWalkHal/xWalkUltrasonic/include" kind="inc" path="" system="false"/>
                 <pathentry include="xWalkHal/xWalkUserButton/include" kind="inc" path="" system="false"/>
                 <pathentry include="xWalkHal/xWalkUtils/include" kind="inc" path="" system="false"/>

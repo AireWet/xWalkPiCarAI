@@ -66,11 +66,27 @@ ctrl::int32 main(ctrl::int32 argumentCount, ctrl::charpointer arguments[])
                                                             );
     if (argumentsParsed == false)
     {
-        std::cerr << "Global options require absolute non-empty paths" << std::endl;
+        std::cerr << "Global options contain a missing or invalid value" << std::endl;
+        return 2;
+    }
+
+    const ::ctrl::boolean traceConfigurationApplied =
+        xwalk::ctrl::XWALK_applyTraceConfiguration(applicationArguments);
+    if (traceConfigurationApplied == false)
+    {
+        std::cerr << "Trace configuration failed" << std::endl;
         return 2;
     }
 
     const ctrl::stringvector& commandArguments = applicationArguments.commandArguments;
+    const ::ctrl::boolean traceConfigurationOnly =
+        commandArguments.empty() &&
+        (!applicationArguments.traceEnableUids.empty() ||
+         !applicationArguments.traceDisableUids.empty());
+    if (traceConfigurationOnly)
+    {
+        return 0;
+    }
     const ::ctrl::boolean helpRequested =
         static_cast<::ctrl::boolean>(xwalk::ctrl::XWALK_isControllerHelpRequest(commandArguments));
 

@@ -100,6 +100,14 @@ struct XWalkControllerApplicationContext
 void XWALK_resetOperationRequest() noexcept;
 
 /**
+ * @brief Applies parsed XML trace enable and disable requests before boot.
+ * @param[in] applicationArguments Validated process-global trace requests.
+ * @return `true` when no changes were requested or every requested update succeeds.
+ */
+::ctrl::boolean XWALK_applyTraceConfiguration(
+    const XWalkControllerApplicationArguments& applicationArguments);
+
+/**
  * @brief Writes one CLI line to standard output.
  * @param[in] context Optional context; unused.
  * @param[in] line Text written synchronously followed by a newline.

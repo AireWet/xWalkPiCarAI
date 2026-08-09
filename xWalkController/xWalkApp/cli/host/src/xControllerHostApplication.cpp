@@ -69,11 +69,26 @@ namespace xwalk::ctrl
             argumentCount, arguments, defaultConfig, applicationArguments);
     if (argumentsParsed == false)
     {
-        std::cerr << "Global options require absolute non-empty paths\n";
+        std::cerr << "Global options contain a missing or invalid value\n";
+        return 2;
+    }
+    const ::ctrl::boolean traceConfigurationApplied =
+        XWALK_applyTraceConfiguration(applicationArguments);
+    if (traceConfigurationApplied == false)
+    {
+        std::cerr << "Trace configuration failed\n";
         return 2;
     }
     const ::ctrl::stringvector& commandArguments =
         applicationArguments.commandArguments;
+    const ::ctrl::boolean traceConfigurationOnly =
+        commandArguments.empty() &&
+        (!applicationArguments.traceEnableUids.empty() ||
+         !applicationArguments.traceDisableUids.empty());
+    if (traceConfigurationOnly)
+    {
+        return 0;
+    }
     const ::ctrl::boolean helpRequested =
         static_cast<::ctrl::boolean>(
             XWALK_isControllerHelpRequest(commandArguments));
@@ -90,15 +105,7 @@ namespace xwalk::ctrl
         &commandArguments, applicationArguments.appConfig.resourceDirectory};
     agent::XWalkBootServices hostServices{};
     agent::XWalkBootHostStub boot(hostServices);
-    try
-    {
-        return boot.run(&bootContext, &XWALK_runController);
-    }
-    catch (const ::ctrl::logicerror& exception)
-    {
-        std::cerr << "Host backend unavailable: " << exception.what() << '\n';
-        return 3;
-    }
+    return boot.run(&bootContext, &XWALK_runController);
 }
 
 } /* namespace xwalk::ctrl */

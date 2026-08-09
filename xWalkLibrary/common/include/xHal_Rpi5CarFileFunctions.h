@@ -51,6 +51,8 @@ namespace xwalk::hal
 
 /** @brief Opens a character file for output and discards its previous content. */
 inline constexpr fileopenmode FILE_OPEN_WRITE_TRUNCATE = std::ios::out | std::ios::trunc;
+/** @brief Opens a character file for output and preserves its previous content. */
+inline constexpr fileopenmode FILE_OPEN_WRITE_APPEND = std::ios::out | std::ios::app;
 /** @brief Opens a file for binary input without character translation. */
 inline constexpr fileopenmode FILE_OPEN_READ_BINARY = std::ios::in | std::ios::binary;
 

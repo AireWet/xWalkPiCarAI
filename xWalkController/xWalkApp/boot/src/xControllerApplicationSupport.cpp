@@ -31,6 +31,7 @@
 #include "xHal_Rpi5CarFileFunctions.h"
 #include "xHal_Rpi5CarLinuxHeaders.h"
 #include "xHal_Rpi5CarMusic.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include <iostream>
 
@@ -67,6 +68,33 @@ volatile sig_atomic_t operationRequested = 1;
  */
 namespace xwalk::ctrl
 {
+
+/**
+ * @brief Applies all requested individual trace states before backend construction.
+ * @param[in] applicationArguments Optional validated trace update requests.
+ * @return `true` when no updates were requested or every XML update succeeds.
+ */
+::ctrl::boolean XWALK_applyTraceConfiguration(
+    const XWalkControllerApplicationArguments& applicationArguments)
+{
+    for (const ::ctrl::string& uid : applicationArguments.traceEnableUids)
+    {
+        const ::ctrl::boolean traceEnabled = hal::XWalkTrace::enableGlobalTrace(uid);
+        if (traceEnabled == false)
+        {
+            return false;
+        }
+    }
+    for (const ::ctrl::string& uid : applicationArguments.traceDisableUids)
+    {
+        const ::ctrl::boolean traceDisabled = hal::XWalkTrace::disableGlobalTrace(uid);
+        if (traceDisabled == false)
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
 /** @brief Restores the application operation request before signal handlers are installed. */
 void XWALK_resetOperationRequest() noexcept

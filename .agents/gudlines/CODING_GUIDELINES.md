@@ -139,7 +139,7 @@ xWalkHal/xWalkLanguageModel/ provider-neutral conversation and prompting control
 xWalkHal/xWalkMusic/         music theory, PCM tone, and injected audio control
 xWalkHal/xWalkRobot/         coordinated multi-servo robot control
 xWalkHal/xWalkSpeaker/       bounded asynchronous audio-file playback control
-xWalkHal/xWalkTrace/         filtered callback-based embedded diagnostics
+xWalkTrace/                  filtered callback-based embedded diagnostics
 xWalkHal/xWalkUserButton/    active-low button events and press timing
 xWalkHal/xWalkUltrasonic/    two-pin ultrasonic distance measurement
 xWalkHal/xWalkUtils/         injected platform utilities and bounded lazy caching
@@ -671,20 +671,41 @@ retaining normal compiler warnings and compilation checks.
   Common conversion function and join them as `major.minor.patch`.
 - Preserve Robot HAT compatibility version `2.5.5` as static non-owning metadata.
   Do not confuse this package version with the firmware bytes read from hardware.
-- Keep `XWalkTrace` limited to severity selection and diagnostic forwarding. Do
-  not introduce a global
-  logger, hidden console output, worker thread, or operating-system dependency.
-- Preserve the severity ordering from zero through four: critical, error,
-  warning, info, and debug. Accept exact lowercase names, use warning by default,
-  and reject numeric values or names outside that contract.
-- Inject a non-null synchronous trace-output callback and an optional non-owning
-  context. The application composition root owns the output backend, timestamp
-  source, and final record formatting. The callback must not retain message views.
-- Forward a record when its numeric severity is no greater than the configured
-  threshold. Report a threshold change at debug severity, so it remains filtered
-  unless the newly selected threshold accepts debug records.
-- Require external synchronization when several tasks or interrupt contexts use
-  one trace object. Do not imply interrupt safety for an arbitrary output callback.
+- Keep the process-wide `XWalkTrace` macro runtime synchronous and free of a
+  console backend or worker thread. Serialize configuration lookup, timing
+  capture, formatting, and append-only `log/xWalkTrace.log` writes. Invoke an
+  optional application callback only after releasing the file lock.
+- Use unique `RPI.<digits>` UIDs with HAL macros and unique `CTRL.<digits>` UIDs
+  with Controller macros. Preserve leading zeros as significant UID characters;
+  `RPI.001` and `RPI.1` are distinct valid identifiers.
+  Priority zero is highest and priority three is lowest. Emit a tagged record
+  only when its independent priority flag and individual UID flag are enabled.
+- Keep warning, error, and numeric assertion-signal macros independent of UID and
+  priority flags. Capture the public macro's `__FILE__` and `__LINE__`; store only
+  the source basename in logs and retain project-relative paths in generated XML.
+- Keep `XWALK_VERBOSE(format, ...)` independent of XML, priority, and UID
+  filtering. Always emit it as `[TRACE] [VERBOSE]` with caller location and
+  timing metadata; its formatting arguments are intentionally always evaluated.
+- Format wall time as UTC with milliseconds and elapsed time from one
+  `steady_clock` initialization point with microseconds. Do not describe one
+  trace call as an operation-duration measurement.
+- Run the class-based
+  `xWalkTrace/pre-compiler/xHal_Rpi5CarTracePreCompiler.py` before trace
+  compilation. Its
+  token-aware scan covers explicit project source roots, rejects duplicate or
+  malformed UIDs, preserves XML enable flags, removes absent UIDs, sorts output,
+  and avoids rewriting unchanged content. New and missing UIDs default disabled.
+- Apply repeatable Controller `--trace-enable UID` and `--trace-disable UID`
+  options before constructing the boot graph only when supplied. Default every
+  newly generated priority and UID to disabled. Persist only scanner-known UIDs
+  through Boolean-status `XWalkTrace::enableGlobalTrace()` or
+  `disableGlobalTrace()` calls, without `try` or `catch` in the startup path,
+  and update the in-memory flag under the trace mutex; never parse XML on each
+  trace call.
+- Preserve the compatibility severity ordering from zero through four:
+  critical, error, warning, info, and debug. Accept exact lowercase names, use
+  warning by default, and retain threshold behavior for explicit `XWalkTrace`
+  object calls.
 - Keep speech recognition and speech synthesis in the combined `xWalkGPT`
   module. Retain `XWalkSpeechToText` and `XWalkTextToSpeech` as separate classes,
   headers, source files, and test executables within that module so each class

@@ -181,6 +181,17 @@
 #define XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_PREFIX "Set trace level to ["
 /** @brief Suffix used when reporting a trace threshold change. */
 #define XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_SUFFIX "]"
+/** @brief Number of supported tagged-trace priorities. */
+#define XHAL_RPI5CAR_TRACE_PRIORITY_COUNT 4U
+/** @brief Working-directory-relative directory receiving xWalk trace records. */
+#define XHAL_RPI5CAR_TRACE_LOG_DIRECTORY "log"
+/** @brief Append-only xWalk trace filename. */
+#define XHAL_RPI5CAR_TRACE_LOG_FILENAME "xWalkTrace.log"
+
+#ifndef XWALK_TRACE_CONFIG_PATH
+/** @brief Generated trace XML path overridden by the xWalkTrace CMake target. */
+#define XWALK_TRACE_CONFIG_PATH "xWalkTrace.xml"
+#endif
 /** @brief Suffix used for a same-directory configuration replacement file. */
 #define XHAL_RPI5CAR_CONFIG_REPLACEMENT_SUFFIX ".tmp"
 /** @brief Prefix written before each initial configuration description line. */

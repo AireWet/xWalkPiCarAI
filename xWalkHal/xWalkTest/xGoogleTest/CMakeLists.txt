@@ -9,7 +9,8 @@ find_package(tinyxml2 CONFIG REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
 
 set(XWALK_HAL_SOURCE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../..)
-include(${XWALK_HAL_SOURCE_DIRECTORY}/../xWalkLibrary/VoskModel.cmake)
+set(XWALK_WORKSPACE_SOURCE_DIRECTORY ${XWALK_HAL_SOURCE_DIRECTORY}/..)
+include(${XWALK_WORKSPACE_SOURCE_DIRECTORY}/xWalkLibrary/VoskModel.cmake)
 
 set(XWALK_GOOGLE_TEST_HOST_CONFIG_SOURCE
     ${CMAKE_CURRENT_SOURCE_DIR}/config/test_config.xml)
@@ -79,7 +80,7 @@ xwalk_add_legacy_test_source(xGoogleTestConfigStore xWalkConfigStoreLegacyMain
     ${XWALK_HAL_SOURCE_DIRECTORY}/xWalkConfig/test/src/xHal_Rpi5CarConfigStoreTest.cpp
     xWalkConfig)
 xwalk_add_legacy_test_source(xGoogleTestTrace xWalkTraceLegacyMain
-    ${XWALK_HAL_SOURCE_DIRECTORY}/xWalkTrace/test/src/xHal_Rpi5CarTraceTest.cpp
+    ${XWALK_WORKSPACE_SOURCE_DIRECTORY}/xWalkTrace/test/src/xHal_Rpi5CarTraceTest.cpp
     xWalkTrace)
 xwalk_add_legacy_test_source(xGoogleTestUtils xWalkUtilsLegacyMain
     ${XWALK_HAL_SOURCE_DIRECTORY}/xWalkUtils/test/src/xHal_Rpi5CarUtilsTest.cpp

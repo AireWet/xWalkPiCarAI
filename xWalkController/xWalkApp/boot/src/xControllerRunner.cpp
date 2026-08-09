@@ -47,7 +47,7 @@ namespace xwalk::ctrl
  * @brief Executes one CLI command through services retained by xWalkBoot.
  * @param[in,out] context Non-null Controller boot context valid throughout the call.
  * @param[in,out] services Command-specific non-owning services retained by xWalkBoot.
- * @return Command-specific Controller status after execution completes.
+ * @return Command-specific status, or three when the required base service is absent.
  */
 ::ctrl::int32 XWALK_runController(::ctrl::contextpointer context, agent::XWalkBootServices& services)
 {
@@ -231,7 +231,7 @@ namespace xwalk::ctrl
 
     if (services.picarx == nullptr)
     {
-        XHAL_THROW_LOGIC_ERROR("xWalkBoot did not provide the base PiCar-X service");
+        return 3;
     }
 
     if (services.selfDrive != nullptr)

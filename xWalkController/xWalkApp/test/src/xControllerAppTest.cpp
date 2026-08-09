@@ -90,11 +90,15 @@ TEST(XWalkAppGroup, ControllerUsageFunction)
 TEST(XWalkAppGroup, ApplicationSupportDefaults)
 {
     const xwalk::ctrl::XWalkControllerBootContext bootContext;
+    const xwalk::ctrl::XWalkControllerApplicationArguments applicationArguments;
     xwalk::ctrl::XWalkControllerApplicationContext applicationContext;
     const xwalk::ctrl::XWalkSoundRequest soundRequest;
 
     EXPECT_EQ(bootContext.commandArguments, nullptr);
     EXPECT_TRUE(bootContext.resourceDirectory.empty());
+    EXPECT_TRUE(applicationArguments.traceEnableUids.empty());
+    EXPECT_TRUE(applicationArguments.traceDisableUids.empty());
+    EXPECT_TRUE(xwalk::ctrl::XWALK_applyTraceConfiguration(applicationArguments));
     EXPECT_EQ(applicationContext.music, nullptr);
     EXPECT_TRUE(applicationContext.resourceDirectory.empty());
     EXPECT_FALSE(xwalk::ctrl::XWALK_performSound(
@@ -374,17 +378,25 @@ TEST(XWalkAppGroup, ControllerApplicationArguments)
     ctrl::string configurationOption{"--deployment-config"};
     ctrl::string configurationPath{"/var/lib/xwalk/picar-x.conf"};
     ctrl::string resourceOption{"--resource-directory=/usr/share/xwalk"};
+    ctrl::string traceEnableOption{"--trace-enable"};
+    ctrl::string traceEnableUid{"RPI.001"};
+    ctrl::string traceDisableOption{"--trace-disable=CTRL.2001"};
     ctrl::string command{"help"};
     ctrl::charpointer arguments[]{executable.data(), configurationOption.data(),
-        configurationPath.data(), resourceOption.data(), command.data()};
+        configurationPath.data(), resourceOption.data(), traceEnableOption.data(),
+        traceEnableUid.data(), traceDisableOption.data(), command.data()};
     xwalk::ctrl::XWalkControllerApplicationArguments applicationArguments;
     const xwalk::ctrl::XWalkAppConfig defaultConfig{
         "/default/config", "/default/resources"};
 
     EXPECT_TRUE(xwalk::ctrl::XWALK_parseControllerApplicationArguments(
-        5, arguments, defaultConfig, applicationArguments));
+        8, arguments, defaultConfig, applicationArguments));
     EXPECT_EQ(applicationArguments.appConfig.configurationFilePath, configurationPath);
     EXPECT_EQ(applicationArguments.appConfig.resourceDirectory, "/usr/share/xwalk");
+    ASSERT_EQ(applicationArguments.traceEnableUids.size(), 1U);
+    EXPECT_EQ(applicationArguments.traceEnableUids[0U], "RPI.001");
+    ASSERT_EQ(applicationArguments.traceDisableUids.size(), 1U);
+    EXPECT_EQ(applicationArguments.traceDisableUids[0U], "CTRL.2001");
     ASSERT_EQ(applicationArguments.commandArguments.size(), 1U);
     EXPECT_EQ(applicationArguments.commandArguments[0U], command);
     EXPECT_TRUE(xwalk::ctrl::XWALK_isControllerHelpRequest(
@@ -411,6 +423,13 @@ TEST(XWalkAppGroup, InvalidControllerApplicationArguments)
 
     EXPECT_FALSE(xwalk::ctrl::XWALK_parseControllerApplicationArguments(
         4, arguments, defaultConfig, applicationArguments));
+
+    ctrl::string traceOption{"--trace-enable"};
+    ctrl::string invalidUid{"RPI.Camera"};
+    ctrl::charpointer traceArguments[]{executable.data(), traceOption.data(),
+        invalidUid.data(), command.data()};
+    EXPECT_FALSE(xwalk::ctrl::XWALK_parseControllerApplicationArguments(
+        4, traceArguments, defaultConfig, applicationArguments));
 }
 
 /**

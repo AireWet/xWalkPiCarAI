@@ -94,7 +94,7 @@ notes.
 - [xWalkServo](../xWalkHal/xWalkServo/README.md): calibrated servo positioning.
 - [xWalkSpeaker](../xWalkHal/xWalkSpeaker/README.md): decoded audio-file playback.
 - [xWalkSpi](../xWalkHal/xWalkSpi/README.md): bounded SPI abstraction and Linux backend.
-- [xWalkTrace](../xWalkHal/xWalkTrace/README.md): filtered callback-based diagnostics.
+- [xWalkTrace](../xWalkTrace/README.md): filtered callback-based diagnostics.
 - [xWalkUltrasonic](../xWalkHal/xWalkUltrasonic/README.md): ultrasonic distance measurement.
 - [xWalkUserButton](../xWalkHal/xWalkUserButton/README.md): button events and press timing.
 - [xWalkUtils](../xWalkHal/xWalkUtils/README.md): platform utilities and bounded lazy caching.

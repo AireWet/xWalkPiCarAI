@@ -5,6 +5,11 @@ project(xWalkController LANGUAGES CXX)
 option(XWALK_CONTROLLER_BUILD_HOST_TESTS "Build PiCar-X CLI host tests" OFF)
 option(XWALK_CONTROLLER_BUILD_RPI_TESTS "Build PiCar-X CLI RPi application and test" OFF)
 
+if(NOT TARGET xWalkTrace)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTrace
+        ${CMAKE_CURRENT_BINARY_DIR}/xWalkTrace)
+endif()
+
 set(XWALK_CONTROLLER_HELP_JSON
     "${CMAKE_CURRENT_SOURCE_DIR}/activate/resources/help.json")
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
@@ -342,7 +347,8 @@ if(XWALK_CONTROLLER_BUILD_HOST_TESTS)
         XWALK_RUNTIME_DATA_DIRECTORY="${XWALK_RUNTIME_DATA_DIRECTORY}")
     target_link_libraries(xwalk-picarx-control PRIVATE
         xWalkController
-        xWalkBoot)
+        xWalkBoot
+        xWalkTrace)
     add_executable(xWalkControllerTest
         ../xWalkHandler/test/src/xControllerTest.cpp)
     target_compile_definitions(xWalkControllerTest PRIVATE
@@ -362,6 +368,7 @@ if(XWALK_CONTROLLER_BUILD_HOST_TESTS)
         GTest::gtest_main
         xWalkController
         xWalkBoot
+        xWalkTrace
         xWalkVoiceActiveCarGpt)
     add_dependencies(xWalkAppTest xwalk-picarx-control)
     add_test(NAME xWalkAppHostTest COMMAND xWalkAppTest)
@@ -384,6 +391,7 @@ if(XWALK_CONTROLLER_BUILD_RPI_TESTS)
     target_link_libraries(xwalk-picarx-control PRIVATE
         xWalkController
         xWalkBootRpi
+        xWalkTrace
     )
     add_test(NAME xWalkControllerHardwareHelpTest COMMAND xwalk-picarx-control --help)
     set_tests_properties(xWalkControllerHardwareHelpTest PROPERTIES LABELS "hardware")
