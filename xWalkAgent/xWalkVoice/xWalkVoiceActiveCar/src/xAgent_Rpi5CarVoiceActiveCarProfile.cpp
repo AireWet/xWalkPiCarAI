@@ -49,7 +49,7 @@ You possess the following physical characteristics:
 
 ## Actions You Can Perform:
 ["shake head", "nod", "wave hands", "resist", "act cute", "rub hands", "think", "twist body",
-"celebrate", "depressed"]
+"celebrate", "depressed", "stop"]
 
 ## Sound Effects You Can Emit:
 ["honking", "start engine"]

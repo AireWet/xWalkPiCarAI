@@ -7,7 +7,7 @@ hardware ownership outside the module.
 ## Behavior
 
 - accepts the exact upstream movement names: `shake head`, `nod`, `wave hands`, `resist`, `act cute`,
-  `rub hands`, `think`, `twist body`, `celebrate`, `depressed`, `forward`, and `backward`;
+  `rub hands`, `think`, `twist body`, `celebrate`, `depressed`, `forward`, `backward`, and `stop`;
 - accepts the upstream sound names `honking` and `start engine`;
 - preserves servo angles, motor commands, delay intervals, action names, and sound volumes;
 - provides synchronous `doAction()` plus explicit standby, think, queued-actions, start, stop, and wait
@@ -23,6 +23,9 @@ hardware ownership outside the module.
 Standby is an explicit idle state. It does not select random intervals, enqueue actions, play sounds, or move
 an actuator. The unused upstream completed-actions state was removed; queue completion transitions directly
 to standby and wakes waiting callers.
+
+Voice-requested `stop` is queued through the worker with every other action. It therefore waits for an active
+thinking pose to finish before touching the PiCar-X motors and cannot race the worker's actuator writes.
 
 ## Sound resources
 

@@ -344,6 +344,11 @@ void testSelfDriveBehavior(agent::stringview configPath)
     assert(picarx.directionAngleDegrees() == 0.0);
     assert(!backend.delays.empty());
 
+    picarx.forward(20.0);
+    assert(selfDrive.doAction("stop"));
+    assert(motors.left().speed() == 0.0);
+    assert(motors.right().speed() == 0.0);
+
     assert(selfDrive.doAction("honking"));
     assert(selfDrive.doAction("start engine"));
     assert(backend.backgroundFiles[0U] ==

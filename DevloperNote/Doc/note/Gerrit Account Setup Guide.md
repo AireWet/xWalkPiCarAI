@@ -146,9 +146,12 @@ git push gerrit HEAD:refs/for/master
 Do not push the review commit directly to GitHub before Gerrit review and verification are complete. Uploading
 a new commit with the same `Change-Id` creates another patch set in the existing review.
 
-After an approved and verified change is submitted, the Gerrit CI service automatically fast-forwards GitHub
-`master` to the submitted Gerrit branch. Developers must not manually repeat that push. The mirror refuses
-non-fast-forward updates so it cannot overwrite an independently changed GitHub history.
+After an approved and verified change is submitted, the Gerrit CI service publishes it to GitHub. Only Joxy
+(`joxjoh24@student.hh.se`) may merge into GitHub `master`. A directly applicable Joxy-owned change may be
+fast-forwarded to `master`. Every other owner's change is pushed to `gerrit-submitted`, where GitHub automation
+opens or updates a pull request for Joxy. The same pull-request path is used for stacked changes when a direct
+update would include work that still requires Joxy's GitHub review. Developers must not manually repeat either
+push. The mirror refuses non-fast-forward updates.
 
 ## Review and verification labels
 
@@ -176,7 +179,7 @@ GoogleTest, sequence tests, module tests, and nested module tests:
 Human reviewer accounts do not have permission to set the `Verified` label on normal branches. Verification
 is owned exclusively by the CI service. Reviewers use only the `Code-Review` label and submit action. Gerrit
 allows submission to `master` only after the current patch set has both `Code-Review +2` and the automatic
-`Verified +1`; the post-submit service then mirrors that exact Gerrit commit to GitHub `master`.
+`Verified +1`. The post-submit service then applies the owner-aware GitHub destination policy described above.
 
 Raspberry Pi hardware tests, physical movement, live provider calls, and other opt-in tests are not executed by
 the automatic runner. They require the correct hardware, a secured robot, and explicit approval.

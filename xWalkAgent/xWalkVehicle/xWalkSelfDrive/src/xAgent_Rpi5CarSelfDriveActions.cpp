@@ -61,13 +61,13 @@ namespace xwalk::agent
  ******************************************************************************/
 
 /**
- * @brief Returns whether text names one supported movement or sound action.
+ * @brief Returns whether text names one supported movement, stop, or sound action.
  *
  * @param[in] action
  * Exact lowercase action name.
  *
  * @return
- * `true` for an upstream action-map or sound-map name; otherwise `false`.
+ * `true` for a preset action-map, serialized stop, or sound-map name; otherwise `false`.
  */
 agent::boolean XWalkSelfDrive::isActionSupported(agent::stringview action) noexcept
 {
@@ -75,7 +75,7 @@ agent::boolean XWalkSelfDrive::isActionSupported(agent::stringview action) noexc
         (action == "resist") || (action == "act cute") || (action == "rub hands") ||
         (action == "think") || (action == "twist body") || (action == "celebrate") ||
         (action == "depressed") || (action == "forward") || (action == "backward") ||
-        (action == "honking") || (action == "start engine");
+        (action == "stop") || (action == "honking") || (action == "start engine");
 }
 
 /**
@@ -154,7 +154,7 @@ agent::boolean XWalkSelfDrive::startEngine()
  * @brief Executes one supported preset action synchronously.
  *
  * @param[in] action
- * Exact lowercase action name from the upstream action or sound map.
+ * Exact lowercase preset action name, including the serialized `stop` action.
  *
  * @return
  * `true` when the action was recognized and completed; otherwise `false`.
@@ -208,6 +208,10 @@ agent::boolean XWalkSelfDrive::doAction(agent::stringview action)
     else if (action == "backward")
     {
         backward();
+    }
+    else if (action == "stop")
+    {
+        picarxObject->stop();
     }
     else if (action == "honking")
     {

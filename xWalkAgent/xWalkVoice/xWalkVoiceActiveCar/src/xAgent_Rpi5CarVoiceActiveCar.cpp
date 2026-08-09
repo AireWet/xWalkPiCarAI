@@ -394,22 +394,25 @@ void XWalkVoiceActiveCar::blink(agent::uint32 count,
     }
 }
 
+/**
+ * @brief Queues parsed model actions for serialized worker execution.
+ *
+ * @details
+ * The `stop` action uses the same worker queue as movement gestures so it
+ * cannot access PiCar-X actuators concurrently with an active thinking pose.
+ *
+ * @param[in] actions
+ * Exact lowercase action names retained for this call.
+ */
 void XWalkVoiceActiveCar::dispatchActions(const agent::stringvector& actions)
 {
     for (const agent::string& action : actions)
     {
-        if (action == "stop")
+        const agent::boolean actionAdded = selfDriveObject->addAction(action);
+        if (actionAdded == false)
         {
-            picarxObject->stop();
-        }
-        else
-        {
-            const agent::boolean actionAdded = selfDriveObject->addAction(action);
-            if (actionAdded == false)
-            {
-                callbacks.output(callbackContext,
-                    agent::string("Unsupported voice action: ") + action);
-            }
+            callbacks.output(callbackContext,
+                agent::string("Unsupported voice action: ") + action);
         }
     }
 }

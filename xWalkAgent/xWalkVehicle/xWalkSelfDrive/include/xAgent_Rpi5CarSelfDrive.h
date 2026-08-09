@@ -102,7 +102,7 @@ class XWalkSelfDrive
 
         /** @brief Rejects a null delay callback before storing dependencies. */
         static void validateDelayCallback(selfdrivedelaycallback delayOperation);
-        /** @brief Returns whether text names one supported movement or sound action. */
+        /** @brief Returns whether text names one supported movement, stop, or sound action. */
         static agent::boolean isActionSupported(agent::stringview action) noexcept;
         /** @brief Invokes the application-owned delay operation and records its status. */
         agent::boolean delay(agent::uint32 durationMs);
@@ -202,7 +202,7 @@ class XWalkSelfDrive
          * @brief Executes one supported preset action synchronously.
          *
          * @param[in] action
-         * Exact lowercase action name from the upstream action or sound map.
+         * Exact lowercase preset action name, including the serialized `stop` action.
          *
          * @return
          * `true` when the action was recognized and completed; otherwise `false`.

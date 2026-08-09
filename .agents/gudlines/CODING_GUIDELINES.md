@@ -13,6 +13,29 @@ If a deliberate architectural or project-wide convention changes, update this
 file in the same change. Do not rewrite the guide merely to justify a one-off
 exception.
 
+## Change publication workflow
+
+Gerrit is the sole review and publication entry point for repository changes.
+After implementation and host verification, commit the code locally and upload
+the commit only to Gerrit:
+
+```bash
+git push gerrit HEAD:refs/for/master
+```
+
+Never push a change directly to a GitHub remote or GitHub `master`, including
+before Gerrit verification. A Gerrit change may be submitted only after its
+current patch set satisfies the configured review and automatic verification
+requirements. The Gerrit CI service then mirrors the submitted Gerrit commit to
+GitHub in response to the `change-merged` event. Only Joxy
+(`joxjoh24@student.hh.se`) may merge into GitHub `master`. The service may
+fast-forward a directly applicable Joxy-owned change to `master`; it publishes
+every other owner's submitted change to the dedicated GitHub review branch and
+opens or updates a pull request for Joxy. A stacked Joxy change also uses the
+pull-request path when directly updating `master` would include another owner's
+unmerged GitHub work. Treat the service as the only supported GitHub write path
+for repository changes.
+
 ## Language and compiler expectations
 
 - Write C++17. Declare `cxx_std_17` on every public library target that needs to

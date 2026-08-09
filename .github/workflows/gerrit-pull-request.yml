@@ -1,0 +1,25 @@
+name: Gerrit submitted pull request
+
+on:
+  push:
+    branches:
+      - gerrit-submitted
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  open-pull-request:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Open pull request for submitted Gerrit changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          REVIEW_BRANCH: ${{ github.ref_name }}
+        run: |
+          open_pr="$(gh pr list --state open --base master --head "$REVIEW_BRANCH" --json number --jq '.[0].number // empty')"
+          if [ -z "$open_pr" ]; then
+              gh pr create --base master --head "$REVIEW_BRANCH" --title "Review submitted Gerrit changes" --body "These changes passed Gerrit review and verification. Only Joxy may merge this pull request into GitHub master."
+          fi

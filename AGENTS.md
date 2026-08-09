@@ -26,3 +26,21 @@ output, accidental inconsistency, or unapproved redesign.
 Prefer host tests. Hardware tests are opt-in and must not be run unless the user
 explicitly requests them and confirms that the correct Raspberry Pi and Robot
 HAT setup is connected and safe.
+
+## Gerrit-only publication
+
+Never push repository changes directly to GitHub, including through the
+`origin` or `github-actions` remotes. Commit changes locally, then upload them
+only to Gerrit for review with:
+
+```bash
+git push gerrit HEAD:refs/for/master
+```
+
+Only Joxy (`joxjoh24@student.hh.se`) may merge into GitHub `master`. After
+Gerrit's **Submit** action, the CI service may mirror a directly applicable
+Joxy-owned change to GitHub `master`. A submitted change owned by anyone else,
+or a change stacked on GitHub work still awaiting review, must be pushed to the
+dedicated GitHub review branch and presented to Joxy as a pull request. Do not
+use a direct GitHub push as a preliminary, backup, or alternate publication
+path.

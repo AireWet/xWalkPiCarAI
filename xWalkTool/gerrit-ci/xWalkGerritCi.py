@@ -38,6 +38,12 @@ class XWalkGerritCi:
         self.github_web_url = os.environ.get(
             "GITHUB_WEB_URL", "https://github.com/jochuuu/xWalkPiCarAI"
         ).rstrip("/")
+        self.github_primary_merger_email = os.environ.get(
+            "GITHUB_PRIMARY_MERGER_EMAIL", "joxjoh24@student.hh.se"
+        ).casefold()
+        self.github_review_branch = os.environ.get(
+            "GITHUB_REVIEW_BRANCH", "gerrit-submitted"
+        )
         self.github_private_key = Path(
             os.environ.get(
                 "GITHUB_SSH_KEY", "/run/secrets/github_mirror_ssh_key"
@@ -161,6 +167,49 @@ class XWalkGerritCi:
         )
         return result.returncode == 0
 
+    @staticmethod
+    def command_output(
+        command: list[str], working_directory: Path, log: TextIO,
+        environment: dict[str, str] | None = None,
+    ) -> str:
+        """Run one inspection command and return stripped output on success."""
+
+        log.write(f"\n$ {shlex.join(command)}\n")
+        log.flush()
+        result = subprocess.run(
+            command,
+            cwd=working_directory,
+            env=environment,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            check=False,
+            text=True,
+        )
+        log.write(result.stdout)
+        log.flush()
+        return result.stdout.strip() if result.returncode == 0 else ""
+
+    @staticmethod
+    def select_github_branch(
+        owner_email: str,
+        primary_merger_email: str,
+        primary_branch: str,
+        review_branch: str,
+        gerrit_parent: str,
+        github_revision: str,
+    ) -> str:
+        """Select master only for one directly applicable Joxy-owned change."""
+
+        owner_is_primary_merger = (
+            bool(owner_email)
+            and owner_email.casefold() == primary_merger_email.casefold()
+        )
+        directly_applicable = (
+            bool(gerrit_parent)
+            and gerrit_parent == github_revision
+        )
+        return primary_branch if owner_is_primary_merger and directly_applicable else review_branch
+
     def verify(self, event: dict[str, Any]) -> None:
         """Fetch, build, test, and report one matching Gerrit patch set."""
 
@@ -246,13 +295,17 @@ class XWalkGerritCi:
         print(f"{message}; Gerrit report accepted={reported}", flush=True)
 
     def mirror(self, event: dict[str, Any]) -> None:
-        """Fast-forward GitHub to the Gerrit branch after one submitted change."""
+        """Publish a submitted change to GitHub master or its review branch."""
 
         change_data = event["change"]
         patch_data = event["patchSet"]
         change = int(change_data["number"])
         patch_set = int(patch_data["number"])
         revision = str(event["newRev"])
+        owner_data = change_data.get("owner", {})
+        owner_email = ""
+        if isinstance(owner_data, dict):
+            owner_email = str(owner_data.get("email", ""))
         timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
         log_path = self.log_directory / f"mirror-{change}-{patch_set}-{timestamp}.log"
         print(f"Mirroring merged change {change}: {revision}", flush=True)
@@ -275,7 +328,10 @@ class XWalkGerritCi:
                     None,
                 ),
                 (
-                    ["git", "fetch", "gerrit", f"refs/heads/{self.branch}"],
+                    [
+                        "git", "fetch", "gerrit",
+                        f"{revision}:refs/remotes/gerrit/submitted",
+                    ],
                     temporary_directory,
                     self.git_environment(),
                 ),
@@ -291,27 +347,64 @@ class XWalkGerritCi:
                     None,
                 ),
                 (
-                    ["git", "push", "github", f"FETCH_HEAD:refs/heads/{self.branch}"],
+                    [
+                        "git", "fetch", "github",
+                        f"refs/heads/{self.branch}:refs/remotes/github/{self.branch}",
+                    ],
                     temporary_directory,
                     self.github_git_environment(),
                 ),
             ]
-            mirrored = all(
+            setup_passed = all(
                 self.run_command(command, directory, log, environment)
                 for command, directory, environment in commands
             )
+            target_branch = self.github_review_branch
+            if setup_passed:
+                gerrit_parent = self.command_output(
+                    ["git", "rev-parse", "refs/remotes/gerrit/submitted^"],
+                    temporary_directory,
+                    log,
+                )
+                github_revision = self.command_output(
+                    ["git", "rev-parse", f"refs/remotes/github/{self.branch}"],
+                    temporary_directory,
+                    log,
+                )
+                target_branch = self.select_github_branch(
+                    owner_email,
+                    self.github_primary_merger_email,
+                    self.branch,
+                    self.github_review_branch,
+                    gerrit_parent,
+                    github_revision,
+                )
+                mirrored = self.run_command(
+                    [
+                        "git", "push", "github",
+                        f"refs/remotes/gerrit/submitted:refs/heads/{target_branch}",
+                    ],
+                    temporary_directory,
+                    log,
+                    self.github_git_environment(),
+                )
+            else:
+                mirrored = False
         shutil.rmtree(temporary_directory, ignore_errors=True)
 
         commit_url = f"{self.github_web_url}/commit/{revision}"
         if mirrored:
-            message = "\n".join(
-                [
-                    "Gerrit change mirrored to GitHub",
-                    f"Branch: {self.branch}",
-                    f"Commit: {commit_url}",
-                    f"Log: {log_path.name}",
-                ]
-            )
+            if target_branch == self.branch:
+                result_text = "Joxy-owned Gerrit change mirrored to GitHub master"
+            else:
+                result_text = "Gerrit change published for Joxy GitHub review"
+            message = "\n".join([
+                result_text,
+                f"Owner: {owner_email or 'unavailable'}",
+                f"Branch: {target_branch}",
+                f"Commit: {commit_url}",
+                f"Log: {log_path.name}",
+            ])
         else:
             message = "\n".join(
                 [

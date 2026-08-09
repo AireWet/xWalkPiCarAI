@@ -59,6 +59,10 @@ class XWalkVoiceActiveCar
             const XWalkVoiceActiveCarConfiguration& carConfiguration);
         void blink(agent::uint32 count, agent::uint32 toggleDelayMs,
             agent::uint32 pauseMs);
+        /**
+         * @brief Queues parsed model actions for serialized worker execution.
+         * @param[in] actions Exact lowercase action names retained for this call.
+         */
         void dispatchActions(const agent::stringvector& actions);
         XWalkVoiceActiveCarResponse parseConfiguredResponse(
             agent::stringview response) const;

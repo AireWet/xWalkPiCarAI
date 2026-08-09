@@ -6,7 +6,8 @@ events on `master`, fetches the exact Gerrit patch-set ref into an isolated
 temporary checkout, runs the original Gerrit host suite and every job from the
 GitHub Host quality workflow, and reports one aggregate `Verified +1` or
 `Verified -1` on that patch set. After Gerrit submits a verified change, the
-same service fast-forwards GitHub `master` to the authoritative Gerrit branch.
+same service selects its GitHub destination from the Gerrit owner and current
+branch relationship.
 
 The aggregate gate runs all of these jobs before voting:
 
@@ -32,8 +33,13 @@ submit changes. The private SSH key remains on the host and is mounted
 read-only into the container. Never add that key to this repository.
 
 GitHub mirroring uses a separate repository-scoped deploy key with write access
-only to `jochuuu/xWalkPiCarAI`. The mirror never force-pushes. A divergent
-GitHub branch therefore fails safely and remains unchanged.
+only to `jochuuu/xWalkPiCarAI`. Joxy (`joxjoh24@student.hh.se`) is the only
+human repository collaborator with merge permission. A directly applicable
+Joxy-owned Gerrit submission may fast-forward GitHub `master`. Every other
+owner, a missing owner email, or a stacked submission that cannot be applied
+directly is published to `gerrit-submitted`. A GitHub workflow opens one pull
+request from that branch for Joxy; later submissions update the same open pull
+request. The mirror never force-pushes.
 
 Store all host-specific runner settings in `~/.xwalk-ci.env`. This file contains
 connection values and credential paths, not private-key contents:
@@ -56,6 +62,8 @@ GITHUB_HOST=github.com
 GITHUB_REPOSITORY=jochuuu/xWalkPiCarAI
 GITHUB_WEB_URL=https://github.com/jochuuu/xWalkPiCarAI
 GITHUB_SSH_KEY=/run/secrets/github_mirror_ssh_key
+GITHUB_PRIMARY_MERGER_EMAIL=joxjoh24@student.hh.se
+GITHUB_REVIEW_BRANCH=gerrit-submitted
 XWALK_CI_STATE_DIRECTORY=/var/lib/xwalk-gerrit-ci
 XWALK_CI_LOG_DIRECTORY=/var/log/xwalk-gerrit-ci
 ```
@@ -93,6 +101,7 @@ Uploading a new patch set automatically starts verification. An informational
 Gerrit message is posted at start, followed by the aggregate job summary and
 final `Verified` vote. Logs remain in the `xwalk-gerrit-ci-logs` Docker volume
 across container restarts.
-Submitted changes also receive an informational message stating whether the
-fast-forward GitHub mirror succeeded. The Gerrit change log records the branch,
-retained mirror log, and a clickable link to the exact GitHub commit.
+Submitted changes also receive an informational message stating whether they
+were mirrored to `master` or published for Joxy's pull-request review. The
+Gerrit change log records the owner email, branch, retained mirror log, and a
+clickable link to the exact GitHub commit.
