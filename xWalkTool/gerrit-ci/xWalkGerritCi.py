@@ -14,6 +14,8 @@ import tempfile
 import time
 from typing import Any, TextIO
 
+from xWalkGerritQuality import XWalkGerritQuality
+
 
 class XWalkGerritCi:
     """Own Gerrit verification and submitted-change GitHub mirroring."""
@@ -200,50 +202,45 @@ class XWalkGerritCi:
                     temporary_directory,
                     None,
                 ),
-                (
-                    [
-                        "cmake",
-                        "--fresh",
-                        "-S",
-                        ".",
-                        "-B",
-                        "build-host/gerrit",
-                        "-G",
-                        "Ninja",
-                        "-DCMAKE_BUILD_TYPE=Debug",
-                        "-DXWALK_ENABLE_STRICT_WARNINGS=ON",
-                    ],
-                    temporary_directory,
-                    None,
-                ),
-                (
-                    ["cmake", "--build", "build-host/gerrit", "--parallel"],
-                    temporary_directory,
-                    None,
-                ),
-                (
-                    [
-                        "ctest",
-                        "--test-dir",
-                        "build-host/gerrit",
-                        "--output-on-failure",
-                        "--no-tests=error",
-                    ],
-                    temporary_directory,
-                    None,
-                ),
             ]
-            passed = all(
+            checkout_passed = all(
                 self.run_command(command, directory, log, environment)
                 for command, directory, environment in commands
             )
+            quality_results: dict[str, bool] = {}
+            if checkout_passed:
+                quality = XWalkGerritQuality(temporary_directory, log)
+                quality_results = quality.run_all()
+            passed = checkout_passed and all(quality_results.values())
         shutil.rmtree(temporary_directory, ignore_errors=True)
 
+        job_summary = [
+            f"{name}: {'PASSED' if job_passed else 'FAILED'}"
+            for name, job_passed in quality_results.items()
+        ]
         if passed:
-            message = f"xWalk host verification passed. Log: {log_path.name}"
+            message = "\n".join(
+                [
+                    "Complete xWalk host quality gate passed",
+                    f"Jobs: {len(quality_results)}/{len(quality_results)}",
+                    *job_summary,
+                    f"Log: {log_path.name}",
+                ]
+            )
             vote = 1
         else:
-            message = f"xWalk host verification failed. Log: {log_path.name}"
+            failed_jobs = [
+                name for name, job_passed in quality_results.items() if not job_passed
+            ]
+            failure_summary = ", ".join(failed_jobs) if failed_jobs else "checkout"
+            message = "\n".join(
+                [
+                    "Complete xWalk host quality gate failed",
+                    f"Failed jobs: {failure_summary}",
+                    *job_summary,
+                    f"Log: {log_path.name}",
+                ]
+            )
             vote = -1
         reported = self.report(change, patch_set, vote, message)
         print(f"{message}; Gerrit report accepted={reported}", flush=True)

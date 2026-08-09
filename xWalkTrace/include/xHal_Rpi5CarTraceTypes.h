@@ -62,6 +62,26 @@ enum class XWalkTraceLevel : uint8
 };
 
 /******************************************************************************
+ * Structure declarations
+ ******************************************************************************/
+
+/**
+ * @brief Stores scanner-generated source metadata for one tagged trace.
+ *
+ * @details
+ * The build-time scanner provides the public macro invocation filename and
+ * line so runtime output remains identical across GCC and Clang.
+ */
+struct XWalkTraceSourceLocation
+{
+    /** @brief Project-relative source filename supplied by generated XML. */
+    string sourceFile;
+
+    /** @brief One-based line containing the public tagged-trace macro name. */
+    uint32 sourceLine{};
+};
+
+/******************************************************************************
  * Type definitions
  ******************************************************************************/
 

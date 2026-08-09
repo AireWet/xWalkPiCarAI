@@ -104,7 +104,10 @@ are always evaluated.
 Every public macro captures `__FILE__` and `__LINE__`. Multiline calls therefore
 record the line containing the public macro name. Production log output keeps
 only the source basename so it cannot expose an absolute build-machine path.
-Generated XML keeps a project-relative source path.
+Generated XML keeps a project-relative source path. For tagged traces, the
+generated filename and invocation line are canonical at runtime. This keeps
+multiline macro locations identical across GCC and Clang; compiler-provided
+macro locations remain the fallback for older XML without metadata.
 
 One tagged record has this form:
 

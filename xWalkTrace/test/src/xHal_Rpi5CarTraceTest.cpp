@@ -55,6 +55,9 @@ using namespace xwalk::hal;
 /** @brief Maximum number of trace records retained by one test capture. */
 #define XHAL_RPI5CAR_TRACE_TEST_RECORD_CAPACITY 8U
 
+/** @brief Canonical scanner line used to verify compiler-independent metadata. */
+#define XHAL_RPI5CAR_TRACE_TEST_METADATA_LINE 1234U
+
 /******************************************************************************
  * Structure declarations
  ******************************************************************************/
@@ -114,7 +117,8 @@ void writeRuntimeConfiguration(const filesystempath& configurationPath)
         <trace uid="RPI.91002" enabled="false"/>
         <trace uid="RPI.91003" enabled="true"/>
         <trace uid="RPI.91004" enabled="true"/>
-        <trace uid="CTRL.92001" enabled="true"/>
+        <trace uid="CTRL.92001" enabled="true"
+            file="xWalkTrace/test/src/xHal_Rpi5CarTraceTest.cpp" line="1234"/>
         <trace uid="CTRL.92002" enabled="false"/>
         <trace uid="CTRL.92003" enabled="true"/>
         <trace uid="CTRL.92004" enabled="true"/>
@@ -236,7 +240,6 @@ void testMacroRuntime()
         expensiveDiagnostic(diagnosticInvocations));
     XWALK_HAL_TRACE_UID3(RPI.91004, "Enabled lowest-priority HAL trace");
 
-    const uint32 ctrlEnabledLine = __LINE__ + 1U;
     XWALK_CTRL_TRACE_UID1(
         CTRL.92001,
         "Enabled CTRL trace");
@@ -294,7 +297,8 @@ void testMacroRuntime()
 
     const string sourceName("xHal_Rpi5CarTraceTest.cpp:");
     assert(contents.find(sourceName + std::to_string(halEnabledLine)) != string::npos);
-    assert(contents.find(sourceName + std::to_string(ctrlEnabledLine)) != string::npos);
+    assert(contents.find(sourceName +
+        std::to_string(XHAL_RPI5CAR_TRACE_TEST_METADATA_LINE)) != string::npos);
     assert(contents.find(sourceName + std::to_string(halWarningLine)) != string::npos);
     assert(contents.find(sourceName + std::to_string(halErrorLine)) != string::npos);
     assert(contents.find(sourceName + std::to_string(halAssertLine)) != string::npos);

@@ -88,6 +88,7 @@ void XWalkTrace::initialize(const filesystempath& configurationPath,
     configurationPathValue = configurationPath;
     priorityEnabledValues.fill(false);
     traceEnabledValues.clear();
+    traceSourceLocations.clear();
     startTime = steadyclock::now();
 
     const filesystempath logDirectory = logPath.parent_path();
@@ -154,6 +155,7 @@ void XWalkTrace::loadConfiguration(const filesystempath& configurationPath)
 
     fixedarray<boolean, XHAL_RPI5CAR_TRACE_PRIORITY_COUNT> loadedPriorities{};
     orderedmap<string, boolean> loadedTraces{};
+    orderedmap<string, XWalkTraceSourceLocation> loadedSourceLocations{};
     boolean configurationValid = true;
 
     const tinyxml2::XMLElement* priorities = root->FirstChildElement("priorities");
@@ -199,20 +201,35 @@ void XWalkTrace::loadConfiguration(const filesystempath& configurationPath)
         while (trace != nullptr)
         {
             const char* uidAttribute = trace->Attribute("uid");
+            const char* fileAttribute = trace->Attribute("file");
             boolean enabled = false;
+            unsigned int sourceLine = 0U;
             const tinyxml2::XMLError enabledResult = trace->QueryBoolAttribute(
                 "enabled", &enabled);
+            const tinyxml2::XMLError lineResult = trace->QueryUnsignedAttribute(
+                "line", &sourceLine);
             const boolean uidMissing = uidAttribute == nullptr;
             const boolean uidInvalid = uidMissing ||
                 (uidMissing == false && isValidUid(uidAttribute) == false);
+            const boolean filePresent = fileAttribute != nullptr;
+            const boolean linePresent = lineResult == tinyxml2::XML_SUCCESS;
+            const boolean sourceMetadataIncomplete = filePresent != linePresent;
+            const boolean sourceMetadataInvalid = sourceMetadataIncomplete ||
+                (filePresent && stringview(fileAttribute).empty()) ||
+                (linePresent && sourceLine == 0U);
             const boolean traceInvalid = uidInvalid ||
-                (enabledResult != tinyxml2::XML_SUCCESS);
+                (enabledResult != tinyxml2::XML_SUCCESS) || sourceMetadataInvalid;
             if (traceInvalid)
             {
                 configurationValid = false;
                 break;
             }
             loadedTraces[string(uidAttribute)] = enabled;
+            if (filePresent)
+            {
+                loadedSourceLocations[string(uidAttribute)] = {
+                    string(fileAttribute), static_cast<uint32>(sourceLine)};
+            }
             trace = trace->NextSiblingElement("trace");
         }
     }
@@ -226,6 +243,7 @@ void XWalkTrace::loadConfiguration(const filesystempath& configurationPath)
 
     priorityEnabledValues = loadedPriorities;
     traceEnabledValues = loadedTraces;
+    traceSourceLocations = loadedSourceLocations;
 }
 
 /**

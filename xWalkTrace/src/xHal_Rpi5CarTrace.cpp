@@ -113,7 +113,15 @@ void XWalkTrace::writeTagged(uint8 priority, stringview component, stringview ui
         }
 
         const string priorityCategory = string("P") + std::to_string(priority);
-        writeRecordLocked(component, priorityCategory, uid, sourceFile, sourceLine, message);
+        const auto configuredLocation = traceSourceLocations.find(string(uid));
+        const boolean configuredLocationKnown =
+            configuredLocation != traceSourceLocations.end();
+        const stringview recordSourceFile = configuredLocationKnown ?
+            stringview(configuredLocation->second.sourceFile) : sourceFile;
+        const uint32 recordSourceLine = configuredLocationKnown ?
+            configuredLocation->second.sourceLine : sourceLine;
+        writeRecordLocked(component, priorityCategory, uid, recordSourceFile,
+            recordSourceLine, message);
     }
     const XWalkTraceLevel callbackLevel = static_cast<XWalkTraceLevel>(priority);
     outputCallback(outputContextPointer, callbackLevel, message);

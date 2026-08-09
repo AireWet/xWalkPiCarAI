@@ -164,14 +164,19 @@ The project uses these Code-Review meanings:
 A `-2` vote does not abandon a change automatically. Use Gerrit's **Abandon** action when the owner and
 reviewers decide the change should no longer proceed.
 
-The dedicated `xwalk-ci` account automatically runs the complete configured host build and CTest suite for
-each new patch set on `master`:
+The dedicated `xwalk-ci` account automatically runs the original strict Gerrit host suite and every
+quality-producing job from the GitHub Host quality workflow for each new patch set on `master`. This includes
+the compiler matrix, sanitizers, stress tests, static analysis, coverage, deployment scripts, staged install,
+GoogleTest, sequence tests, module tests, and nested module tests:
 
-- `Verified +1` means all configured host tests passed.
-- `Verified -1` means configuration, compilation, or at least one host test failed.
+- `Verified +1` means every aggregate quality job passed.
+- `Verified -1` means checkout, configuration, compilation, analysis, installation, or at least one host test
+  failed.
 
 Human reviewer accounts do not have permission to set the `Verified` label on normal branches. Verification
-is owned exclusively by the CI service. Reviewers use only the `Code-Review` label and submit action.
+is owned exclusively by the CI service. Reviewers use only the `Code-Review` label and submit action. Gerrit
+allows submission to `master` only after the current patch set has both `Code-Review +2` and the automatic
+`Verified +1`; the post-submit service then mirrors that exact Gerrit commit to GitHub `master`.
 
 Raspberry Pi hardware tests, physical movement, live provider calls, and other opt-in tests are not executed by
 the automatic runner. They require the correct hardware, a secured robot, and explicit approval.

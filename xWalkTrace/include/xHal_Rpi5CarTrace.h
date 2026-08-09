@@ -74,6 +74,9 @@ class XWalkTrace final
         /** @brief Individual UID enable flags loaded once from XML. */
         orderedmap<string, boolean> traceEnabledValues;
 
+        /** @brief Scanner-generated source locations indexed by complete UID. */
+        orderedmap<string, XWalkTraceSourceLocation> traceSourceLocations;
+
         /** @brief XML path used for boot-time persistent trace control. */
         filesystempath configurationPathValue;
 
