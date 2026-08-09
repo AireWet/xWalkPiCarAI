@@ -14,6 +14,7 @@ import tempfile
 import time
 from typing import Any, TextIO
 
+from xWalkGerritLogServer import XWalkGerritLogServer
 from xWalkGerritQuality import XWalkGerritQuality
 
 
@@ -57,6 +58,12 @@ class XWalkGerritCi:
         )
         self.state_directory.mkdir(parents=True, exist_ok=True)
         self.log_directory.mkdir(parents=True, exist_ok=True)
+        self.log_server = XWalkGerritLogServer(
+            self.log_directory,
+            os.environ.get("XWALK_CI_LOG_HTTP_HOST", "0.0.0.0"),
+            int(os.environ.get("XWALK_CI_LOG_HTTP_PORT", "8091")),
+            os.environ.get("XWALK_CI_LOG_WEB_URL", "http://aireWet:8091"),
+        )
 
     def ssh_arguments(self) -> list[str]:
         """Return noninteractive SSH arguments shared by Git and Gerrit commands."""
@@ -221,8 +228,24 @@ class XWalkGerritCi:
         ref = str(patch_data["ref"])
         timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
         log_path = self.log_directory / f"change-{change}-{patch_set}-{timestamp}.log"
+        log_path.touch(exist_ok=False)
+        results_url = self.log_server.dashboard_url(change, patch_set)
+        job_links = self.log_server.job_links(change, patch_set)
+        job_link_lines = [f"{name}: {url}" for name, url in job_links]
         print(f"Verifying change {change}, patch set {patch_set}: {revision}", flush=True)
-        self.report(change, patch_set, 0, "xWalk host verification started")
+        self.report(
+            change,
+            patch_set,
+            0,
+            "\n".join(
+                [
+                    "xWalk host verification started",
+                    f"Overall results and full log: {results_url}",
+                    "Separate job logs:",
+                    *job_link_lines,
+                ]
+            ),
+        )
 
         temporary_directory = Path(
             tempfile.mkdtemp(prefix=f"xwalk-gerrit-{change}-{patch_set}-")
@@ -264,7 +287,8 @@ class XWalkGerritCi:
         shutil.rmtree(temporary_directory, ignore_errors=True)
 
         job_summary = [
-            f"{name}: {'PASSED' if job_passed else 'FAILED'}"
+            f"{name}: {'PASSED' if job_passed else 'FAILED'} - "
+            f"{self.log_server.job_url(change, patch_set, name)}"
             for name, job_passed in quality_results.items()
         ]
         if passed:
@@ -273,6 +297,7 @@ class XWalkGerritCi:
                     "Complete xWalk host quality gate passed",
                     f"Jobs: {len(quality_results)}/{len(quality_results)}",
                     *job_summary,
+                    f"Overall results and full log: {results_url}",
                     f"Log: {log_path.name}",
                 ]
             )
@@ -287,6 +312,7 @@ class XWalkGerritCi:
                     "Complete xWalk host quality gate failed",
                     f"Failed jobs: {failure_summary}",
                     *job_summary,
+                    f"Overall results and full log: {results_url}",
                     f"Log: {log_path.name}",
                 ]
             )
@@ -470,6 +496,11 @@ class XWalkGerritCi:
             raise SystemExit(f"Missing Gerrit SSH key: {self.private_key}")
         if not self.github_private_key.is_file():
             raise SystemExit(f"Missing GitHub mirror SSH key: {self.github_private_key}")
+        self.log_server.start()
+        print(
+            f"xWalk CI log dashboard listening at {self.log_server.public_url}",
+            flush=True,
+        )
         while True:
             self.consume_stream()
             print("Gerrit event stream closed; reconnecting in five seconds", flush=True)

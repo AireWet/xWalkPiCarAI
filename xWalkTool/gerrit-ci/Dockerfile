@@ -31,9 +31,12 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY xWalkGerritCi.py /usr/local/bin/xWalkGerritCi.py
+COPY xWalkGerritLogServer.py /usr/local/bin/xWalkGerritLogServer.py
 COPY xWalkGerritQuality.py /usr/local/bin/xWalkGerritQuality.py
 
-RUN chmod 0555 /usr/local/bin/xWalkGerritCi.py /usr/local/bin/xWalkGerritQuality.py \
+RUN chmod 0555 /usr/local/bin/xWalkGerritCi.py \
+        /usr/local/bin/xWalkGerritLogServer.py \
+        /usr/local/bin/xWalkGerritQuality.py \
     && mkdir --parents /var/lib/xwalk-gerrit-ci /var/log/xwalk-gerrit-ci \
     && chown --recursive ubuntu:ubuntu \
         /var/lib/xwalk-gerrit-ci /var/log/xwalk-gerrit-ci

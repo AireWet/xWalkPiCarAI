@@ -18,6 +18,8 @@ xWalkTool/
 │   ├── README.md
 │   ├── xWalkGerritCi.py
 │   ├── xWalkGerritCiTest.py
+│   ├── xWalkGerritLogServer.py
+│   ├── xWalkGerritLogServerTest.py
 │   └── xWalkGerritQuality.py
 ├── xWalkJiraImport/
 │   ├── pyproject.toml
@@ -55,7 +57,7 @@ xWalkTool/
     └── xWalkEnv.sh
 ```
 
-The directory contains six Bash scripts, one package manifest, seven Python
+The directory contains six Bash scripts, one package manifest, nine Python
 tools, their host tests, three quality-tool configurations, Gerrit CI assets, deployment assets,
 two compiled Device Tree blobs, the empty model-selection configuration, and this
 README. The applicable project and third-party license terms are in the

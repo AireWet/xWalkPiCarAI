@@ -66,6 +66,9 @@ GITHUB_PRIMARY_MERGER_EMAIL=joxjoh24@student.hh.se
 GITHUB_REVIEW_BRANCH=gerrit-submitted
 XWALK_CI_STATE_DIRECTORY=/var/lib/xwalk-gerrit-ci
 XWALK_CI_LOG_DIRECTORY=/var/log/xwalk-gerrit-ci
+XWALK_CI_LOG_HTTP_HOST=0.0.0.0
+XWALK_CI_LOG_HTTP_PORT=8091
+XWALK_CI_LOG_WEB_URL=http://aireWet:8091
 ```
 
 Restrict the file even though it contains no secret values:
@@ -90,17 +93,28 @@ The non-root runner uses `seccomp=unconfined` only so `setarch` can disable
 address randomization for ThreadSanitizer on the host kernel. TSan otherwise
 terminates before executing a test with an unexpected-memory-mapping error.
 
+The runner also serves a read-only CI dashboard on port `8091`. Every patch-set
+page shows the live aggregate job state and complete escaped log. Each aggregate
+job has a separate stable link that shows only that job's full output and links
+back to the overall run. Running pages refresh every ten seconds. The overall
+page also links to the raw text. Only validated log filenames below the retained
+log directory can be read; the server provides no write route or directory
+listing. `XWALK_CI_LOG_WEB_URL` must use the hostname that Gerrit reviewers can
+reach.
+
 Inspect service and verification output with:
 
 ```bash
 docker logs --follow xwalk-gerrit-ci
 docker exec xwalk-gerrit-ci find /var/log/xwalk-gerrit-ci -type f -maxdepth 1 -print
+curl http://127.0.0.1:8091/health
 ```
 
 Uploading a new patch set automatically starts verification. An informational
-Gerrit message is posted at start, followed by the aggregate job summary and
-final `Verified` vote. Logs remain in the `xwalk-gerrit-ci-logs` Docker volume
-across container restarts.
+Gerrit message is posted at start with the overall dashboard and all separate
+job-log links. The completion message reports every aggregate status beside the
+same job link, the overall full-log link, and the final `Verified` vote. Logs
+remain in the `xwalk-gerrit-ci-logs` Docker volume across container restarts.
 Submitted changes also receive an informational message stating whether they
 were mirrored to `master` or published for Joxy's pull-request review. The
 Gerrit change log records the owner email, branch, retained mirror log, and a

@@ -176,6 +176,12 @@ GoogleTest, sequence tests, module tests, and nested module tests:
 - `Verified -1` means checkout, configuration, compilation, analysis, installation, or at least one host test
   failed.
 
+The CI start and completion messages contain an **Overall results and full log** link plus a separate stable
+link for every aggregate job. A job link shows that action's complete output and status, similar to selecting a
+job in GitHub Actions, and links back to the overall run. The overall dashboard shows every aggregate job state
+and the complete build and test output while the gate is running or after it finishes. The retained raw log is
+also available from that page.
+
 Human reviewer accounts do not have permission to set the `Verified` label on normal branches. Verification
 is owned exclusively by the CI service. Reviewers use only the `Code-Review` label and submit action. Gerrit
 allows submission to `master` only after the current patch set has both `Code-Review +2` and the automatic
