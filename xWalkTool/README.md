@@ -13,6 +13,10 @@ confirmed.
 xWalkTool/
 ├── README.md
 ├── apt-packages.txt
+├── gerrit-ci/
+│   ├── Dockerfile
+│   ├── README.md
+│   └── xWalkGerritCi.py
 ├── xWalkJiraImport/
 │   ├── pyproject.toml
 │   ├── README.md
@@ -49,8 +53,8 @@ xWalkTool/
     └── xWalkEnv.sh
 ```
 
-The directory contains six Bash scripts, one package manifest, four Python
-tools, their host tests, three quality-tool configurations, deployment assets,
+The directory contains six Bash scripts, one package manifest, five Python
+tools, their host tests, three quality-tool configurations, Gerrit CI assets, deployment assets,
 two compiled Device Tree blobs, the empty model-selection configuration, and this
 README. The applicable project and third-party license terms are in the
 workspace-root `LICENSE`; there is no separate `xWalkTool/LICENSE` file.
@@ -59,6 +63,7 @@ workspace-root `LICENSE`; there is no separate `xWalkTool/LICENSE` file.
 
 - [xWalkTool overview](../DevloperNote/Doc/note/xWalkTool%20Overview.md)
 - [Jira history importer](xWalkJiraImport/README.md)
+- [Gerrit host-verification runner](gerrit-ci/README.md)
 - [Clean build script](../DevloperNote/Doc/note/Clean%20Build%20Script%20Guide.md)
 - [Eclipse build script](../DevloperNote/Doc/note/Eclipse%20Build%20Script%20Guide.md)
 - [Host coverage script](../DevloperNote/Doc/note/Host%20Coverage%20Script%20Guide.md)
@@ -79,6 +84,7 @@ workspace-root `LICENSE`; there is no separate `xWalkTool/LICENSE` file.
 |---|---|---|
 | `apt-packages.txt` | Lists and maps host, Raspberry Pi, quality, packaging, and optional packages | Read-only |
 | `xWalkJiraImport` | Installs the historical Git-to-Jira importer | Dry-run by default |
+| `gerrit-ci` | Builds a persistent patch-set verifier that votes on Gerrit | Isolated host-only container |
 | `python/xHal_Rpi5CarDependencyInstaller` | Installs dependencies and configures verified v5 boot | Privileged |
 | `python/xWalkLicenseTool` | Authenticates model settings without storing API credentials | Host-safe |
 | `shell/clean-build.sh` | Finds and optionally deletes generated output | Dry-run is non-destructive |
