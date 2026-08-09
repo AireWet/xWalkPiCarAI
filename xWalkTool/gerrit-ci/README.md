@@ -35,6 +35,7 @@ GERRIT_BRANCH=master
 GERRIT_SSH_KEY=/run/secrets/gerrit_ssh_key
 GITHUB_HOST=github.com
 GITHUB_REPOSITORY=jochuuu/xWalkPiCarAI
+GITHUB_WEB_URL=https://github.com/jochuuu/xWalkPiCarAI
 GITHUB_SSH_KEY=/run/secrets/github_mirror_ssh_key
 XWALK_CI_STATE_DIRECTORY=/var/lib/xwalk-gerrit-ci
 XWALK_CI_LOG_DIRECTORY=/var/log/xwalk-gerrit-ci
@@ -69,4 +70,5 @@ Uploading a new patch set automatically starts verification. An informational
 Gerrit message is posted at start, followed by the final `Verified` vote. Logs
 remain in the `xwalk-gerrit-ci-logs` Docker volume across container restarts.
 Submitted changes also receive an informational message stating whether the
-fast-forward GitHub mirror succeeded and naming its retained mirror log.
+fast-forward GitHub mirror succeeded. The Gerrit change log records the branch,
+retained mirror log, and a clickable link to the exact GitHub commit.

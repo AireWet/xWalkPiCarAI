@@ -33,6 +33,9 @@ class XWalkGerritCi:
         self.github_repository = os.environ.get(
             "GITHUB_REPOSITORY", "jochuuu/xWalkPiCarAI"
         )
+        self.github_web_url = os.environ.get(
+            "GITHUB_WEB_URL", "https://github.com/jochuuu/xWalkPiCarAI"
+        ).rstrip("/")
         self.github_private_key = Path(
             os.environ.get(
                 "GITHUB_SSH_KEY", "/run/secrets/github_mirror_ssh_key"
@@ -302,10 +305,24 @@ class XWalkGerritCi:
             )
         shutil.rmtree(temporary_directory, ignore_errors=True)
 
+        commit_url = f"{self.github_web_url}/commit/{revision}"
         if mirrored:
-            message = f"Gerrit {self.branch} mirrored to GitHub. Log: {log_path.name}"
+            message = "\n".join(
+                [
+                    "Gerrit change mirrored to GitHub",
+                    f"Branch: {self.branch}",
+                    f"Commit: {commit_url}",
+                    f"Log: {log_path.name}",
+                ]
+            )
         else:
-            message = f"GitHub mirror failed. Log: {log_path.name}"
+            message = "\n".join(
+                [
+                    "GitHub mirror failed",
+                    f"Target: {commit_url}",
+                    f"Log: {log_path.name}",
+                ]
+            )
         reported = self.post_message(change, patch_set, message)
         print(f"{message}; Gerrit report accepted={reported}", flush=True)
 
