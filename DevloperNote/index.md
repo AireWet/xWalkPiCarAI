@@ -18,6 +18,8 @@ options, backend ownership, safety constraints, and verification commands remain
 - [CMake dependency guide](Doc/note/Dependency%20Installer%20Guide.md): external libraries, imported targets,
   build-mode requirements, package names, and discovery troubleshooting.
 - [xWalkTool overview](Doc/note/xWalkTool%20Overview.md): tool inventory, safety classes, and detailed links.
+- [Gerrit account setup guide](Doc/note/Gerrit%20Account%20Setup%20Guide.md): account provisioning, dedicated
+  SSH keys, repository setup, review upload, voting, and remote-network access.
 - [Device Tree overlay guide](Doc/note/Device%20Tree%20Overlay%20Assets%20Guide.md): asset roles and inspection.
 - [Release acceptance checklist](Doc/note/Release%20Acceptance%20Checklist.md): independent host, ARM package,
   plug-and-run, and physical-safety evidence gates.
