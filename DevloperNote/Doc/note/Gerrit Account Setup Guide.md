@@ -146,6 +146,10 @@ git push gerrit HEAD:refs/for/master
 Do not push the review commit directly to GitHub before Gerrit review and verification are complete. Uploading
 a new commit with the same `Change-Id` creates another patch set in the existing review.
 
+After an approved and verified change is submitted, the Gerrit CI service automatically fast-forwards GitHub
+`master` to the submitted Gerrit branch. Developers must not manually repeat that push. The mirror refuses
+non-fast-forward updates so it cannot overwrite an independently changed GitHub history.
+
 ## Review and verification labels
 
 The project uses these Code-Review meanings:
@@ -165,6 +169,9 @@ each new patch set on `master`:
 
 - `Verified +1` means all configured host tests passed.
 - `Verified -1` means configuration, compilation, or at least one host test failed.
+
+Human reviewer accounts do not have permission to set the `Verified` label on normal branches. Verification
+is owned exclusively by the CI service. Reviewers use only the `Code-Review` label and submit action.
 
 Raspberry Pi hardware tests, physical movement, live provider calls, and other opt-in tests are not executed by
 the automatic runner. They require the correct hardware, a secured robot, and explicit approval.
