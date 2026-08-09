@@ -70,6 +70,7 @@ does not replace a successful CMake configure and build.
 | Threads | `find_package(Threads REQUIRED)` | `Threads::Threads` | Linux GPIO backend or GPIO hardware tests |
 | libsndfile | `find_path()` and `find_library()` | `xWalkSndFileDependency` | Native Music decoder is enabled |
 | GoogleTest | `find_package(GTest CONFIG REQUIRED)` | `GTest::gtest` | Central HAL tests are enabled |
+| json-c | `pkg_check_modules(JSON_C REQUIRED)` | `PkgConfig::JSON_C` | Runtime trace JSON configuration |
 | TinyXML2 | `find_package(tinyxml2 CONFIG REQUIRED)` | `tinyxml2::tinyxml2` | Central HAL tests are enabled |
 | yaml-cpp | `find_package(yaml-cpp CONFIG REQUIRED)` | `yaml-cpp::yaml-cpp` | YAML runners |
 | Linux UAPI headers | `check_include_file_cxx()` | Configure-test results | Raspberry Pi aggregate build |
@@ -142,7 +143,7 @@ enables both; the normal root host build does not enable the libsndfile decoder.
 Install the dependencies for the complete root host build and test suite:
 
 ```sh
-sudo apt-get install build-essential cmake ninja-build pkg-config python3 libasound2-dev libcurl4-openssl-dev libprotobuf-dev libgrpc++-dev libgtest-dev libtinyxml2-dev libyaml-cpp-dev
+sudo apt-get install build-essential cmake ninja-build pkg-config python3 libasound2-dev libcurl4-openssl-dev libprotobuf-dev libgrpc++-dev libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev
 ```
 
 For the full Raspberry Pi-compatible CMake build, also install the Linux headers and libsndfile development
@@ -164,8 +165,8 @@ requirements. See
 [`xWalkTool/apt-packages.txt`](../../../xWalkTool/apt-packages.txt) for the complete build and runtime package
 map.
 
-The package commands above are the system fallback. GoogleTest, TinyXML2, yaml-cpp, Protobuf, gRPC, and
-libsndfile can instead be supplied as relocatable CMake packages under the selected native `xWalkLibrary`
+The package commands above are the system fallback. GoogleTest, json-c, TinyXML2, yaml-cpp, Protobuf, gRPC,
+and libsndfile can instead be supplied under the selected native `xWalkLibrary`
 prefix. Vosk is already present there. APT packages are not extracted into `xWalkLibrary`, because their
 transitive dependencies, absolute paths, post-install scripts, and metadata can require the system prefix.
 
@@ -173,7 +174,7 @@ transitive dependencies, absolute paths, post-install scripts, and metadata can 
 
 | Preset | Additional dependency behavior |
 | --- | --- |
-| `host-debug` | Full host tests: Protobuf, gRPC, Python, ALSA, curl, GoogleTest, TinyXML2, and yaml-cpp |
+| `host-debug` | Full host tests: Protobuf, gRPC, Python, ALSA, curl, GoogleTest, json-c, TinyXML2, and yaml-cpp |
 | `host-release` | Uses the same dependency surface as `host-debug` |
 | `sanity` | Uses host dependencies and enables strict compiler warnings |
 | `clang-tidy` | Adds the external `clang-tidy` executable and compilation database |

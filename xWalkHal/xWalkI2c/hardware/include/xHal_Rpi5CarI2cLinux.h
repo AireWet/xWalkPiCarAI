@@ -4,7 +4,8 @@
  *
  * @details
  * Owns a Linux I2C device descriptor, serializes bus transactions, and exposes
- * callback-compatible probe, register-write, and sequential-read operations to `XWalkI2c`.
+ * callback-compatible probe, register-write, and sequential-read operations
+ * to `XWalkI2c` with xWalk tracing at transaction and failure boundaries.
  *
  * @project     xWalk Firmware
  * @module      xWalkI2c Linux Backend
@@ -29,6 +30,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarI2c.h"
+#include "xHal_Rpi5CarI2cDevice.h"
 
 /******************************************************************************
  * Namespace declarations
@@ -53,6 +55,7 @@ namespace xwalk::hal
  * Opens and owns one Linux I2C device descriptor and retries probe, write, and read
  * operations according to the configured attempt count. The application entry
  * point creates the separate `XWalkI2c` object and binds it to this backend.
+ * Retry exhaustion and invalid backend state produce xWalk diagnostics.
  */
 class XWalkI2cLinux
 {
@@ -60,6 +63,9 @@ class XWalkI2cLinux
         /**************************************************************************
          * Private data members
          **************************************************************************/
+
+        /** @brief Non-owning Linux device-operation implementation. */
+        XWalkI2cDevice& deviceInterfaceValue;
 
         /** @brief Mutex serializing address selection and I2C transactions. */
         mutexhandle mutex;
@@ -106,7 +112,7 @@ class XWalkI2cLinux
          * @throws std::runtime_error
          * If the device cannot be opened.
          */
-        static int32 openDevice(cstring devicePath);
+        int32 openDevice(cstring devicePath);
 
         /**
          * @brief Validates the configured I2C operation attempt count.
@@ -179,6 +185,16 @@ class XWalkI2cLinux
          * If the Linux device node cannot be opened.
          */
         explicit XWalkI2cLinux(cstring devicePath = XHAL_RPI5CAR_I2C_DEFAULT_DEVICE,
+            uint32 retryCount = XHAL_RPI5CAR_I2C_RETRY_COUNT);
+
+        /**
+         * @brief Constructs the backend with an injected device-operation interface.
+         * @param[in,out] deviceInterface Device boundary that must outlive this backend.
+         * @param[in] devicePath Non-null logical device path passed to the interface.
+         * @param[in] retryCount Number of permitted transaction attempts.
+         */
+        XWalkI2cLinux(XWalkI2cDevice& deviceInterface,
+            cstring devicePath = XHAL_RPI5CAR_I2C_DEFAULT_DEVICE,
             uint32 retryCount = XHAL_RPI5CAR_I2C_RETRY_COUNT);
 
         /** @brief Closes the owned Linux I2C device descriptor. */
@@ -309,6 +325,10 @@ class XWalkI2cLinux
          *
          * @post
          * Invalid input and exhausted backend retries are reported as `false`.
+         *
+         * @note
+         * This fail-safe path does not invoke trace operations so it remains
+         * non-throwing even when trace output is unavailable.
          */
         boolean tryWriteRegisterDevice(uint8 address, uint8 reg,
             const bytevector& payload) noexcept;

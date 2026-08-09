@@ -3,8 +3,8 @@
  * @brief       Implements centralized GoogleTest registration and selection.
  *
  * @details
- * Adapts the existing assertion-based HAL host entry points into isolated
- * GoogleTest cases and resolves XML, standard-filter, and custom selections.
+ * Adapts assertion-based HAL entry points, inventories module-native Google
+ * Tests, and resolves XML, standard-filter, and custom selections.
  *
  * @project     xWalk Firmware
  * @module      xGoogleTest
@@ -40,7 +40,6 @@
  * Legacy test entry-point declarations
  ******************************************************************************/
 
-int xWalkI2cLegacyMain();
 int xWalkSpiLegacyMain();
 int xWalkGpioLegacyMain();
 int xWalkAudioAlsaLegacyMain();
@@ -127,6 +126,8 @@ struct LegacyTestDefinition
     xwalk::hal::string executablePath;
     /** @brief Whether ThreadSanitizer must skip this failure-isolation scenario. */
     xwalk::hal::boolean skipWithThreadSanitizer{};
+    /** @brief Whether the case is registered natively by its module source. */
+    xwalk::hal::boolean nativeGoogleTest{};
 };
 
 /** @brief Stable sequence of registered legacy test definitions. */
@@ -155,6 +156,18 @@ LegacyTestDefinition noArgumentTest(xwalk::hal::cstring suiteName, xwalk::hal::c
     legacytestnoargs function)
 {
     return {suiteName, caseName, function, nullptr, {}, {}, false};
+}
+
+/**
+ * @brief Creates inventory metadata for one module-native Google Test.
+ * @param[in] suiteName Exact Google Test suite name.
+ * @param[in] caseName Exact Google Test case name.
+ * @return Definition excluded from dynamic legacy registration.
+ */
+LegacyTestDefinition nativeTest(xwalk::hal::cstring suiteName,
+    xwalk::hal::cstring caseName)
+{
+    return {suiteName, caseName, nullptr, nullptr, {}, {}, false, true};
 }
 
 /**
@@ -224,7 +237,13 @@ legacytestdefinitionvector buildHostDefinitions(
     const xwalk::hal::string binaryDirectory(binaryDirectoryPath.string());
     const xwalk::hal::string processIdentifier = std::to_string(::getpid());
     return {
-        noArgumentTest("TEST_SUITE_XWALK_I2C", "Initialization", &xWalkI2cLegacyMain),
+        nativeTest("TEST_SUITE_XWALK_I2C", "Probe"),
+        nativeTest("TEST_SUITE_XWALK_I2C", "ProbeValidation"),
+        nativeTest("TEST_SUITE_XWALK_I2C", "WriteRegister"),
+        nativeTest("TEST_SUITE_XWALK_I2C", "TryWriteRegister"),
+        nativeTest("TEST_SUITE_XWALK_I2C", "Read"),
+        nativeTest("TEST_SUITE_XWALK_I2C", "ReadRegister"),
+        nativeTest("TEST_SUITE_XWALK_I2C", "ReadRegisterCallbackValidation"),
         noArgumentTest("TEST_SUITE_XWALK_SPI", "Host", &xWalkSpiLegacyMain),
         noArgumentTest("TEST_SUITE_XWALK_GPIO", "Host", &xWalkGpioLegacyMain),
         noArgumentTest("TEST_SUITE_XWALK_AUDIO", "AlsaSoftware", &xWalkAudioAlsaLegacyMain),
@@ -744,6 +763,10 @@ void TestRunner::registerTests() const
          buildDefinitions(profileValue, binaryDirectoryValue,
              runtimeConfigurationPathValue))
     {
+        if (definition.nativeGoogleTest)
+        {
+            continue;
+        }
         // GoogleTest owns the registered factory; Clang Analyzer does not model that transfer.
         // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
         static_cast<void>(::testing::RegisterTest(

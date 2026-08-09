@@ -1,248 +1,138 @@
 # xWalkTrace
 
-`xWalkTrace` is the C++17 trace service shared by HAL and Controller code. It
-provides build-validated identifiers, runtime XML filtering, automatic source
-locations, UTC timestamps, monotonic elapsed time, and synchronized append-only
-output to `log/xWalkTrace.log`.
+`xWalkTrace` is the C++17 trace service shared by HAL, Controller, nested
+modules, and libraries. Tagged traces are build-validated, filtered before
+format arguments are evaluated, and written synchronously to the terminal and
+`log/xWalkTrace.log` with UTC time, monotonic elapsed time, UID, and source
+location. Both destinations receive the same completely formatted record.
 
-## Tagged trace API
+## Trace declarations
 
-HAL traces use `RPI.<number>` and Controller traces use `CTRL.<number>`:
+HAL traces use `RPI.<numeric-id>` and Controller traces use
+`CTRL.<numeric-id>`:
 
 ```cpp
-XWALK_HAL_TRACE_UID0(
-    RPI.1001,
-    "Critical HAL trace");
-
-XWALK_HAL_TRACE_UID1(
-    RPI.1002,
-    "HAL value: %u",
-    value);
-
-XWALK_HAL_TRACE_UID2(
-    RPI.1003,
-    "HAL state: %s",
-    state);
-
-XWALK_HAL_TRACE_UID3(
-    RPI.1004,
-    "HAL diagnostic");
-
-XWALK_CTRL_TRACE_UID0(
-    CTRL.2001,
-    "Critical CTRL trace");
-
-XWALK_CTRL_TRACE_UID1(
-    CTRL.2002,
-    "CTRL value: %u",
-    value);
-
-XWALK_CTRL_TRACE_UID2(
-    CTRL.2003,
-    "CTRL state: %s",
-    state);
-
-XWALK_CTRL_TRACE_UID3(
-    CTRL.2004,
-    "CTRL diagnostic");
+XWALK_HAL_TRACE_UID2(RPI.001, "I2C probe: %u", address);
+XWALK_CTRL_TRACE_UID1(CTRL.001, "Controller command execution started");
 ```
 
-The identifier grammar is `^(RPI|CTRL)\.[0-9]+$`. Leading zeros are preserved
-and are significant, so `RPI.001`, `RPI.01`, and `RPI.1` are three different
-valid UIDs. This convention supports the boot option's fixed-width UID form.
+The complete ID must be unique across the repository. `RPI.001` and
+`CTRL.001` are distinct and valid; declaring `RPI.001` twice stops the build.
+Leading zeros remain significant. Priority suffixes `0` through `3` describe
+record priority but do not bypass runtime state.
 
-The complete UID must be unique across every scanned source file, macro, and
-priority. `RPI.1001` and `CTRL.1001` are different complete UIDs and may both
-exist. HAL macros reject `CTRL` tags and Controller macros reject `RPI` tags.
-
-The macro suffix is the priority. Priority `0` is highest and priority `3` is
-lowest. The runtime uses four independent priority flags rather than a
-threshold. A tagged record is emitted only when its priority flag and its UID
-flag are both enabled. Freshly generated XML disables every priority and UID
-by default. Missing UIDs are disabled. Because the macro performs
-the enable check before calling the formatter, arguments of disabled traces are
-not evaluated.
-
-## Warnings, errors, and assertions
-
-Warnings and errors have no UID and bypass priority and UID filtering:
+Warnings, errors, and numeric assertions remain intentionally unconditional:
 
 ```cpp
 XWALK_HAL_WARNINGS("HAL warning: %d", warningCode);
 XWALK_HAL_ERROR("HAL error: %d", errorCode);
 XWALK_HAL_ASSERT(100);
-
-XWALK_CTRL_WARNINGS("CTRL warning: %d", warningCode);
-XWALK_CTRL_ERROR("CTRL error: %d", errorCode);
-XWALK_CTRL_ASSERT(200);
+XWALK_CTRL_ERROR("Controller error: %d", errorCode);
 ```
 
-An assertion signal must have an integral C++ type. The macro rejects string
-and nonnumeric values with a compile-time assertion where the compiler can
-form the expression. Assertion signals are diagnostic numbers: the current
-module records `signal=<number>` and does not raise an operating-system signal
-or terminate the process. There was no earlier xWalkTrace assertion callback or
-termination behavior to preserve.
+The legacy `XWALK_VERBOSE` name remains as a disabled no-op for source
+compatibility. Production normal diagnostics must use a registered UID macro.
 
-## Always-on verbose trace
+## Runtime configuration
 
-`XWALK_VERBOSE` writes unconditionally and has no UID or priority filter:
-
-```cpp
-XWALK_VERBOSE("Camera frame: %u", frameNumber);
-XWALK_VERBOSE("Controller boot completed");
-```
-
-It produces a `[TRACE] [VERBOSE]` record even when every XML priority and UID
-is disabled or the XML configuration is missing. Like the other public macros,
-it captures the caller's filename and line and includes UTC wall time and
-monotonic elapsed time. Because it is never filtered, its formatting arguments
-are always evaluated.
-
-## Source location and log format
-
-Every public macro captures `__FILE__` and `__LINE__`. Multiline calls therefore
-record the line containing the public macro name. Production log output keeps
-only the source basename so it cannot expose an absolute build-machine path.
-Generated XML keeps a project-relative source path. For tagged traces, the
-generated filename and invocation line are canonical at runtime. This keeps
-multiline macro locations identical across GCC and Clang; compiler-provided
-macro locations remain the fallback for older XML without metadata.
-
-One tagged record has this form:
-
-```text
-2026-08-09 12:45:10.120Z [T+12.345678s] [HAL] [P0] [RPI.1001] [camera.cpp:42] Camera ready
-```
-
-Warning, error, and assertion categories replace the priority and omit the UID:
-
-```text
-2026-08-09 12:45:11.100Z [T+13.325487s] [HAL] [WARNING] [camera.cpp:87] Camera delayed
-2026-08-09 12:45:11.200Z [T+13.425612s] [CTRL] [ERROR] [controller.cpp:102] State failed
-2026-08-09 12:45:11.300Z [T+13.525719s] [HAL] [ASSERT] [camera.cpp:120] signal=100
-```
-
-The wall-clock field uses UTC and millisecond precision; `Z` makes the timezone
-explicit. `[T+<seconds>.<microseconds>s]` uses `std::chrono::steady_clock` and
-measures elapsed time since trace initialization or the latest explicit global
-reconfiguration. It does not measure the duration of the calling operation.
-
-Timestamp capture and each append/flush operation occur under synchronization.
-All macro threads use the same process-wide start point and cannot interleave
-log records. The compatibility callback runs after the file lock is released.
-
-## Build-time scanner and XML
-
-The class-based
-`pre-compiler/xHal_Rpi5CarTracePreCompiler.py` runs before `xWalkTrace`
-compiles. It scans the
-explicit `xWalkTrace`, `xWalkHal`, `xWalkController`, and `xWalkAgent` roots and
-ignores build trees, generated code, external code, comments, string literals,
-and macro definitions. Its balanced parser supports multiline calls, nested
-parentheses, and multiple formatting arguments.
-
-The build fails for malformed identifiers, incorrect component/tag mappings,
-unsupported priorities, duplicate complete UIDs, scanner errors, or XML
-generation errors. The deterministic output is:
-
-```text
-<build-directory>/generated/xWalkTrace.xml
-```
-
-Each XML trace contains component, tag, numeric ID, complete UID, priority,
-enabled state, format, macro, relative filename, and invocation line. Runtime
-timestamps are not stored in XML.
-
-New UIDs default to `enabled="false"`. On regeneration, known UID flags and all
-four priority flags are preserved, removed UIDs disappear, and moved traces
-receive updated source metadata. Identical XML content is not rewritten.
-
-Example configuration fragment:
-
-```xml
-<priorities>
-    <priority level="0" enabled="false"/>
-    <priority level="1" enabled="false"/>
-    <priority level="2" enabled="false"/>
-    <priority level="3" enabled="false"/>
-</priorities>
-<traces>
-    <trace
-        component="HAL"
-        tag="RPI"
-        id="1001"
-        uid="RPI.1001"
-        priority="0"
-        enabled="true"
-        file="xWalkHal/xWalkCamera/src/camera.cpp"
-        line="42"
-        format="Camera ready"
-        macro="XWALK_HAL_TRACE_UID0"/>
-</traces>
-```
-
-The Controller optionally applies repeatable `--trace-enable UID` and
-`--trace-disable UID` global options during startup, before the backend boot
-graph is constructed. Both separated and assignment forms are supported:
+All normal traces start disabled. The shared thread-safe registry resolves an
+effective state in this order: individual tag, module, then global. Settings
+are applied from left to right; a later global setting clears earlier module
+and tag overrides, and a later module setting clears earlier tag overrides in
+that module. This makes the last applicable setting win.
 
 ```bash
-xwalk-picarx-control --trace-enable RPI.001
-xwalk-picarx-control --trace-disable=CTRL.2001 doctor
+xwalk-picarx-control --trace RPI.001.enable
+xwalk-picarx-control --trace RPI.001.disable
+xwalk-picarx-control --trace CTRL.001.enable
+xwalk-picarx-control --trace CTRL.001.disable
+xwalk-picarx-control --trace RPI.enable
+xwalk-picarx-control --trace RPI.disable
+xwalk-picarx-control --trace CTRL.enable
+xwalk-picarx-control --trace CTRL.disable
+xwalk-picarx-control --trace all.enable
+xwalk-picarx-control --trace all.disable
+xwalk-picarx-control --trace xWalkController/xWalkConfig/xwalk-traces.json
 ```
 
-A normal command requires no trace argument. A trace-only invocation updates
-XML and exits successfully when that UID is
-present in the build-generated metadata. The public C++
-entry points are `XWalkTrace::enableGlobalTrace(uid)` and
-`XWalkTrace::disableGlobalTrace(uid)`. They return a Boolean status, require a
-well-formed UID already present in generated XML, save the new flag, and update
-the initialized lookup without reparsing XML on each trace call. Unknown UIDs
-return `false` instead of creating metadata that was not found by the
-pre-compiler. This startup path does not use C++ `try` or `catch` blocks.
+JSON uses one top-level `trace` object. It applies `all`, then module states,
+then tag states. State values must be the strings `enable` or `disable`;
+Boolean values are rejected. Unknown modules and complete IDs, malformed or
+missing files, and invalid selectors produce startup status 2 before hardware
+composition. Example files are in `xWalkController/xWalkConfig`.
 
-Manual XML changes are loaded once when the process-wide trace instance
-initializes; they are not parsed for every call. Restart the application for
-manual edits to take effect. Tests and application composition code may
-deliberately reload a configuration and select a log path with
-`XWalkTrace::configureGlobal()`.
+## Build validation and XML catalogue
 
-All implementation filenames follow the repository's `xHal_Rpi5Car...`
-module convention. `CMakeLists.txt` and `README.md` retain their standard build
-and documentation names.
+`pre-compiler/xHal_Rpi5CarTracePreCompiler.py` tokenizes the structured
+`XWALK_HAL_TRACE_UIDn` and `XWALK_CTRL_TRACE_UIDn` declarations recursively
+across the repository, including generated project sources and participating
+nested repositories. Build trees and third-party/external trees are excluded.
+This macro inventory is the sole source for validation, XML generation, runtime
+registration, and trace discovery.
 
-Missing or malformed XML produces a clear trace-system warning or error and
-keeps all tagged priorities and UIDs disabled. Warnings, errors, and assertions
-remain available under those safe defaults.
+The normal CMake build depends on the scanner. It reports every duplicate ID
+and every declaration path and line in one run, then returns non-zero before
+the dependent compilation or link completes. For example:
 
-## Compatibility object API
+```text
+Trace validation error: non-unique trace IDs are used.
 
-The existing `XWalkTrace` constructors, typed level selection, `critical()`,
-`error()`, `warning()`, `info()`, `debug()`, and synchronous callback remain
-available. These compatibility methods retain the original critical-through-
-debug threshold and now use the richer timestamped log format. New code should
-use the component macros when build metadata and XML filtering are required.
+Duplicate trace ID: RPI.001
+  Declared at: src/rpi/camera.cpp:42 (XWALK_HAL_TRACE_UID1)
+  Declared at: src/rpi/motor.cpp:87 (XWALK_HAL_TRACE_UID2)
+
+Compilation stopped because trace IDs must be unique.
+```
+
+A successful build atomically creates:
+
+```text
+<build-directory>/generated/xwalk-traces.xml
+```
+
+The UTF-8 catalogue is deterministic: modules are sorted by canonical name,
+traces are sorted numerically and then by preserved ID text, paths are
+project-relative, and no timestamps are stored. CMake depends on the scanner
+and every recursively discovered project C/C++ source, so additions, removals,
+IDs, text, module changes, and source-line changes regenerate it. Identical
+content is not rewritten.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<xwalkTraceCatalogue version="1.0">
+  <module name="RPI" defaultState="disable">
+    <trace
+      id="001"
+      fullId="RPI.001"
+      defaultState="disable"
+      name="I2C probe"
+      sourceFile="xWalkHal/xWalkI2c/core/src/xHal_Rpi5CarI2c.cpp"
+      sourceLine="73"
+      priority="2"
+      owningComponent="HAL" />
+  </module>
+</xwalkTraceCatalogue>
+```
+
+XML attributes are escaped by the generator and parsed with real XML parsers
+in the automated tests. The runtime loads the catalogue once; it does not parse
+XML or JSON for every trace call.
 
 ## Build and test
 
-The module requires Python 3 for build-time metadata generation and TinyXML2
-for one-time runtime configuration loading.
-
-From the repository root:
+The build requires Python 3, TinyXML2, and the `libjson-c-dev` development
+package, all resolved locally without network access.
 
 ```bash
-cmake -S xWalkTrace -B xWalkTrace/build-host \
-    -DXWALK_TRACE_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkTrace -B xWalkTrace/build-host -DXWALK_TRACE_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkTrace/build-host --parallel
 ctest --test-dir xWalkTrace/build-host --output-on-failure
 ```
 
-The C++ runtime test and Python scanner test are host-only. Hardware compilation
-is available without execution:
+Hardware tests are opt-in and must only be listed during ordinary development:
 
 ```bash
-cmake -S xWalkTrace -B xWalkTrace/build-rpi \
-    -DXWALK_TRACE_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkTrace -B xWalkTrace/build-rpi -DXWALK_TRACE_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkTrace/build-rpi --parallel
 ctest --test-dir xWalkTrace/build-rpi -N -L hardware
 ```

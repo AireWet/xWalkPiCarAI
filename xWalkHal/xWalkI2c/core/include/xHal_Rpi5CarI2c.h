@@ -4,7 +4,8 @@
  *
  * @details
  * Defines a concrete callback-driven I2C object used by HAL modules without
- * coupling those modules to a platform-specific device implementation.
+ * coupling those modules to a platform-specific device implementation. Public
+ * operations emit filtered trace records and unfiltered failure diagnostics.
  *
  * @project     xWalk Firmware
  * @module      xWalkI2c
@@ -52,6 +53,7 @@ namespace xwalk::hal
  * @details
  * Stores a non-owning backend context and validated probe, write, and read
  * callbacks. The backend object and callback targets must outlive this object.
+ * Operations publish xWalk trace, warning, error, and assertion diagnostics.
  */
 class XWalkI2c
 {
@@ -248,6 +250,10 @@ class XWalkI2c
          *
          * @post
          * Invalid input and a missing safe-write callback are reported as `false`.
+         *
+         * @note
+         * This fail-safe path does not invoke trace operations so it remains
+         * non-throwing even when trace output is unavailable.
          */
         boolean tryWriteRegister(uint8 address, uint8 reg, const bytevector& data) noexcept;
 };

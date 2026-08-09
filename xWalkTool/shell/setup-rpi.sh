@@ -134,7 +134,7 @@ done
 
 required_packages=(
     build-essential cmake ninja-build pkg-config python3 python3-nacl linux-libc-dev
-    libasound2-dev alsa-utils libatomic1 libcurl4-openssl-dev
+    libasound2-dev alsa-utils libatomic1 libcurl4-openssl-dev libjson-c-dev
     libsndfile1-dev libyaml-cpp-dev libopencv-dev libboost-dev i2c-tools libi2c-dev gpiod
     espeak-ng libttspico-utils curl ca-certificates
 )

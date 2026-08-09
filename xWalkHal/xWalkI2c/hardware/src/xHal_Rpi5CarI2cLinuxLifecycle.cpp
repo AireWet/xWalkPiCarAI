@@ -3,9 +3,9 @@
  * @brief       Implements Linux I2C backend validation and lifecycle behavior.
  *
  * @details
- * Validates retry configuration, opens the Linux I2C device, and closes the
- * owned descriptor during destruction. Callback composition remains outside
- * the backend.
+ * Validates retry configuration, opens the Linux I2C device with xWalk
+ * lifecycle diagnostics, and closes the owned descriptor during destruction.
+ * Callback composition remains outside the backend.
  *
  * @project     xWalk Firmware
  * @module      xWalkI2c Linux Backend
@@ -27,10 +27,11 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarI2cLinux.h"
+#include "xHal_Rpi5CarI2cDeviceLinux.h"
 
 #include "xHal_Rpi5CarCommon.h"
 #include "xHal_Rpi5CarExceptions.h"
-#include "xHal_Rpi5CarLinuxHeaders.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -42,6 +43,22 @@
  */
 namespace xwalk::hal
 {
+
+/******************************************************************************
+ * Anonymous namespace
+ ******************************************************************************/
+
+namespace
+{
+
+/** @brief Returns the process-lifetime production device interface. */
+XWalkI2cDevice& systemDeviceInterface()
+{
+    static XWalkI2cDeviceLinux deviceInterface;
+    return deviceInterface;
+}
+
+} /* namespace */
 
 /******************************************************************************
  * Protected member function definitions
@@ -63,8 +80,11 @@ uint32 XWalkI2cLinux::validateRetryCount(uint32 retryCount)
 {
     if (retryCount == 0U)
     {
+        XWALK_HAL_ERROR("Linux I2C retry count is zero");
+        XWALK_HAL_ASSERT(1241);
         XHAL_THROW_INVALID_ARGUMENT("I2C retry count must be greater than zero");
     }
+    XWALK_HAL_TRACE_UID2(RPI.025, "Linux I2C retry count validated: %u", retryCount);
     return retryCount;
 }
 
@@ -87,14 +107,20 @@ int32 XWalkI2cLinux::openDevice(cstring devicePath)
 {
     if (devicePath == nullptr)
     {
+        XWALK_HAL_ERROR("Linux I2C device path is null");
+        XWALK_HAL_ASSERT(1242);
         XHAL_THROW_INVALID_ARGUMENT("I2C device path must not be null");
     }
 
-    const int32 descriptor = ::open(devicePath, O_RDWR | O_CLOEXEC);
+    XWALK_HAL_TRACE_UID1(RPI.026, "Opening Linux I2C device: %s", devicePath);
+    const int32 descriptor = deviceInterfaceValue.openDevice(devicePath);
     if (descriptor < 0)
     {
+        XWALK_HAL_ERROR("Unable to open Linux I2C device: %s", devicePath);
+        XWALK_HAL_ASSERT(1243);
         XHAL_THROW_RUNTIME_ERROR("Unable to open Linux I2C device");
     }
+    XWALK_HAL_TRACE_UID1(RPI.027, "Linux I2C device opened with descriptor %d", descriptor);
     return descriptor;
 }
 
@@ -122,8 +148,29 @@ int32 XWalkI2cLinux::openDevice(cstring devicePath)
  * If the Linux device node cannot be opened.
  */
 XWalkI2cLinux::XWalkI2cLinux(cstring devicePath, uint32 retryCount):
-    retryCountValue(validateRetryCount(retryCount)), fileDescriptor(openDevice(devicePath))
+    XWalkI2cLinux(systemDeviceInterface(), devicePath, retryCount)
 {
+}
+
+/**
+ * @brief Constructs a Linux backend using an injected device boundary.
+ *
+ * @param[in,out] deviceInterface
+ * Device-operation implementation that must outlive this backend.
+ *
+ * @param[in] devicePath
+ * Non-null logical device path passed to `deviceInterface`.
+ *
+ * @param[in] retryCount
+ * Number of permitted transaction attempts.
+ */
+XWalkI2cLinux::XWalkI2cLinux(XWalkI2cDevice& deviceInterface,
+    cstring devicePath, uint32 retryCount):
+    deviceInterfaceValue(deviceInterface), retryCountValue(validateRetryCount(retryCount)),
+    fileDescriptor(openDevice(devicePath))
+{
+    XWALK_HAL_TRACE_UID1(RPI.028,
+        "Linux I2C backend constructed with %u retry attempts", retryCountValue);
 }
 
 /******************************************************************************
@@ -143,7 +190,7 @@ XWalkI2cLinux::~XWalkI2cLinux()
 {
     if (fileDescriptor >= 0)
     {
-        ::close(fileDescriptor);
+        deviceInterfaceValue.closeDevice(fileDescriptor);
         fileDescriptor = -1;
     }
 }

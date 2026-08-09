@@ -17,6 +17,7 @@ RUN apt-get update \
         libcurl4-openssl-dev \
         libgrpc++-dev \
         libgtest-dev \
+        libjson-c-dev \
         libprotobuf-dev \
         libtinyxml2-dev \
         libyaml-cpp-dev \

@@ -62,8 +62,7 @@ Copy the empty template to a secure location outside the repository, restrict
 it to its owner, and fill every model value required by the environment loader:
 
 ```sh
-install -m 0600 xWalkTool/environment/xWalkLicense.cfg \
-    /secure/location/xWalkLicense.cfg
+install -m 0600 xWalkTool/environment/xWalkLicense.cfg /secure/location/xWalkLicense.cfg
 ```
 
 Encryption requires exactly one case-sensitive `[models]` section. It rejects
@@ -132,16 +131,13 @@ protected location; it must never contain credential values itself.
 The preferred command reads the protected external configuration file:
 
 ```sh
-python3 xWalkTool/python/xWalkLicenseTool encrypt \
-    --config /secure/location/xWalkLicense.cfg
+python3 xWalkTool/python/xWalkLicenseTool encrypt --config /secure/location/xWalkLicense.cfg
 ```
 
 For a small manual model selection, repeat `--env`:
 
 ```sh
-python3 xWalkTool/python/xWalkLicenseTool encrypt \
-    --env OPENAI_MODEL=<model-name> \
-    --env GEMINI_MODEL=<model-name>
+python3 xWalkTool/python/xWalkLicenseTool encrypt --env OPENAI_MODEL=<model-name> --env GEMINI_MODEL=<model-name>
 ```
 
 Values supplied through `--env` can appear in shell history and process
@@ -184,8 +180,7 @@ validation or write failure prints neither the serial nor the key.
 Decrypt to an explicitly selected temporary path outside the source tree:
 
 ```sh
-python3 xWalkTool/python/xWalkLicenseTool decrypt \
-    --output /tmp/xWalkLicense.decrypted.json
+python3 xWalkTool/python/xWalkLicenseTool decrypt --output /tmp/xWalkLicense.decrypted.json
 ```
 
 The tool requests the key with `getpass`; it has no command-line key option.

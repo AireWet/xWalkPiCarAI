@@ -192,6 +192,8 @@ if(XWALK_HAL_BUILD_CENTRAL_TESTS)
         "Required by centralized speech playback tests" FORCE)
     set(XWALK_LANGUAGE_MODEL_BUILD_OLLAMA_PROVIDER ON CACHE BOOL
         "Required by centralized language-model tests" FORCE)
+    set(XWALK_I2C_BUILD_LINUX_BACKEND ON CACHE BOOL
+        "Required by centralized I2C host simulation" FORCE)
     set(XWALK_MUSIC_BUILD_ALSA_BACKEND ON CACHE BOOL
         "Required by centralized music tests" FORCE)
     set(XWALK_SPEAKER_BUILD_ALSA_BACKEND ON CACHE BOOL
@@ -224,12 +226,12 @@ endif()
 
 add_subdirectory(xWalkLibrary/common)
 add_subdirectory(xWalkIW)
+add_subdirectory(xWalkTrace)
 add_subdirectory(xWalkHal/xWalkI2c)
 add_subdirectory(xWalkHal/xWalkSpi)
 add_subdirectory(xWalkHal/xWalkGpio)
 add_subdirectory(xWalkHal/xWalkAudio)
 add_subdirectory(xWalkHal/xWalkConfig)
-add_subdirectory(xWalkTrace)
 add_subdirectory(xWalkHal/xWalkUtils)
 add_subdirectory(xWalkHal/xWalkLanguageModel)
 add_subdirectory(xWalkHal/xWalkMusic)

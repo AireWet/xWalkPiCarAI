@@ -48,8 +48,9 @@ Documentation must:
 - link to module READMEs instead of duplicating complete public contracts;
 - describe current C++ behavior directly and retain only relevant hardware concepts;
 - state hardware revision, units, ranges, ownership, and safety constraints;
-- keep each fenced shell command on one physical line without continuation backslashes, allowing the complete
-  command to exceed 115 characters when necessary;
+- in `.md` files only, keep each fenced shell command on one physical line
+  without continuation backslashes, allowing the complete command to exceed
+  115 characters when necessary;
 - use `ctest -N -L hardware` for ordinary hardware-test discovery;
 - keep page content synchronized with current C++ headers and module READMEs;
 - preserve upstream source and license attribution for adapted documentation.

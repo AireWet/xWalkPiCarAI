@@ -18,6 +18,7 @@ formatter declared by `xControllerParsing.h`.
 | `XWalkAppGroup.ControllerBootModes` | Verifies every command mapping and Base fallback |
 | `XWalkAppGroup.ControllerRunnerDoctor` | Verifies boot-service dispatch through the Doctor path |
 | `XWalkAppGroup.Help` | Accepts generated help without a hardware backend |
+| `XWalkAppGroup.TraceConfiguration` | Applies global, module, and tag selectors without hardware |
 | `XWalkAppGroup.InvalidDeploymentConfiguration` | Rejects a relative deployment-configuration path |
 | `XWalkAppGroup.HardwareCommandUnavailable` | Runs host-stub boot and rejects unavailable hardware |
 | `XWalkAppParsingGroup.HexadecimalPayload` | Parses and formats bounded SPI bytes |

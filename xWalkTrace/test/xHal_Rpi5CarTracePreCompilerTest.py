@@ -23,26 +23,35 @@ import xHal_Rpi5CarTracePreCompiler as TRACE_GENERATOR  # noqa: E402
 
 
 class XWalkTracePreCompilerTest(unittest.TestCase):
-    """Exercises tokenization, validation, uniqueness, and XML preservation."""
+    """Exercises tokenization, uniqueness, and deterministic XML generation."""
 
-    def test_valid_hal_and_ctrl_identifiers(self) -> None:
+    def testValidHalAndCtrlIdentifiers(self) -> None:
         source = """
 XWALK_HAL_TRACE_UID0(RPI.1001, "HAL ready");
 XWALK_CTRL_TRACE_UID3(CTRL.2001, "CTRL value: %u", value);
 """
-        traces = TRACE_GENERATOR.scan_source(source, "src/sample.cpp")
+        traces = TRACE_GENERATOR.scanSource(source, "src/sample.cpp")
         self.assertEqual([trace.uid for trace in traces], ["RPI.1001", "CTRL.2001"])
         self.assertEqual([trace.priority for trace in traces], [0, 3])
 
-    def test_invalid_identifier_forms(self) -> None:
+    def testSameNumericIdInDistinctModulesIsUnique(self) -> None:
+        traces = TRACE_GENERATOR.scanSource(
+            'XWALK_HAL_TRACE_UID0(RPI.001, "HAL");\n'
+            'XWALK_CTRL_TRACE_UID0(CTRL.001, "CTRL");',
+            "distinct-modules.cpp",
+        )
+        TRACE_GENERATOR.validateUniqueness(traces)
+        self.assertEqual([trace.uid for trace in traces], ["RPI.001", "CTRL.001"])
+
+    def testInvalidIdentifierForms(self) -> None:
         invalid_uids = ["RPI.Camera", "CTRL.20A1", "OTHER.1001", "RPI.", "CTRL."]
         for uid in invalid_uids:
             with self.subTest(uid=uid), self.assertRaises(TRACE_GENERATOR.ScannerError):
-                TRACE_GENERATOR.scan_source(
+                TRACE_GENERATOR.scanSource(
                     f'XWALK_HAL_TRACE_UID0({uid}, "invalid");', "invalid.cpp"
                 )
 
-    def test_component_tag_mismatch(self) -> None:
+    def testComponentTagMismatch(self) -> None:
         cases = [
             'XWALK_HAL_TRACE_UID0(CTRL.1001, "invalid");',
             'XWALK_CTRL_TRACE_UID0(RPI.2001, "invalid");',
@@ -51,17 +60,17 @@ XWALK_CTRL_TRACE_UID3(CTRL.2001, "CTRL value: %u", value);
             with self.subTest(source=source), self.assertRaisesRegex(
                 TRACE_GENERATOR.ScannerError, "trace macros require"
             ):
-                TRACE_GENERATOR.scan_source(source, "mismatch.cpp")
+                TRACE_GENERATOR.scanSource(source, "mismatch.cpp")
 
-    def test_leading_zero_policy(self) -> None:
-        traces = TRACE_GENERATOR.scan_source(
+    def testLeadingZeroPolicy(self) -> None:
+        traces = TRACE_GENERATOR.scanSource(
             'XWALK_HAL_TRACE_UID1(RPI.001, "valid");\n'
             'XWALK_CTRL_TRACE_UID1(CTRL.0, "valid");',
             "leading-zero.cpp",
         )
         self.assertEqual([trace.uid for trace in traces], ["RPI.001", "CTRL.0"])
 
-    def test_multiline_nested_arguments_and_invocation_line(self) -> None:
+    def testMultilineNestedArgumentsAndInvocationLine(self) -> None:
         source = """int value = 0;
 XWALK_HAL_TRACE_UID2(
     RPI.1002,
@@ -69,11 +78,11 @@ XWALK_HAL_TRACE_UID2(
     outer(inner(value, 2)),
     another(3));
 """
-        trace = TRACE_GENERATOR.scan_source(source, "src/nested.cpp")[0]
+        trace = TRACE_GENERATOR.scanSource(source, "src/nested.cpp")[0]
         self.assertEqual(trace.source_line, 2)
         self.assertEqual(trace.trace_format, "Nested values: %d %d")
 
-    def test_comments_strings_and_definitions_are_ignored(self) -> None:
+    def testCommentsStringsAndDefinitionsAreIgnored(self) -> None:
         source = r'''
 // XWALK_HAL_TRACE_UID0(RPI.3001, "comment")
 /* XWALK_CTRL_TRACE_UID0(CTRL.3002, "comment") */
@@ -81,40 +90,80 @@ const char* text = "XWALK_HAL_TRACE_UID0(RPI.3003, ignored)";
 #define XWALK_HAL_TRACE_UID0(UID, ...) replacement
 XWALK_HAL_TRACE_UID0(RPI.3004, "real");
 '''
-        traces = TRACE_GENERATOR.scan_source(source, "src/comments.cpp")
+        traces = TRACE_GENERATOR.scanSource(source, "src/comments.cpp")
         self.assertEqual([trace.uid for trace in traces], ["RPI.3004"])
 
-    def test_adjacent_format_literals(self) -> None:
+    def testAdjacentFormatLiterals(self) -> None:
         source = 'XWALK_CTRL_TRACE_UID1(CTRL.4001, "first " "second");'
-        trace = TRACE_GENERATOR.scan_source(source, "src/format.cpp")[0]
+        trace = TRACE_GENERATOR.scanSource(source, "src/format.cpp")[0]
         self.assertEqual(trace.trace_format, "first second")
 
-    def test_unsupported_priority(self) -> None:
+    def testUnsupportedPriority(self) -> None:
         with self.assertRaisesRegex(TRACE_GENERATOR.ScannerError, "Unsupported trace priority"):
-            TRACE_GENERATOR.scan_source(
+            TRACE_GENERATOR.scanSource(
                 'XWALK_HAL_TRACE_UID4(RPI.5001, "invalid");', "priority.cpp"
             )
 
-    def test_duplicate_uid_in_one_file_and_across_priorities(self) -> None:
-        traces = TRACE_GENERATOR.scan_source(
+    def testDuplicateUidInOneFileAndAcrossPriorities(self) -> None:
+        traces = TRACE_GENERATOR.scanSource(
             'XWALK_HAL_TRACE_UID0(RPI.6001, "first");\n'
             'XWALK_HAL_TRACE_UID3(RPI.6001, "second");',
             "duplicate.cpp",
         )
-        with self.assertRaisesRegex(TRACE_GENERATOR.ScannerError, "Duplicate trace identifier"):
-            TRACE_GENERATOR.validate_uniqueness(traces)
+        with self.assertRaisesRegex(
+            TRACE_GENERATOR.ScannerError,
+            "Duplicate trace ID: RPI.6001",
+        ):
+            TRACE_GENERATOR.validateUniqueness(traces)
 
-    def test_duplicate_uid_across_files(self) -> None:
-        traces = TRACE_GENERATOR.scan_source(
+    def testDuplicateUidAcrossFiles(self) -> None:
+        traces = TRACE_GENERATOR.scanSource(
             'XWALK_CTRL_TRACE_UID0(CTRL.7001, "first");', "first.cpp"
         )
-        traces += TRACE_GENERATOR.scan_source(
+        traces += TRACE_GENERATOR.scanSource(
             'XWALK_CTRL_TRACE_UID1(CTRL.7001, "second");', "second.cpp"
         )
-        with self.assertRaisesRegex(TRACE_GENERATOR.ScannerError, "second.cpp"):
-            TRACE_GENERATOR.validate_uniqueness(traces)
+        with self.assertRaisesRegex(
+            TRACE_GENERATOR.ScannerError,
+            "non-unique trace IDs are used",
+        ):
+            TRACE_GENERATOR.validateUniqueness(traces)
 
-    def test_xml_generation_escaping_defaults_and_metadata(self) -> None:
+    def testDuplicateUidCliFailsMetadataGeneration(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source_root = root / "src"
+            source_root.mkdir()
+            (source_root / "first.cpp").write_text(
+                'XWALK_HAL_TRACE_UID0(RPI.7002, "first");\n', encoding="utf-8"
+            )
+            (source_root / "second.cpp").write_text(
+                'XWALK_HAL_TRACE_UID1(RPI.7002, "second");\n', encoding="utf-8"
+            )
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(SCRIPT_PATH),
+                    "--project-root",
+                    str(root),
+                    "--source-root",
+                    str(source_root),
+                    "--output",
+                    str(root / "generated" / "xwalk-traces.xml"),
+                ],
+                capture_output=True,
+                check=False,
+                text=True,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn(
+                "Duplicate trace ID: RPI.7002", result.stderr
+            )
+            self.assertIn("src/first.cpp:1", result.stderr)
+            self.assertIn("src/second.cpp:1", result.stderr)
+            self.assertFalse((root / "generated" / "xwalk-traces.xml").exists())
+
+    def testXmlGenerationEscapingDefaultsAndMetadata(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source_root = root / "src"
@@ -124,24 +173,20 @@ XWALK_HAL_TRACE_UID0(RPI.3004, "real");
                 'XWALK_HAL_TRACE_UID0(RPI.8001, "value < %d & \\\"quoted\\\"");\n',
                 encoding="utf-8",
             )
-            output = root / "generated" / "xWalkTrace.xml"
+            output = root / "generated" / "xwalk-traces.xml"
             TRACE_GENERATOR.XWalkTracePreCompiler(root, [source_root], output).run()
             xml_root = ElementTree.parse(output).getroot()
-            priority_values = [
-                priority.get("enabled")
-                for priority in xml_root.findall("./priorities/priority")
-            ]
-            trace = xml_root.find("./traces/trace")
+            trace = xml_root.find("./module/trace")
             assert trace is not None
-            self.assertEqual(priority_values, ["false", "false", "false", "false"])
-            self.assertEqual(trace.get("file"), "src/sample.cpp")
-            self.assertEqual(trace.get("line"), "1")
+            self.assertEqual(xml_root.tag, "xwalkTraceCatalogue")
+            self.assertEqual(trace.get("sourceFile"), "src/sample.cpp")
+            self.assertEqual(trace.get("sourceLine"), "1")
             self.assertEqual(trace.get("format"), 'value < %d & "quoted"')
-            self.assertEqual(trace.get("enabled"), "false")
+            self.assertEqual(trace.get("defaultState"), "disable")
             self.assertNotIn("timestamp", trace.attrib)
             self.assertNotIn("elapsed", trace.attrib)
 
-    def test_existing_flags_are_preserved_and_removed_uids_disappear(self) -> None:
+    def testCatalogueRegenerationRemovesAbsentUids(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source_root = root / "src"
@@ -152,18 +197,8 @@ XWALK_HAL_TRACE_UID0(RPI.3004, "real");
                 'XWALK_HAL_TRACE_UID1(RPI.8102, "remove");\n',
                 encoding="utf-8",
             )
-            output = root / "xWalkTrace.xml"
+            output = root / "xwalk-traces.xml"
             TRACE_GENERATOR.XWalkTracePreCompiler(root, [source_root], output).run()
-            contents = output.read_text(encoding="utf-8")
-            contents = contents.replace(
-                '<priority level="2" enabled="false"/>',
-                '<priority level="2" enabled="true"/>',
-            ).replace('uid="RPI.8101"\n            priority', 'uid="RPI.8101"\n            priority')
-            contents = contents.replace(
-                'uid="RPI.8101"\n            priority="0"\n            enabled="false"',
-                'uid="RPI.8101"\n            priority="0"\n            enabled="true"',
-            )
-            output.write_text(contents, encoding="utf-8")
             source.write_text(
                 '\nXWALK_HAL_TRACE_UID0(RPI.8101, "moved");\n'
                 'XWALK_HAL_TRACE_UID3(RPI.8103, "new");\n',
@@ -171,19 +206,17 @@ XWALK_HAL_TRACE_UID0(RPI.3004, "real");
             )
             TRACE_GENERATOR.XWalkTracePreCompiler(root, [source_root], output).run()
             xml_root = ElementTree.parse(output).getroot()
-            priorities = {
-                node.get("level"): node.get("enabled")
-                for node in xml_root.findall("./priorities/priority")
+            traces = {
+                node.get("fullId"): node
+                for node in xml_root.findall("./module/trace")
             }
-            traces = {node.get("uid"): node for node in xml_root.findall("./traces/trace")}
-            self.assertEqual(priorities["2"], "true")
-            self.assertEqual(traces["RPI.8101"].get("enabled"), "true")
-            self.assertEqual(traces["RPI.8101"].get("line"), "2")
+            self.assertEqual(traces["RPI.8101"].get("defaultState"), "disable")
+            self.assertEqual(traces["RPI.8101"].get("sourceLine"), "2")
             self.assertEqual(traces["RPI.8101"].get("format"), "moved")
-            self.assertEqual(traces["RPI.8103"].get("enabled"), "false")
+            self.assertEqual(traces["RPI.8103"].get("defaultState"), "disable")
             self.assertNotIn("RPI.8102", traces)
 
-    def test_unchanged_xml_is_not_rewritten(self) -> None:
+    def testUnchangedXmlIsNotRewritten(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source_root = root / "src"
@@ -191,20 +224,44 @@ XWALK_HAL_TRACE_UID0(RPI.3004, "real");
             (source_root / "sample.cpp").write_text(
                 'XWALK_CTRL_TRACE_UID0(CTRL.8201, "stable");\n', encoding="utf-8"
             )
-            output = root / "xWalkTrace.xml"
+            output = root / "xwalk-traces.xml"
             TRACE_GENERATOR.XWalkTracePreCompiler(root, [source_root], output).run()
             original_timestamp = output.stat().st_mtime_ns
             TRACE_GENERATOR.XWalkTracePreCompiler(root, [source_root], output).run()
             self.assertEqual(output.stat().st_mtime_ns, original_timestamp)
 
-    def test_malformed_existing_xml_fails(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            output = Path(directory) / "xWalkTrace.xml"
-            output.write_text("<xwalkTrace>", encoding="utf-8")
-            with self.assertRaisesRegex(TRACE_GENERATOR.ScannerError, "malformed"):
-                TRACE_GENERATOR.generate_xml([], output)
+    def testXmlModulesAndNumericIdsAreSorted(self) -> None:
+        traces = TRACE_GENERATOR.scanSource(
+            'XWALK_HAL_TRACE_UID0(RPI.010, "ten");\n'
+            'XWALK_CTRL_TRACE_UID0(CTRL.002, "two");\n'
+            'XWALK_HAL_TRACE_UID0(RPI.002, "two");',
+            "sorting.cpp",
+        )
+        xml_text = TRACE_GENERATOR.generateXml(traces, Path("unused.xml"))
+        root = ElementTree.fromstring(xml_text)
+        modules = root.findall("./module")
+        self.assertEqual([module.get("name") for module in modules], ["CTRL", "RPI"])
+        self.assertEqual(
+            [trace.get("id") for trace in modules[1].findall("./trace")],
+            ["002", "010"],
+        )
 
-    def test_assertion_signal_type_is_checked_at_compile_time(self) -> None:
+    def testMultipleDuplicateIdsAreReportedTogether(self) -> None:
+        traces = TRACE_GENERATOR.scanSource(
+            'XWALK_HAL_TRACE_UID0(RPI.9001, "one");\n'
+            'XWALK_CTRL_TRACE_UID0(CTRL.9001, "one");\n'
+            'XWALK_HAL_TRACE_UID1(RPI.9001, "two");\n'
+            'XWALK_CTRL_TRACE_UID1(CTRL.9001, "two");',
+            "duplicates.cpp",
+        )
+        with self.assertRaises(TRACE_GENERATOR.ScannerError) as context:
+            TRACE_GENERATOR.validateUniqueness(traces)
+        message = str(context.exception)
+        self.assertIn("Duplicate trace ID: RPI.9001", message)
+        self.assertIn("Duplicate trace ID: CTRL.9001", message)
+        self.assertEqual(message.count("Declared at: duplicates.cpp:"), 4)
+
+    def testAssertionSignalTypeIsCheckedAtCompileTime(self) -> None:
         compiler = shutil.which(os.environ.get("CXX", "c++"))
         self.assertIsNotNone(compiler)
         project_root = SCRIPT_PATH.parents[2]

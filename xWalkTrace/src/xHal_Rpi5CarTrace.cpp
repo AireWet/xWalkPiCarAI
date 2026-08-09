@@ -57,10 +57,10 @@ boolean XWalkTrace::accepts(XWalkTraceLevel level) const noexcept
 }
 
 /**
- * @brief Tests process-wide priority and UID configuration without formatting.
+ * @brief Tests process-wide global, module, and UID configuration without formatting.
  * @param[in] priority Tagged priority from zero through three.
  * @param[in] uid Complete tagged-trace identifier.
- * @return `true` only when the priority and known UID are both enabled.
+ * @return `true` only when the known UID resolves to enabled.
  */
 boolean XWalkTrace::globalTraceIsEnabled(uint8 priority, stringview uid)
 {
@@ -72,15 +72,24 @@ boolean XWalkTrace::globalTraceIsEnabled(uint8 priority, stringview uid)
         return false;
     }
 
-    const boolean priorityEnabled = instance.priorityEnabledValues[priority];
-    if (priorityEnabled == false)
+    const string uidValue(uid);
+    const auto source = instance.traceSourceLocations.find(uidValue);
+    if (source == instance.traceSourceLocations.end())
     {
         return false;
     }
-
-    const auto trace = instance.traceEnabledValues.find(string(uid));
-    const boolean traceKnown = trace != instance.traceEnabledValues.end();
-    return traceKnown && trace->second;
+    const auto trace = instance.traceEnabledValues.find(uidValue);
+    if (trace != instance.traceEnabledValues.end())
+    {
+        return trace->second;
+    }
+    const string moduleName(uid.substr(0U, uid.find('.')));
+    const auto module = instance.moduleEnabledValues.find(moduleName);
+    if (module != instance.moduleEnabledValues.end())
+    {
+        return module->second;
+    }
+    return instance.globalTraceEnabledValue;
 }
 
 /**
@@ -103,10 +112,21 @@ void XWalkTrace::writeTagged(uint8 priority, stringview component, stringview ui
             return;
         }
 
-        const auto trace = traceEnabledValues.find(string(uid));
-        const boolean traceKnown = trace != traceEnabledValues.end();
-        const boolean traceEnabled = traceKnown && trace->second;
-        const boolean recordEnabled = priorityEnabledValues[priority] && traceEnabled;
+        const string uidValue(uid);
+        const auto source = traceSourceLocations.find(uidValue);
+        boolean recordEnabled = source != traceSourceLocations.end();
+        const auto trace = traceEnabledValues.find(uidValue);
+        if (recordEnabled && (trace != traceEnabledValues.end()))
+        {
+            recordEnabled = trace->second;
+        }
+        else if (recordEnabled)
+        {
+            const string moduleName(uid.substr(0U, uid.find('.')));
+            const auto module = moduleEnabledValues.find(moduleName);
+            recordEnabled = module != moduleEnabledValues.end() ?
+                module->second : globalTraceEnabledValue;
+        }
         if (recordEnabled == false)
         {
             return;

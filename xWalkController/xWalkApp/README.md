@@ -58,6 +58,22 @@ optional backends. The CLI composes only the graph selected by the parsed comman
 `--help` returns before constructing the boot object, so it does not claim I2C,
 GPIO, audio, microphone, or model resources.
 
+The repeatable global `--trace VALUE` option configures the shared in-memory
+trace registry before the selected boot graph is constructed. All normal traces
+start disabled. Values are `all.<state>`, `<module>.<state>`,
+`<module>.<numeric-id>.<state>`, or a `.json` file, where state is exactly
+`enable` or `disable`. Arguments are applied from left to right and the last
+applicable setting wins. JSON applies `all`, module, then tag states. Unknown
+modules and IDs, Boolean JSON states, missing files, malformed JSON, and invalid
+selectors return status 2 without constructing hardware. Legacy
+`--trace-enable UID` and `--trace-disable UID` forms remain accepted.
+
+Every complete trace ID must be unique. `RPI.001` and `CTRL.001` are distinct,
+but a repeated `RPI.001` stops compilation. The validation error reports all
+duplicated IDs and every declaration path and line. A successful normal build
+generates the deterministic catalogue at
+`<build-directory>/generated/xwalk-traces.xml`.
+
 `doctor` selects a separate passive boot graph. It reports board-profile and
 Device Tree agreement, I2C and firmware response, battery voltage, GPIO chip
 metadata and identity, SPI open availability, camera and ALSA metadata,
@@ -139,12 +155,21 @@ xwalk-picarx-control servo-zeroing
 xwalk-picarx-control calibrate
 ```
 
-Use `xwalk-picarx-control --help` or `xwalk-picarx-control -h` for command descriptions, option ranges, and
-examples.
+Use `xwalk-picarx-control --help` or `xwalk-picarx-control -h` for command
+descriptions, option ranges, trace selectors, and examples.
 
 Example commands:
 
 ```bash
+xwalk-picarx-control --trace RPI.001.enable
+xwalk-picarx-control --trace RPI.001.disable
+xwalk-picarx-control --trace RPI.enable
+xwalk-picarx-control --trace RPI.disable
+xwalk-picarx-control --trace CTRL.001.enable
+xwalk-picarx-control --trace CTRL.disable doctor
+xwalk-picarx-control --trace all.enable
+xwalk-picarx-control --trace all.disable
+xwalk-picarx-control --trace xWalkController/xWalkConfig/xwalk-traces.json
 xwalk-picarx-control doctor
 xwalk-picarx-control move forward --speed 40 --duration 2.5
 xwalk-picarx-control move demo

@@ -61,6 +61,26 @@ namespace
     return true;
 }
 
+/** @brief Validates one canonical trace module token. */
+::ctrl::boolean validTraceModule(::ctrl::stringview module) noexcept
+{
+    if (module.empty() || (module[0U] < 'A') || (module[0U] > 'Z'))
+    {
+        return false;
+    }
+    for (const char character : module)
+    {
+        const ::ctrl::boolean validCharacter =
+            ((character >= 'A') && (character <= 'Z')) ||
+            ((character >= '0') && (character <= '9')) || (character == '_');
+        if (validCharacter == false)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 } /* namespace */
 
 /******************************************************************************
@@ -83,10 +103,10 @@ namespace xwalk::ctrl
  * @param[out] applicationArguments Validated paths and remaining command arguments.
  *
  * @return
- * `true` when every application-global option is complete, non-empty, and
- * absolute; otherwise `false`.
+ * `true` when every application-global option is complete, path values are
+ * absolute, and trace selectors are valid; otherwise `false`.
  */
-::ctrl::boolean XWALK_parseControllerApplicationArguments(
+::ctrl::boolean xWalkParseControllerApplicationArguments(
                                     ::ctrl::int32 argumentCount, ::ctrl::charpointer arguments[],
                                     const XWalkAppConfig& defaultConfig,
                                     XWalkControllerApplicationArguments& applicationArguments
@@ -111,9 +131,9 @@ namespace xwalk::ctrl
             break;
         }
         const ::ctrl::string option = commandArguments[0U];
-        const ::ctrl::fixedarray<::ctrl::stringview, 4U> optionNames{{
+        const ::ctrl::fixedarray<::ctrl::stringview, 5U> optionNames{{
             "--deployment-config", "--resource-directory",
-            "--trace-enable", "--trace-disable"}};
+            "--trace", "--trace-enable", "--trace-disable"}};
         ::ctrl::stringview matchedOption;
         ::ctrl::string value;
         ::ctrl::size consumed{};
@@ -147,10 +167,44 @@ namespace xwalk::ctrl
         {
             return false;
         }
-        const ::ctrl::boolean traceOption =
+        const ::ctrl::boolean legacyTraceOption =
             (matchedOption == "--trace-enable") ||
             (matchedOption == "--trace-disable");
-        if (traceOption && (validTraceUid(value) == false))
+        const ::ctrl::boolean unifiedTraceOption = matchedOption == "--trace";
+        const ::ctrl::boolean traceOption = legacyTraceOption || unifiedTraceOption;
+        ::ctrl::string traceTarget = value;
+        ::ctrl::boolean traceEnabled = matchedOption == "--trace-enable";
+        const ::ctrl::boolean jsonTraceOption = unifiedTraceOption &&
+            (value.size() > 5U) &&
+            (value.compare(value.size() - 5U, 5U, ".json") == 0);
+        if (unifiedTraceOption && (jsonTraceOption == false))
+        {
+            const ::ctrl::stringview enableSuffix(".enable");
+            const ::ctrl::stringview disableSuffix(".disable");
+            const ::ctrl::boolean enableRequested =
+                value.size() > enableSuffix.size() &&
+                value.compare(value.size() - enableSuffix.size(),
+                    enableSuffix.size(), enableSuffix) == 0;
+            const ::ctrl::boolean disableRequested =
+                value.size() > disableSuffix.size() &&
+                value.compare(value.size() - disableSuffix.size(),
+                    disableSuffix.size(), disableSuffix) == 0;
+            const ::ctrl::boolean operationValid = enableRequested || disableRequested;
+            if (operationValid == false)
+            {
+                return false;
+            }
+            const ::ctrl::size suffixLength =
+                enableRequested ? enableSuffix.size() : disableSuffix.size();
+            traceTarget = value.substr(0U, value.size() - suffixLength);
+            traceEnabled = enableRequested;
+        }
+        const ::ctrl::boolean allTracesSelected = traceTarget == "all";
+        const ::ctrl::boolean moduleSelected = validTraceModule(traceTarget);
+        const ::ctrl::boolean traceTargetValid =
+            allTracesSelected || moduleSelected || validTraceUid(traceTarget);
+        if (traceOption && (jsonTraceOption == false) &&
+            (traceTargetValid == false))
         {
             return false;
         }
@@ -167,13 +221,11 @@ namespace xwalk::ctrl
         {
             applicationArguments.appConfig.resourceDirectory = value;
         }
-        else if (matchedOption == "--trace-enable")
+        else if (traceOption)
         {
-            applicationArguments.traceEnableUids.push_back(value);
-        }
-        else
-        {
-            applicationArguments.traceDisableUids.push_back(value);
+            const ::ctrl::string selector = jsonTraceOption ? value :
+                traceTarget + (traceEnabled ? ".enable" : ".disable");
+            applicationArguments.traceArguments.push_back(selector);
         }
         commandArguments.erase(commandArguments.begin(), commandArguments.begin() +
             static_cast<::ctrl::stringvector::difference_type>(consumed));

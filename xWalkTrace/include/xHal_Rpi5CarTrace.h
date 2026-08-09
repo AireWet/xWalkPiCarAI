@@ -48,11 +48,11 @@ namespace xwalk::hal
 
 /**
  * @class XWalkTrace
- * @brief Owns trace filtering, configuration, formatting, and file output.
+ * @brief Owns trace filtering, configuration, formatting, terminal, and file output.
  *
  * @details
- * Tagged traces use four independently configured priorities and per-UID XML
- * flags. Warnings, errors, and assertions bypass tagged-trace filtering. One
+ * Tagged traces use one ordered global, module, and per-UID runtime registry.
+ * Warnings, errors, and assertions bypass tagged-trace filtering. One
  * process-wide instance serves the public macros. Explicit instances preserve
  * the original severity methods and injected callback contract.
  */
@@ -68,8 +68,11 @@ class XWalkTrace final
         /** @brief Append-only output stream protected by `traceMutex`. */
         mutable outputfilestream logFile;
 
-        /** @brief Priority enable flags indexed from highest priority zero. */
-        fixedarray<boolean, XHAL_RPI5CAR_TRACE_PRIORITY_COUNT> priorityEnabledValues;
+        /** @brief Effective fallback state for every present and future trace. */
+        boolean globalTraceEnabledValue{false};
+
+        /** @brief Explicit module states indexed by canonical module name. */
+        orderedmap<string, boolean> moduleEnabledValues;
 
         /** @brief Individual UID enable flags loaded once from XML. */
         orderedmap<string, boolean> traceEnabledValues;
@@ -77,8 +80,14 @@ class XWalkTrace final
         /** @brief Scanner-generated source locations indexed by complete UID. */
         orderedmap<string, XWalkTraceSourceLocation> traceSourceLocations;
 
-        /** @brief XML path used for boot-time persistent trace control. */
+        /** @brief Immutable generated trace catalogue path loaded at startup. */
         filesystempath configurationPathValue;
+
+        /** @brief Active append-only log path selected during initialization. */
+        filesystempath logPathValue;
+
+        /** @brief Most recent actionable runtime trace-configuration error. */
+        string traceConfigurationErrorValue;
 
         /** @brief Monotonic reference point shared by all entries from this instance. */
         steadytimestamp startTime;
@@ -95,7 +104,9 @@ class XWalkTrace final
          **************************************************************************/
 
         /** @brief Returns the process-wide macro trace instance. */
-        static XWalkTrace& globalInstance();
+        static XWalkTrace& globalInstance(
+            const filesystempath* configurationPath = nullptr,
+            const filesystempath* logPath = nullptr);
 
         /** @brief Discards compatibility callback records from the global instance. */
         static void discardOutput(contextpointer context, XWalkTraceLevel level,
@@ -119,14 +130,23 @@ class XWalkTrace final
         /** @brief Validates `RPI.<digits>` or `CTRL.<digits>`, including leading zeros. */
         static boolean isValidUid(stringview uid) noexcept;
 
-        /** @brief Persists one known UID flag and updates the in-memory lookup. */
+        /** @brief Applies one known UID state to the in-memory lookup. */
         boolean setTraceEnabled(stringview uid, boolean enabled);
 
-        /** @brief Opens the selected log and loads priority and UID flags once. */
+        /** @brief Applies one module state and clears earlier tag overrides. */
+        boolean setModuleTracesEnabled(stringview module, boolean enabled);
+
+        /** @brief Applies one global state and clears every earlier override. */
+        boolean setAllTracesEnabled(boolean enabled);
+
+        /** @brief Loads and atomically applies one JSON trace configuration. */
+        boolean loadJsonConfiguration(const filesystempath& configurationPath);
+
+        /** @brief Opens the selected log and loads catalogue IDs once. */
         void initialize(const filesystempath& configurationPath,
             const filesystempath& logPath);
 
-        /** @brief Loads XML flags or retains safe disabled defaults on failure. */
+        /** @brief Loads XML catalogue entries or retains safe disabled defaults. */
         void loadConfiguration(const filesystempath& configurationPath);
 
         /** @brief Reports configuration failure directly to the initialized log. */
@@ -135,7 +155,7 @@ class XWalkTrace final
         /** @brief Reports whether one compatibility severity passes its threshold. */
         boolean accepts(XWalkTraceLevel level) const noexcept;
 
-        /** @brief Appends one completely formatted record while holding the mutex. */
+        /** @brief Emits one formatted record to the terminal and log while locked. */
         void writeRecordLocked(stringview component, stringview category,
             stringview uid, stringview sourceFile, uint32 sourceLine,
             stringview message) const;
@@ -145,6 +165,11 @@ class XWalkTrace final
 
         /** @brief Reports a compatibility level change when debug is accepted. */
         void reportLevelChange() const;
+
+        /** @brief Constructs a trace with explicit initial catalogue and log paths. */
+        XWalkTrace(contextpointer outputContext, traceoutputcallback output,
+            XWalkTraceLevel level, const filesystempath& configurationPath,
+            const filesystempath& logPath);
 
         /** @brief Formats one validated printf-style message. */
         template<typename... FormatArguments>
@@ -250,7 +275,38 @@ class XWalkTrace final
         static boolean disableGlobalTrace(stringview uid);
 
         /**
-         * @brief Tests both priority and individual UID flags without formatting.
+         * @brief Enables every priority and scanner-known UID in the global XML configuration.
+         * @return `true` after every XML and memory flag is updated; otherwise `false`.
+         */
+        static boolean enableAllGlobalTraces();
+
+        /**
+         * @brief Disables every priority and scanner-known UID in the global XML configuration.
+         * @return `true` after every XML and memory flag is updated; otherwise `false`.
+         */
+        static boolean disableAllGlobalTraces();
+
+        /**
+         * @brief Resets every normal trace to the mandatory disabled startup state.
+         * @return Always `true` after the synchronized reset.
+         */
+        static boolean resetGlobalTraceConfiguration();
+
+        /**
+         * @brief Applies one selector or JSON filename to the shared registry.
+         * @param[in] argument Valid selector or `.json` configuration path.
+         * @return `true` when the complete argument validates and is applied.
+         */
+        static boolean applyGlobalTraceArgument(stringview argument);
+
+        /**
+         * @brief Returns the latest runtime trace-configuration error.
+         * @return Owned diagnostic text, or empty text after success.
+         */
+        static string globalTraceConfigurationError();
+
+        /**
+         * @brief Resolves one known UID without formatting its arguments.
          * @param[in] priority Priority from zero through three.
          * @param[in] uid Complete tagged identifier.
          * @return `true` only when both flags are enabled.
@@ -381,7 +437,7 @@ class XWalkTrace final
 
 /**
  * @brief Implements filtered tagged-trace macros.
- * @details Checks priority and UID flags before evaluating formatting arguments.
+ * @details Checks registry state before evaluating formatting arguments.
  */
 #define XWALK_TRACE_UID(COMPONENT, PRIORITY, UID, ...) \
     do \
@@ -434,10 +490,10 @@ class XWalkTrace final
 #define XWALK_CTRL_ERROR(...) XWALK_TRACE_CATEGORY("CTRL", "ERROR", __VA_ARGS__)
 
 /**
- * @brief Always emits one untagged verbose record regardless of XML filtering.
- * @details Accepts one printf-style format followed by optional formatting arguments.
+ * @brief Preserves the legacy untagged verbose API as a disabled no-op.
+ * @details Normal diagnostics must use one scanner-registered UID macro.
  */
-#define XWALK_VERBOSE(...) XWALK_TRACE_CATEGORY("TRACE", "VERBOSE", __VA_ARGS__)
+#define XWALK_VERBOSE(...) do { } while (false)
 
 /** @brief Implements compile-time type checking and logging for assertion signals. */
 #define XWALK_TRACE_ASSERT(COMPONENT, SIGNAL_NUMBER) \

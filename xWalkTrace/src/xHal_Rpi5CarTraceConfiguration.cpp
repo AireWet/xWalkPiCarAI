@@ -1,18 +1,17 @@
 /******************************************************************************
  * @file        xHal_Rpi5CarTraceConfiguration.cpp
- * @brief       Loads xWalk trace priority and UID configuration once.
+ * @brief       Loads the immutable xWalk trace catalogue once.
  *
  * @project     xWalk Firmware
  * @module      xWalkTrace
  * @author      Joxy John
  * @date        2026-08-09
- * @version     2.0.0
+ * @version     3.0.0
  ******************************************************************************/
 
 #include "xHal_Rpi5CarTrace.h"
 
 #include <filesystem>
-#include <fstream>
 #include <tinyxml2.h>
 
 /**
@@ -22,44 +21,27 @@
 namespace xwalk::hal
 {
 
-/**
- * @brief Validates one complete tagged-trace identifier.
- *
- * @param[in] uid
- * Candidate identifier to validate without allocation.
- *
- * @return
- * `true` for `RPI.<digits>` or `CTRL.<digits>`, including identifiers whose
- * numeric part has leading zeros; otherwise `false`.
- */
+/** @brief Validates one complete tagged-trace identifier. */
 boolean XWalkTrace::isValidUid(stringview uid) noexcept
 {
     const size separatorPosition = uid.find('.');
-    const boolean separatorValid =
-        (separatorPosition != stringview::npos) && (separatorPosition > 0U);
-    if (separatorValid == false)
+    if ((separatorPosition == stringview::npos) || (separatorPosition == 0U))
     {
         return false;
     }
-
-    const stringview tag = uid.substr(0U, separatorPosition);
-    const boolean tagValid = (tag == "RPI") || (tag == "CTRL");
-    if (tagValid == false)
+    const stringview module = uid.substr(0U, separatorPosition);
+    if ((module != "RPI") && (module != "CTRL"))
     {
         return false;
     }
-
     const stringview number = uid.substr(separatorPosition + 1U);
-    const boolean numberMissing = number.empty();
-    if (numberMissing)
+    if (number.empty())
     {
         return false;
     }
-
     for (const char digit : number)
     {
-        const boolean digitInvalid = (digit < '0') || (digit > '9');
-        if (digitInvalid)
+        if ((digit < '0') || (digit > '9'))
         {
             return false;
         }
@@ -67,195 +49,113 @@ boolean XWalkTrace::isValidUid(stringview uid) noexcept
     return true;
 }
 
-/**
- * @brief Reopens the append-only log and loads one XML configuration.
- *
- * @param[in] configurationPath
- * XML file read once for priority and UID enable flags.
- *
- * @param[in] logPath
- * Log file whose parent directories are created when needed.
- *
- * @throws filesystemerror
- * If a required log directory cannot be created.
- *
- * @throws std::runtime_error
- * If the log file cannot be opened for append.
- */
+/** @brief Reopens the append-only log and loads one generated catalogue. */
 void XWalkTrace::initialize(const filesystempath& configurationPath,
     const filesystempath& logPath)
 {
     configurationPathValue = configurationPath;
-    priorityEnabledValues.fill(false);
+    globalTraceEnabledValue = false;
+    moduleEnabledValues.clear();
     traceEnabledValues.clear();
     traceSourceLocations.clear();
+    traceConfigurationErrorValue.clear();
     startTime = steadyclock::now();
 
     const filesystempath logDirectory = logPath.parent_path();
-    const boolean logDirectoryProvided = logDirectory.empty() == false;
-    if (logDirectoryProvided)
+    if (logDirectory.empty() == false)
     {
         static_cast<void>(createDirectories(logDirectory));
     }
-
-    const boolean previousLogOpen = logFile.is_open();
-    if (previousLogOpen)
+    if (logFile.is_open())
     {
         logFile.close();
     }
     logFile.clear();
     logFile.open(logPath, FILE_OPEN_WRITE_APPEND);
-    const boolean logOpenFailed = logFile.is_open() == false;
-    if (logOpenFailed)
+    if (logFile.is_open() == false)
     {
         XHAL_THROW_RUNTIME_ERROR("Trace log file could not be opened for append");
     }
-
+    logPathValue = logPath;
     loadConfiguration(configurationPath);
 }
 
-/**
- * @brief Loads configuration into temporary containers and commits it atomically.
- *
- * @param[in] configurationPath
- * XML file containing `priorities` and `traces` elements.
- *
- * @post
- * Missing or invalid input leaves every priority and UID disabled and writes a
- * configuration diagnostic.
- */
+/** @brief Loads known IDs and locations from the generated XML catalogue. */
 void XWalkTrace::loadConfiguration(const filesystempath& configurationPath)
 {
     tinyxml2::XMLDocument document;
-    const tinyxml2::XMLError loadResult = document.LoadFile(configurationPath.string().c_str());
-    const boolean configurationMissing = loadResult == tinyxml2::XML_ERROR_FILE_NOT_FOUND;
-    if (configurationMissing)
+    const tinyxml2::XMLError loadResult =
+        document.LoadFile(configurationPath.string().c_str());
+    if (loadResult == tinyxml2::XML_ERROR_FILE_NOT_FOUND)
     {
         writeConfigurationDiagnostic("WARNING",
-            "Trace XML is missing; all tagged traces are disabled");
+            "Trace catalogue is missing; all normal traces are disabled");
         return;
     }
-
-    const boolean configurationLoadFailed = loadResult != tinyxml2::XML_SUCCESS;
-    if (configurationLoadFailed)
+    if (loadResult != tinyxml2::XML_SUCCESS)
     {
         writeConfigurationDiagnostic("ERROR",
-            "Trace XML is malformed; all tagged traces are disabled");
+            "Trace catalogue is malformed; all normal traces are disabled");
         return;
     }
-
-    const tinyxml2::XMLElement* root = document.FirstChildElement("xwalkTrace");
-    const boolean rootMissing = root == nullptr;
-    if (rootMissing)
+    const tinyxml2::XMLElement* root =
+        document.FirstChildElement("xwalkTraceCatalogue");
+    if ((root == nullptr) || (stringview(root->Attribute("version") == nullptr ?
+        "" : root->Attribute("version")) != "1.0"))
     {
         writeConfigurationDiagnostic("ERROR",
-            "Trace XML root is invalid; all tagged traces are disabled");
+            "Trace catalogue root is invalid; all normal traces are disabled");
         return;
     }
 
-    fixedarray<boolean, XHAL_RPI5CAR_TRACE_PRIORITY_COUNT> loadedPriorities{};
-    orderedmap<string, boolean> loadedTraces{};
-    orderedmap<string, XWalkTraceSourceLocation> loadedSourceLocations{};
-    boolean configurationValid = true;
-
-    const tinyxml2::XMLElement* priorities = root->FirstChildElement("priorities");
-    const boolean prioritiesMissing = priorities == nullptr;
-    if (prioritiesMissing)
+    orderedmap<string, XWalkTraceSourceLocation> loadedLocations;
+    boolean catalogueValid = true;
+    for (const tinyxml2::XMLElement* module = root->FirstChildElement("module");
+        (module != nullptr) && catalogueValid;
+        module = module->NextSiblingElement("module"))
     {
-        configurationValid = false;
-    }
-    else
-    {
-        const tinyxml2::XMLElement* priority = priorities->FirstChildElement("priority");
-        while (priority != nullptr)
+        const char* moduleName = module->Attribute("name");
+        const char* moduleDefault = module->Attribute("defaultState");
+        catalogueValid = (moduleName != nullptr) && (moduleDefault != nullptr) &&
+            (stringview(moduleDefault) == "disable");
+        for (const tinyxml2::XMLElement* trace = module->FirstChildElement("trace");
+            (trace != nullptr) && catalogueValid;
+            trace = trace->NextSiblingElement("trace"))
         {
-            unsigned int level = XHAL_RPI5CAR_TRACE_PRIORITY_COUNT;
-            boolean enabled = false;
-            const tinyxml2::XMLError levelResult = priority->QueryUnsignedAttribute(
-                "level", &level);
-            const tinyxml2::XMLError enabledResult = priority->QueryBoolAttribute(
-                "enabled", &enabled);
-            const boolean priorityInvalid =
-                (levelResult != tinyxml2::XML_SUCCESS) ||
-                (enabledResult != tinyxml2::XML_SUCCESS) ||
-                (level >= XHAL_RPI5CAR_TRACE_PRIORITY_COUNT);
-            if (priorityInvalid)
-            {
-                configurationValid = false;
-                break;
-            }
-            loadedPriorities[static_cast<size>(level)] = enabled;
-            priority = priority->NextSiblingElement("priority");
-        }
-    }
-
-    const tinyxml2::XMLElement* traces = root->FirstChildElement("traces");
-    const boolean tracesMissing = traces == nullptr;
-    if (tracesMissing)
-    {
-        configurationValid = false;
-    }
-    else
-    {
-        const tinyxml2::XMLElement* trace = traces->FirstChildElement("trace");
-        while (trace != nullptr)
-        {
-            const char* uidAttribute = trace->Attribute("uid");
-            const char* fileAttribute = trace->Attribute("file");
-            boolean enabled = false;
+            const char* uid = trace->Attribute("fullId");
+            const char* numericId = trace->Attribute("id");
+            const char* defaultState = trace->Attribute("defaultState");
+            const char* sourceFile = trace->Attribute("sourceFile");
             unsigned int sourceLine = 0U;
-            const tinyxml2::XMLError enabledResult = trace->QueryBoolAttribute(
-                "enabled", &enabled);
-            const tinyxml2::XMLError lineResult = trace->QueryUnsignedAttribute(
-                "line", &sourceLine);
-            const boolean uidMissing = uidAttribute == nullptr;
-            const boolean uidInvalid = uidMissing ||
-                (uidMissing == false && isValidUid(uidAttribute) == false);
-            const boolean filePresent = fileAttribute != nullptr;
-            const boolean linePresent = lineResult == tinyxml2::XML_SUCCESS;
-            const boolean sourceMetadataIncomplete = filePresent != linePresent;
-            const boolean sourceMetadataInvalid = sourceMetadataIncomplete ||
-                (filePresent && stringview(fileAttribute).empty()) ||
-                (linePresent && sourceLine == 0U);
-            const boolean traceInvalid = uidInvalid ||
-                (enabledResult != tinyxml2::XML_SUCCESS) || sourceMetadataInvalid;
-            if (traceInvalid)
+            const boolean attributesValid = (uid != nullptr) &&
+                (numericId != nullptr) && (defaultState != nullptr) &&
+                (sourceFile != nullptr) && isValidUid(uid) &&
+                (stringview(defaultState) == "disable") &&
+                (string(uid) == string(moduleName) + "." + numericId) &&
+                (trace->QueryUnsignedAttribute("sourceLine", &sourceLine) ==
+                    tinyxml2::XML_SUCCESS) && (sourceLine > 0U) &&
+                (loadedLocations.find(uid) == loadedLocations.end());
+            if (attributesValid == false)
             {
-                configurationValid = false;
+                catalogueValid = false;
                 break;
             }
-            loadedTraces[string(uidAttribute)] = enabled;
-            if (filePresent)
-            {
-                loadedSourceLocations[string(uidAttribute)] = {
-                    string(fileAttribute), static_cast<uint32>(sourceLine)};
-            }
-            trace = trace->NextSiblingElement("trace");
+            loadedLocations[string(uid)] = {
+                string(sourceFile), static_cast<uint32>(sourceLine)};
         }
     }
-
-    if (configurationValid == false)
+    if (catalogueValid == false)
     {
         writeConfigurationDiagnostic("ERROR",
-            "Trace XML values are invalid; all tagged traces are disabled");
+            "Trace catalogue values are invalid; all normal traces are disabled");
         return;
     }
-
-    priorityEnabledValues = loadedPriorities;
-    traceEnabledValues = loadedTraces;
-    traceSourceLocations = loadedSourceLocations;
+    traceSourceLocations = loadedLocations;
 }
 
-/**
- * @brief Writes one unfiltered trace-system configuration diagnostic.
- *
- * @param[in] category
- * `WARNING` or `ERROR` category selected by the detected failure.
- *
- * @param[in] message
- * Human-readable safe-default explanation.
- */
-void XWalkTrace::writeConfigurationDiagnostic(stringview category, stringview message)
+/** @brief Writes one unfiltered trace-system configuration diagnostic. */
+void XWalkTrace::writeConfigurationDiagnostic(stringview category,
+    stringview message)
 {
     writeRecordLocked("TRACE", category, "", "xWalkTrace", 0U, message);
 }

@@ -4,7 +4,8 @@
  *
  * @details
  * Uses Linux `i2c-dev` ioctl requests for serialized address selection, device
- * probing, SMBus byte or word writes, and I2C block writes with bounded retries.
+ * probing, SMBus byte or word writes, and I2C block writes with bounded retries
+ * and filtered xWalk transaction tracing.
  *
  * @project     xWalk Firmware
  * @module      xWalkI2c Linux Backend
@@ -29,6 +30,7 @@
 
 #include "xHal_Rpi5CarExceptions.h"
 #include "xHal_Rpi5CarLinuxHeaders.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -59,7 +61,14 @@ namespace xwalk::hal
  */
 boolean XWalkI2cLinux::selectAddress(uint8 address)
 {
-    return ::ioctl(fileDescriptor, I2C_SLAVE, address) >= 0;
+    const boolean addressSelected =
+        deviceInterfaceValue.selectAddress(fileDescriptor, address);
+    if (addressSelected == false)
+    {
+        XWALK_HAL_TRACE_UID3(RPI.010, "Linux I2C address selection failed for address %u",
+            static_cast<uint32>(address));
+    }
+    return addressSelected;
 }
 
 /******************************************************************************
@@ -87,7 +96,16 @@ boolean XWalkI2cLinux::selectAddress(uint8 address)
  */
 boolean XWalkI2cLinux::probeDevice(uint8 address)
 {
+    const boolean addressInvalid = address > common::I2C_MAXIMUM_SEVEN_BIT_ADDRESS;
+    if (addressInvalid)
+    {
+        XWALK_HAL_ERROR("Linux I2C probe address exceeds the seven-bit range: %u",
+            static_cast<uint32>(address));
+        XWALK_HAL_ASSERT(1221);
+    }
     common::validateI2cAddress(address);
+    XWALK_HAL_TRACE_UID2(RPI.011, "Linux I2C probe started for address %u",
+        static_cast<uint32>(address));
     const mutexlock lock(mutex);
     for (uint32 attempt = 0U; attempt < retryCountValue; ++attempt)
     {
@@ -104,12 +122,17 @@ boolean XWalkI2cLinux::probeDevice(uint8 address)
         request.data = nullptr;
 
         const hal::boolean transferSucceeded =
-            static_cast<hal::boolean>(
-                ::ioctl(fileDescriptor, I2C_SMBUS, &request) >= 0);
+            deviceInterfaceValue.transfer(fileDescriptor, &request);
         if (transferSucceeded)
         {
+            XWALK_HAL_TRACE_UID2(RPI.012,
+                "Linux I2C probe succeeded for address %u on attempt %u",
+                static_cast<uint32>(address), attempt + 1U);
             return true;
         }
+        XWALK_HAL_TRACE_UID3(RPI.013,
+            "Linux I2C probe attempt %u failed for address %u",
+            attempt + 1U, static_cast<uint32>(address));
     }
     return false;
 }
@@ -139,10 +162,12 @@ boolean XWalkI2cLinux::readByteOnce(uint8& value)
     request.size = I2C_SMBUS_BYTE;
     request.data = &smbusData;
 
-    const boolean readSucceeded = ::ioctl(fileDescriptor, I2C_SMBUS, &request) >= 0;
+    const boolean readSucceeded = deviceInterfaceValue.transfer(fileDescriptor, &request);
     if (readSucceeded)
     {
         value = smbusData.byte;
+        XWALK_HAL_TRACE_UID3(RPI.014, "Linux I2C byte read returned %u",
+            static_cast<uint32>(value));
     }
     return readSucceeded;
 }
@@ -174,16 +199,30 @@ boolean XWalkI2cLinux::readByteOnce(uint8& value)
  */
 bytevector XWalkI2cLinux::readDevice(uint8 address, size length)
 {
+    const boolean addressInvalid = address > common::I2C_MAXIMUM_SEVEN_BIT_ADDRESS;
+    if (addressInvalid)
+    {
+        XWALK_HAL_ERROR("Linux I2C read address exceeds the seven-bit range: %u",
+            static_cast<uint32>(address));
+        XWALK_HAL_ASSERT(1222);
+    }
     common::validateI2cAddress(address);
     if (length == 0U)
     {
+        XWALK_HAL_ERROR("Linux I2C read length is zero");
+        XWALK_HAL_ASSERT(1223);
         XHAL_THROW_INVALID_ARGUMENT("I2C read length must not be zero");
     }
     if (length > XHAL_RPI5CAR_I2C_SMBUS_BLOCK_MAX)
     {
+        XWALK_HAL_ERROR("Linux I2C read length exceeds the SMBus block size: %zu", length);
+        XWALK_HAL_ASSERT(1224);
         XHAL_THROW_OUT_OF_RANGE("I2C read length exceeds SMBus block size");
     }
 
+    XWALK_HAL_TRACE_UID2(RPI.015,
+        "Linux I2C sequential read started for address %u and %zu bytes",
+        static_cast<uint32>(address), length);
     const mutexlock lock(mutex);
     for (uint32 attempt = 0U; attempt < retryCountValue; ++attempt)
     {
@@ -201,9 +240,15 @@ bytevector XWalkI2cLinux::readDevice(uint8 address, size length)
         }
         if (readSucceeded)
         {
+            XWALK_HAL_TRACE_UID2(RPI.016,
+                "Linux I2C sequential read succeeded on attempt %u", attempt + 1U);
             return bytes;
         }
+        XWALK_HAL_TRACE_UID3(RPI.017,
+            "Linux I2C sequential read attempt %u failed", attempt + 1U);
     }
+    XWALK_HAL_ERROR("Linux I2C sequential read failed after %u attempts", retryCountValue);
+    XWALK_HAL_ASSERT(1225);
     XHAL_THROW_RUNTIME_ERROR("Linux I2C read failed after retries");
 }
 
@@ -237,16 +282,30 @@ bytevector XWalkI2cLinux::readDevice(uint8 address, size length)
  */
 bytevector XWalkI2cLinux::readRegisterDevice(uint8 address, uint8 reg, size length)
 {
+    const boolean addressInvalid = address > common::I2C_MAXIMUM_SEVEN_BIT_ADDRESS;
+    if (addressInvalid)
+    {
+        XWALK_HAL_ERROR("Linux I2C register-read address exceeds the seven-bit range: %u",
+            static_cast<uint32>(address));
+        XWALK_HAL_ASSERT(1226);
+    }
     common::validateI2cAddress(address);
     if (length == 0U)
     {
+        XWALK_HAL_ERROR("Linux I2C register-read length is zero");
+        XWALK_HAL_ASSERT(1227);
         XHAL_THROW_INVALID_ARGUMENT("I2C register-read length must not be zero");
     }
     if (length > XHAL_RPI5CAR_I2C_SMBUS_BLOCK_MAX)
     {
+        XWALK_HAL_ERROR("Linux I2C register-read length exceeds the SMBus block size: %zu", length);
+        XWALK_HAL_ASSERT(1228);
         XHAL_THROW_OUT_OF_RANGE("I2C register-read length exceeds SMBus block size");
     }
 
+    XWALK_HAL_TRACE_UID2(RPI.018,
+        "Linux I2C register read started for address %u, register %u, and %zu bytes",
+        static_cast<uint32>(address), static_cast<uint32>(reg), length);
     const mutexlock lock(mutex);
     for (uint32 attempt = 0U; attempt < retryCountValue; ++attempt)
     {
@@ -264,7 +323,7 @@ bytevector XWalkI2cLinux::readRegisterDevice(uint8 address, uint8 reg, size leng
         request.size = I2C_SMBUS_I2C_BLOCK_DATA;
         request.data = &smbusData;
 
-        const boolean readSucceeded = ::ioctl(fileDescriptor, I2C_SMBUS, &request) >= 0;
+        const boolean readSucceeded = deviceInterfaceValue.transfer(fileDescriptor, &request);
         const size returnedLength = static_cast<size>(smbusData.block[0U]);
         if (readSucceeded && (returnedLength == length))
         {
@@ -274,9 +333,16 @@ bytevector XWalkI2cLinux::readRegisterDevice(uint8 address, uint8 reg, size leng
             {
                 bytes.push_back(smbusData.block[index + 1U]);
             }
+            XWALK_HAL_TRACE_UID2(RPI.019,
+                "Linux I2C register read succeeded on attempt %u", attempt + 1U);
             return bytes;
         }
+        XWALK_HAL_TRACE_UID3(RPI.020,
+            "Linux I2C register-read attempt %u failed with %zu returned bytes",
+            attempt + 1U, returnedLength);
     }
+    XWALK_HAL_ERROR("Linux I2C register read failed after %u attempts", retryCountValue);
+    XWALK_HAL_ASSERT(1229);
     XHAL_THROW_RUNTIME_ERROR("Linux I2C register read failed after retries");
 }
 
@@ -320,31 +386,36 @@ boolean XWalkI2cLinux::writeRegisterOnce(uint8 reg, const bytevector& payload)
         smbusData.byte = payload[0U];
         request.size = I2C_SMBUS_BYTE_DATA;
     }
-    else {
+    else
+    {
         const hal::boolean twoBytePayload =
             static_cast<hal::boolean>(
                 payload.size() == 2U);
-            if (twoBytePayload)
-    {
-        const uint16 lowByteValue = static_cast<uint16>(payload[0U]);
-        const uint16 highByteValue = static_cast<uint16>(payload[1U]);
-        const uint16 shiftedHighByte = static_cast<uint16>(highByteValue << 8U);
-        smbusData.word = static_cast<uint16>(lowByteValue | shiftedHighByte);
-
-        request.size = I2C_SMBUS_WORD_DATA;
-    }
-    else
-    {
-        smbusData.block[0U] = static_cast<uint8>(payload.size());
-        for (size index = 0U; index < payload.size(); ++index)
+        if (twoBytePayload)
         {
-            smbusData.block[index + 1U] = payload[index];
+            const uint16 lowByteValue = static_cast<uint16>(payload[0U]);
+            const uint16 highByteValue = static_cast<uint16>(payload[1U]);
+            const uint16 shiftedHighByte = static_cast<uint16>(highByteValue << 8U);
+            smbusData.word = static_cast<uint16>(lowByteValue | shiftedHighByte);
+
+            request.size = I2C_SMBUS_WORD_DATA;
         }
-        request.size = I2C_SMBUS_I2C_BLOCK_DATA;
-    }
+        else
+        {
+            smbusData.block[0U] = static_cast<uint8>(payload.size());
+            for (size index = 0U; index < payload.size(); ++index)
+            {
+                smbusData.block[index + 1U] = payload[index];
+            }
+            request.size = I2C_SMBUS_I2C_BLOCK_DATA;
+        }
     }
 
-    return ::ioctl(fileDescriptor, I2C_SMBUS, &request) >= 0;
+    const boolean writeSucceeded = deviceInterfaceValue.transfer(fileDescriptor, &request);
+    XWALK_HAL_TRACE_UID3(RPI.021,
+        "Linux I2C register-write ioctl completed for register %u with status %u",
+        static_cast<uint32>(reg), static_cast<uint32>(writeSucceeded));
+    return writeSucceeded;
 }
 
 /******************************************************************************
@@ -379,12 +450,21 @@ boolean XWalkI2cLinux::writeRegisterOnce(uint8 reg, const bytevector& payload)
  */
 void XWalkI2cLinux::writeRegisterDevice(uint8 address, uint8 reg, const bytevector& payload)
 {
+    const boolean addressInvalid = address > common::I2C_MAXIMUM_SEVEN_BIT_ADDRESS;
+    if (addressInvalid)
+    {
+        XWALK_HAL_ERROR("Linux I2C register-write address exceeds the seven-bit range: %u",
+            static_cast<uint32>(address));
+        XWALK_HAL_ASSERT(1230);
+    }
     common::validateI2cAddress(address);
     const hal::boolean payloadEmpty =
         static_cast<hal::boolean>(
             payload.empty());
     if (payloadEmpty)
     {
+        XWALK_HAL_ERROR("Linux I2C register-write payload is empty");
+        XWALK_HAL_ASSERT(1231);
         XHAL_THROW_INVALID_ARGUMENT("I2C register data must not be empty");
     }
 
@@ -393,9 +473,15 @@ void XWalkI2cLinux::writeRegisterDevice(uint8 address, uint8 reg, const bytevect
             payload.size() > XHAL_RPI5CAR_I2C_SMBUS_BLOCK_MAX);
     if (payloadTooLarge)
     {
+        XWALK_HAL_ERROR("Linux I2C register-write payload exceeds the SMBus block size: %zu",
+            payload.size());
+        XWALK_HAL_ASSERT(1232);
         XHAL_THROW_OUT_OF_RANGE("I2C register data exceeds SMBus block size");
     }
 
+    XWALK_HAL_TRACE_UID2(RPI.022,
+        "Linux I2C register write started for address %u, register %u, and %zu bytes",
+        static_cast<uint32>(address), static_cast<uint32>(reg), payload.size());
     const mutexlock lock(mutex);
     for (uint32 attempt = 0U; attempt < retryCountValue; ++attempt)
     {
@@ -404,16 +490,41 @@ void XWalkI2cLinux::writeRegisterDevice(uint8 address, uint8 reg, const bytevect
                 selectAddress(address) && writeRegisterOnce(reg, payload));
         if (registerWriteSucceeded)
         {
+            XWALK_HAL_TRACE_UID2(RPI.023,
+                "Linux I2C register write succeeded on attempt %u", attempt + 1U);
             return;
         }
+        XWALK_HAL_TRACE_UID3(RPI.024,
+            "Linux I2C register-write attempt %u failed", attempt + 1U);
     }
 
+    XWALK_HAL_ERROR("Linux I2C register write failed after %u attempts", retryCountValue);
+    XWALK_HAL_ASSERT(1233);
     XHAL_THROW_RUNTIME_ERROR("Linux I2C register write failed after retries");
 }
 
 /**
  * @brief Attempts a validated I2C register write without throwing.
- * @return `true` when one complete address-selection and write sequence succeeds; otherwise `false`.
+ *
+ * @param[in] address
+ * Seven-bit I2C destination address.
+ *
+ * @param[in] reg
+ * Eight-bit destination register address.
+ *
+ * @param[in] payload
+ * Payload containing between 1 and 32 bytes.
+ *
+ * @return
+ * `true` when one complete address-selection and write sequence succeeds;
+ * otherwise `false`.
+ *
+ * @post
+ * Invalid input and exhausted backend retries are reported as `false`.
+ *
+ * @note
+ * This fail-safe path deliberately avoids tracing so trace initialization or
+ * formatting cannot violate its non-throwing contract.
  */
 boolean XWalkI2cLinux::tryWriteRegisterDevice(uint8 address, uint8 reg,
     const bytevector& payload) noexcept

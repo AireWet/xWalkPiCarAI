@@ -70,25 +70,22 @@ namespace xwalk::ctrl
 {
 
 /**
- * @brief Applies all requested individual trace states before backend construction.
- * @param[in] applicationArguments Optional validated trace update requests.
- * @return `true` when no updates were requested or every XML update succeeds.
+ * @brief Disables all normal traces and applies ordered settings before backend construction.
+ * @param[in] applicationArguments Validated trace selectors and JSON paths.
+ * @return `true` when the default and every requested update succeed.
  */
-::ctrl::boolean XWALK_applyTraceConfiguration(
+::ctrl::boolean xWalkApplyTraceConfiguration(
     const XWalkControllerApplicationArguments& applicationArguments)
 {
-    for (const ::ctrl::string& uid : applicationArguments.traceEnableUids)
+    const ::ctrl::boolean defaultTracesDisabled =
+        hal::XWalkTrace::resetGlobalTraceConfiguration();
+    if (defaultTracesDisabled == false)
     {
-        const ::ctrl::boolean traceEnabled = hal::XWalkTrace::enableGlobalTrace(uid);
-        if (traceEnabled == false)
-        {
-            return false;
-        }
+        return false;
     }
-    for (const ::ctrl::string& uid : applicationArguments.traceDisableUids)
+    for (const ::ctrl::string& argument : applicationArguments.traceArguments)
     {
-        const ::ctrl::boolean traceDisabled = hal::XWalkTrace::disableGlobalTrace(uid);
-        if (traceDisabled == false)
+        if (hal::XWalkTrace::applyGlobalTraceArgument(argument) == false)
         {
             return false;
         }

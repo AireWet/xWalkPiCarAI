@@ -1,0 +1,12 @@
+{
+  "trace": {
+    "RPI": {
+      "state": "disable",
+      "tags": {
+        "001": "enable",
+        "002": "enable",
+        "003": "disable"
+      }
+    }
+  }
+}

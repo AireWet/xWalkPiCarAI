@@ -33,6 +33,7 @@
 #include "xAgent_Rpi5CarBootHostStub.h"
 
 #include "xHal_Rpi5CarLinuxHeaders.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include <iostream>
 
@@ -65,7 +66,7 @@ namespace xwalk::ctrl
     XWalkControllerApplicationArguments applicationArguments;
     const XWalkAppConfig defaultConfig{{}, XWALK_RUNTIME_DATA_DIRECTORY};
     const ::ctrl::boolean argumentsParsed =
-        XWALK_parseControllerApplicationArguments(
+        xWalkParseControllerApplicationArguments(
             argumentCount, arguments, defaultConfig, applicationArguments);
     if (argumentsParsed == false)
     {
@@ -73,18 +74,18 @@ namespace xwalk::ctrl
         return 2;
     }
     const ::ctrl::boolean traceConfigurationApplied =
-        XWALK_applyTraceConfiguration(applicationArguments);
+        xWalkApplyTraceConfiguration(applicationArguments);
     if (traceConfigurationApplied == false)
     {
-        std::cerr << "Trace configuration failed\n";
+        std::cerr << "Trace configuration failed: "
+                  << hal::XWalkTrace::globalTraceConfigurationError() << '\n';
         return 2;
     }
     const ::ctrl::stringvector& commandArguments =
         applicationArguments.commandArguments;
     const ::ctrl::boolean traceConfigurationOnly =
         commandArguments.empty() &&
-        (!applicationArguments.traceEnableUids.empty() ||
-         !applicationArguments.traceDisableUids.empty());
+        !applicationArguments.traceArguments.empty();
     if (traceConfigurationOnly)
     {
         return 0;

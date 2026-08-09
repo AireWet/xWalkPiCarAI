@@ -31,6 +31,7 @@ a workspace build.
 | ALSA development library | Builds the optional shared PCM and mixer backend |
 | Protobuf and gRPC development libraries | Build the xWalkIW interface library |
 | GoogleTest development library | Provides the central HAL host-test framework |
+| json-c development library | Parses runtime trace configuration files |
 | TinyXML2 development library | Validates the central test selection file |
 | yaml-cpp development library | Loads board, AI, example, and hardware runtime values |
 | `../xWalkLibrary` | Architecture-selected portable dependencies and shared Vosk model |
@@ -42,7 +43,7 @@ a workspace build.
 On Debian or Ubuntu, install the normal build dependencies with:
 
 ```bash
-sudo apt-get install build-essential cmake libasound2-dev libcurl4-openssl-dev libgrpc++-dev libprotobuf-dev libgtest-dev libtinyxml2-dev libyaml-cpp-dev libsndfile1-dev linux-libc-dev
+sudo apt-get install build-essential cmake libasound2-dev libcurl4-openssl-dev libgrpc++-dev libprotobuf-dev libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev libsndfile1-dev linux-libc-dev
 ```
 
 ## Build and run every host test

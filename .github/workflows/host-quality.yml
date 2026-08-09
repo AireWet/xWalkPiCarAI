@@ -23,7 +23,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
+          libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Select compiler
         run: |
@@ -80,7 +80,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
+          libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure
         run: cmake --fresh --preset sanitizers
@@ -100,7 +100,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
+          libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure
         run: cmake --fresh --preset thread-sanitizer
@@ -117,7 +117,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
+          libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure strict host build
         run: cmake --fresh --preset sanity
@@ -134,7 +134,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build clang-tidy cppcheck libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
+          libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure
         run: cmake --fresh --preset clang-tidy
@@ -151,7 +151,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build gcovr libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
+          libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Build, test, and generate coverage reports
         run: xWalkTool/shell/run-host-coverage.sh run
@@ -182,7 +182,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
+          libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure release installation
         run: >-

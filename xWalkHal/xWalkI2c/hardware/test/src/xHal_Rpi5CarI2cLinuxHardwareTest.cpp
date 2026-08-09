@@ -4,8 +4,8 @@
  *
  * @details
  * Creates the Linux backend and callback interface as separate objects, then
- * succeeds when any supported Robot HAT address responds. This executable must
- * only run on prepared hardware.
+ * succeeds when any supported Robot HAT address responds. It emits xWalk test
+ * progress and failure diagnostics and must only run on prepared hardware.
  *
  * @project     xWalk Firmware
  * @module      xWalkI2c Hardware Test
@@ -28,6 +28,8 @@
 
 #include "xHal_Rpi5CarI2cLinux.h"
 
+#include "xHal_Rpi5CarTrace.h"
+
 /******************************************************************************
  * Global function definitions
  ******************************************************************************/
@@ -48,8 +50,11 @@ XWalkHal::int32 main(XWalkHal::int32 argumentCount,
 {
     if (argumentCount != 2)
     {
+        XWALK_HAL_ERROR("xWalkI2c hardware test requires exactly one device path");
+        XWALK_HAL_ASSERT(1271);
         return 2;
     }
+    XWALK_HAL_TRACE_UID0(RPI.033, "xWalkI2c hardware probe test started");
     xwalk::hal::XWalkI2cLinux backend(arguments[1U]);
     xwalk::hal::XWalkI2c i2c(&backend, XHAL_I2C_PROBE_CALLBACK(xwalk::hal::XWalkI2cLinux),
         XHAL_I2C_WRITE_REGISTER_CALLBACK(xwalk::hal::XWalkI2cLinux),
@@ -60,6 +65,7 @@ XWalkHal::int32 main(XWalkHal::int32 argumentCount,
             i2c.probe(XHAL_RPI5CAR_I2C_ADDRESS_1));
     if (primaryAddressAvailable)
     {
+        XWALK_HAL_TRACE_UID0(RPI.034, "Robot HAT responded at primary I2C address");
         return 0;
     }
     const hal::boolean secondaryAddressAvailable =
@@ -67,14 +73,18 @@ XWalkHal::int32 main(XWalkHal::int32 argumentCount,
             i2c.probe(XHAL_RPI5CAR_I2C_ADDRESS_2));
     if (secondaryAddressAvailable)
     {
+        XWALK_HAL_TRACE_UID0(RPI.035, "Robot HAT responded at secondary I2C address");
         return 0;
     }
-    const hal::boolean secondaryAddressAvailable =
+    const hal::boolean tertiaryAddressAvailable =
         static_cast<hal::boolean>(
             i2c.probe(XHAL_RPI5CAR_I2C_ADDRESS_3));
-    if (secondaryAddressAvailable)
+    if (tertiaryAddressAvailable)
     {
+        XWALK_HAL_TRACE_UID0(RPI.036, "Robot HAT responded at tertiary I2C address");
         return 0;
     }
+    XWALK_HAL_ERROR("No supported Robot HAT I2C address responded");
+    XWALK_HAL_ASSERT(1272);
     return 1;
 }

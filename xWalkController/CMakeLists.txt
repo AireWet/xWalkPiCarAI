@@ -70,6 +70,13 @@ if(XWALK_CLI_BUILD_HOST OR XWALK_CLI_BUILD_RPI)
     include(CTest)
 endif()
 
+if(NOT TARGET xWalkTrace)
+    add_subdirectory(
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkTrace
+        ${CMAKE_CURRENT_BINARY_DIR}/xWalkTrace
+    )
+endif()
+
 if(NOT TARGET xWalkAgent)
     add_subdirectory(
         ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkAgent

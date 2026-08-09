@@ -21,6 +21,13 @@ deliberately introduces or changes a reusable project-wide convention, update
 the guide in the same change. Do not update it for a local exception, generated
 output, accidental inconsistency, or unapproved redesign.
 
+## Markdown command formatting
+
+In `.md` files only, keep every fenced shell-command example on one physical
+line. Do not use continuation backslashes to wrap CMake, build, test, Python,
+or other shell commands. A complete shell-command line may exceed the normal
+115-character documentation limit.
+
 ## Verification safety
 
 Prefer host tests. Hardware tests are opt-in and must not be run unless the user

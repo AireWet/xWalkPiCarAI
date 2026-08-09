@@ -100,11 +100,23 @@ void XWalkTrace::discardOutput(contextpointer context, XWalkTraceLevel level,
 
 /**
  * @brief Returns the lazily initialized process-wide macro trace instance.
+ * @param[in] configurationPath Optional first-use catalogue path.
+ * @param[in] logPath Optional first-use log path.
  * @return Stable instance shared by every public trace macro.
  */
-XWalkTrace& XWalkTrace::globalInstance()
+XWalkTrace& XWalkTrace::globalInstance(const filesystempath* configurationPath,
+    const filesystempath* logPath)
 {
-    static XWalkTrace instance(nullptr, &XWalkTrace::discardOutput);
+    const filesystempath defaultConfigurationPath(XWALK_TRACE_CONFIG_PATH);
+    const filesystempath defaultLogPath =
+        filesystempath(XHAL_RPI5CAR_TRACE_LOG_DIRECTORY) /
+        XHAL_RPI5CAR_TRACE_LOG_FILENAME;
+    const filesystempath& initialConfigurationPath = configurationPath == nullptr ?
+        defaultConfigurationPath : *configurationPath;
+    const filesystempath& initialLogPath = logPath == nullptr ?
+        defaultLogPath : *logPath;
+    static XWalkTrace instance(nullptr, &XWalkTrace::discardOutput,
+        XWalkTraceLevel::Warning, initialConfigurationPath, initialLogPath);
     return instance;
 }
 
@@ -119,12 +131,34 @@ XWalkTrace& XWalkTrace::globalInstance()
  */
 XWalkTrace::XWalkTrace(contextpointer outputContext, traceoutputcallback output,
     XWalkTraceLevel level):
+    XWalkTrace(outputContext, output, level,
+        filesystempath(XWALK_TRACE_CONFIG_PATH),
+        filesystempath(XHAL_RPI5CAR_TRACE_LOG_DIRECTORY) /
+            XHAL_RPI5CAR_TRACE_LOG_FILENAME)
+{
+}
+
+/**
+ * @brief Constructs a trace with explicit initial catalogue and log paths.
+ * @param[in,out] outputContext Optional non-owning callback context.
+ * @param[in] output Non-null synchronous callback.
+ * @param[in] level Initial validated compatibility threshold.
+ * @param[in] configurationPath XML catalogue loaded during construction.
+ * @param[in] logPath Append-only log opened during construction.
+ */
+XWalkTrace::XWalkTrace(contextpointer outputContext, traceoutputcallback output,
+    XWalkTraceLevel level, const filesystempath& configurationPath,
+    const filesystempath& logPath):
     outputContextPointer(outputContext),
     outputCallback(output),
     logFile(),
-    priorityEnabledValues{},
+    globalTraceEnabledValue(false),
+    moduleEnabledValues{},
     traceEnabledValues{},
+    traceSourceLocations{},
     configurationPathValue(),
+    logPathValue(),
+    traceConfigurationErrorValue(),
     startTime(steadyclock::now()),
     levelValue(validateLevel(level)),
     traceMutex()
@@ -134,10 +168,7 @@ XWalkTrace::XWalkTrace(contextpointer outputContext, traceoutputcallback output,
         XHAL_THROW_INVALID_ARGUMENT("Trace output callback must not be null");
     }
 
-    const filesystempath defaultLogPath =
-        filesystempath(XHAL_RPI5CAR_TRACE_LOG_DIRECTORY) /
-        XHAL_RPI5CAR_TRACE_LOG_FILENAME;
-    initialize(filesystempath(XWALK_TRACE_CONFIG_PATH), defaultLogPath);
+    initialize(configurationPath, logPath);
     reportLevelChange();
 }
 
@@ -176,9 +207,15 @@ XWalkTrace::~XWalkTrace() = default;
 void XWalkTrace::configureGlobal(const filesystempath& configurationPath,
     const filesystempath& logPath)
 {
-    XWalkTrace& instance = globalInstance();
+    XWalkTrace& instance = globalInstance(&configurationPath, &logPath);
     mutexlock lock(instance.traceMutex);
-    instance.initialize(configurationPath, logPath);
+    const boolean pathsChanged =
+        (instance.configurationPathValue != configurationPath) ||
+        (instance.logPathValue != logPath);
+    if (pathsChanged)
+    {
+        instance.initialize(configurationPath, logPath);
+    }
 }
 
 } /* namespace xwalk::hal */

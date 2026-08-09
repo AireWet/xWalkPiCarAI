@@ -363,15 +363,17 @@ retaining normal compiler warnings and compilation checks.
 
 - Indent with four spaces; do not use tabs.
 - Limit every line in C++ sources, headers, CMake files, and repository
-  documentation to 115 characters, except complete shell commands inside fenced Markdown code blocks. Wrap any
-  other line that would exceed this limit.
+  documentation to 115 characters, except complete shell commands inside
+  fenced Markdown code blocks. Wrap any other line that would exceed this
+  limit.
   Count leading indentation and all other characters when measuring the line.
   Do not wrap a C++ statement, declaration, condition, call, or expression when
   the complete construct fits within 115 characters. When wrapping is required,
   keep as much of the construct as practical on each line without exceeding the
   limit.
-  Keep each fenced shell-command example on one physical line without a continuation backslash. A complete
-  command in such a block may exceed 115 characters when required to preserve its one-line form.
+  In `.md` files only, keep each fenced shell-command example on one physical
+  line without a continuation backslash. A complete command in such a block may
+  exceed 115 characters when required to preserve its one-line form.
 - Use Allman braces for namespaces, classes, functions, and control statements:
 
   ```cpp
@@ -702,29 +704,37 @@ retaining normal compiler warnings and compilation checks.
   with Controller macros. Preserve leading zeros as significant UID characters;
   `RPI.001` and `RPI.1` are distinct valid identifiers.
   Priority zero is highest and priority three is lowest. Emit a tagged record
-  only when its independent priority flag and individual UID flag are enabled.
-- Keep warning, error, and numeric assertion-signal macros independent of UID and
-  priority flags. Capture the public macro's `__FILE__` and `__LINE__`; store only
+  only when its resolved global, module, and individual UID state is enabled.
+- Keep warning, error, and numeric assertion-signal macros independent of normal
+  trace registry state. Capture the public macro's `__FILE__` and `__LINE__`; store only
   the source basename in logs and retain project-relative paths in generated XML.
-- Keep `XWALK_VERBOSE(format, ...)` independent of XML, priority, and UID
-  filtering. Always emit it as `[TRACE] [VERBOSE]` with caller location and
-  timing metadata; its formatting arguments are intentionally always evaluated.
+- Keep `XWALK_VERBOSE(format, ...)` only as a disabled no-op for source
+  compatibility. Normal diagnostics use one scanner-registered UID macro so
+  their formatting arguments are not evaluated while disabled.
 - Format wall time as UTC with milliseconds and elapsed time from one
   `steady_clock` initialization point with microseconds. Do not describe one
   trace call as an operation-duration measurement.
 - Run the class-based
   `xWalkTrace/pre-compiler/xHal_Rpi5CarTracePreCompiler.py` before trace
   compilation. Its
-  token-aware scan covers explicit project source roots, rejects duplicate or
-  malformed UIDs, preserves XML enable flags, removes absent UIDs, sorts output,
-  and avoids rewriting unchanged content. New and missing UIDs default disabled.
-- Apply repeatable Controller `--trace-enable UID` and `--trace-disable UID`
-  options before constructing the boot graph only when supplied. Default every
-  newly generated priority and UID to disabled. Persist only scanner-known UIDs
-  through Boolean-status `XWalkTrace::enableGlobalTrace()` or
-  `disableGlobalTrace()` calls, without `try` or `catch` in the startup path,
-  and update the in-memory flag under the trace mutex; never parse XML on each
-  trace call.
+  token-aware scan covers the complete project root, including generated
+  project sources and participating nested repositories, rejects every
+  duplicate or malformed UID, generates the deterministic immutable
+  `generated/xwalk-traces.xml` catalogue, removes absent UIDs, and avoids
+  rewriting unchanged content. Every normal trace defaults disabled.
+- Apply repeatable Controller `--trace VALUE` options before constructing the
+  boot graph. Accept `all.<state>`, `<module>.<state>`,
+  `<module>.<digits>.<state>`, and `.json` paths, with exact `enable` or
+  `disable` states. Retain `--trace-enable UID` and `--trace-disable UID` as
+  legacy aliases. Start with `all.disable`, process arguments left to right,
+  and make the last applicable setting win. JSON applies global, module, then
+  tag states and rejects Boolean states and unknown catalogue IDs. Store runtime
+  state only in the synchronized shared registry; never mutate the generated
+  catalogue or parse XML or JSON on each trace call.
+- Let standalone diagnostic binaries accept an exact `--trace` selector when
+  runtime trace control is required. Use individual, module, global, or JSON
+  selectors, validate them before opening hardware, and apply only
+  scanner-known module and UID states in memory.
 - Preserve the compatibility severity ordering from zero through four:
   critical, error, warning, info, and debug. Accept exact lowercase names, use
   warning by default, and retain threshold behavior for explicit `XWalkTrace`
@@ -1156,8 +1166,9 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
 - Name feature options `XWALK_<MODULE>_BUILD_<MODE>_TESTS` and default them to
   `OFF`.
 - Register tests with descriptive stable names and labels.
-- Keep every fenced shell-command example on one physical line. Do not use a trailing backslash to wrap CMake
-  configure, build, or CTest commands. These command lines are exempt from the 115-character limit.
+- In `.md` files only, keep every fenced shell-command example on one physical
+  line. Do not use a trailing backslash to wrap CMake configure, build, or CTest
+  commands. These command lines are exempt from the 115-character limit.
 - Use module-local build directories such as `xWalkServo/build-host` and
   `xWalkServo/build-rpi` in documented commands. Do not require `/tmp` paths.
 - Use the workspace root and its presets for release-wide sanity, Clang-Tidy,

@@ -35,6 +35,7 @@
 
 #include "xHal_Rpi5CarFileFunctions.h"
 #include "xHal_Rpi5CarLinuxHeaders.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include <iostream>
 
@@ -58,7 +59,7 @@ ctrl::int32 main(ctrl::int32 argumentCount, ctrl::charpointer arguments[])
                                     };
 
     const ctrl::boolean argumentsParsed =
-            xwalk::ctrl::XWALK_parseControllerApplicationArguments(
+            xwalk::ctrl::xWalkParseControllerApplicationArguments(
                                                             argumentCount,
                                                             arguments,
                                                             defaultConfig,
@@ -71,18 +72,19 @@ ctrl::int32 main(ctrl::int32 argumentCount, ctrl::charpointer arguments[])
     }
 
     const ::ctrl::boolean traceConfigurationApplied =
-        xwalk::ctrl::XWALK_applyTraceConfiguration(applicationArguments);
+        xwalk::ctrl::xWalkApplyTraceConfiguration(applicationArguments);
     if (traceConfigurationApplied == false)
     {
-        std::cerr << "Trace configuration failed" << std::endl;
+        std::cerr << "Trace configuration failed: "
+                  << xwalk::hal::XWalkTrace::globalTraceConfigurationError()
+                  << std::endl;
         return 2;
     }
 
     const ctrl::stringvector& commandArguments = applicationArguments.commandArguments;
     const ::ctrl::boolean traceConfigurationOnly =
         commandArguments.empty() &&
-        (!applicationArguments.traceEnableUids.empty() ||
-         !applicationArguments.traceDisableUids.empty());
+        !applicationArguments.traceArguments.empty();
     if (traceConfigurationOnly)
     {
         return 0;

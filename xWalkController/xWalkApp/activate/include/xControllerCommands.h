@@ -55,10 +55,10 @@ namespace xwalk::ctrl
  * @param[out] applicationArguments Validated paths and remaining command arguments.
  *
  * @return
- * `true` when every application-global option is complete, non-empty, and
- * absolute; otherwise `false`.
+ * `true` when every application-global option is complete, path values are
+ * absolute, and trace selectors are valid; otherwise `false`.
  */
-::ctrl::boolean XWALK_parseControllerApplicationArguments(
+::ctrl::boolean xWalkParseControllerApplicationArguments(
     ::ctrl::int32 argumentCount, ::ctrl::charpointer arguments[],
     const XWalkAppConfig& defaultConfig,
     XWalkControllerApplicationArguments& applicationArguments);

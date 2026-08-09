@@ -18,6 +18,7 @@ libcurl4-openssl-dev
 libprotobuf-dev
 libgrpc++-dev
 libgtest-dev
+libjson-c-dev
 libtinyxml2-dev
 libyaml-cpp-dev
 
@@ -61,6 +62,7 @@ libsndfile1-dev
 libprotobuf-dev
 libgrpc++-dev
 libgtest-dev
+libjson-c-dev
 libtinyxml2-dev
 libyaml-cpp-dev
 libopencv-dev
@@ -117,7 +119,7 @@ APT: none
 
 xWalkTrace
 Internal: xWalkLibraryCommon
-APT: none
+APT: libjson-c-dev
 
 xWalkUtils
 Internal: xWalkLibraryCommon
@@ -253,6 +255,7 @@ package|curl-dev|required|host,rpi|curl|libcurl4-openssl-dev|libcurl-devel|curl|
 package|protobuf-dev|required|host,rpi|workspace|libprotobuf-dev|protobuf-devel|protobuf|protobuf
 package|grpc-dev|required|host,rpi|workspace|libgrpc++-dev|grpc-devel|grpc|grpc
 package|gtest|required|host,rpi|workspace|libgtest-dev|gtest-devel|gtest|googletest
+package|json-c|required|host,rpi|workspace|libjson-c-dev|json-c-devel|json-c|json-c
 package|tinyxml2|required|host,rpi|workspace|libtinyxml2-dev|tinyxml2-devel|tinyxml2|tinyxml2
 package|yaml-cpp|required|host,rpi|workspace|libyaml-cpp-dev|yaml-cpp-devel|yaml-cpp|yaml-cpp
 package|opencv|required|rpi|camera|libopencv-dev|opencv-devel|opencv|opencv

@@ -32,7 +32,9 @@
 #include <cassert>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <regex>
+#include <sstream>
 #include <string>
 #include <thread>
 
@@ -98,32 +100,36 @@ void captureOutput(contextpointer context, XWalkTraceLevel level, stringview mes
     ++capture.count;
 }
 
-/** @brief Writes one complete runtime XML fixture below the test working directory. */
+/** @brief Writes one complete immutable catalogue fixture below the test directory. */
 void writeRuntimeConfiguration(const filesystempath& configurationPath)
 {
     outputfilestream configuration(configurationPath, FILE_OPEN_WRITE_TRUNCATE);
     assert(configuration.is_open());
     configuration << R"xml(<?xml version="1.0" encoding="UTF-8"?>
-<xwalkTrace>
-    <priorities>
-        <priority level="0" enabled="true"/>
-        <priority level="1" enabled="true"/>
-        <priority level="2" enabled="false"/>
-        <priority level="3" enabled="true"/>
-    </priorities>
-    <traces>
-        <trace uid="RPI.001" enabled="false"/>
-        <trace uid="RPI.91001" enabled="true"/>
-        <trace uid="RPI.91002" enabled="false"/>
-        <trace uid="RPI.91003" enabled="true"/>
-        <trace uid="RPI.91004" enabled="true"/>
-        <trace uid="CTRL.92001" enabled="true"
-            file="xWalkTrace/test/src/xHal_Rpi5CarTraceTest.cpp" line="1234"/>
-        <trace uid="CTRL.92002" enabled="false"/>
-        <trace uid="CTRL.92003" enabled="true"/>
-        <trace uid="CTRL.92004" enabled="true"/>
-    </traces>
-</xwalkTrace>
+<xwalkTraceCatalogue version="1.0">
+  <module name="CTRL" defaultState="disable">
+    <trace id="92001" fullId="CTRL.92001" defaultState="disable"
+      sourceFile="xWalkTrace/test/src/xHal_Rpi5CarTraceTest.cpp" sourceLine="1234"/>
+    <trace id="92002" fullId="CTRL.92002" defaultState="disable"
+      sourceFile="trace-test.cpp" sourceLine="2"/>
+    <trace id="92003" fullId="CTRL.92003" defaultState="disable"
+      sourceFile="trace-test.cpp" sourceLine="3"/>
+    <trace id="92004" fullId="CTRL.92004" defaultState="disable"
+      sourceFile="trace-test.cpp" sourceLine="4"/>
+  </module>
+  <module name="RPI" defaultState="disable">
+    <trace id="001" fullId="RPI.001" defaultState="disable"
+      sourceFile="trace-test.cpp" sourceLine="5"/>
+    <trace id="91001" fullId="RPI.91001" defaultState="disable"
+      sourceFile="trace-test.cpp" sourceLine="6"/>
+    <trace id="91002" fullId="RPI.91002" defaultState="disable"
+      sourceFile="trace-test.cpp" sourceLine="7"/>
+    <trace id="91003" fullId="RPI.91003" defaultState="disable"
+      sourceFile="trace-test.cpp" sourceLine="8"/>
+    <trace id="91004" fullId="RPI.91004" defaultState="disable"
+      sourceFile="trace-test.cpp" sourceLine="9"/>
+  </module>
+</xwalkTraceCatalogue>
 )xml";
     configuration.flush();
     assert(configuration.good());
@@ -134,6 +140,76 @@ int32 expensiveDiagnostic(int32& invocationCount)
 {
     ++invocationCount;
     return invocationCount;
+}
+
+/** @brief Verifies explicit first-use paths avoid creating the fallback log directory. */
+void testConfiguredGlobalAvoidsDefaultLog()
+{
+    const filesystempath originalDirectory = std::filesystem::current_path();
+    const filesystempath isolatedDirectory =
+        originalDirectory / "trace-global-initialization";
+    static_cast<void>(std::filesystem::remove_all(isolatedDirectory));
+    static_cast<void>(std::filesystem::create_directories(isolatedDirectory));
+    const filesystempath configurationPath =
+        isolatedDirectory / "trace-catalogue.xml";
+    const filesystempath configuredLogPath =
+        isolatedDirectory / "configured" / "trace.log";
+    writeRuntimeConfiguration(configurationPath);
+
+    std::filesystem::current_path(isolatedDirectory);
+    XWalkTrace::configureGlobal(configurationPath, configuredLogPath);
+    std::filesystem::current_path(originalDirectory);
+
+    assert(std::filesystem::exists(configuredLogPath));
+    assert(std::filesystem::exists(isolatedDirectory / "log") == false);
+}
+
+/** @brief Verifies JSON ordering, strict states, unknown IDs, and precedence. */
+void testRuntimeConfigurationArguments()
+{
+    const filesystempath configurationPath("trace-argument-catalogue.xml");
+    writeRuntimeConfiguration(configurationPath);
+    XWalkTrace::configureGlobal(configurationPath, "trace-argument.log");
+
+    assert(XWalkTrace::applyGlobalTraceArgument("RPI.91001.enable"));
+    assert(XWalkTrace::globalTraceIsEnabled(0U, "RPI.91001"));
+    assert(XWalkTrace::applyGlobalTraceArgument("RPI.disable"));
+    assert(XWalkTrace::globalTraceIsEnabled(0U, "RPI.91001") == false);
+    assert(XWalkTrace::applyGlobalTraceArgument("all.enable"));
+    assert(XWalkTrace::globalTraceIsEnabled(0U, "RPI.91001"));
+    assert(XWalkTrace::globalTraceIsEnabled(0U, "CTRL.92001"));
+    assert(XWalkTrace::applyGlobalTraceArgument("CTRL.92001.disable"));
+    assert(XWalkTrace::globalTraceIsEnabled(0U, "CTRL.92001") == false);
+
+    const filesystempath jsonPath("trace-argument.json");
+    outputfilestream jsonFile(jsonPath, FILE_OPEN_WRITE_TRUNCATE);
+    jsonFile << R"json({
+  "trace": {
+    "all": {"state": "disable"},
+    "RPI": {"state": "enable", "tags": {"91001": "disable"}},
+    "CTRL": {"state": "disable", "tags": {"92001": "enable"}}
+  }
+})json";
+    jsonFile.close();
+    assert(XWalkTrace::applyGlobalTraceArgument(jsonPath.string()));
+    assert(XWalkTrace::globalTraceIsEnabled(0U, "RPI.91001") == false);
+    assert(XWalkTrace::globalTraceIsEnabled(0U, "RPI.91004"));
+    assert(XWalkTrace::globalTraceIsEnabled(0U, "CTRL.92001"));
+    assert(XWalkTrace::globalTraceIsEnabled(0U, "CTRL.92004") == false);
+
+    outputfilestream invalidJson("trace-invalid-state.json", FILE_OPEN_WRITE_TRUNCATE);
+    invalidJson << R"json({"trace":{"all":{"state":true}}})json";
+    invalidJson.close();
+    assert(XWalkTrace::applyGlobalTraceArgument("trace-invalid-state.json") == false);
+    assert(XWalkTrace::globalTraceConfigurationError().find("enable or disable") !=
+        string::npos);
+
+    outputfilestream unknownJson("trace-unknown-id.json", FILE_OPEN_WRITE_TRUNCATE);
+    unknownJson << R"json({"trace":{"RPI":{"tags":{"99999":"enable"}}}})json";
+    unknownJson.close();
+    assert(XWalkTrace::applyGlobalTraceArgument("trace-unknown-id.json") == false);
+    assert(XWalkTrace::globalTraceConfigurationError().find("RPI.99999") !=
+        string::npos);
 }
 
 /** @brief Verifies warning-default filtering and all severity entry points. */
@@ -159,18 +235,25 @@ void testDefaultFiltering()
     assert(capture.messages[2U] == "critical");
 }
 
-/** @brief Verifies accepted records are appended to the relative log file. */
-void testFileOutput()
+/** @brief Verifies accepted records are emitted to the terminal and log file. */
+void testFileAndTerminalOutput()
 {
     TraceCapture capture;
     XWalkTrace trace(&capture, &captureOutput);
+    std::ostringstream terminalOutput;
+    std::streambuf* const previousTerminalOutput =
+        std::clog.rdbuf(terminalOutput.rdbuf());
     trace.warning("host file output record");
+    std::clog.rdbuf(previousTerminalOutput);
 
     const filesystempath logPath = filesystempath(XHAL_RPI5CAR_TRACE_LOG_DIRECTORY) /
         XHAL_RPI5CAR_TRACE_LOG_FILENAME;
     const string logContents = readFileContents(logPath);
+    const string terminalContents = terminalOutput.str();
     assert(logContents.find("[LEGACY] [WARNING]") != string::npos);
     assert(logContents.find("host file output record") != string::npos);
+    assert(terminalContents.find("[LEGACY] [WARNING]") != string::npos);
+    assert(terminalContents.find("host file output record") != string::npos);
 }
 
 /** @brief Verifies missing and malformed XML use safe disabled defaults. */
@@ -181,19 +264,16 @@ void testConfigurationFailures()
     static_cast<void>(removeFilesystemEntry(missingLog, operationError));
     XWalkTrace::configureGlobal("trace-config-does-not-exist.xml", missingLog);
     assert(XWalkTrace::globalTraceIsEnabled(0U, "RPI.91001") == false);
-    const uint32 verboseLine = __LINE__ + 1U;
     XWALK_VERBOSE("Always visible value: %d", 9);
     const string missingContents = readFileContents(missingLog);
     assert(missingContents.find("[TRACE] [WARNING]") != string::npos);
-    assert(missingContents.find("all tagged traces are disabled") != string::npos);
-    assert(missingContents.find("[TRACE] [VERBOSE]") != string::npos);
-    assert(missingContents.find("Always visible value: 9") != string::npos);
-    assert(missingContents.find("xHal_Rpi5CarTraceTest.cpp:" +
-        std::to_string(verboseLine)) != string::npos);
+    assert(missingContents.find("all normal traces are disabled") != string::npos);
+    assert(missingContents.find("[TRACE] [VERBOSE]") == string::npos);
+    assert(missingContents.find("Always visible value: 9") == string::npos);
 
     const filesystempath malformedConfiguration("trace-malformed-config.xml");
     outputfilestream malformed(malformedConfiguration, FILE_OPEN_WRITE_TRUNCATE);
-    malformed << "<xwalkTrace><priorities>";
+    malformed << "<xwalkTraceCatalogue>";
     malformed.close();
     const filesystempath malformedLog("trace-malformed-config.log");
     operationError.clear();
@@ -214,21 +294,40 @@ void testMacroRuntime()
     static_cast<void>(removeFilesystemEntry(logPath, operationError));
     XWalkTrace::configureGlobal(configurationPath, logPath);
 
+    assert(XWalkTrace::globalTraceIsEnabled(0U, "RPI.91001") == false);
+    assert(XWalkTrace::globalTraceIsEnabled(1U, "CTRL.92001") == false);
+
     const boolean leadingZeroTraceEnabled = XWalkTrace::enableGlobalTrace("RPI.001");
     assert(leadingZeroTraceEnabled);
     assert(XWalkTrace::globalTraceIsEnabled(0U, "RPI.001"));
-    assert(readFileContents(configurationPath).find(
-        "uid=\"RPI.001\" enabled=\"true\"") != string::npos);
     const boolean leadingZeroTraceDisabled = XWalkTrace::disableGlobalTrace("RPI.001");
     assert(leadingZeroTraceDisabled);
     assert(XWalkTrace::globalTraceIsEnabled(0U, "RPI.001") == false);
-    assert(readFileContents(configurationPath).find(
-        "uid=\"RPI.001\" enabled=\"false\"") != string::npos);
     assert(XWalkTrace::enableGlobalTrace("RPI.Camera") == false);
     assert(XWalkTrace::enableGlobalTrace("RPI.99999") == false);
 
+    const boolean allTracesDisabled = XWalkTrace::disableAllGlobalTraces();
+    assert(allTracesDisabled);
+    assert(XWalkTrace::globalTraceIsEnabled(0U, "RPI.91001") == false);
+    assert(XWalkTrace::globalTraceIsEnabled(1U, "CTRL.92001") == false);
+    assert(XWalkTrace::globalTraceIsEnabled(3U, "RPI.91004") == false);
+    const boolean allTracesEnabled = XWalkTrace::enableAllGlobalTraces();
+    assert(allTracesEnabled);
+    assert(XWalkTrace::globalTraceIsEnabled(0U, "RPI.91001"));
+    assert(XWalkTrace::globalTraceIsEnabled(1U, "CTRL.92001"));
+    assert(XWalkTrace::globalTraceIsEnabled(2U, "RPI.91003"));
+    assert(XWalkTrace::applyGlobalTraceArgument("all.disable"));
+    assert(XWalkTrace::applyGlobalTraceArgument("RPI.enable"));
+    assert(XWalkTrace::applyGlobalTraceArgument("RPI.91002.disable"));
+    assert(XWalkTrace::applyGlobalTraceArgument("RPI.91003.disable"));
+    assert(XWalkTrace::applyGlobalTraceArgument("CTRL.enable"));
+    assert(XWalkTrace::applyGlobalTraceArgument("CTRL.92002.disable"));
+    assert(XWalkTrace::applyGlobalTraceArgument("CTRL.92003.disable"));
+
+    std::ostringstream terminalOutput;
+    std::streambuf* const previousTerminalOutput =
+        std::clog.rdbuf(terminalOutput.rdbuf());
     int32 diagnosticInvocations = 0;
-    const uint32 halEnabledLine = __LINE__ + 1U;
     XWALK_HAL_TRACE_UID0(RPI.91001, "Enabled HAL value: %u", 7U);
     XWALK_HAL_TRACE_UID1(
         RPI.91002,
@@ -275,9 +374,12 @@ void testMacroRuntime()
     {
         writer.join();
     }
+    std::clog.rdbuf(previousTerminalOutput);
 
     assert(diagnosticInvocations == 0);
     const string contents = readFileContents(logPath);
+    const string terminalContents = terminalOutput.str();
+    assert(terminalContents == contents);
     assert(contents.find("[HAL] [P0] [RPI.91001]") != string::npos);
     assert(contents.find("RPI.91002") == string::npos);
     assert(contents.find("RPI.91003") == string::npos);
@@ -294,9 +396,15 @@ void testMacroRuntime()
     assert(contents.find("[CTRL] [ASSERT]") != string::npos);
     assert(contents.find("signal=100") != string::npos);
     assert(contents.find("signal=200") != string::npos);
+    assert(terminalContents.find("[HAL] [P0] [RPI.91001]") != string::npos);
+    assert(terminalContents.find("RPI.91002") == string::npos);
+    assert(terminalContents.find("RPI.91003") == string::npos);
+    assert(terminalContents.find("[CTRL] [P1] [CTRL.92001]") != string::npos);
+    assert(terminalContents.find("CTRL.92002") == string::npos);
+    assert(terminalContents.find("CTRL.92003") == string::npos);
 
     const string sourceName("xHal_Rpi5CarTraceTest.cpp:");
-    assert(contents.find(sourceName + std::to_string(halEnabledLine)) != string::npos);
+    assert(contents.find("trace-test.cpp:6") != string::npos);
     assert(contents.find(sourceName +
         std::to_string(XHAL_RPI5CAR_TRACE_TEST_METADATA_LINE)) != string::npos);
     assert(contents.find(sourceName + std::to_string(halWarningLine)) != string::npos);
@@ -417,12 +525,14 @@ void testValidation()
  */
 int32 main()
 {
+    testConfiguredGlobalAvoidsDefaultLog();
     testDefaultFiltering();
-    testFileOutput();
+    testFileAndTerminalOutput();
     testLevelSelection();
     testConstructorInputs();
     testValidation();
     testConfigurationFailures();
+    testRuntimeConfigurationArguments();
     testMacroRuntime();
     return 0;
 }

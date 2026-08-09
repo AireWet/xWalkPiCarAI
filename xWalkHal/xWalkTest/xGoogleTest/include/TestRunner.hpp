@@ -80,9 +80,9 @@ using testselectionvector = std::vector<TestSelection>;
  * @brief Registers and selects all centralized xWalk HAL host tests.
  *
  * @details
- * Existing assertion-based test entry points execute in isolated child
- * processes so one failure becomes a GoogleTest failure instead of terminating
- * the complete central executable.
+ * Native Google Tests run directly. Assertion-based entry points execute in
+ * isolated child processes so one failure cannot terminate the central
+ * executable.
  */
 class TestRunner
 {

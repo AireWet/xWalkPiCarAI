@@ -3,8 +3,9 @@
  * @brief       Implements lifecycle operations for the xWalk I2C interface.
  *
  * @details
- * Validates callback bindings during construction and provides the default
- * destruction behavior for the non-owning callback interface.
+ * Validates callback bindings during construction, emits xWalk lifecycle and
+ * validation diagnostics, and provides the default destruction behavior for
+ * the non-owning callback interface.
  *
  * @project     xWalk Firmware
  * @module      xWalkI2c
@@ -28,6 +29,7 @@
 #include "xHal_Rpi5CarI2c.h"
 
 #include "xHal_Rpi5CarExceptions.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -86,16 +88,26 @@ XWalkI2c::XWalkI2c(contextpointer context, i2cprobecallback probeOperation,
 {
     if (this->probeCallback == nullptr)
     {
+        XWALK_HAL_ERROR("I2C probe callback is null during construction");
+        XWALK_HAL_ASSERT(1211);
         XHAL_THROW_INVALID_ARGUMENT("I2C probe callback must not be null");
     }
     if (this->writeRegisterCallback == nullptr)
     {
+        XWALK_HAL_ERROR("I2C write-register callback is null during construction");
+        XWALK_HAL_ASSERT(1212);
         XHAL_THROW_INVALID_ARGUMENT("I2C write-register callback must not be null");
     }
     if (this->readCallback == nullptr)
     {
+        XWALK_HAL_ERROR("I2C sequential-read callback is null during construction");
+        XWALK_HAL_ASSERT(1213);
         XHAL_THROW_INVALID_ARGUMENT("I2C read callback must not be null");
     }
+    XWALK_HAL_TRACE_UID1(RPI.009,
+        "I2C callback interface constructed with register-read=%u and fail-safe-write=%u",
+        static_cast<uint32>(this->readRegisterCallback != nullptr),
+        static_cast<uint32>(this->tryWriteRegisterCallback != nullptr));
 }
 
 /******************************************************************************

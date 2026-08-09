@@ -31,6 +31,7 @@
 #include "xAgent_Rpi5CarBootTypes.h"
 #include "xAgent_Rpi5CarVoiceActiveCarGpt.h"
 #include "xHal_Rpi5CarExceptions.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -51,6 +52,7 @@ namespace xwalk::ctrl
  */
 ::ctrl::int32 XWALK_runController(::ctrl::contextpointer context, agent::XWalkBootServices& services)
 {
+    XWALK_CTRL_TRACE_UID1(CTRL.001, "Controller command execution started");
     const XWalkControllerBootContext& bootContext = *static_cast<XWalkControllerBootContext*>(context);
     const ::ctrl::stringvector& commandArguments  = *bootContext.commandArguments;
     const XWalkControllerCallbacks callbacks{

@@ -137,10 +137,8 @@ struct XWalkControllerApplicationArguments
     ::ctrl::stringvector commandArguments{};
     /** @brief Application configuration populated from defaults and global options. */
     XWalkAppConfig appConfig{};
-    /** @brief Trace UIDs persistently enabled before the Controller boot graph starts. */
-    ::ctrl::stringvector traceEnableUids{};
-    /** @brief Trace UIDs persistently disabled before the Controller boot graph starts. */
-    ::ctrl::stringvector traceDisableUids{};
+    /** @brief Validated trace selectors and JSON paths in command-line order. */
+    ::ctrl::stringvector traceArguments{};
 };
 
 /** @brief Stores one classified top-level command and its unconverted CLI text. */

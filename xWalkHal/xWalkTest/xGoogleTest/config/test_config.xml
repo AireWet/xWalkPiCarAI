@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testConfiguration>
     <testSuite name="TEST_SUITE_XWALK_I2C" enabled="1">
-        <testCase name="Initialization" enabled="1"/>
+        <testCase name="Probe" enabled="1"/>
+        <testCase name="ProbeValidation" enabled="1"/>
+        <testCase name="WriteRegister" enabled="1"/>
+        <testCase name="TryWriteRegister" enabled="1"/>
+        <testCase name="Read" enabled="1"/>
+        <testCase name="ReadRegister" enabled="1"/>
+        <testCase name="ReadRegisterCallbackValidation" enabled="1"/>
     </testSuite>
     <testSuite name="TEST_SUITE_XWALK_SPI" enabled="1">
         <testCase name="Host" enabled="1"/>

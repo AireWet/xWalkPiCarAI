@@ -5,6 +5,7 @@ project(xGoogleTest LANGUAGES CXX)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkLibrary/XWalkDependencies.cmake)
 
 find_package(GTest CONFIG REQUIRED)
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
 find_package(tinyxml2 CONFIG REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
 
@@ -61,9 +62,46 @@ function(xwalk_add_legacy_test_source object_target entry_point source_path)
     target_sources(xGoogleTest PRIVATE $<TARGET_OBJECTS:${object_target}>)
 endfunction()
 
-xwalk_add_legacy_test_source(xGoogleTestI2c xWalkI2cLegacyMain
-    ${XWALK_HAL_SOURCE_DIRECTORY}/xWalkI2c/test/xHal_Rpi5CarI2cTest.cpp
-    xWalkI2c)
+if(NOT XWALK_HAL_BUILD_RPI)
+    set(XWALK_GOOGLE_TEST_I2C_TRACE_INVENTORY
+        ${CMAKE_BINARY_DIR}/generated/xwalk-traces.xml)
+    set(XWALK_GOOGLE_TEST_I2C_TRACE_GENERATOR
+        ${XWALK_HAL_SOURCE_DIRECTORY}/xWalkI2c/simulation/config/xHal_Rpi5CarI2cTraceConfig.py)
+    set(XWALK_GOOGLE_TEST_I2C_TRACE_CONFIG_PATH
+        ${CMAKE_CURRENT_BINARY_DIR}/generated/xWalkI2cTrace.xml)
+    add_custom_command(
+        OUTPUT ${XWALK_GOOGLE_TEST_I2C_TRACE_CONFIG_PATH}
+        COMMAND ${Python3_EXECUTABLE} ${XWALK_GOOGLE_TEST_I2C_TRACE_GENERATOR}
+            --input ${XWALK_GOOGLE_TEST_I2C_TRACE_INVENTORY}
+            --output ${XWALK_GOOGLE_TEST_I2C_TRACE_CONFIG_PATH}
+        DEPENDS ${XWALK_GOOGLE_TEST_I2C_TRACE_INVENTORY}
+            ${XWALK_GOOGLE_TEST_I2C_TRACE_GENERATOR}
+        COMMENT "Preparing the all-disabled centralized trace catalogue"
+        VERBATIM)
+    add_custom_target(xGoogleTestI2cTraceConfig
+        DEPENDS ${XWALK_GOOGLE_TEST_I2C_TRACE_CONFIG_PATH})
+    add_dependencies(xGoogleTestI2cTraceConfig xWalkTraceMetadata)
+
+    add_library(xGoogleTestI2c OBJECT
+        ${XWALK_HAL_SOURCE_DIRECTORY}/xWalkI2c/simulation/src/xHal_Rpi5CarI2cHostStub.cpp
+        ${XWALK_HAL_SOURCE_DIRECTORY}/xWalkI2c/simulation/src/xHal_Rpi5CarI2cSimulationArguments.cpp
+        ${XWALK_HAL_SOURCE_DIRECTORY}/xWalkI2c/test/src/xHal_Rpi5CarI2cTest.cpp
+    )
+    target_compile_features(xGoogleTestI2c PRIVATE cxx_std_17)
+    target_compile_definitions(xGoogleTestI2c PRIVATE
+        XWALK_I2C_SIMULATION_TRACE_CONFIG_PATH="${XWALK_GOOGLE_TEST_I2C_TRACE_CONFIG_PATH}"
+        XWALK_I2C_SIMULATION_TRACE_LOG_PATH="${CMAKE_BINARY_DIR}/log/xWalkI2cTest.log"
+    )
+    target_include_directories(xGoogleTestI2c PRIVATE
+        ${XWALK_HAL_SOURCE_DIRECTORY}/xWalkI2c/simulation/include
+        ${XWALK_HAL_SOURCE_DIRECTORY}/xWalkI2c/test/include
+        ${XWALK_HAL_SOURCE_DIRECTORY}/xWalkI2c/hardware/include
+        ${XWALK_HAL_SOURCE_DIRECTORY}/xWalkI2c/core/include
+    )
+    target_link_libraries(xGoogleTestI2c PRIVATE GTest::gtest xWalkI2cLinux xWalkTrace)
+    add_dependencies(xGoogleTestI2c xGoogleTestI2cTraceConfig)
+    target_sources(xGoogleTest PRIVATE $<TARGET_OBJECTS:xGoogleTestI2c>)
+endif()
 xwalk_add_legacy_test_source(xGoogleTestSpi xWalkSpiLegacyMain
     ${XWALK_HAL_SOURCE_DIRECTORY}/xWalkSpi/test/src/xHal_Rpi5CarSpiTest.cpp
     xWalkSpi)
@@ -228,6 +266,7 @@ target_link_libraries(xGoogleTest PRIVATE
     tinyxml2::tinyxml2
     yaml-cpp::yaml-cpp
     xWalkHal
+    xWalkI2cLinux
     xWalkAudioAlsa
     xWalkButtonEventSequence
     xWalkInitAnglesSequence

@@ -106,6 +106,8 @@
                 <pathentry include="xWalkHal/xWalkGPT/hardware/include" kind="inc" path="" system="false"/>
                 <pathentry include="xWalkHal/xWalkI2c/core/include" kind="inc" path="" system="false"/>
                 <pathentry include="xWalkHal/xWalkI2c/hardware/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/xWalkI2c/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/xWalkI2c/test/include" kind="inc" path="" system="false"/>
                 <pathentry include="xWalkHal/xWalkLanguageModel/include" kind="inc" path="" system="false"/>
                 <pathentry include="xWalkHal/xWalkLanguageModel/hardware/include" kind="inc" path="" system="false"/>
                 <pathentry include="xWalkHal/xWalkLed/include" kind="inc" path="" system="false"/>

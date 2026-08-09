@@ -10,25 +10,86 @@ xWalkI2c/
 │   └── src/
 │       ├── xHal_Rpi5CarI2c.cpp
 │       └── xHal_Rpi5CarI2cLifecycle.cpp
+├── simulation/
+│   ├── config/
+│   │   └── xHal_Rpi5CarI2cTraceConfig.py
+│   ├── include/
+│   │   ├── xHal_Rpi5CarI2cDeviceFactory.h
+│   │   ├── xHal_Rpi5CarI2cHandler.h
+│   │   ├── xHal_Rpi5CarI2cHostStub.h
+│   │   ├── xHal_Rpi5CarI2cSimulationArguments.h
+│   │   └── xHal_Rpi5CarI2cSimulationConfig.h
+│   ├── src/
+│   │   ├── main.cpp
+│   │   ├── xHal_Rpi5CarI2cDeviceFactoryHardware.cpp
+│   │   ├── xHal_Rpi5CarI2cDeviceFactoryStub.cpp
+│   │   ├── xHal_Rpi5CarI2cHandler.cpp
+│   │   ├── xHal_Rpi5CarI2cSimulationArguments.cpp
+│   │   └── xHal_Rpi5CarI2cHostStub.cpp
+│   ├── CMakeLists.txt
+│   └── README.md
 ├── test/
-│   └── xHal_Rpi5CarI2cTest.cpp
+│   ├── include/
+│   │   └── xHal_Rpi5CarI2cTest.h
+│   ├── src/
+│   │   └── xHal_Rpi5CarI2cTest.cpp
+│   └── CMakeLists.txt
 ├── hardware/
 │   ├── include/
-│   │   └── xHal_Rpi5CarI2cLinux.h
+│   │   ├── xHal_Rpi5CarI2cLinux.h
+│   │   ├── xHal_Rpi5CarI2cDevice.h
+│   │   └── xHal_Rpi5CarI2cDeviceLinux.h
 │   ├── src/
 │   │   ├── xHal_Rpi5CarI2cLinux.cpp
-│   │   └── xHal_Rpi5CarI2cLinuxLifecycle.cpp
+│   │   ├── xHal_Rpi5CarI2cLinuxLifecycle.cpp
+│   │   └── xHal_Rpi5CarI2cDeviceLinux.cpp
 │   └── test/src/
 │       └── xHal_Rpi5CarI2cLinuxHardwareTest.cpp
 ├── CMakeLists.txt
 └── README.md
 ```
 
+| Path | Responsibility |
+|---|---|
+| `core/include` | Hardware-independent I2C public contract |
+| `core/src` | Callback forwarding, validation, and lifecycle behavior |
+| `simulation/include` | Arguments, operation handler, host mirror, and runner configuration |
+| `simulation/src` | Standalone runner, argument parsing, operation handler, and host mirror implementation |
+| `test/include` | Google Test fixture declaration and owned test dependencies |
+| `test/src` | Individual Google Tests for public I2C operations |
+| `hardware/include` | Linux I2C backend and injectable device-operation contracts |
+| `hardware/src` | Linux `i2c-dev` ownership and callback operations |
+| `hardware/test/src` | Opt-in physical-device probe test |
+
 `XWalkI2c` is intentionally independent of Raspberry Pi hardware. It is a
 concrete non-virtual object containing C-style callback pointers and a context
-pointer. Host tests provide recording callbacks. The optional
+pointer. Host tests execute the Linux backend with a mirrored device boundary. The optional
 `XWalkI2cLinux` backend supplies callback-compatible operations implemented with
 Linux `i2c-dev`.
+
+Core, Linux, host-stub, and simulation-factory operations use `xWalkTrace`.
+Forty-two filtered identifiers from `RPI.001` through `RPI.042` describe lifecycle and
+transaction progress. Warnings and errors bypass UID filtering, and numeric
+HAL assertion signals identify failed validation, exhausted retries,
+hardware-test failures, and host-test checks. The diagnostic assertion macro
+records a signal; normal exception and C++ assertion behavior remains
+responsible for control flow.
+
+The simulation generates a module-local trace configuration from the scanner
+inventory. It enables all four priorities and every trace originating below
+`xWalkHal/xWalkI2c/`, while traces from other modules remain disabled.
+
+The standalone simulation `main()` explicitly boots the global trace service,
+constructs the build-selected device backend, and dispatches
+`XWalkI2cHandler`. It does not include or invoke Google Test code. CMake supplies
+the generated configuration and build-local log paths.
+
+The host entry point creates both `XWalkI2cLinux` and `XWalkI2cHostStub`.
+`XWalkI2c` binds to the real Linux backend through the same `XHAL_I2C_*_CALLBACK`
+macros used on Raspberry Pi. The backend then calls the injected
+`XWalkI2cDevice`; the host stub mirrors only device open, address
+selection, SMBus transfer, and close operations. This executes core validation,
+Linux retry logic, and Linux transaction encoding without physical hardware.
 
 Composition is explicit at the application or test entry point: construct the
 backend first, construct a separate `XWalkI2c` with a non-owning pointer to that
@@ -42,12 +103,13 @@ write failure; it does not intercept an exception.
 
 The module can be configured and built directly without building `xWalkPwm`
 and without Raspberry Pi hardware. Its CMake configuration automatically adds
-the adjacent `xWalkLibraryCommon` dependency.
+the adjacent `xWalkLibraryCommon` and `xWalkTrace` dependencies.
 
 Run these commands from the repository root:
 
-The host test is a logic simulation. It uses in-memory callbacks and never
-opens `/dev/i2c-1`, builds `XWalkI2cLinux`, or requires an RPi.
+The host test is a Linux-backend simulation. It builds and executes
+`XWalkI2cLinux`, but its injected device interface never opens `/dev/i2c-1` and
+does not require an RPi.
 
 ```bash
 cmake -S xWalkI2c -B xWalkI2c/build-host -DXWALK_I2C_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
@@ -56,17 +118,57 @@ cmake --build xWalkI2c/build-host --parallel
 
 | CMake flag | Default | Purpose |
 |---|---:|---|
-| `XWALK_I2C_BUILD_HOST_TESTS` | `OFF` | Build callback-based tests that require no hardware |
+| `XWALK_I2C_BUILD_HOST_TESTS` | `OFF` | Build Linux-backend simulation tests without hardware |
 | `XWALK_I2C_BUILD_HARDWARE_TESTS` | `OFF` | Build the Linux backend and RPi integration test |
 
-The resulting library is:
+## Run the standalone simulation
+
+The default build uses the device-free stub while executing the same public
+core and Linux-backend operations as the hardware selection. Run the following
+commands from `xWalkHal/xWalkI2c/simulation`:
+
+```bash
+cmake -S . -B build-simulation -DXWALK_I2C_SIMULATION_BACKEND=stub
+cmake --build build-simulation --target xWalkI2cSimulation --parallel
+./build-simulation/xWalkI2cSimulation
+```
+
+The hardware selection compiles the same `main()` and handler with the hardware
+device factory. Running it performs real I2C reads and writes and is therefore
+opt-in:
+
+```bash
+cmake -S . -B build-hardware -DXWALK_I2C_SIMULATION_BACKEND=hardware -DXWALK_I2C_SIMULATION_DEVICE=/dev/i2c-1
+cmake --build build-hardware --target xWalkI2cSimulation --parallel
+```
+
+After confirming that the correct Raspberry Pi and Robot HAT setup is connected
+and safe, the hardware binary accepts one optional trace selector:
+
+```bash
+./build-hardware/xWalkI2cSimulation --help
+./build-hardware/xWalkI2cSimulation --trace RPI.031.enable
+./build-hardware/xWalkI2cSimulation --trace RPI.031.disable
+./build-hardware/xWalkI2cSimulation --trace all.enable
+./build-hardware/xWalkI2cSimulation --trace all.disable
+```
+
+Tracing is enabled by default. Invalid syntax and scanner-unknown UIDs return
+status `2` before the hardware device is opened.
+Help reports the accepted selector forms and compile-time trace-ID uniqueness
+requirement without configuring tracing or opening hardware.
+
+The resulting libraries are:
 
 | Library | Purpose |
 |---|---|
 | `xWalkI2c/build-host/libxWalkI2c.a` | Hardware-independent I2C callback object |
+| `xWalkI2c/build-host/xWalkTrace/libxWalkTrace.a` | Shared filtered and unfiltered diagnostics |
 
 `xWalkLibraryCommon` is a header-only interface target, so it propagates shared types,
 math operations, and exception helpers without producing a separate archive.
+`xWalkTrace` uses the generated XML inventory and is linked into I2C executables
+through the module target.
 
 To build the library without its host test:
 
@@ -89,17 +191,19 @@ The test executable can also be run directly:
 ./xWalkI2c/build-host/xWalkI2cTest
 ```
 
-The host test verifies callback construction, seven-bit address validation,
-address probing, register writes, sequential reads, and register-addressed
-reads. It uses in-memory callbacks and does not access `/dev/i2c-*` or require
-an RPi.
+Seven individual Google Test cases verify address probing, probe validation,
+register writes, fail-safe writes, sequential reads, register-addressed reads,
+and missing register-read callback validation. Five additional cases validate
+default, help, individual, all-trace, and malformed simulation arguments. They use
+the injected device mirror and do not access `/dev/i2c-*` or require an RPi.
 
 | Expected result | Value |
 |---|---|
 | CTest name | `xWalkI2cHostTest` |
+| Google Test cases | `12` |
 | Required hardware | None |
-| Required sibling module | `xWalkLibraryCommon` |
-| Expected passing tests | `1` |
+| Required sibling modules | `xWalkLibraryCommon`, `xWalkTrace` |
+| Expected passing CTest entries | `1` |
 
 ## Test on Raspberry Pi hardware
 

@@ -15,6 +15,7 @@
 #include <ctime>
 #include <fstream>
 #include <iomanip>
+#include <iostream>
 #include <mutex>
 #include <sstream>
 #include <string>
@@ -46,7 +47,7 @@ string XWalkTrace::sanitizedSourceName(stringview sourceFile)
 }
 
 /**
- * @brief Captures timing data and appends one complete synchronized log line.
+ * @brief Captures timing data and emits one synchronized terminal and log line.
  *
  * @param[in] component
  * `HAL`, `CTRL`, `TRACE`, or compatibility component label.
@@ -108,7 +109,10 @@ void XWalkTrace::writeRecordLocked(stringview component, stringview category,
     record << " [" << sanitizedSourceName(sourceFile) << ':' << sourceLine << "] "
         << message;
 
-    logFile << record.str() << '\n';
+    const string recordText = record.str();
+    std::clog << recordText << '\n';
+    std::clog.flush();
+    logFile << recordText << '\n';
     logFile.flush();
     const boolean logWriteFailed = !logFile;
     if (logWriteFailed)

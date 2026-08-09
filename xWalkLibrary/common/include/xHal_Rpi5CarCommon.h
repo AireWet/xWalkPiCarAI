@@ -190,7 +190,7 @@
 
 #ifndef XWALK_TRACE_CONFIG_PATH
 /** @brief Generated trace XML path overridden by the xWalkTrace CMake target. */
-#define XWALK_TRACE_CONFIG_PATH "xWalkTrace.xml"
+#define XWALK_TRACE_CONFIG_PATH "xwalk-traces.xml"
 #endif
 /** @brief Suffix used for a same-directory configuration replacement file. */
 #define XHAL_RPI5CAR_CONFIG_REPLACEMENT_SUFFIX ".tmp"

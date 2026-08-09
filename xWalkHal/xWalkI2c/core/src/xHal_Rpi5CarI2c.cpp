@@ -4,7 +4,8 @@
  *
  * @details
  * Forwards device probes and register writes to the callbacks validated during
- * construction of the `XWalkI2c` object.
+ * construction of the `XWalkI2c` object. Emits filtered transaction traces and
+ * unfiltered validation diagnostics around the callback boundary.
  *
  * @project     xWalk Firmware
  * @module      xWalkI2c
@@ -26,6 +27,8 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarI2c.h"
+
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -59,8 +62,20 @@ namespace xwalk::hal
  */
 boolean XWalkI2c::probe(uint8 address)
 {
+    const boolean addressInvalid = address > common::I2C_MAXIMUM_SEVEN_BIT_ADDRESS;
+    if (addressInvalid)
+    {
+        XWALK_HAL_ERROR("I2C probe address exceeds the seven-bit range: %u",
+            static_cast<uint32>(address));
+        XWALK_HAL_ASSERT(1201);
+    }
     common::validateI2cAddress(address);
-    return probeCallback(contextValue, address);
+    XWALK_HAL_TRACE_UID2(RPI.001, "I2C probe requested for address %u",
+        static_cast<uint32>(address));
+    const boolean deviceAvailable = probeCallback(contextValue, address);
+    XWALK_HAL_TRACE_UID2(RPI.002, "I2C probe completed for address %u with status %u",
+        static_cast<uint32>(address), static_cast<uint32>(deviceAvailable));
+    return deviceAvailable;
 }
 
 /**
@@ -83,12 +98,26 @@ boolean XWalkI2c::probe(uint8 address)
  */
 bytevector XWalkI2c::read(uint8 address, size length)
 {
+    const boolean addressInvalid = address > common::I2C_MAXIMUM_SEVEN_BIT_ADDRESS;
+    if (addressInvalid)
+    {
+        XWALK_HAL_ERROR("I2C read address exceeds the seven-bit range: %u",
+            static_cast<uint32>(address));
+        XWALK_HAL_ASSERT(1202);
+    }
     common::validateI2cAddress(address);
     if (length == 0U)
     {
+        XWALK_HAL_ERROR("I2C read length is zero");
+        XWALK_HAL_ASSERT(1203);
         XHAL_THROW_INVALID_ARGUMENT("I2C read length must not be zero");
     }
-    return readCallback(contextValue, address, length);
+    XWALK_HAL_TRACE_UID2(RPI.003, "I2C sequential read requested for address %u and %zu bytes",
+        static_cast<uint32>(address), length);
+    bytevector bytes = readCallback(contextValue, address, length);
+    XWALK_HAL_TRACE_UID2(RPI.004, "I2C sequential read returned %zu bytes from address %u",
+        bytes.size(), static_cast<uint32>(address));
+    return bytes;
 }
 
 /**
@@ -117,16 +146,35 @@ bytevector XWalkI2c::read(uint8 address, size length)
  */
 bytevector XWalkI2c::readRegister(uint8 address, uint8 reg, size length)
 {
+    const boolean addressInvalid = address > common::I2C_MAXIMUM_SEVEN_BIT_ADDRESS;
+    if (addressInvalid)
+    {
+        XWALK_HAL_ERROR("I2C register-read address exceeds the seven-bit range: %u",
+            static_cast<uint32>(address));
+        XWALK_HAL_ASSERT(1204);
+    }
     common::validateI2cAddress(address);
     if (length == 0U)
     {
+        XWALK_HAL_ERROR("I2C register-read length is zero");
+        XWALK_HAL_ASSERT(1205);
         XHAL_THROW_INVALID_ARGUMENT("I2C register-read length must not be zero");
     }
     if (readRegisterCallback == nullptr)
     {
+        XWALK_HAL_WARNINGS("I2C atomic register-read operation is unavailable");
+        XWALK_HAL_ERROR("I2C register-read callback is not configured");
+        XWALK_HAL_ASSERT(1206);
         XHAL_THROW_RUNTIME_ERROR("I2C register-read callback is not configured");
     }
-    return readRegisterCallback(contextValue, address, reg, length);
+    XWALK_HAL_TRACE_UID2(RPI.005,
+        "I2C register read requested for address %u, register %u, and %zu bytes",
+        static_cast<uint32>(address), static_cast<uint32>(reg), length);
+    bytevector bytes = readRegisterCallback(contextValue, address, reg, length);
+    XWALK_HAL_TRACE_UID2(RPI.006,
+        "I2C register read returned %zu bytes from address %u and register %u",
+        bytes.size(), static_cast<uint32>(address), static_cast<uint32>(reg));
+    return bytes;
 }
 
 /**
@@ -153,8 +201,21 @@ bytevector XWalkI2c::readRegister(uint8 address, uint8 reg, size length)
  */
 void XWalkI2c::writeRegister(uint8 address, uint8 reg, const bytevector& data)
 {
+    const boolean addressInvalid = address > common::I2C_MAXIMUM_SEVEN_BIT_ADDRESS;
+    if (addressInvalid)
+    {
+        XWALK_HAL_ERROR("I2C register-write address exceeds the seven-bit range: %u",
+            static_cast<uint32>(address));
+        XWALK_HAL_ASSERT(1207);
+    }
     common::validateI2cAddress(address);
+    XWALK_HAL_TRACE_UID2(RPI.007,
+        "I2C register write requested for address %u, register %u, and %zu bytes",
+        static_cast<uint32>(address), static_cast<uint32>(reg), data.size());
     writeRegisterCallback(contextValue, address, reg, data);
+    XWALK_HAL_TRACE_UID2(RPI.008,
+        "I2C register write completed for address %u and register %u",
+        static_cast<uint32>(address), static_cast<uint32>(reg));
 }
 
 /**
@@ -178,6 +239,10 @@ void XWalkI2c::writeRegister(uint8 address, uint8 reg, const bytevector& data)
  *
  * @post
  * Invalid input and a missing safe-write callback are reported as `false`.
+ *
+ * @note
+ * This fail-safe path deliberately avoids tracing so trace initialization or
+ * formatting cannot violate its non-throwing contract.
  */
 boolean XWalkI2c::tryWriteRegister(uint8 address, uint8 reg, const bytevector& data) noexcept
 {

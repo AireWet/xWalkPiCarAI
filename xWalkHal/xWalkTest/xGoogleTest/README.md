@@ -7,21 +7,21 @@ profile; no module test is copied into this directory. The three files under
 `src/` only implement configuration, selection, and the central process entry
 point.
 
-The pre-existing HAL tests use `assert`-based standalone entry points rather
-than `TEST` or `TEST_F` declarations. CMake compiles each entry point in an
-object library with a unique symbol name, and `TestRunner` registers those
-scenarios dynamically with GoogleTest. Each legacy scenario executes in an
-isolated child process so an assertion, signal, or non-zero result is reported
-as one failed GoogleTest case without stopping the remaining cases.
+Most pre-existing HAL tests use `assert`-based standalone entry points rather
+than native `TEST` or `TEST_F` declarations. CMake renames their `main` symbols
+and `TestRunner` registers those scenarios dynamically. The I2C host simulation
+is registered directly as seven native Google Test cases. Each legacy scenario
+still executes in an isolated child process so one failure cannot stop the
+remaining cases.
 
 ## Dependencies and build
 
-The host test build requires GoogleTest, TinyXML2, and yaml-cpp development
-packages.
+The host test build requires GoogleTest, json-c, TinyXML2, and yaml-cpp
+development packages.
 On Debian or Ubuntu:
 
 ```sh
-sudo apt-get install libgtest-dev libtinyxml2-dev libyaml-cpp-dev
+sudo apt-get install libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev
 ```
 
 From the repository root:
@@ -53,9 +53,9 @@ Runtime selections override the XML for that process only:
 
 ```sh
 ./build/xGoogleTest TEST_SUITE_XWALK_I2C:1
-./build/xGoogleTest TEST_SUITE_XWALK_I2C:Initialization:1
+./build/xGoogleTest TEST_SUITE_XWALK_I2C:Probe:1
 ./build/xGoogleTest TEST_SUITE_XWALK_I2C:0
-./build/xGoogleTest TEST_SUITE_XWALK_I2C:Initialization:0
+./build/xGoogleTest TEST_SUITE_XWALK_I2C:Probe:0
 ```
 
 Supported custom forms are `<SUITE>:<0|1>` and

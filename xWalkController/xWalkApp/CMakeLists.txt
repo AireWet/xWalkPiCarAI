@@ -364,6 +364,8 @@ if(XWALK_CONTROLLER_BUILD_HOST_TESTS)
         test/src/xControllerParsingTest.cpp
         test/src/xControllerAppTest.cpp)
     target_compile_features(xWalkAppTest PRIVATE cxx_std_17)
+    target_compile_definitions(xWalkAppTest PRIVATE
+        XWALK_CONTROLLER_TRACE_EXAMPLE_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../xWalkConfig")
     target_link_libraries(xWalkAppTest PRIVATE
         GTest::gtest_main
         xWalkController
