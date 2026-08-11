@@ -24,12 +24,12 @@ namespace xwalk::agent
 
 /**
  * @brief Runs one configured SPI transaction service.
- * @param[in,out] context Nullable caller-owned application context.
+ * @param[in,out] applicationContext Nullable caller-owned application context.
  * @param[in] callback Non-null synchronous application callback.
  * @param[in,out] config Loaded deployment configuration.
  * @return Status returned by `callback`.
  */
-agent::int32 XWalkBootRpi::runSpiTransfer(agent::contextpointer context,
+agent::int32 XWalkBootRpi::runSpiTransfer(agent::contextpointer applicationContext,
     bootapplicationcallback callback, hal::XWalkConfigStore& config)
 {
     const agent::string spiDevice = config.get(
@@ -49,7 +49,7 @@ agent::int32 XWalkBootRpi::runSpiTransfer(agent::contextpointer context,
     XWalkSpiTransfer spiTransfer(spi);
     XWalkBootServices services{};
     services.spiTransfer = &spiTransfer;
-    return callback(context, services);
+    return callback(applicationContext, services);
 }
 
 } /* namespace xwalk::agent */

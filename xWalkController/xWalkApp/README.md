@@ -58,9 +58,32 @@ optional backends. The CLI composes only the graph selected by the parsed comman
 `--help` returns before constructing the boot object, so it does not claim I2C,
 GPIO, audio, microphone, or model resources.
 
-The repeatable global `--trace VALUE` option configures the shared in-memory
-trace registry before the selected boot graph is constructed. All normal traces
-start disabled. Values are `all.<state>`, `<module>.<state>`,
+## Device-free configuration diagnostics
+
+The host and Raspberry Pi entry points can validate the layered deployment
+manifest before constructing a boot backend. `--validate-config` reports each
+known safety and integration invariant. `--print-effective-config` additionally
+prints the stable known schema in effective-value order; secret-shaped values
+are redacted. `--diagnose` requires `--no-hardware`, which makes the no-device
+intent explicit. These actions reject robot commands and never open I2C, GPIO,
+SPI, camera, audio, or network resources.
+
+```bash
+xwalk-picarx-control --deployment-config=/absolute/path/to/picar-x.conf --validate-config
+xwalk-picarx-control --deployment-config=/absolute/path/to/picar-x.conf --print-effective-config
+xwalk-picarx-control --deployment-config=/absolute/path/to/picar-x.conf --diagnose --no-hardware
+```
+
+This is schema and layering evidence only. A passing report does not prove that
+the named device nodes exist, that the Robot HAT revision matches, or that any
+physical channel is wired correctly. Use the ordinary `doctor` command later on
+the Raspberry Pi for passive device discovery, then follow the wheels-up
+commissioning sequence before enabling actuator commands.
+
+The repeatable global `--trace VALUE` option atomically updates the shared XML
+and trace registry before the selected boot graph is constructed. Newly found
+normal traces start disabled, while saved states load automatically on later
+runs. Values are `all.<state>`, `<module>.<state>`,
 `<module>.<numeric-id>.<state>`, or a `.json` file, where state is exactly
 `enable` or `disable`. Arguments are applied from left to right and the last
 applicable setting wins. JSON applies `all`, module, then tag states. Unknown
@@ -68,10 +91,12 @@ modules and IDs, Boolean JSON states, missing files, malformed JSON, and invalid
 selectors return status 2 without constructing hardware. Legacy
 `--trace-enable UID` and `--trace-disable UID` forms remain accepted.
 
-Every complete trace ID must be unique. `RPI.001` and `CTRL.001` are distinct,
-but a repeated `RPI.001` stops compilation. The validation error reports all
-duplicated IDs and every declaration path and line. A successful normal build
-generates the deterministic catalogue at
+Every numeric trace value must be unique within its `RPI`, `CTRL`, `RPIAGENT`,
+or `LIB` tag across all modules and submodules. Source-tree ownership is also
+checked during the build. Equal numeric values in different tags are valid,
+while `RPI.001` and `RPI.1` conflict. The validation error reports all
+duplicated IDs and every declaration path and line. A successful normal build generates
+the deterministic persistent catalogue at
 `<build-directory>/generated/xwalk-traces.xml`.
 
 `doctor` selects a separate passive boot graph. It reports board-profile and
@@ -121,6 +146,9 @@ Complete command shapes:
 
 ```text
 xwalk-picarx-control [--deployment-config ABSOLUTE_PATH] [--resource-directory ABSOLUTE_PATH] <command>
+xwalk-picarx-control --deployment-config ABSOLUTE_PATH --validate-config
+xwalk-picarx-control --deployment-config ABSOLUTE_PATH --print-effective-config
+xwalk-picarx-control --deployment-config ABSOLUTE_PATH --diagnose --no-hardware
 xwalk-picarx-control doctor
 xwalk-picarx-control move <forward|backward> [--speed N] [--duration S]
 xwalk-picarx-control move demo
@@ -167,6 +195,8 @@ xwalk-picarx-control --trace RPI.enable
 xwalk-picarx-control --trace RPI.disable
 xwalk-picarx-control --trace CTRL.001.enable
 xwalk-picarx-control --trace CTRL.disable doctor
+xwalk-picarx-control --trace RPIAGENT.enable
+xwalk-picarx-control --trace LIB.disable
 xwalk-picarx-control --trace all.enable
 xwalk-picarx-control --trace all.disable
 xwalk-picarx-control --trace xWalkController/xWalkConfig/xwalk-traces.json
@@ -276,6 +306,14 @@ Until `calibrate` records successful raised-wheel motor-direction, motor-balance
 the effective limit cannot exceed 20 percent. Raise the configured limit only after those checks. Grayscale
 acquisition performs a warm-up, five-sample filtering, poisoned-ADC signature rejection, automatic reference,
 line status, and cliff output.
+
+Fresh deployments keep `picarx_apply_persisted_servo_positions = false`. In
+that state PiCar-X initialization configures the servo timers and arms the
+motors at zero output, but it does not command the stored steering, pan, or tilt
+angles. Complete the mechanically unloaded servo calibration first, review the
+three stored offsets, and then explicitly change this key to `true`. Shutdown
+disarms the motors and does not recenter servos; use an explicit reset only when
+servo movement is known to be safe.
 
 The `calibrate` workflow clears prior verification before actuator checks. After servo calibration, it requires
 the operator to confirm that all wheels are raised, runs the left motor, right motor, and paired motors through

@@ -364,9 +364,7 @@ int32 XWalkSequenceTestRunner::runSelection(
 int32 XWalkSequenceTestRunner::runConfigured(
     stringview executable, stringview selection, stringview configurationPath)
 {
-    try
-    {
-        const YAML::Node root = YAML::LoadFile(string(configurationPath));
+    const YAML::Node root = YAML::LoadFile(string(configurationPath));
         const hal::boolean mapNotMatched =
             static_cast<hal::boolean>(
                 !root.IsMap());
@@ -434,15 +432,8 @@ int32 XWalkSequenceTestRunner::runConfigured(
             argumentPointers.push_back(value.data());
         }
         argumentPointers.push_back(nullptr);
-        return runSelection(static_cast<int32>(values.size()),
-            argumentPointers.data());
-    }
-    catch (const YAML::Exception& exception)
-    {
-        std::cerr << "xSequenceTest YAML configuration error: "
-                  << exception.what() << '\n';
-        return 2;
-    }
+    return runSelection(static_cast<int32>(values.size()),
+        argumentPointers.data());
 }
 
 /**

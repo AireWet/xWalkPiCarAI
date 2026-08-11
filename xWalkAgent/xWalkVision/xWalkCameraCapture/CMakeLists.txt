@@ -5,12 +5,13 @@ option(XWALK_CAMERA_CAPTURE_BUILD_HOST_TESTS
     "Build xWalkCameraCapture host tests" OFF)
 
 if(NOT TARGET xWalkCamera)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/xWalkCamera
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/device/xWalkCamera
         ${CMAKE_CURRENT_BINARY_DIR}/xWalkCamera)
 endif()
 
 add_library(xWalkCameraCapture STATIC
     src/xAgent_Rpi5CarCameraCapture.cpp)
+target_link_libraries(xWalkCameraCapture PRIVATE xWalkTrace)
 add_library(xWalk::CameraCapture ALIAS xWalkCameraCapture)
 target_include_directories(xWalkCameraCapture PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include)

@@ -28,7 +28,6 @@
 #include "xAgent_Rpi5CarSelfDrive.h"
 
 #include "xHal_Rpi5CarAdc.h"
-#include "xHal_Rpi5CarExceptions.h"
 #include "xHal_Rpi5CarFileFunctions.h"
 #include "xHal_Rpi5CarI2c.h"
 #include "xHal_Rpi5CarPwmTimerState.h"
@@ -302,6 +301,7 @@ void testSelfDriveBehavior(agent::stringview configPath)
     config.set("picarx_calibration_verified", "true");
     xwalk::agent::XWalkPicarx picarx(motors, directionServo, panServo, tiltServo,
         grayscale, ultrasonic, config);
+    static_cast<void>(picarx.initialize());
 
     TestBackend backend;
     backend.motors = &motors;

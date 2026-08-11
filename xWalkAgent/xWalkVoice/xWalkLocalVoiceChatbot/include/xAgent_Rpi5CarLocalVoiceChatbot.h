@@ -72,8 +72,8 @@ class XWalkLocalVoiceChatbot final
             const XWalkLocalVoiceChatbotCallbacks& backendCallbacks,
             const XWalkLocalVoiceChatbotConfiguration& chatbotConfiguration = {});
 
-        /** @brief Releases no caller-owned voice or callback resources. */
-        ~XWalkLocalVoiceChatbot() = default;
+        /** @brief Stops the caller-owned assistant without releasing it. */
+        ~XWalkLocalVoiceChatbot();
 
         XWalkLocalVoiceChatbot(XWalkLocalVoiceChatbot&&) = delete;
         XWalkLocalVoiceChatbot(const XWalkLocalVoiceChatbot&) = delete;

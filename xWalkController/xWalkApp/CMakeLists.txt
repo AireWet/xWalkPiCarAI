@@ -248,6 +248,7 @@ add_library(xWalkController STATIC
     parse/src/xControllerCommandParser.cpp
     parse/src/xControllerHelpRequest.cpp
     parse/src/xControllerParsing.cpp
+    boot/src/xControllerDeploymentConfig.cpp
     ../xWalkHandler/src/xControllerLifecycle.cpp
     ../xWalkHandler/src/calibration/xControllerCalibrationHandler.cpp
     ../xWalkHandler/src/calibration/xControllerCalibrationSupport.cpp
@@ -284,6 +285,7 @@ add_library(xWalkController STATIC
     ../xWalkHandler/src/voice/xControllerVoiceControlledCarHandler.cpp
     ../xWalkHandler/src/voice/xControllerVoicePromptCarHandler.cpp
 )
+target_link_libraries(xWalkController PRIVATE xWalkTrace)
 add_library(xWalk::Controller ALIAS xWalkController)
 
 target_include_directories(xWalkController
@@ -325,6 +327,7 @@ target_link_libraries(xWalkController PUBLIC
     xWalkVoiceActiveCar
     xWalkSelfDrive)
 target_link_libraries(xWalkController PUBLIC xWalkSpiTransfer)
+target_link_libraries(xWalkController PUBLIC xWalkConfig)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkController PRIVATE

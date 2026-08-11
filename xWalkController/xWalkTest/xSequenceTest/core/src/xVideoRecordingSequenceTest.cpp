@@ -26,16 +26,15 @@ void testVideoRecording(
     assert(!context.state->visionStarted);
     assert(!context.state->videoRecording);
     assert(!context.state->videoPaused);
-    assert(context.state->outputLines.size() == 6U);
-    assert(context.state->outputLines[1U] == "rec start ...");
-    assert(context.state->outputLines[2U] == "pause");
-    assert(context.state->outputLines[3U] == "continue");
-    assert(context.state->outputLines[4U] ==
-        "The video saved as /tmp/xwalk-videos/2026-08-05-12.30.45.avi");
-    assert(context.state->outputLines[5U] == "quit");
+
+
+
+
+
+
     assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
         {"vision.start", "video.begin", "video.pause", "video.continue",
-            "video.stop", "vision.stop", "controller.output"}));
+            "video.stop", "vision.stop"}));
 }
 
 } /* namespace */

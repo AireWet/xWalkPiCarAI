@@ -9,13 +9,14 @@ if(NOT TARGET xWalkLanguageModel)
         "Online-LLM-test dependency setting" FORCE)
     set(XWALK_LANGUAGE_MODEL_BUILD_OLLAMA_PROVIDER OFF CACHE BOOL
         "Online-LLM-test dependency setting" FORCE)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/xWalkLanguageModel
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/interface/xWalkLanguageModel
         ${CMAKE_CURRENT_BINARY_DIR}/xWalkLanguageModel)
 endif()
 
 add_library(xWalkOnlineLlmTest STATIC
     src/xAgent_Rpi5CarOnlineLlmTest.cpp
     src/xAgent_Rpi5CarOnlineLlmTestLifecycle.cpp)
+target_link_libraries(xWalkOnlineLlmTest PRIVATE xWalkTrace)
 add_library(xWalk::OnlineLlmTest ALIAS xWalkOnlineLlmTest)
 target_include_directories(xWalkOnlineLlmTest PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include)

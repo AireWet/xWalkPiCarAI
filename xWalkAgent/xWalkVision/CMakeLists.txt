@@ -12,6 +12,8 @@ if(XWALK_AGENT_VISION_BUILD_HOST_TESTS)
     set(XWALK_VIDEO_RECORDING_BUILD_HOST_TESTS ON CACHE BOOL "Vision group test dependency" FORCE)
     set(XWALK_CAMERA_CAPTURE_BUILD_HOST_TESTS ON CACHE BOOL "Vision group test dependency" FORCE)
     set(XWALK_CAMERA_BUILD_HOST_TESTS ON CACHE BOOL "Vision group test dependency" FORCE)
+    set(XWALK_ROAD_USER_SAFETY_BUILD_HOST_TESTS ON CACHE BOOL "Vision group test dependency" FORCE)
+    set(XWALK_VIDEO_STREAMING_BUILD_HOST_TESTS ON CACHE BOOL "Vision group test dependency" FORCE)
 endif()
 
 if(XWALK_AGENT_VISION_BUILD_HOST_TESTS OR XWALK_AGENT_VISION_BUILD_HARDWARE_TESTS)
@@ -26,6 +28,8 @@ add_subdirectory(xWalkTreasureHunt)
 add_subdirectory(xWalkVideoRecording)
 add_subdirectory(xWalkVideoCar)
 add_subdirectory(xWalkCameraCapture)
+add_subdirectory(xWalkRoadUserSafety)
+add_subdirectory(xWalkVideoStreaming)
 
 add_library(xWalkAgentVision INTERFACE)
 add_library(xWalk::AgentVision ALIAS xWalkAgentVision)
@@ -38,21 +42,29 @@ target_link_libraries(xWalkAgentVision INTERFACE
     xWalkVideoRecording
     xWalkVideoCar
     xWalkCameraCapture
+    xWalkRoadUserSafety
+    xWalkVideoStreaming
 )
 
 if(XWALK_AGENT_VISION_BUILD_HOST_TESTS)
     include(CTest)
     add_executable(xWalkAgentVisionGroupTest
-        test/src/xAgent_Rpi5CarVisionGroupTest.cpp)
+        test/src/xAgent_Rpi5CarVisionGroupTest.cpp
+        test/src/xAgent_Rpi5CarVisionTestSupport.cpp
+        ../xWalkVehicle/xWalkPicarx/test/src/xAgent_Rpi5CarPicarxTestSupport.cpp)
     target_compile_features(xWalkAgentVisionGroupTest PRIVATE cxx_std_17)
     target_include_directories(xWalkAgentVisionGroupTest PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/../test/include)
+        ${CMAKE_CURRENT_SOURCE_DIR}/../test/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkVehicle/xWalkPicarx/test/include)
     add_dependencies(xWalkAgentVisionGroupTest
         xWalkComputerVisionTest
         xWalkVideoRecordingTest
-        xWalkCameraCaptureTest)
+        xWalkCameraCaptureTest
+        xWalkRoadUserSafetyTest)
+    add_dependencies(xWalkAgentVisionGroupTest xWalkVideoStreamingTest)
     target_link_libraries(xWalkAgentVisionGroupTest PRIVATE
-        GTest::gtest_main xWalk::AgentVision)
+        GTest::gtest_main xWalk::AgentVision xWalkRobotHatSimulation)
     add_test(NAME xWalkAgentVisionGroupHostTest COMMAND xWalkAgentVisionGroupTest)
     set_tests_properties(xWalkAgentVisionGroupHostTest PROPERTIES LABELS "host;agent-group")
 endif()

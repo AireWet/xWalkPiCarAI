@@ -14,6 +14,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarTtsOpenAiExample.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
 
@@ -87,28 +88,16 @@ void testRequests()
 /** @brief Verifies rejection of either missing operation. */
 void testValidation()
 {
-    XWalkHal::boolean rejectedSpeak = false;
-    XWalkHal::boolean rejectedReport = false;
-    try
+    xwalk::hal::test::expectFailure([]()
     {
         xwalk::hal::example::XWalkTtsOpenAiExample invalid(
             nullptr, nullptr, &report);
-    }
-    catch (const XWalkHal::invalidargument&)
-    {
-        rejectedSpeak = true;
-    }
-    try
+    });
+    xwalk::hal::test::expectFailure([]()
     {
         xwalk::hal::example::XWalkTtsOpenAiExample invalid(
             nullptr, &speak, nullptr);
-    }
-    catch (const XWalkHal::invalidargument&)
-    {
-        rejectedReport = true;
-    }
-    assert(rejectedSpeak);
-    assert(rejectedReport);
+    });
 }
 
 } /* namespace */

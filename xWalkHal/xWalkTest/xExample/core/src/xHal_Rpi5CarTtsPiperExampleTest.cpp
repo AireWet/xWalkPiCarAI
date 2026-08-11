@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarTtsPiperExample.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
 
@@ -84,16 +85,10 @@ void testRequest()
 /** @brief Verifies rejection of a missing speech operation. */
 void testValidation()
 {
-    XWalkHal::boolean rejected = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         xwalk::hal::example::XWalkTtsPiperExample invalid(nullptr, nullptr);
-    }
-    catch (const XWalkHal::invalidargument&)
-    {
-        rejected = true;
-    }
-    assert(rejected);
+    });
 }
 
 } /* namespace */

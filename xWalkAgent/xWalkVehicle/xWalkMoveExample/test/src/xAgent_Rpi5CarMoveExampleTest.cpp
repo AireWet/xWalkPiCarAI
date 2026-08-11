@@ -170,6 +170,7 @@ void testMoveExample(agent::stringview configurationPath)
     configuration.set("picarx_calibration_verified", "true");
     xwalk::agent::XWalkPicarx picarx(motors, directionServo, panServo, tiltServo,
         grayscale, ultrasonic, configuration);
+    static_cast<void>(picarx.initialize());
     TestSchedule schedule;
     xwalk::agent::XWalkMoveExample example(
         picarx, &schedule, &delay, &continueOperation);

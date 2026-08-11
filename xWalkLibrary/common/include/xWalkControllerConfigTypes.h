@@ -139,6 +139,14 @@ struct XWalkControllerApplicationArguments
     XWalkAppConfig appConfig{};
     /** @brief Validated trace selectors and JSON paths in command-line order. */
     ::ctrl::stringvector traceArguments{};
+    /** @brief Requests a read-only deployment configuration validation report. */
+    ::ctrl::boolean validateConfiguration{};
+    /** @brief Requests the sanitized layered configuration values. */
+    ::ctrl::boolean printEffectiveConfiguration{};
+    /** @brief Requests deployment diagnostics instead of a robot command. */
+    ::ctrl::boolean diagnose{};
+    /** @brief Prohibits physical backend construction and device access. */
+    ::ctrl::boolean noHardware{};
 };
 
 /** @brief Stores one classified top-level command and its unconverted CLI text. */

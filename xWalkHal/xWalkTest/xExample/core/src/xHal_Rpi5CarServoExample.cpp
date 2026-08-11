@@ -23,6 +23,7 @@
 
 #include "xHal_Rpi5CarServoExample.h"
 
+#include "xHal_Rpi5CarTrace.h"
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -31,8 +32,7 @@
  * @namespace xwalk::hal::example
  * @brief Contains host-testable behavior ported from upstream examples.
  */
-namespace xwalk::hal::example
-{
+namespace xwalk::hal::example {
 
 /**
  * @brief Binds and validates all servo example operations.
@@ -40,16 +40,14 @@ namespace xwalk::hal::example
  * @param[in] exampleCallbacks Complete operation table.
  * @throws std::invalid_argument If any callback is null.
  */
-XWalkServoExample::XWalkServoExample(contextpointer context,
-    const XWalkServoExampleCallbacks& exampleCallbacks):
-    callbackContext(context), callbacks(exampleCallbacks)
-{
-    if ((callbacks.setAngle == nullptr) || (callbacks.wait == nullptr) ||
-        (callbacks.report == nullptr))
-    {
-        XHAL_THROW_INVALID_ARGUMENT(
-            "Servo example requires a complete callback table");
-    }
+XWalkServoExample::XWalkServoExample(
+    contextpointer context, const XWalkServoExampleCallbacks &exampleCallbacks)
+    : callbackContext(context), callbacks(exampleCallbacks) {
+  if ((callbacks.setAngle == nullptr) || (callbacks.wait == nullptr) ||
+      (callbacks.report == nullptr)) {
+    XWALK_HAL_ERROR(XWALK_INVAL,
+                    "Servo example requires a complete callback table");
+  }
 }
 
 /**
@@ -57,32 +55,28 @@ XWalkServoExample::XWalkServoExample(contextpointer context,
  * @param[in] cycleCount Complete cycles from one through 100.
  * @throws std::out_of_range If `cycleCount` is outside its range.
  */
-void XWalkServoExample::run(uint32 cycleCount)
-{
-    if ((cycleCount == 0U) ||
-        (cycleCount > XHAL_RPI5CAR_SERVO_EXAMPLE_MAXIMUM_CYCLES))
-    {
-        XHAL_THROW_OUT_OF_RANGE("Servo example cycle count is outside its range");
-    }
+void XWalkServoExample::run(uint32 cycleCount) {
+  if ((cycleCount == 0U) ||
+      (cycleCount > XHAL_RPI5CAR_SERVO_EXAMPLE_MAXIMUM_CYCLES)) {
+    XWALK_HAL_ERROR(XWALK_RANGE,
+                    "Servo example cycle count is outside its range");
+  }
 
-    for (uint32 cycle = 0U; cycle < cycleCount; ++cycle)
-    {
-        for (int32 angle = -90; angle < 90; ++angle)
-        {
-            callbacks.setAngle(callbackContext, static_cast<float64>(angle));
-            callbacks.wait(callbackContext, 10U);
-            callbacks.report(callbackContext, angle);
-        }
-        callbacks.wait(callbackContext, 1'000U);
-
-        for (int32 angle = 90; angle > -90; --angle)
-        {
-            callbacks.setAngle(callbackContext, static_cast<float64>(angle));
-            callbacks.wait(callbackContext, 10U);
-            callbacks.report(callbackContext, angle);
-        }
-        callbacks.wait(callbackContext, 1'000U);
+  for (uint32 cycle = 0U; cycle < cycleCount; ++cycle) {
+    for (int32 angle = -90; angle < 90; ++angle) {
+      callbacks.setAngle(callbackContext, static_cast<float64>(angle));
+      callbacks.wait(callbackContext, 10U);
+      callbacks.report(callbackContext, angle);
     }
+    callbacks.wait(callbackContext, 1'000U);
+
+    for (int32 angle = 90; angle > -90; --angle) {
+      callbacks.setAngle(callbackContext, static_cast<float64>(angle));
+      callbacks.wait(callbackContext, 10U);
+      callbacks.report(callbackContext, angle);
+    }
+    callbacks.wait(callbackContext, 1'000U);
+  }
 }
 
 } /* namespace xwalk::hal::example */

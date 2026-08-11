@@ -6,6 +6,9 @@ dependencies.
 
 ## Behavior
 
+- construction loads and validates configuration without moving any servo;
+- explicit `initialize()` initializes the steering, pan, and tilt PWM paths, applies requested calibrated
+  positions, and arms the paired motor controller;
 - loads and persists the upstream `picarx_*`, `line_reference`, and `cliff_reference` keys;
 - exposes non-persistent servo-offset and motor-direction previews for calibration Agents;
 - clamps steering to -30 through 30 degrees, pan to -90 through 90 degrees, and tilt to -35 through 65
@@ -20,6 +23,10 @@ dependencies.
 - exposes raw grayscale data, threshold classification, cliff detection, and ultrasonic distance in
   centimeters;
 - resets all logical actuator commands during `close()` and cancels ultrasonic interrupt registrations.
+
+`initialize()` is the required application lifecycle boundary. Drive commands are rejected before it succeeds.
+An emergency stop disarms the motors; clearing the emergency latch first re-establishes a stopped output and
+re-arms them. Initialization failure leaves motor movement unavailable.
 
 The upstream constructor resets the Robot HAT MCU before motor GPIO 5 is claimed. This port performs that step
 in the RPi composition root so the temporary reset GPIO backend can be destroyed before the right motor claims

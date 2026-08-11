@@ -22,8 +22,8 @@ jobs:
       - name: Install host dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes
-          cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
+          clang libclang-rt-18-dev cmake ninja-build libasound2-dev libcurl4-openssl-dev
+          libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Select compiler
         run: |
@@ -48,6 +48,10 @@ jobs:
         run: >-
           ctest --test-dir build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
           --output-on-failure --no-tests=error
+      - name: Validate deployment configuration without hardware
+        run: >-
+          build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}/xWalkController/xWalkApp/xwalk-picarx-control
+          --deployment-config="$PWD/xWalkController/xWalkConfig/picar-x.conf" --diagnose --no-hardware
       - name: Test xWalkAgent aggregate
         run: >-
           ctest --test-dir build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
@@ -56,6 +60,18 @@ jobs:
         run: >-
           ctest --test-dir build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
           --output-on-failure --no-tests=error -L agent-group
+      - name: Test simulator scenarios
+        run: >-
+          ctest --test-dir build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
+          --output-on-failure --no-tests=error -L simulation
+      - name: Test recorded vision scenarios
+        run: >-
+          ctest --test-dir build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
+          --output-on-failure --no-tests=error -L recorded-media
+      - name: Test streaming lifecycle and backpressure
+        run: >-
+          ctest --test-dir build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
+          --output-on-failure --no-tests=error -L streaming
       - name: Test host-safe HAL sequences
         run: >-
           build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}/xGoogleTest
@@ -69,45 +85,47 @@ jobs:
           build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}/xCliSequenceTest
           --gtest_brief=1
 
-  sanitizers:
+  asan-ubsan:
     runs-on: ubuntu-24.04
-    env:
-      ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
-      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - name: Install host dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
+          libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Configure
-        run: cmake --fresh --preset sanitizers
-      - name: Build
-        run: cmake --build --preset sanitizers --parallel
-      - name: Test with AddressSanitizer and UndefinedBehaviorSanitizer
-        run: ctest --preset sanitizers
+      - name: Build and test with AddressSanitizer and UndefinedBehaviorSanitizer
+        run: xWalkTool/shell/run-host-sanitizer.sh asan
+
+  leak-sanitizer:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install host dependencies
+        run: >-
+          sudo apt-get update && sudo apt-get install --yes clang cmake ninja-build
+          libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev
+          libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
+          protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
+      - name: Verify LSan and run the leak-enabled suite
+        run: xWalkTool/shell/run-host-sanitizer.sh lsan
 
   thread-sanitizer:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-    env:
-      TSAN_OPTIONS: halt_on_error=1
     steps:
       - uses: actions/checkout@v4
       - name: Install host dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
+          libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Configure
-        run: cmake --fresh --preset thread-sanitizer
-      - name: Build
-        run: cmake --build --preset thread-sanitizer --parallel
-      - name: Test concurrency with ThreadSanitizer
-        run: ctest --preset thread-sanitizer --timeout 60
+      - name: Verify TSan and run focused concurrency tests
+        run: xWalkTool/shell/run-host-sanitizer.sh tsan
 
   stress-tests:
     runs-on: ubuntu-24.04
@@ -117,7 +135,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
+          libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure strict host build
         run: cmake --fresh --preset sanity
@@ -125,6 +143,72 @@ jobs:
         run: cmake --build --preset sanity --parallel
       - name: Repeat every host test until failure
         run: ctest --preset host-stress
+
+  recorded-scenarios:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install host dependencies
+        run: >-
+          sudo apt-get update && sudo apt-get install --yes cmake ninja-build
+          libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev
+          libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
+          protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
+      - name: Configure and build recorded scenarios
+        run: cmake --fresh --preset host-debug && cmake --build --preset host-debug --target xWalkRoadUserSafetyTest --parallel
+      - name: Verify asset checksums, licenses, annotations, and decoding
+        run: ctest --preset host-debug -L recorded-media
+
+  streaming:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install host dependencies
+        run: >-
+          sudo apt-get update && sudo apt-get install --yes cmake ninja-build
+          libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev
+          libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
+          protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
+      - name: Configure and build socket streaming tests
+        run: cmake --fresh --preset host-debug && cmake --build --preset host-debug --target xWalkVideoStreamingTest --parallel
+      - name: Run loopback HTTP and MJPEG lifecycle tests
+        run: ctest --preset host-debug -L streaming
+
+  fuzz-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install fuzz dependencies
+        run: >-
+          sudo apt-get update && sudo apt-get install --yes clang cmake ninja-build
+          libasound2-dev libcurl4-openssl-dev libjson-c-dev libopencv-dev
+          libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
+          protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
+      - name: Configure and build fuzzers
+        run: cmake --fresh --preset fuzz && cmake --build --preset fuzz --parallel
+      - name: Run bounded fuzz smoke
+        run: >-
+          for fuzz_name in configuration protobuf grpc http_requests camera_sources model_metadata scenarios i2c_payloads image_decode; do
+          build-host/fuzz/xWalkTool/fuzz/xWalkFuzz_${fuzz_name} -runs=1000 -artifact_prefix=/tmp/xwalk-fuzz-
+          xWalkTool/fuzz/corpus/${fuzz_name} || exit 1; done
+
+  soak-smoke:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install host dependencies
+        run: >-
+          sudo apt-get update && sudo apt-get install --yes cmake ninja-build
+          libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev
+          libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
+          protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
+      - name: Configure and build soak test
+        run: cmake --fresh --preset host-debug && cmake --build --preset host-debug --target xWalkRobotHatSoakTest --parallel
+      - name: Run deterministic soak smoke
+        run: ctest --preset host-debug -L soak
+      - name: Validate soak report
+        run: python3 -m json.tool build-host/cmake/xWalkHal/simulation/xWalkRobotHat/xwalk-robot-hat-soak-report.json
 
   static-analysis:
     runs-on: ubuntu-24.04
@@ -134,7 +218,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build clang-tidy cppcheck libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
+          libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure
         run: cmake --fresh --preset clang-tidy
@@ -150,11 +234,13 @@ jobs:
       - name: Install coverage dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes
-          cmake ninja-build gcovr libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
+          clang llvm cmake ninja-build gcovr libasound2-dev libcurl4-openssl-dev
+          libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Build, test, and generate coverage reports
-        run: xWalkTool/shell/run-host-coverage.sh run
+      - name: Build, test, and generate GCC coverage reports
+        run: xWalkTool/shell/run-host-coverage.sh run gcc
+      - name: Build, test, and generate Clang coverage reports
+        run: xWalkTool/shell/run-host-coverage.sh run clang
       - uses: actions/upload-artifact@v4
         with:
           name: coverage-report
@@ -162,6 +248,53 @@ jobs:
             build-host/coverage/coverage.html
             build-host/coverage/coverage.*.html
             build-host/coverage/coverage.xml
+            build-host/coverage/coverage.json
+            build-host/coverage-clang/coverage-summary.txt
+            build-host/coverage-clang/coverage.json
+            build-host/coverage-clang/html
+
+  valgrind:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install host and Valgrind dependencies
+        run: >-
+          sudo apt-get update && sudo apt-get install --yes cmake ninja-build valgrind
+          libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev
+          libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
+          protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
+      - name: Run focused CTest MemCheck suite
+        run: xWalkTool/shell/run-host-valgrind.sh
+
+  clang-static-analyzer:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install host and analyzer dependencies
+        run: >-
+          sudo apt-get update && sudo apt-get install --yes clang clang-tools libclang-rt-18-dev cmake ninja-build
+          libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev
+          libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
+          protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
+      - name: Run Clang Static Analyzer
+        run: xWalkTool/shell/run-clang-static-analyzer.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: clang-static-analyzer-report
+          path: build-host/clang-analyzer/reports
+
+  shellcheck:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ShellCheck
+        run: sudo apt-get update && sudo apt-get install --yes shellcheck
+      - name: Analyze every repository-owned shell script
+        run: xWalkTool/shell/run-host-shellcheck.sh
 
   deployment-scripts:
     runs-on: ubuntu-24.04
@@ -170,7 +303,7 @@ jobs:
       - name: Install script validation dependencies
         run: sudo apt-get update && sudo apt-get install --yes shellcheck
       - name: Check shell scripts
-        run: shellcheck xWalkTool/shell/*.sh xWalkTool/deployment/test/*.sh
+        run: shellcheck xWalkTool/shell/*.sh xWalkTool/deployment/*.sh xWalkTool/deployment/test/*.sh
       - name: Test provisioning behavior
         run: bash xWalkTool/deployment/test/setup-rpi-test.sh
 
@@ -182,7 +315,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install --yes
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
+          libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure release installation
         run: >-
@@ -209,6 +342,7 @@ jobs:
           test -r build-host/deploy/usr/share/xwalk/music/slow-trail-Ahjay_Stelino.mp3
           cd /tmp
           "$GITHUB_WORKSPACE/build-host/deploy/usr/bin/xwalk-picarx-control" --help
+          "$GITHUB_WORKSPACE/build-host/deploy/usr/bin/xwalk-picarx-control" --deployment-config="$GITHUB_WORKSPACE/build-host/deploy/etc/xwalk/picar-x.conf" --diagnose --no-hardware
       - name: Reject developer paths in installed configuration
         run: >-
           if grep -R --fixed-strings "$GITHUB_WORKSPACE"

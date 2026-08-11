@@ -33,11 +33,11 @@ void testSoundBackgroundMusic(
     assert(context.state->delays[0U] == 20U);
     assert(context.state->delays[1U] == 20U);
     assert(context.state->delays[2U] == 10U);
-    assert(context.state->outputLines.back() == "Sound and music stopped");
+
     assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
         {"hal.music.volume", "hal.music.play", "hal.music.sound",
             "controller.delay", "hal.music.sound", "controller.delay",
-            "hal.music.control", "controller.output"}));
+            "hal.music.control"}));
 }
 
 } /* namespace */

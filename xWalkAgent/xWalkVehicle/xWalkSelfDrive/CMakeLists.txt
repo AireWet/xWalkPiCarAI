@@ -30,6 +30,7 @@ add_library(xWalkSelfDrive STATIC
     src/xAgent_Rpi5CarSelfDriveLifecycle.cpp
     src/xAgent_Rpi5CarSelfDriveWorker.cpp
 )
+target_link_libraries(xWalkSelfDrive PRIVATE xWalkTrace)
 add_library(xWalk::SelfDrive ALIAS xWalkSelfDrive)
 
 target_include_directories(xWalkSelfDrive PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

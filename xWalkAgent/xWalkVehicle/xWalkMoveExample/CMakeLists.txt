@@ -14,6 +14,7 @@ endif()
 add_library(xWalkMoveExample STATIC
     src/xAgent_Rpi5CarMoveExample.cpp
     src/xAgent_Rpi5CarMoveExampleLifecycle.cpp)
+target_link_libraries(xWalkMoveExample PRIVATE xWalkTrace)
 add_library(xWalk::MoveExample ALIAS xWalkMoveExample)
 
 target_include_directories(xWalkMoveExample PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

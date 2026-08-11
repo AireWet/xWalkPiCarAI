@@ -30,8 +30,6 @@
 #include "xHal_Rpi5CarCommonFunctions.h"
 #include "xHal_Rpi5CarFileFunctions.h"
 
-#include <cassert>
-
 /******************************************************************************
  * Anonymous namespace
  ******************************************************************************/
@@ -82,19 +80,26 @@ int main(int argumentCount, char* arguments[])
     callbacks.delay = &delay;
     callbacks.continueOperation = &continueOperation;
     xwalk::agent::XWalkComputerVision vision(&provider, callbacks);
-    const agent::boolean started = vision.start();
-    assert(started);
+    if (!vision.start())
+    {
+        return 1;
+    }
     static_cast<void>(vision.handleKey("1"));
     static_cast<void>(vision.handleKey("f"));
     static_cast<void>(vision.handleKey("r"));
     const xwalk::agent::XWalkComputerVisionResult observation = vision.handleKey("s");
-    assert(observation.event == xwalk::agent::XWalkComputerVisionEvent::ObjectsShown);
+    if (observation.event != xwalk::agent::XWalkComputerVisionEvent::ObjectsShown)
+    {
+        vision.stop();
+        return 1;
+    }
     const xwalk::agent::XWalkComputerVisionResult photograph = vision.handleKey("q");
-    assert(photograph.event == xwalk::agent::XWalkComputerVisionEvent::PhotoCaptured);
-    assert(xwalk::hal::filesystemEntryExists(photograph.photoPath));
+    if (photograph.event != xwalk::agent::XWalkComputerVisionEvent::PhotoCaptured ||
+        !xwalk::hal::filesystemEntryExists(photograph.photoPath))
+    {
+        vision.stop();
+        return 1;
+    }
     vision.stop();
-    const agent::boolean removed =
-        xwalk::hal::removeFilesystemEntry(photograph.photoPath);
-    assert(removed);
-    return 0;
+    return xwalk::hal::removeFilesystemEntry(photograph.photoPath) ? 0 : 1;
 }

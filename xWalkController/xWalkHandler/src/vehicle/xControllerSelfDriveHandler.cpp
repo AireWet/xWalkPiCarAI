@@ -3,7 +3,8 @@
  * @brief       Implements the SelfDriveHandler command responsibility.
  *
  * @details
- * Keeps this controller responsibility isolated within its functionality-based handler group.
+ * Keeps this controller responsibility isolated within its functionality-based
+ *handler group.
  *
  * @project     xWalk Firmware
  * @module      xWalkHandler
@@ -26,8 +27,7 @@
 
 #include "xController.h"
 
-#include "xHal_Rpi5CarExceptions.h"
-
+#include "xHal_Rpi5CarTrace.h"
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -36,8 +36,7 @@
  * @namespace xwalk::ctrl
  * @brief Contains Controller command interfaces for the xWalk firmware.
  */
-namespace xwalk::ctrl
-{
+namespace xwalk::ctrl {
 
 /******************************************************************************
  * Member function definitions
@@ -46,26 +45,25 @@ namespace xwalk::ctrl
 /**
  * @brief Executes one named self-drive preset action.
  * @param[in] request Canonical space-separated action text.
- * @return Zero after a supported action completes; three when the coordinator is unavailable.
+ * @return Zero after a supported action completes; three when the coordinator
+ * is unavailable.
  */
-::ctrl::int32 XWalkController::XWALK_handlerSelfDrive(const XWalkSelfDriveRequest& request)
-{
-    if (selfDriveObject == nullptr)
-    {
-        output("Self-drive backend unavailable");
-        return 3;
-    }
-    const ::ctrl::boolean operationRequested = operationMayContinue();
-    if (operationRequested == false)
-    {
-        return 0;
-    }
-    const ::ctrl::boolean actionQueued = selfDriveObject->doAction(request.action);
-    if (actionQueued == false)
-    {
-        XHAL_THROW_INVALID_ARGUMENT("self-drive action is not supported");
-    }
+::ctrl::int32
+XWalkController::XWALK_handlerSelfDrive(const XWalkSelfDriveRequest &request) {
+  if (selfDriveObject == nullptr) {
+    XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Self-drive backend unavailable");
+    return 3;
+  }
+  const ::ctrl::boolean operationRequested = operationMayContinue();
+  if (operationRequested == false) {
     return 0;
+  }
+  const ::ctrl::boolean actionQueued =
+      selfDriveObject->doAction(request.action);
+  if (actionQueued == false) {
+    XWALK_CTRL_ERROR(XWALK_INVAL, "self-drive action is not supported");
+  }
+  return 0;
 }
 
 } /* namespace xwalk::ctrl */

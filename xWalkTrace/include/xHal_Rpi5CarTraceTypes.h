@@ -79,6 +79,9 @@ struct XWalkTraceSourceLocation
 
     /** @brief One-based line containing the public tagged-trace macro name. */
     uint32 sourceLine{};
+
+    /** @brief Preserved callback and record priority from zero through three. */
+    uint8 priority{};
 };
 
 /******************************************************************************

@@ -10,6 +10,6 @@ The authoritative declarations are in
 [`xWalkTrace`](../../../xWalkTrace/README.md).
 
 The application configures the active severity and supplies the callback
-context. The trace object appends accepted records to `log/xWalkTrace.log`,
-relative to the process working directory, and does not own the additional
-callback destination.
+context. The trace object appends accepted records to
+`<build-directory>/log/xWalkTrace.log`, independent of the process working
+directory, and does not own the additional callback destination.

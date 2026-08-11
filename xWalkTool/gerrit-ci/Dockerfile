@@ -7,6 +7,7 @@ RUN apt-get update \
         ca-certificates \
         clang \
         clang-tidy \
+        libclang-rt-18-dev \
         cmake \
         cppcheck \
         g++ \
@@ -16,8 +17,10 @@ RUN apt-get update \
         libasound2-dev \
         libcurl4-openssl-dev \
         libgrpc++-dev \
+        libgmock-dev \
         libgtest-dev \
         libjson-c-dev \
+        libopencv-dev \
         libprotobuf-dev \
         libtinyxml2-dev \
         libyaml-cpp-dev \

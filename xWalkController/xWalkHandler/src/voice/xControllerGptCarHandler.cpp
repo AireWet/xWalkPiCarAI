@@ -3,7 +3,8 @@
  * @brief       Implements the GptCarHandler command responsibility.
  *
  * @details
- * Keeps this controller responsibility isolated within its functionality-based handler group.
+ * Keeps this controller responsibility isolated within its functionality-based
+ *handler group.
  *
  * @project     xWalk Firmware
  * @module      xWalkHandler
@@ -26,7 +27,7 @@
 
 #include "xController.h"
 
-#include "xHal_Rpi5CarExceptions.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -36,8 +37,7 @@
  * @namespace xwalk::ctrl
  * @brief Contains Controller command interfaces for the xWalk firmware.
  */
-namespace xwalk::ctrl
-{
+namespace xwalk::ctrl {
 
 /******************************************************************************
  * Member function definitions
@@ -48,22 +48,19 @@ namespace xwalk::ctrl
  * @param[in] request Validated lifecycle action and input-source flags.
  * @return Zero on completion or three when the selected backend is unavailable.
  */
-::ctrl::int32 XWalkController::XWALK_handlerGptCar(
-    const XWalkGptCarRequest& request)
-{
-    if (gptCarObject == nullptr)
-    {
-        output("GPT-car backend unavailable");
-        return 3;
-    }
-    if (request.action == XWalkLifecycleAction::Stop)
-    {
-        gptCarObject->stop();
-        output("GPT car stopped");
-        return 0;
-    }
-    gptCarObject->configure(request.keyboardInput, request.withImage);
-    return gptCarObject->run();
+::ctrl::int32
+XWalkController::XWALK_handlerGptCar(const XWalkGptCarRequest &request) {
+  if (gptCarObject == nullptr) {
+    XWALK_CTRL_ERROR(XWALK_EXCEPTION, "GPT-car backend unavailable");
+    return 3;
+  }
+  if (request.action == XWalkLifecycleAction::Stop) {
+    gptCarObject->stop();
+    XWALK_CTRL_TRACE_UID0(CTRL .077, "GPT car stopped");
+    return 0;
+  }
+  gptCarObject->configure(request.keyboardInput, request.withImage);
+  return gptCarObject->run();
 }
 
 } /* namespace xwalk::ctrl */

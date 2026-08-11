@@ -187,6 +187,7 @@ endif()
 add_library(xWalkBoot STATIC
     core/src/xAgent_Rpi5CarBoot.cpp
     stub/src/xAgent_Rpi5CarBootHostStub.cpp)
+target_link_libraries(xWalkBoot PRIVATE xWalkTrace)
 add_library(xWalk::Boot ALIAS xWalkBoot)
 target_include_directories(xWalkBoot PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/core/include
@@ -269,6 +270,7 @@ if(XWALK_BOOT_BUILD_RPI_BACKEND)
         hardware/src/xAgent_Rpi5CarBootRpiVoiceChat.cpp
         hardware/src/xAgent_Rpi5CarBootRpiVoiceControlledCar.cpp
         hardware/src/xAgent_Rpi5CarBootRpiVoicePromptCar.cpp)
+target_link_libraries(xWalkBootRpi PRIVATE xWalkTrace)
     add_library(xWalk::BootRpi ALIAS xWalkBootRpi)
     target_include_directories(xWalkBootRpi PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/hardware/include)

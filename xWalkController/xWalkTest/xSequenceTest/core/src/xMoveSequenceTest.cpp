@@ -28,7 +28,7 @@ void testMove(xwalk::agent::test::ControllerCommandTestContext& context)
     assert(context.state->delays.size() == 509U);
     assert(context.state->leftSpeeds.front() == 70.0);
     assert(context.state->leftSpeeds[2U] != 0.0);
-    assert(context.state->outputLines.back() == "Move example complete!");
+
     assert(context.picarx->directionAngleDegrees() == -1.0);
     assert(context.motors->left().speed() == 0.0);
     assert(context.motors->right().speed() == 0.0);

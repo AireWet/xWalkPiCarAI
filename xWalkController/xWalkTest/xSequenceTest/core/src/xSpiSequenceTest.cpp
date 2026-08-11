@@ -21,9 +21,9 @@ void testSpi(xwalk::agent::test::ControllerCommandTestContext& context)
 {
     xwalk::agent::test::XWalkControllerSequence sequence(*context.spiController);
     assert(sequence.run({{"spi", "transfer", "0x9f00a5"}}) == 0);
-    assert(context.state->outputLines.back() == "60 FF 5A");
+
     assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"hal.spi.transfer", "controller.output"}));
+        {"hal.spi.transfer"}));
 }
 }
 

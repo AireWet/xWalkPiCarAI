@@ -234,8 +234,12 @@ void testLineTrackingBehavior(agent::stringview configPath)
     config.set("line_reference", "[1000,1000,1000]");
     xwalk::agent::XWalkPicarx picarx(motors, directionServo, panServo, tiltServo,
         grayscale, ultrasonic, config);
+    static_cast<void>(picarx.initialize());
     TestTiming timing;
-    xwalk::agent::XWalkLineTracking tracking(picarx, &timing, &delayMilliseconds);
+    xwalk::agent::XWalkLineTrackingConfiguration trackingConfiguration;
+    trackingConfiguration.maximumRecoverySamples = 2U;
+    xwalk::agent::XWalkLineTracking tracking(
+        picarx, &timing, &delayMilliseconds, trackingConfiguration);
 
     assert(xwalk::agent::XWalkLineTracking::classify({0U, 0U, 0U}) ==
         xwalk::agent::XWalkLineTrackingState::Stop);
@@ -270,6 +274,13 @@ void testLineTrackingBehavior(agent::stringview configPath)
     assert(motors.right().speed() < 0.0);
     assert(timing.delays.back() == 1U);
 
+    result = tracking.step();
+    assert(result.recoveryAttempted);
+    assert(result.recoveryTimedOut);
+    assert(result.state == xwalk::agent::XWalkLineTrackingState::Stop);
+    assert(motors.left().speed() == 0.0);
+    assert(motors.right().speed() == 0.0);
+
     tracking.stop();
     assert(tracking.currentState() == xwalk::agent::XWalkLineTrackingState::Stop);
     assert(tracking.lastState() == xwalk::agent::XWalkLineTrackingState::Stop);
@@ -280,17 +291,6 @@ void testLineTrackingBehavior(agent::stringview configPath)
     assert(timing.delays.back() == 100U);
     assert(tracking.currentState() == xwalk::agent::XWalkLineTrackingState::Stop);
     assert(tracking.lastState() == xwalk::agent::XWalkLineTrackingState::Stop);
-
-    xwalk::agent::XWalkLineTrackingConfiguration timeoutConfiguration;
-    timeoutConfiguration.maximumRecoverySamples = 2U;
-    xwalk::agent::XWalkLineTracking timeoutTracking(
-        picarx, &timing, &delayMilliseconds, timeoutConfiguration);
-    result = timeoutTracking.step();
-    assert(result.recoveryAttempted);
-    assert(result.recoveryTimedOut);
-    assert(result.state == xwalk::agent::XWalkLineTrackingState::Stop);
-    assert(motors.left().speed() == 0.0);
-    assert(motors.right().speed() == 0.0);
 
     xwalk::hal::test::expectFailure([&]()
     {

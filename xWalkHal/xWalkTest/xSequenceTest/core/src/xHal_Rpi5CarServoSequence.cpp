@@ -27,6 +27,7 @@
 
 #include "xHal_Rpi5CarServoSequence.h"
 
+#include "xHal_Rpi5CarTrace.h"
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -35,8 +36,7 @@
  * @namespace xwalk::hal::test
  * @brief Contains host-testable and physical HAL sequence behavior.
  */
-namespace xwalk::hal::test
-{
+namespace xwalk::hal::test {
 
 /**
  * @brief Binds the ordered servo set and wait operation.
@@ -53,21 +53,19 @@ namespace xwalk::hal::test
  * @throws std::invalid_argument
  * If `wait` or a servo pointer is null.
  */
-XWalkServoSequence::XWalkServoSequence(const servosequencearray& servos,
-    contextpointer context, servosequencewaitcallback wait)
-    : servoObjects(servos), waitContext(context), waitCallback(wait)
-{
-    if (waitCallback == nullptr)
-    {
-        XHAL_THROW_INVALID_ARGUMENT("Servo-sequence wait callback must not be null");
+XWalkServoSequence::XWalkServoSequence(const servosequencearray &servos,
+                                       contextpointer context,
+                                       servosequencewaitcallback wait)
+    : servoObjects(servos), waitContext(context), waitCallback(wait) {
+  if (waitCallback == nullptr) {
+    XWALK_HAL_ERROR(XWALK_INVAL,
+                    "Servo-sequence wait callback must not be null");
+  }
+  for (const XWalkServo *const servo : servoObjects) {
+    if (servo == nullptr) {
+      XWALK_HAL_ERROR(XWALK_INVAL, "Servo-sequence pointers must not be null");
     }
-    for (const XWalkServo* const servo : servoObjects)
-    {
-        if (servo == nullptr)
-        {
-            XHAL_THROW_INVALID_ARGUMENT("Servo-sequence pointers must not be null");
-        }
-    }
+  }
 }
 
 /**
@@ -82,27 +80,22 @@ XWalkServoSequence::XWalkServoSequence(const servosequencearray& servos,
  * @throws std::out_of_range
  * If `cycleCount` is outside its supported range.
  */
-void XWalkServoSequence::run(uint32 cycleCount)
-{
-    if ((cycleCount == 0U) ||
-        (cycleCount > XHAL_RPI5CAR_SERVO_SEQUENCE_MAX_CYCLES))
-    {
-        XHAL_THROW_OUT_OF_RANGE("Servo-sequence cycles must be from 1 to 100");
-    }
+void XWalkServoSequence::run(uint32 cycleCount) {
+  if ((cycleCount == 0U) ||
+      (cycleCount > XHAL_RPI5CAR_SERVO_SEQUENCE_MAX_CYCLES)) {
+    XWALK_HAL_ERROR(XWALK_RANGE, "Servo-sequence cycles must be from 1 to 100");
+  }
 
-    for (uint32 cycle = 0U; cycle < cycleCount; ++cycle)
-    {
-        for (XWalkServo* const servo : servoObjects)
-        {
-            servo->setAngle(-20.0);
-            waitCallback(waitContext, 100U);
-        }
-        for (XWalkServo* const servo : servoObjects)
-        {
-            servo->setAngle(20.0);
-            waitCallback(waitContext, 100U);
-        }
+  for (uint32 cycle = 0U; cycle < cycleCount; ++cycle) {
+    for (XWalkServo *const servo : servoObjects) {
+      servo->setAngle(-20.0);
+      waitCallback(waitContext, 100U);
     }
+    for (XWalkServo *const servo : servoObjects) {
+      servo->setAngle(20.0);
+      waitCallback(waitContext, 100U);
+    }
+  }
 }
 
 } /* namespace xwalk::hal::test */

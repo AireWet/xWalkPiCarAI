@@ -23,6 +23,7 @@
 
 #include "xHal_Rpi5CarUltrasonicExample.h"
 
+#include "xHal_Rpi5CarTrace.h"
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -31,8 +32,7 @@
  * @namespace xwalk::hal::example
  * @brief Contains host-testable behavior ported from upstream examples.
  */
-namespace xwalk::hal::example
-{
+namespace xwalk::hal::example {
 
 /**
  * @brief Binds and validates all ultrasonic operations.
@@ -40,16 +40,15 @@ namespace xwalk::hal::example
  * @param[in] exampleCallbacks Complete operation table.
  * @throws std::invalid_argument If any callback is null.
  */
-XWalkUltrasonicExample::XWalkUltrasonicExample(contextpointer context,
-    const XWalkUltrasonicExampleCallbacks& exampleCallbacks):
-    callbackContext(context), callbacks(exampleCallbacks)
-{
-    if ((callbacks.read == nullptr) || (callbacks.wait == nullptr) ||
-        (callbacks.report == nullptr))
-    {
-        XHAL_THROW_INVALID_ARGUMENT(
-            "Ultrasonic example requires a complete callback table");
-    }
+XWalkUltrasonicExample::XWalkUltrasonicExample(
+    contextpointer context,
+    const XWalkUltrasonicExampleCallbacks &exampleCallbacks)
+    : callbackContext(context), callbacks(exampleCallbacks) {
+  if ((callbacks.read == nullptr) || (callbacks.wait == nullptr) ||
+      (callbacks.report == nullptr)) {
+    XWALK_HAL_ERROR(XWALK_INVAL,
+                    "Ultrasonic example requires a complete callback table");
+  }
 }
 
 /**
@@ -57,20 +56,17 @@ XWalkUltrasonicExample::XWalkUltrasonicExample(contextpointer context,
  * @param[in] sampleCount Sample count from one through 18,000.
  * @throws std::out_of_range If `sampleCount` is outside its range.
  */
-void XWalkUltrasonicExample::run(uint32 sampleCount)
-{
-    if ((sampleCount == 0U) ||
-        (sampleCount > XHAL_RPI5CAR_ULTRASONIC_EXAMPLE_MAXIMUM_SAMPLES))
-    {
-        XHAL_THROW_OUT_OF_RANGE(
-            "Ultrasonic sample count is outside its range");
-    }
+void XWalkUltrasonicExample::run(uint32 sampleCount) {
+  if ((sampleCount == 0U) ||
+      (sampleCount > XHAL_RPI5CAR_ULTRASONIC_EXAMPLE_MAXIMUM_SAMPLES)) {
+    XWALK_HAL_ERROR(XWALK_RANGE,
+                    "Ultrasonic sample count is outside its range");
+  }
 
-    for (uint32 sampleIndex = 0U; sampleIndex < sampleCount; ++sampleIndex)
-    {
-        callbacks.report(callbackContext, callbacks.read(callbackContext));
-        callbacks.wait(callbackContext, 200U);
-    }
+  for (uint32 sampleIndex = 0U; sampleIndex < sampleCount; ++sampleIndex) {
+    callbacks.report(callbackContext, callbacks.read(callbackContext));
+    callbacks.wait(callbackContext, 200U);
+  }
 }
 
 } /* namespace xwalk::hal::example */

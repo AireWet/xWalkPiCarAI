@@ -39,7 +39,7 @@ void testVoicePromptCar(xwalk::agent::test::ControllerCommandTestContext& contex
     assert(context.picarx->directionAngleDegrees() == 0.0);
     assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
         {"hal.speech.speak", "controller.continue", "hal.i2c.write",
-            "controller.output", "hal.i2c.write", "controller.output"}));
+            "hal.i2c.write"}));
 }
 }
 

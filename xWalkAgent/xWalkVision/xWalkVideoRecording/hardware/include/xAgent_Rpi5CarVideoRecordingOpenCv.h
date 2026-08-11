@@ -21,13 +21,26 @@
 namespace xwalk::agent
 {
 
+/** @brief Selects how OpenCV opens the recording frame source. */
+enum class XWalkVideoRecordingOpenCvBackend : agent::uint8
+{
+    V4l2 = 0U,
+    Gstreamer,
+    VideoFile,
+    ImageSequence,
+    Automatic
+};
+
 struct XWalkVideoRecordingOpenCvConfiguration
 {
-    agent::string cameraDevice{"/dev/video0"};
+    XWalkVideoRecordingOpenCvBackend cameraBackend{XWalkVideoRecordingOpenCvBackend::V4l2};
+    agent::string cameraDevice{};
     agent::string videoDirectory{"/tmp/xwalk-videos"};
     agent::uint32 widthPixels{640U};
     agent::uint32 heightPixels{480U};
     agent::float64 framesPerSecond{20.0};
+    /** @brief Best-effort OpenCV frame-read timeout from 1 through 60000 milliseconds. */
+    agent::uint32 readTimeoutMilliseconds{1'000U};
 };
 
 /** @brief Owns one camera, AVI writer, and continuous capture worker. */
@@ -41,6 +54,8 @@ private:
     mutable std::mutex stateMutex{};
     std::atomic<agent::boolean> stopRequested{false};
     std::atomic<agent::boolean> workerFailed{false};
+    /** @brief Distinguishes normal finite-source exhaustion from camera failure. */
+    std::atomic<agent::boolean> sourceEnded{false};
     /** @brief Actual width reported by the opened camera. */
     agent::uint32 frameWidthPixelsValue{};
     /** @brief Actual height reported by the opened camera. */
@@ -57,12 +72,14 @@ protected:
         agent::stringview recordingName);
     static void pauseRecording(agent::contextpointer context);
     static void continueRecording(agent::contextpointer context);
-    static void stopRecording(agent::contextpointer context);
+    static void stopRecording(agent::contextpointer context) noexcept;
     static agent::string timestamp(agent::contextpointer context);
     void captureLoop() noexcept;
     void stopProvider() noexcept;
 
 public:
+    /** @brief Parses a deployment backend name. */
+    static XWalkVideoRecordingOpenCvBackend backendFromString(agent::stringview backend);
     explicit XWalkVideoRecordingOpenCv(
         const XWalkVideoRecordingOpenCvConfiguration& configuration = {});
     ~XWalkVideoRecordingOpenCv() noexcept;

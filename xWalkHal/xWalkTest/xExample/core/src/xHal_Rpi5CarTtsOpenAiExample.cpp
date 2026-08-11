@@ -19,44 +19,44 @@
 
 #include "xHal_Rpi5CarTtsOpenAiExample.h"
 
-namespace xwalk::hal::example
-{
+#include "xHal_Rpi5CarTrace.h"
+namespace xwalk::hal::example {
 
 /** @brief Binds and validates the required synchronous operations. */
 XWalkTtsOpenAiExample::XWalkTtsOpenAiExample(contextpointer context,
-    ttsopenaispeakcallback speak, ttsopenaireportcallback report):
-    callbackContext(context), speakCallback(speak), reportCallback(report)
-{
-    if ((speakCallback == nullptr) || (reportCallback == nullptr))
-    {
-        XHAL_THROW_INVALID_ARGUMENT(
-            "OpenAI TTS example requires speech and report callbacks");
-    }
+                                             ttsopenaispeakcallback speak,
+                                             ttsopenaireportcallback report)
+    : callbackContext(context), speakCallback(speak), reportCallback(report) {
+  if ((speakCallback == nullptr) || (reportCallback == nullptr)) {
+    XWALK_HAL_ERROR(XWALK_INVAL,
+                    "OpenAI TTS example requires speech and report callbacks");
+  }
 }
 
 /** @brief Delivers the exact source messages and instructions in order. */
-void XWalkTtsOpenAiExample::run()
-{
-    constexpr stringview firstMessage{"Hello! I'm OpenAI TTS."};
-    constexpr stringview secondMessage{
-        "with instructions, I can say word sadly"};
-    constexpr stringview secondInstructions{"say it sadly"};
-    constexpr stringview thirdMessage{"or say something dramaticly."};
-    constexpr stringview thirdInstructions{"say it dramaticly"};
+void XWalkTtsOpenAiExample::run() {
+  constexpr stringview firstMessage{"Hello! I'm OpenAI TTS."};
+  constexpr stringview secondMessage{"with instructions, I can say word sadly"};
+  constexpr stringview secondInstructions{"say it sadly"};
+  constexpr stringview thirdMessage{"or say something dramaticly."};
+  constexpr stringview thirdInstructions{"say it dramaticly"};
 
-    reportCallback(callbackContext, "Say: Hello! I'm OpenAI TTS.");
-    speakCallback(callbackContext, XWALK_TTS_OPEN_AI_EXAMPLE_MODEL,
-        XWALK_TTS_OPEN_AI_EXAMPLE_VOICE, firstMessage, {});
-    reportCallback(callbackContext,
-        "Say: with instructions, I can say word sadly, with instructions: "
-        "'say it sadly'");
-    speakCallback(callbackContext, XWALK_TTS_OPEN_AI_EXAMPLE_MODEL,
-        XWALK_TTS_OPEN_AI_EXAMPLE_VOICE, secondMessage, secondInstructions);
-    reportCallback(callbackContext,
-        "Say: or say something dramaticly., with instructions: "
-        "'say it dramaticly'");
-    speakCallback(callbackContext, XWALK_TTS_OPEN_AI_EXAMPLE_MODEL,
-        XWALK_TTS_OPEN_AI_EXAMPLE_VOICE, thirdMessage, thirdInstructions);
+  reportCallback(callbackContext, "Say: Hello! I'm OpenAI TTS.");
+  speakCallback(callbackContext, XWALK_TTS_OPEN_AI_EXAMPLE_MODEL,
+                XWALK_TTS_OPEN_AI_EXAMPLE_VOICE, firstMessage, {});
+  reportCallback(
+      callbackContext,
+      "Say: with instructions, I can say word sadly, with instructions: "
+      "'say it sadly'");
+  speakCallback(callbackContext, XWALK_TTS_OPEN_AI_EXAMPLE_MODEL,
+                XWALK_TTS_OPEN_AI_EXAMPLE_VOICE, secondMessage,
+                secondInstructions);
+  reportCallback(callbackContext,
+                 "Say: or say something dramaticly., with instructions: "
+                 "'say it dramaticly'");
+  speakCallback(callbackContext, XWALK_TTS_OPEN_AI_EXAMPLE_MODEL,
+                XWALK_TTS_OPEN_AI_EXAMPLE_VOICE, thirdMessage,
+                thirdInstructions);
 }
 
 } /* namespace xwalk::hal::example */

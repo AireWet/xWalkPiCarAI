@@ -25,6 +25,7 @@ endif()
 add_library(xWalkVideoCar STATIC
     src/xAgent_Rpi5CarVideoCar.cpp
     src/xAgent_Rpi5CarVideoCarLifecycle.cpp)
+target_link_libraries(xWalkVideoCar PRIVATE xWalkTrace)
 add_library(xWalk::VideoCar ALIAS xWalkVideoCar)
 target_include_directories(xWalkVideoCar PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include)

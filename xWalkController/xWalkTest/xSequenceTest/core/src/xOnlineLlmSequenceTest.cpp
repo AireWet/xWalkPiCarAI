@@ -38,13 +38,13 @@ void testOnlineLlm(
         "Hello, I am a helpful assistant. How can I help you?");
     assert(context.state->outputLines[1U] == "Hello from OpenAI");
     assert(context.state->outputLines[2U] == "I am ready");
-    assert(context.state->outputLines.back() == "Online LLM test stopped");
+
     assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"hal.model.configure", "hal.model.configure", "controller.output",
+        {"hal.model.configure", "hal.model.configure",
             "controller.continue", "controller.input", "hal.model.prompt",
-            "controller.output", "controller.continue", "controller.input",
-            "hal.model.prompt", "controller.output", "controller.continue",
-            "controller.output"}));
+            "controller.continue", "controller.input",
+            "hal.model.prompt", "controller.continue",
+            }));
 }
 
 } /* namespace */

@@ -200,7 +200,7 @@ class XWalkController
         ::ctrl::int32 XWALK_handlerSound(const XWalkSoundRequest& request);
         /** @brief Executes one bounded full-duplex SPI transfer. */
         ::ctrl::int32 XWALK_handlerSpi(const XWalkSpiRequest& request);
-        /** @brief Prints one passive hardware preflight report. */
+        /** @brief Traces one passive hardware preflight report. */
         ::ctrl::int32 XWALK_handlerDoctor(const XWalkNoArgumentRequest& request);
         /** @brief Runs the all-channel sequence ported from `servo_zeroing.py`. */
         ::ctrl::int32 XWALK_handlerServoZeroing(const XWalkNoArgumentRequest& request);

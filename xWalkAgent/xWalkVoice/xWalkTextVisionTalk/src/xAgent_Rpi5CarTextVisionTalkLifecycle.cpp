@@ -12,32 +12,32 @@
 
 #include "xAgent_Rpi5CarTextVisionTalk.h"
 
-#include "xHal_Rpi5CarExceptions.h"
-
+#include "xHal_Rpi5CarTrace.h"
 #include <algorithm>
 #include <cctype>
 
-/** @namespace xwalk::agent @brief Contains application coordinators for xWalk firmware. */
-namespace xwalk::agent
-{
+/** @namespace xwalk::agent @brief Contains application coordinators for xWalk
+ * firmware. */
+namespace xwalk::agent {
 
 /**
- * @brief Binds caller-owned model, camera, callbacks, and conversation settings.
+ * @brief Binds caller-owned model, camera, callbacks, and conversation
+ * settings.
  * @param[in,out] languageModel Model coordinator that must outlive this Agent.
  * @param[in,out] cameraCapture Capture Agent that must outlive this Agent.
  * @param[in,out] context Nullable context that must outlive callback use.
  * @param[in] backendCallbacks Complete synchronous callback table.
  * @param[in] talkConfiguration Owned source-compatible settings.
  */
-XWalkTextVisionTalk::XWalkTextVisionTalk(hal::XWalkLanguageModel& languageModel,
-    XWalkCameraCapture& cameraCapture, agent::contextpointer context,
-    const XWalkTextVisionTalkCallbacks& backendCallbacks,
-    const XWalkTextVisionTalkConfiguration& talkConfiguration):
-    languageModelObject(&languageModel), cameraCaptureObject(&cameraCapture),
-    callbackContext(context), callbacks(backendCallbacks),
-    configuration(talkConfiguration)
-{
-    validate(callbacks, configuration);
+XWalkTextVisionTalk::XWalkTextVisionTalk(
+    hal::XWalkLanguageModel &languageModel, XWalkCameraCapture &cameraCapture,
+    agent::contextpointer context,
+    const XWalkTextVisionTalkCallbacks &backendCallbacks,
+    const XWalkTextVisionTalkConfiguration &talkConfiguration)
+    : languageModelObject(&languageModel), cameraCaptureObject(&cameraCapture),
+      callbackContext(context), callbacks(backendCallbacks),
+      configuration(talkConfiguration) {
+  validate(callbacks, configuration);
 }
 
 /**
@@ -45,20 +45,19 @@ XWalkTextVisionTalk::XWalkTextVisionTalk(hal::XWalkLanguageModel& languageModel,
  * @param[in] text Text to normalize.
  * @return Owned normalized text.
  */
-agent::string XWalkTextVisionTalk::normalize(agent::stringview text)
-{
-    agent::string result(text);
-    std::transform(result.begin(), result.end(), result.begin(), [](char value)
-    {
-        return static_cast<char>(std::tolower(static_cast<unsigned char>(value)));
-    });
-    const auto isNotSpace = [](char value)
-    {
-        return std::isspace(static_cast<unsigned char>(value)) == 0;
-    };
-    result.erase(result.begin(), std::find_if(result.begin(), result.end(), isNotSpace));
-    result.erase(std::find_if(result.rbegin(), result.rend(), isNotSpace).base(), result.end());
-    return result;
+agent::string XWalkTextVisionTalk::normalize(agent::stringview text) {
+  agent::string result(text);
+  std::transform(result.begin(), result.end(), result.begin(), [](char value) {
+    return static_cast<char>(std::tolower(static_cast<unsigned char>(value)));
+  });
+  const auto isNotSpace = [](char value) {
+    return std::isspace(static_cast<unsigned char>(value)) == 0;
+  };
+  result.erase(result.begin(),
+               std::find_if(result.begin(), result.end(), isNotSpace));
+  result.erase(std::find_if(result.rbegin(), result.rend(), isNotSpace).base(),
+               result.end());
+  return result;
 }
 
 /**
@@ -69,27 +68,26 @@ agent::string XWalkTextVisionTalk::normalize(agent::stringview text)
  * @throws std::out_of_range If a numeric setting is zero.
  */
 void XWalkTextVisionTalk::validate(
-    const XWalkTextVisionTalkCallbacks& backendCallbacks,
-    const XWalkTextVisionTalkConfiguration& talkConfiguration)
-{
-    if ((backendCallbacks.output == nullptr) || (backendCallbacks.input == nullptr) ||
-        (backendCallbacks.delay == nullptr) ||
-        (backendCallbacks.shouldContinue == nullptr))
-    {
-        XHAL_THROW_INVALID_ARGUMENT("Text-vision-talk callbacks must be complete");
-    }
-    const agent::boolean promptTextEmpty =
-        static_cast<agent::boolean>(
-            talkConfiguration.promptText.empty());
-    if (promptTextEmpty)
-    {
-        XHAL_THROW_INVALID_ARGUMENT("Text-vision-talk prompt must not be empty");
-    }
-    if ((talkConfiguration.maximumMessages == 0U) ||
-        (talkConfiguration.cameraWarmupMs == 0U))
-    {
-        XHAL_THROW_OUT_OF_RANGE("Text-vision-talk configuration is outside its range");
-    }
+    const XWalkTextVisionTalkCallbacks &backendCallbacks,
+    const XWalkTextVisionTalkConfiguration &talkConfiguration) {
+  if ((backendCallbacks.output == nullptr) ||
+      (backendCallbacks.input == nullptr) ||
+      (backendCallbacks.delay == nullptr) ||
+      (backendCallbacks.shouldContinue == nullptr)) {
+    XWALK_RPIAGENT_ERROR(XWALK_INVAL,
+                         "Text-vision-talk callbacks must be complete");
+  }
+  const agent::boolean promptTextEmpty =
+      static_cast<agent::boolean>(talkConfiguration.promptText.empty());
+  if (promptTextEmpty) {
+    XWALK_RPIAGENT_ERROR(XWALK_INVAL,
+                         "Text-vision-talk prompt must not be empty");
+  }
+  if ((talkConfiguration.maximumMessages == 0U) ||
+      (talkConfiguration.cameraWarmupMs == 0U)) {
+    XWALK_RPIAGENT_ERROR(XWALK_RANGE,
+                         "Text-vision-talk configuration is outside its range");
+  }
 }
 
 } /* namespace xwalk::agent */

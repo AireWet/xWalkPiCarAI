@@ -185,9 +185,11 @@ and requires an administrator to resolve the conflict manually.
 The common package set is:
 
 ```text
-build-essential cmake ninja-build pkg-config python3 linux-libc-dev libasound2-dev alsa-utils
-libcurl4-openssl-dev libsndfile1-dev i2c-tools libi2c-dev gpiod espeak-ng libttspico-utils
-curl ca-certificates
+build-essential cmake ninja-build pkg-config python3 python3-nacl linux-libc-dev
+libasound2-dev alsa-utils libatomic1
+libcurl4-openssl-dev libsndfile1-dev libprotobuf-dev libgrpc++-dev libgtest-dev libjson-c-dev libtinyxml2-dev
+libyaml-cpp-dev libopencv-dev libboost-dev i2c-tools libi2c-dev gpiod
+espeak-ng libttspico-utils curl ca-certificates
 ```
 
 CSI camera selection additionally requires `rpicam-apps`. USB camera selection instead requires `ffmpeg`.

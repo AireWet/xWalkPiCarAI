@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file        xHal_Rpi5CarTraceControl.cpp
- * @brief       Implements ordered in-memory trace configuration control.
+ * @brief       Implements ordered persistent trace configuration control.
  *
  * @project     xWalk Firmware
  * @module      xWalkTrace
@@ -12,6 +12,7 @@
 #include "xHal_Rpi5CarTrace.h"
 
 #include <json-c/json.h>
+#include <tinyxml2.h>
 
 /******************************************************************************
  * Anonymous namespace
@@ -113,6 +114,162 @@ boolean XWalkTrace::setAllTracesEnabled(boolean enabled)
     return true;
 }
 
+/**
+ * @brief Resolves one known UID through its trace, module, and global states.
+ *
+ * @param[in] uid
+ * Complete scanner-known trace identifier.
+ *
+ * @return
+ * `true` only when the UID exists and its effective persistent state is enabled.
+ */
+boolean XWalkTrace::traceIsEnabled(stringview uid) const
+{
+    const string uidValue(uid);
+    const auto source = traceSourceLocations.find(uidValue);
+    const boolean sourceKnown = source != traceSourceLocations.end();
+    if (sourceKnown == false)
+    {
+        return false;
+    }
+    const auto trace = traceEnabledValues.find(uidValue);
+    const boolean traceOverridePresent = trace != traceEnabledValues.end();
+    if (traceOverridePresent)
+    {
+        return trace->second;
+    }
+    const size separatorPosition = uid.find('.');
+    const string moduleName(uid.substr(0U, separatorPosition));
+    const auto module = moduleEnabledValues.find(moduleName);
+    const boolean moduleOverridePresent = module != moduleEnabledValues.end();
+    return moduleOverridePresent ? module->second : globalTraceEnabledValue;
+}
+
+/**
+ * @brief Atomically persists effective runtime states in the configured XML catalogue.
+ *
+ * @details
+ * Writes a same-directory replacement, preserves existing permission bits,
+ * and publishes it with one rename only after every known UID is updated.
+ *
+ * @return
+ * `true` after the complete XML replacement succeeds; otherwise `false` and
+ * `traceConfigurationErrorValue` describes the failure.
+ */
+boolean XWalkTrace::persistConfiguration()
+{
+    tinyxml2::XMLDocument document;
+    const string configurationPath = configurationPathValue.string();
+    const tinyxml2::XMLError loadResult = document.LoadFile(configurationPath.c_str());
+    if (loadResult != tinyxml2::XML_SUCCESS)
+    {
+        traceConfigurationErrorValue =
+            "Trace XML could not be loaded for update: " + configurationPath;
+        return false;
+    }
+    tinyxml2::XMLElement* root = document.FirstChildElement("xwalkTraceCatalogue");
+    const boolean rootPresent = root != nullptr;
+    if (rootPresent == false)
+    {
+        traceConfigurationErrorValue = "Trace XML root is missing: " + configurationPath;
+        return false;
+    }
+    root->SetAttribute("defaultState", globalTraceEnabledValue ? "enable" : "disable");
+
+    orderedmap<string, boolean> updatedTraceIds;
+    boolean catalogueValid = true;
+    for (tinyxml2::XMLElement* module = root->FirstChildElement("module");
+        (module != nullptr) && catalogueValid;
+        module = module->NextSiblingElement("module"))
+    {
+        const char* moduleName = module->Attribute("name");
+        const boolean moduleNamePresent = moduleName != nullptr;
+        if (moduleNamePresent == false)
+        {
+            catalogueValid = false;
+            break;
+        }
+        const auto configuredModule = moduleEnabledValues.find(moduleName);
+        const boolean moduleOverridePresent = configuredModule != moduleEnabledValues.end();
+        const boolean moduleEnabled = moduleOverridePresent ?
+            configuredModule->second : globalTraceEnabledValue;
+        module->SetAttribute("defaultState", moduleEnabled ? "enable" : "disable");
+
+        for (tinyxml2::XMLElement* trace = module->FirstChildElement("trace");
+            (trace != nullptr) && catalogueValid;
+            trace = trace->NextSiblingElement("trace"))
+        {
+            const char* uid = trace->Attribute("fullId");
+            const boolean uidPresent = uid != nullptr;
+            const boolean uidKnown = uidPresent &&
+                (traceSourceLocations.find(uid) != traceSourceLocations.end());
+            const boolean uidUnique = uidPresent &&
+                (updatedTraceIds.find(uid) == updatedTraceIds.end());
+            if ((uidKnown == false) || (uidUnique == false))
+            {
+                catalogueValid = false;
+                break;
+            }
+            const boolean enabled = traceIsEnabled(uid);
+            trace->SetAttribute("defaultState", enabled ? "enable" : "disable");
+            updatedTraceIds[string(uid)] = true;
+        }
+    }
+    const boolean everyTraceUpdated =
+        updatedTraceIds.size() == traceSourceLocations.size();
+    if ((catalogueValid == false) || (everyTraceUpdated == false))
+    {
+        traceConfigurationErrorValue =
+            "Trace XML inventory changed while applying persistent state";
+        return false;
+    }
+
+    const filesystempath temporaryPath(
+        configurationPath + XHAL_RPI5CAR_CONFIG_REPLACEMENT_SUFFIX);
+    errorcode operationError;
+    static_cast<void>(removeFilesystemEntry(temporaryPath, operationError));
+    const tinyxml2::XMLError saveResult = document.SaveFile(temporaryPath.string().c_str());
+    if (saveResult != tinyxml2::XML_SUCCESS)
+    {
+        traceConfigurationErrorValue =
+            "Trace XML replacement could not be written: " + temporaryPath.string();
+        return false;
+    }
+
+    operationError.clear();
+    const filesystemstatus originalStatus =
+        filesystemStatus(configurationPathValue, operationError);
+    const boolean statusRead = operationError.value() == 0;
+    if (statusRead)
+    {
+        operationError.clear();
+        replaceFilesystemPermissions(
+            temporaryPath, originalStatus.permissions(), operationError);
+    }
+    const boolean permissionsPreserved = operationError.value() == 0;
+    if (permissionsPreserved == false)
+    {
+        operationError.clear();
+        static_cast<void>(removeFilesystemEntry(temporaryPath, operationError));
+        traceConfigurationErrorValue =
+            "Trace XML replacement permissions could not be preserved";
+        return false;
+    }
+
+    operationError.clear();
+    renameFilesystemEntry(temporaryPath, configurationPathValue, operationError);
+    const boolean replacementPublished = operationError.value() == 0;
+    if (replacementPublished == false)
+    {
+        operationError.clear();
+        static_cast<void>(removeFilesystemEntry(temporaryPath, operationError));
+        traceConfigurationErrorValue = "Trace XML replacement could not be published";
+        return false;
+    }
+    traceConfigurationErrorValue.clear();
+    return true;
+}
+
 /** @brief Loads, validates, and applies one ordered JSON configuration. */
 boolean XWalkTrace::loadJsonConfiguration(const filesystempath& configurationPath)
 {
@@ -170,12 +327,14 @@ boolean XWalkTrace::loadJsonConfiguration(const filesystempath& configurationPat
 
     json_object_object_foreach(traceObject, moduleName, moduleObject)
     {
-        const stringview module(moduleName);
+        // json-c owns moduleName through root. Keep an owned copy because
+        // validation failures release root before composing the diagnostic.
+        const string module(moduleName);
         if (module == "all")
         {
             continue;
         }
-        const string prefix = string(module) + ".";
+        const string prefix = module + ".";
         boolean moduleKnown = false;
         for (const auto& trace : traceSourceLocations)
         {
@@ -190,7 +349,7 @@ boolean XWalkTrace::loadJsonConfiguration(const filesystempath& configurationPat
         {
             json_object_put(root);
             traceConfigurationErrorValue = "Unknown trace module in JSON: " +
-                string(module);
+                module;
             return false;
         }
         json_object* stateObject = nullptr;
@@ -201,10 +360,10 @@ boolean XWalkTrace::loadJsonConfiguration(const filesystempath& configurationPat
             {
                 json_object_put(root);
                 traceConfigurationErrorValue = "Trace JSON module state must be "
-                    "enable or disable: " + string(module);
+                    "enable or disable: " + module;
                 return false;
             }
-            selectors.push_back(string(module) +
+            selectors.push_back(module +
                 (enabled ? ".enable" : ".disable"));
         }
     }
@@ -272,7 +431,18 @@ boolean XWalkTrace::enableGlobalTrace(stringview uid)
 {
     XWalkTrace& instance = globalInstance();
     mutexlock lock(instance.traceMutex);
-    return instance.setTraceEnabled(uid, true);
+    const orderedmap<string, boolean> previousTraces = instance.traceEnabledValues;
+    const boolean stateApplied = instance.setTraceEnabled(uid, true);
+    if (stateApplied == false)
+    {
+        return false;
+    }
+    const boolean statePersisted = instance.persistConfiguration();
+    if (statePersisted == false)
+    {
+        instance.traceEnabledValues = previousTraces;
+    }
+    return statePersisted;
 }
 
 /** @brief Disables one known trace UID. */
@@ -280,7 +450,18 @@ boolean XWalkTrace::disableGlobalTrace(stringview uid)
 {
     XWalkTrace& instance = globalInstance();
     mutexlock lock(instance.traceMutex);
-    return instance.setTraceEnabled(uid, false);
+    const orderedmap<string, boolean> previousTraces = instance.traceEnabledValues;
+    const boolean stateApplied = instance.setTraceEnabled(uid, false);
+    if (stateApplied == false)
+    {
+        return false;
+    }
+    const boolean statePersisted = instance.persistConfiguration();
+    if (statePersisted == false)
+    {
+        instance.traceEnabledValues = previousTraces;
+    }
+    return statePersisted;
 }
 
 /** @brief Enables all registered and future normal traces. */
@@ -288,7 +469,18 @@ boolean XWalkTrace::enableAllGlobalTraces()
 {
     XWalkTrace& instance = globalInstance();
     mutexlock lock(instance.traceMutex);
-    return instance.setAllTracesEnabled(true);
+    const boolean previousGlobal = instance.globalTraceEnabledValue;
+    const orderedmap<string, boolean> previousModules = instance.moduleEnabledValues;
+    const orderedmap<string, boolean> previousTraces = instance.traceEnabledValues;
+    static_cast<void>(instance.setAllTracesEnabled(true));
+    const boolean statePersisted = instance.persistConfiguration();
+    if (statePersisted == false)
+    {
+        instance.globalTraceEnabledValue = previousGlobal;
+        instance.moduleEnabledValues = previousModules;
+        instance.traceEnabledValues = previousTraces;
+    }
+    return statePersisted;
 }
 
 /** @brief Disables all registered and future normal traces. */
@@ -296,10 +488,21 @@ boolean XWalkTrace::disableAllGlobalTraces()
 {
     XWalkTrace& instance = globalInstance();
     mutexlock lock(instance.traceMutex);
-    return instance.setAllTracesEnabled(false);
+    const boolean previousGlobal = instance.globalTraceEnabledValue;
+    const orderedmap<string, boolean> previousModules = instance.moduleEnabledValues;
+    const orderedmap<string, boolean> previousTraces = instance.traceEnabledValues;
+    static_cast<void>(instance.setAllTracesEnabled(false));
+    const boolean statePersisted = instance.persistConfiguration();
+    if (statePersisted == false)
+    {
+        instance.globalTraceEnabledValue = previousGlobal;
+        instance.moduleEnabledValues = previousModules;
+        instance.traceEnabledValues = previousTraces;
+    }
+    return statePersisted;
 }
 
-/** @brief Restores the mandatory all-disabled startup configuration. */
+/** @brief Persists an all-disabled normal-trace configuration. */
 boolean XWalkTrace::resetGlobalTraceConfiguration()
 {
     return disableAllGlobalTraces();
@@ -310,38 +513,54 @@ boolean XWalkTrace::applyGlobalTraceArgument(stringview argument)
 {
     XWalkTrace& instance = globalInstance();
     mutexlock lock(instance.traceMutex);
+    const boolean previousGlobal = instance.globalTraceEnabledValue;
+    const orderedmap<string, boolean> previousModules = instance.moduleEnabledValues;
+    const orderedmap<string, boolean> previousTraces = instance.traceEnabledValues;
     const boolean jsonSelected = (argument.size() > 5U) &&
         (argument.substr(argument.size() - 5U) == ".json");
+    boolean stateApplied = false;
     if (jsonSelected)
     {
-        return instance.loadJsonConfiguration(filesystempath(argument));
+        stateApplied = instance.loadJsonConfiguration(filesystempath(argument));
     }
-    const size stateSeparator = argument.rfind('.');
-    if (stateSeparator == stringview::npos)
+    else
     {
-        instance.traceConfigurationErrorValue =
-            "Invalid trace selector: " + string(argument);
+        const size stateSeparator = argument.rfind('.');
+        if (stateSeparator == stringview::npos)
+        {
+            instance.traceConfigurationErrorValue =
+                "Invalid trace selector: " + string(argument);
+            return false;
+        }
+        const stringview target = argument.substr(0U, stateSeparator);
+        const stringview state = argument.substr(stateSeparator + 1U);
+        const boolean stateValid = (state == "enable") || (state == "disable");
+        if (stateValid == false)
+        {
+            instance.traceConfigurationErrorValue =
+                "Trace state must be enable or disable: " + string(argument);
+            return false;
+        }
+        const boolean enabled = state == "enable";
+        const size targetSeparator = target.find('.');
+        const boolean allSelected = target == "all";
+        const boolean moduleSelected = targetSeparator == stringview::npos;
+        stateApplied = allSelected ? instance.setAllTracesEnabled(enabled) :
+            (moduleSelected ? instance.setModuleTracesEnabled(target, enabled) :
+                instance.setTraceEnabled(target, enabled));
+    }
+    if (stateApplied == false)
+    {
         return false;
     }
-    const stringview target = argument.substr(0U, stateSeparator);
-    const stringview state = argument.substr(stateSeparator + 1U);
-    const boolean stateValid = (state == "enable") || (state == "disable");
-    if (stateValid == false)
+    const boolean statePersisted = instance.persistConfiguration();
+    if (statePersisted == false)
     {
-        instance.traceConfigurationErrorValue =
-            "Trace state must be enable or disable: " + string(argument);
-        return false;
+        instance.globalTraceEnabledValue = previousGlobal;
+        instance.moduleEnabledValues = previousModules;
+        instance.traceEnabledValues = previousTraces;
     }
-    const boolean enabled = state == "enable";
-    if (target == "all")
-    {
-        return instance.setAllTracesEnabled(enabled);
-    }
-    if (target.find('.') == stringview::npos)
-    {
-        return instance.setModuleTracesEnabled(target, enabled);
-    }
-    return instance.setTraceEnabled(target, enabled);
+    return statePersisted;
 }
 
 /** @brief Returns the most recent runtime configuration error. */

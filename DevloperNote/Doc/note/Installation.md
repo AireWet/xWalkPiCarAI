@@ -129,23 +129,23 @@ documented build and test commands.
 Each module remains independently configurable. For example:
 
 ```sh
-cmake -S xWalkHal/xWalkPwm -B xWalkHal/xWalkPwm/build
-cmake --build xWalkHal/xWalkPwm/build --parallel
+cmake -S xWalkHal/device/xWalkPwm -B xWalkHal/device/xWalkPwm/build
+cmake --build xWalkHal/device/xWalkPwm/build --parallel
 ```
 
 Enable host tests with the option documented by the module README:
 
 ```sh
-cmake -S xWalkHal/xWalkPwm -B xWalkHal/xWalkPwm/build-host -DXWALK_PWM_BUILD_HOST_TESTS=ON
-cmake --build xWalkHal/xWalkPwm/build-host --parallel
-ctest --test-dir xWalkHal/xWalkPwm/build-host --output-on-failure
+cmake -S xWalkHal/device/xWalkPwm -B xWalkHal/device/xWalkPwm/build-host -DXWALK_PWM_BUILD_HOST_TESTS=ON
+cmake --build xWalkHal/device/xWalkPwm/build-host --parallel
+ctest --test-dir xWalkHal/device/xWalkPwm/build-host --output-on-failure
 ```
 
 Build hardware tests only when the target headers and dependencies are present.
 List hardware tests without executing them during normal verification:
 
 ```sh
-ctest --test-dir xWalkHal/xWalkPwm/build-rpi -N -L hardware
+ctest --test-dir xWalkHal/device/xWalkPwm/build-rpi -N -L hardware
 ```
 
 `Doc/note` contains Markdown sources and `Doc/image` contains referenced image

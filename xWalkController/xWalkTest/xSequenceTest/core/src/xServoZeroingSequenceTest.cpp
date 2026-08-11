@@ -26,8 +26,8 @@ void testServoZeroing(
     xwalk::agent::test::XWalkControllerSequence sequence(
         *context.servoZeroingController);
     assert(sequence.run({{"servo-zeroing"}}) == 0);
-    assert(context.state->outputLines.size() == 1U);
-    assert(context.state->outputLines.front() == "Set servo to zero");
+
+
     assert(context.state->servoZeroingIds.size() == 24U);
     assert(context.state->servoZeroingAngles.size() == 24U);
     for (ctrl::uint32 servoId = 0U; servoId < 12U; ++servoId)
@@ -41,7 +41,7 @@ void testServoZeroing(
     }
     assert(context.state->delays.size() == 120U);
     assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"controller.output", "servo-zeroing.angle", "controller.continue",
+        {"servo-zeroing.angle", "controller.continue",
             "controller.delay", "servo-zeroing.angle"}));
 }
 

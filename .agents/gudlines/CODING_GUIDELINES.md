@@ -152,31 +152,35 @@ xWalkIW/                     I2C and Controller Protobuf DTOs and gRPC interface
 xWalkLibrary/                common public headers, portable dependencies, models, and native assets
 xWalkLibrary/common/         common interface target, headers, configuration, and documentation
 CMakeLists.txt               workspace and HAL aggregate build
-xWalkHal/xWalkBoardControl/  board control, discovery, and firmware information
-xWalkHal/xWalkBuzzer/        active GPIO and passive PWM buzzer control
-xWalkHal/xWalkCamera/        backend-neutral capture plus Linux CSI and USB providers
-xWalkHal/xWalkConfig/        section-aware and flat key-value configuration persistence
-xWalkHal/xWalkGPT/           speech coordination plus Linux Vosk and Espeak providers
-xWalkHal/xWalkLed/           GPIO and three-channel PWM LED control
-xWalkHal/xWalkLanguageModel/ provider-neutral conversation and prompting control
-xWalkHal/xWalkMusic/         music theory, PCM tone, and injected audio control
-xWalkHal/xWalkRobot/         coordinated multi-servo robot control
-xWalkHal/xWalkSpeaker/       bounded asynchronous audio-file playback control
+xWalkHal/interface/          low-level platform interfaces and common services
+xWalkHal/device/             hardware device abstractions
+xWalkHal/sensor/             sensor and actuator components
+xWalkHal/layer1/             higher-level robot services and features
+xWalkHal/layer1/xWalkBoardControl/ board control, discovery, and firmware information
+xWalkHal/sensor/xWalkBuzzer/ active GPIO and passive PWM buzzer control
+xWalkHal/device/xWalkCamera/ backend-neutral capture plus Linux CSI and USB providers
+xWalkHal/interface/xWalkConfig/ section-aware and flat key-value configuration persistence
+xWalkHal/layer1/xWalkGPT/    speech coordination plus Linux Vosk and Espeak providers
+xWalkHal/sensor/xWalkLed/    GPIO and three-channel PWM LED control
+xWalkHal/interface/xWalkLanguageModel/ provider-neutral conversation and prompting control
+xWalkHal/layer1/xWalkMusic/  music theory, PCM tone, and injected audio control
+xWalkHal/layer1/xWalkRobot/  coordinated multi-servo robot control
+xWalkHal/layer1/xWalkSpeaker/ bounded asynchronous audio-file playback control
 xWalkTrace/                  filtered callback-based embedded diagnostics
-xWalkHal/xWalkUserButton/    active-low button events and press timing
-xWalkHal/xWalkUltrasonic/    two-pin ultrasonic distance measurement
-xWalkHal/xWalkUtils/         injected platform utilities and bounded lazy caching
-xWalkHal/xWalkVoiceAssistant/ synchronous speech, model, and response coordination
-xWalkHal/xWalkLineTracker/   grayscale sensing and line-position estimation
-xWalkHal/xWalkAdc/           Robot HAT analog-to-digital converter module
-xWalkHal/xWalkAudio/         shared ALSA PCM and mixer ownership
-xWalkHal/xWalkGpio/          Robot HAT digital GPIO module and Linux backend
-xWalkHal/xWalkSpi/           bounded callback-driven SPI and Linux spidev backend
-xWalkHal/xWalkMotor/         single and paired Robot HAT motor control
-xWalkHal/xWalk<Module>/include/ public module headers
-xWalkHal/xWalk<Module>/src/  hardware-independent implementation
-xWalkHal/xWalk<Module>/test/ host-side tests and test helpers
-xWalkHal/xWalk<Module>/hardware/ optional platform backend and hardware tests
+xWalkHal/device/xWalkUserButton/ active-low button events and press timing
+xWalkHal/device/xWalkUltrasonic/ two-pin ultrasonic distance measurement
+xWalkHal/interface/xWalkUtils/ injected platform utilities and bounded lazy caching
+xWalkHal/layer1/xWalkVoiceAssistant/ synchronous speech, model, and response coordination
+xWalkHal/sensor/xWalkLineTracker/ grayscale sensing and line-position estimation
+xWalkHal/device/xWalkAdc/    Robot HAT analog-to-digital converter module
+xWalkHal/interface/xWalkAudio/ shared ALSA PCM and mixer ownership
+xWalkHal/interface/xWalkGpio/ Robot HAT digital GPIO module and Linux backend
+xWalkHal/interface/xWalkSpi/ bounded callback-driven SPI and Linux spidev backend
+xWalkHal/sensor/xWalkMotor/  single and paired Robot HAT motor control
+xWalkHal/<Group>/xWalk<Module>/include/ public module headers
+xWalkHal/<Group>/xWalk<Module>/src/ hardware-independent implementation
+xWalkHal/<Group>/xWalk<Module>/test/ host-side tests and test helpers
+xWalkHal/<Group>/xWalk<Module>/hardware/ optional platform backend and hardware tests
 xWalkHal/xWalkTest/xGoogleTest/ centralized HAL host/hardware runner and XML selection
 xWalkHal/xWalkTest/xExample/ centralized ported examples with core and hardware layers
 xWalkHal/xWalkTest/xSequenceTest/ bounded opt-in sequence and integration tests
@@ -209,9 +213,13 @@ source explicitly in the `xWalkController` CMake target.
 Whenever files are added, update the module tree and responsibility table in
 its README.
 
-Keep AddressSanitizer/UndefinedBehaviorSanitizer and ThreadSanitizer in separate host build directories and
-never combine them in one executable. Use the root presets for repeat-under-load host verification so a
-failure stops the bounded repetition immediately.
+Keep AddressSanitizer/UndefinedBehaviorSanitizer, leak-enabled verification,
+ThreadSanitizer, GCC coverage, and Clang coverage in separate host build
+directories. Never combine TSan with another sanitizer or coverage in one
+executable. Verify LSan and TSan availability with the dedicated negative
+probes, and classify runtime initialization failures as environment blocks
+rather than passes. Use the root presets for repeat-under-load host verification
+so a failure stops the bounded repetition immediately.
 
 Keep HAL unit-test implementations in each owning module's existing `test/`
 tree. The central `xGoogleTest` target may compile those sources and adapt
@@ -220,6 +228,14 @@ central `main()`, list sources explicitly, and remain disabled with
 `BUILD_TESTING=OFF`. Physical hardware executables stay separate, use a
 separate disabled-by-default XML profile, and require explicit runtime
 selection.
+
+Keep cross-module HAL interaction tests below each architectural group's
+`test` directory. Give interface, device, sensor, and layer1 one
+GoogleTest/GoogleMock executable each, register the executable with CTest, and
+apply the owning `<group>-group` label plus `group-tests` and
+`host`. Compose real production coordinators over deterministic caller-owned
+fakes, keep build-local file fixtures isolated per target, and do not replace
+or invoke physical hardware from these suites.
 
 Sequence tests that observe or manipulate physical hardware must use a bounded
 runtime, carry the CTest `hardware;sequence` labels, and remain disabled in the
@@ -379,7 +395,7 @@ retaining normal compiler warnings and compilation checks.
   ```cpp
   if (value > maximum)
   {
-      XHAL_THROW_OUT_OF_RANGE("value is outside its range");
+      XWALK_HAL_ERROR(XWALK_RANGE, "Value is outside its range");
   }
   ```
 
@@ -433,8 +449,10 @@ retaining normal compiler warnings and compilation checks.
 - Keep Linux-only headers centralized in `xHal_Rpi5CarLinuxHeaders.h` and out of
   hardware-independent source.
 - Expose reusable standard operations through the existing common facilities.
-  Use the `XHAL_*` math and exception macros instead of introducing direct
-  `std::` calls throughout module code.
+  Use the `XHAL_*` math macros instead of introducing direct `std::` calls
+  throughout module code. Controller, Agent, and HAL code use their exception
+  type and string aliases after emitting the corresponding component error
+  trace.
 - Avoid unnecessary transitive coupling. Link each CMake target publicly only
   to dependencies used by its public interface; keep implementation-only and
   test dependencies private.
@@ -500,17 +518,40 @@ retaining normal compiler warnings and compilation checks.
   real requirement.
 - Continue the I2C dependency-injection pattern: a context pointer plus C-style
   callbacks separates hardware-independent behavior from the backend.
+- Keep the default PWM simulation device-free. Compose `XWalkPwm` with an
+  in-memory I2C callback backend and never open `/dev/i2c-*` or access a Robot
+  HAT unless an explicit hardware-test target is selected.
+- Keep the non-throwing PWM fail-safe write path free of trace operations and
+  exception handling. Trace ordinary timer and output operations only after
+  their state change and I2C write have succeeded.
+- Keep the default ADC simulation device-free. Compose `XWalkAdc` with an
+  in-memory I2C callback backend and validate address selection, sample
+  assembly, and voltage conversion without opening `/dev/i2c-*`.
+- Keep the default Servo simulation device-free. Compose `XWalkServo` through
+  real PWM and I2C interfaces backed by an in-memory callback recorder. It must
+  not open `/dev/i2c-*` or move a physical actuator.
+- Keep the default ADXL345 simulation device-free. Exercise configuration,
+  discarded reads, signed conversion, and axis ordering through an in-memory
+  register-read callback backend without opening `/dev/i2c-*`.
 - I2C consumers that acquire device data use the shared read callback. A raw read
   returns bytes in bus order and must reject a zero-byte request at the interface boundary.
 - Continue the GPIO dependency-injection pattern: one `XWalkGpio` stores a
   non-owning backend context and validated callback set. A Linux GPIO backend is
   dedicated to one GPIO object because it owns that line's descriptor and event
   worker. Create the backend before the GPIO object in the composition root.
+- Keep Linux GPIO system calls behind an injected `XWalkGpioDevice` boundary.
+  Production uses `XWalkGpioDeviceLinux`; host tests and the safe standalone
+  simulation inject `XWalkGpioHostStub` so the real Linux line-request and
+  digital-I/O logic executes without opening `/dev/gpiochip*`.
 - Continue the SPI dependency-injection pattern: one `XWalkSpi` stores a
   non-owning backend context and required full-duplex callback. Keep device,
   mode, clock, bits-per-word, and chip-select selection in deployment and the
   Linux owner. Bound one transfer to 256 bytes and require equal request and
   response lengths.
+- Keep Linux SPI system calls behind an injected `XWalkSpiDevice` boundary.
+  Production uses `XWalkSpiDeviceLinux`; host tests and the safe standalone
+  simulation inject `XWalkSpiHostStub` so the real Linux configuration and
+  request-building logic executes without opening `/dev/spidev*`.
 - Compose the CLI SPI command through its dedicated SPI-only boot mode. It must
   not detect or reset the Robot HAT, claim GPIO, construct actuators, or start
   audio, camera, speech, or model services.
@@ -522,9 +563,17 @@ retaining normal compiler warnings and compilation checks.
 - GPIO interrupt application contexts are non-owning. They must outlive the
   registration, and handlers invoked by a backend worker must not throw or block
   indefinitely. Cancel the registration before destroying the handler context.
+- Keep the default UserButton simulation device-free. Drive one active-low
+  input through a named in-memory GPIO callback backend and verify bounded press
+  and release observation without opening `/dev/gpiochip*`. Keep trace work out
+  of the `noexcept` polling worker and its callbacks.
 - Motor drivers receive caller-created PWM and GPIO objects by reference and
   store non-owning pointers. Select PWM-and-direction or dual-PWM mode through
   typed constructor dependencies rather than an unchecked numeric mode value.
+- Keep the default Motor simulation device-free. Compose real I2C, PWM, GPIO,
+  and Motor interfaces over named in-memory callbacks without opening device
+  nodes or moving an actuator. Never add trace work to `stopSafely()` or a
+  motor destructor because those fail-safe paths are non-throwing.
 - Keep ordinary `stop()` failure-reporting, but implement `stopSafely()` as a
   non-throwing best-effort boundary. A single motor independently attempts every
   speed PWM output, paired motors independently attempt both motors, and both
@@ -613,9 +662,12 @@ retaining normal compiler warnings and compilation checks.
   Reject malformed section headers conservatively, and use an empty string as
   the empty typed C++ default.
 - Commit both configuration formats through a same-directory replacement file
-  and preserve existing permission bits. Do not expose mode or owner
-  constructor arguments and never execute `chmod`, `chown`, or `sudo` through a
-  shell. Deployment tooling owns file permission and ownership policy.
+  and preserve existing permission bits. Do not expose mode or owner constructor
+  arguments, and never execute `chmod`, `chown`, or `sudo` through a shell.
+  Deployment tooling owns file permission and ownership policy.
+- Keep the standalone `xWalkConfig` simulation confined to its generated build
+  directory. Exercise both section-aware and flat-store persistence there; do
+  not read, replace, or create deployed application configuration paths.
 - Keep `XWalkBoardControl`, `XWalkDevice`, and `XWalkFirmwareInfo` in the
   combined `xWalkBoardControl` module. Retain separate class headers, source
   files, tests, and responsibilities rather than combining them into one class.
@@ -656,11 +708,23 @@ retaining normal compiler warnings and compilation checks.
   of priming output. A failed callback leaves speaker power enabled.
 - Do not invoke `pinctrl`, `raspi-gpio`, `play`, `sudo`, or another shell command
   from board-control production code. Use the injected GPIO and audio contracts.
+- Keep the standalone `xWalkBoardControl` simulation device-free. Exercise reset,
+  battery conversion, speaker priming, firmware acquisition, and device discovery
+  through named in-memory callbacks and a build-local synthetic device tree. Do
+  not access GPIO, I2C, ALSA, or `/proc/device-tree` from the host simulation.
+- Emit board-control operation, discovery, firmware, simulation, and host-test
+  records through xWalk trace macros. Preserve trace selector state in the
+  generated XML catalogue so a later no-argument run reloads it automatically.
+  Keep disable, destructor, cleanup, and callback paths trace-free.
 - Keep non-hardware platform behavior in the separate `xWalkUtils` module. Do not
   move terminal, command, executable, network,
   username, standard-error, or lazy-cache behavior into `xWalkBoardControl`.
 - Inject terminal output, volume control, command execution, executable lookup,
   IPv4 lookup, username lookup, monotonic time, and standard-error redirection.
+- Keep the default standalone `xWalkUtils` simulation bound to
+  `XWalkUtilsHostStub`. It must mirror output, volume, commands, executable and
+  network queries, and username lookup in memory without invoking a shell,
+  changing mixer state, redirecting descriptors, or querying the host.
   The hardware-independent module must not call `sudo`, `amixer`, `which`, a
   shell, environment lookup, network command, or descriptor API directly.
 - Treat command text as security-sensitive. Forward it without modification so
@@ -698,16 +762,39 @@ retaining normal compiler warnings and compilation checks.
   Do not confuse this package version with the firmware bytes read from hardware.
 - Keep the process-wide `XWalkTrace` macro runtime synchronous and free of a
   console backend or worker thread. Serialize configuration lookup, timing
-  capture, formatting, and append-only `log/xWalkTrace.log` writes. Invoke an
-  optional application callback only after releasing the file lock.
-- Use unique `RPI.<digits>` UIDs with HAL macros and unique `CTRL.<digits>` UIDs
-  with Controller macros. Preserve leading zeros as significant UID characters;
-  `RPI.001` and `RPI.1` are distinct valid identifiers.
-  Priority zero is highest and priority three is lowest. Emit a tagged record
-  only when its resolved global, module, and individual UID state is enabled.
+  capture, formatting, and append-only
+  `<build-directory>/log/xWalkTrace.log` writes. Generate the path through the
+  owning CMake build so running a binary from the source root never creates
+  source-tree log artifacts. Invoke an optional application callback only after
+  releasing the file lock.
+- Use `RPI.<digits>` UIDs with HAL macros, `CTRL.<digits>` UIDs with Controller
+  macros, `RPIAGENT.<digits>` UIDs with Agent macros, and `LIB.<digits>` UIDs
+  with Library macros. Source files below `xWalkHal`, `xWalkController`,
+  `xWalkAgent`, and `xWalkLibrary` must use their owning macro family. The
+  numeric value must be unique within its tag across the complete repository
+  regardless of module, submodule, or priority. IDs `RPI.001`, `CTRL.001`,
+  `RPIAGENT.001`, and `LIB.001` are valid together because their tags differ;
+  `RPI.001` and `RPI.1` conflict because their numeric values are equal.
+  The `UIDn` suffix is the exact count of formatting arguments after the UID
+  and format string. Keep priority zero as highest and priority three as lowest
+  in the central xWalkTrace priority catalogue. Emit a tagged record only when
+  its resolved global, module, and individual UID state is enabled.
 - Keep warning, error, and numeric assertion-signal macros independent of normal
   trace registry state. Capture the public macro's `__FILE__` and `__LINE__`; store only
   the source basename in logs and retain project-relative paths in generated XML.
+- Route every project-owned diagnostic through the source tree's existing xWalk
+  trace macro family. Normal, informational, status, progress, success, and
+  debug records use one registered UID macro; warnings use the singular
+  selector-tagged `WARNING` macro, errors use the selector-tagged `ERROR`
+  macro, and `ASSERT` is reserved for genuine invariant failures. Do not
+  use direct standard streams, C printing, platform logging, local diagnostic
+  macros, or callback-based console printing for diagnostics. Functional CLI
+  and protocol output remains separate at application and Agent interaction
+  boundaries: preserve help, version text, protocol responses, and conversation
+  output when trace decoration would change their interface contract.
+  `xWalkController/xWalkHandler` is trace-only for its own status, result,
+  warning, and failure records; it must not call its output callback for those
+  records.
 - Keep `XWALK_VERBOSE(format, ...)` only as a disabled no-op for source
   compatibility. Normal diagnostics use one scanner-registered UID macro so
   their formatting arguments are not evaluated while disabled.
@@ -719,22 +806,24 @@ retaining normal compiler warnings and compilation checks.
   compilation. Its
   token-aware scan covers the complete project root, including generated
   project sources and participating nested repositories, rejects every
-  duplicate or malformed UID, generates the deterministic immutable
-  `generated/xwalk-traces.xml` catalogue, removes absent UIDs, and avoids
-  rewriting unchanged content. Every normal trace defaults disabled.
+  duplicate numeric or malformed UID, generates the deterministic mutable
+  `generated/xwalk-traces.xml` catalogue, removes absent UIDs, preserves valid
+  states for retained UIDs, and avoids rewriting unchanged content. Newly
+  discovered normal traces default disabled.
 - Apply repeatable Controller `--trace VALUE` options before constructing the
   boot graph. Accept `all.<state>`, `<module>.<state>`,
   `<module>.<digits>.<state>`, and `.json` paths, with exact `enable` or
   `disable` states. Retain `--trace-enable UID` and `--trace-disable UID` as
-  legacy aliases. Start with `all.disable`, process arguments left to right,
-  and make the last applicable setting win. JSON applies global, module, then
-  tag states and rejects Boolean states and unknown catalogue IDs. Store runtime
-  state only in the synchronized shared registry; never mutate the generated
-  catalogue or parse XML or JSON on each trace call.
+  legacy aliases. Start with the saved XML state, process arguments left to
+  right, and make the last applicable setting win. JSON applies global, module,
+  then tag states and rejects Boolean states and unknown catalogue IDs. Persist each
+  complete update atomically in the generated XML and update the synchronized
+  shared registry only when persistence succeeds. Load saved states once on the
+  next process run; never parse XML or JSON on each trace call.
 - Let standalone diagnostic binaries accept an exact `--trace` selector when
   runtime trace control is required. Use individual, module, global, or JSON
-  selectors, validate them before opening hardware, and apply only
-  scanner-known module and UID states in memory.
+  selectors, validate them before opening hardware, and atomically persist only
+  scanner-known module and UID states in the configured XML.
 - Preserve the compatibility severity ordering from zero through four:
   critical, error, warning, info, and debug. Accept exact lowercase names, use
   warning by default, and retain threshold behavior for explicit `XWalkTrace`
@@ -747,6 +836,14 @@ retaining normal compiler warnings and compilation checks.
   Pico2Wave, Espeak, OpenAI TTS, and EdgeTTS providers. Consolidate those
   providers into one coordinator rather than duplicating five
   classes whose only Robot HAT responsibility is speaker activation.
+- Keep the standalone `xWalkGPT` simulation device-free. Exercise readiness,
+  bounded recognition, file transcription, cancellation, speaker priming, and
+  speech dispatch through named in-memory callbacks. Never open ALSA devices,
+  load models, invoke providers, access a network, or produce audible output.
+- Emit GPT coordinator lifecycle and completed-operation records through xWalk
+  trace macros. Persist trace selector changes in XML and load them on the next
+  no-argument run. Never log transcript or speech text, captured PCM, credentials,
+  provider requests, callback bodies, cancellation cleanup, or destructors.
 - Create `XWalkBoardControl` and the speech backend in `main()`. Pass board
   control by reference, store only a non-owning pointer, and inject speech output
   through a non-null synchronous callback with an optional non-owning context.
@@ -766,6 +863,16 @@ retaining normal compiler warnings and compilation checks.
   `XWalkSpeechToText`, `XWalkLanguageModel`, and `XWalkTextToSpeech` objects.
   Create those objects in `main()`, pass them by reference, and store non-owning
   pointers that remain non-null and valid for the coordinator's full lifetime.
+- Keep the standalone VoiceAssistant simulation device-free. Compose GPIO, I2C,
+  recognition, language-model, and speech-output seams through named in-memory
+  callbacks without ALSA, models, providers, processes, network, or audible output.
+- Emit VoiceAssistant lifecycle and completed-round records through trace macros.
+  Persist trace selection in generated XML and load it on the next no-argument run.
+  Never trace recognized text, prompts, model responses, speech text, audio,
+  fixtures, credentials, callback bodies, cancellation cleanup, or destructors.
+- Put reusable VoiceAssistant host-test state and callbacks in the named
+  `xwalk::hal::test::voiceassistant` namespace under `test/include` and `test/src`.
+  Keep scenario assertions in the test entry-point source.
 - Preserve one-round flow as listen, skip silence, prompt, optionally parse, speak
   non-empty output, and report completion. Optional null lifecycle callbacks are
   no-ops, and a null response parser returns an unmodified owned response copy.
@@ -853,6 +960,9 @@ retaining normal compiler warnings and compilation checks.
 - Never emit Ollama requests, responses, images, prompts, or credentials through
   normal diagnostics. Require explicit endpoint, model, and prompt selection in
   the opt-in provider smoke test.
+- Keep the default LanguageModel simulation provider-neutral and in memory. It
+  may mirror coordinator operations for verification, but must not select a
+  provider, read credentials, start a process, or perform a network request.
 - Validate both left and right commands before changing either motor. A failed
   range or finite-value check must not leave only one motor updated.
 - Do not embed one project class as a by-value object or reference data member
@@ -872,6 +982,13 @@ retaining normal compiler warnings and compilation checks.
   complete registration before `initialize()`, and prohibit registration after
   initialization. The application creates PWM and Servo objects before the
   Robot and destroys the Robot first.
+- Keep the standalone `xWalkRobot` simulation device-free. Use a named in-memory
+  I2C adapter, one simulated Servo/PWM chain, and a build-local configuration
+  store. Never open Linux I2C devices or cause physical servo movement there.
+- Emit Robot lifecycle, completed movement, action, calibration, persistence,
+  simulation, and host-test records through xWalk trace macros. Persist selector
+  changes in XML and load them automatically on the next no-argument run. Keep
+  interpolation-loop writes, callbacks, cleanup, and destructors trace-free.
 - Keep articulated-robot configuration separate from hardware construction.
   Inject `XWalkConfigStore` by reference, derive a robot-specific offset key,
   and reject malformed or incorrectly sized persisted offset lists.
@@ -889,6 +1006,11 @@ retaining normal compiler warnings and compilation checks.
 - Preserve the ultrasonic result contract: return `-1.0` for timeout,
   retry timeout results only, and return `-2.0` without retry when no complete
   pulse can be measured. Document all successful values in centimeters.
+- Keep the default Ultrasonic simulation device-free. Compose the public GPIO
+  and Ultrasonic interfaces with named in-memory callbacks, model a bounded
+  echo pulse, and validate trigger sequencing and the converted distance.
+  Trace-selector changes must persist in the generated XML and load on the next
+  run without requiring the selector again.
 - Construct the three line-tracker ADC channels in the application, pass them
   by reference in left, middle, and right order, and store bounded non-owning
   pointers. Use fixed three-element project types for readings, statuses,
@@ -899,6 +1021,9 @@ retaining normal compiler warnings and compilation checks.
 - Preserve strict tracker comparisons: a cliff value is below its
   threshold, a line requires spread greater than the configured difference,
   and a grayscale value equal to its reference is classified as black.
+- Keep the default LineTracker simulation device-free. Compose the public I2C,
+  ADC, grayscale, and tracker interfaces over a named in-memory bus and verify
+  channel ordering and position without opening `/dev/i2c-*`.
 - This rule applies to project component classes. Value-like standard-library
   state such as containers, mutexes, optionals, and fixed arrays remains stored
   by value.
@@ -922,10 +1047,25 @@ retaining normal compiler warnings and compilation checks.
 ## Validation, errors, and numeric behavior
 
 - Do not use `try` or `catch` statements in workspace production code or tests.
-  Functions throw through the project exception macros and ordinary callers let
-  those failures escape. Provide cleanup through scope-bound guards and
-  destructors so stack cleanup requests actuator shutdown without exception
-  interception.
+  Controller, Agent, and HAL functions throw through their exception aliases.
+  Ordinary callers let those failures escape. Provide
+  cleanup through scope-bound guards and destructors so stack cleanup requests
+  actuator shutdown without exception interception.
+- Controller, Agent, HAL, and traced Library paths pass one public error signal
+  from `xHal_Rpi5CarErrorSignals.h` and an owned message to their component
+  `ERROR` macro. Use `XWALK_INVAL`, `XWALK_RANGE`, `XWALK_LOGIC`, or
+  `XWALK_RUNTIME` for the common validation and runtime categories; the error
+  signal header documents the additional supported selectors. The macro evaluates the
+  formatting arguments once, records the diagnostic, and throws the selected
+  C++ exception. Operating-system signal selectors only report the matching
+  signal condition and never raise the signal again. Use `XWALK_EXCEPTION` for
+  a generic error that intentionally returns a status or continues without
+  throwing. Do not add a separate
+  `throw` or insert an `ASSERT` around an ordinary validation, configuration,
+  backend, or runtime exception. The foundational
+  `xWalkLibraryCommon` headers and xWalkTrace's own implementation remain exempt
+  because tracing from either layer would introduce a dependency cycle or
+  recursive trace failure.
 - When an operation must continue after one failed backend attempt, provide an
   explicit non-throwing Boolean status operation. The fail-safe I2C/PWM write
   path and the SelfDrive delay callback use this pattern. Callers must check the
@@ -956,8 +1096,8 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
 `value1`, or `result2`.
 
 - Validate inputs at the public boundary or before acquiring a resource.
-- Reject invalid states with the exception macros in
-  `xHal_Rpi5CarExceptions.h`:
+- Reject invalid states with the corresponding Controller, Agent, or HAL
+  exception alias:
   - invalid form, null callback, or impossible argument: invalid argument;
   - numeric or container limit violation: out of range;
   - failed hardware operation after retries: runtime error.
@@ -980,6 +1120,10 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
 - Keep `XWalkLed` and `XWalkRgbLed` in the combined `xWalkLed` submodule. Build,
   test, document, and configure both through the `XWALK_LED_*` options; retain
   `xWalkRgbLed` only as a CMake target alias for compatible consumer linkage.
+- Keep the default LED simulation device-free. Compose real GPIO, I2C, PWM,
+  single-color LED, and RGB LED interfaces over named in-memory callbacks
+  without opening device nodes or changing physical light outputs. Keep trace
+  work out of the LED destructor and its `noexcept` blink worker.
 - Convert each RGB component independently to a PWM percentage. Invert the
   eight-bit component before scaling for common-anode wiring; do not invert it
   for common-cathode wiring.
@@ -989,6 +1133,10 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
 - Represent active and passive buzzers with separate `XWalkBuzzer` constructor
   overloads. Accept an `XWalkGpio&` for an active buzzer or an `XWalkPwm&` for a
   passive buzzer, and store the selected dependency as a non-owning pointer.
+- Keep the default Buzzer simulation device-free and silent. Compose real GPIO,
+  I2C, PWM, active-buzzer, and passive-buzzer interfaces over named in-memory
+  callbacks without opening device nodes or producing physical sound. Keep the
+  buzzer destructor free of trace and hardware operations.
 - Place every buzzer into the inactive state during construction. Use logical
   GPIO polarity for active buzzers and zero or 50 percent PWM duty cycles for
   passive-buzzer off or on operations respectively.
@@ -1039,6 +1187,10 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
 - Do not disable or release the injected music backend during destruction. The
   backend is caller-owned, and speaker activation has no matching destruction
   operation.
+- Keep the default Music simulation device-free, file-free, and silent. Exercise
+  the real theory, playback, transport, and PCM-generation interface over named
+  in-memory callbacks without opening ALSA or reading audio resources. Keep the
+  Music destructor free of trace and backend operations.
 - Implement Linux music callbacks in `XWalkMusicAlsa`, which observes one
   caller-owned `XWalkAudioAlsa`. The audio owner outlives the adapter, and the
   adapter outlives `XWalkMusic`; no adapter releases the shared audio owner.
@@ -1067,6 +1219,10 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
   playback workers through the state mutex. Backend operations on `noexcept`
   workers and during destruction must not throw; a violation terminates the
   process.
+- Keep the default Speaker simulation device-free and silent. Exercise the real
+  task controller over named in-memory decoder and stream callbacks with only a
+  build-local fixture. Keep trace work out of `playbackLoop()`, task cleanup,
+  output disable, worker callbacks, and destruction.
 - Preserve the speaker format groups: WAV, FLAC, and OGG use the SoundFile
   decoder family; MP3, M4A, AAC, and WMA use the compressed-audio family.
 - Implement Linux Speaker callbacks in `XWalkSpeakerAlsa`, which observes one
@@ -1082,6 +1238,10 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
   Music depend on Speaker or Speaker depend on Music to obtain audio output.
 - Create `XWalkAudioAlsa` before every audio adapter and consumer. Its injected
   ALSA-operation context is non-owning and must outlive the backend.
+- Keep all libasound calls behind `XWalkAudioAlsaOperations`. Production uses
+  the system operation table; host tests and the default standalone simulation
+  inject `XWalkAudioHostStub` so ownership, playback, and mixer behavior run
+  without opening an audio endpoint or changing host volume.
 - Select PCM device, mixer device, and simple-element names through deployment
   configuration. Do not assume ALSA card zero; `default` and `PCM` are only
   configurable defaults.
@@ -1125,6 +1285,19 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
 - Keep reusable fake hardware in test helper classes such as
   `XWalkPwmTestI2c`. Record the interaction needed for assertions: probes,
   addresses, registers, and payloads.
+- Keep reusable test callback state, fake-backend structures, mapping records,
+  callback declarations, and callback-table factories in a dedicated
+  `<Component>TestSupport.h` under the owning module's `test/include` directory.
+  Put their non-trivial function definitions in the matching
+  `<Component>TestSupport.cpp` under `test/src`; scenario test sources contain
+  fixtures and test cases rather than reusable callback implementations.
+- Put shared test support in the owning layer's named component namespace, such
+  as `xwalk::hal::test::gpio`. Never place an anonymous namespace in a header:
+  it creates a different type and function identity in every translation unit.
+  Component nesting also prevents helper-name collisions in aggregate test
+  runners. List the support source explicitly in standalone and aggregate test
+  targets. Apply this layout across `xWalkHal`, `xWalkAgent`, and
+  `xWalkController` whenever a test is added or modified.
 - Test public results and observable bus traffic, including register selection,
   byte order, state shared between channels, and validation failures.
 - Add a selector in the test main and a separately named CTest entry when adding
@@ -1161,8 +1334,8 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
 - Let a module add an adjacent dependency only when its target does not already
   exist. Give the dependency a dedicated binary directory.
 - Resolve the workspace-level `xWalkLibraryCommon` target source from
-  `../../xWalkLibrary/common` when configuring an individual HAL submodule. The
-  workspace root imports it from `xWalkLibrary/common`.
+  `../../../xWalkLibrary/common` when configuring an individual grouped HAL
+  submodule. The workspace root imports it from `xWalkLibrary/common`.
 - Name feature options `XWALK_<MODULE>_BUILD_<MODE>_TESTS` and default them to
   `OFF`.
 - Register tests with descriptive stable names and labels.
@@ -1259,6 +1432,10 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
   Camera Serial Interface device and `usb` for a V4L2 webcam. Keep capture
   executables and device paths outside the Agent, invoke providers without a
   shell, and enforce the HAL capture deadline in the parent process.
+- Keep the default Camera simulation device-free. Compose `XWalkCamera` with a
+  named in-memory capture callback and validate the destination and bounded
+  settings without opening a camera, starting a process, or creating an image
+  file. Persist trace-selector changes in generated XML for the next run.
 - Keep host command parsing independent of Linux hardware headers. Inject
   console, timing, cancellation, and audio callbacks into `XWalkController`.
   Store the
@@ -1456,47 +1633,51 @@ cmake -S xWalkAgent -B xWalkAgent/build-host -DXWALK_AGENT_BUILD_HOST=ON -DCMAKE
 cmake --build xWalkAgent/build-host --parallel
 ctest --test-dir xWalkAgent/build-host --output-on-failure
 
-cmake -S xWalkI2c -B xWalkI2c/build-host -DXWALK_I2C_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/interface/xWalkI2c -B xWalkHal/interface/xWalkI2c/build-host -DXWALK_I2C_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkI2c/build-host --parallel
 ctest --test-dir xWalkI2c/build-host --output-on-failure
 
-cmake -S xWalkAudio -B xWalkAudio/build-host -DXWALK_AUDIO_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/interface/xWalkSpi -B xWalkHal/interface/xWalkSpi/build-host -DXWALK_SPI_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build xWalkSpi/build-host --parallel
+ctest --test-dir xWalkSpi/build-host --output-on-failure
+
+cmake -S xWalkHal/interface/xWalkAudio -B xWalkHal/interface/xWalkAudio/build-host -DXWALK_AUDIO_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkAudio/build-host --parallel
 ctest --test-dir xWalkAudio/build-host --output-on-failure
 
-cmake -S xWalkMusic -B xWalkMusic/build-host -DXWALK_MUSIC_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/layer1/xWalkMusic -B xWalkHal/layer1/xWalkMusic/build-host -DXWALK_MUSIC_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkMusic/build-host --parallel
 ctest --test-dir xWalkMusic/build-host --output-on-failure
 
-cmake -S xWalkSpeaker -B xWalkSpeaker/build-host -DXWALK_SPEAKER_BUILD_HOST_TESTS=ON
+cmake -S xWalkHal/layer1/xWalkSpeaker -B xWalkHal/layer1/xWalkSpeaker/build-host -DXWALK_SPEAKER_BUILD_HOST_TESTS=ON
 cmake --build xWalkSpeaker/build-host --parallel
 ctest --test-dir xWalkSpeaker/build-host --output-on-failure
 
-cmake -S xWalkPwm -B xWalkPwm/build-host -DXWALK_PWM_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/device/xWalkPwm -B xWalkHal/device/xWalkPwm/build-host -DXWALK_PWM_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkPwm/build-host --parallel
 ctest --test-dir xWalkPwm/build-host --output-on-failure
 
-cmake -S xWalkServo -B xWalkServo/build-host -DXWALK_SERVO_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/device/xWalkServo -B xWalkHal/device/xWalkServo/build-host -DXWALK_SERVO_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkServo/build-host --parallel
 ctest --test-dir xWalkServo/build-host --output-on-failure
 
-cmake -S xWalkAdc -B xWalkAdc/build-host -DXWALK_ADC_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/device/xWalkAdc -B xWalkHal/device/xWalkAdc/build-host -DXWALK_ADC_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkAdc/build-host --parallel
 ctest --test-dir xWalkAdc/build-host --output-on-failure
 
-cmake -S xWalkGpio -B xWalkGpio/build-host -DXWALK_GPIO_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/interface/xWalkGpio -B xWalkHal/interface/xWalkGpio/build-host -DXWALK_GPIO_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkGpio/build-host --parallel
 ctest --test-dir xWalkGpio/build-host --output-on-failure
 
-cmake -S xWalkMotor -B xWalkMotor/build-host -DXWALK_MOTOR_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/sensor/xWalkMotor -B xWalkHal/sensor/xWalkMotor/build-host -DXWALK_MOTOR_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkMotor/build-host --parallel
 ctest --test-dir xWalkMotor/build-host --output-on-failure
 
-cmake -S xWalkConfig -B xWalkConfig/build-host -DXWALK_CONFIG_BUILD_HOST_TESTS=ON
+cmake -S xWalkHal/interface/xWalkConfig -B xWalkHal/interface/xWalkConfig/build-host -DXWALK_CONFIG_BUILD_HOST_TESTS=ON
 cmake --build xWalkConfig/build-host --parallel
 ctest --test-dir xWalkConfig/build-host --output-on-failure
 
-cmake -S xWalkBoardControl -B xWalkBoardControl/build-host -DXWALK_BOARD_CONTROL_BUILD_HOST_TESTS=ON
+cmake -S xWalkHal/layer1/xWalkBoardControl -B xWalkHal/layer1/xWalkBoardControl/build-host -DXWALK_BOARD_CONTROL_BUILD_HOST_TESTS=ON
 cmake --build xWalkBoardControl/build-host --parallel
 ctest --test-dir xWalkBoardControl/build-host --output-on-failure
 
@@ -1504,47 +1685,47 @@ cmake -S xWalkTrace -B xWalkTrace/build-host -DXWALK_TRACE_BUILD_HOST_TESTS=ON -
 cmake --build xWalkTrace/build-host --parallel
 ctest --test-dir xWalkTrace/build-host --output-on-failure
 
-cmake -S xWalkGPT -B xWalkGPT/build-host -DXWALK_GPT_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/layer1/xWalkGPT -B xWalkHal/layer1/xWalkGPT/build-host -DXWALK_GPT_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkGPT/build-host --parallel
 ctest --test-dir xWalkGPT/build-host --output-on-failure
 
-cmake -S xWalkLanguageModel -B xWalkLanguageModel/build-host -DXWALK_LANGUAGE_MODEL_BUILD_HOST_TESTS=ON
+cmake -S xWalkHal/interface/xWalkLanguageModel -B xWalkHal/interface/xWalkLanguageModel/build-host -DXWALK_LANGUAGE_MODEL_BUILD_HOST_TESTS=ON
 cmake --build xWalkLanguageModel/build-host --parallel
 ctest --test-dir xWalkLanguageModel/build-host --output-on-failure
 
-cmake -S xWalkVoiceAssistant -B build-va-host -DXWALK_VOICE_ASSISTANT_BUILD_HOST_TESTS=ON
-cmake --build build-va-host --parallel
-ctest --test-dir build-va-host --output-on-failure
+cmake -S xWalkHal/layer1/xWalkVoiceAssistant -B build/xWalkVoiceAssistant-host -DXWALK_VOICE_ASSISTANT_BUILD_HOST_TESTS=ON
+cmake --build build/xWalkVoiceAssistant-host --parallel
+ctest --test-dir build/xWalkVoiceAssistant-host --output-on-failure
 
-cmake -S xWalkUtils -B build-utils-host -DXWALK_UTILS_BUILD_HOST_TESTS=ON
+cmake -S xWalkHal/interface/xWalkUtils -B build-utils-host -DXWALK_UTILS_BUILD_HOST_TESTS=ON
 cmake --build build-utils-host --parallel
 ctest --test-dir build-utils-host --output-on-failure
 
-cmake -S xWalkRobot -B xWalkRobot/build-host -DXWALK_ROBOT_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/layer1/xWalkRobot -B xWalkHal/layer1/xWalkRobot/build-host -DXWALK_ROBOT_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkRobot/build-host --parallel
 ctest --test-dir xWalkRobot/build-host --output-on-failure
 
-cmake -S xWalkUltrasonic -B xWalkUltrasonic/build-host -DXWALK_ULTRASONIC_BUILD_HOST_TESTS=ON
+cmake -S xWalkHal/device/xWalkUltrasonic -B xWalkHal/device/xWalkUltrasonic/build-host -DXWALK_ULTRASONIC_BUILD_HOST_TESTS=ON
 cmake --build xWalkUltrasonic/build-host --parallel
 ctest --test-dir xWalkUltrasonic/build-host --output-on-failure
 
-cmake -S xWalkLineTracker -B xWalkLineTracker/build-host -DXWALK_LINE_TRACKER_BUILD_HOST_TESTS=ON
+cmake -S xWalkHal/sensor/xWalkLineTracker -B xWalkHal/sensor/xWalkLineTracker/build-host -DXWALK_LINE_TRACKER_BUILD_HOST_TESTS=ON
 cmake --build xWalkLineTracker/build-host --parallel
 ctest --test-dir xWalkLineTracker/build-host --output-on-failure
 
-cmake -S xWalkAdxl345 -B xWalkAdxl345/build-host -DXWALK_ADXL345_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/device/xWalkAdxl345 -B xWalkHal/device/xWalkAdxl345/build-host -DXWALK_ADXL345_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkAdxl345/build-host --parallel
 ctest --test-dir xWalkAdxl345/build-host --output-on-failure
 
-cmake -S xWalkBuzzer -B xWalkBuzzer/build-host -DXWALK_BUZZER_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/sensor/xWalkBuzzer -B xWalkHal/sensor/xWalkBuzzer/build-host -DXWALK_BUZZER_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkBuzzer/build-host --parallel
 ctest --test-dir xWalkBuzzer/build-host --output-on-failure
 
-cmake -S xWalkLed -B xWalkLed/build-host -DXWALK_LED_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/sensor/xWalkLed -B xWalkHal/sensor/xWalkLed/build-host -DXWALK_LED_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkLed/build-host --parallel
 ctest --test-dir xWalkLed/build-host --output-on-failure
 
-cmake -S xWalkUserButton -B xWalkUserButton/build-host -DXWALK_USER_BUTTON_BUILD_HOST_TESTS=ON
+cmake -S xWalkHal/device/xWalkUserButton -B xWalkHal/device/xWalkUserButton/build-host -DXWALK_USER_BUTTON_BUILD_HOST_TESTS=ON
 cmake --build xWalkUserButton/build-host --parallel
 ctest --test-dir xWalkUserButton/build-host --output-on-failure
 
@@ -1561,46 +1742,50 @@ cmake -S xWalkAgent -B xWalkAgent/build-rpi -DXWALK_AGENT_BUILD_RPI=ON -DCMAKE_B
 cmake --build xWalkAgent/build-rpi --parallel
 ctest --test-dir xWalkAgent/build-rpi -N -L hardware
 
-cmake -S xWalkI2c -B xWalkI2c/build-rpi -DXWALK_I2C_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/interface/xWalkI2c -B xWalkHal/interface/xWalkI2c/build-rpi -DXWALK_I2C_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkI2c/build-rpi --parallel
 ctest --test-dir xWalkI2c/build-rpi -N -L hardware
 
-cmake -S xWalkAudio -B xWalkAudio/build-rpi -DXWALK_AUDIO_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/interface/xWalkSpi -B xWalkHal/interface/xWalkSpi/build-rpi -DXWALK_SPI_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build xWalkSpi/build-rpi --parallel
+ctest --test-dir xWalkSpi/build-rpi -N -L hardware
+
+cmake -S xWalkHal/interface/xWalkAudio -B xWalkHal/interface/xWalkAudio/build-rpi -DXWALK_AUDIO_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkAudio/build-rpi --parallel
 ctest --test-dir xWalkAudio/build-rpi -N -L hardware
 
-cmake -S xWalkMusic -B xWalkMusic/build-rpi -DXWALK_MUSIC_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/layer1/xWalkMusic -B xWalkHal/layer1/xWalkMusic/build-rpi -DXWALK_MUSIC_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkMusic/build-rpi --parallel
 ctest --test-dir xWalkMusic/build-rpi -N -L hardware
 
-cmake -S xWalkSpeaker -B xWalkSpeaker/build-rpi -DXWALK_SPEAKER_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalkHal/layer1/xWalkSpeaker -B xWalkHal/layer1/xWalkSpeaker/build-rpi -DXWALK_SPEAKER_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkSpeaker/build-rpi --parallel
 ctest --test-dir xWalkSpeaker/build-rpi -N -L hardware
 
-cmake -S xWalkPwm -B xWalkPwm/build-rpi -DXWALK_PWM_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/device/xWalkPwm -B xWalkHal/device/xWalkPwm/build-rpi -DXWALK_PWM_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkPwm/build-rpi --parallel
 ctest --test-dir xWalkPwm/build-rpi -N -L hardware
 
-cmake -S xWalkServo -B xWalkServo/build-rpi -DXWALK_SERVO_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/device/xWalkServo -B xWalkHal/device/xWalkServo/build-rpi -DXWALK_SERVO_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkServo/build-rpi --parallel
 ctest --test-dir xWalkServo/build-rpi -N -L hardware
 
-cmake -S xWalkAdc -B xWalkAdc/build-rpi -DXWALK_ADC_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/device/xWalkAdc -B xWalkHal/device/xWalkAdc/build-rpi -DXWALK_ADC_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkAdc/build-rpi --parallel
 ctest --test-dir xWalkAdc/build-rpi -N -L hardware
 
-cmake -S xWalkGpio -B xWalkGpio/build-rpi -DXWALK_GPIO_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/interface/xWalkGpio -B xWalkHal/interface/xWalkGpio/build-rpi -DXWALK_GPIO_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkGpio/build-rpi --parallel
 ctest --test-dir xWalkGpio/build-rpi -N -L hardware
 
-cmake -S xWalkMotor -B xWalkMotor/build-rpi -DXWALK_MOTOR_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/sensor/xWalkMotor -B xWalkHal/sensor/xWalkMotor/build-rpi -DXWALK_MOTOR_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkMotor/build-rpi --parallel
 ctest --test-dir xWalkMotor/build-rpi -N -L hardware
 
-cmake -S xWalkConfig -B xWalkConfig/build-rpi -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/interface/xWalkConfig -B xWalkHal/interface/xWalkConfig/build-rpi -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkConfig/build-rpi --parallel
 
-cmake -S xWalkBoardControl -B xWalkBoardControl/build-rpi -DXWALK_BOARD_CONTROL_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalkHal/layer1/xWalkBoardControl -B xWalkHal/layer1/xWalkBoardControl/build-rpi -DXWALK_BOARD_CONTROL_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkBoardControl/build-rpi --parallel
 ctest --test-dir xWalkBoardControl/build-rpi -N -L hardware
 
@@ -1608,47 +1793,47 @@ cmake -S xWalkTrace -B xWalkTrace/build-rpi -DXWALK_TRACE_BUILD_HARDWARE_TESTS=O
 cmake --build xWalkTrace/build-rpi --parallel
 ctest --test-dir xWalkTrace/build-rpi -N -L hardware
 
-cmake -S xWalkGPT -B xWalkGPT/build-rpi -DXWALK_GPT_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/layer1/xWalkGPT -B xWalkHal/layer1/xWalkGPT/build-rpi -DXWALK_GPT_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkGPT/build-rpi --parallel
 ctest --test-dir xWalkGPT/build-rpi -N -L hardware
 
-cmake -S xWalkLanguageModel -B xWalkLanguageModel/build-rpi -DXWALK_LANGUAGE_MODEL_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalkHal/interface/xWalkLanguageModel -B xWalkHal/interface/xWalkLanguageModel/build-rpi -DXWALK_LANGUAGE_MODEL_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkLanguageModel/build-rpi --parallel
 ctest --test-dir xWalkLanguageModel/build-rpi -N -L hardware
 
-cmake -S xWalkVoiceAssistant -B build-va-rpi -DXWALK_VOICE_ASSISTANT_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalkHal/layer1/xWalkVoiceAssistant -B build-va-rpi -DXWALK_VOICE_ASSISTANT_BUILD_HARDWARE_TESTS=ON
 cmake --build build-va-rpi --parallel
 ctest --test-dir build-va-rpi -N -L hardware
 
-cmake -S xWalkUtils -B build-utils-rpi -DXWALK_UTILS_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalkHal/interface/xWalkUtils -B build-utils-rpi -DXWALK_UTILS_BUILD_HARDWARE_TESTS=ON
 cmake --build build-utils-rpi --parallel
 ctest --test-dir build-utils-rpi -N -L hardware
 
-cmake -S xWalkRobot -B xWalkRobot/build-rpi -DXWALK_ROBOT_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalkHal/layer1/xWalkRobot -B xWalkHal/layer1/xWalkRobot/build-rpi -DXWALK_ROBOT_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkRobot/build-rpi --parallel
 ctest --test-dir xWalkRobot/build-rpi -N -L hardware
 
-cmake -S xWalkUltrasonic -B xWalkUltrasonic/build-rpi -DXWALK_ULTRASONIC_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalkHal/device/xWalkUltrasonic -B xWalkHal/device/xWalkUltrasonic/build-rpi -DXWALK_ULTRASONIC_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkUltrasonic/build-rpi --parallel
 ctest --test-dir xWalkUltrasonic/build-rpi -N -L hardware
 
-cmake -S xWalkLineTracker -B xWalkLineTracker/build-rpi -DXWALK_LINE_TRACKER_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalkHal/sensor/xWalkLineTracker -B xWalkHal/sensor/xWalkLineTracker/build-rpi -DXWALK_LINE_TRACKER_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkLineTracker/build-rpi --parallel
 ctest --test-dir xWalkLineTracker/build-rpi -N -L hardware
 
-cmake -S xWalkAdxl345 -B xWalkAdxl345/build-rpi -DXWALK_ADXL345_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalkHal/device/xWalkAdxl345 -B xWalkHal/device/xWalkAdxl345/build-rpi -DXWALK_ADXL345_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkAdxl345/build-rpi --parallel
 ctest --test-dir xWalkAdxl345/build-rpi -N -L hardware
 
-cmake -S xWalkBuzzer -B xWalkBuzzer/build-rpi -DXWALK_BUZZER_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalkHal/sensor/xWalkBuzzer -B xWalkHal/sensor/xWalkBuzzer/build-rpi -DXWALK_BUZZER_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkBuzzer/build-rpi --parallel
 ctest --test-dir xWalkBuzzer/build-rpi -N -L hardware
 
-cmake -S xWalkLed -B xWalkLed/build-rpi -DXWALK_LED_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalkHal/sensor/xWalkLed -B xWalkHal/sensor/xWalkLed/build-rpi -DXWALK_LED_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkLed/build-rpi --parallel
 ctest --test-dir xWalkLed/build-rpi -N -L hardware
 
-cmake -S xWalkUserButton -B xWalkUserButton/build-rpi -DXWALK_USER_BUTTON_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalkHal/device/xWalkUserButton -B xWalkHal/device/xWalkUserButton/build-rpi -DXWALK_USER_BUTTON_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkUserButton/build-rpi --parallel
 ctest --test-dir xWalkUserButton/build-rpi -N -L hardware
 
@@ -1682,17 +1867,40 @@ As of 2026-08-06:
   foreground line tracking, and preset self-drive actions. External-service
   commands remain unavailable until their safe process-level backends are composed.
 - The I2C Linux backend and `xWalkI2cLinuxHardwareTest` compile successfully.
+- The GPIO core and Linux backend host suite passes through an injected device
+  mirror, and the standalone stub simulation runs without opening hardware.
+  The Linux GPIO backend and opt-in hardware test compile without execution.
 - The xWalkIW Protobuf/XML contract validates, its generated gRPC C++ library
   compiles, and its host schema test passes in the aggregate suite.
-- The SPI core, Agent transaction service, and CLI dispatch host tests pass with
-  injected transfers; the Linux spidev backend and opt-in hardware test compile.
+- The SPI core and Linux backend host suite passes through an injected device
+  mirror, and the standalone stub simulation runs without opening hardware.
+  The Agent transaction service and CLI dispatch host tests pass with injected
+  transfers; the Linux spidev backend and opt-in hardware test compile.
 - The CLI `spi transfer <HEX>` path compiles in the complete Raspberry Pi
   executable without initializing the Robot HAT or other PiCar-X services.
-- The shared ALSA backend software test passes with injected operations, and its
-  silent hardware test compiles without being executed.
-- The PWM hardware target and `xWalkPwmHardwareTest` compile successfully.
-- The Servo hardware target and `xWalkServoHardwareTest` compile successfully.
+- The shared ALSA backend host suite passes with injected operations and the
+  standalone stub simulation runs without opening an audio device or changing
+  mixer state. Its silent hardware test and hardware simulation compile without
+  being executed.
+- The section-aware Config and flat ConfigStore host suites pass, and their
+  standalone simulation persists and reloads values only below its build tree.
+  xWalkConfig has no physical-hardware backend or hardware test.
+- The Utils callback and safe Linux software suites pass, and the standalone
+  host-stub simulation runs without shell, mixer, descriptor, network, or user
+  database side effects. Its hardware target compiles without execution.
+- The PWM host suite and standalone in-memory simulation pass with persistent
+  trace selection. The hardware target and `xWalkPwmHardwareTest` compile and
+  are listed without execution.
+- The Servo host suite and standalone in-memory simulation pass with persistent
+  trace selection. Its hardware-test target compiles and is listed without
+  execution.
 - The ADC, GPIO, and Motor hardware-test targets compile successfully.
+- The Motor host suite and standalone in-memory simulation pass with persistent
+  trace selection. Its PWM, I2C, and GPIO hardware dependencies compile and are
+  listed without moving physical motors.
+- The ADC host suite and standalone in-memory simulation pass with persistent
+  trace selection. Its hardware-test target compiles and is listed without
+  execution.
 - The I2C, PWM, Servo, ADC, GPIO, Motor, and combined Config host suites pass.
 - The combined BoardControl, Device, and FirmwareInfo host suites pass with their dependencies.
 - Their combined target and Linux ADC, I2C, and GPIO dependencies compile successfully.
@@ -1700,9 +1908,13 @@ As of 2026-08-06:
 - Trace output remains callback-defined; the port has no physical-hardware test or built-in console backend.
 - The GPT host suites and their BoardControl, ADC, I2C, and GPIO dependency suites pass.
 - The GPT microphone and playback targets compile and require explicit devices before physical access.
-- The LanguageModel coordinator and Ollama provider host suites pass with fake transports.
-- The Ollama target compiles and requires explicit endpoint, model, and prompt before network access.
-- The VoiceAssistant host suite passes neutral coordinator and completed ALSA/Ollama composition tests.
+- The LanguageModel coordinator and Ollama provider host suites pass with an
+  in-memory coordinator backend and fake HTTP transport. Its standalone
+  simulation runs without provider, credential, process, or network access.
+- The Ollama hardware-test target compiles and is listed without execution. It
+  requires explicit endpoint, model, and prompt before network access.
+- The VoiceAssistant host suite and standalone in-memory simulation pass with
+  persistent trace selection; completed ALSA/Ollama composition remains device-free.
 - The VoiceAssistant full-stack target compiles and requires explicit microphone,
   playback, model, and fixture input.
 - The Utils host suite passes with injected platform, clock, and standard-error backends.
@@ -1710,18 +1922,30 @@ As of 2026-08-06:
 - The Robot host suite and its Servo, PWM, I2C, and Config dependency suites pass.
 - The combined Config target-oriented production library compiles successfully.
 - The Robot target and its Servo, PWM, and I2C hardware dependencies compile successfully.
-- The Ultrasonic host suite and its GPIO dependency suite pass.
-- The Ultrasonic target and its Linux GPIO hardware dependency compile successfully.
-- The LineTracker host suite and its ADC and I2C dependency suites pass.
-- The LineTracker target and its ADC and Linux I2C hardware dependencies compile successfully.
+- The Ultrasonic host suite and standalone in-memory simulation pass with
+  persistent trace selection. Its target and Linux GPIO hardware dependency
+  compile and are listed without executing physical-device tests.
+- The Camera host suite and standalone in-memory simulation pass with persistent
+  trace selection. Its Linux CSI/USB backend and opt-in hardware test compile
+  and are listed without capturing an image.
+- The LineTracker host suite and standalone in-memory simulation pass with
+  persistent trace selection. Its target, ADC, and Linux I2C dependencies
+  compile and are listed without physical sensor execution.
 - The ADXL345 host suite and its I2C dependency suite pass.
-- The ADXL345 target and its Linux I2C hardware dependency compile successfully.
-- The Buzzer host suite and its PWM, I2C, and GPIO dependency suites pass.
-- The Buzzer target and its PWM, I2C, and GPIO hardware dependencies compile successfully.
-- The combined LED host suites and their GPIO, PWM, and I2C dependency suites pass.
-- The combined LED target and its Linux GPIO and I2C hardware dependencies compile successfully.
-- The UserButton host suite and its GPIO dependency suite pass.
-- The UserButton target and its Linux GPIO hardware dependency compile successfully.
+- Its standalone in-memory simulation passes with persistent trace selection.
+  The ADXL345 target and Linux I2C hardware dependency compile and are listed
+  without execution.
+- The Buzzer host suite and standalone in-memory simulation pass with persistent
+  trace selection. Its PWM, I2C, and GPIO dependency suites pass.
+- The Buzzer target and its PWM, I2C, and GPIO hardware dependencies compile
+  and are listed without producing physical sound.
+- The combined LED host suites and standalone in-memory simulation pass with
+  persistent trace selection. Its GPIO, PWM, and I2C dependency suites pass.
+- The combined LED target and its Linux GPIO and I2C hardware dependencies
+  compile and are listed without changing physical light outputs.
+- The UserButton host suite and standalone in-memory simulation pass with
+  persistent trace selection. Its target and Linux GPIO hardware dependency
+  compile and are listed without executing physical button monitoring.
 - The bounded D0 button-event sequence passes with an in-memory host backend,
   and its Linux adapter and central hardware selector compile successfully;
   physical button events have not been exercised.
@@ -1795,11 +2019,13 @@ As of 2026-08-06:
 - The ported servo example passes with injected angle, timing, and reporting
   operations. Its bounded PWM-channel-one adapter compiles; the disabled live
   case has not opened I2C or moved a physical servo.
-- The Music host suite passes, and its hardware-independent target compiles successfully.
+- The Music host suite and standalone silent simulation pass with persistent
+  trace selection, and its hardware-independent target compiles successfully.
 - Music callbacks are connected to shared ALSA and its opt-in hardware target compiles.
 - Native Music MP3 decoding is covered by a device-free libsndfile host test.
 - The xWalkBoot host stub passes one-shot lifecycle tests, and its RPi composition target compiles.
-- The Speaker host suite passes, and its hardware-independent target compiles successfully.
+- The Speaker host suite and standalone silent simulation pass with persistent
+  trace selection, and its hardware-independent target compiles successfully.
 - Speaker decoding and shared-ALSA playback are covered by host and opt-in hardware targets.
 - The host and hardware compilation paths are warning-clean under the configured
   GCC warning options.

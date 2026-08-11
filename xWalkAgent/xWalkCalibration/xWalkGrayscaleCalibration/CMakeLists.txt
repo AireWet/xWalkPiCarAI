@@ -17,6 +17,7 @@ endif()
 add_library(xWalkGrayscaleCalibration STATIC
     src/xAgent_Rpi5CarGrayscaleCalibration.cpp
     src/xAgent_Rpi5CarGrayscaleCalibrationLifecycle.cpp)
+target_link_libraries(xWalkGrayscaleCalibration PRIVATE xWalkTrace)
 add_library(xWalk::GrayscaleCalibration ALIAS xWalkGrayscaleCalibration)
 
 target_include_directories(xWalkGrayscaleCalibration PUBLIC

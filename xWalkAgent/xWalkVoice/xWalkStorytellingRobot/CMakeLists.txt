@@ -24,13 +24,14 @@ if(NOT TARGET xWalkGPT)
         "Storytelling-robot dependency setting" FORCE)
     set(XWALK_GPT_BUILD_PIPER_PROVIDER OFF CACHE BOOL
         "Storytelling-robot dependency setting" FORCE)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/xWalkGPT
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/layer1/xWalkGPT
         ${CMAKE_CURRENT_BINARY_DIR}/xWalkGPT)
 endif()
 
 add_library(xWalkStorytellingRobot STATIC
     src/xAgent_Rpi5CarStorytellingRobot.cpp
     src/xAgent_Rpi5CarStorytellingRobotLifecycle.cpp)
+target_link_libraries(xWalkStorytellingRobot PRIVATE xWalkTrace)
 add_library(xWalk::StorytellingRobot ALIAS xWalkStorytellingRobot)
 target_include_directories(xWalkStorytellingRobot PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include)

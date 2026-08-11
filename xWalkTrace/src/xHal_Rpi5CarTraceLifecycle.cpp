@@ -15,6 +15,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarTrace.h"
+#include "xHal_Rpi5CarTraceBuildConfig.h"
 
 #include <filesystem>
 #include <fstream>
@@ -37,7 +38,7 @@ XWalkTraceLevel XWalkTrace::parseLevel(uint8 level)
 {
     if (level >= XHAL_RPI5CAR_TRACE_LEVEL_COUNT)
     {
-        XHAL_THROW_OUT_OF_RANGE("Trace level must be in range 0..4");
+        throw outofrange("Trace level must be in range 0..4");
     }
     return static_cast<XWalkTraceLevel>(level);
 }
@@ -70,7 +71,7 @@ XWalkTraceLevel XWalkTrace::parseLevel(stringview levelName)
     {
         return XWalkTraceLevel::Debug;
     }
-    XHAL_THROW_INVALID_ARGUMENT("Trace level name is unsupported");
+    throw invalidargument("Trace level name is unsupported");
 }
 
 /**
@@ -165,7 +166,7 @@ XWalkTrace::XWalkTrace(contextpointer outputContext, traceoutputcallback output,
 {
     if (outputCallback == nullptr)
     {
-        XHAL_THROW_INVALID_ARGUMENT("Trace output callback must not be null");
+        throw invalidargument("Trace output callback must not be null");
     }
 
     initialize(configurationPath, logPath);

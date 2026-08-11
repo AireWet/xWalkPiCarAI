@@ -11,9 +11,9 @@
 #include "xAgent_Rpi5CarAppControlWebSocket.h"
 
 #include "xAgent_Rpi5CarAppControlWebSocketState.h"
-#include "xHal_Rpi5CarExceptions.h"
 
 #include <chrono>
+#include <memory>
 #include <thread>
 
 namespace xwalk::agent
@@ -76,16 +76,15 @@ agent::boolean XWalkAppControlWebSocket::start(agent::stringview name,
     }
     state->startupComplete.store(false);
     state->startupSucceeded.store(false);
-    try
-    {
-        state->worker = std::thread(&XWalkAppControlWebSocketState::run,
-            state.get(), port);
-    }
-    catch (...)
+    const auto rollbackStart = [this](void*) noexcept
     {
         state->running.store(false);
-        throw;
-    }
+    };
+    std::unique_ptr<void, decltype(rollbackStart)> rollbackGuard(
+        this, rollbackStart);
+    state->worker = std::thread(&XWalkAppControlWebSocketState::run,
+        state.get(), port);
+    static_cast<void>(rollbackGuard.release());
     for (agent::uint32 attempt = 0U; attempt < 400U; ++attempt)
     {
         const agent::boolean startupComplete =

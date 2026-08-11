@@ -27,6 +27,7 @@
 
 #include "xHal_Rpi5CarServoHatSequence.h"
 
+#include "xHal_Rpi5CarTrace.h"
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -35,8 +36,7 @@
  * @namespace xwalk::hal::test
  * @brief Contains host-testable and physical HAL sequence behavior.
  */
-namespace xwalk::hal::test
-{
+namespace xwalk::hal::test {
 
 /**
  * @brief Binds the board, servos, ADC inputs, and reporting operations.
@@ -65,34 +65,30 @@ namespace xwalk::hal::test
  * @throws std::invalid_argument
  * If a callback or dependency pointer is null.
  */
-XWalkServoHatSequence::XWalkServoHatSequence(
-    XWalkBoardControl& boardControl, const servohatservoarray& servos,
-    const servohatadcarray& adcInputs, contextpointer context,
-    servohatwaitcallback wait, servohatservocallback reportServo,
-    servohatadccallback reportAdc)
+XWalkServoHatSequence::XWalkServoHatSequence(XWalkBoardControl &boardControl,
+                                             const servohatservoarray &servos,
+                                             const servohatadcarray &adcInputs,
+                                             contextpointer context,
+                                             servohatwaitcallback wait,
+                                             servohatservocallback reportServo,
+                                             servohatadccallback reportAdc)
     : boardControlObject(&boardControl), servoObjects(servos),
       adcObjects(adcInputs), callbackContext(context), waitCallback(wait),
-      servoCallback(reportServo), adcCallback(reportAdc)
-{
-    if ((waitCallback == nullptr) || (servoCallback == nullptr) ||
-        (adcCallback == nullptr))
-    {
-        XHAL_THROW_INVALID_ARGUMENT("Servo HAT callbacks must not be null");
+      servoCallback(reportServo), adcCallback(reportAdc) {
+  if ((waitCallback == nullptr) || (servoCallback == nullptr) ||
+      (adcCallback == nullptr)) {
+    XWALK_HAL_ERROR(XWALK_INVAL, "Servo HAT callbacks must not be null");
+  }
+  for (const XWalkServo *const servo : servoObjects) {
+    if (servo == nullptr) {
+      XWALK_HAL_ERROR(XWALK_INVAL, "Servo HAT servo pointers must not be null");
     }
-    for (const XWalkServo* const servo : servoObjects)
-    {
-        if (servo == nullptr)
-        {
-            XHAL_THROW_INVALID_ARGUMENT("Servo HAT servo pointers must not be null");
-        }
+  }
+  for (const XWalkAdc *const adc : adcObjects) {
+    if (adc == nullptr) {
+      XWALK_HAL_ERROR(XWALK_INVAL, "Servo HAT ADC pointers must not be null");
     }
-    for (const XWalkAdc* const adc : adcObjects)
-    {
-        if (adc == nullptr)
-        {
-            XHAL_THROW_INVALID_ARGUMENT("Servo HAT ADC pointers must not be null");
-        }
-    }
+  }
 }
 
 /**
@@ -107,36 +103,32 @@ XWalkServoHatSequence::XWalkServoHatSequence(
  * @throws std::out_of_range
  * If `sampleCount` is outside its supported range.
  */
-void XWalkServoHatSequence::run(uint32 sampleCount)
-{
-    if ((sampleCount == 0U) ||
-        (sampleCount > XHAL_RPI5CAR_SERVO_HAT_MAX_SAMPLES))
-    {
-        XHAL_THROW_OUT_OF_RANGE("Servo HAT sample count must be from 1 to 3600");
-    }
+void XWalkServoHatSequence::run(uint32 sampleCount) {
+  if ((sampleCount == 0U) ||
+      (sampleCount > XHAL_RPI5CAR_SERVO_HAT_MAX_SAMPLES)) {
+    XWALK_HAL_ERROR(XWALK_RANGE,
+                    "Servo HAT sample count must be from 1 to 3600");
+  }
 
-    boardControlObject->resetMcu();
+  boardControlObject->resetMcu();
+  waitCallback(callbackContext, 1'000U);
+
+  for (size channel = 0U; channel < servoObjects.size(); ++channel) {
+    servoCallback(callbackContext, static_cast<uint8>(channel));
+    servoObjects[channel]->setAngle(10.0);
+    waitCallback(callbackContext, 100U);
+    servoObjects[channel]->setAngle(0.0);
+    waitCallback(callbackContext, 100U);
+  }
+
+  for (uint32 sample = 0U; sample < sampleCount; ++sample) {
+    servohatreadings readings{};
+    for (size channel = 0U; channel < adcObjects.size(); ++channel) {
+      readings[channel] = adcObjects[channel]->read();
+    }
+    adcCallback(callbackContext, readings);
     waitCallback(callbackContext, 1'000U);
-
-    for (size channel = 0U; channel < servoObjects.size(); ++channel)
-    {
-        servoCallback(callbackContext, static_cast<uint8>(channel));
-        servoObjects[channel]->setAngle(10.0);
-        waitCallback(callbackContext, 100U);
-        servoObjects[channel]->setAngle(0.0);
-        waitCallback(callbackContext, 100U);
-    }
-
-    for (uint32 sample = 0U; sample < sampleCount; ++sample)
-    {
-        servohatreadings readings{};
-        for (size channel = 0U; channel < adcObjects.size(); ++channel)
-        {
-            readings[channel] = adcObjects[channel]->read();
-        }
-        adcCallback(callbackContext, readings);
-        waitCallback(callbackContext, 1'000U);
-    }
+  }
 }
 
 } /* namespace xwalk::hal::test */

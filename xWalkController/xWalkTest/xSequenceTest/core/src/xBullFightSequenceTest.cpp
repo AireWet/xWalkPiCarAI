@@ -28,11 +28,11 @@ void testBullFight(
     assert(context.state->visionObservationCount == 1U);
     assert(context.motors->left().speed() == 0.0);
     assert(context.motors->right().speed() == 0.0);
-    assert(context.state->outputLines.back() == "stop and exit");
+
     assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
         {"vision.start", "vision.color", "vision.observe", "hal.i2c.write",
             "hal.i2c.write", "hal.i2c.write", "vision.stop",
-            "controller.output"}));
+            }));
 
     context.state->visionColorVisible = false;
     context.state->operationQueryLimit = context.state->operationQueries + 5U;
@@ -46,7 +46,7 @@ void testBullFight(
     const ctrl::int32 stopStatus =
         xwalk::ctrl::XWALK_runControllerCommand(*context.bullFightController, {"bull-fight", "stop"});
     assert(stopStatus == 0);
-    assert(context.state->outputLines.back() == "Bull fight stopped");
+
 }
 
 } /* namespace */

@@ -3,7 +3,8 @@
  * @brief       Implements the MoveExampleHandler command responsibility.
  *
  * @details
- * Keeps this controller responsibility isolated within its functionality-based handler group.
+ * Keeps this controller responsibility isolated within its functionality-based
+ *handler group.
  *
  * @project     xWalk Firmware
  * @module      xWalkHandler
@@ -26,7 +27,7 @@
 
 #include "xController.h"
 
-#include "xHal_Rpi5CarExceptions.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -36,8 +37,7 @@
  * @namespace xwalk::ctrl
  * @brief Contains Controller command interfaces for the xWalk firmware.
  */
-namespace xwalk::ctrl
-{
+namespace xwalk::ctrl {
 
 /******************************************************************************
  * Member function definitions
@@ -48,21 +48,18 @@ namespace xwalk::ctrl
  * @return Zero after completion or cancellation with the motors stopped.
  * @warning Moves both drive motors, steering, and camera servos.
  */
-::ctrl::int32 XWalkController::XWALK_handlerMoveExample()
-{
-    if (moveExampleObject == nullptr)
-    {
-        output("Move example backend unavailable.");
-        return 3;
-    }
-    const ::ctrl::boolean completed = moveExampleObject->run();
-    if (completed == false)
-    {
-        output("Move example incomplete.");
-        return 2;
-    }
-    output("Move example complete!");
-    return 0;
+::ctrl::int32 XWalkController::XWALK_handlerMoveExample() {
+  if (moveExampleObject == nullptr) {
+    XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Move example backend unavailable.");
+    return 3;
+  }
+  const ::ctrl::boolean completed = moveExampleObject->run();
+  if (completed == false) {
+    XWALK_CTRL_WARNING(XWALK_LOGIC, "Move example incomplete.");
+    return 2;
+  }
+  XWALK_CTRL_TRACE_UID0(CTRL .033, "Move example complete!");
+  return 0;
 }
 
 } /* namespace xwalk::ctrl */

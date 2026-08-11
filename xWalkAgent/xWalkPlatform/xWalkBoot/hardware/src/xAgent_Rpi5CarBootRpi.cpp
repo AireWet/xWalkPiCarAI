@@ -29,14 +29,13 @@
 
 #include "xHal_Rpi5CarCommonFunctions.h"
 #include "xHal_Rpi5CarConfigStore.h"
-#include "xHal_Rpi5CarExceptions.h"
 
+#include "xHal_Rpi5CarTrace.h"
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
 
-namespace xwalk::agent
-{
+namespace xwalk::agent {
 
 /******************************************************************************
  * Constructor definitions
@@ -48,45 +47,43 @@ namespace xwalk::agent
  * @param[in] configFilePath Non-empty writable PiCar-X configuration path.
  * @throws std::invalid_argument If the path or mode is invalid.
  */
-XWalkBootRpi::XWalkBootRpi(agent::uint8 mode, agent::stringview configFilePath):
-    selectedMode(mode), configurationFilePath(configFilePath)
-{
-    const agent::boolean configurationFilePathEmpty =
-        static_cast<agent::boolean>(configurationFilePath.empty());
-    if (configurationFilePathEmpty)
-    {
-        XHAL_THROW_INVALID_ARGUMENT("xWalkBoot configuration file path is required");
-    }
-    switch (selectedMode)
-    {
-        case XWALK_BOOT_BASE_REQ:
-        case XWALK_BOOT_DOCTOR_REQ:
-        case XWALK_BOOT_COMPUTER_VISION_REQ:
-        case XWALK_BOOT_FACE_TRACKING_REQ:
-        case XWALK_BOOT_BULL_FIGHT_REQ:
-        case XWALK_BOOT_TREASURE_HUNT_REQ:
-        case XWALK_BOOT_VIDEO_RECORDING_REQ:
-        case XWALK_BOOT_VIDEO_CAR_REQ:
-        case XWALK_BOOT_APP_CONTROL_REQ:
-        case XWALK_BOOT_SOUND_BACKGROUND_MUSIC_REQ:
-        case XWALK_BOOT_LINE_TRACKING_REQ:
-        case XWALK_BOOT_SELF_DRIVE_REQ:
-        case XWALK_BOOT_SOUND_REQ:
-        case XWALK_BOOT_VOICE_CHAT_REQ:
-        case XWALK_BOOT_VOICE_ACTIVE_CAR_REQ:
-        case XWALK_BOOT_VOICE_ACTIVE_CAR_GPT_REQ:
-        case XWALK_BOOT_GPT_CAR_REQ:
-        case XWALK_BOOT_VOICE_CONTROLLED_CAR_REQ:
-        case XWALK_BOOT_VOICE_PROMPT_CAR_REQ:
-        case XWALK_BOOT_STORYTELLING_ROBOT_REQ:
-        case XWALK_BOOT_TEXT_VISION_TALK_REQ:
-        case XWALK_BOOT_ONLINE_LLM_TEST_REQ:
-        case XWALK_BOOT_SERVO_ZEROING_REQ:
-        case XWALK_BOOT_SPI_TRANSFER_REQ:
-            break;
-        default:
-            XHAL_THROW_INVALID_ARGUMENT("xWalkBoot mode is invalid");
-    }
+XWalkBootRpi::XWalkBootRpi(agent::uint8 mode, agent::stringview configFilePath)
+    : selectedMode(mode), configurationFilePath(configFilePath) {
+  const agent::boolean configurationFilePathEmpty =
+      static_cast<agent::boolean>(configurationFilePath.empty());
+  if (configurationFilePathEmpty) {
+    XWALK_RPIAGENT_ERROR(XWALK_INVAL,
+                         "xWalkBoot configuration file path is required");
+  }
+  switch (selectedMode) {
+  case XWALK_BOOT_BASE_REQ:
+  case XWALK_BOOT_DOCTOR_REQ:
+  case XWALK_BOOT_COMPUTER_VISION_REQ:
+  case XWALK_BOOT_FACE_TRACKING_REQ:
+  case XWALK_BOOT_BULL_FIGHT_REQ:
+  case XWALK_BOOT_TREASURE_HUNT_REQ:
+  case XWALK_BOOT_VIDEO_RECORDING_REQ:
+  case XWALK_BOOT_VIDEO_CAR_REQ:
+  case XWALK_BOOT_APP_CONTROL_REQ:
+  case XWALK_BOOT_SOUND_BACKGROUND_MUSIC_REQ:
+  case XWALK_BOOT_LINE_TRACKING_REQ:
+  case XWALK_BOOT_SELF_DRIVE_REQ:
+  case XWALK_BOOT_SOUND_REQ:
+  case XWALK_BOOT_VOICE_CHAT_REQ:
+  case XWALK_BOOT_VOICE_ACTIVE_CAR_REQ:
+  case XWALK_BOOT_VOICE_ACTIVE_CAR_GPT_REQ:
+  case XWALK_BOOT_GPT_CAR_REQ:
+  case XWALK_BOOT_VOICE_CONTROLLED_CAR_REQ:
+  case XWALK_BOOT_VOICE_PROMPT_CAR_REQ:
+  case XWALK_BOOT_STORYTELLING_ROBOT_REQ:
+  case XWALK_BOOT_TEXT_VISION_TALK_REQ:
+  case XWALK_BOOT_ONLINE_LLM_TEST_REQ:
+  case XWALK_BOOT_SERVO_ZEROING_REQ:
+  case XWALK_BOOT_SPI_TRANSFER_REQ:
+    break;
+  default:
+    XWALK_RPIAGENT_ERROR(XWALK_INVAL, "xWalkBoot mode is invalid");
+  }
 }
 
 /******************************************************************************
@@ -99,10 +96,9 @@ XWalkBootRpi::XWalkBootRpi(agent::uint8 mode, agent::stringview configFilePath):
  * @param[in] durationMs Requested duration in milliseconds.
  */
 void XWalkBootRpi::delayMilliseconds(agent::contextpointer context,
-    agent::uint32 durationMs)
-{
-    static_cast<void>(context);
-    hal::common::sleepMilliseconds(durationMs);
+                                     agent::uint32 durationMs) {
+  static_cast<void>(context);
+  hal::common::sleepMilliseconds(durationMs);
 }
 
 /**
@@ -112,22 +108,22 @@ void XWalkBootRpi::delayMilliseconds(agent::contextpointer context,
  * @param[in] angleDegrees Logical angle in degrees.
  */
 void XWalkBootRpi::setServoZeroingAngle(agent::contextpointer context,
-    agent::uint8 servoId, agent::float64 angleDegrees)
-{
-    hal::XWalkServo** servos = static_cast<hal::XWalkServo**>(context);
-    servos[servoId]->setAngle(angleDegrees);
+                                        agent::uint8 servoId,
+                                        agent::float64 angleDegrees) {
+  hal::XWalkServo **servos = static_cast<hal::XWalkServo **>(context);
+  servos[servoId]->setAngle(angleDegrees);
 }
 
 /**
- * @brief Allows provider-local waits while application cancellation is checked externally.
+ * @brief Allows provider-local waits while application cancellation is checked
+ * externally.
  * @param[in] context Optional context; unused.
  * @return Always `true`.
  */
-agent::boolean XWalkBootRpi::continueComputerVision(
-    agent::contextpointer context) noexcept
-{
-    static_cast<void>(context);
-    return true;
+agent::boolean
+XWalkBootRpi::continueComputerVision(agent::contextpointer context) noexcept {
+  static_cast<void>(context);
+  return true;
 }
 
 /**
@@ -136,12 +132,12 @@ agent::boolean XWalkBootRpi::continueComputerVision(
  * @param[in] durationMs Requested duration in milliseconds.
  * @return Always `true` after the requested delay completes.
  */
-agent::boolean XWalkBootRpi::selfDriveDelayMilliseconds(
-    agent::contextpointer context, agent::uint32 durationMs) noexcept
-{
-    static_cast<void>(context);
-    hal::common::sleepMilliseconds(durationMs);
-    return true;
+agent::boolean
+XWalkBootRpi::selfDriveDelayMilliseconds(agent::contextpointer context,
+                                         agent::uint32 durationMs) noexcept {
+  static_cast<void>(context);
+  hal::common::sleepMilliseconds(durationMs);
+  return true;
 }
 
 /**
@@ -150,10 +146,9 @@ agent::boolean XWalkBootRpi::selfDriveDelayMilliseconds(
  * @param[in] durationMs Requested duration; unused by this silent callback.
  */
 void XWalkBootRpi::primeSpeaker(agent::contextpointer context,
-    agent::uint32 durationMs)
-{
-    static_cast<void>(context);
-    static_cast<void>(durationMs);
+                                agent::uint32 durationMs) {
+  static_cast<void>(context);
+  static_cast<void>(durationMs);
 }
 
 /**
@@ -166,36 +161,37 @@ void XWalkBootRpi::primeSpeaker(agent::contextpointer context,
  * @throws std::out_of_range If the value exceeds `maximum`.
  */
 agent::uint32 XWalkBootRpi::parseUnsigned(agent::stringview value,
-    agent::stringview optionName, agent::uint32 maximum)
-{
-    const agent::boolean valueEmpty = static_cast<agent::boolean>(value.empty());
-    if (valueEmpty)
-    {
-        XHAL_THROW_INVALID_ARGUMENT_DETAIL(optionName, " must not be empty");
+                                          agent::stringview optionName,
+                                          agent::uint32 maximum) {
+  const agent::boolean valueEmpty = static_cast<agent::boolean>(value.empty());
+  if (valueEmpty) {
+    const std::string exceptionMessage =
+        std::string(optionName).append(" must not be empty");
+    XWALK_RPIAGENT_ERROR(XWALK_INVAL, exceptionMessage);
+  }
+  agent::uint32 result{};
+  for (const char character : value) {
+    const agent::boolean characterInvalid =
+        static_cast<agent::boolean>((character < '0') || (character > '9'));
+    if (characterInvalid) {
+      const std::string exceptionMessage =
+          std::string(optionName).append(" must contain decimal digits only");
+      XWALK_RPIAGENT_ERROR(XWALK_INVAL, exceptionMessage);
     }
-    agent::uint32 result{};
-    for (const char character : value)
-    {
-        const agent::boolean characterInvalid =
-            static_cast<agent::boolean>((character < '0') || (character > '9'));
-        if (characterInvalid)
-        {
-            XHAL_THROW_INVALID_ARGUMENT_DETAIL(optionName,
-                " must contain decimal digits only");
-        }
-        const agent::uint32 digit = static_cast<agent::uint32>(character - '0');
-        const agent::uint32 maximumPrefix = maximum / 10U;
-        const agent::uint32 maximumDigit = maximum % 10U;
-        const agent::boolean valueExceedsMaximum =
-            static_cast<agent::boolean>((result > maximumPrefix) ||
-                ((result == maximumPrefix) && (digit > maximumDigit)));
-        if (valueExceedsMaximum)
-        {
-            XHAL_THROW_OUT_OF_RANGE_DETAIL(optionName, " exceeds its range");
-        }
-        result = (result * 10U) + digit;
+    const agent::uint32 digit = static_cast<agent::uint32>(character - '0');
+    const agent::uint32 maximumPrefix = maximum / 10U;
+    const agent::uint32 maximumDigit = maximum % 10U;
+    const agent::boolean valueExceedsMaximum = static_cast<agent::boolean>(
+        (result > maximumPrefix) ||
+        ((result == maximumPrefix) && (digit > maximumDigit)));
+    if (valueExceedsMaximum) {
+      const std::string exceptionMessage =
+          std::string(optionName).append(" exceeds its range");
+      XWALK_RPIAGENT_ERROR(XWALK_RANGE, exceptionMessage);
     }
-    return result;
+    result = (result * 10U) + digit;
+  }
+  return result;
 }
 
 /******************************************************************************
@@ -212,36 +208,25 @@ agent::uint32 XWalkBootRpi::parseUnsigned(agent::stringview value,
  * @warning Claims only the physical resources required by the selected mode.
  */
 agent::int32 XWalkBootRpi::run(agent::contextpointer context,
-    bootapplicationcallback callback)
-{
-    begin(callback);
-    if (selectedMode == XWALK_BOOT_DOCTOR_REQ)
-    {
-        return runDoctor(context, callback);
-    }
+                               bootapplicationcallback callback) {
+  begin(callback);
+  if (selectedMode == XWALK_BOOT_DOCTOR_REQ) {
+    return runDoctor(context, callback);
+  }
 
-    hal::XWalkConfigStore config(configurationFilePath);
-    if (selectedMode == XWALK_BOOT_TEXT_VISION_TALK_REQ)
-    {
-        return runTextVisionTalk(context, callback, config);
-    }
-    else if (selectedMode == XWALK_BOOT_ONLINE_LLM_TEST_REQ)
-    {
-        return runOnlineLlmTest(context, callback, config);
-    }
-    else if (selectedMode == XWALK_BOOT_COMPUTER_VISION_REQ)
-    {
-        return runComputerVision(context, callback, config);
-    }
-    else if (selectedMode == XWALK_BOOT_VIDEO_RECORDING_REQ)
-    {
-        return runVideoRecording(context, callback, config);
-    }
-    else if (selectedMode == XWALK_BOOT_SPI_TRANSFER_REQ)
-    {
-        return runSpiTransfer(context, callback, config);
-    }
-    return runVehicle(context, callback, config);
+  hal::XWalkConfigStore config(configurationFilePath);
+  if (selectedMode == XWALK_BOOT_TEXT_VISION_TALK_REQ) {
+    return runTextVisionTalk(context, callback, config);
+  } else if (selectedMode == XWALK_BOOT_ONLINE_LLM_TEST_REQ) {
+    return runOnlineLlmTest(context, callback, config);
+  } else if (selectedMode == XWALK_BOOT_COMPUTER_VISION_REQ) {
+    return runComputerVision(context, callback, config);
+  } else if (selectedMode == XWALK_BOOT_VIDEO_RECORDING_REQ) {
+    return runVideoRecording(context, callback, config);
+  } else if (selectedMode == XWALK_BOOT_SPI_TRANSFER_REQ) {
+    return runSpiTransfer(context, callback, config);
+  }
+  return runVehicle(context, callback, config);
 }
 
 } /* namespace xwalk::agent */

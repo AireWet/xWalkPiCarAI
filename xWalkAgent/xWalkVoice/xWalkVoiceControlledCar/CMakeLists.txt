@@ -22,13 +22,14 @@ if(NOT TARGET xWalkGPT)
         "Voice-controlled-car dependency setting" FORCE)
     set(XWALK_GPT_BUILD_ESPEAK_PROVIDER OFF CACHE BOOL
         "Voice-controlled-car dependency setting" FORCE)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/xWalkGPT
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/layer1/xWalkGPT
         ${CMAKE_CURRENT_BINARY_DIR}/xWalkGPT)
 endif()
 
 add_library(xWalkVoiceControlledCar STATIC
     src/xAgent_Rpi5CarVoiceControlledCar.cpp
     src/xAgent_Rpi5CarVoiceControlledCarLifecycle.cpp)
+target_link_libraries(xWalkVoiceControlledCar PRIVATE xWalkTrace)
 add_library(xWalk::VoiceControlledCar ALIAS xWalkVoiceControlledCar)
 target_include_directories(xWalkVoiceControlledCar PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include)

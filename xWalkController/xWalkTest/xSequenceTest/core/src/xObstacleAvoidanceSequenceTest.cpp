@@ -25,15 +25,14 @@ void testObstacleAvoidance(
 {
     xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
     assert(sequence.run({{"avoid-obstacles", "stop"}}) == 0);
-    assert(context.state->outputLines.back() == "Obstacle avoidance stopped.");
+
     assert(xwalk::ctrl::XWALK_runControllerCommand(*context.controller, {"avoid-obstacles", "start"}) == 2);
-    assert(context.state->outputLines.back() ==
-        "Obstacle avoidance stopped: invalid ultrasonic sample.");
+
     assert(context.motors->left().speed() == 0.0);
     assert(context.motors->right().speed() == 0.0);
     assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"hal.i2c.write", "controller.output", "hal.i2c.write",
-            "controller.output", "hal.i2c.write", "controller.output"}));
+        {"hal.i2c.write", "hal.i2c.write",
+            "hal.i2c.write"}));
 }
 
 } /* namespace */

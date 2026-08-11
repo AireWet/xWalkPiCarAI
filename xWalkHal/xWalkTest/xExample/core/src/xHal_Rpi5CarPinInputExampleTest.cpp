@@ -22,6 +22,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarPinInputExample.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
 
@@ -92,29 +93,17 @@ void testValidation()
     PinInputExampleState state;
     xwalk::hal::example::XWalkPinInputExampleCallbacks incomplete = callbacks();
     incomplete.read = nullptr;
-    XWalkHal::boolean rejectedCallbacks = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         xwalk::hal::example::XWalkPinInputExample invalidExample(
             &state, incomplete);
-    }
-    catch (const XWalkHal::invalidargument&)
-    {
-        rejectedCallbacks = true;
-    }
-    assert(rejectedCallbacks);
+    });
 
     xwalk::hal::example::XWalkPinInputExample example(&state, callbacks());
-    XWalkHal::boolean rejectedCount = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         example.run(0U);
-    }
-    catch (const XWalkHal::outofrange&)
-    {
-        rejectedCount = true;
-    }
-    assert(rejectedCount);
+    });
 }
 
 } /* namespace */

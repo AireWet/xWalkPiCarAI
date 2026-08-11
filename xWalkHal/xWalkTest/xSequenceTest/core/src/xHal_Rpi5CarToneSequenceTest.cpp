@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarToneSequence.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
 
@@ -180,17 +181,11 @@ void runTest()
     assert(melody.back().beatValue ==
         XHAL_RPI5CAR_MUSIC_QUARTER_NOTE + XHAL_RPI5CAR_MUSIC_EIGHTH_NOTE);
 
-    XWalkHal::boolean rejectedCallback = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         xwalk::hal::test::XWalkToneSequence invalidSequence(
             music, nullptr, nullptr);
-    }
-    catch (const XWalkHal::invalidargument&)
-    {
-        rejectedCallback = true;
-    }
-    assert(rejectedCallback);
+    });
 }
 
 } /* namespace */

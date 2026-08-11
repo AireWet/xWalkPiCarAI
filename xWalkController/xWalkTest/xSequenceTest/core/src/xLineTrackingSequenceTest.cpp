@@ -23,25 +23,22 @@ void testLineTracking(xwalk::agent::test::ControllerCommandTestContext& context)
     xwalk::agent::test::XWalkControllerSequence sequence(*context.lineController);
     assert(sequence.run({{"line-track", "start"}, {"line-track", "stop"}}) == 0);
     assert(context.state->operationQueries == 3U);
-    assert(context.state->outputLines.size() == 5U);
-    assert(context.state->outputLines[0U] ==
-        "Line tracking started; press Ctrl+C to stop");
-    assert(context.state->outputLines[1U] ==
-        "gm_val_list: [1000, 1000, 1000], forward");
-    assert(context.state->outputLines[2U] ==
-        "gm_val_list: [1000, 1000, 1000], forward");
-    assert(context.state->outputLines.back() == "Line tracking stopped");
+
+
+
+
+
     assert(context.state->delays.size() == 2U);
     assert(context.state->delays[0U] == 100U);
     assert(context.state->delays[1U] == 100U);
     assert(context.motors->left().speed() == 0.0);
     assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"controller.output", "controller.continue", "hal.i2c.read",
-            "hal.i2c.write", "controller.output", "controller.continue",
-            "hal.i2c.read", "hal.i2c.write", "controller.output",
+        {"controller.continue", "hal.i2c.read",
+            "hal.i2c.write", "controller.continue",
+            "hal.i2c.read", "hal.i2c.write",
             "controller.continue", "hal.i2c.write", "controller.delay",
-            "controller.output", "hal.i2c.write", "controller.delay",
-            "controller.output"}));
+            "hal.i2c.write", "controller.delay",
+            }));
 }
 }
 

@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarTtsPico2WaveExample.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
 
@@ -82,16 +83,10 @@ void testRequest()
 /** @brief Verifies rejection of a missing speech operation. */
 void testValidation()
 {
-    XWalkHal::boolean rejected = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         xwalk::hal::example::XWalkTtsPico2WaveExample invalid(nullptr, nullptr);
-    }
-    catch (const XWalkHal::invalidargument&)
-    {
-        rejected = true;
-    }
-    assert(rejected);
+    });
 }
 
 } /* namespace */

@@ -84,11 +84,9 @@ int main(int argumentCount, char* argumentValues[])
     }
 #endif
 
-    try
-    {
-        xwalk::hal::test::TestRunner runner(
-            profile, executableDirectory / "xWalkHal",
-            runtimeConfigurationPath);
+    xwalk::hal::test::TestRunner runner(
+        profile, executableDirectory / "xWalkHal",
+        runtimeConfigurationPath);
         runner.registerTests();
         const xwalk::hal::boolean standardFilterSelected =
             runner.hasStandardFilter(argumentCount, argumentValues);
@@ -119,12 +117,5 @@ int main(int argumentCount, char* argumentValues[])
         }
 
         runner.applyFilter(configuration, standardFilterSelected);
-        return RUN_ALL_TESTS();
-    }
-    catch (const xwalk::hal::standardexception& exception)
-    {
-        std::cerr << "xGoogleTest runtime configuration error: "
-                  << exception.what() << '\n';
-        return EXIT_FAILURE;
-    }
+    return RUN_ALL_TESTS();
 }

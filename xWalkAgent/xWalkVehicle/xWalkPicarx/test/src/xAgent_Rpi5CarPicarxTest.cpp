@@ -188,6 +188,9 @@ void testPicarxBehavior(agent::stringview configPath)
 
     xwalk::agent::XWalkPicarx picarx(motors, directionServo, panServo, tiltServo,
         grayscale, ultrasonic, config);
+    assert(picarx.isInitialized() == false);
+    assert(picarx.initialize());
+    assert(picarx.initialize() == false);
     assert(picarx.maximumMotorOutputPercent() == 100.0);
     picarx.setDirectionServoAngle(30.0);
     assert(picarx.directionAngleDegrees() == 30.0);
@@ -232,6 +235,7 @@ void testPicarxBehavior(agent::stringview configPath)
 
     xwalk::agent::XWalkPicarx reloadedPicarx(motors, directionServo, panServo,
         tiltServo, grayscale, ultrasonic, config);
+    static_cast<void>(reloadedPicarx.initialize());
     reloadedPicarx.setPower(20.0);
     assert(motors.left().speed() == 50.0);
     assert(motors.right().speed() == 60.0);
@@ -249,6 +253,41 @@ void testPicarxBehavior(agent::stringview configPath)
         xwalk::agent::XWalkPicarx invalidPicarx(motors, directionServo, panServo,
             tiltServo, grayscale, ultrasonic, config);
     });
+    config.set("picarx_motor_speed_calibration", "0");
+    struct InvalidConfiguration
+    {
+        agent::cstring key;
+        agent::cstring invalidValue;
+        agent::cstring validValue;
+    };
+    const agent::fixedarray<InvalidConfiguration, 16U> invalidConfigurations{{
+        {"picarx_dir_servo", "nan", "5"},
+        {"picarx_max_motor_output_percent", "101", "100"},
+        {"picarx_calibration_verified", "yes", "true"},
+        {"picarx_apply_persisted_servo_positions", "yes", "false"},
+        {"picarx_dir_motor", "1,1", "[1, 1]"},
+        {"picarx_dir_motor", "[0,1]", "[1, 1]"},
+        {"picarx_dir_motor", "[1 1]", "[1, 1]"},
+        {"picarx_dir_motor", "[1,1]x", "[1, 1]"},
+        {"line_reference", "1,2,3", "[900, 1000, 1100]"},
+        {"line_reference", "[1.5,2,3]", "[900, 1000, 1100]"},
+        {"line_reference", "[1,2]", "[900, 1000, 1100]"},
+        {"line_reference", "[1,2,3,4]", "[900, 1000, 1100]"},
+        {"line_reference", "[1, x, 3]", "[900, 1000, 1100]"},
+        {"cliff_reference", "[1,2,2147483648]", "[500, 500, 500]"},
+        {"cliff_reference", "[1,2,-2147483649]", "[500, 500, 500]"},
+        {"cliff_reference", "[1,2,3] trailing", "[500, 500, 500]"}
+    }};
+    for (const InvalidConfiguration& invalidConfiguration : invalidConfigurations)
+    {
+        config.set(invalidConfiguration.key, invalidConfiguration.invalidValue);
+        xwalk::hal::test::expectFailure([&]()
+        {
+            xwalk::agent::XWalkPicarx invalidPicarx(motors, directionServo,
+                panServo, tiltServo, grayscale, ultrasonic, config);
+        });
+        config.set(invalidConfiguration.key, invalidConfiguration.validValue);
+    }
 }
 
 /**
@@ -290,6 +329,7 @@ void testFirstRunOutputLimit(agent::stringview configPath)
     config.set("picarx_max_motor_output_percent", "100");
     xwalk::agent::XWalkPicarx picarx(motors, directionServo, panServo, tiltServo,
         grayscale, ultrasonic, config);
+    static_cast<void>(picarx.initialize());
 
     assert(!picarx.calibrationVerified());
     assert(picarx.maximumMotorOutputPercent() == 20.0);

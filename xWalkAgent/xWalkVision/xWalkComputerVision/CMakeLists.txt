@@ -23,6 +23,7 @@ endif()
 add_library(xWalkComputerVision STATIC
     src/xAgent_Rpi5CarComputerVision.cpp
     src/xAgent_Rpi5CarComputerVisionLifecycle.cpp)
+target_link_libraries(xWalkComputerVision PRIVATE xWalkTrace)
 add_library(xWalk::ComputerVision ALIAS xWalkComputerVision)
 
 target_include_directories(xWalkComputerVision PUBLIC
@@ -39,6 +40,7 @@ if(XWALK_COMPUTER_VISION_BUILD_OPENCV_BACKEND)
     find_package(OpenCV 4 REQUIRED COMPONENTS core imgcodecs imgproc objdetect videoio)
     add_library(xWalkComputerVisionOpenCv STATIC
         hardware/src/xAgent_Rpi5CarComputerVisionOpenCv.cpp)
+target_link_libraries(xWalkComputerVisionOpenCv PRIVATE xWalkTrace)
     add_library(xWalk::ComputerVisionOpenCv ALIAS xWalkComputerVisionOpenCv)
     target_include_directories(xWalkComputerVisionOpenCv
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/hardware/include)
@@ -51,6 +53,21 @@ if(XWALK_COMPUTER_VISION_BUILD_OPENCV_BACKEND)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         target_compile_options(xWalkComputerVisionOpenCv PRIVATE
             -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
+    endif()
+
+    if(XWALK_COMPUTER_VISION_BUILD_HOST_TESTS)
+        find_package(GTest REQUIRED)
+        add_executable(xWalkComputerVisionOpenCvHostTest
+            hardware/test/src/xAgent_Rpi5CarComputerVisionOpenCvTest.cpp
+            hardware/test/src/xAgent_Rpi5CarComputerVisionOpenCvTestSupport.cpp)
+        target_include_directories(xWalkComputerVisionOpenCvHostTest PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/hardware/test/include)
+        target_link_libraries(xWalkComputerVisionOpenCvHostTest PRIVATE
+            xWalkComputerVisionOpenCv xWalkTrace GTest::gtest_main)
+        add_test(NAME xWalkComputerVisionOpenCvHostTest
+            COMMAND xWalkComputerVisionOpenCvHostTest)
+        set_tests_properties(xWalkComputerVisionOpenCvHostTest PROPERTIES
+            LABELS "host;camera;recorded-media")
     endif()
 endif()
 

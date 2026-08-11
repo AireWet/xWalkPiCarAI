@@ -61,6 +61,10 @@ agent::int32 XWalkBootRpi::runServoZeroing(agent::contextpointer context,
     hal::XWalkServo* servos[]{&servo0, &servo1, &servo2, &servo3,
         &servo4, &servo5, &servo6, &servo7, &servo8, &servo9,
         &servo10, &servo11};
+    for (hal::XWalkServo* const servo : servos)
+    {
+        static_cast<void>(servo->initialize());
+    }
     const XWalkServoZeroingCallbacks zeroingCallbacks{
         &setServoZeroingAngle, &delayMilliseconds, &continueComputerVision};
     XWalkServoZeroing servoZeroing(servos, zeroingCallbacks);

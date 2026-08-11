@@ -42,7 +42,8 @@ namespace
         return false;
     }
     const ::ctrl::stringview tag = uid.substr(0U, separator);
-    if ((tag != "RPI") && (tag != "CTRL"))
+    if ((tag != "RPI") && (tag != "CTRL") &&
+        (tag != "RPIAGENT") && (tag != "LIB"))
     {
         return false;
     }
@@ -131,6 +132,25 @@ namespace xwalk::ctrl
             break;
         }
         const ::ctrl::string option = commandArguments[0U];
+        const ::ctrl::boolean flagOption =
+            (option == "--validate-config") ||
+            (option == "--print-effective-config") ||
+            (option == "--diagnose") || (option == "--no-hardware");
+        if (flagOption)
+        {
+            applicationArguments.validateConfiguration =
+                applicationArguments.validateConfiguration ||
+                (option == "--validate-config");
+            applicationArguments.printEffectiveConfiguration =
+                applicationArguments.printEffectiveConfiguration ||
+                (option == "--print-effective-config");
+            applicationArguments.diagnose = applicationArguments.diagnose ||
+                (option == "--diagnose");
+            applicationArguments.noHardware = applicationArguments.noHardware ||
+                (option == "--no-hardware");
+            commandArguments.erase(commandArguments.begin());
+            continue;
+        }
         const ::ctrl::fixedarray<::ctrl::stringview, 5U> optionNames{{
             "--deployment-config", "--resource-directory",
             "--trace", "--trace-enable", "--trace-disable"}};

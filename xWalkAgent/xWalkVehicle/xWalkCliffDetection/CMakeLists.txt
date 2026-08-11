@@ -17,6 +17,7 @@ endif()
 add_library(xWalkCliffDetection STATIC
     src/xAgent_Rpi5CarCliffDetection.cpp
     src/xAgent_Rpi5CarCliffDetectionLifecycle.cpp)
+target_link_libraries(xWalkCliffDetection PRIVATE xWalkTrace)
 add_library(xWalk::CliffDetection ALIAS xWalkCliffDetection)
 
 target_include_directories(xWalkCliffDetection PUBLIC

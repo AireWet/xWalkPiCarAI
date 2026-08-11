@@ -19,31 +19,47 @@
  * @namespace xwalk::hal
  * @brief Contains hardware abstraction components for the xWalk firmware.
  */
-namespace xwalk::hal
-{
+namespace xwalk::hal {
+
+namespace {
+
+/** @brief Removes formatter-inserted whitespace from a stringized UID token. */
+string canonicalTraceUid(stringview uid) {
+  string canonicalUid;
+  canonicalUid.reserve(uid.size());
+  for (const char character : uid) {
+    const boolean whitespace = (character == ' ') || (character == '\t') ||
+                               (character == '\n') || (character == '\r') ||
+                               (character == '\f') || (character == '\v');
+    if (whitespace == false) {
+      canonicalUid.push_back(character);
+    }
+  }
+  return canonicalUid;
+}
+
+} /* namespace */
 
 /**
  * @brief Returns the stable lowercase name of one compatibility severity.
  * @param[in] level Valid critical-through-debug severity.
  * @return Static non-owning severity name.
  */
-stringview XWalkTrace::nameForLevel(XWalkTraceLevel level) noexcept
-{
-    switch (level)
-    {
-        case XWalkTraceLevel::Critical:
-            return XHAL_RPI5CAR_TRACE_LEVEL_CRITICAL_NAME;
-        case XWalkTraceLevel::Error:
-            return XHAL_RPI5CAR_TRACE_LEVEL_ERROR_NAME;
-        case XWalkTraceLevel::Warning:
-            return XHAL_RPI5CAR_TRACE_LEVEL_WARNING_NAME;
-        case XWalkTraceLevel::Info:
-            return XHAL_RPI5CAR_TRACE_LEVEL_INFO_NAME;
-        case XWalkTraceLevel::Debug:
-            return XHAL_RPI5CAR_TRACE_LEVEL_DEBUG_NAME;
-        default:
-            return XHAL_RPI5CAR_TRACE_LEVEL_WARNING_NAME;
-    }
+stringview XWalkTrace::nameForLevel(XWalkTraceLevel level) noexcept {
+  switch (level) {
+  case XWalkTraceLevel::Critical:
+    return XHAL_RPI5CAR_TRACE_LEVEL_CRITICAL_NAME;
+  case XWalkTraceLevel::Error:
+    return XHAL_RPI5CAR_TRACE_LEVEL_ERROR_NAME;
+  case XWalkTraceLevel::Warning:
+    return XHAL_RPI5CAR_TRACE_LEVEL_WARNING_NAME;
+  case XWalkTraceLevel::Info:
+    return XHAL_RPI5CAR_TRACE_LEVEL_INFO_NAME;
+  case XWalkTraceLevel::Debug:
+    return XHAL_RPI5CAR_TRACE_LEVEL_DEBUG_NAME;
+  default:
+    return XHAL_RPI5CAR_TRACE_LEVEL_WARNING_NAME;
+  }
 }
 
 /**
@@ -51,137 +67,93 @@ stringview XWalkTrace::nameForLevel(XWalkTraceLevel level) noexcept
  * @param[in] level Severity being considered.
  * @return `true` when its numeric value is no greater than the threshold.
  */
-boolean XWalkTrace::accepts(XWalkTraceLevel level) const noexcept
-{
-    return static_cast<uint8>(level) <= static_cast<uint8>(levelValue);
+boolean XWalkTrace::accepts(XWalkTraceLevel level) const noexcept {
+  return static_cast<uint8>(level) <= static_cast<uint8>(levelValue);
 }
 
 /**
- * @brief Tests process-wide global, module, and UID configuration without formatting.
- * @param[in] priority Tagged priority from zero through three.
+ * @brief Tests process-wide global, module, and UID configuration without
+ * formatting.
  * @param[in] uid Complete tagged-trace identifier.
  * @return `true` only when the known UID resolves to enabled.
  */
-boolean XWalkTrace::globalTraceIsEnabled(uint8 priority, stringview uid)
-{
-    XWalkTrace& instance = globalInstance();
-    mutexlock lock(instance.traceMutex);
-    const boolean priorityValid = priority < XHAL_RPI5CAR_TRACE_PRIORITY_COUNT;
-    if (priorityValid == false)
-    {
-        return false;
-    }
-
-    const string uidValue(uid);
-    const auto source = instance.traceSourceLocations.find(uidValue);
-    if (source == instance.traceSourceLocations.end())
-    {
-        return false;
-    }
-    const auto trace = instance.traceEnabledValues.find(uidValue);
-    if (trace != instance.traceEnabledValues.end())
-    {
-        return trace->second;
-    }
-    const string moduleName(uid.substr(0U, uid.find('.')));
-    const auto module = instance.moduleEnabledValues.find(moduleName);
-    if (module != instance.moduleEnabledValues.end())
-    {
-        return module->second;
-    }
-    return instance.globalTraceEnabledValue;
+boolean XWalkTrace::globalTraceIsEnabled(stringview uid) {
+  XWalkTrace &instance = globalInstance();
+  mutexlock lock(instance.traceMutex);
+  return instance.traceIsEnabled(canonicalTraceUid(uid));
 }
 
 /**
  * @brief Rechecks and writes one tagged record through this instance.
- * @param[in] priority Tagged priority from zero through three.
- * @param[in] component `HAL` or `CTRL` component label.
+ * @param[in] component Registered component label.
  * @param[in] uid Complete scanner-validated identifier.
- * @param[in] sourceFile Compiler-provided caller source path.
- * @param[in] sourceLine One-based public macro invocation line.
  * @param[in] message Fully formatted message.
  */
-void XWalkTrace::writeTagged(uint8 priority, stringview component, stringview uid,
-    stringview sourceFile, uint32 sourceLine, stringview message)
-{
-    {
-        mutexlock lock(traceMutex);
-        const boolean priorityValid = priority < XHAL_RPI5CAR_TRACE_PRIORITY_COUNT;
-        if (priorityValid == false)
-        {
-            return;
-        }
-
-        const string uidValue(uid);
-        const auto source = traceSourceLocations.find(uidValue);
-        boolean recordEnabled = source != traceSourceLocations.end();
-        const auto trace = traceEnabledValues.find(uidValue);
-        if (recordEnabled && (trace != traceEnabledValues.end()))
-        {
-            recordEnabled = trace->second;
-        }
-        else if (recordEnabled)
-        {
-            const string moduleName(uid.substr(0U, uid.find('.')));
-            const auto module = moduleEnabledValues.find(moduleName);
-            recordEnabled = module != moduleEnabledValues.end() ?
-                module->second : globalTraceEnabledValue;
-        }
-        if (recordEnabled == false)
-        {
-            return;
-        }
-
-        const string priorityCategory = string("P") + std::to_string(priority);
-        const auto configuredLocation = traceSourceLocations.find(string(uid));
-        const boolean configuredLocationKnown =
-            configuredLocation != traceSourceLocations.end();
-        const stringview recordSourceFile = configuredLocationKnown ?
-            stringview(configuredLocation->second.sourceFile) : sourceFile;
-        const uint32 recordSourceLine = configuredLocationKnown ?
-            configuredLocation->second.sourceLine : sourceLine;
-        writeRecordLocked(component, priorityCategory, uid, recordSourceFile,
-            recordSourceLine, message);
+void XWalkTrace::writeTagged(stringview component, stringview uid,
+                             stringview message) {
+  const string canonicalUid = canonicalTraceUid(uid);
+  uint8 priority{};
+  {
+    mutexlock lock(traceMutex);
+    const boolean recordEnabled = traceIsEnabled(canonicalUid);
+    if (recordEnabled == false) {
+      return;
     }
-    const XWalkTraceLevel callbackLevel = static_cast<XWalkTraceLevel>(priority);
-    outputCallback(outputContextPointer, callbackLevel, message);
+
+    const auto configuredLocation = traceSourceLocations.find(canonicalUid);
+    const boolean configuredLocationKnown =
+        configuredLocation != traceSourceLocations.end();
+    if (configuredLocationKnown == false) {
+      return;
+    }
+    priority = configuredLocation->second.priority;
+    const string priorityCategory = string("P") + std::to_string(priority);
+    const stringview recordSourceFile = configuredLocation->second.sourceFile;
+    const uint32 recordSourceLine = configuredLocation->second.sourceLine;
+    writeRecordLocked(component, priorityCategory, canonicalUid,
+                      recordSourceFile, recordSourceLine, message);
+  }
+  const XWalkTraceLevel callbackLevel = static_cast<XWalkTraceLevel>(priority);
+  outputCallback(outputContextPointer, callbackLevel, message);
 }
 
 /**
  * @brief Writes one unfiltered warning, error, assertion, or verbose record.
- * @param[in] component `HAL`, `CTRL`, or `TRACE` component label.
+ * @param[in] component Registered component or `TRACE` label.
  * @param[in] category `WARNING`, `ERROR`, `ASSERT`, or `VERBOSE`.
+ * @param[in] selector Short error or operating-system signal selector name.
  * @param[in] sourceFile Compiler-provided caller source path.
  * @param[in] sourceLine One-based public macro invocation line.
  * @param[in] message Fully formatted message or assertion signal text.
  */
 void XWalkTrace::writeCategory(stringview component, stringview category,
-    stringview sourceFile, uint32 sourceLine, stringview message)
-{
-    {
-        mutexlock lock(traceMutex);
-        writeRecordLocked(component, category, "", sourceFile, sourceLine, message);
-    }
-    const boolean warningCategory = category == "WARNING";
-    const XWalkTraceLevel callbackLevel = warningCategory ?
-        XWalkTraceLevel::Warning : XWalkTraceLevel::Error;
-    outputCallback(outputContextPointer, callbackLevel, message);
+                               stringview selector, stringview sourceFile,
+                               uint32 sourceLine, stringview message) {
+  {
+    mutexlock lock(traceMutex);
+    writeRecordLocked(component, category, selector, sourceFile, sourceLine,
+                      message);
+  }
+  const boolean warningCategory = category == "WARNING";
+  const XWalkTraceLevel callbackLevel =
+      warningCategory ? XWalkTraceLevel::Warning : XWalkTraceLevel::Error;
+  outputCallback(outputContextPointer, callbackLevel, message);
 }
 
 /**
  * @brief Converts and writes one numeric process-wide assertion signal.
- * @param[in] component `HAL` or `CTRL` component label.
+ * @param[in] component Registered component label.
  * @param[in] signalNumber Application-defined numeric assertion signal.
  * @param[in] sourceFile Compiler-provided caller source path.
  * @param[in] sourceLine One-based public macro invocation line.
  */
 void XWalkTrace::globalWriteAssertion(stringview component, int32 signalNumber,
-    stringview sourceFile, uint32 sourceLine)
-{
-    std::ostringstream message;
-    message << "signal=" << signalNumber;
-    globalInstance().writeCategory(component, "ASSERT", sourceFile, sourceLine,
-        message.str());
+                                      stringview sourceFile,
+                                      uint32 sourceLine) {
+  std::ostringstream message;
+  message << "signal=" << signalNumber;
+  globalInstance().writeCategory(component, "ASSERT", "", sourceFile,
+                                 sourceLine, message.str());
 }
 
 /**
@@ -189,60 +161,59 @@ void XWalkTrace::globalWriteAssertion(stringview component, int32 signalNumber,
  * @param[in] level Compatibility severity assigned to the record.
  * @param[in] message Non-owning message valid through the callback invocation.
  */
-void XWalkTrace::write(XWalkTraceLevel level, stringview message) const
-{
-    {
-        mutexlock lock(traceMutex);
-        const boolean levelAccepted = accepts(level);
-        if (levelAccepted == false)
-        {
-            return;
-        }
-        string category(nameForLevel(level));
-        for (char& character : category)
-        {
-            const boolean lowercaseLetter = (character >= 'a') && (character <= 'z');
-            if (lowercaseLetter)
-            {
-                character = static_cast<char>(character - ('a' - 'A'));
-            }
-        }
-        writeRecordLocked("LEGACY", category, "", "legacy", 0U, message);
+void XWalkTrace::write(XWalkTraceLevel level, stringview message) const {
+  {
+    mutexlock lock(traceMutex);
+    const boolean levelAccepted = accepts(level);
+    if (levelAccepted == false) {
+      return;
     }
-    outputCallback(outputContextPointer, level, message);
+    string category(nameForLevel(level));
+    for (char &character : category) {
+      const boolean lowercaseLetter = (character >= 'a') && (character <= 'z');
+      if (lowercaseLetter) {
+        character = static_cast<char>(character - ('a' - 'A'));
+      }
+    }
+    writeRecordLocked("LEGACY", category, "", "legacy", 0U, message);
+  }
+  outputCallback(outputContextPointer, level, message);
 }
 
 /**
  * @brief Emits the compatibility threshold-change message at debug severity.
  * @post The message remains filtered unless debug is accepted.
  */
-void XWalkTrace::reportLevelChange() const
-{
-    switch (levelValue)
-    {
-        case XWalkTraceLevel::Critical:
-            debug(XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_PREFIX
-                XHAL_RPI5CAR_TRACE_LEVEL_CRITICAL_NAME XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_SUFFIX);
-            break;
-        case XWalkTraceLevel::Error:
-            debug(XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_PREFIX
-                XHAL_RPI5CAR_TRACE_LEVEL_ERROR_NAME XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_SUFFIX);
-            break;
-        case XWalkTraceLevel::Warning:
-            debug(XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_PREFIX
-                XHAL_RPI5CAR_TRACE_LEVEL_WARNING_NAME XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_SUFFIX);
-            break;
-        case XWalkTraceLevel::Info:
-            debug(XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_PREFIX
-                XHAL_RPI5CAR_TRACE_LEVEL_INFO_NAME XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_SUFFIX);
-            break;
-        case XWalkTraceLevel::Debug:
-            debug(XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_PREFIX
-                XHAL_RPI5CAR_TRACE_LEVEL_DEBUG_NAME XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_SUFFIX);
-            break;
-        default:
-            break;
-    }
+void XWalkTrace::reportLevelChange() const {
+  switch (levelValue) {
+  case XWalkTraceLevel::Critical:
+    debug(XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_PREFIX
+              XHAL_RPI5CAR_TRACE_LEVEL_CRITICAL_NAME
+                  XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_SUFFIX);
+    break;
+  case XWalkTraceLevel::Error:
+    debug(XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_PREFIX
+              XHAL_RPI5CAR_TRACE_LEVEL_ERROR_NAME
+                  XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_SUFFIX);
+    break;
+  case XWalkTraceLevel::Warning:
+    debug(XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_PREFIX
+              XHAL_RPI5CAR_TRACE_LEVEL_WARNING_NAME
+                  XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_SUFFIX);
+    break;
+  case XWalkTraceLevel::Info:
+    debug(XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_PREFIX
+              XHAL_RPI5CAR_TRACE_LEVEL_INFO_NAME
+                  XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_SUFFIX);
+    break;
+  case XWalkTraceLevel::Debug:
+    debug(XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_PREFIX
+              XHAL_RPI5CAR_TRACE_LEVEL_DEBUG_NAME
+                  XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_SUFFIX);
+    break;
+  default:
+    break;
+  }
 }
 
 /**
@@ -250,13 +221,12 @@ void XWalkTrace::reportLevelChange() const
  * @param[in] level Valid critical-through-debug severity.
  * @throws std::out_of_range If `level` has an unsupported underlying value.
  */
-void XWalkTrace::setLevel(XWalkTraceLevel level)
-{
-    {
-        mutexlock lock(traceMutex);
-        levelValue = validateLevel(level);
-    }
-    reportLevelChange();
+void XWalkTrace::setLevel(XWalkTraceLevel level) {
+  {
+    mutexlock lock(traceMutex);
+    levelValue = validateLevel(level);
+  }
+  reportLevelChange();
 }
 
 /**
@@ -264,82 +234,69 @@ void XWalkTrace::setLevel(XWalkTraceLevel level)
  * @param[in] level Severity number in the inclusive range zero through four.
  * @throws std::out_of_range If `level` exceeds four.
  */
-void XWalkTrace::setLevel(uint8 level)
-{
-    setLevel(parseLevel(level));
-}
+void XWalkTrace::setLevel(uint8 level) { setLevel(parseLevel(level)); }
 
 /**
  * @brief Selects one lowercase compatibility threshold name.
  * @param[in] levelName Supported critical-through-debug name.
  * @throws std::invalid_argument If `levelName` is unsupported.
  */
-void XWalkTrace::setLevel(stringview levelName)
-{
-    setLevel(parseLevel(levelName));
+void XWalkTrace::setLevel(stringview levelName) {
+  setLevel(parseLevel(levelName));
 }
 
 /**
  * @brief Returns the configured typed compatibility threshold.
  * @return Current critical-through-debug threshold.
  */
-XWalkTraceLevel XWalkTrace::level() const noexcept
-{
-    return levelValue;
-}
+XWalkTraceLevel XWalkTrace::level() const noexcept { return levelValue; }
 
 /**
  * @brief Returns the configured lowercase compatibility threshold name.
  * @return Static non-owning current threshold name.
  */
-stringview XWalkTrace::levelName() const noexcept
-{
-    return nameForLevel(levelValue);
+stringview XWalkTrace::levelName() const noexcept {
+  return nameForLevel(levelValue);
 }
 
 /**
  * @brief Emits one compatibility critical record when accepted.
  * @param[in] message Non-owning text consumed synchronously.
  */
-void XWalkTrace::critical(stringview message) const
-{
-    write(XWalkTraceLevel::Critical, message);
+void XWalkTrace::critical(stringview message) const {
+  write(XWalkTraceLevel::Critical, message);
 }
 
 /**
  * @brief Emits one compatibility error record when accepted.
  * @param[in] message Non-owning text consumed synchronously.
  */
-void XWalkTrace::error(stringview message) const
-{
-    write(XWalkTraceLevel::Error, message);
+void XWalkTrace::error(stringview message) const {
+  write(XWalkTraceLevel::Error, message);
 }
 
 /**
  * @brief Emits one compatibility warning record when accepted.
  * @param[in] message Non-owning text consumed synchronously.
  */
-void XWalkTrace::warning(stringview message) const
-{
-    write(XWalkTraceLevel::Warning, message);
+void XWalkTrace::warning(stringview message) const {
+  write(XWalkTraceLevel::Warning, message);
 }
 
 /**
  * @brief Emits one compatibility informational record when accepted.
  * @param[in] message Non-owning text consumed synchronously.
  */
-void XWalkTrace::info(stringview message) const
-{
-    write(XWalkTraceLevel::Info, message);
+void XWalkTrace::info(stringview message) const {
+  write(XWalkTraceLevel::Info, message);
 }
 
 /**
  * @brief Emits one compatibility debug record when accepted.
  * @param[in] message Non-owning text consumed synchronously.
  */
-void XWalkTrace::debug(stringview message) const
-{
-    write(XWalkTraceLevel::Debug, message);
+void XWalkTrace::debug(stringview message) const {
+  write(XWalkTraceLevel::Debug, message);
 }
 
 } /* namespace xwalk::hal */

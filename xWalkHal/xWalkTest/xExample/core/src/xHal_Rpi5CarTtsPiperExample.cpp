@@ -27,6 +27,7 @@
 
 #include "xHal_Rpi5CarTtsPiperExample.h"
 
+#include "xHal_Rpi5CarTrace.h"
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -35,8 +36,7 @@
  * @namespace xwalk::hal::example
  * @brief Contains host-testable ports of upstream Robot HAT examples.
  */
-namespace xwalk::hal::example
-{
+namespace xwalk::hal::example {
 
 /******************************************************************************
  * Constructor definitions
@@ -48,15 +48,12 @@ namespace xwalk::hal::example
  * @param[in] speak Non-null operation accepting model and text views.
  * @throws std::invalid_argument If `speak` is null.
  */
-XWalkTtsPiperExample::XWalkTtsPiperExample(
-    contextpointer context, ttspiperspeakcallback speak):
-    callbackContext(context), speakCallback(speak)
-{
-    if (speakCallback == nullptr)
-    {
-        XHAL_THROW_INVALID_ARGUMENT(
-            "Piper example requires a speech callback");
-    }
+XWalkTtsPiperExample::XWalkTtsPiperExample(contextpointer context,
+                                           ttspiperspeakcallback speak)
+    : callbackContext(context), speakCallback(speak) {
+  if (speakCallback == nullptr) {
+    XWALK_HAL_ERROR(XWALK_INVAL, "Piper example requires a speech callback");
+  }
 }
 
 /******************************************************************************
@@ -66,10 +63,9 @@ XWalkTtsPiperExample::XWalkTtsPiperExample(
 /**
  * @brief Delivers the exact source voice model and message once.
  */
-void XWalkTtsPiperExample::run()
-{
-    speakCallback(callbackContext, XWALK_TTS_PIPER_EXAMPLE_MODEL,
-        XWALK_TTS_PIPER_EXAMPLE_MESSAGE);
+void XWalkTtsPiperExample::run() {
+  speakCallback(callbackContext, XWALK_TTS_PIPER_EXAMPLE_MODEL,
+                XWALK_TTS_PIPER_EXAMPLE_MESSAGE);
 }
 
 } /* namespace xwalk::hal::example */

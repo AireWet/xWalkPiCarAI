@@ -23,6 +23,7 @@
 
 #include "xHal_Rpi5CarPinInputExample.h"
 
+#include "xHal_Rpi5CarTrace.h"
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -31,8 +32,7 @@
  * @namespace xwalk::hal::example
  * @brief Contains host-testable behavior ported from upstream examples.
  */
-namespace xwalk::hal::example
-{
+namespace xwalk::hal::example {
 
 /**
  * @brief Binds and validates all pin-input operations.
@@ -40,16 +40,15 @@ namespace xwalk::hal::example
  * @param[in] exampleCallbacks Complete operation table.
  * @throws std::invalid_argument If any callback is null.
  */
-XWalkPinInputExample::XWalkPinInputExample(contextpointer context,
-    const XWalkPinInputExampleCallbacks& exampleCallbacks):
-    callbackContext(context), callbacks(exampleCallbacks)
-{
-    if ((callbacks.read == nullptr) || (callbacks.wait == nullptr) ||
-        (callbacks.report == nullptr))
-    {
-        XHAL_THROW_INVALID_ARGUMENT(
-            "Pin-input example requires a complete callback table");
-    }
+XWalkPinInputExample::XWalkPinInputExample(
+    contextpointer context,
+    const XWalkPinInputExampleCallbacks &exampleCallbacks)
+    : callbackContext(context), callbacks(exampleCallbacks) {
+  if ((callbacks.read == nullptr) || (callbacks.wait == nullptr) ||
+      (callbacks.report == nullptr)) {
+    XWALK_HAL_ERROR(XWALK_INVAL,
+                    "Pin-input example requires a complete callback table");
+  }
 }
 
 /**
@@ -57,19 +56,16 @@ XWalkPinInputExample::XWalkPinInputExample(contextpointer context,
  * @param[in] sampleCount Sample count from one through 36,000.
  * @throws std::out_of_range If `sampleCount` is outside its range.
  */
-void XWalkPinInputExample::run(uint32 sampleCount)
-{
-    if ((sampleCount == 0U) ||
-        (sampleCount > XHAL_RPI5CAR_PIN_INPUT_EXAMPLE_MAXIMUM_SAMPLES))
-    {
-        XHAL_THROW_OUT_OF_RANGE("Pin-input sample count is outside its range");
-    }
+void XWalkPinInputExample::run(uint32 sampleCount) {
+  if ((sampleCount == 0U) ||
+      (sampleCount > XHAL_RPI5CAR_PIN_INPUT_EXAMPLE_MAXIMUM_SAMPLES)) {
+    XWALK_HAL_ERROR(XWALK_RANGE, "Pin-input sample count is outside its range");
+  }
 
-    for (uint32 sampleIndex = 0U; sampleIndex < sampleCount; ++sampleIndex)
-    {
-        callbacks.report(callbackContext, callbacks.read(callbackContext));
-        callbacks.wait(callbackContext, 100U);
-    }
+  for (uint32 sampleIndex = 0U; sampleIndex < sampleCount; ++sampleIndex) {
+    callbacks.report(callbackContext, callbacks.read(callbackContext));
+    callbacks.wait(callbackContext, 100U);
+  }
 }
 
 } /* namespace xwalk::hal::example */

@@ -9,6 +9,35 @@ All aggregate build flags default to `OFF`. Host and Raspberry Pi verification
 must use separate build directories because they enable different backends and
 tests.
 
+## Architectural groups
+
+The HAL modules are organized by responsibility while retaining their existing
+library targets, namespaces, APIs, tests, and trace identifiers:
+
+```text
+xWalkHal/
+├── interface/  low-level platform interfaces and common services
+├── device/     hardware device abstractions
+├── sensor/     sensor and actuator components
+└── layer1/     higher-level robot services and features
+```
+
+Dependencies flow from `interface` through `device` and `sensor` to `layer1`.
+A higher group may use a lower group when its existing contract requires it.
+The repository-wide `xWalkLibrary/common` interface remains outside `xWalkHal`
+because HAL, Agent, Controller, IW, and Trace consumers share it.
+
+Each architectural group documents its hardware-independent GoogleTest
+interaction suite separately:
+
+- [`interface`](interface/README.md)
+- [`device`](device/README.md)
+- [`sensor`](sensor/README.md)
+- [`layer1`](layer1/README.md)
+
+These suites complement, and do not replace, each module's individual host
+tests.
+
 ## Aggregate build modes
 
 | Root flag | Default | Result |
@@ -48,8 +77,8 @@ sudo apt-get install build-essential cmake libasound2-dev libcurl4-openssl-dev l
 
 ## Build and run every host test
 
-Host mode is deterministic logic simulation. It must not open GPIO or I2C
-devices, and it does not require a Raspberry Pi or Robot HAT.
+Host mode is deterministic logic simulation. It must not open GPIO, I2C, SPI,
+or Audio devices, and it does not require a Raspberry Pi or Robot HAT.
 
 From the repository root, configure the complete host build:
 
@@ -95,31 +124,31 @@ Use the central runtime suite name to select one HAL module. For example:
 
 | Submodule | Central suite | Test scope |
 |---|---|---|
-| xWalkAdc | `TEST_SUITE_XWALK_ADC` | ADC conversion and callback logic |
-| xWalkAdxl345 | `TEST_SUITE_XWALK_ADXL345` | Accelerometer decoding and validation |
-| xWalkAudio | `TEST_SUITE_XWALK_AUDIO` | Injected ALSA ownership and recovery behavior |
-| xWalkBoardControl | `TEST_SUITE_XWALK_BOARD_CONTROL` | Board control, device, and firmware information |
-| xWalkBuzzer | `TEST_SUITE_XWALK_BUZZER` | Buzzer behavior |
-| xWalkCamera | `TEST_SUITE_XWALK_CAMERA` | Capture validation and injected backend behavior |
-| xWalkConfig | `TEST_SUITE_XWALK_CONFIG` | Configuration and configuration-store behavior |
-| xWalkGpio | `TEST_SUITE_XWALK_GPIO` | Callback-based GPIO behavior |
-| xWalkGPT | `TEST_SUITE_XWALK_GPT` | Speech and device-free ALSA adapter behavior |
+| xWalkAdc | `TEST_SUITE_XWALK_ADC` | ADC conversion, in-memory I2C simulation, and trace persistence |
+| xWalkAdxl345 | `TEST_SUITE_XWALK_ADXL345` | Accelerometer conversion, safe simulation, and trace persistence |
+| xWalkAudio | `TEST_SUITE_XWALK_AUDIO` | Injected ALSA ownership, host simulation, and recovery behavior |
+| xWalkBoardControl | `TEST_SUITE_XWALK_BOARD_CONTROL` | Board services, safe simulation, and trace persistence |
+| xWalkBuzzer | `TEST_SUITE_XWALK_BUZZER` | Active/passive behavior, safe simulation, and trace persistence |
+| xWalkCamera | `TEST_SUITE_XWALK_CAMERA` | Capture validation, safe simulation, and trace persistence |
+| xWalkConfig | `TEST_SUITE_XWALK_CONFIG` | Section/store persistence, trace selectors, and safe simulation |
+| xWalkGpio | `TEST_SUITE_XWALK_GPIO` | Linux-backend GPIO simulation, pin mapping, polarity, and interrupts |
+| xWalkGPT | `TEST_SUITE_XWALK_GPT` | Speech coordination, safe simulation, and trace persistence |
 | xWalkI2c | `TEST_SUITE_XWALK_I2C` | Callback-based I2C behavior |
-| xWalkLanguageModel | `TEST_SUITE_XWALK_LANGUAGE_MODEL` | Coordinator and Ollama provider behavior |
-| xWalkLed | `TEST_SUITE_XWALK_LED` | Single-color and RGB LED behavior |
-| xWalkLineTracker | `TEST_SUITE_XWALK_LINE_TRACKER` | Line-tracker interpretation |
-| xWalkMotor | `TEST_SUITE_XWALK_MOTOR` | Motor direction and speed logic |
-| xWalkMusic | `TEST_SUITE_XWALK_MUSIC` | Music behavior and shared-ALSA callback adapter |
-| xWalkPwm | `TEST_SUITE_XWALK_PWM` | Addressing, timers, registers, percentages, frequency, and validation |
-| xWalkRobot | `TEST_SUITE_XWALK_ROBOT` | Robot composition behavior |
-| xWalkServo | `TEST_SUITE_XWALK_SERVO` | Initialization, angle, pulse-width, and validation behavior |
-| xWalkSpeaker | `TEST_SUITE_XWALK_SPEAKER` | Speaker behavior, bounded decoding, and ALSA adaptation |
-| xWalkSpi | `TEST_SUITE_XWALK_SPI` | Bounded full-duplex SPI callback behavior |
+| xWalkLanguageModel | `TEST_SUITE_XWALK_LANGUAGE_MODEL` | Coordinator, in-memory simulation, trace selectors, and fake-HTTP provider behavior |
+| xWalkLed | `TEST_SUITE_XWALK_LED` | Single/RGB LED behavior, safe simulation, and trace persistence |
+| xWalkLineTracker | `TEST_SUITE_XWALK_LINE_TRACKER` | Tracking, in-memory simulation, and trace persistence |
+| xWalkMotor | `TEST_SUITE_XWALK_MOTOR` | Motor control, safe simulation, and trace persistence |
+| xWalkMusic | `TEST_SUITE_XWALK_MUSIC` | Music behavior, silent simulation, trace persistence, and ALSA adapter |
+| xWalkPwm | `TEST_SUITE_XWALK_PWM` | Addressing, timers, output, safe simulation, and trace persistence |
+| xWalkRobot | `TEST_SUITE_XWALK_ROBOT` | Multi-servo coordination, safe simulation, and trace persistence |
+| xWalkServo | `TEST_SUITE_XWALK_SERVO` | Angle, pulse output, in-memory simulation, and trace persistence |
+| xWalkSpeaker | `TEST_SUITE_XWALK_SPEAKER` | Speaker tasks, silent simulation, trace persistence, and ALSA adaptation |
+| xWalkSpi | `TEST_SUITE_XWALK_SPI` | Linux-backend SPI simulation and bounded transfer behavior |
 | xWalkTrace | `TEST_SUITE_XWALK_TRACE` | Trace behavior |
-| xWalkUltrasonic | `TEST_SUITE_XWALK_ULTRASONIC` | Distance calculation logic |
-| xWalkUserButton | `TEST_SUITE_XWALK_USER_BUTTON` | Button behavior |
-| xWalkUtils | `TEST_SUITE_XWALK_UTILS` | Shared utility behavior |
-| xWalkVoiceAssistant | `TEST_SUITE_XWALK_VOICE_ASSISTANT` | Coordinator and completed-backend composition |
+| xWalkUltrasonic | `TEST_SUITE_XWALK_ULTRASONIC` | Distance, in-memory GPIO simulation, and trace persistence |
+| xWalkUserButton | `TEST_SUITE_XWALK_USER_BUTTON` | Button events, safe simulation, and trace persistence |
+| xWalkUtils | `TEST_SUITE_XWALK_UTILS` | Injected utilities, safe Linux behavior, and host simulation |
+| xWalkVoiceAssistant | `TEST_SUITE_XWALK_VOICE_ASSISTANT` | Traced coordinator, persistent simulation, and completed-backend composition |
 | xSequenceTest | `TEST_SUITE_XWALK_SEQUENCE` | Button, servo, ADC, motor, speech, and tone flows |
 | xExample | Direct `xExample <selector> <arguments>` invocation | Ported hardware and service examples |
 
@@ -197,7 +226,7 @@ Run one Raspberry Pi submodule suite with the same directory method, for
 example:
 
 ```bash
-ctest --test-dir build-rpi/xWalkI2c -L hardware --output-on-failure
+ctest --test-dir build-rpi/xWalkHal/interface/xWalkI2c -L hardware --output-on-failure
 ```
 
 Hardware tests may move motors or servos, drive GPIO/PWM outputs, sound a

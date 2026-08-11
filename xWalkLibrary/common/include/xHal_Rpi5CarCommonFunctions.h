@@ -28,7 +28,6 @@
  * Includes
  ******************************************************************************/
 
-#include "xHal_Rpi5CarExceptions.h"
 #include "xHal_Rpi5CarMath.h"
 #include "xHal_Rpi5CarTypes.h"
 
@@ -73,7 +72,7 @@ inline void validateI2cAddress(uint8 address)
 {
     if (address > I2C_MAXIMUM_SEVEN_BIT_ADDRESS)
     {
-        XHAL_THROW_OUT_OF_RANGE("I2C address must be seven-bit");
+        throw outofrange("I2C address must be seven-bit");
     }
 }
 
@@ -231,7 +230,7 @@ inline uint32 roundedValue(float64 value, cstring name, uint32 minimum, uint32 m
             !XHAL_IS_FINITE(value));
     if (valueNotFinite)
     {
-        XHAL_THROW_INVALID_ARGUMENT_DETAIL(name, " must be finite");
+        throw invalidargument(string(name).append(" must be finite"));
     }
 
     const float64 roundedValue = XHAL_ROUND_NEAREST(value);
@@ -239,7 +238,7 @@ inline uint32 roundedValue(float64 value, cstring name, uint32 minimum, uint32 m
     const float64 maximumValue = static_cast<float64>(maximum);
     if (roundedValue < minimumValue || roundedValue > maximumValue)
     {
-        XHAL_THROW_OUT_OF_RANGE_DETAIL(name, " is outside its range");
+        throw outofrange(string(name).append(" is outside its range"));
     }
     return static_cast<uint32>(roundedValue);
 }

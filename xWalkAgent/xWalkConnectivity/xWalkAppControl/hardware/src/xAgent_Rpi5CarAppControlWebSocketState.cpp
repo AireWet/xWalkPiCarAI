@@ -13,11 +13,56 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/websocket.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
+#include <json-c/json.h>
 
 #include <chrono>
+#include <cmath>
+#include <memory>
 #include <sstream>
+
+namespace
+{
+
+using JsonObject = std::unique_ptr<json_object, decltype(&json_object_put)>;
+
+bool jsonBoolean(json_object* root, const char* name, bool defaultValue) noexcept
+{
+    json_object* value{nullptr};
+    if (!json_object_object_get_ex(root, name, &value) ||
+        (json_object_get_type(value) != json_type_boolean))
+    {
+        return defaultValue;
+    }
+    return json_object_get_boolean(value) != 0;
+}
+
+bool jsonPair(json_object* root, const char* name, double& first,
+    double& second) noexcept
+{
+    json_object* value{nullptr};
+    if (!json_object_object_get_ex(root, name, &value) ||
+        (json_object_get_type(value) != json_type_array) ||
+        (json_object_array_length(value) < 2U))
+    {
+        return false;
+    }
+    json_object* firstValue = json_object_array_get_idx(value, 0U);
+    json_object* secondValue = json_object_array_get_idx(value, 1U);
+    const bool valuesNumeric = (firstValue != nullptr) && (secondValue != nullptr) &&
+        ((json_object_get_type(firstValue) == json_type_double) ||
+            (json_object_get_type(firstValue) == json_type_int)) &&
+        ((json_object_get_type(secondValue) == json_type_double) ||
+            (json_object_get_type(secondValue) == json_type_int));
+    if (!valuesNumeric)
+    {
+        return false;
+    }
+    first = json_object_get_double(firstValue);
+    second = json_object_get_double(secondValue);
+    return std::isfinite(first) && std::isfinite(second);
+}
+
+} /* namespace */
 
 namespace xwalk::agent
 {
@@ -57,70 +102,49 @@ agent::string XWalkAppControlWebSocketState::escaped(agent::stringview value)
 
 void XWalkAppControlWebSocketState::parse(const agent::string& message)
 {
-    try
+    if (message.size() > 65'536U)
     {
-        std::istringstream stream(message);
-        boost::property_tree::ptree tree;
-        boost::property_tree::read_json(stream, tree);
-        XWalkAppControlInput next;
-        {
-            const std::lock_guard<std::mutex> lock(mutex);
-            next = input;
-        }
-        next.hornRequested = tree.get("M", false);
-        next.lineTrackingEnabled = tree.get("I", false);
-        next.obstacleAvoidanceEnabled = tree.get("E", false);
-        next.colorDetectionEnabled = tree.get("N", false);
-        next.faceDetectionEnabled = tree.get("O", false);
-        next.objectDetectionEnabled = tree.get("P", false);
-        next.driveJoystickAvailable = false;
-        next.cameraJoystickAvailable = false;
-        const auto speech = tree.get_optional<agent::string>("J");
-        if (speech)
-        {
-            next.spokenCommand = *speech;
-        }
-        const auto driveJoystick = tree.get_child_optional("K");
-        if (driveJoystick)
-        {
-            auto value = driveJoystick->begin();
-            const agent::boolean driveXAvailable = value != driveJoystick->end();
-            if (driveXAvailable)
-            {
-                next.driveX = value->second.get_value<agent::float64>();
-                ++value;
-                const agent::boolean driveYAvailable = value != driveJoystick->end();
-                if (driveYAvailable)
-                {
-                    next.driveY = value->second.get_value<agent::float64>();
-                    next.driveJoystickAvailable = true;
-                }
-            }
-        }
-        const auto cameraJoystick = tree.get_child_optional("Q");
-        if (cameraJoystick)
-        {
-            auto value = cameraJoystick->begin();
-            const agent::boolean cameraPanAvailable = value != cameraJoystick->end();
-            if (cameraPanAvailable)
-            {
-                next.cameraPanDegrees = value->second.get_value<agent::float64>();
-                ++value;
-                const agent::boolean cameraTiltAvailable = value != cameraJoystick->end();
-                if (cameraTiltAvailable)
-                {
-                    next.cameraTiltDegrees = value->second.get_value<agent::float64>();
-                    next.cameraJoystickAvailable = true;
-                }
-            }
-        }
+        return;
+    }
+    json_tokener* const tokener = json_tokener_new();
+    if (tokener == nullptr)
+    {
+        return;
+    }
+    json_object* parsed = json_tokener_parse_ex(tokener, message.data(),
+        static_cast<int>(message.size()));
+    const json_tokener_error parseError = json_tokener_get_error(tokener);
+    json_tokener_free(tokener);
+    JsonObject root(parsed, &json_object_put);
+    if ((parseError != json_tokener_success) || (root == nullptr) ||
+        (json_object_get_type(root.get()) != json_type_object))
+    {
+        return;
+    }
+    XWalkAppControlInput next;
+    {
         const std::lock_guard<std::mutex> lock(mutex);
-        input = next;
+        next = input;
     }
-    catch (...)
+    next.hornRequested = jsonBoolean(root.get(), "M", false);
+    next.lineTrackingEnabled = jsonBoolean(root.get(), "I", false);
+    next.obstacleAvoidanceEnabled = jsonBoolean(root.get(), "E", false);
+    next.colorDetectionEnabled = jsonBoolean(root.get(), "N", false);
+    next.faceDetectionEnabled = jsonBoolean(root.get(), "O", false);
+    next.objectDetectionEnabled = jsonBoolean(root.get(), "P", false);
+    next.driveJoystickAvailable = false;
+    next.cameraJoystickAvailable = false;
+    json_object* speech{nullptr};
+    if (json_object_object_get_ex(root.get(), "J", &speech) &&
+        (json_object_get_type(speech) == json_type_string))
     {
-        /* Malformed or oversized-type input leaves the last valid state intact. */
+        next.spokenCommand = json_object_get_string(speech);
     }
+    next.driveJoystickAvailable = jsonPair(root.get(), "K", next.driveX, next.driveY);
+    next.cameraJoystickAvailable = jsonPair(root.get(), "Q",
+        next.cameraPanDegrees, next.cameraTiltDegrees);
+    const std::lock_guard<std::mutex> lock(mutex);
+    input = next;
 }
 
 agent::string XWalkAppControlWebSocketState::response() const
@@ -142,79 +166,92 @@ void XWalkAppControlWebSocketState::run(agent::uint16 port) noexcept
     namespace beast = boost::beast;
     namespace websocket = beast::websocket;
     using tcp = asio::ip::tcp;
-    try
+    asio::io_context context;
+    boost::system::error_code error;
+    const asio::ip::address address = asio::ip::make_address(bindAddress, error);
+    if (error)
     {
-        asio::io_context context;
-        const asio::ip::address address = asio::ip::make_address(bindAddress);
-        tcp::acceptor acceptor(context, tcp::endpoint(address, port));
-        acceptor.non_blocking(true);
-        startupSucceeded.store(true);
         startupComplete.store(true);
-        const agent::boolean serverLoopRequested{true};
-        while (serverLoopRequested)
+        running.store(false);
+        return;
+    }
+    const tcp::endpoint endpoint(address, port);
+    tcp::acceptor acceptor(context);
+    acceptor.open(endpoint.protocol(), error);
+    if (!error)
+    {
+        acceptor.bind(endpoint, error);
+    }
+    if (!error)
+    {
+        acceptor.listen(asio::socket_base::max_listen_connections, error);
+    }
+    if (!error)
+    {
+        acceptor.non_blocking(true, error);
+    }
+    if (error)
+    {
+        startupComplete.store(true);
+        running.store(false);
+        return;
+    }
+    startupSucceeded.store(true);
+    startupComplete.store(true);
+    const agent::boolean serverLoopRequested{true};
+    while (serverLoopRequested)
+    {
+        const agent::boolean serverRunning = running.load();
+        if (serverRunning == false)
         {
-            const agent::boolean serverRunning = running.load();
-            if (serverRunning == false)
+            break;
+        }
+        tcp::socket socket(context);
+        acceptor.accept(socket, error);
+        if (error == asio::error::would_block)
+        {
+            error.clear();
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+            continue;
+        }
+        if (error)
+        {
+            break;
+        }
+        beast::tcp_stream stream(std::move(socket));
+        stream.expires_after(std::chrono::seconds(2));
+        websocket::stream<beast::tcp_stream> connection(std::move(stream));
+        connection.read_message_max(65'536U);
+        connection.accept(error);
+        if (!error)
+        {
+            connection.next_layer().expires_never();
+            connection.next_layer().socket().non_blocking(true, error);
+        }
+        beast::flat_buffer buffer;
+        const agent::boolean connectionLoopRequested{true};
+        while (connectionLoopRequested)
+        {
+            const agent::boolean connectionRunning = running.load() && !error;
+            if (connectionRunning == false)
             {
                 break;
             }
-            tcp::socket socket(context);
-            boost::system::error_code error;
-            acceptor.accept(socket, error);
-            if (error == asio::error::would_block)
+            connection.read(buffer, error);
+            if ((error == asio::error::would_block) ||
+                (error == asio::error::try_again))
             {
-                std::this_thread::sleep_for(std::chrono::milliseconds(20));
-                continue;
+                error.clear();
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
-            if (error)
+            else if (!error)
             {
-                break;
-            }
-            beast::tcp_stream stream(std::move(socket));
-            stream.expires_after(std::chrono::seconds(2));
-            websocket::stream<beast::tcp_stream> connection(std::move(stream));
-            websocket::stream_base::timeout timeout =
-                websocket::stream_base::timeout::suggested(beast::role_type::server);
-            timeout.handshake_timeout = std::chrono::seconds(2);
-            timeout.idle_timeout = std::chrono::milliseconds(250);
-            connection.set_option(timeout);
-            connection.read_message_max(65'536U);
-            connection.accept(error);
-            if (!error)
-            {
-                connection.next_layer().expires_never();
-                connection.next_layer().socket().non_blocking(true, error);
-            }
-            beast::flat_buffer buffer;
-            const agent::boolean connectionLoopRequested{true};
-            while (connectionLoopRequested)
-            {
-                const agent::boolean connectionRunning = running.load() && !error;
-                if (connectionRunning == false)
-                {
-                    break;
-                }
-                connection.read(buffer, error);
-                if ((error == asio::error::would_block) ||
-                    (error == asio::error::try_again))
-                {
-                    error.clear();
-                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-                }
-                else if (!error)
-                {
-                    parse(beast::buffers_to_string(buffer.data()));
-                    buffer.consume(buffer.size());
-                    connection.text(true);
-                    connection.write(asio::buffer(response()), error);
-                }
+                parse(beast::buffers_to_string(buffer.data()));
+                buffer.consume(buffer.size());
+                connection.text(true);
+                connection.write(asio::buffer(response()), error);
             }
         }
-    }
-    catch (...)
-    {
-        /* The foreground coordinator observes shutdown through cancellation. */
-        startupComplete.store(true);
     }
     running.store(false);
 }

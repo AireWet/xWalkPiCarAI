@@ -1,11 +1,19 @@
 # A fixed-size test token array is non-empty by construction. Cppcheck loses
 # its template extent when following the injected callback.
-zerodiv:*xWalkHal/xWalkAudio/hardware/test/src/xHal_Rpi5CarAudioAlsaTest.cpp
+zerodiv:*xWalkHal/interface/xWalkAudio/hardware/test/src/xHal_Rpi5CarAudioAlsaTest.cpp
 
 # Taking the address of these callbacks does not execute their bodies and
 # cannot throw. Cppcheck attributes callback-body exceptions to pointer return.
-throwInNoexceptFunction:*xWalkHal/xWalkGPT/hardware/src/xHal_Rpi5CarSpeechToTextAlsa.cpp
-throwInNoexceptFunction:*xWalkHal/xWalkGPT/hardware/src/xHal_Rpi5CarTextToSpeechAlsa.cpp
+throwInNoexceptFunction:*xWalkHal/layer1/xWalkGPT/hardware/src/xHal_Rpi5CarSpeechToTextAlsa.cpp
+throwInNoexceptFunction:*xWalkHal/layer1/xWalkGPT/hardware/src/xHal_Rpi5CarTextToSpeechAlsa.cpp
+throwInNoexceptFunction:*xWalkHal/simulation/xWalkRobotHat/src/xHal_Rpi5CarRobotHatSimulation.cpp
+throwInNoexceptFunction:*xWalkAgent/xWalkVision/xWalkComputerVision/hardware/src/xAgent_Rpi5CarComputerVisionOpenCv.cpp
+throwInNoexceptFunction:*xWalkAgent/xWalkVision/xWalkVideoRecording/hardware/src/xAgent_Rpi5CarVideoRecordingOpenCv.cpp
+throwInNoexceptFunction:*xWalkAgent/xWalkVision/xWalkRoadUserSafety/test/src/xAgent_Rpi5CarRoadUserSafetyTestSupport.cpp
+
+# Generated Protobuf compatibility guards are validated by the real compiler.
+# Cppcheck evaluates both sides of the version guard while parsing includes.
+preprocessorErrorDirective:*xWalkIW/auto-gen/include/*.pb.h
 
 # The preceding action appends a known number of delay records and the test
 # checks that postcondition before indexing. Cppcheck does not model the Agent.
@@ -16,6 +24,13 @@ containerOutOfBounds:*xWalkAgent/xWalkVehicle/xWalkSelfDrive/test/src/xAgent_Rpi
 # compiler and Clang-Tidy still validate these translation units in CI.
 syntaxError:*xWalkAgent/test/src/xAgent_Rpi5CarAgentGoogleTest.cpp
 syntaxError:*xWalkAgent/*/test/src/xAgent_Rpi5Car*GroupTest.cpp
+syntaxError:*xWalkHal/*/test/src/xHal_Rpi5Car*GroupTest.cpp
 syntaxError:*xWalkController/xWalkApp/test/src/*.cpp
 syntaxError:*xWalkController/xWalkTest/xSequenceTest/main.cpp
 syntaxError:*xWalkController/xWalkTest/xGoogleTest/src/main.cpp
+syntaxError:*xWalkAgent/xWalkVision/xWalkComputerVision/hardware/test/src/xAgent_Rpi5CarComputerVisionOpenCvTest.cpp
+syntaxError:*xWalkAgent/xWalkVision/xWalkVideoRecording/hardware/test/src/xAgent_Rpi5CarVideoRecordingOpenCvHostTest.cpp
+syntaxError:*xWalkAgent/xWalkVision/xWalkRoadUserSafety/test/src/xAgent_Rpi5CarRoadUserSafetyTest.cpp
+syntaxError:*xWalkAgent/xWalkVision/xWalkRoadUserSafety/test/src/xAgent_Rpi5CarRoadUserSafetyAssetTest.cpp
+syntaxError:*xWalkAgent/xWalkVision/xWalkVideoStreaming/test/src/xAgent_Rpi5CarMjpegStreamTest.cpp
+syntaxError:*xWalkAgent/xWalkVision/xWalkVideoStreaming/test/src/xAgent_Rpi5CarMjpegHttpServerTest.cpp

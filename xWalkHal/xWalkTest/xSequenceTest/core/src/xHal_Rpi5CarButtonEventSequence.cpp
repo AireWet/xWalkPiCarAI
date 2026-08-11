@@ -27,61 +27,59 @@
 
 #include "xHal_Rpi5CarButtonEventSequence.h"
 
+#include "xHal_Rpi5CarTrace.h"
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
 
-namespace xwalk::hal::test
-{
+namespace xwalk::hal::test {
 
 /******************************************************************************
  * Public constructor definitions
  ******************************************************************************/
 
-XWalkButtonEventSequence::XWalkButtonEventSequence(XWalkGpio& gpio,
-    contextpointer context, sequencewaitcallback wait, sequencetimecallback time,
-    sequenceeventcallback event)
+XWalkButtonEventSequence::XWalkButtonEventSequence(XWalkGpio &gpio,
+                                                   contextpointer context,
+                                                   sequencewaitcallback wait,
+                                                   sequencetimecallback time,
+                                                   sequenceeventcallback event)
     : gpioObject(&gpio), callbackContext(context), waitCallback(wait),
-      timeCallback(time), eventCallback(event)
-{
-    if ((waitCallback == nullptr) || (timeCallback == nullptr) ||
-        (eventCallback == nullptr))
-    {
-        XHAL_THROW_INVALID_ARGUMENT("Button-event sequence callbacks must not be null");
-    }
+      timeCallback(time), eventCallback(event) {
+  if ((waitCallback == nullptr) || (timeCallback == nullptr) ||
+      (eventCallback == nullptr)) {
+    XWALK_HAL_ERROR(XWALK_INVAL,
+                    "Button-event sequence callbacks must not be null");
+  }
 }
 
 /******************************************************************************
  * Private member function definitions
  ******************************************************************************/
 
-void XWalkButtonEventSequence::handleEvent() noexcept
-{
-    const boolean pressed = !pressedValue.load();
-    pressedValue.store(pressed);
-    eventCallback(callbackContext, pressed, timeCallback(callbackContext));
+void XWalkButtonEventSequence::handleEvent() noexcept {
+  const boolean pressed = !pressedValue.load();
+  pressedValue.store(pressed);
+  eventCallback(callbackContext, pressed, timeCallback(callbackContext));
 }
 
-void XWalkButtonEventSequence::eventHandler(contextpointer context) noexcept
-{
-    static_cast<XWalkButtonEventSequence*>(context)->handleEvent();
+void XWalkButtonEventSequence::eventHandler(contextpointer context) noexcept {
+  static_cast<XWalkButtonEventSequence *>(context)->handleEvent();
 }
 
 /******************************************************************************
  * Public member function definitions
  ******************************************************************************/
 
-void XWalkButtonEventSequence::run(uint32 durationSeconds)
-{
-    if ((durationSeconds == 0U) || (durationSeconds > 3'600U))
-    {
-        XHAL_THROW_OUT_OF_RANGE("Button-event duration must be from 1 to 3600 seconds");
-    }
+void XWalkButtonEventSequence::run(uint32 durationSeconds) {
+  if ((durationSeconds == 0U) || (durationSeconds > 3'600U)) {
+    XWALK_HAL_ERROR(XWALK_RANGE,
+                    "Button-event duration must be from 1 to 3600 seconds");
+  }
 
-    gpioObject->irq(this, &XWalkButtonEventSequence::eventHandler,
-        XWalkGpioEdge::Both, 10U, XWalkGpioPull::Up);
-    waitCallback(callbackContext, durationSeconds * 1'000U);
-    gpioObject->close();
+  gpioObject->irq(this, &XWalkButtonEventSequence::eventHandler,
+                  XWalkGpioEdge::Both, 10U, XWalkGpioPull::Up);
+  waitCallback(callbackContext, durationSeconds * 1'000U);
+  gpioObject->close();
 }
 
 } /* namespace xwalk::hal::test */

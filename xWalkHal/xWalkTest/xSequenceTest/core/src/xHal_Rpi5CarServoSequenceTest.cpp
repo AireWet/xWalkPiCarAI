@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarServoSequence.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
 
@@ -161,6 +162,10 @@ void runTest()
     const xwalk::hal::test::servosequencearray servos{{
         &servo0, &servo1, &servo2, &servo3, &servo4, &servo5,
         &servo6, &servo7, &servo8, &servo9, &servo10, &servo11}};
+    for (XWalkHal::XWalkServo* const servo : servos)
+    {
+        static_cast<void>(servo->initialize());
+    }
     WaitState waitState;
     waitState.pwmObjects = {{
         &pwm0, &pwm1, &pwm2, &pwm3, &pwm4, &pwm5,
@@ -199,16 +204,10 @@ void runTest()
     }
     assert(i2cState.writeCount > 0U);
 
-    XWalkHal::boolean rejectedCycles = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         sequence.run(0U);
-    }
-    catch (const XWalkHal::outofrange&)
-    {
-        rejectedCycles = true;
-    }
-    assert(rejectedCycles);
+    });
 }
 
 } /* namespace */

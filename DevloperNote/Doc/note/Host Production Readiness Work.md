@@ -69,9 +69,10 @@ The foreground-only runner uses a system `gcovr` executable or
 `build-host/tools/gcovr-venv/bin/gcovr`. It fails before configuration when neither is available and does not
 create a detached process.
 
-The reviewed 2026-08-03 baseline is 79.8 percent line coverage, 92.6 percent
-function coverage, and 40.8 percent branch coverage. The gate requires at least
-79 percent line coverage and 40 percent branch coverage. Add tests for
+The reviewed 2026-08-11 baseline is 80.7 percent line coverage, 85.2 percent
+function coverage, and 66.6 percent branch coverage. The gate requires at least
+75 percent line coverage, 85 percent function coverage, and 66 percent branch
+coverage. Add tests for
 meaningful production behavior rather than excluding important production files
 or testing trivial getters merely to raise percentages.
 
@@ -108,8 +109,8 @@ than silently skipped.
 - ThreadSanitizer execution is blocked in this traced sandbox by `unexpected memory mapping`; it did not pass.
 - AddressSanitizer and UndefinedBehaviorSanitizer passed all 62 host tests with
   leak detection disabled because LeakSanitizer cannot run under tracing.
-- Coverage passed the new gate at 79.8 percent lines, 92.6 percent functions,
-  and 40.8 percent branches.
+- Coverage passed the new gate at 80.7 percent lines, 85.2 percent functions,
+  and 66.6 percent branches.
 - ShellCheck is unavailable locally, so its CI job remains the required execution evidence.
 - No Raspberry Pi, ARM package, system service, udev installation, or physical actuator test was performed.
 

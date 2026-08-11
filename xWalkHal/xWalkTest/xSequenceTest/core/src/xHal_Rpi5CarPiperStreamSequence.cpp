@@ -27,8 +27,7 @@
 
 #include "xHal_Rpi5CarPiperStreamSequence.h"
 
-#include "xHal_Rpi5CarExceptions.h"
-
+#include "xHal_Rpi5CarTrace.h"
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -37,8 +36,7 @@
  * @namespace xwalk::hal::test
  * @brief Contains host-testable and physical HAL sequence behavior.
  */
-namespace xwalk::hal::test
-{
+namespace xwalk::hal::test {
 
 /**
  * @brief Binds the Piper provider, clock, and reporting operations.
@@ -61,18 +59,16 @@ namespace xwalk::hal::test
  * @throws std::invalid_argument
  * If any callback is null.
  */
-XWalkPiperStreamSequence::XWalkPiperStreamSequence(contextpointer context,
-    piperstreamspeakcallback speak, piperstreamtimecallback time,
-    piperstreammessagecallback reportMessage,
+XWalkPiperStreamSequence::XWalkPiperStreamSequence(
+    contextpointer context, piperstreamspeakcallback speak,
+    piperstreamtimecallback time, piperstreammessagecallback reportMessage,
     piperstreamdurationcallback reportDuration)
     : callbackContext(context), speakCallback(speak), timeCallback(time),
-      messageCallback(reportMessage), durationCallback(reportDuration)
-{
-    if ((speakCallback == nullptr) || (timeCallback == nullptr) ||
-        (messageCallback == nullptr) || (durationCallback == nullptr))
-    {
-        XHAL_THROW_INVALID_ARGUMENT("Piper-stream callbacks must not be null");
-    }
+      messageCallback(reportMessage), durationCallback(reportDuration) {
+  if ((speakCallback == nullptr) || (timeCallback == nullptr) ||
+      (messageCallback == nullptr) || (durationCallback == nullptr)) {
+    XWALK_HAL_ERROR(XWALK_INVAL, "Piper-stream callbacks must not be null");
+  }
 }
 
 /**
@@ -88,32 +84,27 @@ XWalkPiperStreamSequence::XWalkPiperStreamSequence(contextpointer context,
  * @note
  * Exceptions from provider or reporting callbacks are propagated.
  */
-void XWalkPiperStreamSequence::run()
-{
-    messageCallback(callbackContext, "Say with stream");
-    const float64 streamedStartSeconds = timeCallback(callbackContext);
-    speakCallback(callbackContext, XHAL_RPI5CAR_PIPER_STREAM_MODEL,
-        XHAL_RPI5CAR_PIPER_STREAM_TEXT, true);
-    const float64 streamedEndSeconds = timeCallback(callbackContext);
-    if (streamedEndSeconds < streamedStartSeconds)
-    {
-        XHAL_THROW_RUNTIME_ERROR("Piper streamed timing moved backwards");
-    }
-    durationCallback(callbackContext,
-        streamedEndSeconds - streamedStartSeconds);
+void XWalkPiperStreamSequence::run() {
+  messageCallback(callbackContext, "Say with stream");
+  const float64 streamedStartSeconds = timeCallback(callbackContext);
+  speakCallback(callbackContext, XHAL_RPI5CAR_PIPER_STREAM_MODEL,
+                XHAL_RPI5CAR_PIPER_STREAM_TEXT, true);
+  const float64 streamedEndSeconds = timeCallback(callbackContext);
+  if (streamedEndSeconds < streamedStartSeconds) {
+    XWALK_HAL_ERROR(XWALK_RUNTIME, "Piper streamed timing moved backwards");
+  }
+  durationCallback(callbackContext, streamedEndSeconds - streamedStartSeconds);
 
-    messageCallback(callbackContext, XHAL_RPI5CAR_PIPER_STREAM_SEPARATOR);
-    messageCallback(callbackContext, "Say without stream");
-    const float64 bufferedStartSeconds = timeCallback(callbackContext);
-    speakCallback(callbackContext, XHAL_RPI5CAR_PIPER_STREAM_MODEL,
-        XHAL_RPI5CAR_PIPER_STREAM_TEXT, false);
-    const float64 bufferedEndSeconds = timeCallback(callbackContext);
-    if (bufferedEndSeconds < bufferedStartSeconds)
-    {
-        XHAL_THROW_RUNTIME_ERROR("Piper buffered timing moved backwards");
-    }
-    durationCallback(callbackContext,
-        bufferedEndSeconds - bufferedStartSeconds);
+  messageCallback(callbackContext, XHAL_RPI5CAR_PIPER_STREAM_SEPARATOR);
+  messageCallback(callbackContext, "Say without stream");
+  const float64 bufferedStartSeconds = timeCallback(callbackContext);
+  speakCallback(callbackContext, XHAL_RPI5CAR_PIPER_STREAM_MODEL,
+                XHAL_RPI5CAR_PIPER_STREAM_TEXT, false);
+  const float64 bufferedEndSeconds = timeCallback(callbackContext);
+  if (bufferedEndSeconds < bufferedStartSeconds) {
+    XWALK_HAL_ERROR(XWALK_RUNTIME, "Piper buffered timing moved backwards");
+  }
+  durationCallback(callbackContext, bufferedEndSeconds - bufferedStartSeconds);
 }
 
 } /* namespace xwalk::hal::test */

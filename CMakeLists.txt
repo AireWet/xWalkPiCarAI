@@ -11,12 +11,57 @@ option(XWALK_ENABLE_STRICT_WARNINGS "Add the host sanity warning extensions" OFF
 option(XWALK_ENABLE_SANITIZERS "Enable AddressSanitizer and UndefinedBehaviorSanitizer" OFF)
 option(XWALK_ENABLE_THREAD_SANITIZER "Enable ThreadSanitizer for host concurrency tests" OFF)
 option(XWALK_ENABLE_COVERAGE "Enable GCC gcov coverage instrumentation" OFF)
+set(XWALK_COVERAGE_BACKEND "gcc" CACHE STRING "Coverage backend: gcc or clang")
+set_property(CACHE XWALK_COVERAGE_BACKEND PROPERTY STRINGS gcc clang)
 option(XWALK_ENABLE_PACKAGING "Enable CPack Debian package generation" OFF)
+option(XWALK_BUILD_FUZZERS "Build Clang libFuzzer harnesses" OFF)
+option(XWALK_AARCH64_DEPENDENCY_AUDIT
+    "Audit required target dependencies before an AArch64 RPI configure" ON)
+
+add_custom_target(host-dependency-check
+    COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/shell/check-host-quality-dependencies.sh"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    COMMENT "Reporting host-quality tool availability")
+add_custom_target(host-shellcheck
+    COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/shell/run-host-shellcheck.sh"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    COMMENT "Checking every repository-owned shell script")
+
+if(XWALK_BUILD_RPI AND CMAKE_CROSSCOMPILING AND
+    CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)$" AND
+    XWALK_AARCH64_DEPENDENCY_AUDIT)
+    execute_process(
+        COMMAND bash
+            "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/deployment/aarch64-dependency-audit.sh"
+            "${XWALK_AARCH64_SYSROOT}"
+        RESULT_VARIABLE XWALK_AARCH64_AUDIT_RESULT
+        OUTPUT_VARIABLE XWALK_AARCH64_AUDIT_OUTPUT
+        ERROR_VARIABLE XWALK_AARCH64_AUDIT_ERROR)
+    if(NOT XWALK_AARCH64_AUDIT_RESULT EQUAL 0)
+        message(FATAL_ERROR
+            "ARM64 target dependency audit failed.\n"
+            "${XWALK_AARCH64_AUDIT_OUTPUT}${XWALK_AARCH64_AUDIT_ERROR}\n"
+            "Review xWalkTool/deployment/ARM64_CROSS_BUILD.md. Do not disable "
+            "the audit for a deployable build.")
+    endif()
+    message(STATUS "${XWALK_AARCH64_AUDIT_OUTPUT}")
+endif()
 
 if(XWALK_ENABLE_THREAD_SANITIZER AND
     (XWALK_ENABLE_SANITIZERS OR XWALK_ENABLE_COVERAGE OR XWALK_BUILD_RPI))
     message(FATAL_ERROR
         "ThreadSanitizer requires a separate host build without other instrumentation")
+endif()
+if(XWALK_ENABLE_SANITIZERS AND XWALK_ENABLE_COVERAGE)
+    message(FATAL_ERROR
+        "AddressSanitizer/UndefinedBehaviorSanitizer and coverage require separate build directories")
+endif()
+if(XWALK_ENABLE_COVERAGE AND NOT XWALK_COVERAGE_BACKEND MATCHES "^(gcc|clang)$")
+    message(FATAL_ERROR "XWALK_COVERAGE_BACKEND must be gcc or clang")
+endif()
+if(XWALK_ENABLE_COVERAGE AND XWALK_COVERAGE_BACKEND STREQUAL "clang" AND
+    NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    message(FATAL_ERROR "The clang coverage backend requires Clang")
 endif()
 if(XWALK_ENABLE_THREAD_SANITIZER AND NOT CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     message(FATAL_ERROR "ThreadSanitizer requires GCC or Clang")
@@ -194,6 +239,10 @@ if(XWALK_HAL_BUILD_CENTRAL_TESTS)
         "Required by centralized language-model tests" FORCE)
     set(XWALK_I2C_BUILD_LINUX_BACKEND ON CACHE BOOL
         "Required by centralized I2C host simulation" FORCE)
+    set(XWALK_GPIO_BUILD_LINUX_BACKEND ON CACHE BOOL
+        "Required by centralized GPIO host simulation" FORCE)
+    set(XWALK_SPI_BUILD_LINUX_BACKEND ON CACHE BOOL
+        "Required by centralized SPI host simulation" FORCE)
     set(XWALK_MUSIC_BUILD_ALSA_BACKEND ON CACHE BOOL
         "Required by centralized music tests" FORCE)
     set(XWALK_SPEAKER_BUILD_ALSA_BACKEND ON CACHE BOOL
@@ -227,30 +276,38 @@ endif()
 add_subdirectory(xWalkLibrary/common)
 add_subdirectory(xWalkIW)
 add_subdirectory(xWalkTrace)
-add_subdirectory(xWalkHal/xWalkI2c)
-add_subdirectory(xWalkHal/xWalkSpi)
-add_subdirectory(xWalkHal/xWalkGpio)
-add_subdirectory(xWalkHal/xWalkAudio)
-add_subdirectory(xWalkHal/xWalkConfig)
-add_subdirectory(xWalkHal/xWalkUtils)
-add_subdirectory(xWalkHal/xWalkLanguageModel)
-add_subdirectory(xWalkHal/xWalkMusic)
-add_subdirectory(xWalkHal/xWalkSpeaker)
-add_subdirectory(xWalkHal/xWalkPwm)
-add_subdirectory(xWalkHal/xWalkAdc)
-add_subdirectory(xWalkHal/xWalkServo)
-add_subdirectory(xWalkHal/xWalkAdxl345)
-add_subdirectory(xWalkHal/xWalkLineTracker)
-add_subdirectory(xWalkHal/xWalkUltrasonic)
-add_subdirectory(xWalkHal/xWalkMotor)
-add_subdirectory(xWalkHal/xWalkLed)
-add_subdirectory(xWalkHal/xWalkBuzzer)
-add_subdirectory(xWalkHal/xWalkCamera)
-add_subdirectory(xWalkHal/xWalkUserButton)
-add_subdirectory(xWalkHal/xWalkBoardControl)
-add_subdirectory(xWalkHal/xWalkRobot)
-add_subdirectory(xWalkHal/xWalkGPT)
-add_subdirectory(xWalkHal/xWalkVoiceAssistant)
+add_subdirectory(xWalkHal/interface/xWalkI2c)
+add_subdirectory(xWalkHal/interface/xWalkSpi)
+add_subdirectory(xWalkHal/interface/xWalkGpio)
+add_subdirectory(xWalkHal/interface/xWalkAudio)
+add_subdirectory(xWalkHal/interface/xWalkConfig)
+add_subdirectory(xWalkHal/interface/xWalkUtils)
+add_subdirectory(xWalkHal/interface/xWalkLanguageModel)
+add_subdirectory(xWalkHal/device/xWalkPwm)
+add_subdirectory(xWalkHal/device/xWalkAdc)
+add_subdirectory(xWalkHal/device/xWalkServo)
+add_subdirectory(xWalkHal/device/xWalkAdxl345)
+add_subdirectory(xWalkHal/device/xWalkUltrasonic)
+add_subdirectory(xWalkHal/device/xWalkCamera)
+add_subdirectory(xWalkHal/device/xWalkUserButton)
+add_subdirectory(xWalkHal/sensor/xWalkLineTracker)
+add_subdirectory(xWalkHal/sensor/xWalkMotor)
+add_subdirectory(xWalkHal/sensor/xWalkLed)
+add_subdirectory(xWalkHal/sensor/xWalkBuzzer)
+add_subdirectory(xWalkHal/layer1/xWalkMusic)
+add_subdirectory(xWalkHal/layer1/xWalkSpeaker)
+add_subdirectory(xWalkHal/layer1/xWalkBoardControl)
+add_subdirectory(xWalkHal/layer1/xWalkRobot)
+add_subdirectory(xWalkHal/layer1/xWalkGPT)
+add_subdirectory(xWalkHal/layer1/xWalkVoiceAssistant)
+
+if(XWALK_HAL_BUILD_HOST)
+    add_subdirectory(xWalkHal/simulation/xWalkRobotHat)
+    add_subdirectory(xWalkHal/interface/test)
+    add_subdirectory(xWalkHal/device/test)
+    add_subdirectory(xWalkHal/sensor/test)
+    add_subdirectory(xWalkHal/layer1/test)
+endif()
 
 if(XWALK_HAL_BUILD_RPI)
     add_subdirectory(xWalkHal/xWalkTest/xExample)
@@ -260,6 +317,9 @@ if(BUILD_TESTING)
 endif()
 if(XWALK_HAL_BUILD_CLI OR XWALK_HAL_BUILD_HOST OR XWALK_HAL_BUILD_RPI)
     add_subdirectory(xWalkController)
+endif()
+if(XWALK_BUILD_FUZZERS)
+    add_subdirectory(xWalkTool/fuzz)
 endif()
 
 add_library(xWalkHal INTERFACE)
@@ -352,6 +412,11 @@ if(BUILD_TESTING)
             "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/deployment/test/dependency-installer-test.py")
     set_tests_properties(xHal_Rpi5CarDependencyInstallerHostTest PROPERTIES
         LABELS "host;deployment")
+    add_test(NAME xWalkAarch64DependencyAuditHostTest
+        COMMAND bash
+            "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/deployment/test/aarch64-dependency-audit-test.sh")
+    set_tests_properties(xWalkAarch64DependencyAuditHostTest PROPERTIES
+        LABELS "host;deployment;dependency")
     add_test(NAME xWalkLibraryX86ArchitectureHostTest
         COMMAND "${CMAKE_COMMAND}"
             -DCMAKE_SYSTEM_PROCESSOR=x86_64
@@ -407,6 +472,10 @@ if(XWALK_ENABLE_PACKAGING)
     if(NOT XWALK_BUILD_RPI)
         message(FATAL_ERROR "Debian packaging requires XWALK_BUILD_RPI=ON")
     endif()
+    if(NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)$")
+        message(FATAL_ERROR
+            "PiCar-X Debian packaging requires an ARM64 target; the x86 RPI profile is compile-check only")
+    endif()
     set(CPACK_GENERATOR "DEB")
     set(CPACK_PACKAGE_NAME "xwalk-picarx")
     set(CPACK_PACKAGE_VENDOR "xWalk Firmware")
@@ -419,6 +488,7 @@ if(XWALK_ENABLE_PACKAGING)
         GROUP_READ GROUP_EXECUTE
         WORLD_READ WORLD_EXECUTE)
     set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
+    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "arm64")
     set(CPACK_DEBIAN_PACKAGE_SECTION "utils")
     set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
     set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)

@@ -3,7 +3,7 @@
  * @brief       Declares Linux composition for the Robot HAT servo sequence.
  *
  * @details
- * Exposes physical Linux I2C and GPIO composition plus console and timing
+ * Exposes physical Linux I2C and GPIO composition plus trace and timing
  * callbacks for the bounded servo sweep and ADC monitor.
  *
  * @project     xWalk Firmware
@@ -92,7 +92,7 @@ public:
     static void wait(contextpointer context, uint32 durationMilliseconds);
 
     /**
-     * @brief Prints the upstream servo-channel status message.
+     * @brief Traces the upstream servo-channel status message.
      *
      * @param[in,out] context
      * Unused callback context.
@@ -103,7 +103,7 @@ public:
     static void reportServo(contextpointer context, uint8 channel);
 
     /**
-     * @brief Prints one ordered five-channel ADC sample.
+     * @brief Traces one ordered five-channel ADC sample.
      *
      * @param[in,out] context
      * Unused callback context.

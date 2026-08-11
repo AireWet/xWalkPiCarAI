@@ -5,7 +5,7 @@ option(XWALK_SPI_TRANSFER_BUILD_HOST_TESTS
     "Build xWalkSpiTransfer host tests" OFF)
 
 if(NOT TARGET xWalkSpi)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/xWalkSpi
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/interface/xWalkSpi
         ${CMAKE_CURRENT_BINARY_DIR}/xWalkSpi)
 endif()
 

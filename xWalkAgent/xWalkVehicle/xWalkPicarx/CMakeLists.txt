@@ -43,6 +43,10 @@ endif()
 if(NOT TARGET xWalkConfig)
     add_subdirectory(${XWALK_HAL_ROOT}/xWalkConfig ${CMAKE_CURRENT_BINARY_DIR}/xWalkConfig)
 endif()
+if(NOT TARGET xWalkTrace)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkTrace
+        ${CMAKE_CURRENT_BINARY_DIR}/xWalkTrace)
+endif()
 if(NOT TARGET xWalkLineTracker)
     add_subdirectory(${XWALK_HAL_ROOT}/xWalkLineTracker ${CMAKE_CURRENT_BINARY_DIR}/xWalkLineTracker)
 endif()
@@ -78,6 +82,7 @@ target_link_libraries(xWalkPicarx PUBLIC
     xWalkServo
     xWalkUltrasonic
 )
+target_link_libraries(xWalkPicarx PRIVATE xWalkTrace)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkPicarx PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
@@ -93,10 +98,23 @@ if(XWALK_PICARX_BUILD_HOST_TESTS)
     add_test(NAME xWalkPicarxHostTest COMMAND xWalkPicarxTest
         ${CMAKE_CURRENT_BINARY_DIR}/test-data/picarx-test.conf)
     set_tests_properties(xWalkPicarxHostTest PROPERTIES LABELS "host")
+
+    if(TARGET xWalkRobotHatSimulation)
+        add_executable(xWalkPicarxSimulationTest
+            test/src/xAgent_Rpi5CarPicarxSimulationTest.cpp
+            test/src/xAgent_Rpi5CarPicarxTestSupport.cpp)
+        target_include_directories(xWalkPicarxSimulationTest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
+        target_link_libraries(xWalkPicarxSimulationTest PRIVATE xWalkPicarx xWalkRobotHatSimulation)
+        add_test(NAME xWalkPicarxSimulationHostTest COMMAND xWalkPicarxSimulationTest
+            ${CMAKE_CURRENT_BINARY_DIR}/test-data/picarx-simulation.conf)
+        set_tests_properties(xWalkPicarxSimulationHostTest PROPERTIES
+            LABELS "host;simulation;fault-injection;lifecycle")
+    endif()
 endif()
 
 if(XWALK_PICARX_BUILD_HARDWARE_TESTS)
     add_executable(xWalkPicarxHardwareTest test/hardware/src/xAgent_Rpi5CarPicarxHardwareTest.cpp)
+target_link_libraries(xWalkPicarxHardwareTest PRIVATE xWalkTrace)
     target_compile_definitions(xWalkPicarxHardwareTest PRIVATE
         XWALK_PICARX_CONFIG_FILE="${XWALK_PICARX_CONFIG_FILE}")
     target_link_libraries(xWalkPicarxHardwareTest PRIVATE

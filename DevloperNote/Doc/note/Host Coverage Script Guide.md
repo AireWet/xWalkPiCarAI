@@ -37,17 +37,19 @@ The script performs these foreground steps in order:
 
 1. Resolve the `gcovr` executable.
 2. Change to the repository root resolved from the script location.
-3. Run `cmake --fresh --preset coverage`.
-4. Run `cmake --build --preset coverage --parallel`.
-5. Run `ctest --preset coverage`.
-6. Run `gcovr` with `xWalkTool/environment/gcovr.cfg`.
+3. Remove only the dedicated `build-host/coverage` instrumentation tree.
+4. Run `cmake --fresh --preset coverage`.
+5. Run `cmake --build --preset coverage --parallel`.
+6. Run `ctest --preset coverage`.
+7. Run `gcovr` with `xWalkTool/environment/gcovr.cfg`.
 
 Any failing step stops the workflow and returns its failure status. No process is intentionally left running
 in the background.
 
-The final report enforces the measured baseline: at least 79 percent total line
-coverage and 40 percent total branch coverage. Falling below either threshold
-returns a non-zero status and fails CI.
+The final report enforces the reviewed regression floors: at least 75 percent
+line coverage, 85 percent function coverage, and 66 percent branch coverage.
+Falling below any threshold returns a non-zero status and fails CI. The current
+measured baseline is 80.7, 85.2, and 66.6 percent respectively.
 
 ## Output
 

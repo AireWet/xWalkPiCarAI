@@ -26,14 +26,14 @@
 #include "xHal_Rpi5CarGpioLinux.h"
 #include "xHal_Rpi5CarLed.h"
 
+#include "xHal_Rpi5CarTrace.h"
 #include <iostream>
 
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
 
-namespace xwalk::hal::example
-{
+namespace xwalk::hal::example {
 
 /**
  * @brief Runs the physical LED example through GPIO26.
@@ -42,27 +42,23 @@ namespace xwalk::hal::example
  * @param[in] chipName Optional exact kernel chip name.
  * @param[in] chipLabel Optional exact kernel chip label.
  */
-void XWalkLedExampleLinux::run(
-    cstring gpioDevice, stringview chipName, stringview chipLabel)
-{
-    XWalkGpioLinux backend(gpioDevice, chipName, chipLabel, 27U);
-    const XWalkGpioCallbacks gpioCallbacks = XHAL_GPIO_CALLBACKS(XWalkGpioLinux);
-    XWalkGpio gpio(&backend, gpioCallbacks, "LED");
-    XWalkLed led(gpio);
-    ledObject = &led;
-    const XWalkLedExampleCallbacks exampleCallbacks{
-        &on, &off, &blink, &close, &wait, &report};
-    XWalkLedExample example(this, exampleCallbacks);
-    try
-    {
-        example.run();
-        ledObject = nullptr;
-    }
-    catch (...)
-    {
-        ledObject = nullptr;
-        throw;
-    }
+void XWalkLedExampleLinux::run(cstring gpioDevice, stringview chipName,
+                               stringview chipLabel) {
+  XWalkGpioLinux backend(gpioDevice, chipName, chipLabel, 27U);
+  const XWalkGpioCallbacks gpioCallbacks = XHAL_GPIO_CALLBACKS(XWalkGpioLinux);
+  XWalkGpio gpio(&backend, gpioCallbacks, "LED");
+  XWalkLed led(gpio);
+  ledObject = &led;
+  const XWalkLedExampleCallbacks exampleCallbacks{&on,    &off,  &blink,
+                                                  &close, &wait, &report};
+  XWalkLedExample example(this, exampleCallbacks);
+  try {
+    example.run();
+    ledObject = nullptr;
+  } catch (...) {
+    ledObject = nullptr;
+    throw;
+  }
 }
 
 /**
@@ -72,30 +68,25 @@ void XWalkLedExampleLinux::run(
  * @return Referenced adapter.
  * @throws std::invalid_argument If the context or bound LED is null.
  */
-XWalkLedExampleLinux& XWalkLedExampleLinux::adapter(contextpointer context)
-{
-    if (context == nullptr)
-    {
-        XHAL_THROW_INVALID_ARGUMENT("LED example Linux context must not be null");
-    }
-    XWalkLedExampleLinux& self = *static_cast<XWalkLedExampleLinux*>(context);
-    if (self.ledObject == nullptr)
-    {
-        XHAL_THROW_INVALID_ARGUMENT("LED example Linux adapter has no bound LED");
-    }
-    return self;
+XWalkLedExampleLinux &XWalkLedExampleLinux::adapter(contextpointer context) {
+  if (context == nullptr) {
+    XWALK_HAL_ERROR(XWALK_INVAL, "LED example Linux context must not be null");
+  }
+  XWalkLedExampleLinux &self = *static_cast<XWalkLedExampleLinux *>(context);
+  if (self.ledObject == nullptr) {
+    XWALK_HAL_ERROR(XWALK_INVAL, "LED example Linux adapter has no bound LED");
+  }
+  return self;
 }
 
 /** @brief Activates the bound LED. */
-void XWalkLedExampleLinux::on(contextpointer context)
-{
-    adapter(context).ledObject->on();
+void XWalkLedExampleLinux::on(contextpointer context) {
+  adapter(context).ledObject->on();
 }
 
 /** @brief Deactivates the bound LED. */
-void XWalkLedExampleLinux::off(contextpointer context)
-{
-    adapter(context).ledObject->off();
+void XWalkLedExampleLinux::off(contextpointer context) {
+  adapter(context).ledObject->off();
 }
 
 /**
@@ -107,16 +98,15 @@ void XWalkLedExampleLinux::off(contextpointer context)
  * @param[in] pauseSeconds Inactive delay after each repeated sequence.
  */
 void XWalkLedExampleLinux::blink(contextpointer context, uint32 cycleCount,
-    float64 toggleDelaySeconds, float64 pauseSeconds)
-{
-    adapter(context).ledObject->blink(
-        cycleCount, toggleDelaySeconds, pauseSeconds);
+                                 float64 toggleDelaySeconds,
+                                 float64 pauseSeconds) {
+  adapter(context).ledObject->blink(cycleCount, toggleDelaySeconds,
+                                    pauseSeconds);
 }
 
 /** @brief Stops and closes the bound LED. */
-void XWalkLedExampleLinux::close(contextpointer context)
-{
-    adapter(context).ledObject->close();
+void XWalkLedExampleLinux::close(contextpointer context) {
+  adapter(context).ledObject->close();
 }
 
 /**
@@ -125,11 +115,10 @@ void XWalkLedExampleLinux::close(contextpointer context)
  * @param[in,out] context Non-null Linux adapter context.
  * @param[in] durationMilliseconds Requested duration in milliseconds.
  */
-void XWalkLedExampleLinux::wait(
-    contextpointer context, uint32 durationMilliseconds)
-{
-    static_cast<void>(adapter(context));
-    common::sleepMilliseconds(durationMilliseconds);
+void XWalkLedExampleLinux::wait(contextpointer context,
+                                uint32 durationMilliseconds) {
+  static_cast<void>(adapter(context));
+  common::sleepMilliseconds(durationMilliseconds);
 }
 
 /**
@@ -138,10 +127,9 @@ void XWalkLedExampleLinux::wait(
  * @param[in,out] context Non-null Linux adapter context.
  * @param[in] message Status message copied from the Python example.
  */
-void XWalkLedExampleLinux::report(contextpointer context, stringview message)
-{
-    static_cast<void>(adapter(context));
-    std::cout << message << '\n';
+void XWalkLedExampleLinux::report(contextpointer context, stringview message) {
+  static_cast<void>(adapter(context));
+  std::cout << message << '\n';
 }
 
 } /* namespace xwalk::hal::example */

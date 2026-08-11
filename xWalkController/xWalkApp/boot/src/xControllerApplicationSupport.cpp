@@ -39,9 +39,9 @@
  * Anonymous namespace
  ******************************************************************************/
 
-/** @brief Contains process cancellation state private to this translation unit. */
-namespace
-{
+/** @brief Contains process cancellation state private to this translation unit.
+ */
+namespace {
 
 /******************************************************************************
  * Static global variables
@@ -66,48 +66,37 @@ volatile sig_atomic_t operationRequested = 1;
  * @namespace xwalk::ctrl
  * @brief Contains Controller application support for the xWalk firmware.
  */
-namespace xwalk::ctrl
-{
+namespace xwalk::ctrl {
 
 /**
- * @brief Disables all normal traces and applies ordered settings before backend construction.
+ * @brief Applies ordered persistent trace settings before backend construction.
  * @param[in] applicationArguments Validated trace selectors and JSON paths.
- * @return `true` when the default and every requested update succeed.
+ * @return `true` when every requested persistent update succeeds.
  */
 ::ctrl::boolean xWalkApplyTraceConfiguration(
-    const XWalkControllerApplicationArguments& applicationArguments)
-{
-    const ::ctrl::boolean defaultTracesDisabled =
-        hal::XWalkTrace::resetGlobalTraceConfiguration();
-    if (defaultTracesDisabled == false)
-    {
-        return false;
+    const XWalkControllerApplicationArguments &applicationArguments) {
+  for (const ::ctrl::string &argument : applicationArguments.traceArguments) {
+    if (hal::XWalkTrace::applyGlobalTraceArgument(argument) == false) {
+      return false;
     }
-    for (const ::ctrl::string& argument : applicationArguments.traceArguments)
-    {
-        if (hal::XWalkTrace::applyGlobalTraceArgument(argument) == false)
-        {
-            return false;
-        }
-    }
-    return true;
+  }
+  return true;
 }
 
-/** @brief Restores the application operation request before signal handlers are installed. */
-void XWALK_resetOperationRequest() noexcept
-{
-    operationRequested = 1;
-}
+/** @brief Restores the application operation request before signal handlers are
+ * installed. */
+void XWALK_resetOperationRequest() noexcept { operationRequested = 1; }
 
 /**
  * @brief Writes one CLI line to standard output.
  * @param[in] context Optional context; unused.
  * @param[in] line Text written synchronously followed by a newline.
  */
-void XWALK_outputLine(::ctrl::contextpointer context, ::ctrl::stringview line)
-{
-    static_cast<void>(context);
-    std::cout << line << '\n';
+void XWALK_outputLine(::ctrl::contextpointer context, ::ctrl::stringview line) {
+  static_cast<void>(context);
+  std::cout << line << '\n';
+  XWALK_CTRL_TRACE_UID0(CTRL .003,
+                        "Controller application wrote one output line");
 }
 
 /**
@@ -117,18 +106,16 @@ void XWALK_outputLine(::ctrl::contextpointer context, ::ctrl::stringview line)
  * @return Owned response line, or `skip` when input reaches end-of-file.
  */
 ::ctrl::string XWALK_inputLine(::ctrl::contextpointer context,
-    ::ctrl::stringview prompt)
-{
-    static_cast<void>(context);
-    std::cout << prompt << std::flush;
-    ::ctrl::string response;
-    const ::ctrl::boolean lineRead =
-        static_cast<::ctrl::boolean>(std::getline(std::cin, response));
-    if (lineRead == false)
-    {
-        return "skip";
-    }
-    return response;
+                               ::ctrl::stringview prompt) {
+  static_cast<void>(context);
+  std::cout << prompt << std::flush;
+  ::ctrl::string response;
+  const ::ctrl::boolean lineRead =
+      static_cast<::ctrl::boolean>(std::getline(std::cin, response));
+  if (lineRead == false) {
+    return "skip";
+  }
+  return response;
 }
 
 /**
@@ -137,20 +124,19 @@ void XWALK_outputLine(::ctrl::contextpointer context, ::ctrl::stringview line)
  * @param[in] durationMs Requested duration in milliseconds.
  */
 void XWALK_delayMilliseconds(::ctrl::contextpointer context,
-    ::ctrl::uint32 durationMs)
-{
-    static_cast<void>(context);
-    hal::common::sleepMilliseconds(durationMs);
+                             ::ctrl::uint32 durationMs) {
+  static_cast<void>(context);
+  hal::common::sleepMilliseconds(durationMs);
 }
 
 /**
- * @brief Requests graceful shutdown of the active operation from a process signal.
+ * @brief Requests graceful shutdown of the active operation from a process
+ * signal.
  * @param[in] signalNumber Delivered signal number; ignored after dispatch.
  */
-void XWALK_requestOperationStop(int signalNumber) noexcept
-{
-    static_cast<void>(signalNumber);
-    operationRequested = 0;
+void XWALK_requestOperationStop(int signalNumber) noexcept {
+  static_cast<void>(signalNumber);
+  operationRequested = 0;
 }
 
 /**
@@ -158,10 +144,10 @@ void XWALK_requestOperationStop(int signalNumber) noexcept
  * @param[in] context Optional context; unused.
  * @return `true` until SIGINT or SIGTERM requests shutdown.
  */
-::ctrl::boolean XWALK_continueOperation(::ctrl::contextpointer context) noexcept
-{
-    static_cast<void>(context);
-    return operationRequested != 0;
+::ctrl::boolean
+XWALK_continueOperation(::ctrl::contextpointer context) noexcept {
+  static_cast<void>(context);
+  return operationRequested != 0;
 }
 
 /**
@@ -171,60 +157,53 @@ void XWALK_requestOperationStop(int signalNumber) noexcept
  * Sound-effect and music-file operations are synchronous because the one-shot
  * CLI must retain its ALSA composition until playback completes.
  *
- * @param[in,out] context Non-null application context that remains valid during the call.
+ * @param[in,out] context Non-null application context that remains valid during
+ * the call.
  * @param[in] request Validated sound action, file path, and optional volume.
  * @return `true` after the Music backend accepts and completes the operation.
  */
 ::ctrl::boolean XWALK_performSound(::ctrl::contextpointer context,
-    const XWalkSoundRequest& request)
-{
-    XWalkControllerApplicationContext& applicationContext =
-        *static_cast<XWalkControllerApplicationContext*>(context);
-    if (applicationContext.music == nullptr)
-    {
-        return false;
+                                   const XWalkSoundRequest &request) {
+  XWalkControllerApplicationContext &applicationContext =
+      *static_cast<XWalkControllerApplicationContext *>(context);
+  if (applicationContext.music == nullptr) {
+    return false;
+  }
+  hal::XWalkMusic &music = *applicationContext.music;
+  ::ctrl::string resolvedFilePath(request.filePath);
+  if ((request.operation == XWalkSoundOperation::Play) ||
+      (request.operation == XWalkSoundOperation::Music)) {
+    const ::ctrl::filesystempath resolved =
+        hal::resolveResourcePath(applicationContext.resourceDirectory,
+                                 ::ctrl::filesystempath(request.filePath));
+    resolvedFilePath = resolved.string();
+    const ::ctrl::boolean readableRegularFileNotMatched =
+        static_cast<::ctrl::boolean>(!hal::isReadableRegularFile(resolved));
+    if (readableRegularFileNotMatched) {
+      XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Unreadable sound resource: %s",
+                       resolvedFilePath.c_str());
+      return false;
     }
-    hal::XWalkMusic& music = *applicationContext.music;
-    ::ctrl::string resolvedFilePath(request.filePath);
-    if ((request.operation == XWalkSoundOperation::Play) ||
-        (request.operation == XWalkSoundOperation::Music))
-    {
-        const ::ctrl::filesystempath resolved = hal::resolveResourcePath(
-            applicationContext.resourceDirectory,
-            ::ctrl::filesystempath(request.filePath));
-        resolvedFilePath = resolved.string();
-        const ::ctrl::boolean readableRegularFileNotMatched =
-            static_cast<::ctrl::boolean>(
-                !hal::isReadableRegularFile(resolved));
-        if (readableRegularFileNotMatched)
-        {
-            std::cerr << "Unreadable sound resource: " << resolvedFilePath << '\n';
-            return false;
-        }
+  }
+  switch (request.operation) {
+  case XWalkSoundOperation::Play:
+  case XWalkSoundOperation::Music:
+    music.soundPlay(resolvedFilePath, request.volumePercent);
+    break;
+  case XWalkSoundOperation::Volume: {
+    const ::ctrl::boolean volumePercentProvided =
+        static_cast<::ctrl::boolean>(!request.volumePercent.has_value());
+    if (volumePercentProvided) {
+      return false;
     }
-    switch (request.operation)
-    {
-        case XWalkSoundOperation::Play:
-        case XWalkSoundOperation::Music:
-            music.soundPlay(resolvedFilePath, request.volumePercent);
-            break;
-        case XWalkSoundOperation::Volume:
-            {
-                const ::ctrl::boolean volumePercentProvided =
-                    static_cast<::ctrl::boolean>(
-                        !request.volumePercent.has_value());
-                    if (volumePercentProvided)
-            {
-                return false;
-            }
-            }
-            music.musicSetVolume(*request.volumePercent);
-            break;
-        case XWalkSoundOperation::Stop:
-            music.musicStop();
-            break;
-    }
-    return true;
+  }
+    music.musicSetVolume(*request.volumePercent);
+    break;
+  case XWalkSoundOperation::Stop:
+    music.musicStop();
+    break;
+  }
+  return true;
 }
 
 } /* namespace xwalk::ctrl */

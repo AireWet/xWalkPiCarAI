@@ -42,11 +42,13 @@
 #include <exception>
 #include <filesystem>
 #include <fstream>
+#include <functional>
 #include <iterator>
 #include <limits>
 #include <map>
 #include <memory>
 #include <mutex>
+#include <new>
 #include <optional>
 #include <set>
 #include <stdexcept>
@@ -54,6 +56,9 @@
 #include <string_view>
 #include <system_error>
 #include <thread>
+#include <type_traits>
+#include <typeinfo>
+#include <variant>
 #include <vector>
 
 #endif /* XHAL_RPI5CAR_STANDARD_HEADERS_H */

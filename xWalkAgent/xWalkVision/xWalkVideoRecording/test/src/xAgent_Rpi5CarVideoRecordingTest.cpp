@@ -58,7 +58,7 @@ void continueRecording(agent::contextpointer context)
     static_cast<TestState*>(context)->paused = false;
 }
 
-void stopRecording(agent::contextpointer context)
+void stopRecording(agent::contextpointer context) noexcept
 {
     TestState& state = *static_cast<TestState*>(context);
     state.recording = false;

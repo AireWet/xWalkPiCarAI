@@ -3,7 +3,7 @@
  * @brief       Declares Linux callbacks for the D0 button-event sequence.
  *
  * @details
- * Supplies wall-clock timestamps, bounded sleeping, and console event output
+ * Supplies wall-clock timestamps, bounded sleeping, and trace event output
  * while keeping the sequence core independent from Linux services.
  *
  * @project     xWalk Firmware
@@ -66,7 +66,7 @@ public:
     /** @brief Returns wall-clock seconds since the Unix epoch. */
     static float64 time(contextpointer context);
 
-    /** @brief Prints one timestamped button event. */
+    /** @brief Traces one timestamped button event. */
     static void event(contextpointer context, boolean pressed,
         float64 timestampSeconds);
 };

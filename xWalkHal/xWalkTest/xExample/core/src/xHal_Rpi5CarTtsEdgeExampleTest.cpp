@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarTtsEdgeExample.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
 
@@ -59,16 +60,10 @@ void testRequest()
 /** @brief Verifies rejection of a missing speech operation. */
 void testValidation()
 {
-    XWalkHal::boolean rejected = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         xwalk::hal::example::XWalkTtsEdgeExample invalid(nullptr, nullptr);
-    }
-    catch (const XWalkHal::invalidargument&)
-    {
-        rejected = true;
-    }
-    assert(rejected);
+    });
 }
 
 } /* namespace */

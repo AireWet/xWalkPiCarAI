@@ -53,7 +53,7 @@ void testTreasureHunt(xwalk::agent::test::ControllerCommandTestContext& context)
     assert(context.state->spokenText == ctrl::stringvector({
         "Game start!", "Look for red!", "Well done!", "Look for blue!",
         "Look for blue!", "Goodbye!"}));
-    assert(context.state->outputLines.back() == "[SAY] Goodbye!");
+
     assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
         {"vision.start", "controller.delay", "hal.speech.speak", "vision.color",
             "hal.speech.speak", "controller.input", "vision.observe",
@@ -61,7 +61,7 @@ void testTreasureHunt(xwalk::agent::test::ControllerCommandTestContext& context)
             "hal.i2c.write", "controller.delay", "hal.i2c.write",
             "controller.input", "vision.observe", "hal.speech.speak",
             "controller.input", "vision.observe", "vision.stop",
-            "hal.speech.speak", "controller.output"}));
+            "hal.speech.speak"}));
 }
 
 } /* namespace */

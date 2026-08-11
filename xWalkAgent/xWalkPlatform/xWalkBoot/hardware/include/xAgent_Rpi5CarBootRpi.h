@@ -102,7 +102,7 @@ class XWalkBootRpi final : private XWalkBoot
         agent::int32 runVideoRecording(agent::contextpointer context,
             bootapplicationcallback callback, hal::XWalkConfigStore& config);
         /** @brief Runs the isolated SPI-transfer mode. */
-        agent::int32 runSpiTransfer(agent::contextpointer context,
+        agent::int32 runSpiTransfer(agent::contextpointer applicationContext,
             bootapplicationcallback callback, hal::XWalkConfigStore& config);
         /** @brief Composes the Robot HAT graph used by actuator modes. */
         agent::int32 runVehicle(agent::contextpointer context,

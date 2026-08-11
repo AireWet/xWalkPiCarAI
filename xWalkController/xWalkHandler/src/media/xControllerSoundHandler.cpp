@@ -3,7 +3,8 @@
  * @brief       Implements the SoundHandler command responsibility.
  *
  * @details
- * Keeps this controller responsibility isolated within its functionality-based handler group.
+ * Keeps this controller responsibility isolated within its functionality-based
+ *handler group.
  *
  * @project     xWalk Firmware
  * @module      xWalkHandler
@@ -26,7 +27,7 @@
 
 #include "xController.h"
 
-#include "xHal_Rpi5CarExceptions.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -36,8 +37,7 @@
  * @namespace xwalk::ctrl
  * @brief Contains Controller command interfaces for the xWalk firmware.
  */
-namespace xwalk::ctrl
-{
+namespace xwalk::ctrl {
 
 /******************************************************************************
  * Member function definitions
@@ -46,17 +46,18 @@ namespace xwalk::ctrl
 /**
  * @brief Executes the sound command.
  * @param[in] request Validated sound action, file path, and optional volume.
- * @return Zero when accepted or three when the platform audio backend is unavailable.
+ * @return Zero when accepted or three when the platform audio backend is
+ * unavailable.
  */
-::ctrl::int32 XWalkController::XWALK_handlerSound(const XWalkSoundRequest& request)
-{
-    const ::ctrl::boolean soundPerformed = callbacks.sound(callbackContext, request);
-    if (soundPerformed == false)
-    {
-        output("Sound backend unavailable");
-        return 3;
-    }
-    return 0;
+::ctrl::int32
+XWalkController::XWALK_handlerSound(const XWalkSoundRequest &request) {
+  const ::ctrl::boolean soundPerformed =
+      callbacks.sound(callbackContext, request);
+  if (soundPerformed == false) {
+    XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Sound backend unavailable");
+    return 3;
+  }
+  return 0;
 }
 
 } /* namespace xwalk::ctrl */

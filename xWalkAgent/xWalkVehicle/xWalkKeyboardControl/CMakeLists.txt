@@ -17,6 +17,7 @@ endif()
 add_library(xWalkKeyboardControl STATIC
     src/xAgent_Rpi5CarKeyboardControl.cpp
     src/xAgent_Rpi5CarKeyboardControlLifecycle.cpp)
+target_link_libraries(xWalkKeyboardControl PRIVATE xWalkTrace)
 add_library(xWalk::KeyboardControl ALIAS xWalkKeyboardControl)
 
 target_include_directories(xWalkKeyboardControl PUBLIC

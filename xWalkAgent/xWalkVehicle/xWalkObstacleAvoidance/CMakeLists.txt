@@ -17,6 +17,7 @@ endif()
 add_library(xWalkObstacleAvoidance STATIC
     src/xAgent_Rpi5CarObstacleAvoidance.cpp
     src/xAgent_Rpi5CarObstacleAvoidanceLifecycle.cpp)
+target_link_libraries(xWalkObstacleAvoidance PRIVATE xWalkTrace)
 add_library(xWalk::ObstacleAvoidance ALIAS xWalkObstacleAvoidance)
 
 target_include_directories(xWalkObstacleAvoidance PUBLIC

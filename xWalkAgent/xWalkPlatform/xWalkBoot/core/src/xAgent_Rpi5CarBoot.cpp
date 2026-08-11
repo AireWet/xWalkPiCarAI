@@ -25,14 +25,13 @@
  * Includes
  ******************************************************************************/
 #include "xAgent_Rpi5CarBoot.h"
-#include "xHal_Rpi5CarExceptions.h"
 
+#include "xHal_Rpi5CarTrace.h"
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
 
-namespace xwalk::agent
-{
+namespace xwalk::agent {
 
 /******************************************************************************
  * Protected member function definitions
@@ -44,17 +43,15 @@ namespace xwalk::agent
  * @throws std::invalid_argument If `callback` is null.
  * @throws std::logic_error If this object already started once.
  */
-void XWalkBoot::begin(bootapplicationcallback callback)
-{
-    if (callback == nullptr)
-    {
-        XHAL_THROW_INVALID_ARGUMENT("xWalkBoot application callback is required");
-    }
-    if (started)
-    {
-        XHAL_THROW_LOGIC_ERROR("xWalkBoot object has already started");
-    }
-    started = true;
+void XWalkBoot::begin(bootapplicationcallback callback) {
+  if (callback == nullptr) {
+    XWALK_RPIAGENT_ERROR(XWALK_INVAL,
+                         "xWalkBoot application callback is required");
+  }
+  if (started) {
+    XWALK_RPIAGENT_ERROR(XWALK_LOGIC, "xWalkBoot object has already started");
+  }
+  started = true;
 }
 
 } /* namespace xwalk::agent */

@@ -106,9 +106,21 @@ agent::int32 XWalkBootRpi::runVehicle(agent::contextpointer context,
     hal::XWalkPwm tiltPwm(i2c, config.get("hardware_tilt_pwm_channel", "P1"), {}, timerState);
     hal::XWalkPwm directionPwm(i2c,
         config.get("hardware_direction_pwm_channel", "P2"), {}, timerState);
-    hal::XWalkServo panServo(panPwm);
-    hal::XWalkServo tiltServo(tiltPwm);
-    hal::XWalkServo directionServo(directionPwm);
+    hal::XWalkServoConfiguration panServoConfiguration;
+    panServoConfiguration.minimumAngleDegrees = -90.0;
+    panServoConfiguration.centreAngleDegrees = 0.0;
+    panServoConfiguration.maximumAngleDegrees = 90.0;
+    hal::XWalkServoConfiguration tiltServoConfiguration;
+    tiltServoConfiguration.minimumAngleDegrees = -35.0;
+    tiltServoConfiguration.centreAngleDegrees = 0.0;
+    tiltServoConfiguration.maximumAngleDegrees = 65.0;
+    hal::XWalkServoConfiguration directionServoConfiguration;
+    directionServoConfiguration.minimumAngleDegrees = -30.0;
+    directionServoConfiguration.centreAngleDegrees = 0.0;
+    directionServoConfiguration.maximumAngleDegrees = 30.0;
+    hal::XWalkServo panServo(panPwm, panServoConfiguration);
+    hal::XWalkServo tiltServo(tiltPwm, tiltServoConfiguration);
+    hal::XWalkServo directionServo(directionPwm, directionServoConfiguration);
     hal::XWalkGpioLinux triggerBackend(gpioDevice.c_str(), gpioChipName,
         gpioChipLabel, minimumGpioLineCount);
     hal::XWalkGpioLinux echoBackend(gpioDevice.c_str(), gpioChipName,
@@ -122,10 +134,16 @@ agent::int32 XWalkBootRpi::runVehicle(agent::contextpointer context,
     hal::XWalkAdc adc2(i2c, config.get("hardware_grayscale_right_channel", "A2"));
     hal::XWalkGrayscaleModule grayscale(adc0, adc1, adc2);
     hal::XWalkUltrasonic ultrasonic(trigger, echo);
+    hal::XWalkMotorsConfiguration motorsConfiguration;
+    motorsConfiguration.watchdogTimeoutMilliseconds = parseUnsigned(config.get(
+        "picarx_motor_watchdog_timeout_ms", "500"),
+        "picarx_motor_watchdog_timeout_ms",
+        hal::XHAL_RPI5CAR_MOTOR_WATCHDOG_MAXIMUM_MILLISECONDS);
     const auto runApplication = [&](hal::XWalkMotors& motors) -> agent::int32
     {
         XWalkPicarx picarx(motors, directionServo, panServo, tiltServo,
             grayscale, ultrasonic, config);
+        static_cast<void>(picarx.initialize());
         return runVehicleMode(context, callback, config, boardControl, picarx,
             gpioDevice, gpioChipName, gpioChipLabel, minimumGpioLineCount,
             gpioCallbacks);
@@ -145,7 +163,7 @@ agent::int32 XWalkBootRpi::runVehicle(agent::contextpointer context,
             config.get("hardware_v5_right_reverse_pwm_channel", "P15"), {}, timerState);
         hal::XWalkMotor leftMotor(leftForwardPwm, leftReversePwm);
         hal::XWalkMotor rightMotor(rightForwardPwm, rightReversePwm);
-        hal::XWalkMotors motors(leftMotor, rightMotor);
+        hal::XWalkMotors motors(leftMotor, rightMotor, motorsConfiguration);
         return runApplication(motors);
     }
 
@@ -163,7 +181,7 @@ agent::int32 XWalkBootRpi::runVehicle(agent::contextpointer context,
         config.get("hardware_v4_right_direction_pin", "D5"));
     hal::XWalkMotor leftMotor(leftPwm, leftDirection);
     hal::XWalkMotor rightMotor(rightPwm, rightDirection);
-    hal::XWalkMotors motors(leftMotor, rightMotor);
+    hal::XWalkMotors motors(leftMotor, rightMotor, motorsConfiguration);
     return runApplication(motors);
 }
 

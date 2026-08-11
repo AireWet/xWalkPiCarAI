@@ -5,8 +5,8 @@
 
 ## Public interface
 
-See [xWalkGpio](../../../xWalkHal/xWalkGpio/README.md),
-[`xHal_Rpi5CarGpio.h`](../../../xWalkHal/xWalkGpio/core/include/xHal_Rpi5CarGpio.h), and the
+See [xWalkGpio](../../../xWalkHal/interface/xWalkGpio/README.md),
+[`xHal_Rpi5CarGpio.h`](../../../xWalkHal/interface/xWalkGpio/core/include/xHal_Rpi5CarGpio.h), and the
 Linux backend header when building for Raspberry Pi.
 
 The application owns callback context lifetime. Keep interrupt callbacks short,

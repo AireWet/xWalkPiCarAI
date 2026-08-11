@@ -26,7 +26,6 @@
 
 #include "xController.h"
 
-#include "xHal_Rpi5CarExceptions.h"
 
 /******************************************************************************
  * Namespace definitions

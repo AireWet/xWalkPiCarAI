@@ -208,6 +208,7 @@ void testCalibration(agent::stringview configurationPath)
     configuration.set("picarx_dir_motor", "[1,1]");
     xwalk::agent::XWalkPicarx picarx(motors, directionServo, panServo, tiltServo,
         grayscale, ultrasonic, configuration);
+    static_cast<void>(picarx.initialize());
     TestSchedule schedule;
     xwalk::agent::XWalkServoMotorCalibration calibration(
         picarx, &schedule, &delay, &continueOperation);

@@ -44,6 +44,16 @@
 namespace xwalk::agent
 {
 
+/** @brief Selects how OpenCV opens the configured frame source. */
+enum class XWalkComputerVisionOpenCvBackend : agent::uint8
+{
+    V4l2 = 0U,
+    Gstreamer,
+    VideoFile,
+    ImageSequence,
+    Automatic
+};
+
 /******************************************************************************
  * Type definitions
  ******************************************************************************/
@@ -65,8 +75,10 @@ using computervisionrectanglevector = std::vector<cv::Rect>;
  */
 struct XWalkComputerVisionOpenCvConfiguration
 {
-    /** @brief Absolute V4L2 device path. */
-    agent::string cameraDevice{"/dev/video0"};
+    /** @brief Selected OpenCV source adapter. */
+    XWalkComputerVisionOpenCvBackend cameraBackend{XWalkComputerVisionOpenCvBackend::V4l2};
+    /** @brief Device path, pipeline, video path, or image-sequence pattern. */
+    agent::string cameraDevice{};
     /** @brief Writable directory receiving timestamped JPEG photographs. */
     agent::string photoDirectory{"/tmp/xwalk-pictures"};
     /** @brief Readable frontal-face Haar cascade XML path. */
@@ -76,6 +88,8 @@ struct XWalkComputerVisionOpenCvConfiguration
     agent::uint32 widthPixels{640U};
     /** @brief Requested capture height from 16 through 4320 pixels. */
     agent::uint32 heightPixels{480U};
+    /** @brief Best-effort OpenCV frame-read timeout from 1 through 60000 milliseconds. */
+    agent::uint32 readTimeoutMilliseconds{1'000U};
 };
 
 /******************************************************************************
@@ -131,6 +145,8 @@ protected:
     XWalkComputerVisionDetection detectFace(const cv::Mat& frame);
 
 public:
+    /** @brief Parses a deployment backend name. */
+    static XWalkComputerVisionOpenCvBackend backendFromString(agent::stringview backend);
     /**
      * @brief Constructs one idle OpenCV provider.
      * @param[in] configuration Camera, cascade, size, and output settings.

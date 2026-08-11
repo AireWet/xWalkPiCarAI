@@ -29,7 +29,6 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarCommonFunctions.h"
-#include "xHal_Rpi5CarExceptions.h"
 #include "xHal_Rpi5CarFileFunctions.h"
 #include "xHal_Rpi5CarMath.h"
 #include "xHal_Rpi5CarTypes.h"
@@ -48,11 +47,11 @@
  * @warning
  * The context must point to a live `BACKEND_TYPE` object for every callback.
  */
-#define XHAL_I2C_PROBE_CALLBACK(BACKEND_TYPE) +[](xwalk::hal::contextpointer context, \
-    xwalk::hal::uint8 address) -> xwalk::hal::boolean \
+#define XHAL_I2C_PROBE_CALLBACK(BACKEND_TYPE) +[](xwalk::hal::contextpointer xwalkCallbackContext, \
+    xwalk::hal::uint8 xwalkCallbackAddress) -> xwalk::hal::boolean \
     { \
-        BACKEND_TYPE& backend = *static_cast<BACKEND_TYPE*>(context); \
-        return backend.probeDevice(address); \
+        BACKEND_TYPE& xwalkCallbackBackend = *static_cast<BACKEND_TYPE*>(xwalkCallbackContext); \
+        return xwalkCallbackBackend.probeDevice(xwalkCallbackAddress); \
     }
 
 /**
@@ -65,23 +64,27 @@
  * @warning
  * The context must point to a live `BACKEND_TYPE` object for every callback.
  */
-#define XHAL_I2C_WRITE_REGISTER_CALLBACK(BACKEND_TYPE) +[](xwalk::hal::contextpointer context, \
-    xwalk::hal::uint8 address, xwalk::hal::uint8 reg, const xwalk::hal::bytevector& data) \
+#define XHAL_I2C_WRITE_REGISTER_CALLBACK(BACKEND_TYPE) \
+    +[](xwalk::hal::contextpointer xwalkCallbackContext, xwalk::hal::uint8 xwalkCallbackAddress, \
+        xwalk::hal::uint8 xwalkCallbackRegister, const xwalk::hal::bytevector& xwalkCallbackData) \
     { \
-        BACKEND_TYPE& backend = *static_cast<BACKEND_TYPE*>(context); \
-        backend.writeRegisterDevice(address, reg, data); \
+        BACKEND_TYPE& xwalkCallbackBackend = *static_cast<BACKEND_TYPE*>(xwalkCallbackContext); \
+        xwalkCallbackBackend.writeRegisterDevice( \
+            xwalkCallbackAddress, xwalkCallbackRegister, xwalkCallbackData); \
     }
 
 /**
  * @brief Creates a non-throwing I2C register-write status callback for a backend type.
  * @warning The context must point to a live `BACKEND_TYPE` object for every callback.
  */
-#define XHAL_I2C_TRY_WRITE_REGISTER_CALLBACK(BACKEND_TYPE) +[](xwalk::hal::contextpointer context, \
-    xwalk::hal::uint8 address, xwalk::hal::uint8 reg, const xwalk::hal::bytevector& data) noexcept \
-    -> xwalk::hal::boolean \
+#define XHAL_I2C_TRY_WRITE_REGISTER_CALLBACK(BACKEND_TYPE) \
+    +[](xwalk::hal::contextpointer xwalkCallbackContext, xwalk::hal::uint8 xwalkCallbackAddress, \
+        xwalk::hal::uint8 xwalkCallbackRegister, \
+        const xwalk::hal::bytevector& xwalkCallbackData) noexcept -> xwalk::hal::boolean \
     { \
-        BACKEND_TYPE& backend = *static_cast<BACKEND_TYPE*>(context); \
-        return backend.tryWriteRegisterDevice(address, reg, data); \
+        BACKEND_TYPE& xwalkCallbackBackend = *static_cast<BACKEND_TYPE*>(xwalkCallbackContext); \
+        return xwalkCallbackBackend.tryWriteRegisterDevice( \
+            xwalkCallbackAddress, xwalkCallbackRegister, xwalkCallbackData); \
     }
 
 /**
@@ -90,11 +93,12 @@
  * @warning
  * The context must point to a live `BACKEND_TYPE` object for every callback.
  */
-#define XHAL_I2C_READ_CALLBACK(BACKEND_TYPE) +[](xwalk::hal::contextpointer context, \
-    xwalk::hal::uint8 address, xwalk::hal::size length) -> xwalk::hal::bytevector \
+#define XHAL_I2C_READ_CALLBACK(BACKEND_TYPE) +[](xwalk::hal::contextpointer xwalkCallbackContext, \
+    xwalk::hal::uint8 xwalkCallbackAddress, xwalk::hal::size xwalkCallbackLength) \
+    -> xwalk::hal::bytevector \
     { \
-        BACKEND_TYPE& backend = *static_cast<BACKEND_TYPE*>(context); \
-        return backend.readDevice(address, length); \
+        BACKEND_TYPE& xwalkCallbackBackend = *static_cast<BACKEND_TYPE*>(xwalkCallbackContext); \
+        return xwalkCallbackBackend.readDevice(xwalkCallbackAddress, xwalkCallbackLength); \
     }
 
 /**
@@ -103,12 +107,14 @@
  * @warning
  * The context must point to a live `BACKEND_TYPE` object for every callback.
  */
-#define XHAL_I2C_READ_REGISTER_CALLBACK(BACKEND_TYPE) +[](xwalk::hal::contextpointer context, \
-    xwalk::hal::uint8 address, xwalk::hal::uint8 reg, xwalk::hal::size length) \
-    -> xwalk::hal::bytevector \
+#define XHAL_I2C_READ_REGISTER_CALLBACK(BACKEND_TYPE) \
+    +[](xwalk::hal::contextpointer xwalkCallbackContext, xwalk::hal::uint8 xwalkCallbackAddress, \
+        xwalk::hal::uint8 xwalkCallbackRegister, xwalk::hal::size xwalkCallbackLength) \
+        -> xwalk::hal::bytevector \
     { \
-        BACKEND_TYPE& backend = *static_cast<BACKEND_TYPE*>(context); \
-        return backend.readRegisterDevice(address, reg, length); \
+        BACKEND_TYPE& xwalkCallbackBackend = *static_cast<BACKEND_TYPE*>(xwalkCallbackContext); \
+        return xwalkCallbackBackend.readRegisterDevice( \
+            xwalkCallbackAddress, xwalkCallbackRegister, xwalkCallbackLength); \
     }
 
 /******************************************************************************
@@ -183,11 +189,6 @@
 #define XHAL_RPI5CAR_TRACE_LEVEL_CHANGE_SUFFIX "]"
 /** @brief Number of supported tagged-trace priorities. */
 #define XHAL_RPI5CAR_TRACE_PRIORITY_COUNT 4U
-/** @brief Working-directory-relative directory receiving xWalk trace records. */
-#define XHAL_RPI5CAR_TRACE_LOG_DIRECTORY "log"
-/** @brief Append-only xWalk trace filename. */
-#define XHAL_RPI5CAR_TRACE_LOG_FILENAME "xWalkTrace.log"
-
 #ifndef XWALK_TRACE_CONFIG_PATH
 /** @brief Generated trace XML path overridden by the xWalkTrace CMake target. */
 #define XWALK_TRACE_CONFIG_PATH "xwalk-traces.xml"

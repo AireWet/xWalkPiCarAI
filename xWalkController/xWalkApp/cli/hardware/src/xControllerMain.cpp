@@ -29,6 +29,7 @@
 #include "xControllerApplicationSupport.h"
 #include "xControllerBootMode.h"
 #include "xControllerCommands.h"
+#include "xControllerDeploymentConfig.h"
 #include "xControllerRunner.h"
 #include "xAgent_Rpi5CarBootRpi.h"
 #include "xAgent_Rpi5CarPicarxConfiguration.h"
@@ -69,6 +70,43 @@ ctrl::int32 main(ctrl::int32 argumentCount, ctrl::charpointer arguments[])
     {
         std::cerr << "Global options contain a missing or invalid value" << std::endl;
         return 2;
+    }
+
+    const ::ctrl::boolean configurationActionRequested =
+        applicationArguments.validateConfiguration ||
+        applicationArguments.printEffectiveConfiguration ||
+        applicationArguments.diagnose || applicationArguments.noHardware;
+    if (configurationActionRequested)
+    {
+        const ::ctrl::boolean actionValid =
+            applicationArguments.commandArguments.empty() &&
+            (!applicationArguments.diagnose || applicationArguments.noHardware) &&
+            (applicationArguments.validateConfiguration ||
+                applicationArguments.printEffectiveConfiguration ||
+                applicationArguments.diagnose);
+        if (actionValid == false)
+        {
+            std::cerr << "No-hardware configuration action is incomplete or conflicts with a command"
+                      << std::endl;
+            return 2;
+        }
+        const xwalk::ctrl::XWalkDeploymentConfigReport report =
+            xwalk::ctrl::XWALK_validateDeploymentConfig(
+                applicationArguments.appConfig.configurationFilePath);
+        for (const ctrl::string& line : report.lines)
+        {
+            std::cout << line << std::endl;
+        }
+        if (report.valid && applicationArguments.printEffectiveConfiguration)
+        {
+            for (const ctrl::string& line :
+                xwalk::ctrl::XWALK_effectiveDeploymentConfig(
+                    applicationArguments.appConfig.configurationFilePath))
+            {
+                std::cout << line << std::endl;
+            }
+        }
+        return report.valid ? 0 : 2;
     }
 
     const ::ctrl::boolean traceConfigurationApplied =

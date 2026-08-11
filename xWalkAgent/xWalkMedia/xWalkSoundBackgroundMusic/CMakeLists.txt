@@ -15,13 +15,14 @@ if(NOT TARGET xWalkMusic)
         set(XWALK_MUSIC_BUILD_SNDFILE_DECODER OFF CACHE BOOL
             "Sound-background-music dependency setting")
     endif()
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/xWalkMusic
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/layer1/xWalkMusic
         ${CMAKE_CURRENT_BINARY_DIR}/xWalkMusic)
 endif()
 
 add_library(xWalkSoundBackgroundMusic STATIC
     src/xAgent_Rpi5CarSoundBackgroundMusic.cpp
     src/xAgent_Rpi5CarSoundBackgroundMusicLifecycle.cpp)
+target_link_libraries(xWalkSoundBackgroundMusic PRIVATE xWalkTrace)
 add_library(xWalk::SoundBackgroundMusic ALIAS xWalkSoundBackgroundMusic)
 target_include_directories(xWalkSoundBackgroundMusic PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include)

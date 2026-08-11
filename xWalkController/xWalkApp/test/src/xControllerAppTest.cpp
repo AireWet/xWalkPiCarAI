@@ -29,6 +29,7 @@
 #include "xWalkControllerConfigTypes.h"
 
 #include "xControllerApplicationSupport.h"
+#include "xControllerDeploymentConfig.h"
 #include "xControllerBootMode.h"
 #include "xControllerCommands.h"
 #include "xControllerPicarxCommands.h"
@@ -36,7 +37,9 @@
 
 #include "xHal_Rpi5CarTypes.h"
 
+#include <algorithm>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <type_traits>
@@ -72,6 +75,34 @@ static_assert(std::is_same_v<
 static_assert(std::is_same_v<
     std::underlying_type_t<xwalk::ctrl::XWalkCalibrationMode>, ctrl::uint8>);
 
+/**
+ * @brief Validates one deployment override while retaining production defaults.
+ * @param[in] name Configuration key written to the isolated fixture.
+ * @param[in] value Configuration value written to the isolated fixture.
+ * @return Complete validation report for the temporary configuration.
+ */
+xwalk::ctrl::XWalkDeploymentConfigReport validateDeploymentOverride(
+    ctrl::stringview name, ctrl::stringview value)
+{
+    const ctrl::filesystempath path = ctrl::filesystempath("/tmp") /
+        ("xwalk-deployment-override-" +
+            std::to_string(static_cast<unsigned long>(::getpid())) + "-" +
+            ctrl::string(name) + ".conf");
+    {
+        std::ofstream output(path);
+        if (!output.is_open())
+        {
+            return {false, {"[FAIL] temporary configuration could not be opened"}};
+        }
+        output << name << " = " << value << '\n';
+    }
+    const xwalk::ctrl::XWalkDeploymentConfigReport report =
+        xwalk::ctrl::XWALK_validateDeploymentConfig(path.string());
+    std::error_code removeError;
+    static_cast<void>(std::filesystem::remove(path, removeError));
+    return report;
+}
+
 /******************************************************************************
  * Test function definitions
  ******************************************************************************/
@@ -100,6 +131,10 @@ TEST(XWalkAppGroup, ApplicationSupportDefaults)
     EXPECT_EQ(bootContext.commandArguments, nullptr);
     EXPECT_TRUE(bootContext.resourceDirectory.empty());
     EXPECT_TRUE(applicationArguments.traceArguments.empty());
+    EXPECT_FALSE(applicationArguments.validateConfiguration);
+    EXPECT_FALSE(applicationArguments.printEffectiveConfiguration);
+    EXPECT_FALSE(applicationArguments.diagnose);
+    EXPECT_FALSE(applicationArguments.noHardware);
     EXPECT_TRUE(xwalk::ctrl::xWalkApplyTraceConfiguration(applicationArguments));
     EXPECT_EQ(applicationContext.music, nullptr);
     EXPECT_TRUE(applicationContext.resourceDirectory.empty());
@@ -450,6 +485,165 @@ TEST(XWalkAppGroup, InvalidControllerApplicationArguments)
         4, legacyArguments, defaultConfig, applicationArguments));
 }
 
+/** @brief Verifies standalone no-hardware global options are removed before command parsing. */
+TEST(XWalkAppGroup, NoHardwareApplicationArguments)
+{
+    ctrl::string executable{"xwalk-picarx-control"};
+    ctrl::string validate{"--validate-config"};
+    ctrl::string print{"--print-effective-config"};
+    ctrl::string diagnose{"--diagnose"};
+    ctrl::string noHardware{"--no-hardware"};
+    ctrl::charpointer arguments[]{executable.data(), validate.data(), print.data(),
+        diagnose.data(), noHardware.data()};
+    xwalk::ctrl::XWalkControllerApplicationArguments applicationArguments;
+    const xwalk::ctrl::XWalkAppConfig defaultConfig{
+        "/absolute/config.conf", "/absolute/resources"};
+
+    EXPECT_TRUE(xwalk::ctrl::xWalkParseControllerApplicationArguments(
+        5, arguments, defaultConfig, applicationArguments));
+    EXPECT_TRUE(applicationArguments.commandArguments.empty());
+    EXPECT_TRUE(applicationArguments.validateConfiguration);
+    EXPECT_TRUE(applicationArguments.printEffectiveConfiguration);
+    EXPECT_TRUE(applicationArguments.diagnose);
+    EXPECT_TRUE(applicationArguments.noHardware);
+}
+
+/** @brief Verifies layered validation and redacted effective output without device access. */
+TEST(XWalkAppGroup, NoHardwareDeploymentConfiguration)
+{
+    const ctrl::filesystempath configurationDirectory(
+        XWALK_CONTROLLER_TRACE_EXAMPLE_DIRECTORY);
+    const ctrl::filesystempath repositoryConfiguration =
+        configurationDirectory / "picar-x.conf";
+    const xwalk::ctrl::XWalkDeploymentConfigReport validReport =
+        xwalk::ctrl::XWALK_validateDeploymentConfig(
+            repositoryConfiguration.string());
+    EXPECT_TRUE(validReport.valid);
+    ASSERT_FALSE(validReport.lines.empty());
+    EXPECT_NE(validReport.lines.back().find("No hardware device"),
+        ctrl::string::npos);
+
+    const ctrl::filesystempath invalidConfiguration =
+        ctrl::filesystempath("/tmp") / ("xwalk-invalid-deployment-config-" +
+            std::to_string(static_cast<unsigned long>(::getpid())) + ".conf");
+    {
+        std::ofstream output(invalidConfiguration);
+        ASSERT_TRUE(output.is_open());
+        output << "deployment_config_version = 99\n";
+        output << "hardware_board = unsupported\n";
+        output << "hardware_v5_right_reverse_pwm_channel = P12\n";
+        output << "hardware_v4_right_direction_pin = D4\n";
+        output << "picarx_motor_watchdog_timeout_ms = 0\n";
+        output << "computer_vision_camera_backend = unsupported\n";
+        output << "voice_language_model_endpoint = https://user@example.invalid/api\n";
+        output << "voice_language_model_api_key_environment = literal-secret\n";
+    }
+    const xwalk::ctrl::XWalkDeploymentConfigReport invalidReport =
+        xwalk::ctrl::XWALK_validateDeploymentConfig(
+            invalidConfiguration.string());
+    EXPECT_FALSE(invalidReport.valid);
+    EXPECT_GE(std::count_if(invalidReport.lines.begin(), invalidReport.lines.end(),
+        [](const ctrl::string& line) { return line.rfind("[FAIL]", 0U) == 0U; }), 5);
+    const ctrl::stringvector effective =
+        xwalk::ctrl::XWALK_effectiveDeploymentConfig(
+            invalidConfiguration.string());
+    EXPECT_NE(std::find(effective.begin(), effective.end(),
+        "voice_language_model_api_key_environment = <redacted>"), effective.end());
+    EXPECT_NE(std::find(effective.begin(), effective.end(),
+        "deployment_config_version = 99"), effective.end());
+    std::error_code removeError;
+    static_cast<void>(std::filesystem::remove(invalidConfiguration, removeError));
+    EXPECT_FALSE(removeError);
+}
+
+/** @brief Rejects boundary violations for every deployment value family. */
+TEST(XWalkAppGroup, DeploymentConfigurationRejectsUnsafeBoundaries)
+{
+    struct InvalidOverride
+    {
+        ctrl::cstring name;
+        ctrl::cstring value;
+    };
+    const ctrl::fixedarray<InvalidOverride, 27U> invalidOverrides{{
+        {"deployment_config_version", "2"},
+        {"hardware_board", "unknown"},
+        {"hardware_i2c_device", "i2c-1"},
+        {"hardware_gpio_device", "gpiochip0"},
+        {"hardware_spi_device", "spidev0.0"},
+        {"hardware_gpio_minimum_line_count", "0"},
+        {"hardware_v5_left_forward_pwm_channel", "P16"},
+        {"hardware_v5_right_reverse_pwm_channel", "P12"},
+        {"hardware_v4_left_pwm_channel", "Q1"},
+        {"hardware_v4_right_pwm_channel", "P13"},
+        {"hardware_v4_left_direction_pin", "D17"},
+        {"hardware_v4_right_direction_pin", "D4"},
+        {"picarx_dir_motor", "[0,1]"},
+        {"picarx_dir_servo", "181"},
+        {"picarx_max_motor_output_percent", "101"},
+        {"picarx_calibration_verified", "yes"},
+        {"picarx_apply_persisted_servo_positions", "1"},
+        {"picarx_motor_watchdog_timeout_ms", "60001"},
+        {"camera_connection", "network"},
+        {"computer_vision_camera_backend", "unknown"},
+        {"computer_vision_width", "15"},
+        {"computer_vision_height", "4321"},
+        {"computer_vision_read_timeout_ms", "0"},
+        {"video_recording_fps", "121"},
+        {"voice_language_model_provider", "unknown"},
+        {"voice_language_model_endpoint", "https://user@example.invalid/api"},
+        {"app_control_port", "0"}
+    }};
+
+    for (const InvalidOverride& invalidOverride : invalidOverrides)
+    {
+        const xwalk::ctrl::XWalkDeploymentConfigReport report =
+            validateDeploymentOverride(invalidOverride.name, invalidOverride.value);
+        EXPECT_FALSE(report.valid) << invalidOverride.name;
+    }
+}
+
+/** @brief Accepts supported alternatives and exact deployment boundaries. */
+TEST(XWalkAppGroup, DeploymentConfigurationAcceptsSupportedAlternatives)
+{
+    struct ValidOverride
+    {
+        ctrl::cstring name;
+        ctrl::cstring value;
+    };
+    const ctrl::fixedarray<ValidOverride, 23U> validOverrides{{
+        {"hardware_board", "robot_hat_v4"},
+        {"hardware_board", "robot_hat_v5"},
+        {"hardware_gpio_minimum_line_count", "1024"},
+        {"hardware_v4_left_direction_pin", "SW"},
+        {"hardware_v4_left_direction_pin", "USER"},
+        {"hardware_v4_left_direction_pin", "MCURST"},
+        {"hardware_v4_left_direction_pin", "BOARD_TYPE"},
+        {"hardware_v4_left_direction_pin", "BLEINT"},
+        {"hardware_v4_left_direction_pin", "RST"},
+        {"hardware_v4_left_direction_pin", "LED"},
+        {"hardware_v4_left_direction_pin", "BLERST"},
+        {"hardware_v4_left_direction_pin", "CE"},
+        {"picarx_dir_motor", "[-1,1]"},
+        {"picarx_dir_motor", "[1,-1]"},
+        {"picarx_dir_motor", "[-1,-1]"},
+        {"picarx_dir_servo", "-180"},
+        {"picarx_cam_tilt_servo", "180"},
+        {"picarx_max_motor_output_percent", "100"},
+        {"picarx_motor_watchdog_timeout_ms", "60000"},
+        {"camera_connection", "usb"},
+        {"computer_vision_camera_backend", "automatic"},
+        {"computer_vision_camera_backend", "gstreamer"},
+        {"app_control_port", "65535"}
+    }};
+
+    for (const ValidOverride& validOverride : validOverrides)
+    {
+        const xwalk::ctrl::XWalkDeploymentConfigReport report =
+            validateDeploymentOverride(validOverride.name, validOverride.value);
+        EXPECT_TRUE(report.valid) << validOverride.name << '=' << validOverride.value;
+    }
+}
+
 /**
  * @brief Runs the sibling host application with up to three arguments.
  *
@@ -545,6 +739,17 @@ TEST(XWalkAppGroup, Help)
     EXPECT_EQ(runHostApplication("--help"), 0);
 }
 
+/** @brief Verifies the host CLI performs validation without constructing a boot backend. */
+TEST(XWalkAppGroup, NoHardwareConfigurationCli)
+{
+    const ctrl::string configuration = "--deployment-config=" +
+        (ctrl::filesystempath(XWALK_CONTROLLER_TRACE_EXAMPLE_DIRECTORY) /
+            "picar-x.conf").string();
+    EXPECT_EQ(runHostApplication(configuration.c_str(), "--validate-config"), 0);
+    EXPECT_EQ(runHostApplication(configuration.c_str(), "--print-effective-config"), 0);
+    EXPECT_EQ(runHostApplication("--diagnose", "--no-hardware"), 2);
+}
+
 /**
  * @brief Verifies unified all-trace control without constructing hardware.
  */
@@ -556,10 +761,16 @@ TEST(XWalkAppGroup, TraceConfiguration)
     EXPECT_EQ(runHostApplication("--trace", "RPI.disable"), 0);
     EXPECT_EQ(runHostApplication("--trace", "CTRL.enable"), 0);
     EXPECT_EQ(runHostApplication("--trace", "CTRL.disable"), 0);
+    EXPECT_EQ(runHostApplication("--trace", "RPIAGENT.enable"), 0);
+    EXPECT_EQ(runHostApplication("--trace", "RPIAGENT.disable"), 0);
+    EXPECT_EQ(runHostApplication("--trace", "LIB.enable"), 0);
+    EXPECT_EQ(runHostApplication("--trace", "LIB.disable"), 0);
     EXPECT_EQ(runHostApplication("--trace", "RPI.001.enable"), 0);
     EXPECT_EQ(runHostApplication("--trace", "RPI.001.disable"), 0);
     EXPECT_EQ(runHostApplication("--trace", "CTRL.001.enable"), 0);
     EXPECT_EQ(runHostApplication("--trace", "CTRL.001.disable"), 0);
+    EXPECT_EQ(runHostApplication("--trace", "RPIAGENT.001.enable"), 0);
+    EXPECT_EQ(runHostApplication("--trace", "RPIAGENT.001.disable"), 0);
     const ctrl::filesystempath jsonExample =
         ctrl::filesystempath(XWALK_CONTROLLER_TRACE_EXAMPLE_DIRECTORY) /
         "xwalk-traces.json";

@@ -12,6 +12,7 @@ endif()
 add_library(xWalkServoZeroing STATIC
     src/xAgent_Rpi5CarServoZeroing.cpp
     src/xAgent_Rpi5CarServoZeroingLifecycle.cpp)
+target_link_libraries(xWalkServoZeroing PRIVATE xWalkTrace)
 add_library(xWalk::ServoZeroing ALIAS xWalkServoZeroing)
 target_include_directories(xWalkServoZeroing PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include)

@@ -45,15 +45,15 @@ void testVoiceChat(xwalk::agent::test::ControllerCommandTestContext& context)
         "<think>private</think> Hello there.");
     assert(context.state->outputLines[6U] == "[INFO] Stopping...");
     assert(context.state->outputLines[7U] == "Bye.");
-    assert(context.state->outputLines.back() == "Local voice chatbot stopped");
+
     assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"hal.speech.speak", "controller.output", "controller.continue",
-            "hal.speech.listen", "controller.output", "controller.delay",
-            "controller.continue", "hal.speech.listen", "controller.output",
-            "hal.model.prompt", "controller.output", "hal.speech.speak",
-            "controller.delay", "controller.continue", "controller.output",
-            "hal.speech.speak", "hal.speech.stop", "controller.output",
-            "controller.output"}));
+        {"hal.speech.speak", "controller.continue",
+            "hal.speech.listen", "controller.delay",
+            "controller.continue", "hal.speech.listen",
+            "hal.model.prompt", "hal.speech.speak",
+            "controller.delay", "controller.continue",
+            "hal.speech.speak", "hal.speech.stop",
+            }));
 }
 }
 

@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarSttVoskWithoutStreamExample.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
 
@@ -77,39 +78,21 @@ void testValidation()
     WithoutStreamExampleState state;
     auto incomplete = callbacks();
     incomplete.report = nullptr;
-    XWalkHal::boolean rejectedCallbacks = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         xwalk::hal::example::XWalkSttVoskWithoutStreamExample invalid(
             &state, incomplete);
-    }
-    catch (const XWalkHal::invalidargument&)
-    {
-        rejectedCallbacks = true;
-    }
-    assert(rejectedCallbacks);
+    });
 
     xwalk::hal::example::XWalkSttVoskWithoutStreamExample example(&state, callbacks());
-    XWalkHal::boolean rejectedCount = false;
-    XWalkHal::boolean rejectedTimeout = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         example.run(0U, 1U);
-    }
-    catch (const XWalkHal::outofrange&)
-    {
-        rejectedCount = true;
-    }
-    try
+    });
+    xwalk::hal::test::expectFailure([&]()
     {
         example.run(1U, XHAL_RPI5CAR_SPEECH_TO_TEXT_MAXIMUM_TIMEOUT_MS + 1U);
-    }
-    catch (const XWalkHal::outofrange&)
-    {
-        rejectedTimeout = true;
-    }
-    assert(rejectedCount);
-    assert(rejectedTimeout);
+    });
 }
 
 } /* namespace */

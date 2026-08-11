@@ -5,7 +5,7 @@
 
 ## Public interface
 
-See [`xWalkI2c`](../../../xWalkHal/xWalkI2c/README.md) and the public headers under its `core`
+See [`xWalkI2c`](../../../xWalkHal/interface/xWalkI2c/README.md) and the public headers under its `core`
 and `hardware` include directories.
 
 Create the backend before `XWalkI2c`, pass its pointer and callback bridges to

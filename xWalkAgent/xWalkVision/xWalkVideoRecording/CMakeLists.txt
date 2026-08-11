@@ -22,6 +22,7 @@ endif()
 add_library(xWalkVideoRecording STATIC
     src/xAgent_Rpi5CarVideoRecording.cpp
     src/xAgent_Rpi5CarVideoRecordingLifecycle.cpp)
+target_link_libraries(xWalkVideoRecording PRIVATE xWalkTrace)
 add_library(xWalk::VideoRecording ALIAS xWalkVideoRecording)
 target_include_directories(xWalkVideoRecording PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -38,6 +39,7 @@ if(XWALK_VIDEO_RECORDING_BUILD_OPENCV_BACKEND)
     find_package(Threads REQUIRED)
     add_library(xWalkVideoRecordingOpenCv STATIC
         hardware/src/xAgent_Rpi5CarVideoRecordingOpenCv.cpp)
+target_link_libraries(xWalkVideoRecordingOpenCv PRIVATE xWalkTrace)
     add_library(xWalk::VideoRecordingOpenCv ALIAS xWalkVideoRecordingOpenCv)
     target_include_directories(xWalkVideoRecordingOpenCv PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/hardware/include)
@@ -50,6 +52,21 @@ if(XWALK_VIDEO_RECORDING_BUILD_OPENCV_BACKEND)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         target_compile_options(xWalkVideoRecordingOpenCv PRIVATE
             -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
+    endif()
+
+    if(XWALK_VIDEO_RECORDING_BUILD_HOST_TESTS)
+        find_package(GTest REQUIRED)
+        add_executable(xWalkVideoRecordingOpenCvHostTest
+            hardware/test/src/xAgent_Rpi5CarVideoRecordingOpenCvHostTest.cpp
+            hardware/test/src/xAgent_Rpi5CarVideoRecordingOpenCvTestSupport.cpp)
+        target_include_directories(xWalkVideoRecordingOpenCvHostTest PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/hardware/test/include)
+        target_link_libraries(xWalkVideoRecordingOpenCvHostTest PRIVATE
+            xWalkVideoRecordingOpenCv xWalkTrace GTest::gtest_main)
+        add_test(NAME xWalkVideoRecordingOpenCvHostTest
+            COMMAND xWalkVideoRecordingOpenCvHostTest)
+        set_tests_properties(xWalkVideoRecordingOpenCvHostTest PROPERTIES
+            LABELS "host;camera;recorded-media")
     endif()
 endif()
 

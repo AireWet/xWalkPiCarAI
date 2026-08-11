@@ -107,7 +107,7 @@ XWalkLineTrackingResult XWalkLineTracking::recoverLine(
         result.readings = picarxObject->grayscaleData();
         result.state = classify(picarxObject->lineStatus(result.readings));
         currentStateValue = result.state;
-        if (result.state != lastStateValue)
+        if (result.state != XWalkLineTrackingState::Stop)
         {
             delay(configurationValue.recoveryCompletionDelayMs);
             return result;

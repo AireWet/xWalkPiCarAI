@@ -3,7 +3,8 @@
  * @brief       Implements the KeyboardControlHandler command responsibility.
  *
  * @details
- * Keeps this controller responsibility isolated within its functionality-based handler group.
+ * Keeps this controller responsibility isolated within its functionality-based
+ *handler group.
  *
  * @project     xWalk Firmware
  * @module      xWalkHandler
@@ -26,7 +27,7 @@
 
 #include "xController.h"
 
-#include "xHal_Rpi5CarExceptions.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -36,8 +37,7 @@
  * @namespace xwalk::ctrl
  * @brief Contains Controller command interfaces for the xWalk firmware.
  */
-namespace xwalk::ctrl
-{
+namespace xwalk::ctrl {
 
 /******************************************************************************
  * Member function definitions
@@ -46,42 +46,40 @@ namespace xwalk::ctrl
 /**
  * @brief Runs interactive keyboard control ported from `3.keyboard_control.py`.
  * @param[in] request Validated empty request.
- * @return Zero after explicit exit or cancellation; three when the Agent is unavailable.
+ * @return Zero after explicit exit or cancellation; three when the Agent is
+ * unavailable.
  * @warning Movement keys drive the physical car at 80-percent requested speed.
  */
 ::ctrl::int32 XWalkController::XWALK_handlerKeyboardControl(
-    const XWalkNoArgumentRequest& request)
-{
-    static_cast<void>(request);
-    if (keyboardControlObject == nullptr)
-    {
-        output("Keyboard-control backend unavailable.");
-        return 3;
-    }
+    const XWalkNoArgumentRequest &request) {
+  static_cast<void>(request);
+  if (keyboardControlObject == nullptr) {
+    XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Keyboard-control backend unavailable.");
+    return 3;
+  }
 
-    output("Keyboard controls: w/s forward/backward, a/d left/right, "
-        "i/k tilt, j/l pan, q quit.");
-    while (true)
-    {
-        const ::ctrl::string keyText = input("keyboard> ");
-        if ((keyText == "q") || (keyText == "Q") || (keyText == "quit") ||
-            (keyText == "exit") || (keyText == "skip"))
-        {
-            break;
-        }
-        const agent::XWalkKeyboardControlResult result = keyboardControlObject->handleKey(keyText);
-        if (result == agent::XWalkKeyboardControlResult::Cancelled)
-        {
-            break;
-        }
-        if (result == agent::XWalkKeyboardControlResult::Ignored)
-        {
-            output("Ignored key; use w, s, a, d, i, k, j, l, or q.");
-        }
+  XWALK_CTRL_TRACE_UID0(
+      CTRL .027, "Keyboard controls: w/s forward/backward, a/d left/right, "
+                 "i/k tilt, j/l pan, q quit.");
+  while (true) {
+    const ::ctrl::string keyText = input("keyboard> ");
+    if ((keyText == "q") || (keyText == "Q") || (keyText == "quit") ||
+        (keyText == "exit") || (keyText == "skip")) {
+      break;
     }
-    keyboardControlObject->finish();
-    output("Keyboard control stopped.");
-    return 0;
+    const agent::XWalkKeyboardControlResult result =
+        keyboardControlObject->handleKey(keyText);
+    if (result == agent::XWalkKeyboardControlResult::Cancelled) {
+      break;
+    }
+    if (result == agent::XWalkKeyboardControlResult::Ignored) {
+      XWALK_CTRL_WARNING(XWALK_INVAL,
+                         "Ignored key; use w, s, a, d, i, k, j, l, or q.");
+    }
+  }
+  keyboardControlObject->finish();
+  XWALK_CTRL_TRACE_UID0(CTRL .028, "Keyboard control stopped.");
+  return 0;
 }
 
 } /* namespace xwalk::ctrl */

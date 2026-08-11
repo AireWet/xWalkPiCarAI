@@ -33,6 +33,18 @@ deployment environment values. It is data, never a compiler or linker input.
 The repository marker is not a usable licence until it is replaced through the
 [licence-key tool](../DevloperNote/Doc/note/License%20Key%20Workflow.md).
 
+## Trace ownership
+
+Compiled sources below `xWalkLibrary` use `XWALK_LIB_TRACE_UIDn` with
+`LIB.<numeric-id>` identifiers. The build-time trace scanner rejects HAL,
+Controller, or Agent trace families in this tree.
+
+The header-only `common` target intentionally remains independent of
+`xWalkTrace`, because the trace runtime itself depends on Common types. A
+compiled Library component may link `xWalkTrace` privately when it emits a
+Library trace; Common headers must not include the trace header merely to emit
+diagnostics.
+
 The `xHal_Rpi5Car*.h` files under `common` are the workspace-wide public C++ declarations exported by the
 `xWalkLibraryCommon` interface target. Consumers include them by basename and must not add this directory globally.
 `xHal_Rpi5CarTypes.h` exports generic shared aliases through the HAL (`hal`), Agent (`agent`), and Controller

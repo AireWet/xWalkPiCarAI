@@ -564,7 +564,7 @@ xExample/
 │   ├── include/
 │   └── src/
 ├── hardware/
-│   ├── include/
+│   ├── include/xHal_Rpi5CarExampleConfig.h
 │   └── src/
 ├── CMakeLists.txt
 ├── main.cpp
@@ -711,6 +711,7 @@ reads YAML arguments but does not read or write an XML selection file.
 | `hardware/include/xHal_Rpi5CarQwenExampleLinux.h` | Live Qwen chat API |
 | `hardware/src/xHal_Rpi5CarQwenExampleLinux.cpp` | DashScope-compatible HTTPS and console adapters |
 | `hardware/include/xHal_Rpi5CarExampleRunner.h` | Central example-selector contract |
+| `hardware/include/xHal_Rpi5CarExampleConfig.h` | Source-visible editor and direct-parse defaults |
 | `hardware/src/xHal_Rpi5CarExampleRunner.cpp` | Argument, environment, and selector validation |
 | `main.cpp` | The module's only process entry point |
 | `config/xHal_Rpi5CarExampleConfig.yml` | Board, AI asset paths, and formal selector arguments |

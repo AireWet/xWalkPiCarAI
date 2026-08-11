@@ -9,10 +9,10 @@ point.
 
 Most pre-existing HAL tests use `assert`-based standalone entry points rather
 than native `TEST` or `TEST_F` declarations. CMake renames their `main` symbols
-and `TestRunner` registers those scenarios dynamically. The I2C host simulation
-is registered directly as seven native Google Test cases. Each legacy scenario
-still executes in an isolated child process so one failure cannot stop the
-remaining cases.
+and `TestRunner` registers those scenarios dynamically. The I2C and SPI host
+simulations of the Linux backends are registered directly as native Google Test
+cases. Each legacy scenario still executes in an isolated child process so one
+failure cannot stop the remaining cases.
 
 ## Dependencies and build
 
@@ -131,7 +131,7 @@ run.
 
 ## XML configuration
 
-`config/test_config.xml` contains 26 host suites and 54 host-safe cases.
+`config/test_config.xml` contains 26 host suites and 77 host-safe cases.
 `config/hardware_test_config.xml` contains 22 hardware suites and 32 physical
 cases. A suite and each child case must have an exact registered name and an
 `enabled` value of `0` or `1`. The loader rejects malformed XML, missing or

@@ -28,6 +28,7 @@
 #include "xControllerAppConfig.h"
 #include "xControllerApplicationSupport.h"
 #include "xControllerCommands.h"
+#include "xControllerDeploymentConfig.h"
 #include "xControllerRunner.h"
 
 #include "xAgent_Rpi5CarBootHostStub.h"
@@ -72,6 +73,40 @@ namespace xwalk::ctrl
     {
         std::cerr << "Global options contain a missing or invalid value\n";
         return 2;
+    }
+    const ::ctrl::boolean configurationActionRequested =
+        applicationArguments.validateConfiguration ||
+        applicationArguments.printEffectiveConfiguration ||
+        applicationArguments.diagnose || applicationArguments.noHardware;
+    if (configurationActionRequested)
+    {
+        const ::ctrl::boolean actionValid =
+            applicationArguments.commandArguments.empty() &&
+            !applicationArguments.appConfig.configurationFilePath.empty() &&
+            (!applicationArguments.diagnose || applicationArguments.noHardware) &&
+            (applicationArguments.validateConfiguration ||
+                applicationArguments.printEffectiveConfiguration ||
+                applicationArguments.diagnose);
+        if (actionValid == false)
+        {
+            std::cerr << "No-hardware configuration action is incomplete or conflicts with a command\n";
+            return 2;
+        }
+        const XWalkDeploymentConfigReport report = XWALK_validateDeploymentConfig(
+            applicationArguments.appConfig.configurationFilePath);
+        for (const ::ctrl::string& line : report.lines)
+        {
+            std::cout << line << '\n';
+        }
+        if (report.valid && applicationArguments.printEffectiveConfiguration)
+        {
+            for (const ::ctrl::string& line : XWALK_effectiveDeploymentConfig(
+                applicationArguments.appConfig.configurationFilePath))
+            {
+                std::cout << line << '\n';
+            }
+        }
+        return report.valid ? 0 : 2;
     }
     const ::ctrl::boolean traceConfigurationApplied =
         xWalkApplyTraceConfiguration(applicationArguments);

@@ -26,6 +26,7 @@
 #include "xHal_Rpi5CarCommon.h"
 #include "xHal_Rpi5CarGpioLinux.h"
 
+#include "xHal_Rpi5CarTrace.h"
 #include <iostream>
 
 /******************************************************************************
@@ -36,8 +37,7 @@
  * @namespace xwalk::hal::example
  * @brief Contains Linux adapters for ported example programs.
  */
-namespace xwalk::hal::example
-{
+namespace xwalk::hal::example {
 
 /**
  * @brief Runs bounded physical D2-trigger and D3-echo ranging.
@@ -48,32 +48,26 @@ namespace xwalk::hal::example
  * @warning Pulses Robot HAT GPIO27 and reads physical GPIO22.
  */
 void XWalkUltrasonicExampleLinux::run(uint32 sampleCount, cstring gpioDevice,
-    stringview chipName, stringview chipLabel)
-{
-    XWalkGpioLinux triggerBackend(
-        gpioDevice, chipName, chipLabel, 27U);
-    XWalkGpioLinux echoBackend(gpioDevice, chipName, chipLabel, 22U);
-    const XWalkGpioCallbacks triggerCallbacks =
-        XHAL_GPIO_CALLBACKS(XWalkGpioLinux);
-    const XWalkGpioCallbacks echoCallbacks =
-        XHAL_GPIO_CALLBACKS(XWalkGpioLinux);
-    XWalkGpio trigger(&triggerBackend, triggerCallbacks, "D2");
-    XWalkGpio echo(&echoBackend, echoCallbacks, "D3");
-    XWalkUltrasonic sensor(trigger, echo);
-    sensorObject = &sensor;
-    const XWalkUltrasonicExampleCallbacks exampleCallbacks{
-        &read, &wait, &report};
-    XWalkUltrasonicExample example(this, exampleCallbacks);
-    try
-    {
-        example.run(sampleCount);
-        sensorObject = nullptr;
-    }
-    catch (...)
-    {
-        sensorObject = nullptr;
-        throw;
-    }
+                                      stringview chipName,
+                                      stringview chipLabel) {
+  XWalkGpioLinux triggerBackend(gpioDevice, chipName, chipLabel, 27U);
+  XWalkGpioLinux echoBackend(gpioDevice, chipName, chipLabel, 22U);
+  const XWalkGpioCallbacks triggerCallbacks =
+      XHAL_GPIO_CALLBACKS(XWalkGpioLinux);
+  const XWalkGpioCallbacks echoCallbacks = XHAL_GPIO_CALLBACKS(XWalkGpioLinux);
+  XWalkGpio trigger(&triggerBackend, triggerCallbacks, "D2");
+  XWalkGpio echo(&echoBackend, echoCallbacks, "D3");
+  XWalkUltrasonic sensor(trigger, echo);
+  sensorObject = &sensor;
+  const XWalkUltrasonicExampleCallbacks exampleCallbacks{&read, &wait, &report};
+  XWalkUltrasonicExample example(this, exampleCallbacks);
+  try {
+    example.run(sampleCount);
+    sensorObject = nullptr;
+  } catch (...) {
+    sensorObject = nullptr;
+    throw;
+  }
 }
 
 /**
@@ -82,28 +76,23 @@ void XWalkUltrasonicExampleLinux::run(uint32 sampleCount, cstring gpioDevice,
  * @return Referenced adapter.
  * @throws std::invalid_argument If the adapter or sensor binding is invalid.
  */
-XWalkUltrasonicExampleLinux& XWalkUltrasonicExampleLinux::adapter(
-    contextpointer context)
-{
-    if (context == nullptr)
-    {
-        XHAL_THROW_INVALID_ARGUMENT(
-            "Ultrasonic Linux context must not be null");
-    }
-    XWalkUltrasonicExampleLinux& self =
-        *static_cast<XWalkUltrasonicExampleLinux*>(context);
-    if (self.sensorObject == nullptr)
-    {
-        XHAL_THROW_INVALID_ARGUMENT(
-            "Ultrasonic Linux adapter has no bound sensor");
-    }
-    return self;
+XWalkUltrasonicExampleLinux &
+XWalkUltrasonicExampleLinux::adapter(contextpointer context) {
+  if (context == nullptr) {
+    XWALK_HAL_ERROR(XWALK_INVAL, "Ultrasonic Linux context must not be null");
+  }
+  XWalkUltrasonicExampleLinux &self =
+      *static_cast<XWalkUltrasonicExampleLinux *>(context);
+  if (self.sensorObject == nullptr) {
+    XWALK_HAL_ERROR(XWALK_INVAL,
+                    "Ultrasonic Linux adapter has no bound sensor");
+  }
+  return self;
 }
 
 /** @brief Reads one distance in centimeters from the bound sensor. */
-float64 XWalkUltrasonicExampleLinux::read(contextpointer context)
-{
-    return adapter(context).sensorObject->read();
+float64 XWalkUltrasonicExampleLinux::read(contextpointer context) {
+  return adapter(context).sensorObject->read();
 }
 
 /**
@@ -111,11 +100,10 @@ float64 XWalkUltrasonicExampleLinux::read(contextpointer context)
  * @param[in,out] context Non-null Linux adapter context.
  * @param[in] durationMilliseconds Requested duration in milliseconds.
  */
-void XWalkUltrasonicExampleLinux::wait(
-    contextpointer context, uint32 durationMilliseconds)
-{
-    static_cast<void>(adapter(context));
-    common::sleepMilliseconds(durationMilliseconds);
+void XWalkUltrasonicExampleLinux::wait(contextpointer context,
+                                       uint32 durationMilliseconds) {
+  static_cast<void>(adapter(context));
+  common::sleepMilliseconds(durationMilliseconds);
 }
 
 /**
@@ -123,12 +111,11 @@ void XWalkUltrasonicExampleLinux::wait(
  * @param[in,out] context Non-null Linux adapter context.
  * @param[in] distanceCentimeters Measured distance in centimeters.
  */
-void XWalkUltrasonicExampleLinux::report(
-    contextpointer context, float64 distanceCentimeters)
-{
-    static_cast<void>(adapter(context));
-    std::cout << "\r\x1b[KDistance: " << distanceCentimeters << " cm"
-              << std::flush;
+void XWalkUltrasonicExampleLinux::report(contextpointer context,
+                                         float64 distanceCentimeters) {
+  static_cast<void>(adapter(context));
+  std::cout << "\r\x1b[KDistance: " << distanceCentimeters << " cm"
+            << std::flush;
 }
 
 } /* namespace xwalk::hal::example */

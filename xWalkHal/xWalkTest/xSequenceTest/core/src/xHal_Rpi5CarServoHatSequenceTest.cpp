@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarServoHatSequence.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
 
@@ -348,6 +349,10 @@ void runTest()
         &servo0, &servo1, &servo2, &servo3, &servo4, &servo5, &servo6, &servo7,
         &servo8, &servo9, &servo10, &servo11, &servo12, &servo13, &servo14,
         &servo15}};
+    for (XWalkHal::XWalkServo* const servo : servos)
+    {
+        static_cast<void>(servo->initialize());
+    }
     const xwalk::hal::test::servohatadcarray adcInputs{{
         &adc0, &adc1, &adc2, &adc3, &adc4}};
     SequenceState sequenceState;
@@ -386,16 +391,10 @@ void runTest()
     assert(adc4.channel() == 4U);
     assert(i2cState.writeCount > 0U);
 
-    XWalkHal::boolean rejectedSamples = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         sequence.run(0U);
-    }
-    catch (const XWalkHal::outofrange&)
-    {
-        rejectedSamples = true;
-    }
-    assert(rejectedSamples);
+    });
 }
 
 } /* namespace */

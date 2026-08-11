@@ -26,45 +26,42 @@
 
 #include "xHal_Rpi5CarSttVoskStreamExample.h"
 
+#include "xHal_Rpi5CarTrace.h"
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
 
-namespace xwalk::hal::example
-{
+namespace xwalk::hal::example {
 
 /** @brief Binds and validates all streaming speech operations. */
-XWalkSttVoskStreamExample::XWalkSttVoskStreamExample(contextpointer context,
-    const XWalkSttVoskStreamExampleCallbacks& exampleCallbacks):
-    callbackContext(context), callbacks(exampleCallbacks)
-{
-    if ((callbacks.listen == nullptr) || (callbacks.reportPrompt == nullptr) ||
-        (callbacks.reportResult == nullptr))
-    {
-        XHAL_THROW_INVALID_ARGUMENT(
-            "Streaming Vosk example requires a complete callback table");
-    }
+XWalkSttVoskStreamExample::XWalkSttVoskStreamExample(
+    contextpointer context,
+    const XWalkSttVoskStreamExampleCallbacks &exampleCallbacks)
+    : callbackContext(context), callbacks(exampleCallbacks) {
+  if ((callbacks.listen == nullptr) || (callbacks.reportPrompt == nullptr) ||
+      (callbacks.reportResult == nullptr)) {
+    XWALK_HAL_ERROR(
+        XWALK_INVAL,
+        "Streaming Vosk example requires a complete callback table");
+  }
 }
 
 /** @brief Runs source-compatible prompts and bounded recognition streams. */
-void XWalkSttVoskStreamExample::run(uint32 sessionCount, uint32 timeoutMs)
-{
-    if ((sessionCount == 0U) ||
-        (sessionCount > XHAL_RPI5CAR_STT_VOSK_STREAM_EXAMPLE_MAXIMUM_SESSIONS))
-    {
-        XHAL_THROW_OUT_OF_RANGE("Streaming Vosk session count is outside its range");
-    }
-    if ((timeoutMs == 0U) ||
-        (timeoutMs > XHAL_RPI5CAR_SPEECH_TO_TEXT_MAXIMUM_TIMEOUT_MS))
-    {
-        XHAL_THROW_OUT_OF_RANGE("Streaming Vosk timeout is outside its range");
-    }
+void XWalkSttVoskStreamExample::run(uint32 sessionCount, uint32 timeoutMs) {
+  if ((sessionCount == 0U) ||
+      (sessionCount > XHAL_RPI5CAR_STT_VOSK_STREAM_EXAMPLE_MAXIMUM_SESSIONS)) {
+    XWALK_HAL_ERROR(XWALK_RANGE,
+                    "Streaming Vosk session count is outside its range");
+  }
+  if ((timeoutMs == 0U) ||
+      (timeoutMs > XHAL_RPI5CAR_SPEECH_TO_TEXT_MAXIMUM_TIMEOUT_MS)) {
+    XWALK_HAL_ERROR(XWALK_RANGE, "Streaming Vosk timeout is outside its range");
+  }
 
-    for (uint32 sessionIndex = 0U; sessionIndex < sessionCount; ++sessionIndex)
-    {
-        callbacks.reportPrompt(callbackContext);
-        callbacks.listen(callbackContext, timeoutMs, callbacks.reportResult);
-    }
+  for (uint32 sessionIndex = 0U; sessionIndex < sessionCount; ++sessionIndex) {
+    callbacks.reportPrompt(callbackContext);
+    callbacks.listen(callbackContext, timeoutMs, callbacks.reportResult);
+  }
 }
 
 } /* namespace xwalk::hal::example */

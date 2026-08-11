@@ -39,12 +39,12 @@ void testTextVisionTalk(
     assert(context.state->outputLines[0U] ==
         "Hello, I am a helpful assistant. How can I help you?");
     assert(context.state->outputLines[1U] == "I can see the PiCar-X.");
-    assert(context.state->outputLines.back() == "Text vision talk stopped");
+
     assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
         {"hal.model.configure", "hal.model.configure", "controller.delay",
-            "controller.output", "controller.continue", "controller.input",
-            "hal.camera.capture", "hal.model.prompt", "controller.output",
-            "controller.continue", "controller.input", "controller.output"}));
+            "controller.continue", "controller.input",
+            "hal.camera.capture", "hal.model.prompt",
+            "controller.continue", "controller.input"}));
 }
 
 } /* namespace */

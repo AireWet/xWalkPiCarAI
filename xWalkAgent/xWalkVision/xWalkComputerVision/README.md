@@ -17,11 +17,26 @@ and cancellation.
 - every key preserves the source's 500-millisecond delay using cancellable
   slices no longer than 20 milliseconds.
 
-The OpenCV hardware provider captures from one configured absolute Linux camera device path,
-uses HSV segmentation for source-compatible color selection, uses a configured
+The OpenCV provider selects a configured V4L2 device, GStreamer pipeline, video
+file, image sequence, or automatic OpenCV source. It uses HSV segmentation for source-compatible color selection, uses a configured
 Haar cascade for frontal faces, and uses OpenCV QR decoding. Unlike Vilib's web
 display, this provider does not start a network listener; the CLI reports
 detection results explicitly and stores requested JPEG files locally.
+
+The source is never implicitly fixed to `/dev/video0`. Device and file paths
+must be absolute, pipelines reject line breaks, dimensions and frame rate must
+be positive, and finite video end-of-file is distinguished from live-camera
+failure. A validated 1 through 60000 millisecond read timeout is requested from
+OpenCV, although support depends on the selected OpenCV backend.
+Recorded MJPEG video exercises acquisition on x86 without a camera. The
+`libcamera`/`rpicam` CSI path remains an unverified integration route, normally
+through a reviewed GStreamer pipeline; no shell command is constructed.
+
+OpenCV's FFmpeg and GStreamer adapters commonly honor the timeout property;
+V4L2 support is backend and driver dependent. This repository therefore does
+not yet claim that every live V4L2 read is forcibly cancellable. That limitation
+must be verified on Raspberry Pi 5, and safety logic must treat acquisition
+failure or timeout as a stop condition.
 
 ## Layout
 
@@ -34,6 +49,7 @@ detection results explicitly and stores requested JPEG files locally.
 | `hardware/include/xAgent_Rpi5CarComputerVisionOpenCv.h` | OpenCV provider contract |
 | `hardware/src/xAgent_Rpi5CarComputerVisionOpenCv.cpp` | Linux camera and detector implementation |
 | `hardware/test/src/xAgent_Rpi5CarComputerVisionHardwareTest.cpp` | Opt-in physical-camera verification |
+| `hardware/test/src/xAgent_Rpi5CarComputerVisionOpenCvTest.cpp` | Recorded-media backend and failure tests |
 | `test/src/xAgent_Rpi5CarComputerVisionTest.cpp` | Deterministic callback-driven host test |
 
 ## Safety and privacy

@@ -119,7 +119,7 @@ contracts remain in `hal`; higher layers do not qualify generic types through
 the HAL namespace.
 
 `xWalkAudioResources` combines repository-owned audio assets under `sounds/`
-and `music/`. The `xWalkHal/xWalkAudio` directory remains a separate ALSA
+and `music/`. The `xWalkHal/interface/xWalkAudio` directory remains a separate ALSA
 implementation module and does not own packaged media files.
 
 ## 6. Primitive hardware modules

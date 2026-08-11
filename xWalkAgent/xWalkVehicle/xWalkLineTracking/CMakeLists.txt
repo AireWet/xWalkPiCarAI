@@ -20,6 +20,7 @@ add_library(xWalkLineTracking STATIC
     src/xAgent_Rpi5CarLineTracking.cpp
     src/xAgent_Rpi5CarLineTrackingLifecycle.cpp
 )
+target_link_libraries(xWalkLineTracking PRIVATE xWalkTrace)
 add_library(xWalk::LineTracking ALIAS xWalkLineTracking)
 
 target_include_directories(xWalkLineTracking PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

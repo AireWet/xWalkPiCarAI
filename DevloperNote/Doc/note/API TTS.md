@@ -2,7 +2,7 @@
 
 `XWalkTextToSpeech` coordinates text synthesis through an injected backend.
 `XWalkSpeechToText` coordinates recognition through an injected backend. Both
-classes belong to [xWalkGPT](../../../xWalkHal/xWalkGPT/README.md).
+classes belong to [xWalkGPT](../../../xWalkHal/layer1/xWalkGPT/README.md).
 
 The C++ core owns no model, microphone, audio device, network client, process,
 credential, or generated media file. The application supplies and owns those

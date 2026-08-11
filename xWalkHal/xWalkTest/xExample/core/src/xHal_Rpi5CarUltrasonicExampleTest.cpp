@@ -22,6 +22,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarUltrasonicExample.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
 
@@ -93,29 +94,17 @@ void testValidation()
     UltrasonicExampleState state;
     xwalk::hal::example::XWalkUltrasonicExampleCallbacks incomplete = callbacks();
     incomplete.read = nullptr;
-    XWalkHal::boolean rejectedCallbacks = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         xwalk::hal::example::XWalkUltrasonicExample invalidExample(
             &state, incomplete);
-    }
-    catch (const XWalkHal::invalidargument&)
-    {
-        rejectedCallbacks = true;
-    }
-    assert(rejectedCallbacks);
+    });
 
     xwalk::hal::example::XWalkUltrasonicExample example(&state, callbacks());
-    XWalkHal::boolean rejectedCount = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         example.run(0U);
-    }
-    catch (const XWalkHal::outofrange&)
-    {
-        rejectedCount = true;
-    }
-    assert(rejectedCount);
+    });
 }
 
 } /* namespace */

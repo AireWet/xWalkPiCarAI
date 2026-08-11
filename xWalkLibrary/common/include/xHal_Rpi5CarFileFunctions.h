@@ -28,7 +28,6 @@
  * Includes
  ******************************************************************************/
 
-#include "xHal_Rpi5CarExceptions.h"
 #include "xHal_Rpi5CarTypes.h"
 
 #include <filesystem>
@@ -101,7 +100,7 @@ inline string readFileContents(const filesystempath& path)
             !file.is_open());
     if (openNotMatched)
     {
-        XHAL_THROW_RUNTIME_ERROR("File could not be opened for binary input");
+        throw runtimeerror("File could not be opened for binary input");
     }
     const string contents{
         std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
@@ -110,7 +109,7 @@ inline string readFileContents(const filesystempath& path)
             file.bad());
     if (streamReadFailed)
     {
-        XHAL_THROW_RUNTIME_ERROR("File could not be read completely");
+        throw runtimeerror("File could not be read completely");
     }
     return contents;
 }
@@ -205,7 +204,7 @@ inline uint64 filesystemFileSize(const filesystempath& path)
             platformSize > std::numeric_limits<uint64>::max());
     if (fileSizeTooLarge)
     {
-        XHAL_THROW_OUT_OF_RANGE("File size exceeds the supported unsigned range");
+        throw outofrange("File size exceeds the supported unsigned range");
     }
     return static_cast<uint64>(platformSize);
 }

@@ -204,6 +204,7 @@ void testCliffDetection(agent::stringview configurationPath)
     configuration.set("cliff_reference", "[200,200,200]");
     xwalk::agent::XWalkPicarx picarx(motors, directionServo, panServo, tiltServo,
         grayscale, ultrasonic, configuration);
+    static_cast<void>(picarx.initialize());
     TestSchedule schedule;
     xwalk::agent::XWalkCliffDetection detection(
         picarx, &schedule, &delay, &continueOperation);

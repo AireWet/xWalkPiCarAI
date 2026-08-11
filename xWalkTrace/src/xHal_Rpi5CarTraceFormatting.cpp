@@ -50,7 +50,7 @@ string XWalkTrace::sanitizedSourceName(stringview sourceFile)
  * @brief Captures timing data and emits one synchronized terminal and log line.
  *
  * @param[in] component
- * `HAL`, `CTRL`, `TRACE`, or compatibility component label.
+ * Registered module, `TRACE`, or compatibility component label.
  *
  * @param[in] category
  * Priority or warning, error, assertion, or compatibility category.
@@ -85,7 +85,7 @@ void XWalkTrace::writeRecordLocked(stringview component, stringview category,
     const boolean timestampConversionFailed = convertedTime == nullptr;
     if (timestampConversionFailed)
     {
-        XHAL_THROW_RUNTIME_ERROR("Trace UTC timestamp conversion failed");
+        throw runtimeerror("Trace UTC timestamp conversion failed");
     }
 
     const auto wallMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -117,7 +117,7 @@ void XWalkTrace::writeRecordLocked(stringview component, stringview category,
     const boolean logWriteFailed = !logFile;
     if (logWriteFailed)
     {
-        XHAL_THROW_RUNTIME_ERROR("Trace record could not be written to the log file");
+        throw runtimeerror("Trace record could not be written to the log file");
     }
 }
 

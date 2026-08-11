@@ -49,6 +49,8 @@ using videorecordingstopcallback = void (*)(agent::contextpointer context) noexc
 using videorecordingbegincallback = agent::string (*)(agent::contextpointer context,
     agent::stringview recordingName);
 using videorecordingcontrolcallback = void (*)(agent::contextpointer context);
+using videorecordingstoprecordingcallback = void (*)(
+    agent::contextpointer context) noexcept;
 using videorecordingdelaycallback = void (*)(agent::contextpointer context,
     agent::uint32 durationMs);
 using videorecordingcontinuecallback = agent::boolean (*)(agent::contextpointer context);
@@ -62,7 +64,7 @@ struct XWalkVideoRecordingCallbacks
     videorecordingbegincallback beginRecording{nullptr};
     videorecordingcontrolcallback pauseRecording{nullptr};
     videorecordingcontrolcallback continueRecording{nullptr};
-    videorecordingcontrolcallback stopRecording{nullptr};
+    videorecordingstoprecordingcallback stopRecording{nullptr};
     videorecordingdelaycallback delay{nullptr};
     videorecordingcontinuecallback continueOperation{nullptr};
     videorecordingtimestampcallback timestamp{nullptr};

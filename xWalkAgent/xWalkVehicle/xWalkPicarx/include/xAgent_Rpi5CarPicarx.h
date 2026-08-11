@@ -94,8 +94,12 @@ class XWalkPicarx
         agent::float64 maximumMotorOutputPercentValue{20.0};
         /** @brief Records whether the first-run actuator checks were confirmed. */
         agent::boolean calibrationVerifiedValue{false};
+        /** @brief Allows initialization to apply persisted servo positions after explicit commissioning. */
+        agent::boolean applyPersistedServoPositionsValue{false};
         /** @brief Latches emergency cancellation and suppresses later actuator commands. */
         agent::atomicboolean emergencyStopRequestedValue{false};
+        /** @brief True after explicit servo initialization and motor arming succeeds. */
+        agent::boolean initializedValue{false};
         /** @brief Per-channel cliff thresholds in raw ADC counts. */
         hal::linetrackervalues cliffReferenceValues{500, 500, 500};
 
@@ -114,7 +118,7 @@ class XWalkPicarx
         static agent::fixedarray<agent::int32, 2U> parseMotorDirections(agent::stringview text);
         /** @brief Formats three signed integer values using the Python-compatible list form. */
         static agent::string formatReferences(const hal::linetrackervalues& values);
-        /** @brief Loads persisted calibration values and applies their initial actuator state. */
+        /** @brief Loads and validates persisted calibration without commanding actuators. */
         void loadConfiguration();
         /** @brief Converts and applies one Python-compatible raw motor command. */
         agent::float64 calibratedMotorSpeed(agent::uint8 motorId, agent::float64 speedPercent) const;
@@ -157,6 +161,17 @@ class XWalkPicarx
         /**************************************************************************
          * Public member functions
          **************************************************************************/
+
+        /**
+         * @brief Explicitly initializes servos and arms motors at zero output.
+         * @details Persisted servo positions are applied only when the commissioning configuration gate is true.
+         *
+         * @return `true` when initialization ran; `false` when it had already completed.
+         */
+        agent::boolean initialize();
+
+        /** @brief Returns whether explicit actuator initialization completed. */
+        agent::boolean isInitialized() const noexcept;
 
         /** @brief Sets one motor command using a one-based motor identifier and -100 to 100 percent speed. */
         void setMotorSpeed(agent::uint8 motorId, agent::float64 speedPercent);
@@ -203,7 +218,7 @@ class XWalkPicarx
         /** @brief Latches actuator suppression and makes a non-throwing paired motor stop attempt. */
         agent::boolean emergencyStop() noexcept;
         /** @brief Clears the emergency latch before a new application-controlled operation. */
-        void clearEmergencyStop() noexcept;
+        void clearEmergencyStop();
         /** @brief Returns whether emergency actuator suppression is latched. */
         agent::boolean emergencyStopRequested() const noexcept;
         /** @brief Returns the configured maximum applied motor PWM magnitude in percent. */
@@ -230,7 +245,7 @@ class XWalkPicarx
         const hal::linetrackervalues& cliffReference() const noexcept;
         /** @brief Stops the motors and centers all logical actuator commands. */
         void reset();
-        /** @brief Resets the coordinator and closes ultrasonic interrupt registrations. */
+        /** @brief Disarms motors and closes ultrasonic registrations without commanding servo movement. */
         void close();
         /** @brief Returns the current constrained steering command in degrees. */
         agent::float64 directionAngleDegrees() const noexcept;

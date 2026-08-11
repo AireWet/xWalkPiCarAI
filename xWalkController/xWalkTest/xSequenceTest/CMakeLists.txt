@@ -21,6 +21,7 @@ configure_file(config/hardware_test_config.xml
 
 add_library(xWalkCliControllerSequence STATIC
     core/src/xControllerSequence.cpp)
+target_link_libraries(xWalkCliControllerSequence PRIVATE xWalkTrace)
 target_include_directories(xWalkCliControllerSequence PUBLIC core/include)
 target_compile_features(xWalkCliControllerSequence PUBLIC cxx_std_17)
 target_link_libraries(xWalkCliControllerSequence PUBLIC xWalkController)
@@ -67,6 +68,7 @@ add_executable(xCliSequenceTest
     core/src/xTextVisionTalkSequenceTest.cpp
     core/src/xOnlineLlmSequenceTest.cpp
     core/src/xCalibrationSequenceTest.cpp)
+target_link_libraries(xCliSequenceTest PRIVATE xWalkTrace)
 set_target_properties(xCliSequenceTest PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 target_include_directories(xCliSequenceTest PRIVATE
@@ -90,4 +92,5 @@ endif()
 
 add_test(NAME xCliSequenceTestHostTest COMMAND xCliSequenceTest)
 set_tests_properties(xCliSequenceTestHostTest PROPERTIES
-    LABELS "host;sequence;cli")
+    LABELS "host;sequence;cli"
+    RUN_SERIAL TRUE)

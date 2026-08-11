@@ -23,19 +23,20 @@ endif()
 if(NOT TARGET xWalkVoiceAssistant)
     set(XWALK_VOICE_ASSISTANT_BUILD_HOST_TESTS OFF CACHE BOOL "Voice car dependency" FORCE)
     set(XWALK_VOICE_ASSISTANT_BUILD_HARDWARE_TESTS OFF CACHE BOOL "Voice car dependency" FORCE)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/xWalkVoiceAssistant
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/layer1/xWalkVoiceAssistant
         ${CMAKE_CURRENT_BINARY_DIR}/xWalkVoiceAssistant)
 endif()
 if(NOT TARGET xWalkLed)
     set(XWALK_LED_BUILD_HOST_TESTS OFF CACHE BOOL "Voice car dependency" FORCE)
     set(XWALK_LED_BUILD_HARDWARE_TESTS OFF CACHE BOOL "Voice car dependency" FORCE)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/xWalkLed
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/sensor/xWalkLed
         ${CMAKE_CURRENT_BINARY_DIR}/xWalkLed)
 endif()
 
 add_library(xWalkVoiceActiveCar STATIC
     src/xAgent_Rpi5CarVoiceActiveCar.cpp
     src/xAgent_Rpi5CarVoiceActiveCarProfile.cpp)
+target_link_libraries(xWalkVoiceActiveCar PRIVATE xWalkTrace)
 add_library(xWalk::VoiceActiveCar ALIAS xWalkVoiceActiveCar)
 target_include_directories(xWalkVoiceActiveCar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkVoiceActiveCar PUBLIC cxx_std_17)

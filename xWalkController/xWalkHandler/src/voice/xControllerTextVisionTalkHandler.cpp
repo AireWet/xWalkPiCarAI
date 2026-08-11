@@ -3,7 +3,8 @@
  * @brief       Implements the TextVisionTalkHandler command responsibility.
  *
  * @details
- * Keeps this controller responsibility isolated within its functionality-based handler group.
+ * Keeps this controller responsibility isolated within its functionality-based
+ *handler group.
  *
  * @project     xWalk Firmware
  * @module      xWalkHandler
@@ -26,7 +27,7 @@
 
 #include "xController.h"
 
-#include "xHal_Rpi5CarExceptions.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -36,8 +37,7 @@
  * @namespace xwalk::ctrl
  * @brief Contains Controller command interfaces for the xWalk firmware.
  */
-namespace xwalk::ctrl
-{
+namespace xwalk::ctrl {
 
 /******************************************************************************
  * Member function definitions
@@ -45,20 +45,17 @@ namespace xwalk::ctrl
 
 /** @brief Executes one image-grounded typed conversation command. */
 ::ctrl::int32 XWalkController::XWALK_handlerTextVisionTalk(
-    const XWalkLifecycleRequest& request)
-{
-    if (textVisionTalkObject == nullptr)
-    {
-        output("Text-vision-talk backend unavailable");
-        return 3;
-    }
-    if (request.action == XWalkLifecycleAction::Stop)
-    {
-        textVisionTalkObject->stop();
-        output("Text vision talk stopped");
-        return 0;
-    }
-    return textVisionTalkObject->run();
+    const XWalkLifecycleRequest &request) {
+  if (textVisionTalkObject == nullptr) {
+    XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Text-vision-talk backend unavailable");
+    return 3;
+  }
+  if (request.action == XWalkLifecycleAction::Stop) {
+    textVisionTalkObject->stop();
+    XWALK_CTRL_TRACE_UID0(CTRL .081, "Text vision talk stopped");
+    return 0;
+  }
+  return textVisionTalkObject->run();
 }
 
 } /* namespace xwalk::ctrl */

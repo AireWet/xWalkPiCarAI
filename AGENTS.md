@@ -21,6 +21,20 @@ deliberately introduces or changes a reusable project-wide convention, update
 the guide in the same change. Do not update it for a local exception, generated
 output, accidental inconsistency, or unapproved redesign.
 
+## Repository-wide test support layout
+
+For tests in `xWalkHal`, `xWalkAgent`, and `xWalkController`, move reusable
+callback state, fake-backend structures, mapping records, callback declarations,
+and callback-table factories into a dedicated `<Component>TestSupport.h` under
+the owning test `include` directory. Put non-trivial implementations in the
+matching `<Component>TestSupport.cpp` under the test `src` directory, and list
+that source explicitly in every standalone or aggregate target that uses it.
+
+Use a named, component-specific test namespace such as
+`xwalk::hal::test::gpio`; never declare an anonymous namespace in a header,
+because it creates different entities in every translation unit. Apply this
+layout whenever test code is added or modified anywhere in the repository.
+
 ## Markdown command formatting
 
 In `.md` files only, keep every fenced shell-command example on one physical

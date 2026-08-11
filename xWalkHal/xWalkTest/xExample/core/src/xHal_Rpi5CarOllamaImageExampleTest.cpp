@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarOllamaImageExample.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
 
@@ -201,30 +202,18 @@ void testValidation()
     xwalk::hal::example::XWalkOllamaImageExampleCallbacks incompleteCallbacks =
         consoleCallbacks();
     incompleteCallbacks.write = nullptr;
-    XWalkHal::boolean rejectedCallbacks = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         xwalk::hal::example::XWalkOllamaImageExample invalidExample(
             camera, model, &state, incompleteCallbacks);
-    }
-    catch (const XWalkHal::invalidargument&)
-    {
-        rejectedCallbacks = true;
-    }
-    assert(rejectedCallbacks);
+    });
 
     xwalk::hal::example::XWalkOllamaImageExample example(
         camera, model, &state, consoleCallbacks());
-    XWalkHal::boolean rejectedCount = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         example.run(0U, "config/llm-img.jpg");
-    }
-    catch (const XWalkHal::outofrange&)
-    {
-        rejectedCount = true;
-    }
-    assert(rejectedCount);
+    });
 }
 
 } /* namespace */

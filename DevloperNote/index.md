@@ -23,6 +23,8 @@ options, backend ownership, safety constraints, and verification commands remain
 - [Device Tree overlay guide](Doc/note/Device%20Tree%20Overlay%20Assets%20Guide.md): asset roles and inspection.
 - [Release acceptance checklist](Doc/note/Release%20Acceptance%20Checklist.md): independent host, ARM package,
   plug-and-run, and physical-safety evidence gates.
+- [Raspberry Pi 5 and PiCar-X readiness audit](Doc/note/Raspberry%20Pi%205%20PiCar-X%20Readiness%20Audit.md):
+  hardware matrix, demonstrated support boundaries, deployment requirements, blockers, and safe first tests.
 - [Host production readiness work](Doc/note/Host%20Production%20Readiness%20Work.md): host sanitizer, stress,
   coverage, clean-environment, and staged-install verification.
 - [Language-model provider configuration](Doc/note/Language%20Model%20Provider%20Configuration.md): Ollama,
@@ -76,31 +78,36 @@ notes.
 
 ## HAL modules
 
-- [xWalkAdc](../xWalkHal/xWalkAdc/README.md): Robot HAT analog-to-digital conversion.
-- [xWalkAdxl345](../xWalkHal/xWalkAdxl345/README.md): ADXL345 acceleration sensing.
-- [xWalkAudio](../xWalkHal/xWalkAudio/README.md): shared ALSA PCM, mixer, and device ownership.
-- [xWalkBoardControl](../xWalkHal/xWalkBoardControl/README.md): board reset, discovery, and firmware data.
-- [xWalkBuzzer](../xWalkHal/xWalkBuzzer/README.md): active and passive buzzer control.
-- [xWalkConfig](../xWalkHal/xWalkConfig/README.md): configuration parsing and persistence.
-- [xWalkGpio](../xWalkHal/xWalkGpio/README.md): GPIO abstraction and Linux backend.
-- [xWalkGPT](../xWalkHal/xWalkGPT/README.md): speech coordination plus Vosk and Espeak providers.
-- [xWalkI2c](../xWalkHal/xWalkI2c/README.md): I2C abstraction and Linux backend.
+The HAL source tree groups low-level platform interfaces and common services
+under `interface`, hardware device abstractions under `device`, sensor and
+actuator components under `sensor`, and higher-level robot services and
+features under `layer1`.
+
+- [xWalkAdc](../xWalkHal/device/xWalkAdc/README.md): Robot HAT analog-to-digital conversion.
+- [xWalkAdxl345](../xWalkHal/device/xWalkAdxl345/README.md): ADXL345 acceleration sensing.
+- [xWalkAudio](../xWalkHal/interface/xWalkAudio/README.md): shared ALSA PCM, mixer, and device ownership.
+- [xWalkBoardControl](../xWalkHal/layer1/xWalkBoardControl/README.md): board reset, discovery, and firmware data.
+- [xWalkBuzzer](../xWalkHal/sensor/xWalkBuzzer/README.md): active and passive buzzer control.
+- [xWalkConfig](../xWalkHal/interface/xWalkConfig/README.md): configuration parsing and persistence.
+- [xWalkGpio](../xWalkHal/interface/xWalkGpio/README.md): GPIO abstraction and Linux backend.
+- [xWalkGPT](../xWalkHal/layer1/xWalkGPT/README.md): speech coordination plus Vosk and Espeak providers.
+- [xWalkI2c](../xWalkHal/interface/xWalkI2c/README.md): I2C abstraction and Linux backend.
 - [xWalkIW](../xWalkIW/README.md): I2C and Controller Protobuf DTOs and typed gRPC services.
-- [xWalkLanguageModel](../xWalkHal/xWalkLanguageModel/README.md): provider-neutral language-model access.
-- [xWalkLed](../xWalkHal/xWalkLed/README.md): GPIO and PWM LED control.
-- [xWalkLineTracker](../xWalkHal/xWalkLineTracker/README.md): grayscale line-position estimation.
-- [xWalkMotor](../xWalkHal/xWalkMotor/README.md): single and paired motor control.
-- [xWalkMusic](../xWalkHal/xWalkMusic/README.md): musical tones and injected audio playback.
-- [xWalkPwm](../xWalkHal/xWalkPwm/README.md): Robot HAT PWM output.
-- [xWalkRobot](../xWalkHal/xWalkRobot/README.md): coordinated multi-servo robot control.
-- [xWalkServo](../xWalkHal/xWalkServo/README.md): calibrated servo positioning.
-- [xWalkSpeaker](../xWalkHal/xWalkSpeaker/README.md): decoded audio-file playback.
-- [xWalkSpi](../xWalkHal/xWalkSpi/README.md): bounded SPI abstraction and Linux backend.
+- [xWalkLanguageModel](../xWalkHal/interface/xWalkLanguageModel/README.md): provider-neutral language-model access.
+- [xWalkLed](../xWalkHal/sensor/xWalkLed/README.md): GPIO and PWM LED control.
+- [xWalkLineTracker](../xWalkHal/sensor/xWalkLineTracker/README.md): grayscale line-position estimation.
+- [xWalkMotor](../xWalkHal/sensor/xWalkMotor/README.md): single and paired motor control.
+- [xWalkMusic](../xWalkHal/layer1/xWalkMusic/README.md): musical tones and injected audio playback.
+- [xWalkPwm](../xWalkHal/device/xWalkPwm/README.md): Robot HAT PWM output.
+- [xWalkRobot](../xWalkHal/layer1/xWalkRobot/README.md): coordinated multi-servo robot control.
+- [xWalkServo](../xWalkHal/device/xWalkServo/README.md): calibrated servo positioning.
+- [xWalkSpeaker](../xWalkHal/layer1/xWalkSpeaker/README.md): decoded audio-file playback.
+- [xWalkSpi](../xWalkHal/interface/xWalkSpi/README.md): bounded SPI abstraction and Linux backend.
 - [xWalkTrace](../xWalkTrace/README.md): filtered callback-based diagnostics.
-- [xWalkUltrasonic](../xWalkHal/xWalkUltrasonic/README.md): ultrasonic distance measurement.
-- [xWalkUserButton](../xWalkHal/xWalkUserButton/README.md): button events and press timing.
-- [xWalkUtils](../xWalkHal/xWalkUtils/README.md): platform utilities and bounded lazy caching.
-- [xWalkVoiceAssistant](../xWalkHal/xWalkVoiceAssistant/README.md): speech and model backend composition.
+- [xWalkUltrasonic](../xWalkHal/device/xWalkUltrasonic/README.md): ultrasonic distance measurement.
+- [xWalkUserButton](../xWalkHal/device/xWalkUserButton/README.md): button events and press timing.
+- [xWalkUtils](../xWalkHal/interface/xWalkUtils/README.md): platform utilities and bounded lazy caching.
+- [xWalkVoiceAssistant](../xWalkHal/layer1/xWalkVoiceAssistant/README.md): speech and model backend composition.
 
 ## Safety and verification
 

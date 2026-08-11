@@ -25,19 +25,19 @@ void testCliffDetection(
 {
     xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
     assert(sequence.run({{"cliff-detection", "stop"}}) == 0);
-    assert(context.state->outputLines.back() == "Cliff detection stopped.");
+
 
     const ctrl::uint32 queryStart = context.state->operationQueries;
     context.state->operationQueryLimit = queryStart + 2U;
     assert(xwalk::ctrl::XWALK_runControllerCommand(*context.controller, {"cliff-detection", "start"}) == 0);
     assert(context.state->operationQueries == (queryStart + 3U));
-    assert(context.state->outputLines.back() == "Cliff detection stopped.");
+
     assert(context.motors->left().speed() == 0.0);
     assert(context.motors->right().speed() == 0.0);
     assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
         {"controller.continue", "hal.i2c.write", "controller.continue",
             "hal.i2c.write", "controller.continue", "hal.i2c.write",
-            "controller.output"}));
+            }));
 }
 
 } /* namespace */

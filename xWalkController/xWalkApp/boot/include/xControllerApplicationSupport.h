@@ -100,9 +100,9 @@ struct XWalkControllerApplicationContext
 void XWALK_resetOperationRequest() noexcept;
 
 /**
- * @brief Disables normal traces and applies ordered trace requests before boot.
+ * @brief Applies ordered persistent trace requests before boot.
  * @param[in] applicationArguments Validated process-global trace requests.
- * @return `true` when the default and every requested update succeed.
+ * @return `true` when every requested XML and memory update succeeds.
  */
 ::ctrl::boolean xWalkApplyTraceConfiguration(
     const XWalkControllerApplicationArguments& applicationArguments);

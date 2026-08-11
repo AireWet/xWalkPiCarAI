@@ -72,10 +72,34 @@ using string = std::string;
 using invalidargument = std::invalid_argument;
 /** @brief Standard range exception reported when a value exceeds supported limits. */
 using outofrange = std::out_of_range;
+/** @brief Standard length exception reported when a requested size is unsupported. */
+using lengtherror = std::length_error;
+/** @brief Standard domain exception reported when an input is mathematically invalid. */
+using domainerror = std::domain_error;
 /** @brief Standard logic exception reported when an object is in an invalid state. */
 using logicerror = std::logic_error;
 /** @brief Standard runtime exception reported when an operation cannot complete. */
 using runtimeerror = std::runtime_error;
+/** @brief Standard overflow exception reported when a result exceeds its upper bound. */
+using overflowerror = std::overflow_error;
+/** @brief Standard underflow exception reported when a result falls below its lower bound. */
+using underflowerror = std::underflow_error;
+/** @brief Standard system exception reported with an operating-system error code. */
+using systemerror = std::system_error;
+/** @brief Standard allocation exception reported when storage cannot be acquired. */
+using badallocation = std::bad_alloc;
+/** @brief Standard cast exception reported when a runtime cast fails. */
+using badcast = std::bad_cast;
+/** @brief Standard type-information exception reported for an invalid type query. */
+using badtypeid = std::bad_typeid;
+/** @brief Standard function exception reported when an empty callable is invoked. */
+using badfunctioncall = std::bad_function_call;
+/** @brief Standard optional exception reported when an empty value is accessed. */
+using badoptionalaccess = std::bad_optional_access;
+/** @brief Standard variant exception reported when the inactive alternative is accessed. */
+using badvariantaccess = std::bad_variant_access;
+/** @brief Standard weak-pointer exception reported when shared ownership has expired. */
+using badweakpointer = std::bad_weak_ptr;
 /** @brief Standard base exception used at process and callback error boundaries. */
 using standardexception = std::exception;
 /** @brief Non-owning pointer to mutable character data. */
@@ -281,8 +305,20 @@ using hal::cstring;
 using hal::string;
 using hal::invalidargument;
 using hal::outofrange;
+using hal::lengtherror;
+using hal::domainerror;
 using hal::logicerror;
 using hal::runtimeerror;
+using hal::overflowerror;
+using hal::underflowerror;
+using hal::systemerror;
+using hal::badallocation;
+using hal::badcast;
+using hal::badtypeid;
+using hal::badfunctioncall;
+using hal::badoptionalaccess;
+using hal::badvariantaccess;
+using hal::badweakpointer;
 using hal::standardexception;
 using hal::charpointer;
 using hal::contextpointer;
@@ -346,8 +382,20 @@ using hal::cstring;
 using hal::string;
 using hal::invalidargument;
 using hal::outofrange;
+using hal::lengtherror;
+using hal::domainerror;
 using hal::logicerror;
 using hal::runtimeerror;
+using hal::overflowerror;
+using hal::underflowerror;
+using hal::systemerror;
+using hal::badallocation;
+using hal::badcast;
+using hal::badtypeid;
+using hal::badfunctioncall;
+using hal::badoptionalaccess;
+using hal::badvariantaccess;
+using hal::badweakpointer;
 using hal::standardexception;
 using hal::charpointer;
 using hal::contextpointer;

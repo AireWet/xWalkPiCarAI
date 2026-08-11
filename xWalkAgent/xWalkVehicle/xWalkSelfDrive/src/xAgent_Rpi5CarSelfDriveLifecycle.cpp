@@ -24,8 +24,8 @@
  * Includes
  ******************************************************************************/
 #include "xAgent_Rpi5CarSelfDrive.h"
-#include "xHal_Rpi5CarExceptions.h"
 
+#include "xHal_Rpi5CarTrace.h"
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -34,8 +34,7 @@
  * @namespace xwalk::agent
  * @brief Contains application coordinators for the xWalk firmware.
  */
-namespace xwalk::agent
-{
+namespace xwalk::agent {
 
 /******************************************************************************
  * Constructor definitions
@@ -65,21 +64,21 @@ namespace xwalk::agent
  * @throws std::invalid_argument
  * If `callback` is null.
  */
-XWalkSelfDrive::XWalkSelfDrive(XWalkPicarx& picarx, hal::XWalkMusic& music,
-    agent::contextpointer context, selfdrivedelaycallback callback,
-    selfdrivecontinuecallback continueOperation, agent::stringview soundDirectory)
-    : picarxObject(&picarx), musicObject(&music), soundDirectoryValue(soundDirectory),
-      callbackContext(context),
-      delayCallback(callback), continueCallback(continueOperation)
-{
-    validateDelayCallback(delayCallback);
-    const agent::boolean soundDirectoryEmpty =
-        static_cast<agent::boolean>(
-            soundDirectoryValue.empty());
-    if (soundDirectoryEmpty)
-    {
-        XHAL_THROW_INVALID_ARGUMENT("Self-drive sound directory must not be empty");
-    }
+XWalkSelfDrive::XWalkSelfDrive(XWalkPicarx &picarx, hal::XWalkMusic &music,
+                               agent::contextpointer context,
+                               selfdrivedelaycallback callback,
+                               selfdrivecontinuecallback continueOperation,
+                               agent::stringview soundDirectory)
+    : picarxObject(&picarx), musicObject(&music),
+      soundDirectoryValue(soundDirectory), callbackContext(context),
+      delayCallback(callback), continueCallback(continueOperation) {
+  validateDelayCallback(delayCallback);
+  const agent::boolean soundDirectoryEmpty =
+      static_cast<agent::boolean>(soundDirectoryValue.empty());
+  if (soundDirectoryEmpty) {
+    XWALK_RPIAGENT_ERROR(XWALK_INVAL,
+                         "Self-drive sound directory must not be empty");
+  }
 }
 
 /******************************************************************************
@@ -92,10 +91,7 @@ XWalkSelfDrive::XWalkSelfDrive(XWalkPicarx& picarx, hal::XWalkMusic& music,
  * @warning
  * Operations running on the worker and its callbacks must not throw.
  */
-XWalkSelfDrive::~XWalkSelfDrive()
-{
-    stop();
-}
+XWalkSelfDrive::~XWalkSelfDrive() { stop(); }
 
 /******************************************************************************
  * Protected member function definitions
@@ -110,12 +106,12 @@ XWalkSelfDrive::~XWalkSelfDrive()
  * @throws std::invalid_argument
  * If `delayOperation` is null.
  */
-void XWalkSelfDrive::validateDelayCallback(selfdrivedelaycallback delayOperation)
-{
-    if (delayOperation == nullptr)
-    {
-        XHAL_THROW_INVALID_ARGUMENT("Self-drive delay callback must not be null");
-    }
+void XWalkSelfDrive::validateDelayCallback(
+    selfdrivedelaycallback delayOperation) {
+  if (delayOperation == nullptr) {
+    XWALK_RPIAGENT_ERROR(XWALK_INVAL,
+                         "Self-drive delay callback must not be null");
+  }
 }
 
 /**
@@ -128,56 +124,54 @@ void XWalkSelfDrive::validateDelayCallback(selfdrivedelaycallback delayOperation
  * `true` when the complete delay finishes; otherwise `false` after cancellation
  * or callback failure has latched emergency stop.
  */
-agent::boolean XWalkSelfDrive::delay(agent::uint32 durationMs)
-{
-    if (continueCallback == nullptr)
-    {
-        const agent::boolean completed = delayCallback(callbackContext, durationMs);
-        if (!completed)
-        {
-            operationFailedValue.store(true);
-            runningValue.store(false);
-            static_cast<void>(picarxObject->emergencyStop());
-            stateChanged.notify_all();
-        }
-        return completed;
+agent::boolean XWalkSelfDrive::delay(agent::uint32 durationMs) {
+  if (continueCallback == nullptr) {
+    const agent::boolean completed = delayCallback(callbackContext, durationMs);
+    if (!completed) {
+      operationFailedValue.store(true);
+      runningValue.store(false);
+      static_cast<void>(picarxObject->emergencyStop());
+      stateChanged.notify_all();
     }
-    constexpr agent::uint32 cancellationIntervalMs{20U};
-    agent::uint32 remainingMs = durationMs;
-    while (remainingMs > 0U)
-    {
-        const agent::boolean operationRequested = continueCallback(callbackContext);
-        if (operationRequested == false)
-        {
-            static_cast<void>(picarxObject->emergencyStop());
-            return false;
-        }
-        const agent::uint32 sliceMs = (remainingMs < cancellationIntervalMs) ?
-            remainingMs : cancellationIntervalMs;
-        const agent::boolean delayCompleted = delayCallback(callbackContext, sliceMs);
-        if (delayCompleted == false)
-        {
-            operationFailedValue.store(true);
-            runningValue.store(false);
-            static_cast<void>(picarxObject->emergencyStop());
-            stateChanged.notify_all();
-            return false;
-        }
-        remainingMs -= sliceMs;
+    return completed;
+  }
+  constexpr agent::uint32 cancellationIntervalMs{20U};
+  agent::uint32 remainingMs = durationMs;
+  while (remainingMs > 0U) {
+    const agent::boolean operationRequested = continueCallback(callbackContext);
+    if (operationRequested == false) {
+      static_cast<void>(picarxObject->emergencyStop());
+      return false;
     }
-    return true;
+    const agent::uint32 sliceMs = (remainingMs < cancellationIntervalMs)
+                                      ? remainingMs
+                                      : cancellationIntervalMs;
+    const agent::boolean delayCompleted =
+        delayCallback(callbackContext, sliceMs);
+    if (delayCompleted == false) {
+      operationFailedValue.store(true);
+      runningValue.store(false);
+      static_cast<void>(picarxObject->emergencyStop());
+      stateChanged.notify_all();
+      return false;
+    }
+    remainingMs -= sliceMs;
+  }
+  return true;
 }
 
 /**
  * @brief Replaces the optional application cancellation query.
- * @param[in,out] context Optional non-owning context that must outlive later action execution.
- * @param[in] continueOperation Optional non-throwing query; null disables cancellation checks.
+ * @param[in,out] context Optional non-owning context that must outlive later
+ * action execution.
+ * @param[in] continueOperation Optional non-throwing query; null disables
+ * cancellation checks.
  */
-void XWalkSelfDrive::setCancellation(agent::contextpointer context,
-    selfdrivecontinuecallback continueOperation) noexcept
-{
-    callbackContext = context;
-    continueCallback = continueOperation;
+void XWalkSelfDrive::setCancellation(
+    agent::contextpointer context,
+    selfdrivecontinuecallback continueOperation) noexcept {
+  callbackContext = context;
+  continueCallback = continueOperation;
 }
 
 /******************************************************************************
@@ -190,23 +184,20 @@ void XWalkSelfDrive::setCancellation(agent::contextpointer context,
  * @throws std::logic_error
  * If the worker is already running.
  */
-void XWalkSelfDrive::start()
-{
-    agent::mutexlock lock(stateMutex);
-    const agent::boolean workerAlreadyRunning =
-        static_cast<agent::boolean>(
-            runningValue.load());
-    if (workerAlreadyRunning)
-    {
-        XHAL_THROW_LOGIC_ERROR("Self-drive worker is already running");
-    }
-    actionQueue.clear();
-    statusValue = XWalkSelfDriveStatus::Standby;
-    lastStatusValue = XWalkSelfDriveStatus::Standby;
-    hasLastStatus = false;
-    operationFailedValue.store(false);
-    runningValue.store(true);
-    worker = agent::threadhandle(&XWalkSelfDrive::actionLoop, this);
+void XWalkSelfDrive::start() {
+  agent::mutexlock lock(stateMutex);
+  const agent::boolean workerAlreadyRunning =
+      static_cast<agent::boolean>(runningValue.load());
+  if (workerAlreadyRunning) {
+    XWALK_RPIAGENT_ERROR(XWALK_LOGIC, "Self-drive worker is already running");
+  }
+  actionQueue.clear();
+  statusValue = XWalkSelfDriveStatus::Standby;
+  lastStatusValue = XWalkSelfDriveStatus::Standby;
+  hasLastStatus = false;
+  operationFailedValue.store(false);
+  runningValue.store(true);
+  worker = agent::threadhandle(&XWalkSelfDrive::actionLoop, this);
 }
 
 /**
@@ -215,17 +206,14 @@ void XWalkSelfDrive::start()
  * @post
  * `running()` returns `false` and no worker remains joinable.
  */
-void XWalkSelfDrive::stop()
-{
-    runningValue.store(false);
-    stateChanged.notify_all();
-    const agent::boolean workerJoinable =
-        static_cast<agent::boolean>(
-            worker.joinable());
-    if (workerJoinable)
-    {
-        worker.join();
-    }
+void XWalkSelfDrive::stop() {
+  runningValue.store(false);
+  stateChanged.notify_all();
+  const agent::boolean workerJoinable =
+      static_cast<agent::boolean>(worker.joinable());
+  if (workerJoinable) {
+    worker.join();
+  }
 }
 
 /**
@@ -234,9 +222,8 @@ void XWalkSelfDrive::stop()
  * @return
  * `true` between successful `start()` and completion of `stop()`.
  */
-agent::boolean XWalkSelfDrive::running() const noexcept
-{
-    return runningValue.load();
+agent::boolean XWalkSelfDrive::running() const noexcept {
+  return runningValue.load();
 }
 
 } /* namespace xwalk::agent */

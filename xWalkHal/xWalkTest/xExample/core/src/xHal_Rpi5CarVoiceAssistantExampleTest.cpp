@@ -14,6 +14,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarVoiceAssistantExample.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
 
@@ -191,32 +192,20 @@ void testValidation()
     VoiceAssistantExampleState state;
     auto incomplete = callbacks();
     incomplete.capture = nullptr;
-    XWalkHal::boolean rejectedCallbacks = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         xwalk::hal::example::XWalkVoiceAssistantExample invalid(
             &state, incomplete);
-    }
-    catch (const XWalkHal::invalidargument&)
-    {
-        rejectedCallbacks = true;
-    }
-    assert(rejectedCallbacks);
+    });
 
     xwalk::hal::example::XWalkVoiceAssistantExample example(
         &state, callbacks());
-    XWalkHal::boolean rejectedRun = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         example.run(
             xwalk::hal::example::XWalkVoiceAssistantExampleInputMode::Keyboard,
             0U, 1000U, "/tmp/voice-assistant.jpg");
-    }
-    catch (const XWalkHal::outofrange&)
-    {
-        rejectedRun = true;
-    }
-    assert(rejectedRun);
+    });
 }
 
 } /* namespace */

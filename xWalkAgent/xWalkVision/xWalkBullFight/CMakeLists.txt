@@ -27,6 +27,7 @@ endif()
 add_library(xWalkBullFight STATIC
     src/xAgent_Rpi5CarBullFight.cpp
     src/xAgent_Rpi5CarBullFightLifecycle.cpp)
+target_link_libraries(xWalkBullFight PRIVATE xWalkTrace)
 add_library(xWalk::BullFight ALIAS xWalkBullFight)
 target_include_directories(xWalkBullFight PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include)

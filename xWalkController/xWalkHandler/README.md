@@ -97,6 +97,18 @@ not define another command handler. PiCar-X command selection is an
 application-owned free function declared and implemented in the sibling
 `xWalkApp` directory.
 
+## Trace reporting
+
+Command handlers do not use the Controller output callback for status,
+results, warnings, or failures. Normal handler records use a unique
+`XWALK_CTRL_TRACE_UIDn` identifier, recoverable failures use
+`XWALK_CTRL_ERROR` with `XWALK_EXCEPTION`, and warnings use
+`XWALK_CTRL_WARNING`. Throwing failures use `XWALK_CTRL_ERROR` with the
+appropriate short C++ selector. The output callback remains available at the
+application boundary for
+help text and to Agent workflows whose public interaction contract requires
+conversation output.
+
 ## Build and host verification
 
 Build and test through the owning controller aggregate:

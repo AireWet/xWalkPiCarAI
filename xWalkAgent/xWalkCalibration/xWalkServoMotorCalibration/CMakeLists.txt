@@ -17,6 +17,7 @@ endif()
 add_library(xWalkServoMotorCalibration STATIC
     src/xAgent_Rpi5CarServoMotorCalibration.cpp
     src/xAgent_Rpi5CarServoMotorCalibrationLifecycle.cpp)
+target_link_libraries(xWalkServoMotorCalibration PRIVATE xWalkTrace)
 add_library(xWalk::ServoMotorCalibration ALIAS xWalkServoMotorCalibration)
 
 target_include_directories(xWalkServoMotorCalibration PUBLIC

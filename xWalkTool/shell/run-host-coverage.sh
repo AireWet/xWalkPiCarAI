@@ -1,41 +1,78 @@
 #!/usr/bin/env bash
 
-set -eu
+set -u
 
 repository_root="$(CDPATH='' cd -- "$(dirname -- "$0")/../.." && pwd)"
+mode="${2-gcc}"
 
-usage() {
-    echo "Usage: $0 run"
-    echo "  run      Build, test, and generate coverage in the foreground."
+missing() {
+    echo "COVERAGE_${mode^^}: SKIPPED_MISSING_TOOL - $1 was not found"
+    exit 2
 }
 
-gcovr_command() {
-    if command -v gcovr >/dev/null 2>&1; then
-        command -v gcovr
-        return 0
+run_gcc_coverage() {
+    command -v gcovr >/dev/null 2>&1 || missing gcovr
+    command -v gcov >/dev/null 2>&1 || missing gcov
+    cd "$repository_root" || return 1
+    cmake -E remove_directory "$repository_root/build-host/coverage" || return 1
+    cmake --fresh --preset coverage -DXWALK_COVERAGE_BACKEND=gcc || return 1
+    cmake --build --preset coverage --parallel || return 1
+    ctest --preset coverage --timeout 120 || return 1
+    gcovr --config xWalkTool/environment/gcovr.cfg || return 1
+    echo "COVERAGE_GCC: PASSED - build-host/coverage/coverage.html"
+}
+
+run_clang_coverage() {
+    command -v llvm-profdata >/dev/null 2>&1 || missing llvm-profdata
+    command -v llvm-cov >/dev/null 2>&1 || missing llvm-cov
+    cd "$repository_root" || return 1
+    cmake -E remove_directory "$repository_root/build-host/coverage-clang" || return 1
+    cmake --fresh --preset coverage-clang || return 1
+    cmake --build --preset coverage-clang --parallel || return 1
+    mkdir -p build-host/coverage-clang/profiles build-host/coverage-clang/html
+    LLVM_PROFILE_FILE="$repository_root/build-host/coverage-clang/profiles/%p-%m.profraw" \
+        ctest --preset coverage-clang --timeout 120 || return 1
+    llvm-profdata merge -sparse build-host/coverage-clang/profiles/*.profraw \
+        -o build-host/coverage-clang/coverage.profdata || return 1
+
+    local first_object=""
+    local object_arguments=()
+    while IFS= read -r executable; do
+        if [ -z "$first_object" ]; then
+            first_object="$executable"
+        else
+            object_arguments+=( -object "$executable" )
+        fi
+    done < <(find build-host/coverage-clang -type f -perm -111 \
+        ! -path '*/CMakeFiles/*' ! -name '*.sh' -print | sort)
+    if [ -z "$first_object" ]; then
+        echo "COVERAGE_CLANG: FAILED - no instrumented executable found"
+        return 1
     fi
-    local virtual_environment_gcovr="$repository_root/build-host/tools/gcovr-venv/bin/gcovr"
-    if [ -x "$virtual_environment_gcovr" ]; then
-        printf '%s\n' "$virtual_environment_gcovr"
-        return 0
-    fi
-    echo "gcovr is required but was not found." >&2
-    echo "Install it with the OS package manager, or create the documented host virtual environment." >&2
-    return 2
+
+    local ignore_regex='(^|/)(test|tests|xWalkTest|auto-gen|third_party)/|/usr/'
+    llvm-cov report "$first_object" "${object_arguments[@]}" \
+        -instr-profile=build-host/coverage-clang/coverage.profdata \
+        -ignore-filename-regex="$ignore_regex" |
+        tee build-host/coverage-clang/coverage-summary.txt || return 1
+    llvm-cov show "$first_object" "${object_arguments[@]}" \
+        -instr-profile=build-host/coverage-clang/coverage.profdata \
+        -ignore-filename-regex="$ignore_regex" -format=html \
+        -output-dir=build-host/coverage-clang/html || return 1
+    llvm-cov export "$first_object" "${object_arguments[@]}" \
+        -instr-profile=build-host/coverage-clang/coverage.profdata \
+        -ignore-filename-regex="$ignore_regex" \
+        >build-host/coverage-clang/coverage.json || return 1
+    echo "COVERAGE_CLANG: PASSED - build-host/coverage-clang/html/index.html"
 }
 
-run_coverage() {
-    local gcovr_executable
-    gcovr_executable="$(gcovr_command)" || return $?
-    cd "$repository_root" || return 2
-    cmake --fresh --preset coverage || return $?
-    cmake --build --preset coverage --parallel || return $?
-    ctest --preset coverage || return $?
-    "$gcovr_executable" --config xWalkTool/environment/gcovr.cfg
-}
+if [ "${1-}" != "run" ]; then
+    echo "Usage: $0 run [gcc|clang]" >&2
+    exit 2
+fi
 
-case "${1-}" in
-    run) run_coverage ;;
-    -h|--help|help) usage ;;
-    *) usage; exit 2 ;;
+case "$mode" in
+    gcc) run_gcc_coverage || { echo "COVERAGE_GCC: FAILED"; exit 1; } ;;
+    clang) run_clang_coverage || { echo "COVERAGE_CLANG: FAILED"; exit 1; } ;;
+    *) echo "Usage: $0 run [gcc|clang]" >&2; exit 2 ;;
 esac

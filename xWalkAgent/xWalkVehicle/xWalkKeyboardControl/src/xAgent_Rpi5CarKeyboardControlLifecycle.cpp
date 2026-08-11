@@ -27,8 +27,7 @@
 
 #include "xAgent_Rpi5CarKeyboardControl.h"
 
-#include "xHal_Rpi5CarExceptions.h"
-
+#include "xHal_Rpi5CarTrace.h"
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -37,8 +36,7 @@
  * @namespace xwalk::agent
  * @brief Contains application coordinators for the xWalk firmware.
  */
-namespace xwalk::agent
-{
+namespace xwalk::agent {
 
 /******************************************************************************
  * Constructor definitions
@@ -47,21 +45,22 @@ namespace xwalk::agent
 /**
  * @brief Binds caller-owned vehicle and synchronous scheduling operations.
  * @param[in] picarx PiCar-X coordinator that must outlive this Agent.
- * @param[in,out] context Optional callback context that must outlive this Agent.
+ * @param[in,out] context Optional callback context that must outlive this
+ * Agent.
  * @param[in] delayOperation Non-null synchronous delay operation.
  * @param[in] continueOperation Non-null synchronous cancellation query.
  * @throws std::invalid_argument If either callback is null.
  */
-XWalkKeyboardControl::XWalkKeyboardControl(XWalkPicarx& picarx,
-    agent::contextpointer context, keyboardcontroldelaycallback delayOperation,
-    keyboardcontrolcontinuecallback continueOperation):
-    picarxObject(&picarx), callbackContext(context), delayCallback(delayOperation),
-    continueCallback(continueOperation)
-{
-    if ((delayCallback == nullptr) || (continueCallback == nullptr))
-    {
-        XHAL_THROW_INVALID_ARGUMENT("Keyboard control requires complete callbacks");
-    }
+XWalkKeyboardControl::XWalkKeyboardControl(
+    XWalkPicarx &picarx, agent::contextpointer context,
+    keyboardcontroldelaycallback delayOperation,
+    keyboardcontrolcontinuecallback continueOperation)
+    : picarxObject(&picarx), callbackContext(context),
+      delayCallback(delayOperation), continueCallback(continueOperation) {
+  if ((delayCallback == nullptr) || (continueCallback == nullptr)) {
+    XWALK_RPIAGENT_ERROR(XWALK_INVAL,
+                         "Keyboard control requires complete callbacks");
+  }
 }
 
 /******************************************************************************
@@ -69,12 +68,13 @@ XWalkKeyboardControl::XWalkKeyboardControl(XWalkPicarx& picarx,
  ******************************************************************************/
 
 /**
- * @brief Latches a non-throwing emergency motor stop without releasing dependencies.
- * @post The PiCar-X emergency latch is set and both motors receive independent stop attempts.
+ * @brief Latches a non-throwing emergency motor stop without releasing
+ * dependencies.
+ * @post The PiCar-X emergency latch is set and both motors receive independent
+ * stop attempts.
  */
-XWalkKeyboardControl::~XWalkKeyboardControl() noexcept
-{
-    static_cast<void>(picarxObject->emergencyStop());
+XWalkKeyboardControl::~XWalkKeyboardControl() noexcept {
+  static_cast<void>(picarxObject->emergencyStop());
 }
 
 /******************************************************************************
@@ -86,23 +86,21 @@ XWalkKeyboardControl::~XWalkKeyboardControl() noexcept
  * @param[in] durationMs Requested delay in milliseconds.
  * @return `true` after the complete delay or `false` after cancellation.
  */
-agent::boolean XWalkKeyboardControl::wait(agent::uint32 durationMs) const
-{
-    constexpr agent::uint32 cancellationIntervalMs{20U};
-    agent::uint32 remainingMs = durationMs;
-    while (remainingMs > 0U)
-    {
-        const agent::boolean operationRequested = continueCallback(callbackContext);
-        if (operationRequested == false)
-        {
-            return false;
-        }
-        const agent::uint32 sliceMs = (remainingMs < cancellationIntervalMs) ?
-            remainingMs : cancellationIntervalMs;
-        delayCallback(callbackContext, sliceMs);
-        remainingMs -= sliceMs;
+agent::boolean XWalkKeyboardControl::wait(agent::uint32 durationMs) const {
+  constexpr agent::uint32 cancellationIntervalMs{20U};
+  agent::uint32 remainingMs = durationMs;
+  while (remainingMs > 0U) {
+    const agent::boolean operationRequested = continueCallback(callbackContext);
+    if (operationRequested == false) {
+      return false;
     }
-    return continueCallback(callbackContext);
+    const agent::uint32 sliceMs = (remainingMs < cancellationIntervalMs)
+                                      ? remainingMs
+                                      : cancellationIntervalMs;
+    delayCallback(callbackContext, sliceMs);
+    remainingMs -= sliceMs;
+  }
+  return continueCallback(callbackContext);
 }
 
 } /* namespace xwalk::agent */

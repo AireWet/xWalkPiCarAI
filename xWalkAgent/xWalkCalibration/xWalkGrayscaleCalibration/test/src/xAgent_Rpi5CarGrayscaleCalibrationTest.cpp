@@ -210,6 +210,7 @@ void testCalibration(agent::stringview configurationPath)
     configuration.set("cliff_reference", "[400,401,402]");
     xwalk::agent::XWalkPicarx picarx(motors, directionServo, panServo, tiltServo,
         grayscale, ultrasonic, configuration);
+    static_cast<void>(picarx.initialize());
     TestSchedule schedule;
     xwalk::agent::XWalkGrayscaleCalibration calibration(
         picarx, &schedule, &delay, &continueOperation);

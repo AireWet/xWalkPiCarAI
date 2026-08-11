@@ -23,13 +23,14 @@ if(NOT TARGET xWalkComputerVision)
 endif()
 
 if(NOT TARGET xWalkGPT)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/xWalkGPT
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/layer1/xWalkGPT
         ${CMAKE_CURRENT_BINARY_DIR}/xWalkGPT)
 endif()
 
 add_library(xWalkTreasureHunt STATIC
     src/xAgent_Rpi5CarTreasureHunt.cpp
     src/xAgent_Rpi5CarTreasureHuntLifecycle.cpp)
+target_link_libraries(xWalkTreasureHunt PRIVATE xWalkTrace)
 add_library(xWalk::TreasureHunt ALIAS xWalkTreasureHunt)
 target_include_directories(xWalkTreasureHunt PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include)

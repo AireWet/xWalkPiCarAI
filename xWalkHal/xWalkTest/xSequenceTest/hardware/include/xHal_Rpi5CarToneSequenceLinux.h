@@ -38,7 +38,7 @@ class XWalkToneSequenceLinux
 {
 protected:
 
-    /** @brief Prints one measure heading before its first note. */
+    /** @brief Traces one measure heading before its first note. */
     static void reportMeasure(contextpointer context, uint8 measureNumber);
 
 public:

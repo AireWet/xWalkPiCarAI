@@ -290,10 +290,11 @@ xWalkTool/shell/run-host-coverage.sh run
 The required `run` action performs these steps in order:
 
 1. Finds `gcovr`.
-2. Configures the root CMake `coverage` preset with `cmake --fresh`.
-3. Builds the coverage preset.
-4. Runs its CTest preset.
-5. Generates the reports defined by `xWalkTool/environment/gcovr.cfg`.
+2. Removes only the dedicated `build-host/coverage` instrumentation tree.
+3. Configures the root CMake `coverage` preset with `cmake --fresh`.
+4. Builds the coverage preset.
+5. Runs its CTest preset.
+6. Generates the reports defined by `xWalkTool/environment/gcovr.cfg`.
 
 Use `xWalkTool/shell/run-host-coverage.sh --help` to print usage. Any other action exits with status 2.
 
@@ -309,8 +310,8 @@ build-host/coverage/coverage.html
 build-host/coverage/coverage.xml
 ```
 
-The report command is also a gate. It fails below 79 percent total line
-coverage or 40 percent total branch coverage.
+The report command is also a gate. It fails below 75 percent total line,
+87 percent function, or 68 percent total branch coverage.
 
 ## Raspberry Pi provisioning
 

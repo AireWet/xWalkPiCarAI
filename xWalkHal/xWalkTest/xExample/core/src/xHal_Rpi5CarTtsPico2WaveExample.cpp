@@ -27,6 +27,7 @@
 
 #include "xHal_Rpi5CarTtsPico2WaveExample.h"
 
+#include "xHal_Rpi5CarTrace.h"
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -35,8 +36,7 @@
  * @namespace xwalk::hal::example
  * @brief Contains host-testable ports of upstream Robot HAT examples.
  */
-namespace xwalk::hal::example
-{
+namespace xwalk::hal::example {
 
 /******************************************************************************
  * Constructor definitions
@@ -49,14 +49,12 @@ namespace xwalk::hal::example
  * @throws std::invalid_argument If `speak` is null.
  */
 XWalkTtsPico2WaveExample::XWalkTtsPico2WaveExample(
-    contextpointer context, ttspico2wavespeakcallback speak):
-    callbackContext(context), speakCallback(speak)
-{
-    if (speakCallback == nullptr)
-    {
-        XHAL_THROW_INVALID_ARGUMENT(
-            "Pico2Wave example requires a speech callback");
-    }
+    contextpointer context, ttspico2wavespeakcallback speak)
+    : callbackContext(context), speakCallback(speak) {
+  if (speakCallback == nullptr) {
+    XWALK_HAL_ERROR(XWALK_INVAL,
+                    "Pico2Wave example requires a speech callback");
+  }
 }
 
 /******************************************************************************
@@ -66,10 +64,9 @@ XWalkTtsPico2WaveExample::XWalkTtsPico2WaveExample(
 /**
  * @brief Delivers the exact source language and message once.
  */
-void XWalkTtsPico2WaveExample::run()
-{
-    speakCallback(callbackContext, XWALK_TTS_PICO2WAVE_EXAMPLE_LANGUAGE,
-        XWALK_TTS_PICO2WAVE_EXAMPLE_MESSAGE);
+void XWalkTtsPico2WaveExample::run() {
+  speakCallback(callbackContext, XWALK_TTS_PICO2WAVE_EXAMPLE_LANGUAGE,
+                XWALK_TTS_PICO2WAVE_EXAMPLE_MESSAGE);
 }
 
 } /* namespace xwalk::hal::example */

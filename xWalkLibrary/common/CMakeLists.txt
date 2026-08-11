@@ -27,20 +27,28 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 
     if(XWALK_ENABLE_SANITIZERS)
         target_compile_options(xWalkLibraryCommon INTERFACE
-            -fsanitize=address,undefined -fno-omit-frame-pointer)
+            -fsanitize=address,undefined -fno-omit-frame-pointer -g)
         target_link_options(xWalkLibraryCommon INTERFACE
             -fsanitize=address,undefined -fno-omit-frame-pointer)
     endif()
 
     if(XWALK_ENABLE_THREAD_SANITIZER)
         target_compile_options(xWalkLibraryCommon INTERFACE
-            -fsanitize=thread -fno-omit-frame-pointer)
+            -fsanitize=thread -fno-omit-frame-pointer -fPIE -g -O1)
         target_link_options(xWalkLibraryCommon INTERFACE
-            -fsanitize=thread -fno-omit-frame-pointer)
+            -fsanitize=thread -fno-omit-frame-pointer -pie)
     endif()
 
     if(XWALK_ENABLE_COVERAGE)
-        target_compile_options(xWalkLibraryCommon INTERFACE --coverage -O0 -g)
-        target_link_options(xWalkLibraryCommon INTERFACE --coverage)
+        if(XWALK_COVERAGE_BACKEND STREQUAL "clang")
+            target_compile_options(xWalkLibraryCommon INTERFACE
+                -fprofile-instr-generate -fcoverage-mapping -O0 -g)
+            target_link_options(xWalkLibraryCommon INTERFACE
+                -fprofile-instr-generate -fcoverage-mapping)
+        else()
+            target_compile_options(xWalkLibraryCommon INTERFACE --coverage -O0 -g)
+            target_link_options(xWalkLibraryCommon INTERFACE --coverage)
+            target_compile_definitions(xWalkLibraryCommon INTERFACE XWALK_GCC_COVERAGE=1)
+        endif()
     endif()
 endif()

@@ -3,7 +3,8 @@
  * @brief       Implements the VoicePromptCarHandler command responsibility.
  *
  * @details
- * Keeps this controller responsibility isolated within its functionality-based handler group.
+ * Keeps this controller responsibility isolated within its functionality-based
+ *handler group.
  *
  * @project     xWalk Firmware
  * @module      xWalkHandler
@@ -26,7 +27,7 @@
 
 #include "xController.h"
 
-#include "xHal_Rpi5CarExceptions.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -36,8 +37,7 @@
  * @namespace xwalk::ctrl
  * @brief Contains Controller command interfaces for the xWalk firmware.
  */
-namespace xwalk::ctrl
-{
+namespace xwalk::ctrl {
 
 /******************************************************************************
  * Member function definitions
@@ -45,20 +45,17 @@ namespace xwalk::ctrl
 
 /** @brief Executes one spoken movement-demonstration command. */
 ::ctrl::int32 XWalkController::XWALK_handlerVoicePromptCar(
-    const XWalkLifecycleRequest& request)
-{
-    if (voicePromptCarObject == nullptr)
-    {
-        output("Voice-prompt-car backend unavailable");
-        return 3;
-    }
-    if (request.action == XWalkLifecycleAction::Stop)
-    {
-        voicePromptCarObject->stop();
-        output("Voice-prompt car stopped");
-        return 0;
-    }
-    return voicePromptCarObject->run();
+    const XWalkLifecycleRequest &request) {
+  if (voicePromptCarObject == nullptr) {
+    XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Voice-prompt-car backend unavailable");
+    return 3;
+  }
+  if (request.action == XWalkLifecycleAction::Stop) {
+    voicePromptCarObject->stop();
+    XWALK_CTRL_TRACE_UID0(CTRL .085, "Voice-prompt car stopped");
+    return 0;
+  }
+  return voicePromptCarObject->run();
 }
 
 } /* namespace xwalk::ctrl */

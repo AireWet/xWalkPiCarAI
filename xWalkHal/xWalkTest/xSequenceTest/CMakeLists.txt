@@ -18,6 +18,7 @@ configure_file(config/xHal_Rpi5CarSequenceTestConfig.yml
 
 add_library(xWalkButtonEventSequence
     core/src/xHal_Rpi5CarButtonEventSequence.cpp)
+target_link_libraries(xWalkButtonEventSequence PRIVATE xWalkTrace)
 target_include_directories(xWalkButtonEventSequence PUBLIC core/include)
 target_compile_features(xWalkButtonEventSequence PUBLIC cxx_std_17)
 target_link_libraries(xWalkButtonEventSequence PUBLIC xWalkGpio)
@@ -34,16 +35,21 @@ add_library(xWalkRobotHat5MotorSequence
     core/src/xHal_Rpi5CarRobotHat5MotorSequence.cpp)
 target_include_directories(xWalkRobotHat5MotorSequence PUBLIC core/include)
 target_compile_features(xWalkRobotHat5MotorSequence PUBLIC cxx_std_17)
-target_link_libraries(xWalkRobotHat5MotorSequence PUBLIC xWalkMotor)
+target_link_libraries(xWalkRobotHat5MotorSequence
+    PUBLIC xWalkMotor
+    PRIVATE xWalkTrace)
 
 add_library(xWalkMotorSequence
     core/src/xHal_Rpi5CarMotorSequence.cpp)
 target_include_directories(xWalkMotorSequence PUBLIC core/include)
 target_compile_features(xWalkMotorSequence PUBLIC cxx_std_17)
-target_link_libraries(xWalkMotorSequence PUBLIC xWalkMotor)
+target_link_libraries(xWalkMotorSequence
+    PUBLIC xWalkMotor
+    PRIVATE xWalkTrace)
 
 add_library(xWalkServoHatSequence
     core/src/xHal_Rpi5CarServoHatSequence.cpp)
+target_link_libraries(xWalkServoHatSequence PRIVATE xWalkTrace)
 target_include_directories(xWalkServoHatSequence PUBLIC core/include)
 target_compile_features(xWalkServoHatSequence PUBLIC cxx_std_17)
 target_link_libraries(xWalkServoHatSequence PUBLIC
@@ -53,18 +59,21 @@ target_link_libraries(xWalkServoHatSequence PUBLIC
 
 add_library(xWalkServoSequence
     core/src/xHal_Rpi5CarServoSequence.cpp)
+target_link_libraries(xWalkServoSequence PRIVATE xWalkTrace)
 target_include_directories(xWalkServoSequence PUBLIC core/include)
 target_compile_features(xWalkServoSequence PUBLIC cxx_std_17)
 target_link_libraries(xWalkServoSequence PUBLIC xWalkServo)
 
 add_library(xWalkPiperStreamSequence
     core/src/xHal_Rpi5CarPiperStreamSequence.cpp)
+target_link_libraries(xWalkPiperStreamSequence PRIVATE xWalkTrace)
 target_include_directories(xWalkPiperStreamSequence PUBLIC core/include)
 target_compile_features(xWalkPiperStreamSequence PUBLIC cxx_std_17)
 target_link_libraries(xWalkPiperStreamSequence PUBLIC xWalkLibraryCommon)
 
 add_library(xWalkToneSequence
     core/src/xHal_Rpi5CarToneSequence.cpp)
+target_link_libraries(xWalkToneSequence PRIVATE xWalkTrace)
 target_include_directories(xWalkToneSequence PUBLIC core/include)
 target_compile_features(xWalkToneSequence PUBLIC cxx_std_17)
 target_link_libraries(xWalkToneSequence PUBLIC xWalkMusic)
@@ -77,7 +86,8 @@ if(XWALK_HAL_BUILD_RPI)
     target_include_directories(xWalkButtonEventSequenceLinux PUBLIC hardware/include)
     target_compile_features(xWalkButtonEventSequenceLinux PUBLIC cxx_std_17)
     target_link_libraries(xWalkButtonEventSequenceLinux PUBLIC
-        xWalkButtonEventSequence)
+        xWalkButtonEventSequence
+        PRIVATE xWalkTrace)
 
     add_library(xWalkInitAnglesSequenceLinux
         hardware/src/xHal_Rpi5CarInitAnglesSequenceLinux.cpp)
@@ -112,7 +122,8 @@ if(XWALK_HAL_BUILD_RPI)
     target_link_libraries(xWalkServoHatSequenceLinux PUBLIC
         xWalkGpioLinux
         xWalkI2cLinux
-        xWalkServoHatSequence)
+        xWalkServoHatSequence
+        PRIVATE xWalkTrace)
 
     add_library(xWalkServoSequenceLinux
         hardware/src/xHal_Rpi5CarServoSequenceLinux.cpp)
@@ -128,7 +139,8 @@ if(XWALK_HAL_BUILD_RPI)
     target_compile_features(xWalkToneSequenceLinux PUBLIC cxx_std_17)
     target_link_libraries(xWalkToneSequenceLinux PUBLIC
         xWalkMusicAlsa
-        xWalkToneSequence)
+        xWalkToneSequence
+        PRIVATE xWalkTrace)
 
     add_library(xWalkSequenceTestRunner
         hardware/src/xHal_Rpi5CarSequenceTestRunner.cpp)

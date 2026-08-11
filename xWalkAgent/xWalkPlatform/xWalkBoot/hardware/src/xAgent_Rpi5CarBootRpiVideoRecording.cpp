@@ -32,8 +32,10 @@ agent::int32 XWalkBootRpi::runVideoRecording(agent::contextpointer context,
     bootapplicationcallback callback, hal::XWalkConfigStore& config)
 {
     XWalkVideoRecordingOpenCvConfiguration videoConfiguration;
+    videoConfiguration.cameraBackend = XWalkVideoRecordingOpenCv::backendFromString(
+        config.get("video_recording_camera_backend", "v4l2"));
     videoConfiguration.cameraDevice = config.get(
-        "computer_vision_camera_device", "/dev/video0");
+        "video_recording_camera_device", "");
     videoConfiguration.videoDirectory = config.get(
         "video_recording_directory", "/tmp/xwalk-videos");
     videoConfiguration.widthPixels = parseUnsigned(config.get(
@@ -43,6 +45,9 @@ agent::int32 XWalkBootRpi::runVideoRecording(agent::contextpointer context,
     videoConfiguration.framesPerSecond = static_cast<agent::float64>(
         parseUnsigned(config.get("video_recording_fps", "20"),
             "video_recording_fps", 120U));
+    videoConfiguration.readTimeoutMilliseconds = parseUnsigned(config.get(
+        "video_recording_read_timeout_ms", "1000"),
+        "video_recording_read_timeout_ms", 60'000U);
     XWalkVideoRecordingOpenCv videoBackend(videoConfiguration);
     XWalkVideoRecordingCallbacks videoCallbacks = videoBackend.callbacks();
     videoCallbacks.delay = &delayMilliseconds;

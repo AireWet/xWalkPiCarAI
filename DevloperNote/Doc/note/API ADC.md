@@ -6,7 +6,7 @@ volts. The caller creates and retains the referenced `XWalkI2c` object.
 ## Public interface
 
 The authoritative declaration is
-[`xHal_Rpi5CarAdc.h`](../../../xWalkHal/xWalkAdc/include/xHal_Rpi5CarAdc.h).
+[`xHal_Rpi5CarAdc.h`](../../../xWalkHal/device/xWalkAdc/include/xHal_Rpi5CarAdc.h).
 
 - Construct with an I2C reference, channel, and optional device address.
 - `read()` returns one raw sample assembled from exactly two bytes.

@@ -35,8 +35,10 @@ agent::int32 XWalkBootRpi::runBullFight(agent::contextpointer context,
     XWalkPicarx& picarx)
 {
     XWalkComputerVisionOpenCvConfiguration visionConfiguration;
+    visionConfiguration.cameraBackend = XWalkComputerVisionOpenCv::backendFromString(
+        config.get("computer_vision_camera_backend", "v4l2"));
     visionConfiguration.cameraDevice = config.get(
-        "computer_vision_camera_device", "/dev/video0");
+        "computer_vision_camera_device", "");
     visionConfiguration.photoDirectory = config.get(
         "computer_vision_photo_directory", "/tmp/xwalk-pictures");
     visionConfiguration.faceCascadePath = config.get("computer_vision_face_cascade",
@@ -45,6 +47,9 @@ agent::int32 XWalkBootRpi::runBullFight(agent::contextpointer context,
         "computer_vision_width", "640"), "computer_vision_width", 7'680U);
     visionConfiguration.heightPixels = parseUnsigned(config.get(
         "computer_vision_height", "480"), "computer_vision_height", 4'320U);
+    visionConfiguration.readTimeoutMilliseconds = parseUnsigned(config.get(
+        "computer_vision_read_timeout_ms", "1000"),
+        "computer_vision_read_timeout_ms", 60'000U);
     XWalkComputerVisionOpenCv visionBackend(visionConfiguration);
     XWalkComputerVisionCallbacks visionCallbacks = visionBackend.callbacks();
     visionCallbacks.delay = &delayMilliseconds;

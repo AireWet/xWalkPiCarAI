@@ -23,6 +23,7 @@
 
 #include "xHal_Rpi5CarOthersExample.h"
 
+#include "xHal_Rpi5CarTrace.h"
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -31,8 +32,7 @@
  * @namespace xwalk::hal::example
  * @brief Contains contracts and adapters for ported example programs.
  */
-namespace xwalk::hal::example
-{
+namespace xwalk::hal::example {
 
 /**
  * @brief Binds one language model and validates the console table.
@@ -41,16 +41,16 @@ namespace xwalk::hal::example
  * @param[in] consoleCallbacks Complete console table.
  * @throws std::invalid_argument If either callback is null.
  */
-XWalkOthersExample::XWalkOthersExample(XWalkLanguageModel& languageModel,
-    contextpointer context, const XWalkOthersExampleCallbacks& consoleCallbacks):
-    languageModelObject(&languageModel), consoleContext(context),
-    callbacks(consoleCallbacks)
-{
-    if ((callbacks.readPrompt == nullptr) || (callbacks.write == nullptr))
-    {
-        XHAL_THROW_INVALID_ARGUMENT(
-            "Generic provider example requires complete console callbacks");
-    }
+XWalkOthersExample::XWalkOthersExample(
+    XWalkLanguageModel &languageModel, contextpointer context,
+    const XWalkOthersExampleCallbacks &consoleCallbacks)
+    : languageModelObject(&languageModel), consoleContext(context),
+      callbacks(consoleCallbacks) {
+  if ((callbacks.readPrompt == nullptr) || (callbacks.write == nullptr)) {
+    XWALK_HAL_ERROR(
+        XWALK_INVAL,
+        "Generic provider example requires complete console callbacks");
+  }
 }
 
 /**
@@ -59,41 +59,37 @@ XWalkOthersExample::XWalkOthersExample(XWalkLanguageModel& languageModel,
  * @throws std::out_of_range If `maximumPrompts` is outside its range.
  * @warning Prompt operations may contact a remote model provider.
  */
-void XWalkOthersExample::run(uint32 maximumPrompts)
-{
-    if ((maximumPrompts == 0U) ||
-        (maximumPrompts > XHAL_RPI5CAR_OTHERS_EXAMPLE_MAXIMUM_PROMPTS))
-    {
-        XHAL_THROW_OUT_OF_RANGE(
-            "Generic provider example prompt count is outside its range");
-    }
+void XWalkOthersExample::run(uint32 maximumPrompts) {
+  if ((maximumPrompts == 0U) ||
+      (maximumPrompts > XHAL_RPI5CAR_OTHERS_EXAMPLE_MAXIMUM_PROMPTS)) {
+    XWALK_HAL_ERROR(
+        XWALK_RANGE,
+        "Generic provider example prompt count is outside its range");
+  }
 
-    constexpr stringview instructions{"You are a helpful assistant."};
-    constexpr stringview welcome{
-        "Hello, I am a helpful assistant. How can I help you?"};
-    languageModelObject->setMaximumMessages(20U);
-    languageModelObject->setInstructions(instructions);
-    languageModelObject->setWelcome(welcome);
-    callbacks.write(consoleContext, welcome, true, false);
+  constexpr stringview instructions{"You are a helpful assistant."};
+  constexpr stringview welcome{
+      "Hello, I am a helpful assistant. How can I help you?"};
+  languageModelObject->setMaximumMessages(20U);
+  languageModelObject->setInstructions(instructions);
+  languageModelObject->setWelcome(welcome);
+  callbacks.write(consoleContext, welcome, true, false);
 
-    for (uint32 promptIndex = 0U; promptIndex < maximumPrompts; ++promptIndex)
-    {
-        string inputText;
-        const hal::boolean promptRead = callbacks.readPrompt(consoleContext, inputText);
-        if (promptRead == false)
-        {
-            break;
-        }
-        const string response = languageModelObject->prompt(inputText);
-        const hal::boolean responseAvailable =
-            static_cast<hal::boolean>(
-                !response.empty());
-        if (responseAvailable)
-        {
-            callbacks.write(consoleContext, response, false, true);
-        }
-        callbacks.write(consoleContext, {}, true, false);
+  for (uint32 promptIndex = 0U; promptIndex < maximumPrompts; ++promptIndex) {
+    string inputText;
+    const hal::boolean promptRead =
+        callbacks.readPrompt(consoleContext, inputText);
+    if (promptRead == false) {
+      break;
     }
+    const string response = languageModelObject->prompt(inputText);
+    const hal::boolean responseAvailable =
+        static_cast<hal::boolean>(!response.empty());
+    if (responseAvailable) {
+      callbacks.write(consoleContext, response, false, true);
+    }
+    callbacks.write(consoleContext, {}, true, false);
+  }
 }
 
 } /* namespace xwalk::hal::example */

@@ -11,6 +11,7 @@ test -r "$configuration_file"
 test -r "$configuration_directory/voice.conf"
 test -r "$configuration_directory/ai/providers/openai.conf"
 test -r "$configuration_directory/ai/providers/gemini.conf"
+test -r "$configuration_directory/ai/providers/grok.conf"
 test -r "$configuration_directory/ai/providers/anthropic.conf"
 test -r "$configuration_directory/ai/providers/openai-compatible.conf"
 test -r "$repository_root/xWalkLibrary/x86_64/lib/libvosk.so"
@@ -38,6 +39,14 @@ grep -q '^voice_language_model_api_key_environment = GEMINI_API_KEY$' \
     "$configuration_directory/ai/providers/gemini.conf"
 grep -q '^voice_language_model_model_environment = GEMINI_MODEL$' \
     "$configuration_directory/ai/providers/gemini.conf"
+grep -q '^voice_language_model_provider = grok$' \
+    "$configuration_directory/ai/providers/grok.conf"
+grep -q '^voice_language_model_endpoint = https://api.x.ai/v1/chat/completions$' \
+    "$configuration_directory/ai/providers/grok.conf"
+grep -q '^voice_language_model_api_key_environment = XAI_API_KEY$' \
+    "$configuration_directory/ai/providers/grok.conf"
+grep -q '^voice_language_model_model_environment = XAI_MODEL$' \
+    "$configuration_directory/ai/providers/grok.conf"
 grep -q '^voice_language_model_api_key_environment = ANTHROPIC_API_KEY$' \
     "$configuration_directory/ai/providers/anthropic.conf"
 grep -q '^voice_language_model_model_environment = ANTHROPIC_MODEL$' \
@@ -57,7 +66,7 @@ if grep -ERq '^voice_language_model_model[[:space:]]*=' "$configuration_director
 fi
 
 service_environment="$repository_root/xWalkTool/deployment/systemd/xwalk-service.conf"
-if grep -Eq '^(OPENAI|GEMINI|ANTHROPIC|XWALK_AI|OLLAMA)_(API_KEY|MODEL)=' \
+if grep -Eq '^(OPENAI|GEMINI|XAI|ANTHROPIC|XWALK_AI|OLLAMA)_(API_KEY|MODEL)=' \
     "$service_environment"; then
     echo "Tracked service configuration bypasses the encrypted licence loader." >&2
     exit 1

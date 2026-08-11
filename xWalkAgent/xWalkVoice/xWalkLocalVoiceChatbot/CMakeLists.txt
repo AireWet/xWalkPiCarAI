@@ -10,13 +10,14 @@ if(NOT TARGET xWalkVoiceAssistant)
         "Voice-chatbot dependency setting" FORCE)
     set(XWALK_VOICE_ASSISTANT_BUILD_HARDWARE_TESTS OFF CACHE BOOL
         "Voice-chatbot dependency setting" FORCE)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/xWalkVoiceAssistant
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/layer1/xWalkVoiceAssistant
         ${CMAKE_CURRENT_BINARY_DIR}/xWalkVoiceAssistant)
 endif()
 
 add_library(xWalkLocalVoiceChatbot STATIC
     src/xAgent_Rpi5CarLocalVoiceChatbotLifecycle.cpp
     src/xAgent_Rpi5CarLocalVoiceChatbotResponse.cpp)
+target_link_libraries(xWalkLocalVoiceChatbot PRIVATE xWalkTrace)
 add_library(xWalk::LocalVoiceChatbot ALIAS xWalkLocalVoiceChatbot)
 target_include_directories(xWalkLocalVoiceChatbot PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include)

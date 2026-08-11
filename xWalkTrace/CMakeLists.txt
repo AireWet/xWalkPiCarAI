@@ -18,8 +18,17 @@ pkg_check_modules(JSON_C REQUIRED IMPORTED_TARGET json-c)
 set(XWALK_TRACE_PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/..)
 set(XWALK_TRACE_GENERATOR
     ${CMAKE_CURRENT_SOURCE_DIR}/pre-compiler/xHal_Rpi5CarTracePreCompiler.py)
+set(XWALK_TRACE_PRIORITY_CONFIG
+    ${CMAKE_CURRENT_SOURCE_DIR}/config/xWalkTracePriorities.json)
 set(XWALK_TRACE_GENERATED_DIRECTORY ${CMAKE_BINARY_DIR}/generated)
 set(XWALK_TRACE_GENERATED_XML ${XWALK_TRACE_GENERATED_DIRECTORY}/xwalk-traces.xml)
+set(XWALK_TRACE_GENERATED_INCLUDE_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/generated/include)
+set(XWALK_TRACE_LOG_DIRECTORY ${CMAKE_BINARY_DIR}/log)
+file(MAKE_DIRECTORY ${XWALK_TRACE_GENERATED_INCLUDE_DIRECTORY})
+file(MAKE_DIRECTORY ${XWALK_TRACE_LOG_DIRECTORY})
+configure_file(config/xHal_Rpi5CarTraceBuildConfig.h.in
+    ${XWALK_TRACE_GENERATED_INCLUDE_DIRECTORY}/xHal_Rpi5CarTraceBuildConfig.h @ONLY)
 set(XWALK_TRACE_SOURCE_ROOTS
     ${XWALK_TRACE_PROJECT_ROOT})
 
@@ -42,8 +51,10 @@ add_custom_command(
     COMMAND ${Python3_EXECUTABLE} ${XWALK_TRACE_GENERATOR}
         --project-root ${XWALK_TRACE_PROJECT_ROOT}
         --source-root ${XWALK_TRACE_PROJECT_ROOT}
+        --priority-config ${XWALK_TRACE_PRIORITY_CONFIG}
         --output ${XWALK_TRACE_GENERATED_XML}
-    DEPENDS ${XWALK_TRACE_GENERATOR} ${XWALK_TRACE_SCANNED_SOURCES}
+    DEPENDS ${XWALK_TRACE_GENERATOR} ${XWALK_TRACE_PRIORITY_CONFIG}
+        ${XWALK_TRACE_SCANNED_SOURCES}
     COMMENT "Validating xWalk trace identifiers and generating XML metadata"
     VERBATIM)
 add_custom_target(xWalkTraceMetadata ALL DEPENDS ${XWALK_TRACE_GENERATED_XML})
@@ -57,7 +68,9 @@ add_library(xWalkTrace STATIC
 )
 add_dependencies(xWalkTrace xWalkTraceMetadata)
 
-target_include_directories(xWalkTrace PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(xWalkTrace PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${XWALK_TRACE_GENERATED_INCLUDE_DIRECTORY})
 target_compile_features(xWalkTrace PUBLIC cxx_std_17)
 target_compile_definitions(xWalkTrace PRIVATE
     XWALK_TRACE_CONFIG_PATH="${XWALK_TRACE_GENERATED_XML}")

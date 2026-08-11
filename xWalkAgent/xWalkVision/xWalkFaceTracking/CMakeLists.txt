@@ -28,6 +28,7 @@ endif()
 add_library(xWalkFaceTracking STATIC
     src/xAgent_Rpi5CarFaceTracking.cpp
     src/xAgent_Rpi5CarFaceTrackingLifecycle.cpp)
+target_link_libraries(xWalkFaceTracking PRIVATE xWalkTrace)
 add_library(xWalk::FaceTracking ALIAS xWalkFaceTracking)
 
 target_include_directories(xWalkFaceTracking PUBLIC

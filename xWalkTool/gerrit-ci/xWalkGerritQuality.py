@@ -4,13 +4,14 @@
 from __future__ import annotations
 
 import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 import subprocess
 from typing import TextIO
 
 
 class XWalkGerritQuality:
-    """Run every GitHub host-quality job sequentially and retain all results."""
+    """Run independent host-quality jobs concurrently and retain all results."""
 
     def __init__(self, workspace: Path, log: TextIO) -> None:
         """Store the isolated checkout and combined verification log."""
@@ -263,7 +264,12 @@ class XWalkGerritQuality:
         )
 
     def run_all(self) -> dict[str, bool]:
-        """Run every current Gerrit and GitHub Actions quality job."""
+        """Run the quality matrix concurrently, like the GitHub workflow.
+
+        Jobs use isolated build directories, so they can execute independently.
+        The worker count is bounded to avoid exhausting the host; set
+        ``XWALK_CI_MAX_WORKERS`` to tune it for a larger runner.
+        """
 
         jobs = [
             ("gerrit-host", self.current_gerrit_job),
@@ -271,13 +277,14 @@ class XWalkGerritQuality:
             ("gcc Release", lambda: self.compiler_job("gcc", "Release")),
             ("clang Debug", lambda: self.compiler_job("clang", "Debug")),
             ("clang Release", lambda: self.compiler_job("clang", "Release")),
-            ("sanitizers", lambda: self.preset_job(
-                "sanitizers", "sanitizers", "sanitizers",
-                {"ASAN_OPTIONS": "detect_leaks=1:halt_on_error=1",
-                 "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"})),
-            ("thread-sanitizer", lambda: self.preset_job(
-                "thread-sanitizer", "thread-sanitizer", "thread-sanitizer",
-                {"TSAN_OPTIONS": "halt_on_error=1"}, "60", True)),
+            ("sanitizers", lambda: self.run_steps(
+                "sanitizers",
+                [(["bash", "xWalkTool/shell/run-host-sanitizer.sh", "asan"], None)],
+            )),
+            ("thread-sanitizer", lambda: self.run_steps(
+                "thread-sanitizer",
+                [(["bash", "xWalkTool/shell/run-host-sanitizer.sh", "tsan"], None)],
+            )),
             ("stress-tests", lambda: self.preset_job(
                 "stress-tests", "sanity", "host-stress")),
             ("static-analysis", self.static_analysis_job),
@@ -285,9 +292,32 @@ class XWalkGerritQuality:
             ("deployment-scripts", self.deployment_scripts_job),
             ("staged-install", self.staged_install_job),
         ]
+        try:
+            worker_count = max(
+                1,
+                min(len(jobs), int(os.environ.get("XWALK_CI_MAX_WORKERS", "4"))),
+            )
+        except ValueError:
+            worker_count = 4
+
         results: dict[str, bool] = {}
-        for name, job in jobs:
-            results[name] = job()
+        with ThreadPoolExecutor(
+            max_workers=worker_count, thread_name_prefix="xwalk-ci"
+        ) as executor:
+            pending = {
+                executor.submit(job): name for name, job in jobs
+            }
+            for future in as_completed(pending):
+                name = pending[future]
+                try:
+                    results[name] = future.result()
+                except Exception as error:  # pragma: no cover - defensive worker boundary
+                    self.log.write(f"\n[FAILED] {name}: {error}\n")
+                    self.log.flush()
+                    results[name] = False
+
+        # Keep the summary deterministic even though completion order varies.
+        results = {name: results.get(name, False) for name, _ in jobs}
 
         self.log.write("\n======================== QUALITY SUMMARY ========================\n")
         for name, passed in results.items():

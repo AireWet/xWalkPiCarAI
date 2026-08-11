@@ -47,7 +47,7 @@ void testVoiceActiveCar(xwalk::agent::test::ControllerCommandTestContext& contex
         {"controller.continue", "hal.speech.listen", "hal.speech.speak",
             "controller.continue", "hal.speech.listen", "hal.camera.capture",
             "hal.model.prompt", "hal.speech.speak", "hal.speech.stop",
-            "controller.output"}));
+            }));
 }
 }
 

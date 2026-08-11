@@ -1211,9 +1211,7 @@ int32 XWalkExampleRunner::runSelection(
 int32 XWalkExampleRunner::runConfigured(
     stringview executable, stringview selection, stringview configurationPath)
 {
-    try
-    {
-        const YAML::Node root = YAML::LoadFile(string(configurationPath));
+    const YAML::Node root = YAML::LoadFile(string(configurationPath));
         const hal::boolean mapNotMatched =
             static_cast<hal::boolean>(
                 !root.IsMap());
@@ -1281,15 +1279,8 @@ int32 XWalkExampleRunner::runConfigured(
             argumentPointers.push_back(value.data());
         }
         argumentPointers.push_back(nullptr);
-        return runSelection(static_cast<int32>(values.size()),
-            argumentPointers.data());
-    }
-    catch (const YAML::Exception& exception)
-    {
-        std::cerr << "xExample YAML configuration error: "
-                  << exception.what() << '\n';
-        return 2;
-    }
+    return runSelection(static_cast<int32>(values.size()),
+        argumentPointers.data());
 }
 
 /**

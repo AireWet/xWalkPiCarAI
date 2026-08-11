@@ -39,7 +39,7 @@ do
 done
 
 if [ ! -f "${REPOSITORY_ROOT}/CMakeLists.txt" ] ||
-    [ ! -f "${REPOSITORY_ROOT}/xWalkHal/xWalkI2c/CMakeLists.txt" ] ||
+    [ ! -f "${REPOSITORY_ROOT}/xWalkHal/interface/xWalkI2c/CMakeLists.txt" ] ||
     [ ! -f "${REPOSITORY_ROOT}/AGENTS.md" ]
 then
     printf 'ERROR: Unable to verify the MyPiCarX workspace root: %s\n' \

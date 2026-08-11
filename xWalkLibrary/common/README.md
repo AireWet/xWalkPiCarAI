@@ -93,17 +93,14 @@ The typed top-level Controller command request macros have their own focused hea
 DTO, while parsing and routing code may include it directly when no request
 structure is required.
 
-Exception creation is isolated behind project macros declared in:
-
-```cpp
-#include "xHal_Rpi5CarExceptions.h"
-```
-
-The uppercase function-like macros `XHAL_THROW_INVALID_ARGUMENT`,
-`XHAL_THROW_INVALID_ARGUMENT_DETAIL`, `XHAL_THROW_OUT_OF_RANGE`,
-`XHAL_THROW_OUT_OF_RANGE_DETAIL`, `XHAL_THROW_LOGIC_ERROR`,
-`XHAL_THROW_RUNTIME_ERROR`, and `XHAL_THROW_RUNTIME_ERROR_DETAIL` keep standard
-exception facilities inside the common header.
+Standard exception types are exposed through the documented aliases in
+`xHal_Rpi5CarTypes.h`. Traced call sites use the stable signals declared by
+`xHal_Rpi5CarErrorSignals.h` and pass the signal with a message to their
+component `ERROR` macro. That macro records the diagnostic and throws the
+selected signal's exception type. The header-only common library throws aliases
+directly without a trace because xWalkTrace itself depends on this foundational
+target. xWalkTrace also throws aliases directly for its own failures to avoid
+recursive tracing.
 
 Linux system headers needed only by optional hardware backends are centralized
 in `xHal_Rpi5CarLinuxHeaders.h`. Host-only HAL sources do not include this

@@ -45,12 +45,12 @@ void testVoiceControlledCar(xwalk::agent::test::ControllerCommandTestContext& co
     assert(context.motors->left().speed() == 0.0);
     assert(context.picarx->directionAngleDegrees() == 0.0);
     assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"controller.output", "controller.continue", "hal.speech.listen",
-            "controller.continue", "hal.speech.listen", "controller.output",
+        {"controller.continue", "hal.speech.listen",
+            "controller.continue", "hal.speech.listen",
             "controller.continue", "hal.speech.listen", "controller.continue",
-            "hal.speech.listen", "controller.output", "hal.i2c.write",
+            "hal.speech.listen", "hal.i2c.write",
             "controller.delay", "hal.i2c.write", "hal.speech.stop",
-            "hal.i2c.write", "controller.output"}));
+            "hal.i2c.write"}));
 }
 }
 

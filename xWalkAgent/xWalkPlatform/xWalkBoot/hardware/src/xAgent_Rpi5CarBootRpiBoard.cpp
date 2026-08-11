@@ -25,61 +25,56 @@
 #include "xAgent_Rpi5CarBootRpi.h"
 
 #include "xHal_Rpi5CarDevice.h"
-#include "xHal_Rpi5CarExceptions.h"
 
+#include "xHal_Rpi5CarTrace.h"
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
 
-namespace xwalk::agent
-{
+namespace xwalk::agent {
 
 /**
  * @brief Applies fail-safe automatic or explicit Robot HAT selection.
  * @param[in] detectedInformation Read-only Device Tree discovery result.
- * @param[in] requestedBoard Exact `auto`, `robot_hat_v4`, or `robot_hat_v5` value.
+ * @param[in] requestedBoard Exact `auto`, `robot_hat_v4`, or `robot_hat_v5`
+ * value.
  * @return Validated board information used for hardware composition.
  * @throws std::runtime_error If the requested board cannot be verified safely.
  * @throws std::invalid_argument If the requested board name is unsupported.
  */
 hal::XWalkDeviceInformation XWalkBootRpi::selectBoard(
-    const hal::XWalkDeviceInformation& detectedInformation,
-    agent::stringview requestedBoard)
-{
-    if (requestedBoard == "auto")
-    {
-        const agent::boolean boardNotDetected =
-            static_cast<agent::boolean>(detectedInformation.detected == false);
-        if (boardNotDetected)
-        {
-            XHAL_THROW_RUNTIME_ERROR(
-                "Robot HAT v5 was not detected; select robot_hat_v4 explicitly when applicable");
-        }
-        return detectedInformation;
+    const hal::XWalkDeviceInformation &detectedInformation,
+    agent::stringview requestedBoard) {
+  if (requestedBoard == "auto") {
+    const agent::boolean boardNotDetected =
+        static_cast<agent::boolean>(detectedInformation.detected == false);
+    if (boardNotDetected) {
+      XWALK_RPIAGENT_ERROR(XWALK_RUNTIME,
+                           "Robot HAT v5 was not detected; select robot_hat_v4 "
+                           "explicitly when applicable");
     }
-    else if (requestedBoard == "robot_hat_v4")
-    {
-        if (detectedInformation.detected)
-        {
-            XHAL_THROW_RUNTIME_ERROR(
-                "Configured Robot HAT v4 conflicts with detected Robot HAT v5");
-        }
-        return {};
+    return detectedInformation;
+  } else if (requestedBoard == "robot_hat_v4") {
+    if (detectedInformation.detected) {
+      XWALK_RPIAGENT_ERROR(
+          XWALK_RUNTIME,
+          "Configured Robot HAT v4 conflicts with detected Robot HAT v5");
     }
-    else if (requestedBoard == "robot_hat_v5")
-    {
-        const agent::boolean boardNotV5 = static_cast<agent::boolean>(
-            (detectedInformation.detected == false) ||
-            (detectedInformation.model != hal::XWalkDeviceModel::RobotHatV5));
-        if (boardNotV5)
-        {
-            XHAL_THROW_RUNTIME_ERROR(
-                "Configured Robot HAT v5 was not verified by Device Tree");
-        }
-        return detectedInformation;
+    return {};
+  } else if (requestedBoard == "robot_hat_v5") {
+    const agent::boolean boardNotV5 = static_cast<agent::boolean>(
+        (detectedInformation.detected == false) ||
+        (detectedInformation.model != hal::XWalkDeviceModel::RobotHatV5));
+    if (boardNotV5) {
+      XWALK_RPIAGENT_ERROR(
+          XWALK_RUNTIME,
+          "Configured Robot HAT v5 was not verified by Device Tree");
     }
-    XHAL_THROW_INVALID_ARGUMENT(
-        "hardware_board must be auto, robot_hat_v4, or robot_hat_v5");
+    return detectedInformation;
+  }
+  XWALK_RPIAGENT_ERROR(
+      XWALK_INVAL,
+      "hardware_board must be auto, robot_hat_v4, or robot_hat_v5");
 }
 
 } /* namespace xwalk::agent */

@@ -8,7 +8,6 @@ get_filename_component(XWALK_TEST_LIBRARY_ROOT "${CMAKE_CURRENT_LIST_DIR}/.." RE
 set(XWALK_LIBRARY_COMMON_PUBLIC_HEADERS
     xHal_Rpi5CarCommon.h
     xHal_Rpi5CarCommonFunctions.h
-    xHal_Rpi5CarExceptions.h
     xHal_Rpi5CarFileFunctions.h
     xHal_Rpi5CarLinuxHeaders.h
     xHal_Rpi5CarMath.h

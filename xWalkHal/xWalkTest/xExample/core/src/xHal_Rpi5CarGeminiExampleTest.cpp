@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarGeminiExample.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
 
@@ -180,30 +181,18 @@ void testValidation()
     xwalk::hal::example::XWalkGeminiExampleCallbacks incompleteCallbacks =
         consoleCallbacks();
     incompleteCallbacks.write = nullptr;
-    XWalkHal::boolean rejectedCallbacks = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         xwalk::hal::example::XWalkGeminiExample invalidExample(
             model, &state, incompleteCallbacks);
-    }
-    catch (const XWalkHal::invalidargument&)
-    {
-        rejectedCallbacks = true;
-    }
-    assert(rejectedCallbacks);
+    });
 
     xwalk::hal::example::XWalkGeminiExample example(
         model, &state, consoleCallbacks());
-    XWalkHal::boolean rejectedCount = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         example.run(0U);
-    }
-    catch (const XWalkHal::outofrange&)
-    {
-        rejectedCount = true;
-    }
-    assert(rejectedCount);
+    });
 }
 
 } /* namespace */

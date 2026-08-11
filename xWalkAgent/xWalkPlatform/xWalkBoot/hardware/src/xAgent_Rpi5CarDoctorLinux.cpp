@@ -454,6 +454,7 @@ void XWalkDoctorLinux::inspectOptionalServices(agent::stringvector& lines,
     {
         const agent::boolean supportedProvider = (modelProvider == "openai") ||
             (modelProvider == "chatgpt") || (modelProvider == "gemini") ||
+            (modelProvider == "grok") || (modelProvider == "xai") ||
             (modelProvider == "claude") || (modelProvider == "anthropic") ||
             (modelProvider == "openai_compatible");
         const agent::boolean languageModelAvailable = supportedProvider &&

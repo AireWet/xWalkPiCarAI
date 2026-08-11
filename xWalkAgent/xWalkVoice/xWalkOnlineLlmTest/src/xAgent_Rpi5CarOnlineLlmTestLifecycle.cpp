@@ -12,11 +12,10 @@
 
 #include "xAgent_Rpi5CarOnlineLlmTest.h"
 
-#include "xHal_Rpi5CarExceptions.h"
-
-/** @namespace xwalk::agent @brief Contains application coordinators for xWalk firmware. */
-namespace xwalk::agent
-{
+#include "xHal_Rpi5CarTrace.h"
+/** @namespace xwalk::agent @brief Contains application coordinators for xWalk
+ * firmware. */
+namespace xwalk::agent {
 
 /**
  * @brief Binds caller-owned model, callbacks, and conversation settings.
@@ -26,43 +25,42 @@ namespace xwalk::agent
  * @param[in] testConfiguration Owned source-compatible settings.
  */
 XWalkOnlineLlmTest::XWalkOnlineLlmTest(
-    hal::XWalkLanguageModel& languageModel, agent::contextpointer context,
-    const XWalkOnlineLlmTestCallbacks& backendCallbacks,
-    const XWalkOnlineLlmTestConfiguration& testConfiguration):
-    languageModelObject(&languageModel), callbackContext(context),
-    callbacks(backendCallbacks), configuration(testConfiguration)
-{
-    validate(callbacks, configuration);
+    hal::XWalkLanguageModel &languageModel, agent::contextpointer context,
+    const XWalkOnlineLlmTestCallbacks &backendCallbacks,
+    const XWalkOnlineLlmTestConfiguration &testConfiguration)
+    : languageModelObject(&languageModel), callbackContext(context),
+      callbacks(backendCallbacks), configuration(testConfiguration) {
+  validate(callbacks, configuration);
 }
 
 /**
  * @brief Validates callbacks and bounded source configuration.
- * @param[in] backendCallbacks Callback table requiring three non-null functions.
- * @param[in] testConfiguration Settings requiring a prompt and non-zero history.
+ * @param[in] backendCallbacks Callback table requiring three non-null
+ * functions.
+ * @param[in] testConfiguration Settings requiring a prompt and non-zero
+ * history.
  * @throws std::invalid_argument If a callback or prompt is missing.
  * @throws std::out_of_range If the retained-message limit is zero.
  */
 void XWalkOnlineLlmTest::validate(
-    const XWalkOnlineLlmTestCallbacks& backendCallbacks,
-    const XWalkOnlineLlmTestConfiguration& testConfiguration)
-{
-    if ((backendCallbacks.output == nullptr) ||
-        (backendCallbacks.input == nullptr) ||
-        (backendCallbacks.shouldContinue == nullptr))
-    {
-        XHAL_THROW_INVALID_ARGUMENT("Online-LLM-test callbacks must be complete");
-    }
-    const agent::boolean promptTextEmpty =
-        static_cast<agent::boolean>(
-            testConfiguration.promptText.empty());
-    if (promptTextEmpty)
-    {
-        XHAL_THROW_INVALID_ARGUMENT("Online-LLM-test prompt must not be empty");
-    }
-    if (testConfiguration.maximumMessages == 0U)
-    {
-        XHAL_THROW_OUT_OF_RANGE("Online-LLM-test message limit must not be zero");
-    }
+    const XWalkOnlineLlmTestCallbacks &backendCallbacks,
+    const XWalkOnlineLlmTestConfiguration &testConfiguration) {
+  if ((backendCallbacks.output == nullptr) ||
+      (backendCallbacks.input == nullptr) ||
+      (backendCallbacks.shouldContinue == nullptr)) {
+    XWALK_RPIAGENT_ERROR(XWALK_INVAL,
+                         "Online-LLM-test callbacks must be complete");
+  }
+  const agent::boolean promptTextEmpty =
+      static_cast<agent::boolean>(testConfiguration.promptText.empty());
+  if (promptTextEmpty) {
+    XWALK_RPIAGENT_ERROR(XWALK_INVAL,
+                         "Online-LLM-test prompt must not be empty");
+  }
+  if (testConfiguration.maximumMessages == 0U) {
+    XWALK_RPIAGENT_ERROR(XWALK_RANGE,
+                         "Online-LLM-test message limit must not be zero");
+  }
 }
 
 } /* namespace xwalk::agent */

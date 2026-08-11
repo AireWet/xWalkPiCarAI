@@ -86,6 +86,10 @@ void XWalkServoSequenceLinux::run(cstring i2cDevice, uint32 cycleCount)
     const servosequencearray servos{{
         &servo0, &servo1, &servo2, &servo3, &servo4, &servo5,
         &servo6, &servo7, &servo8, &servo9, &servo10, &servo11}};
+    for (XWalkServo* const servo : servos)
+    {
+        static_cast<void>(servo->initialize());
+    }
     XWalkServoSequence sequence(
         servos, this, &XWalkServoSequenceLinux::wait);
     sequence.run(cycleCount);

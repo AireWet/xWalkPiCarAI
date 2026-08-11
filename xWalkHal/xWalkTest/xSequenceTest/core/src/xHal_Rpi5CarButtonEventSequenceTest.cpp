@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarButtonEventSequence.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
 
@@ -150,16 +151,10 @@ void testButtonEventSequence()
     assert(state.timestamps[0U] == 10.0);
     assert(state.timestamps[1U] == 11.0);
 
-    XWalkHal::boolean rejectedDuration = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         sequence.run(0U);
-    }
-    catch (const std::out_of_range&)
-    {
-        rejectedDuration = true;
-    }
-    assert(rejectedDuration);
+    });
 }
 
 } /* namespace */

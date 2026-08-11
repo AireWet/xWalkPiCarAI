@@ -12,9 +12,9 @@ have been confirmed.
 ## Prerequisites
 
 Use Bash and install the dependencies required by the selected operation.
-CMake and CTest are needed for host builds, `gcovr` is needed for coverage,
-and the Raspberry Pi scripts require their documented operating-system and
-hardware tools.
+CMake and CTest are needed for host builds. The complete sanitizer, coverage,
+Valgrind, static-analysis, and ShellCheck prerequisites and commands are in the
+[host quality guide](../quality/README.md).
 
 The licence environment loader additionally requires Python 3 and PyNaCl.
 The recommended Python environment is documented in the
@@ -27,6 +27,12 @@ The recommended Python environment is documented in the
 | `clean-build.sh` | Finds and removes generated CMake and Python output | Use `--dry-run` first |
 | `eclipse-build.sh` | Configures, builds, and tests the Eclipse CLI host tree | Host-only |
 | `run-host-coverage.sh` | Builds, tests, and creates the host coverage report | Host-only |
+| `check-host-quality-dependencies.sh` | Reports analysis tool paths and versions | Read-only |
+| `run-host-sanitizer.sh` | Runs isolated ASan/UBSan, LSan, or TSan verification | Host-only |
+| `run-host-valgrind.sh` | Runs focused CTest MemCheck cases | Host-only |
+| `run-clang-static-analyzer.sh` | Runs a clean Clang Static Analyzer build | Host-only |
+| `run-host-shellcheck.sh` | Checks all repository-owned shell scripts | Read-only |
+| `run-host-quality.sh` | Runs the complete host-quality workflow | Host-only |
 | `provision-hardware.sh` | Writes verified hardware identities to one configuration file | Hardware-specific |
 | `setup-rpi.sh` | Checks, previews, or applies Raspberry Pi provisioning | `--apply` is privileged |
 | `xWalkEnv.sh` | Combines authenticated models with private netrc credentials | Must be sourced |

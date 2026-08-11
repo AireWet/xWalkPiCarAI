@@ -31,6 +31,48 @@ int main()
     assert(fallback.actions.size() == 1U);
     assert(fallback.actions[0U] == "stop");
 
+    const xwalk::agent::XWalkVoiceActiveCarResponse whitespace =
+        xwalk::agent::XWalkVoiceActiveCar::parseResponse(
+            "  Hello  \nACTIONS: forward, stop  ");
+    assert(whitespace.text == "Hello");
+    assert(whitespace.actions.size() == 2U);
+    const xwalk::agent::XWalkVoiceActiveCarResponse empty =
+        xwalk::agent::XWalkVoiceActiveCar::parseResponse(" \t\r\n");
+    assert(empty.text.empty());
+    assert(empty.actions == xwalk::agent::stringvector({"stop"}));
+
+    const xwalk::agent::XWalkVoiceActiveCarResponse json =
+        xwalk::agent::XWalkVoiceActiveCar::parseJsonResponse(
+            "{\n \"answer\" : \"Line one\\nLine two\\tend\", "
+            "\"actions\" : [ \"forward\", \"stop\" ] }");
+    assert(json.text == "Line one\nLine two\tend");
+    assert(json.actions == xwalk::agent::stringvector({"forward", "stop"}));
+    const xwalk::agent::XWalkVoiceActiveCarResponse escaped =
+        xwalk::agent::XWalkVoiceActiveCar::parseJsonResponse(
+            "{\"answer\":\"say \\\"hello\\\"\",\"actions\":[\"wave hands\"]}");
+    assert(escaped.text == "say \"hello\"");
+    assert(escaped.actions == xwalk::agent::stringvector({"wave hands"}));
+    const xwalk::agent::XWalkVoiceActiveCarResponse noActions =
+        xwalk::agent::XWalkVoiceActiveCar::parseJsonResponse(
+            "{\"answer\":\"answer only\"}");
+    assert(noActions.text == "answer only");
+    assert(noActions.actions.empty());
+    const xwalk::agent::XWalkVoiceActiveCarResponse raw =
+        xwalk::agent::XWalkVoiceActiveCar::parseJsonResponse("not json");
+    assert(raw.text == "not json");
+    assert(raw.actions.empty());
+    const xwalk::agent::XWalkVoiceActiveCarResponse malformedAnswer =
+        xwalk::agent::XWalkVoiceActiveCar::parseJsonResponse(
+            "{\"answer\": missing, \"actions\": [broken]}");
+    assert(malformedAnswer.text ==
+        "{\"answer\": missing, \"actions\": [broken]}");
+    assert(malformedAnswer.actions.empty());
+    const xwalk::agent::XWalkVoiceActiveCarResponse truncated =
+        xwalk::agent::XWalkVoiceActiveCar::parseJsonResponse(
+            "{\"answer\":\"unterminated,\"actions\":[\"forward\"");
+    assert(truncated.text == "unterminated,");
+    assert(truncated.actions == xwalk::agent::stringvector({"forward"}));
+
     const xwalk::agent::XWalkVoiceActiveCarConfiguration carConfiguration =
         xwalk::agent::XWalkVoiceActiveCar::carConfiguration();
     assert(carConfiguration.tooCloseCm == 10.0);

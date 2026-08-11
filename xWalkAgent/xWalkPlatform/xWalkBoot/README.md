@@ -132,16 +132,25 @@ PiCar-X configuration file:
 | `camera_width` | `640` |
 | `camera_height` | `480` |
 | `camera_timeout_ms` | `5000` |
+| `picarx_motor_watchdog_timeout_ms` | `500`; valid range 1 through 60000 |
+| `computer_vision_camera_backend` | `v4l2` |
 | `computer_vision_camera_device` | `/dev/video0` |
 | `computer_vision_photo_directory` | `/tmp/xwalk-pictures` |
 | `computer_vision_face_cascade` | OpenCV frontal-face cascade under `/usr/share/opencv4` |
 | `computer_vision_width` | `640` |
 | `computer_vision_height` | `480` |
+| `video_recording_camera_backend` | `v4l2` |
+| `video_recording_camera_device` | `/dev/video0` |
 | `video_recording_directory` | `/tmp/xwalk-videos` |
 | `video_recording_fps` | `20` |
 | `text_vision_width` | `1280` |
 | `text_vision_height` | `720` |
 | `local_voice_chatbot_maximum_messages` | `20` |
+
+OpenCV source values are `v4l2`, `gstreamer`, `video_file`,
+`image_sequence`, and `automatic`. The source string is mandatory: path-based
+backends require an absolute path, while GStreamer receives a validated
+pipeline string directly through OpenCV without invoking a shell.
 
 `hardware_board` accepts `auto`, `robot_hat_v4`, or `robot_hat_v5`. The v4
 value is the explicit legacy selection because the current Device Tree detector
@@ -161,10 +170,14 @@ Rolly profile from `example/voice_active_car.py`, uses OpenAI `gpt-4o-mini`,
 and reads its credential from `OPENAI_API_KEY`. Example 21's
 `voice-active-car-gpt` mode also uses OpenAI `gpt-4o-mini` and uses Piper
 `en_US-ryan-low`. Supported generic provider names are `ollama`, `openai`,
-`chatgpt`, `gemini`, `claude`, `anthropic`, and `openai_compatible`. Cloud
+`chatgpt`, `gemini`, `grok`, `xai`, `claude`, `anthropic`, and
+`openai_compatible`. Cloud
 providers require HTTPS, an endpoint ending in `/chat/completions`, a model,
 and a non-empty credential in the provider-configured environment variable.
 Ollama requires an endpoint ending in `/api/chat` and no key.
+The tracked Grok profile uses xAI's OpenAI-compatible
+`https://api.x.ai/v1/chat/completions` endpoint and reads `XAI_API_KEY` and
+`XAI_MODEL` only from the deployment environment.
 Legacy `voice_ollama_endpoint` and `voice_ollama_model` values remain readable
 when their generic replacements are absent.
 

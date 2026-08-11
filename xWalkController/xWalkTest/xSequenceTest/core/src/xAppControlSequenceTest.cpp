@@ -60,20 +60,17 @@ void testAppControl(xwalk::agent::test::ControllerCommandTestContext& context)
     assert(context.state->soundFile == "car-double-horn.wav");
     assert(context.motors->left().speed() == 0.0);
     assert(context.motors->right().speed() == 0.0);
-    assert(std::find(context.state->outputLines.begin(),
-        context.state->outputLines.end(),
-        "Object detection is not available for this build") !=
-        context.state->outputLines.end());
-    assert(context.state->outputLines.back() == "stop and exit");
+
+
     assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
         {"app.start", "vision.start", "app.publish", "app.poll",
             "hal.i2c.write", "vision.color", "vision.face", "vision.stop",
-            "app.stop", "controller.output"}));
+            "app.stop"}));
 
     const ctrl::int32 stopStatus =
         xwalk::ctrl::XWALK_runControllerCommand(*context.appControlController, {"app-control", "stop"});
     assert(stopStatus == 0);
-    assert(context.state->outputLines.back() == "App control stopped");
+
 }
 
 } /* namespace */

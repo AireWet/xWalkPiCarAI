@@ -16,13 +16,14 @@ if(NOT TARGET xWalkLanguageModel)
         "Text-vision-talk dependency setting" FORCE)
     set(XWALK_LANGUAGE_MODEL_BUILD_OLLAMA_PROVIDER OFF CACHE BOOL
         "Text-vision-talk dependency setting" FORCE)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/xWalkLanguageModel
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/interface/xWalkLanguageModel
         ${CMAKE_CURRENT_BINARY_DIR}/xWalkLanguageModel)
 endif()
 
 add_library(xWalkTextVisionTalk STATIC
     src/xAgent_Rpi5CarTextVisionTalk.cpp
     src/xAgent_Rpi5CarTextVisionTalkLifecycle.cpp)
+target_link_libraries(xWalkTextVisionTalk PRIVATE xWalkTrace)
 add_library(xWalk::TextVisionTalk ALIAS xWalkTextVisionTalk)
 target_include_directories(xWalkTextVisionTalk PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include)

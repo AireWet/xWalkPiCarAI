@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarPiperStreamSequence.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
 
@@ -147,33 +148,21 @@ void runTest()
         "====================================================", "Say without stream",
         "speak:buffered", "duration"}));
 
-    XWalkHal::boolean rejectedCallback = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         xwalk::hal::test::XWalkPiperStreamSequence invalidSequence(
             &state, nullptr, &time, &reportMessage, &reportDuration);
         static_cast<void>(invalidSequence);
-    }
-    catch (const XWalkHal::invalidargument&)
-    {
-        rejectedCallback = true;
-    }
-    assert(rejectedCallback);
+    });
 
     TestState backwardsState;
     backwardsState.times = {{5.0, 4.0, 0.0, 0.0}};
     xwalk::hal::test::XWalkPiperStreamSequence backwardsSequence(
         &backwardsState, &speak, &time, &reportMessage, &reportDuration);
-    XWalkHal::boolean rejectedClock = false;
-    try
+    xwalk::hal::test::expectFailure([&]()
     {
         backwardsSequence.run();
-    }
-    catch (const XWalkHal::runtimeerror&)
-    {
-        rejectedClock = true;
-    }
-    assert(rejectedClock);
+    });
 }
 
 } /* namespace */

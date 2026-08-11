@@ -26,6 +26,7 @@
 #include "xHal_Rpi5CarCommon.h"
 #include "xHal_Rpi5CarGpioLinux.h"
 
+#include "xHal_Rpi5CarTrace.h"
 #include <iostream>
 
 /******************************************************************************
@@ -36,8 +37,7 @@
  * @namespace xwalk::hal::example
  * @brief Contains Linux adapters for ported example programs.
  */
-namespace xwalk::hal::example
-{
+namespace xwalk::hal::example {
 
 /**
  * @brief Runs bounded physical D3 input sampling.
@@ -48,26 +48,21 @@ namespace xwalk::hal::example
  * @warning Reads physical Robot HAT GPIO22.
  */
 void XWalkPinInputExampleLinux::run(uint32 sampleCount, cstring gpioDevice,
-    stringview chipName, stringview chipLabel)
-{
-    XWalkGpioLinux backend(gpioDevice, chipName, chipLabel, 22U);
-    const XWalkGpioCallbacks gpioCallbacks = XHAL_GPIO_CALLBACKS(XWalkGpioLinux);
-    XWalkGpio gpio(&backend, gpioCallbacks, "D3",
-        XWalkGpioMode::Input, XWalkGpioPull::Up);
-    gpioObject = &gpio;
-    const XWalkPinInputExampleCallbacks exampleCallbacks{
-        &read, &wait, &report};
-    XWalkPinInputExample example(this, exampleCallbacks);
-    try
-    {
-        example.run(sampleCount);
-        gpioObject = nullptr;
-    }
-    catch (...)
-    {
-        gpioObject = nullptr;
-        throw;
-    }
+                                    stringview chipName, stringview chipLabel) {
+  XWalkGpioLinux backend(gpioDevice, chipName, chipLabel, 22U);
+  const XWalkGpioCallbacks gpioCallbacks = XHAL_GPIO_CALLBACKS(XWalkGpioLinux);
+  XWalkGpio gpio(&backend, gpioCallbacks, "D3", XWalkGpioMode::Input,
+                 XWalkGpioPull::Up);
+  gpioObject = &gpio;
+  const XWalkPinInputExampleCallbacks exampleCallbacks{&read, &wait, &report};
+  XWalkPinInputExample example(this, exampleCallbacks);
+  try {
+    example.run(sampleCount);
+    gpioObject = nullptr;
+  } catch (...) {
+    gpioObject = nullptr;
+    throw;
+  }
 }
 
 /**
@@ -76,28 +71,22 @@ void XWalkPinInputExampleLinux::run(uint32 sampleCount, cstring gpioDevice,
  * @return Referenced adapter.
  * @throws std::invalid_argument If the adapter or GPIO binding is invalid.
  */
-XWalkPinInputExampleLinux& XWalkPinInputExampleLinux::adapter(
-    contextpointer context)
-{
-    if (context == nullptr)
-    {
-        XHAL_THROW_INVALID_ARGUMENT(
-            "Pin-input Linux context must not be null");
-    }
-    XWalkPinInputExampleLinux& self =
-        *static_cast<XWalkPinInputExampleLinux*>(context);
-    if (self.gpioObject == nullptr)
-    {
-        XHAL_THROW_INVALID_ARGUMENT(
-            "Pin-input Linux adapter has no bound GPIO");
-    }
-    return self;
+XWalkPinInputExampleLinux &
+XWalkPinInputExampleLinux::adapter(contextpointer context) {
+  if (context == nullptr) {
+    XWALK_HAL_ERROR(XWALK_INVAL, "Pin-input Linux context must not be null");
+  }
+  XWalkPinInputExampleLinux &self =
+      *static_cast<XWalkPinInputExampleLinux *>(context);
+  if (self.gpioObject == nullptr) {
+    XWALK_HAL_ERROR(XWALK_INVAL, "Pin-input Linux adapter has no bound GPIO");
+  }
+  return self;
 }
 
 /** @brief Reads one logical value from the bound D3 input. */
-boolean XWalkPinInputExampleLinux::read(contextpointer context)
-{
-    return adapter(context).gpioObject->read();
+boolean XWalkPinInputExampleLinux::read(contextpointer context) {
+  return adapter(context).gpioObject->read();
 }
 
 /**
@@ -105,11 +94,10 @@ boolean XWalkPinInputExampleLinux::read(contextpointer context)
  * @param[in,out] context Non-null Linux adapter context.
  * @param[in] durationMilliseconds Requested duration in milliseconds.
  */
-void XWalkPinInputExampleLinux::wait(
-    contextpointer context, uint32 durationMilliseconds)
-{
-    static_cast<void>(adapter(context));
-    common::sleepMilliseconds(durationMilliseconds);
+void XWalkPinInputExampleLinux::wait(contextpointer context,
+                                     uint32 durationMilliseconds) {
+  static_cast<void>(adapter(context));
+  common::sleepMilliseconds(durationMilliseconds);
 }
 
 /**
@@ -117,11 +105,9 @@ void XWalkPinInputExampleLinux::wait(
  * @param[in,out] context Non-null Linux adapter context.
  * @param[in] value Logical value to print as zero or one.
  */
-void XWalkPinInputExampleLinux::report(
-    contextpointer context, boolean value)
-{
-    static_cast<void>(adapter(context));
-    std::cout << (value ? 1U : 0U) << '\n';
+void XWalkPinInputExampleLinux::report(contextpointer context, boolean value) {
+  static_cast<void>(adapter(context));
+  std::cout << (value ? 1U : 0U) << '\n';
 }
 
 } /* namespace xwalk::hal::example */

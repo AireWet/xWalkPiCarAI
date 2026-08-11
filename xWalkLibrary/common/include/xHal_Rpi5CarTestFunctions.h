@@ -31,6 +31,10 @@
 #include "xHal_Rpi5CarLinuxHeaders.h"
 #include "xHal_Rpi5CarTypes.h"
 
+#if defined(XWALK_GCC_COVERAGE)
+extern "C" void __gcov_dump() noexcept;
+#endif
+
 /******************************************************************************
  * Namespace declarations
  ******************************************************************************/
@@ -70,9 +74,15 @@ void expectFailure(OperationType operation)
     {
         std::set_terminate([]() noexcept
         {
+#if defined(XWALK_GCC_COVERAGE)
+            __gcov_dump();
+#endif
             ::_exit(EXIT_FAILURE);
         });
         operation();
+#if defined(XWALK_GCC_COVERAGE)
+        __gcov_dump();
+#endif
         ::_exit(EXIT_SUCCESS);
     }
 

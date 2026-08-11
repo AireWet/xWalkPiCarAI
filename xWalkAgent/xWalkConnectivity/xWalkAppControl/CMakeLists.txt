@@ -28,6 +28,7 @@ endif()
 add_library(xWalkAppControl STATIC
     src/xAgent_Rpi5CarAppControl.cpp
     src/xAgent_Rpi5CarAppControlLifecycle.cpp)
+target_link_libraries(xWalkAppControl PRIVATE xWalkTrace)
 add_library(xWalk::AppControl ALIAS xWalkAppControl)
 target_include_directories(xWalkAppControl PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -41,6 +42,8 @@ endif()
 
 if(XWALK_APP_CONTROL_BUILD_WEBSOCKET_BACKEND)
     find_package(Boost 1.74 REQUIRED)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(JSON_C REQUIRED IMPORTED_TARGET json-c)
     find_package(Threads REQUIRED)
     add_library(xWalkAppControlWebSocket STATIC
         hardware/src/xAgent_Rpi5CarAppControlWebSocket.cpp
@@ -53,7 +56,7 @@ if(XWALK_APP_CONTROL_BUILD_WEBSOCKET_BACKEND)
     target_compile_definitions(xWalkAppControlWebSocket PRIVATE
         BOOST_ERROR_CODE_HEADER_ONLY=1)
     target_link_libraries(xWalkAppControlWebSocket PUBLIC
-        xWalkAppControl Threads::Threads)
+        xWalkAppControl Threads::Threads PRIVATE PkgConfig::JSON_C)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         target_compile_options(xWalkAppControlWebSocket PRIVATE
             -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)

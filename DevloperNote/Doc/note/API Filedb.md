@@ -2,7 +2,7 @@
 
 `XWalkConfigStore` provides flat key-value persistence. `XWalkConfig` provides
 section-aware configuration persistence. Both are defined by the
-[`xWalkConfig`](../../../xWalkHal/xWalkConfig/README.md) module.
+[`xWalkConfig`](../../../xWalkHal/interface/xWalkConfig/README.md) module.
 
 Configuration objects own their paths and in-memory values. Filesystem access
 passes through common file wrappers. Deployment owns directory creation,

@@ -44,4 +44,6 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 add_test(NAME xCliGoogleTestHostTest COMMAND xCliGoogleTest)
-set_tests_properties(xCliGoogleTestHostTest PROPERTIES LABELS "host;unit;cli")
+set_tests_properties(xCliGoogleTestHostTest PROPERTIES
+    LABELS "host;unit;cli"
+    RUN_SERIAL TRUE)
