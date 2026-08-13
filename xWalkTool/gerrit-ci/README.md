@@ -118,9 +118,11 @@ patch set without starting CI by adding Gerrit's `%wip` push option:
 git push gerrit HEAD:refs/for/master%wip
 ```
 
-For a WIP change, use Gerrit's **Mark As Active** button as the Activate action.
-The resulting WIP-to-active event starts verification for the current patch
-set. Moving an active change into WIP does not start CI.
+For a WIP change, use the persistent **Activate** button supplied by the
+`gerrit-ui` plugin. The button changes to the pressed **Activated** state and
+remains visible after activation and merge. The resulting WIP-to-active event
+starts verification for the current patch set. Moving an active change into
+WIP does not start CI.
 
 An informational Gerrit message is posted at start with the overall dashboard
 and all separate job-log links. The completion message reports every aggregate

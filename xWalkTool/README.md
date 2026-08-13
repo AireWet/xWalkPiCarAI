@@ -21,6 +21,10 @@ xWalkTool/
 │   ├── xWalkGerritLogServer.py
 │   ├── xWalkGerritLogServerTest.py
 │   └── xWalkGerritQuality.py
+├── gerrit-ui/
+│   ├── README.md
+│   ├── xWalkReviewControls.js
+│   └── xWalkReviewControlsTest.js
 ├── xWalkJiraImport/
 │   ├── pyproject.toml
 │   ├── README.md
@@ -68,6 +72,7 @@ workspace-root `LICENSE`; there is no separate `xWalkTool/LICENSE` file.
 - [xWalkTool overview](../DevloperNote/Doc/note/xWalkTool%20Overview.md)
 - [Jira history importer](xWalkJiraImport/README.md)
 - [Gerrit host-verification runner](gerrit-ci/README.md)
+- [Gerrit review controls](gerrit-ui/README.md)
 - [Clean build script](../DevloperNote/Doc/note/Clean%20Build%20Script%20Guide.md)
 - [Eclipse build script](../DevloperNote/Doc/note/Eclipse%20Build%20Script%20Guide.md)
 - [Host coverage script](../DevloperNote/Doc/note/Host%20Coverage%20Script%20Guide.md)
@@ -89,6 +94,7 @@ workspace-root `LICENSE`; there is no separate `xWalkTool/LICENSE` file.
 | `apt-packages.txt` | Lists and maps host, Raspberry Pi, quality, packaging, and optional packages | Read-only |
 | `xWalkJiraImport` | Installs the historical Git-to-Jira importer | Dry-run by default |
 | `gerrit-ci` | Builds a persistent patch-set verifier that votes on Gerrit | Isolated host-only container |
+| `gerrit-ui` | Keeps Gerrit activation state visible and gates Submit presentation | Browser-only plugin |
 | `python/xHal_Rpi5CarDependencyInstaller` | Installs dependencies and configures verified v5 boot | Privileged |
 | `python/xWalkLicenseTool` | Authenticates model settings without storing API credentials | Host-safe |
 | `shell/clean-build.sh` | Finds and optionally deletes generated output | Dry-run is non-destructive |
