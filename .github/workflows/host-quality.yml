@@ -267,6 +267,8 @@ jobs:
           libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev
           libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
           protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
+      - name: Test Valgrind descriptor classification
+        run: xWalkTool/shell/test/validate-valgrind-descriptors-test.sh
       - name: Run focused CTest MemCheck suite
         run: xWalkTool/shell/run-host-valgrind.sh
 

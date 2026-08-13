@@ -33,11 +33,10 @@ if grep -Eq 'definitely lost: [1-9]|indirectly lost: [1-9]|possibly lost: [1-9]|
     echo "VALGRIND: FAILED - disallowed memory finding"
     exit 1
 fi
-while IFS= read -r descriptor_count; do
-    if [ "$descriptor_count" -gt 5 ]; then
-        echo "VALGRIND: FAILED - $descriptor_count descriptors remained (three standard plus two inherited CTest logs expected)"
-        exit 1
-    fi
-done < <(sed -n 's/.*FILE DESCRIPTORS: \([0-9][0-9]*\) open.*/\1/p' \
-    "$memory_log_directory"/MemoryChecker.*.log)
+if ! unexpected_descriptors="$("$repository_root/xWalkTool/shell/validate-valgrind-descriptors.sh" \
+    "$memory_log_directory"/MemoryChecker.*.log)"; then
+    echo "VALGRIND: FAILED - non-inherited descriptors remained"
+    printf '%s\n' "$unexpected_descriptors"
+    exit 1
+fi
 echo "VALGRIND: PASSED"

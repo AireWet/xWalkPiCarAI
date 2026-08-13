@@ -30,6 +30,7 @@ The recommended Python environment is documented in the
 | `check-host-quality-dependencies.sh` | Reports analysis tool paths and versions | Read-only |
 | `run-host-sanitizer.sh` | Runs isolated ASan/UBSan, LSan, or TSan verification | Host-only |
 | `run-host-valgrind.sh` | Runs focused CTest MemCheck cases | Host-only |
+| `validate-valgrind-descriptors.sh` | Rejects child-owned descriptors reported by Valgrind | Read-only |
 | `run-clang-static-analyzer.sh` | Runs a clean Clang Static Analyzer build | Host-only |
 | `run-host-shellcheck.sh` | Checks all repository-owned shell scripts | Read-only |
 | `run-host-quality.sh` | Runs the complete host-quality workflow | Host-only |

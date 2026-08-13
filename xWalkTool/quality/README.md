@@ -91,11 +91,13 @@ xWalkTool/shell/run-host-valgrind.sh
 
 The wrapper checks leaks, all leak kinds, origins, invalid memory access,
 uninitialized values, and open descriptors. It excludes long soak and fuzz
-workloads. CTest MemCheck itself passes two report descriptors to each child;
-the wrapper accounts for those named inherited descriptors and rejects any
-additional descriptor. CTest labels all `still reachable` records as potential
-leaks; the wrapper separately rejects nonzero definite, indirect, or possible
-loss and nonzero Valgrind error summaries. No suppression file is provided because no demonstrated
+workloads. CTest and CI runners may pass a variable number of report and command
+descriptors to each child. The wrapper accepts descriptors that Valgrind names
+and marks as inherited from the parent, while rejecting every non-standard
+descriptor opened by the tested process and left open at exit. CTest labels all
+`still reachable` records as potential leaks; the wrapper separately rejects
+nonzero definite, indirect, or possible loss and nonzero Valgrind error
+summaries. No suppression file is provided because no demonstrated
 external-library false positive has been accepted.
 
 Run the Clang Static Analyzer in its clean build directory:
