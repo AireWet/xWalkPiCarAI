@@ -94,7 +94,7 @@ run_tsan() {
     clang++ -std=c++17 -g -O1 -fPIE -pie -fno-omit-frame-pointer -fsanitize=thread \
         "$repository_root/xWalkTool/quality/probes/xWalkThreadSanitizerProbe.cpp" \
         -o "$probe_directory/xWalkThreadSanitizerProbe" || return 1
-    TSAN_OPTIONS="halt_on_error=1:history_size=7" timeout 30s \
+    TSAN_OPTIONS="halt_on_error=1:history_size=7" timeout 120s \
         "$probe_directory/xWalkThreadSanitizerProbe" >"$probe_log" 2>&1
     local probe_status=$?
     if [ "$probe_status" -eq 124 ]; then

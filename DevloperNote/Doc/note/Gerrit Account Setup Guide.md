@@ -196,5 +196,5 @@ Remove a lost or retired public key immediately in **Settings > SSH Keys**. Gene
 key instead of copying another user's key. Ask a Gerrit administrator to deactivate accounts that are no longer
 needed and periodically review group membership and project permissions.
 
-The `xwalk-ci` key is a host-mounted service credential used only by the verification container. It must remain
-separate from all developer accounts and must never be committed to Git.
+The `xwalk-ci` key is a server-local service credential used only by the non-root verification process. It must
+remain separate from all developer accounts, use mode `0600`, and never be committed to Git.

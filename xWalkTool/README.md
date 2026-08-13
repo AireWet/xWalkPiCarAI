@@ -13,23 +13,33 @@ confirmed.
 xWalkTool/
 ├── README.md
 ├── apt-packages.txt
-├── gerrit-ci/
-│   ├── Dockerfile
-│   ├── README.md
-│   ├── xWalkGerritCi.py
-│   ├── xWalkGerritCiTest.py
-│   ├── xWalkGerritLogServer.py
-│   ├── xWalkGerritLogServerTest.py
-│   └── xWalkGerritQuality.py
-├── gerrit-ui/
+├── gerrit/
 │   ├── README.md
 │   ├── xWalkReviewControls.js
-│   └── xWalkReviewControlsTest.js
-├── gerrit-server/
-│   ├── README.md
-│   ├── templates/
-│   ├── xWalkGerritServerSetup.py
-│   └── xWalkGerritServerSetupTest.py
+│   ├── bin/
+│   ├── config/
+│   │   ├── gerrit-setup.conf
+│   │   └── XWALK_CI_ENV.example
+│   ├── local-linux/
+│   │   ├── README.md
+│   │   ├── gerrit-local.conf
+│   │   └── gerrit-local.sh
+│   ├── py-src/
+│   │   ├── xWalkGerritCi.py
+│   │   ├── xWalkGerritLogServer.py
+│   │   ├── xWalkGerritQuality.py
+│   │   └── xWalkGerritServerSetup.py
+│   ├── py-test/
+│   │   ├── xWalkGerritCiTest.py
+│   │   ├── xWalkGerritLogServerTest.py
+│   │   ├── xWalkGerritServerSetupTest.py
+│   │   └── xWalkReviewControlsTest.js
+│   ├── shell-script/
+│   │   └── gerrit-setup.sh
+│   └── DevloperNote/
+│       ├── index.md
+│       └── Doc/
+│           └── note/
 ├── xWalkJiraImport/
 │   ├── pyproject.toml
 │   ├── README.md
@@ -76,9 +86,7 @@ workspace-root `LICENSE`; there is no separate `xWalkTool/LICENSE` file.
 
 - [xWalkTool overview](../DevloperNote/Doc/note/xWalkTool%20Overview.md)
 - [Jira history importer](xWalkJiraImport/README.md)
-- [Gerrit host-verification runner](gerrit-ci/README.md)
-- [Gerrit review controls](gerrit-ui/README.md)
-- [Non-root Gerrit server installer](gerrit-server/README.md)
+- [Combined Gerrit server, CI, and review controls](gerrit/README.md)
 - [Clean build script](../DevloperNote/Doc/note/Clean%20Build%20Script%20Guide.md)
 - [Eclipse build script](../DevloperNote/Doc/note/Eclipse%20Build%20Script%20Guide.md)
 - [Host coverage script](../DevloperNote/Doc/note/Host%20Coverage%20Script%20Guide.md)
@@ -99,9 +107,7 @@ workspace-root `LICENSE`; there is no separate `xWalkTool/LICENSE` file.
 |---|---|---|
 | `apt-packages.txt` | Lists and maps host, Raspberry Pi, quality, packaging, and optional packages | Read-only |
 | `xWalkJiraImport` | Installs the historical Git-to-Jira importer | Dry-run by default |
-| `gerrit-ci` | Builds a persistent patch-set verifier that votes on Gerrit | Isolated host-only container |
-| `gerrit-ui` | Keeps Gerrit activation state visible and gates Submit presentation | Browser-only plugin |
-| `gerrit-server` | Assesses and installs an eduVPN-facing Gerrit site below `$HOME` | Non-root server setup |
+| `gerrit` | Runs Gerrit, CI, logs, and review controls | User-owned service |
 | `python/xHal_Rpi5CarDependencyInstaller` | Installs dependencies and configures verified v5 boot | Privileged |
 | `python/xWalkLicenseTool` | Authenticates model settings without storing API credentials | Host-safe |
 | `shell/clean-build.sh` | Finds and optionally deletes generated output | Dry-run is non-destructive |

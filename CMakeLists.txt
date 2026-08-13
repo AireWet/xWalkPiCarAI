@@ -401,12 +401,20 @@ if(BUILD_TESTING)
     set_tests_properties(xWalkJiraImportHostTest PROPERTIES
         LABELS "host;tooling;network-free"
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/xWalkJiraImport")
-    add_test(NAME xWalkGerritCiHostTest
+    add_test(NAME xWalkGerritHostTest
         COMMAND "${Python3_EXECUTABLE}" -m unittest discover
-            -s . -p "xWalkGerrit*Test.py")
-    set_tests_properties(xWalkGerritCiHostTest PROPERTIES
+            -s py-test -p "xWalkGerrit*Test.py")
+    set_tests_properties(xWalkGerritHostTest PROPERTIES
         LABELS "host;tooling;network-free"
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/gerrit-ci")
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/gerrit")
+    find_program(XWALK_NODE_EXECUTABLE node)
+    if(XWALK_NODE_EXECUTABLE)
+        add_test(NAME xWalkGerritUiHostTest
+            COMMAND "${XWALK_NODE_EXECUTABLE}" --test py-test/xWalkReviewControlsTest.js)
+        set_tests_properties(xWalkGerritUiHostTest PROPERTIES
+            LABELS "host;tooling;network-free"
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/gerrit")
+    endif()
     add_test(NAME xHal_Rpi5CarDependencyInstallerHostTest
         COMMAND "${Python3_EXECUTABLE}"
             "${CMAKE_CURRENT_SOURCE_DIR}/xWalkTool/deployment/test/dependency-installer-test.py")
