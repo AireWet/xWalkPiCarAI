@@ -58,6 +58,17 @@ only to Gerrit for review with:
 git push gerrit HEAD:refs/for/master
 ```
 
+An active upload triggers Gerrit CI automatically. To defer CI, upload the
+change as WIP:
+
+```bash
+git push gerrit HEAD:refs/for/master%wip
+```
+
+For a WIP change, Gerrit's **Mark As Active** button is the Activate action.
+Clearing WIP through that button triggers CI for the current patch set. Moving
+an active change into WIP must not trigger CI.
+
 Only Joxy (`joxjoh24@student.hh.se`) may merge into GitHub `master`. After
 Gerrit's **Submit** action, the CI service may mirror a directly applicable
 Joxy-owned change to GitHub `master`. A submitted change owned by anyone else,

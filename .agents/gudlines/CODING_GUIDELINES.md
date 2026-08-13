@@ -23,6 +23,17 @@ the commit only to Gerrit:
 git push gerrit HEAD:refs/for/master
 ```
 
+Active patch-set uploads trigger Gerrit CI automatically. When verification
+must be deferred, upload the change as WIP:
+
+```bash
+git push gerrit HEAD:refs/for/master%wip
+```
+
+For a WIP change, use Gerrit's **Mark As Active** button as the Activate action.
+The WIP-to-active transition triggers CI for the current patch set. Moving an
+active change into WIP does not trigger CI.
+
 Never push a change directly to a GitHub remote or GitHub `master`, including
 before Gerrit verification. A Gerrit change may be submitted only after its
 current patch set satisfies the configured review and automatic verification

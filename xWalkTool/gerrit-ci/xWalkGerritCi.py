@@ -446,12 +446,18 @@ class XWalkGerritCi:
         """Report whether an event requires configured host verification."""
 
         change = event.get("change", {})
-        return (
-            event.get("type") == "patchset-created"
-            and change.get("project") == self.project
+        matches_target = (
+            change.get("project") == self.project
             and change.get("branch") == self.branch
             and isinstance(event.get("patchSet"), dict)
         )
+        if not matches_target:
+            return False
+
+        event_type = event.get("type")
+        if event_type == "patchset-created":
+            return change.get("wip") is not True
+        return event_type == "wip-state-changed" and change.get("wip") is not True
 
     def matching_merge_event(self, event: dict[str, Any]) -> bool:
         """Report whether a submitted change must be mirrored to GitHub."""

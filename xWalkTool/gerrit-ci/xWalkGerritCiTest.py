@@ -9,7 +9,66 @@ from xWalkGerritCi import XWalkGerritCi
 
 
 class XWalkGerritCiTest(unittest.TestCase):
-    """Verify that only a directly applicable Joxy change targets master."""
+    """Verify Gerrit event selection and GitHub destination selection."""
+
+    def setUp(self) -> None:
+        """Create a verifier without initializing host service resources."""
+
+        self.ci = XWalkGerritCi.__new__(XWalkGerritCi)
+        self.ci.project = "xWalkPiCarAI"
+        self.ci.branch = "master"
+
+    @staticmethod
+    def verification_event(
+        event_type: str, wip: bool | None
+    ) -> dict[str, object]:
+        """Return one target-project event with a current patch-set payload."""
+
+        change: dict[str, object] = {
+            "project": "xWalkPiCarAI",
+            "branch": "master",
+        }
+        if wip is not None:
+            change["wip"] = wip
+        return {
+            "type": event_type,
+            "change": change,
+            "patchSet": {
+                "number": 3,
+                "revision": "revision",
+                "ref": "refs/changes/41/41/3",
+            },
+        }
+
+    def test_active_patch_set_triggers_verification(self) -> None:
+        """Run CI automatically when an active patch set is uploaded."""
+
+        event = self.verification_event("patchset-created", False)
+        self.assertTrue(self.ci.matching_verification_event(event))
+
+    def test_wip_patch_set_waits_for_activation(self) -> None:
+        """Keep a WIP patch-set upload idle until its change becomes active."""
+
+        event = self.verification_event("patchset-created", True)
+        self.assertFalse(self.ci.matching_verification_event(event))
+
+    def test_mark_as_active_triggers_verification(self) -> None:
+        """Run CI when activation omits Gerrit's false WIP field."""
+
+        event = self.verification_event("wip-state-changed", None)
+        self.assertTrue(self.ci.matching_verification_event(event))
+
+    def test_mark_as_wip_does_not_trigger_verification(self) -> None:
+        """Do not run CI when an active change is moved into WIP state."""
+
+        event = self.verification_event("wip-state-changed", True)
+        self.assertFalse(self.ci.matching_verification_event(event))
+
+    def test_unrelated_event_does_not_trigger_verification(self) -> None:
+        """Ignore other event types even when they carry a target patch set."""
+
+        event = self.verification_event("comment-added", False)
+        self.assertFalse(self.ci.matching_verification_event(event))
 
     def test_joxy_change_targets_master(self) -> None:
         """Allow Joxy when GitHub is exactly at the submitted change parent."""

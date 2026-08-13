@@ -1,13 +1,14 @@
 # xWalk Gerrit CI
 
 This directory defines the dedicated host-verification runner for the local
-`xWalkPiCarAI` Gerrit project. The runner listens only for `patchset-created`
-events on `master`, fetches the exact Gerrit patch-set ref into an isolated
-temporary checkout, runs the original Gerrit host suite and every job from the
-GitHub Host quality workflow, and reports one aggregate `Verified +1` or
-`Verified -1` on that patch set. After Gerrit submits a verified change, the
-same service selects its GitHub destination from the Gerrit owner and current
-branch relationship.
+`xWalkPiCarAI` Gerrit project. The runner listens for active `patchset-created`
+events and WIP-to-active `wip-state-changed` events on `master`, fetches the
+exact Gerrit patch-set ref into an isolated temporary checkout, runs the
+original Gerrit host suite and every job from the GitHub Host quality workflow,
+and reports one aggregate `Verified +1` or `Verified -1` on that patch set. WIP
+uploads remain idle until a reviewer activates them. After Gerrit submits a
+verified change, the same service selects its GitHub destination from the
+Gerrit owner and current branch relationship.
 
 The aggregate gate runs all of these jobs before voting:
 
@@ -110,12 +111,22 @@ docker exec xwalk-gerrit-ci find /var/log/xwalk-gerrit-ci -type f -maxdepth 1 -p
 curl http://127.0.0.1:8091/health
 ```
 
-Uploading a new patch set automatically starts verification. An informational
-Gerrit message is posted at start with the overall dashboard and all separate
-job-log links. The completion message reports every aggregate status beside the
-same job link, the overall full-log link, and the final `Verified` vote. Logs
-remain in the `xwalk-gerrit-ci-logs` Docker volume across container restarts.
-Submitted changes also receive an informational message stating whether they
-were mirrored to `master` or published for Joxy's pull-request review. The
-Gerrit change log records the owner email, branch, retained mirror log, and a
-clickable link to the exact GitHub commit.
+Uploading a new active patch set automatically starts verification. Upload a
+patch set without starting CI by adding Gerrit's `%wip` push option:
+
+```bash
+git push gerrit HEAD:refs/for/master%wip
+```
+
+For a WIP change, use Gerrit's **Mark As Active** button as the Activate action.
+The resulting WIP-to-active event starts verification for the current patch
+set. Moving an active change into WIP does not start CI.
+
+An informational Gerrit message is posted at start with the overall dashboard
+and all separate job-log links. The completion message reports every aggregate
+status beside the same job link, the overall full-log link, and the final
+`Verified` vote. Logs remain in the `xwalk-gerrit-ci-logs` Docker volume across
+container restarts. Submitted changes also receive an informational message
+stating whether they were mirrored to `master` or published for Joxy's
+pull-request review. The Gerrit change log records the owner email, branch,
+retained mirror log, and a clickable link to the exact GitHub commit.
