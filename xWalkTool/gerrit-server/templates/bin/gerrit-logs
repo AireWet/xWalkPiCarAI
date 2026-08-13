@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+# shellcheck source=/dev/null
+. "$HOME/gerrit-env.sh"
+case "$GERRIT_SITE" in "$HOME"/*) ;; *) echo "Unsafe GERRIT_SITE: $GERRIT_SITE" >&2; exit 2 ;; esac
+[ -d "$GERRIT_SITE/logs" ] || { echo "Missing Gerrit log directory" >&2; exit 2; }
+exec tail -n 100 -F "$GERRIT_SITE/logs/error_log" "$GERRIT_SITE/logs/httpd_log" "$GERRIT_SITE/logs/sshd_log"
