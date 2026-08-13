@@ -173,6 +173,12 @@ XWalkComputerVisionOpenCv::startProvider(agent::contextpointer context) {
   } else if (backend.configurationValue.cameraBackend ==
              XWalkComputerVisionOpenCvBackend::Gstreamer) {
     apiPreference = cv::CAP_GSTREAMER;
+  } else if (backend.configurationValue.cameraBackend ==
+             XWalkComputerVisionOpenCvBackend::VideoFile) {
+    apiPreference = cv::CAP_FFMPEG;
+  } else if (backend.configurationValue.cameraBackend ==
+             XWalkComputerVisionOpenCvBackend::ImageSequence) {
+    apiPreference = cv::CAP_IMAGES;
   }
   const agent::boolean opened = backend.camera.open(
       backend.configurationValue.cameraDevice, apiPreference);

@@ -21,14 +21,14 @@ cmake --build --preset valgrind --parallel || exit 1
 memory_log_directory="$repository_root/build-host/valgrind/Testing/Temporary"
 find "$memory_log_directory" -maxdepth 1 -type f -name 'MemoryChecker.*.log' -delete 2>/dev/null || true
 ctest --test-dir build-host/valgrind -T memcheck --output-on-failure --timeout 180 \
-    -L 'streaming|simulation|recorded-scenario|fault-injection' \
+    -L 'streaming|simulation|recorded-media|fault-injection' \
     -E 'RobotHatSimulation|Soak'
 status=$?
 if [ "$status" -ne 0 ]; then
     echo "VALGRIND: FAILED"
     exit "$status"
 fi
-if rg -q 'definitely lost: [1-9]|indirectly lost: [1-9]|possibly lost: [1-9]|ERROR SUMMARY: [1-9]' \
+if grep -Eq 'definitely lost: [1-9]|indirectly lost: [1-9]|possibly lost: [1-9]|ERROR SUMMARY: [1-9]' \
     "$memory_log_directory"/MemoryChecker.*.log; then
     echo "VALGRIND: FAILED - disallowed memory finding"
     exit 1

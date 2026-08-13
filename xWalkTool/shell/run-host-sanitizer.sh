@@ -74,7 +74,8 @@ run_lsan() {
         return 3
     fi
     if [ "$test_status" -ne 0 ]; then
-        tail -n 80 "$repository_root/build-host/leak-sanitizer/ctest.log"
+        ctest --preset leak-sanitizer --rerun-failed --output-on-failure --timeout 120 \
+            || true
         result "LEAK_SANITIZER" "FAILED" "project test failure"
         return 1
     fi

@@ -111,6 +111,12 @@ XWalkVideoRecordingOpenCv::startCamera(agent::contextpointer context) {
   } else if (backend.configurationValue.cameraBackend ==
              XWalkVideoRecordingOpenCvBackend::Gstreamer) {
     apiPreference = cv::CAP_GSTREAMER;
+  } else if (backend.configurationValue.cameraBackend ==
+             XWalkVideoRecordingOpenCvBackend::VideoFile) {
+    apiPreference = cv::CAP_FFMPEG;
+  } else if (backend.configurationValue.cameraBackend ==
+             XWalkVideoRecordingOpenCvBackend::ImageSequence) {
+    apiPreference = cv::CAP_IMAGES;
   }
   const agent::boolean cameraOpened = backend.camera.open(
       backend.configurationValue.cameraDevice, apiPreference);
