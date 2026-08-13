@@ -10,9 +10,13 @@ if ! command -v valgrind >/dev/null 2>&1; then
 fi
 
 cd "$repository_root" || exit 1
+memorycheck_options="--leak-check=full"
+memorycheck_options+=" --show-leak-kinds=definite,indirect,possible"
+memorycheck_options+=" --errors-for-leak-kinds=definite,indirect,possible"
+memorycheck_options+=" --track-origins=yes --track-fds=yes --error-exitcode=1"
 cmake --fresh --preset valgrind \
     -DMEMORYCHECK_COMMAND="$(command -v valgrind)" \
-    -DMEMORYCHECK_COMMAND_OPTIONS="--leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=definite,indirect,possible --track-origins=yes --track-fds=yes --error-exitcode=1" || exit 1
+    -DMEMORYCHECK_COMMAND_OPTIONS="$memorycheck_options" || exit 1
 cmake --build --preset valgrind --parallel || exit 1
 memory_log_directory="$repository_root/build-host/valgrind/Testing/Temporary"
 find "$memory_log_directory" -maxdepth 1 -type f -name 'MemoryChecker.*.log' -delete 2>/dev/null || true

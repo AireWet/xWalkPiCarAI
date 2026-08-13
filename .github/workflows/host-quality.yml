@@ -18,7 +18,7 @@ jobs:
         compiler: [gcc, clang]
         build_type: [Debug, Release]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install host dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes
@@ -89,7 +89,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install host dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes
@@ -103,7 +103,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install host dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes clang cmake ninja-build
@@ -117,7 +117,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install host dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes
@@ -130,7 +130,7 @@ jobs:
   stress-tests:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install host dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes
@@ -147,7 +147,7 @@ jobs:
   recorded-scenarios:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install host dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes cmake ninja-build
@@ -155,14 +155,17 @@ jobs:
           libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
           protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure and build recorded scenarios
-        run: cmake --fresh --preset host-debug && cmake --build --preset host-debug --target xWalkRoadUserSafetyTest --parallel
+        run: >-
+          cmake --fresh --preset host-debug && cmake --build --preset host-debug
+          --target xWalkComputerVisionOpenCvHostTest xWalkVideoRecordingOpenCvHostTest xWalkRoadUserSafetyTest
+          --parallel
       - name: Verify asset checksums, licenses, annotations, and decoding
         run: ctest --preset host-debug -L recorded-media
 
   streaming:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install host dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes cmake ninja-build
@@ -178,7 +181,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install fuzz dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes clang cmake ninja-build
@@ -196,7 +199,7 @@ jobs:
   soak-smoke:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install host dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes cmake ninja-build
@@ -213,7 +216,7 @@ jobs:
   static-analysis:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install analysis dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes
@@ -230,7 +233,7 @@ jobs:
   coverage:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install coverage dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes
@@ -241,7 +244,7 @@ jobs:
         run: xWalkTool/shell/run-host-coverage.sh run gcc
       - name: Build, test, and generate Clang coverage reports
         run: xWalkTool/shell/run-host-coverage.sh run clang
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: coverage-report
           path: |
@@ -257,7 +260,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install host and Valgrind dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes cmake ninja-build valgrind
@@ -271,7 +274,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install host and analyzer dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes clang clang-tools libclang-rt-18-dev cmake ninja-build
@@ -280,17 +283,18 @@ jobs:
           protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Run Clang Static Analyzer
         run: xWalkTool/shell/run-clang-static-analyzer.sh
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: clang-static-analyzer-report
           path: build-host/clang-analyzer/reports
+          if-no-files-found: ignore
 
   shellcheck:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install ShellCheck
         run: sudo apt-get update && sudo apt-get install --yes shellcheck
       - name: Analyze every repository-owned shell script
@@ -299,7 +303,7 @@ jobs:
   deployment-scripts:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install script validation dependencies
         run: sudo apt-get update && sudo apt-get install --yes shellcheck
       - name: Check shell scripts
@@ -310,7 +314,7 @@ jobs:
   staged-install:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install host dependencies
         run: >-
           sudo apt-get update && sudo apt-get install --yes
@@ -355,7 +359,7 @@ jobs:
         run: >-
           find build-host/deploy -type f -print0 | sort -z |
           xargs -0 sha256sum > build-host/deploy.sha256
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: staged-install-checksums
           path: build-host/deploy.sha256

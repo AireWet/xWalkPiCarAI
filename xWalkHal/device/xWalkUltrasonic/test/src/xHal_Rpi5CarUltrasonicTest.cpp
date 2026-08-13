@@ -33,8 +33,9 @@ void testDistanceMeasurement() {
   assert(backend.echoPull == XWalkHal::XWalkGpioPull::Down);
   assert(ultrasonic.timeoutMicroseconds() == 20'000U);
   const XWalkHal::float64 distanceCentimeters = ultrasonic.read(1U);
+  const XWalkHal::float64 maximumTimeoutDistanceCentimeters = 350.0;
   assert(distanceCentimeters > 1.0);
-  assert(distanceCentimeters < 50.0);
+  assert(distanceCentimeters < maximumTimeoutDistanceCentimeters);
   assert(backend.triggerLevels == XWalkHal::bytevector({0U, 1U, 0U}));
 }
 

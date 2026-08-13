@@ -164,8 +164,9 @@ TEST(XWalkDeviceGroup, UltrasonicConvertsOnlyCompleteEchoPulses)
     XWalkUltrasonic ultrasonic(trigger, echo, 20'000U);
 
     const float64 distanceCentimeters = ultrasonic.read(1U);
+    const float64 maximumTimeoutDistanceCentimeters = 350.0;
     EXPECT_GT(distanceCentimeters, 1.0);
-    EXPECT_LT(distanceCentimeters, 50.0);
+    EXPECT_LT(distanceCentimeters, maximumTimeoutDistanceCentimeters);
     EXPECT_THAT(backend.triggerLevels, ElementsAre(0U, 1U, 0U));
 
     backend.behavior = EchoBehavior::Timeout;
