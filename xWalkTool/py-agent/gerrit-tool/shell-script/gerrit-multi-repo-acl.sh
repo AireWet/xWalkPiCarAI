@@ -11,6 +11,12 @@ mode="${1:---dry-run}"
 xwalk_mode "$mode"
 xwalk_load_config
 acl_tool="$xwalk_root/py-src/xWalkGerritAcl.py"
+acl_work=""
+
+cleanup_acl_work()
+{
+    [[ -z "$acl_work" ]] || rm -rf -- "$acl_work"
+}
 
 acl_arguments()
 {
@@ -35,8 +41,11 @@ log_rules()
 group_uuid()
 {
     local name="$1" listing="$2" uuid
-    uuid="$(awk -v name="$name" 'substr($0, length($0) - length(name) + 1) == name {print $1; exit}' \
-        <<< "$listing")"
+    case "$name" in
+        "Anonymous Users") printf '%s\n' "global:Anonymous-Users"; return ;;
+        "Registered Users") printf '%s\n' "global:Registered-Users"; return ;;
+    esac
+    uuid="$(awk -F '\t' -v name="$name" '$1 == name {print $2; exit}' <<< "$listing")"
     [[ -n "$uuid" ]] || { echo "Cannot resolve Gerrit group UUID: $name" >&2; return 1; }
     printf '%s\n' "$uuid"
 }
@@ -46,7 +55,8 @@ apply_acl()
     local repository="$1" work listing before after verify
     local -a arguments=()
     work="$(mktemp -d -t xwalk-gerrit-acl-XXXXXXXX)"
-    trap 'rm -rf -- "$work"' EXIT
+    acl_work="$work"
+    trap cleanup_acl_work EXIT
     listing="$(xwalk_ssh gerrit ls-groups --verbose)"
     git -C "$work" init --quiet
     git -C "$work" remote add origin \
@@ -68,11 +78,11 @@ apply_acl()
     if git -C "$work" diff --cached --quiet; then
         log_rules "$repository" "Skipped" "Existing refs/meta/config matches the fixed matrix"
         rm -rf -- "$work"
+        acl_work=""
         trap - EXIT
         return
     fi
-    git -C "$work" -c user.name=xWalk-Automation -c user.email=automation.invalid \
-        commit --quiet -m "Configure xWalk repository access"
+    git -C "$work" commit --quiet -m "Configure xWalk repository access"
     after="$(git -C "$work" rev-parse HEAD)"
     if ! git -C "$work" push --quiet origin HEAD:refs/meta/config; then
         log_rules "$repository" "Failed" "" "refs/meta/config push failed"
@@ -88,6 +98,7 @@ apply_acl()
     log_rules "$repository" "Verified" "Fetched refs/meta/config matches the applied configuration"
     printf 'ACL verified for %s: %s -> %s\n' "$repository" "$before" "$after"
     rm -rf -- "$work"
+    acl_work=""
     trap - EXIT
 }
 

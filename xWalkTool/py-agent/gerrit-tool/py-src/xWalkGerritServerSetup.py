@@ -747,6 +747,34 @@ def caddy_git_route(users: pathlib.Path, backend_port: int) -> str:
     )
 
 
+def caddy_public_git_route(backend_port: int) -> str:
+    """Build anonymous upload-pack routes for the four public repositories."""
+
+    public_repositories = ("DevloperNote", "xWalkHal", "xWalkLibrary", "xWalkTrace")
+    info_paths = " ".join(f"/{repository}/info/refs" for repository in public_repositories)
+    upload_paths = " ".join(f"/{repository}/git-upload-pack" for repository in public_repositories)
+    proxy = (
+        f"            reverse_proxy 127.0.0.1:{backend_port} {{\n"
+        "                header_up -Authorization\n"
+        "                header_up -X-Forwarded-For\n"
+        "                header_up -X-Gerrit-User\n"
+        "            }\n"
+    )
+    return (
+        "        @public_git_info {\n"
+        f"            path {info_paths}\n"
+        "            query service=git-upload-pack\n"
+        "        }\n"
+        "        handle @public_git_info {\n"
+        f"{proxy}"
+        "        }\n"
+        f"        @public_git_upload path {upload_paths}\n"
+        "        handle @public_git_upload {\n"
+        f"{proxy}"
+        "        }\n"
+    )
+
+
 def caddy_public_route(backend_port: int) -> str:
     """Build the anonymous review route with identity spoofing removed."""
 
@@ -781,6 +809,7 @@ def caddy_site_block(
     """Build the IP-bound Caddy site block."""
 
     ci_route = caddy_ci_route()
+    public_git_route = caddy_public_git_route(args.http_port)
     git_route = caddy_git_route(users, args.http_port)
     login_route = caddy_login_route(users, args.http_port)
     public_route = caddy_public_route(args.http_port)
@@ -789,7 +818,7 @@ def caddy_site_block(
         f"    bind {args.server_ip}\n"
         f"    tls {json.dumps(str(certificate))} {json.dumps(str(private_key))}\n"
         "    route {\n"
-        f"{git_route}{ci_route}{login_route}{public_route}"
+        f"{public_git_route}{git_route}{ci_route}{login_route}{public_route}"
         "    }\n"
         "    log {\n"
         f"        output file {json.dumps(str(access_log))}\n"

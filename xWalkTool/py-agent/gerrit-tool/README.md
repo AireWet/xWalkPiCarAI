@@ -32,6 +32,7 @@ export GERRIT_ADMIN_ROLE="Student"
 export GERRIT_ADMIN_EMAIL="joxjoh24@student.hh.se"
 export GERRIT_PROJECT="xWalk-rpi5"
 export GERRIT_BRANCH="main"
+export GERRIT_VERIFICATION_TARGETS="xWalk-rpi5:main,xWalkPiCarAI:master"
 export GERRIT_HTTPS_PORT="18443"
 export GERRIT_SSH_PORT="29418"
 export GERRIT_HTTP_PORT="8080"
@@ -48,6 +49,13 @@ Replace the first two placeholders with:
 Change the administrator, project, branch, or ports in the same file when the
 deployment requires different values. The installer prompts separately for a
 unique administrator password of at least 12 characters.
+
+`GERRIT_PROJECT` and `GERRIT_BRANCH` identify the primary integration target
+used by guarded synchronization. `GERRIT_VERIFICATION_TARGETS` is a
+comma-separated allowlist of exact `project:branch` pairs whose active patch
+sets receive host verification. Retain `xWalkPiCarAI:master` only while legacy
+monorepository reviews remain open; it does not permit that project to be
+synchronized to GitHub.
 
 Do not add the administrator password to the configuration file. The setup
 script reads it without echo and exports `GERRIT_ADMIN_PASSWORD` only to the

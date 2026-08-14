@@ -45,6 +45,10 @@ def rules(repository: str, owner: str, partner: str, ci: str, direct_devnote: bo
         Rule("refs/*", "read", owner, "ALLOW", "Owners require complete repository access."),
         Rule("refs/*", "read", ci, "ALLOW", "CI requires read access for deterministic validation."),
         Rule("refs/*", "owner", owner, "ALLOW", "Only owners may administer project ACLs."),
+        Rule(
+            "refs/meta/config", "push", owner, "ALLOW",
+            "Owners require push access to maintain the project ACL configuration.",
+        ),
         Rule("refs/heads/*", "push", owner, "ALLOW", "Owners maintain protected branches."),
         Rule("refs/heads/*", "push", owner, "FORCE", "Only owners may perform authorized recovery."),
         Rule("refs/heads/main", "submit", owner, "ALLOW", "Owners submit reviewed changes."),

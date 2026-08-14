@@ -429,6 +429,9 @@ class GerritServerSetupTest(unittest.TestCase):
             expected = (
                 "https://10.20.30.40:18443", "bind 10.20.30.40",
                 "reverse_proxy 127.0.0.1:18080",
+                "@public_git_info", "/DevloperNote/info/refs", "/xWalkHal/info/refs",
+                "/xWalkLibrary/info/refs", "/xWalkTrace/info/refs",
+                "@public_git_upload", "/DevloperNote/git-upload-pack",
                 "@git_http path */info/refs */git-upload-pack */git-receive-pack",
                 "handle @git_http", "handle_path /ci/*", "reverse_proxy 127.0.0.1:8091",
                 "@login path /login /login/*", "handle @login",
@@ -483,6 +486,10 @@ class GerritServerSetupTest(unittest.TestCase):
                 self.assertEqual(response_status(fixture.certificate, https_port, "/login/"), "401")
                 git_path = "/project/info/refs?service=git-upload-pack"
                 self.assertEqual(response_status(fixture.certificate, https_port, git_path), "401")
+                public_git_path = "/xWalkHal/info/refs?service=git-upload-pack"
+                self.assertEqual(
+                    response_status(fixture.certificate, https_port, public_git_path), "502"
+                )
                 self.assertEqual(response_status(fixture.certificate, https_port, "/"), "502")
             finally:
                 run_control(control, environment, "stop")

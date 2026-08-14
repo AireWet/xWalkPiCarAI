@@ -108,6 +108,24 @@ ensure_group()
         "Exact group-name lookup succeeded"
 }
 
+ensure_group_member()
+{
+    local group="$1" username="$2"
+    planned "group-member" "$group: $username"
+    if [[ "$XWALK_MODE" == "dry-run" ]]; then
+        xwalk_log "ensure-group-member" "Provisioning" "All-Users" "$group:$username" \
+            "unknown" "present" "Ensure Gerrit group membership" \
+            "The fixed access matrix requires this identity membership." "Planned"
+        return
+    fi
+    xwalk_ssh gerrit set-members --add "$username" "$group" || fail_log \
+        "ensure-group-member" "Provisioning" "All-Users" "$group:$username" \
+        "The fixed access matrix requires this identity membership."
+    xwalk_log "ensure-group-member" "Provisioning" "All-Users" "$group:$username" \
+        "unknown" "present" "Ensured Gerrit group membership" \
+        "The fixed access matrix requires this identity membership." "Applied"
+}
+
 ensure_project()
 {
     local project="$1" existing="" parent="xWalk-Projects" current_parent="" current_head=""
@@ -121,8 +139,11 @@ ensure_project()
             "Planned"
         xwalk_log "set-parent" "Provisioning" "$project" "parent" "unknown" "$parent" \
             "Assign permission-only parent" "A common parent prevents unsafe All-Projects inheritance." "Planned"
-        xwalk_log "set-default-branch" "Provisioning" "$project" "HEAD" "unknown" "refs/heads/main" \
-            "Configure main as default" "All module and integration workflows target main." "Planned"
+        if [[ "$project" != "xWalk-Projects" ]]; then
+            xwalk_log "set-default-branch" "Provisioning" "$project" "HEAD" "unknown" \
+                "refs/heads/main" "Configure main as default" \
+                "All module and integration workflows target main." "Planned"
+        fi
         if [[ -n "$description" ]]; then
             xwalk_log "set-description" "Provisioning" "$project" "description" "unknown" \
                 "$description" "Configure integration repository description" \
@@ -132,7 +153,14 @@ ensure_project()
     fi
     existing="$(xwalk_ssh gerrit ls-projects 2>/dev/null | grep -F -x -- "$project" || true)"
     if [[ -z "$existing" ]]; then
-        local -a create_arguments=(gerrit create-project --branch main --parent "$parent")
+        local -a create_arguments=(
+            gerrit create-project --parent "$parent" --owner "$GERRIT_OWNER_GROUP"
+        )
+        if [[ "$project" == "xWalk-Projects" ]]; then
+            create_arguments+=(--permissions-only)
+        else
+            create_arguments+=(--branch main --empty-commit)
+        fi
         [[ -z "$description" ]] || create_arguments+=(--description "$description")
         create_arguments+=("$project")
         xwalk_ssh "${create_arguments[@]}" || fail_log \
@@ -171,6 +199,9 @@ ensure_project()
         xwalk_log "set-parent" "Provisioning" "$project" "parent" "${current_parent:-unknown}" "$parent" \
             "Assigned permission-only parent" "The parent isolates project permissions." "Applied"
     fi
+    if [[ "$project" == "xWalk-Projects" ]]; then
+        return
+    fi
     current_head="$(xwalk_ssh gerrit set-head "$project" 2>/dev/null || true)"
     if [[ "$current_head" == *"refs/heads/main"* ]]; then
         xwalk_log "set-default-branch" "Provisioning" "$project" "HEAD" "refs/heads/main" \
@@ -197,6 +228,8 @@ main()
     ensure_group "$GERRIT_OWNER_GROUP"
     ensure_group "$GERRIT_PARTNER_GROUP"
     ensure_group "$GERRIT_CI_GROUP"
+    ensure_group_member "$GERRIT_OWNER_GROUP" "$GERRIT_ADMIN_USERNAME"
+    ensure_group_member "$GERRIT_CI_GROUP" "$GERRIT_CI_USERNAME"
     ensure_project xWalk-Projects
     local project
     for project in "${xwalk_repositories[@]}"; do

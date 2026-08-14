@@ -21,6 +21,7 @@ from xWalkGerritQuality import XWalkGerritQuality
 class XWalkGerritCi:
     """Own Gerrit verification and guarded xWalk-rpi5 GitHub synchronization."""
 
+    integration_repositories = {"xWalk-rpi5", "xWalkPiCarAI"}
     repositories = {
         "DevloperNote", "xWalkAgent", "xWalkAudioResources", "xWalkController",
         "xWalkHal", "xWalkIW", "xWalkLibrary", "xWalkTrace", "xWalk-rpi5",
@@ -42,6 +43,10 @@ class XWalkGerritCi:
         self.user = os.environ.get("GERRIT_USER", "xwalk-ci")
         self.project = os.environ.get("GERRIT_PROJECT", "xWalk-rpi5")
         self.branch = os.environ.get("GERRIT_BRANCH", "main")
+        self.verification_targets = self.parse_verification_targets(
+            os.environ.get("GERRIT_VERIFICATION_TARGETS", ""),
+            (self.project, self.branch),
+        )
         self.private_key = Path(
             os.environ.get("GERRIT_SSH_KEY", str(home / ".ssh" / "id_ed25519_xwalk_ci"))
         ).expanduser()
@@ -52,6 +57,25 @@ class XWalkGerritCi:
                 str(Path(__file__).parents[1] / "shell-script" / "gerrit-auto-uplift.sh"),
             )
         ).expanduser()
+
+    @staticmethod
+    def parse_verification_targets(
+        configured: str, primary: tuple[str, str],
+    ) -> set[tuple[str, str]]:
+        """Return configured project and branch pairs plus the primary target."""
+
+        targets = {primary}
+        for item in configured.split(","):
+            item = item.strip()
+            if not item:
+                continue
+            project, separator, branch = item.partition(":")
+            if not separator or not project or not branch:
+                raise SystemExit(
+                    "GERRIT_VERIFICATION_TARGETS entries must use project:branch"
+                )
+            targets.add((project, branch))
+        return targets
 
     def configure_github(self, home: Path) -> None:
         """Load GitHub mirror endpoint and identity settings."""
@@ -257,21 +281,28 @@ class XWalkGerritCi:
         self.report(change, patch_set, 0, message)
         return results_url
 
-    def checkout_commands(self, ref: str) -> list[tuple[list[str], dict[str, str] | None]]:
+    def checkout_commands(
+        self, ref: str, verification_project: str | None = None,
+    ) -> list[tuple[list[str], dict[str, str] | None]]:
         """Build the isolated Gerrit patch-set checkout commands."""
 
-        project = self.project if self.project == "xWalk-rpi5" else "xWalk-rpi5"
+        target_project = verification_project or self.project
+        project = (
+            target_project
+            if target_project in self.integration_repositories
+            else "xWalk-rpi5"
+        )
         remote = f"ssh://{self.user}@{self.host}:{self.port}/{project}"
         commands: list[tuple[list[str], dict[str, str] | None]] = [
             (["git", "init", "--quiet"], None),
             (["git", "remote", "add", "origin", remote], None),
             (
-                ["git", "fetch", "origin", ref if project == self.project else "main"],
+                ["git", "fetch", "origin", ref if project == target_project else "main"],
                 self.git_environment(),
             ),
             (["git", "checkout", "--detach", "FETCH_HEAD"], None),
         ]
-        if self.project != "xWalk-rpi5":
+        if project != target_project:
             commands.extend([
                 (["git", "submodule", "sync", "--recursive"], None),
                 (
@@ -279,24 +310,27 @@ class XWalkGerritCi:
                     self.git_environment(),
                 ),
                 (
-                    ["git", "-C", self.project, "fetch", "origin", ref],
+                    ["git", "-C", target_project, "fetch", "origin", ref],
                     self.git_environment(),
                 ),
-                (["git", "-C", self.project, "checkout", "--detach", "FETCH_HEAD"], None),
+                (["git", "-C", target_project, "checkout", "--detach", "FETCH_HEAD"], None),
             ])
         return commands
 
-    def standalone_commands(self, directory: Path) -> list[list[str]]:
+    def standalone_commands(
+        self, directory: Path, verification_project: str | None = None,
+    ) -> list[list[str]]:
         """Return the module-specific validation commands before integration CI."""
 
-        if self.project == "xWalk-rpi5":
+        target_project = verification_project or self.project
+        if target_project in self.integration_repositories:
             return []
-        module = directory / self.project
+        module = directory / target_project
         code_repositories = {
             "xWalkAgent", "xWalkController", "xWalkHal", "xWalkIW", "xWalkLibrary", "xWalkTrace",
         }
-        if self.project in code_repositories:
-            build = directory / "build-host" / f"standalone-{self.project}"
+        if target_project in code_repositories:
+            build = directory / "build-host" / f"standalone-{target_project}"
             module_options = {
                 "xWalkAgent": "-DXWALK_AGENT_BUILD_HOST=ON",
                 "xWalkController": "-DXWALK_CLI_BUILD_HOST=ON",
@@ -304,8 +338,8 @@ class XWalkGerritCi:
                 "xWalkTrace": "-DXWALK_TRACE_BUILD_HOST_TESTS=ON",
             }
             options = ["-DXWALK_STANDALONE_BUILD=ON"]
-            if self.project in module_options:
-                options.append(module_options[self.project])
+            if target_project in module_options:
+                options.append(module_options[target_project])
             return [
                 [
                     "cmake", "--fresh", "-S", str(module), "-B", str(build), "-G", "Ninja",
@@ -318,23 +352,25 @@ class XWalkGerritCi:
 
     def execute_verification(
         self, ref: str, directory: Path, log_path: Path,
+        verification_project: str | None = None,
     ) -> tuple[bool, dict[str, bool]]:
         """Checkout one patch set and execute the unchanged quality matrix."""
 
+        target_project = verification_project or self.project
         with log_path.open("w", encoding="utf-8") as log:
             checkout_passed = all(
                 self.run_command(command, directory, log, environment)
-                for command, environment in self.checkout_commands(ref)
+                for command, environment in self.checkout_commands(ref, target_project)
             )
             standalone_passed = checkout_passed and all(
                 self.run_command(command, directory, log)
-                for command in self.standalone_commands(directory)
+                for command in self.standalone_commands(directory, target_project)
             )
             results = (
                 XWalkGerritQuality(directory, log).run_all() if standalone_passed else {}
             )
-            if self.project != "xWalk-rpi5":
-                results = {f"{self.project} standalone": standalone_passed, **results}
+            if target_project not in self.integration_repositories:
+                results = {f"{target_project} standalone": standalone_passed, **results}
         return checkout_passed and all(results.values()), results
 
     def report_module_results(
@@ -401,6 +437,7 @@ class XWalkGerritCi:
         patch_set = int(event["patchSet"]["number"])
         revision = str(event["patchSet"]["revision"])
         ref = str(event["patchSet"]["ref"])
+        project = str(event["change"]["project"])
         timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
         log_path = self.log_directory / f"change-{change}-{patch_set}-{timestamp}.log"
         log_path.touch(exist_ok=False)
@@ -411,7 +448,7 @@ class XWalkGerritCi:
         )
         try:
             passed, quality_results = self.execute_verification(
-                ref, temporary_directory, log_path
+                ref, temporary_directory, log_path, project
             )
         finally:
             shutil.rmtree(temporary_directory, ignore_errors=True)
@@ -560,8 +597,7 @@ class XWalkGerritCi:
 
         change = event.get("change", {})
         matches_target = (
-            change.get("project") == self.project
-            and change.get("branch") == self.branch
+            (change.get("project"), change.get("branch")) in self.verification_targets
             and isinstance(event.get("patchSet"), dict)
         )
         if not matches_target:
@@ -652,6 +688,12 @@ class XWalkGerritCi:
         self.validate_private_key(self.private_key)
         if self.project not in self.repositories or self.branch != "main":
             raise SystemExit("GERRIT_PROJECT must be an xWalk repository on branch main")
+        supported_targets = {(project, "main") for project in self.repositories}
+        supported_targets.add(("xWalkPiCarAI", "master"))
+        if not self.verification_targets <= supported_targets:
+            raise SystemExit(
+                "GERRIT_VERIFICATION_TARGETS contains an unsupported project or branch"
+            )
         if self.uplift_enabled and not self.uplift_script.is_file():
             raise SystemExit(f"Missing automatic uplift script: {self.uplift_script}")
         if self.github_push_enabled:

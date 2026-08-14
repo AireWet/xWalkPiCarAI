@@ -57,6 +57,14 @@ class XWalkGerritAclTest(unittest.TestCase):
         self.assertIn(permission, integration)
         self.assertNotIn(permission, component)
 
+    def test_only_owners_can_push_project_access_configuration(self) -> None:
+        """Permit the owner group to maintain reviewed repository ACLs."""
+
+        permissions = self.permissions("xWalkHal")
+        self.assertIn(("refs/meta/config", "push", "owners", "ALLOW"), permissions)
+        self.assertNotIn(("refs/meta/config", "push", "partners", "ALLOW"), permissions)
+        self.assertNotIn(("refs/meta/config", "push", "ci", "ALLOW"), permissions)
+
     def test_xwalk_tool_is_not_a_product_repository(self) -> None:
         """Keep administration and migration tooling outside the product repository set."""
 

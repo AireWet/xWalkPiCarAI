@@ -27,6 +27,9 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.ci = XWalkGerritCi.__new__(XWalkGerritCi)
         self.ci.project = "xWalk-rpi5"
         self.ci.branch = "main"
+        self.ci.verification_targets = {
+            ("xWalk-rpi5", "main"), ("xWalkPiCarAI", "master"),
+        }
         self.ci.github_remote = "git@github.com:example/xWalk-rpi5.git"
         self.ci.github_branch = "main"
         self.ci.github_push_enabled = True
@@ -60,6 +63,40 @@ class XWalkGerritCiTest(unittest.TestCase):
 
         event = self.verification_event("patchset-created", False)
         self.assertTrue(self.ci.matching_verification_event(event))
+
+    def test_legacy_monorepository_patch_set_triggers_verification(self) -> None:
+        """Keep active legacy reviews verified during repository migration."""
+
+        event = self.verification_event("patchset-created", False)
+        event["change"] = {
+            "project": "xWalkPiCarAI", "branch": "master", "wip": False,
+        }
+        self.assertTrue(self.ci.matching_verification_event(event))
+
+    def test_legacy_monorepository_wrong_branch_is_ignored(self) -> None:
+        """Accept only the explicit legacy project and master branch pair."""
+
+        event = self.verification_event("patchset-created", False)
+        event["change"] = {
+            "project": "xWalkPiCarAI", "branch": "main", "wip": False,
+        }
+        self.assertFalse(self.ci.matching_verification_event(event))
+
+    def test_verification_targets_include_primary_project(self) -> None:
+        """Always retain the primary project when extra targets are configured."""
+
+        targets = self.ci.parse_verification_targets(
+            "xWalkPiCarAI:master", ("xWalk-rpi5", "main")
+        )
+        self.assertEqual(
+            targets, {("xWalk-rpi5", "main"), ("xWalkPiCarAI", "master")}
+        )
+
+    def test_invalid_verification_target_is_rejected(self) -> None:
+        """Reject ambiguous target entries before consuming Gerrit events."""
+
+        with self.assertRaisesRegex(SystemExit, "project:branch"):
+            self.ci.parse_verification_targets("xWalkPiCarAI", ("xWalk-rpi5", "main"))
 
     def test_wip_patch_set_waits_for_activation(self) -> None:
         """Keep a WIP patch-set upload idle until its change becomes active."""
@@ -156,6 +193,27 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.assertIn(["git", "submodule", "update", "--init", "--recursive"], commands)
         self.assertIn(
             ["git", "-C", "xWalkHal", "fetch", "origin", "refs/changes/1"], commands
+        )
+
+    def test_legacy_monorepository_checkout_fetches_its_patch_set_directly(self) -> None:
+        """Run the full graph from the reviewed legacy monorepository revision."""
+
+        self.ci.user = "ci"
+        self.ci.host = "gerrit.example"
+        self.ci.port = "29418"
+        self.ci.private_key = pathlib.Path("/key")
+        self.ci.state_directory = pathlib.Path("/state")
+        commands = [
+            command for command, unused_environment in self.ci.checkout_commands(
+                "refs/changes/62/62/2", "xWalkPiCarAI"
+            )
+        ]
+        self.assertIn("/xWalkPiCarAI", commands[1][-1])
+        self.assertEqual(
+            commands[2], ["git", "fetch", "origin", "refs/changes/62/62/2"]
+        )
+        self.assertNotIn(
+            ["git", "submodule", "update", "--init", "--recursive"], commands
         )
 
     def test_code_module_has_standalone_build_and_test(self) -> None:
