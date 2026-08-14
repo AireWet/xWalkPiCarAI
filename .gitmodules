@@ -1,0 +1,4 @@
+[submodule "xWalk-rpi5-sim"]
+	path = xWalk-rpi5-sim
+	url = ssh://192.168.1.158:29419/xWalk-rpi5-sim
+	branch = main

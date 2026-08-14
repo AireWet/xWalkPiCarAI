@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify Gerrit patch sets and synchronize submitted xWalk-rpi5 integration."""
+"""Verify Gerrit patch sets and synchronize a submitted xWalk integration."""
 
 from __future__ import annotations
 
@@ -24,7 +24,8 @@ class XWalkGerritCi:
     integration_repositories = {"xWalk-rpi5", "xWalkPiCarAI"}
     repositories = {
         "DevloperNote", "xWalkAgent", "xWalkAudioResources", "xWalkController",
-        "xWalkHal", "xWalkIW", "xWalkLibrary", "xWalkTrace", "xWalk-rpi5",
+        "xWalkHal", "xWalkIW", "xWalkLibrary", "xWalkTrace", "xWalk-rpi5-sim",
+        "xWalk-rpi5",
     }
 
     def __init__(self) -> None:
@@ -80,12 +81,28 @@ class XWalkGerritCi:
     def configure_github(self, home: Path) -> None:
         """Load GitHub mirror endpoint and identity settings."""
 
-        self.github_remote = os.environ.get("GITHUB_XWALK_RPI5_REMOTE", "")
-        self.github_web_url = os.environ.get("GITHUB_XWALK_RPI5_WEB_URL", "").rstrip("/")
-        self.github_branch = os.environ.get("GITHUB_XWALK_RPI5_BRANCH", "main")
+        self.github_source_project = os.environ.get(
+            "GITHUB_SYNC_SOURCE_PROJECT", self.project
+        )
+        self.github_source_branch = os.environ.get(
+            "GITHUB_SYNC_SOURCE_BRANCH", self.branch
+        )
+        self.github_remote = os.environ.get(
+            "GITHUB_INTEGRATION_REMOTE",
+            os.environ.get("GITHUB_XWALK_RPI5_REMOTE", ""),
+        )
+        self.github_web_url = os.environ.get(
+            "GITHUB_INTEGRATION_WEB_URL",
+            os.environ.get("GITHUB_XWALK_RPI5_WEB_URL", ""),
+        ).rstrip("/")
+        self.github_branch = os.environ.get(
+            "GITHUB_INTEGRATION_BRANCH",
+            os.environ.get("GITHUB_XWALK_RPI5_BRANCH", self.github_source_branch),
+        )
         self.github_push_enabled = os.environ.get("GITHUB_PUSH_ENABLED", "false") == "true"
         self.github_direct_push_owner_email = os.environ.get(
-            "GITHUB_DIRECT_PUSH_OWNER_EMAIL", ""
+            "GITHUB_DIRECT_PUSH_OWNER_EMAIL",
+            os.environ.get("GITHUB_PRIMARY_MERGER_EMAIL", ""),
         ).casefold()
         self.github_private_key = Path(
             os.environ.get(
@@ -258,16 +275,19 @@ class XWalkGerritCi:
         return result.stdout.strip() if result.returncode == 0 else ""
 
     def validate_github_destination(self) -> bool:
-        """Accept only an explicitly enabled remote whose repository is xWalk-rpi5."""
+        """Accept only an explicitly enabled integrated-project destination."""
 
         if (
             not self.github_push_enabled or not self.github_remote
-            or not self.github_direct_push_owner_email or self.branch != "main"
-            or self.github_branch != "main"
+            or not self.github_direct_push_owner_email
+            or (self.github_source_project, self.github_source_branch) not in {
+                ("xWalk-rpi5", "main"), ("xWalkPiCarAI", "master"),
+            }
+            or self.github_branch != self.github_source_branch
         ):
             return False
         repository = self.github_remote.rstrip("/").rsplit("/", 1)[-1].rsplit(":", 1)[-1]
-        return repository.removesuffix(".git") == "xWalk-rpi5"
+        return repository.removesuffix(".git") == self.github_source_project
 
     def announce_verification(self, change: int, patch_set: int, revision: str) -> str:
         """Post the live graph link before running one patch-set quality gate."""
@@ -525,12 +545,19 @@ class XWalkGerritCi:
     ) -> list[tuple[list[str], dict[str, str] | None]]:
         """Build Gerrit and GitHub setup commands for one submitted revision."""
 
-        gerrit = f"ssh://{self.user}@{self.host}:{self.port}/{self.project}"
+        gerrit = (
+            f"ssh://{self.user}@{self.host}:{self.port}/"
+            f"{self.github_source_project}"
+        )
+        source_ref = (
+            f"{self.github_source_branch}:refs/remotes/gerrit/"
+            f"{self.github_source_branch}"
+        )
         return [
             (["git", "init", "--quiet"], None),
             (["git", "remote", "add", "gerrit", gerrit], None),
             (
-                ["git", "fetch", "gerrit", "main:refs/remotes/gerrit/main"],
+                ["git", "fetch", "gerrit", source_ref],
                 self.git_environment(),
             ),
             (["git", "remote", "add", "github", self.github_remote], None),
@@ -546,18 +573,22 @@ class XWalkGerritCi:
                 self.run_command(command, directory, log, environment)
                 for command, environment in self.mirror_commands(revision)
             )
-            branch = self.branch
+            branch = self.github_branch
             if not setup_passed:
                 return False, branch
+            submitted_ref = f"refs/remotes/gerrit/{self.github_source_branch}"
             submitted = self.command_output(
-                ["git", "rev-parse", "refs/remotes/gerrit/main"], directory, log
+                ["git", "rev-parse", submitted_ref], directory, log
             )
             if submitted != revision:
-                log.write("Submitted revision is not the current Gerrit xWalk-rpi5/main tip\n")
+                log.write(
+                    "Submitted revision is not the current configured Gerrit "
+                    "integration tip\n"
+                )
                 return False, branch
             command = [
                 "git", "push", "github",
-                "refs/remotes/gerrit/main:refs/heads/main",
+                f"{submitted_ref}:refs/heads/{self.github_branch}",
             ]
             return self.run_command(
                 command, directory, log, self.github_git_environment()
@@ -571,11 +602,30 @@ class XWalkGerritCi:
 
         commit_url = f"{self.github_web_url}/commit/{revision}"
         if not mirrored:
-            return "\n".join(["GitHub mirror failed", f"Target: {commit_url}", f"Log: {log_path.name}"])
-        result = "Verified submitted xWalk-rpi5 integration synchronized to GitHub main"
+            return "\n".join([
+                "xWalk GitHub Uplift", "Status: FAILED", f"Target: {commit_url}",
+                f"Log: {log_path.name}",
+            ])
         return "\n".join([
-            result, f"Owner: {owner_email or 'unavailable'}", f"Branch: {branch}",
+            "xWalk GitHub Uplift", "Status: PASSED",
+            f"Owner: {owner_email or 'unavailable'}", f"Branch: {branch}",
             f"Commit: {commit_url}", f"Log: {log_path.name}",
+        ])
+
+    def integration_uplift_message(
+        self, uploaded: bool, source_project: str, revision: str,
+    ) -> str:
+        """Build one component-to-integration change-log result row."""
+
+        status = "PASSED" if uploaded else "FAILED"
+        result = (
+            "Integration review uploaded"
+            if uploaded else "Integration uplift command failed"
+        )
+        return "\n".join([
+            "xWalk Integration Uplift", f"Status: {status}",
+            f"Source: {source_project}@{revision}", "Target: xWalk-rpi5/main",
+            f"Result: {result}",
         ])
 
     @staticmethod
@@ -613,7 +663,7 @@ class XWalkGerritCi:
         return False
 
     def mirror(self, event: dict[str, Any]) -> None:
-        """Publish a verified submitted xWalk-rpi5 change to GitHub main."""
+        """Publish a verified submitted xWalk integration change to GitHub."""
 
         change_data = event["change"]
         patch_data = event["patchSet"]
@@ -626,8 +676,13 @@ class XWalkGerritCi:
         print(f"Mirroring merged change {change}: {revision}", flush=True)
 
         if not self.submitted_revision_verified(change, revision):
-            message = "GitHub synchronization skipped: submitted revision lacks CI Verified +1"
-            self.post_message(change, patch_set, message)
+            message = "\n".join([
+                "xWalk GitHub Uplift", "Status: SKIPPED",
+                "Reason: submitted revision lacks CI Verified +1",
+            ])
+            self.post_message(
+                change, patch_set, message, "autogenerated:xwalk-ci:github-uplift"
+            )
             print(message, flush=True)
             return
 
@@ -644,7 +699,9 @@ class XWalkGerritCi:
         message = self.mirror_message(
             mirrored, target_branch, owner_email, revision, log_path
         )
-        reported = self.post_message(change, patch_set, message)
+        reported = self.post_message(
+            change, patch_set, message, "autogenerated:xwalk-ci:github-uplift"
+        )
         print(f"{message}; Gerrit report accepted={reported}", flush=True)
 
     def matching_verification_event(self, event: dict[str, Any]) -> bool:
@@ -671,9 +728,8 @@ class XWalkGerritCi:
             event.get("type") == "change-merged"
             and self.github_push_enabled
             and self.validate_github_destination()
-            and self.project == "xWalk-rpi5"
-            and change.get("project") == self.project
-            and change.get("branch") == self.branch
+            and change.get("project") == self.github_source_project
+            and change.get("branch") == self.github_source_branch
             and self.change_owner_email(change).casefold()
             == self.github_direct_push_owner_email
             and isinstance(event.get("patchSet"), dict)
@@ -687,9 +743,10 @@ class XWalkGerritCi:
         return (
             event.get("type") == "change-merged"
             and self.uplift_enabled
-            and self.project in self.repositories - {"xWalk-rpi5"}
+            and self.project in self.repositories - self.integration_repositories
             and change.get("project") == self.project
             and change.get("branch") == "main"
+            and isinstance(event.get("patchSet"), dict)
             and isinstance(event.get("newRev"), str)
         )
 
@@ -697,14 +754,24 @@ class XWalkGerritCi:
         """Run the locked integration-uplift workflow for one submitted module."""
 
         change = event["change"]
+        patch_set = int(event["patchSet"]["number"])
+        revision = str(event["newRev"])
         topic = str(change.get("topic", ""))
         command = [
-            str(self.uplift_script), "--apply", self.project, str(event["newRev"]),
+            str(self.uplift_script), "--apply", self.project, revision,
             str(change["number"]),
         ]
         if topic:
             command.append(topic)
         result = subprocess.run(command, check=False, text=True)
+        message = self.integration_uplift_message(
+            result.returncode == 0, self.project, revision
+        )
+        reported = self.post_message(
+            int(change["number"]), patch_set, message,
+            "autogenerated:xwalk-ci:integration-uplift",
+        )
+        print(f"{message}; Gerrit report accepted={reported}", flush=True)
         if result.returncode != 0:
             print(
                 f"Automatic uplift failed for {self.project} change {change['number']}",
@@ -741,10 +808,10 @@ class XWalkGerritCi:
         """Reconnect indefinitely so temporary Gerrit outages do not stop CI."""
 
         self.validate_private_key(self.private_key)
-        if self.project not in self.repositories or self.branch != "main":
-            raise SystemExit("GERRIT_PROJECT must be an xWalk repository on branch main")
         supported_targets = {(project, "main") for project in self.repositories}
         supported_targets.add(("xWalkPiCarAI", "master"))
+        if (self.project, self.branch) not in supported_targets:
+            raise SystemExit("GERRIT_PROJECT and GERRIT_BRANCH are not a supported target")
         if not self.verification_targets <= supported_targets:
             raise SystemExit(
                 "GERRIT_VERIFICATION_TARGETS contains an unsupported project or branch"
@@ -753,7 +820,9 @@ class XWalkGerritCi:
             raise SystemExit(f"Missing automatic uplift script: {self.uplift_script}")
         if self.github_push_enabled:
             if not self.validate_github_destination():
-                raise SystemExit("GitHub synchronization requires the exact xWalk-rpi5/main destination")
+                raise SystemExit(
+                    "GitHub synchronization requires an exact integrated-project destination"
+                )
             self.validate_private_key(self.github_private_key)
         self.log_server.start()
         print(

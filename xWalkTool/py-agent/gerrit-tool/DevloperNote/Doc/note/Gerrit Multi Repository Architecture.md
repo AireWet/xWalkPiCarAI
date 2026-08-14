@@ -2,16 +2,18 @@
 
 ## Scope and safety state
 
-The target architecture has eight Gerrit-only component repositories and one
-private Gerrit integration repository. GitHub contains only `xWalk-rpi5`. The
-migration tools stage work in new clones so the source monorepo remains usable
-until the administrator validates and submits the migration. A dry run is a
-plan, not proof that Gerrit repositories or permissions exist.
+The target architecture has nine Gerrit-only component repositories and one
+private Gerrit integration repository. During migration, `xWalkPiCarAI/master`
+is the active integrated Gerrit and GitHub branch; the final integration target
+is `xWalk-rpi5/main`. The migration tools stage work in new clones so the source
+monorepo remains usable until the administrator validates and submits the
+migration. A dry run is a plan, not proof that Gerrit repositories or
+permissions exist.
 
 The component repositories are `DevloperNote`, `xWalkAgent`,
 `xWalkAudioResources`, `xWalkController`, `xWalkHal`, `xWalkIW`,
-`xWalkLibrary`, and `xWalkTrace`. `xWalk-rpi5` records them as exact
-submodule gitlinks together with top-level integration files, CMake entry
+`xWalkLibrary`, `xWalkTrace`, and `xWalk-rpi5-sim`. `xWalk-rpi5` records them as
+exact submodule gitlinks together with top-level integration files, CMake entry
 points, GitHub workflows, and integration history. Reproducible builds must use
 `git submodule update --init --recursive`; they must not use uncontrolled
 `git submodule update --remote`.
@@ -43,6 +45,7 @@ The optional permission-only parent is `xWalk-Projects`.
 | `xWalkLibrary` | Read/clone | Review push | Full/Owner | Read and Verified |
 | `xWalkTrace` | Read/clone | Review push | Full/Owner | Read and Verified |
 | `xWalkAudioResources` | No access | No access | Full/Owner | Read and Verified |
+| `xWalk-rpi5-sim` | No access | No access | Full/Owner | Read and Verified |
 | `xWalk-rpi5` | No access | No access | Full/Owner | Read, uplift review push and Verified |
 
 Review push means read plus upload to `refs/for/main`; it does not grant direct
@@ -203,21 +206,27 @@ one complete validation, and one Gerrit review.
 
 ## GitHub policy and Actions checkout
 
-Only a submitted and integration-verified `xWalk-rpi5/main` may synchronize to
-the configured GitHub `xWalk-rpi5` repository. Component GitHub repositories,
-component GitHub remotes, `git push --mirror`, `git push --all`, wildcard
-refspecs, force push, and `git submodule foreach git push` are prohibited.
+Only a submitted and integration-verified branch selected by
+`GITHUB_SYNC_SOURCE_PROJECT` and `GITHUB_SYNC_SOURCE_BRANCH` may synchronize.
+The accepted pairs are the current `xWalkPiCarAI/master` migration branch and
+the final `xWalk-rpi5/main` branch. The GitHub repository name and branch must
+match the selected source. Component GitHub repositories, component GitHub
+remotes, `git push --mirror`, `git push --all`, wildcard refspecs, force push,
+and `git submodule foreach git push` are prohibited.
 
 ```bash
 xWalkTool/py-agent/gerrit-tool/shell-script/gerrit-github-sync.sh --dry-run
 ```
 
-Apply additionally requires `GITHUB_PUSH_ENABLED=true` and
-`XWALK_INTEGRATION_VERIFIED_COMMIT` equal to the fetched Gerrit `main` tip. The
-submitted owner must match the separately configured
+The event-driven service additionally requires `GITHUB_PUSH_ENABLED=true`, an
+exact integrated-project destination, and the configured CI account's
+`Verified +1` on the submitted revision. The standalone final-migration helper
+requires `XWALK_INTEGRATION_VERIFIED_COMMIT` equal to the fetched Gerrit `main`
+tip. The submitted owner must match the separately configured
 `GITHUB_DIRECT_PUSH_OWNER_EMAIL`. The only push refspec is
-`refs/heads/main:refs/heads/main`. A change owned by anyone else is not pushed
-directly; it must follow the repository owner's approved pull-request process.
+the configured source branch to its same-named GitHub branch. A change owned by
+anyone else is not pushed directly; it must follow the repository owner's
+approved pull-request process.
 
 GitHub Actions uses `gerrit-github-checkout.sh` with a repository-scoped,
 read-only Gerrit deploy identity stored in GitHub Secrets. The helper scans the

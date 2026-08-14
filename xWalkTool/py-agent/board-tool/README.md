@@ -80,7 +80,7 @@ python -m pip install --editable ./xWalkTool/py-agent/board-tool
 
 The package installs the `xWalkJiraImport` console command. The equivalent module form is
 `python -m xWalkJiraImport`. The repository launcher
-`xWalkTool/shell-agent/board-tool/xWalkJiraImport.sh` runs the checked-out `py-src` package through Python 3
+`xWalkTool/shell-agent/jira-tool/xWalkJiraImport.sh` runs the checked-out `py-src` package through Python 3
 without installing it. `requirements.txt` remains available for environments that manage the runtime dependency
 separately, while `pyproject.toml` is the authoritative package metadata.
 

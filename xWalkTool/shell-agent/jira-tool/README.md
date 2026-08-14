@@ -1,4 +1,4 @@
-# Board tool launcher
+# Jira tool launcher
 
 This directory provides the shell entry point for the host-only xWalk Jira
 history importer. The launcher executes the checked-out Python package from
@@ -27,7 +27,7 @@ The launcher adds the checked-out `py-src` directory to `PYTHONPATH` and
 forwards every argument to `python3 -m xWalkJiraImport`:
 
 ```bash
-xWalkTool/shell-agent/board-tool/xWalkJiraImport.sh --help
+xWalkTool/shell-agent/jira-tool/xWalkJiraImport.sh --help
 ```
 
 Non-secret service selection can be supplied through the documented
@@ -46,7 +46,7 @@ Dry-run is the default and does not create or update Jira work items. Keep the
 explicit option in review and automation logs:
 
 ```bash
-xWalkTool/shell-agent/board-tool/xWalkJiraImport.sh --dry-run --max-commits 20 --output-report build/jira-import-preview
+xWalkTool/shell-agent/jira-tool/xWalkJiraImport.sh --dry-run --max-commits 20 --output-report build/jira-import-preview
 ```
 
 Review both generated JSON and CSV reports before considering apply mode. The
@@ -59,7 +59,7 @@ duplicate detection, account permissions, project key, board filter, date
 range, and credential source have been verified:
 
 ```bash
-xWalkTool/shell-agent/board-tool/xWalkJiraImport.sh --apply --since 2026-01-01 --until 2026-12-31 --output-report build/jira-import-applied
+xWalkTool/shell-agent/jira-tool/xWalkJiraImport.sh --apply --since 2026-01-01 --until 2026-12-31 --output-report build/jira-import-applied
 ```
 
 The importer never changes Git history, branches, tags, files, or remotes. See
@@ -78,6 +78,6 @@ python3 -m unittest discover -s xWalkTool/py-agent/board-tool/test -p 'test_*.py
 Check the launcher before review:
 
 ```bash
-bash -n xWalkTool/shell-agent/board-tool/xWalkJiraImport.sh
-shellcheck xWalkTool/shell-agent/board-tool/xWalkJiraImport.sh
+bash -n xWalkTool/shell-agent/jira-tool/xWalkJiraImport.sh
+shellcheck xWalkTool/shell-agent/jira-tool/xWalkJiraImport.sh
 ```

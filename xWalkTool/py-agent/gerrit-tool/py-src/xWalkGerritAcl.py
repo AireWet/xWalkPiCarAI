@@ -13,11 +13,11 @@ import sys
 PUBLIC = {"DevloperNote", "xWalkHal", "xWalkLibrary", "xWalkTrace"}
 PARTNER_REVIEW = {"DevloperNote", "xWalkHal", "xWalkController", "xWalkLibrary", "xWalkTrace"}
 PARTNER_READ = PARTNER_REVIEW | {"xWalkIW", "xWalkAgent"}
-PRIVATE_PARTNER = {"xWalkAudioResources", "xWalk-rpi5"}
+PRIVATE_PARTNER = {"xWalkAudioResources", "xWalk-rpi5-sim", "xWalk-rpi5"}
 REPOSITORIES = (
     "xWalk-Projects",
     "DevloperNote", "xWalkAgent", "xWalkAudioResources", "xWalkController", "xWalkHal",
-    "xWalkIW", "xWalkLibrary", "xWalkTrace", "xWalk-rpi5",
+    "xWalkIW", "xWalkLibrary", "xWalkTrace", "xWalk-rpi5-sim", "xWalk-rpi5",
 )
 
 

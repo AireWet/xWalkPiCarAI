@@ -68,10 +68,11 @@ For a WIP change, Gerrit's **Mark As Active** button is the Activate action.
 Clearing WIP through that button triggers CI for the current patch set. Moving
 an active change into WIP must not trigger CI.
 
-GitHub contains only the integrated `xWalk-rpi5` repository. Component
-repositories must not have GitHub remotes. After an integration change passes
-complete CI, receives approval, and is submitted to Gerrit `xWalk-rpi5/main`,
-the dedicated synchronization service may fast-forward that exact submitted
-commit to GitHub `xWalk-rpi5/main`. Do not use a direct, force, mirror, wildcard,
-or component GitHub push as a preliminary, backup, or alternate publication
-path.
+GitHub contains only the configured integrated repository. During the current
+migration that repository is `xWalkPiCarAI/master`; the final target is
+`xWalk-rpi5/main`. Component repositories must not have GitHub remotes. After
+an integration change passes complete CI, receives approval, and is submitted
+to the configured Gerrit integration branch, the dedicated synchronization
+service may fast-forward that exact submitted commit to the matching GitHub
+branch. Do not use a direct, force, mirror, wildcard, or component GitHub push
+as a preliminary, backup, or alternate publication path.

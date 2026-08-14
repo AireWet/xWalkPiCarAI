@@ -4,7 +4,7 @@ set -Eeuo pipefail
 root="$(git rev-parse --show-toplevel)"
 components=(
     xWalkAgent xWalkAudioResources xWalkController xWalkHal xWalkIW xWalkLibrary
-    DevloperNote xWalkTrace
+    DevloperNote xWalkTrace xWalk-rpi5-sim
 )
 
 [[ -f "$root/.gitmodules" ]] || {
@@ -34,5 +34,5 @@ while IFS= read -r path; do
     [[ -n "${expected[$path]:-}" ]] || { echo "Unexpected submodule: $path" >&2; exit 1; }
 done < <(git -C "$root" config -f .gitmodules --get-regexp '^submodule\..*\.path$' | awk '{print $2}')
 
-[[ "$(git -C "$root" config -f .gitmodules --get-regexp '^submodule\..*\.path$' | wc -l)" -eq 8 ]]
-echo "Validated eight exact Gerrit component gitlinks"
+[[ "$(git -C "$root" config -f .gitmodules --get-regexp '^submodule\..*\.path$' | wc -l)" -eq 9 ]]
+echo "Validated nine exact Gerrit component gitlinks"

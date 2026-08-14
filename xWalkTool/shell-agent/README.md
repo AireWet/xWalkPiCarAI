@@ -24,7 +24,7 @@ The recommended Python environment is documented in the
 
 | Module | Purpose | Safety boundary |
 |---|---|---|
-| [`board-tool/`](board-tool/README.md) | Runs the Jira history importer from the checked-out `py-src` package | Dry-run by default |
+| [`jira-tool/`](jira-tool/README.md) | Runs the Jira history importer from source | Dry-run by default |
 | [`gerrit-tool/`](gerrit-tool/README.md) | Prepares Gerrit reviews, dispatches Host Quality jobs, and validates submodule metadata | CI and host-only |
 | [`deploy-tool/`](deploy-tool/README.md) | Provides provisioning, packaging assets, and deployment tests | `--apply` is privileged |
 | [`env-tool/`](env-tool/README.md) | Groups quality, licence, boot-overlay, and Zuul configuration | Mixed; see its guide |
@@ -65,7 +65,7 @@ xWalkTool/shell-agent/quality-tool/run-host-coverage.sh --help
 Preview Jira board history without installing the package into the repository:
 
 ```sh
-xWalkTool/shell-agent/board-tool/xWalkJiraImport.sh --dry-run --max-commits 20 --output-report build/jira-import-preview
+xWalkTool/shell-agent/jira-tool/xWalkJiraImport.sh --dry-run --max-commits 20 --output-report build/jira-import-preview
 ```
 
 The launcher uses Python 3 and the checked-out `xWalkTool/py-agent/board-tool/py-src` package. Runtime dependencies may be

@@ -48,7 +48,7 @@ xWalkTool/
 │       └── DevloperNote/
 └── shell-agent/
     ├── README.md
-    ├── board-tool/
+    ├── jira-tool/
     │   └── xWalkJiraImport.sh
     ├── gerrit-tool/
     │   ├── checkout-gerrit-submodules.sh
@@ -126,7 +126,7 @@ workspace-root `LICENSE`; there is no separate `xWalkTool/LICENSE` file.
 | `py-agent/dev-tool/xHal_Rpi5CarDependencyInstaller` | Installs dependencies and configures verified v5 boot | Privileged |
 | `py-agent/dev-tool/xWalkLicenseTool` | Authenticates model settings without storing API credentials | Host-safe |
 | `py-agent/dev-tool/xWalkZuulValidator` | Validates repository Zuul structure | Host-safe |
-| `shell-agent/board-tool/` | Runs the board importer directly from source | Dry-run by default |
+| `shell-agent/jira-tool/` | Runs the Jira importer directly from source | Dry-run by default |
 | `shell-agent/gerrit-tool/` | Dispatches CI jobs and validates Gerrit integration metadata | Host-safe automation |
 | `shell-agent/deploy-tool/` | Stores provisioning scripts, packaging assets, and tests | Apply is privileged |
 | `shell-agent/env-tool/` | Groups quality, licence, and boot-overlay modules | Mixed; see child modules |

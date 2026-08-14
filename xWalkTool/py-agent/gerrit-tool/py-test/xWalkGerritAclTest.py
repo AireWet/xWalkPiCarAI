@@ -41,6 +41,15 @@ class XWalkGerritAclTest(unittest.TestCase):
         self.assertNotIn(("refs/*", "read", "Registered Users", "ALLOW"), permissions)
         self.assertIn(("refs/*", "read", "partners", "DENY"), permissions)
 
+    def test_simulation_repository_uses_private_component_access(self) -> None:
+        """Keep the simulation component private with owner and CI access."""
+
+        permissions = self.permissions("xWalk-rpi5-sim")
+        self.assertIn(("refs/*", "read", "owners", "ALLOW"), permissions)
+        self.assertIn(("refs/*", "read", "ci", "ALLOW"), permissions)
+        self.assertIn(("refs/*", "read", "partners", "DENY"), permissions)
+        self.assertNotIn(("refs/*", "read", "Anonymous Users", "ALLOW"), permissions)
+
     def test_read_only_partner_has_no_review_push(self) -> None:
         """Keep xWalkIW cloneable by partners without accepting uploads."""
 

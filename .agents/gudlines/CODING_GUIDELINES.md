@@ -34,14 +34,13 @@ For a WIP change, use Gerrit's **Mark As Active** button as the Activate action.
 The WIP-to-active transition triggers CI for the current patch set. Moving an
 active change into WIP does not trigger CI.
 
-Never push a component change to GitHub. GitHub contains only the integrated
-`xWalk-rpi5` repository. A Gerrit change may be submitted only after its current
-patch set satisfies the configured review and automatic verification
-requirements. After a component submission, CI uplifts only its exact gitlink
-into `xWalk-rpi5`, validates the complete product, and uploads the integration
-change for review. Only a submitted, approved, integration-verified
-`xWalk-rpi5/main` commit may be fast-forwarded to GitHub `xWalk-rpi5/main` by
-the dedicated synchronization service.
+Never push a component change to GitHub. GitHub contains only the configured
+integrated repository. During migration, `xWalkPiCarAI/master` is the active
+integration branch; the final target is `xWalk-rpi5/main`. A Gerrit change may
+be submitted only after its current patch set satisfies the configured review
+and automatic verification requirements. The dedicated synchronization
+service may fast-forward only the exact submitted, approved, CI-verified
+integration revision to the matching GitHub branch.
 
 ## Language and compiler expectations
 
@@ -120,7 +119,7 @@ xWalkTool/py-agent/board-tool/ host-only board tooling with the importer package
 xWalkTool/py-agent/dev-tool/ executable dependency, interface-generation, licence utilities, and host tests
 xWalkTool/py-agent/gerrit-tool/   Gerrit server, CI, review-control, and multi-repository administration tooling
 xWalkTool/shell-agent/       host-safe repository automation and configuration
-xWalkTool/shell-agent/board-tool/ source launcher for the board importer
+xWalkTool/shell-agent/jira-tool/ source launcher for the Jira importer
 xWalkTool/shell-agent/gerrit-tool/ Gerrit and GitHub Host Quality dispatch and metadata checks
 xWalkTool/shell-agent/deploy-tool/ provisioning, packaging assets, and deployment tests
 xWalkTool/shell-agent/env-tool/ grouped environment assets and configuration

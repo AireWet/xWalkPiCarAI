@@ -31,6 +31,9 @@ class XWalkGerritCiTest(unittest.TestCase):
             ("xWalk-rpi5", "main"), ("xWalkPiCarAI", "master"),
         }
         self.ci.github_remote = "git@github.com:example/xWalk-rpi5.git"
+        self.ci.github_source_project = "xWalk-rpi5"
+        self.ci.github_source_branch = "main"
+        self.ci.github_web_url = "https://github.com/example/xWalk-rpi5"
         self.ci.github_branch = "main"
         self.ci.github_push_enabled = True
         self.ci.github_direct_push_owner_email = "owner@example.test"
@@ -128,6 +131,15 @@ class XWalkGerritCiTest(unittest.TestCase):
 
         self.assertTrue(self.ci.validate_github_destination())
 
+    def test_legacy_integration_destination_is_allowed_during_migration(self) -> None:
+        """Allow the active monorepository's exact master-to-master synchronization."""
+
+        self.ci.github_source_project = "xWalkPiCarAI"
+        self.ci.github_source_branch = "master"
+        self.ci.github_remote = "git@github.com:example/xWalkPiCarAI.git"
+        self.ci.github_branch = "master"
+        self.assertTrue(self.ci.validate_github_destination())
+
     def test_component_github_destination_is_rejected(self) -> None:
         """Never synchronize an individual component repository to GitHub."""
 
@@ -139,6 +151,11 @@ class XWalkGerritCiTest(unittest.TestCase):
 
         self.assertNotIn("xWalkTool", self.ci.repositories)
 
+    def test_simulation_component_is_a_verified_repository(self) -> None:
+        """Accept Gerrit events for the Raspberry Pi 5 simulation component."""
+
+        self.assertIn("xWalk-rpi5-sim", self.ci.repositories)
+
     def test_disabled_github_push_is_rejected(self) -> None:
         """Require the explicit GitHub synchronization enable switch."""
 
@@ -148,7 +165,7 @@ class XWalkGerritCiTest(unittest.TestCase):
     def test_non_main_integration_branch_is_rejected(self) -> None:
         """Reject any source branch other than xWalk-rpi5 main."""
 
-        self.ci.branch = "review"
+        self.ci.github_source_branch = "review"
         self.assertFalse(self.ci.validate_github_destination())
 
     def test_non_main_github_branch_is_rejected(self) -> None:
@@ -156,6 +173,44 @@ class XWalkGerritCiTest(unittest.TestCase):
 
         self.ci.github_branch = "review"
         self.assertFalse(self.ci.validate_github_destination())
+
+    def test_legacy_merge_event_triggers_configured_github_sync(self) -> None:
+        """Mirror a submitted legacy integration change after the Gerrit merge click."""
+
+        self.ci.github_source_project = "xWalkPiCarAI"
+        self.ci.github_source_branch = "master"
+        self.ci.github_remote = "git@github.com:example/xWalkPiCarAI.git"
+        self.ci.github_branch = "master"
+        event = {
+            "type": "change-merged",
+            "change": {
+                "project": "xWalkPiCarAI", "branch": "master", "number": 63,
+                "owner": {"email": "owner@example.test"},
+            },
+            "patchSet": {"number": 1},
+            "newRev": "a" * 40,
+        }
+        self.assertTrue(self.ci.matching_merge_event(event))
+
+    def test_legacy_mirror_fetches_and_pushes_master_without_force(self) -> None:
+        """Use one exact master-to-master refspec for the migration repository."""
+
+        self.ci.user = "ci"
+        self.ci.host = "gerrit.example"
+        self.ci.port = "29418"
+        self.ci.private_key = pathlib.Path("/key")
+        self.ci.state_directory = pathlib.Path("/state")
+        self.ci.github_source_project = "xWalkPiCarAI"
+        self.ci.github_source_branch = "master"
+        self.ci.github_branch = "master"
+        commands = [
+            command for command, unused_environment in self.ci.mirror_commands("a" * 40)
+        ]
+        self.assertIn("/xWalkPiCarAI", commands[1][-1])
+        self.assertEqual(
+            commands[2],
+            ["git", "fetch", "gerrit", "master:refs/remotes/gerrit/master"],
+        )
 
     def test_submitted_component_triggers_enabled_uplift(self) -> None:
         """Select a merged module revision for automatic integration review."""
@@ -165,9 +220,32 @@ class XWalkGerritCiTest(unittest.TestCase):
         event = {
             "type": "change-merged",
             "change": {"project": "xWalkHal", "branch": "main", "number": 152},
+            "patchSet": {"number": 4},
             "newRev": "0" * 40,
         }
         self.assertTrue(self.ci.matching_uplift_event(event))
+
+    def test_component_uplift_posts_a_separate_change_log_row(self) -> None:
+        """Report the integration upload independently from module verification."""
+
+        self.ci.project = "xWalkHal"
+        self.ci.uplift_script = pathlib.Path("/tool/gerrit-auto-uplift.sh")
+        event = {
+            "type": "change-merged",
+            "change": {"project": "xWalkHal", "branch": "main", "number": 152},
+            "patchSet": {"number": 4},
+            "newRev": "0" * 40,
+        }
+        result = mock.Mock(returncode=0)
+        with mock.patch("xWalkGerritCi.subprocess.run", return_value=result), mock.patch.object(
+            self.ci, "post_message", return_value=True
+        ) as post:
+            self.ci.uplift(event)
+
+        self.assertIn("xWalk Integration Uplift\nStatus: PASSED", post.call_args.args[2])
+        self.assertEqual(
+            post.call_args.args[3], "autogenerated:xwalk-ci:integration-uplift"
+        )
 
     def test_integration_project_never_uplifts_itself(self) -> None:
         """Keep xWalk-rpi5 submission on the guarded GitHub path."""
@@ -179,6 +257,15 @@ class XWalkGerritCiTest(unittest.TestCase):
             "newRev": "1" * 40,
         }
         self.assertFalse(self.ci.matching_uplift_event(event))
+
+    def test_github_uplift_message_is_a_separate_status_row(self) -> None:
+        """Present successful GitHub publication as its own named result."""
+
+        message = self.ci.mirror_message(
+            True, "master", "owner@example.test", "a" * 40,
+            pathlib.Path("mirror.log"),
+        )
+        self.assertIn("xWalk GitHub Uplift\nStatus: PASSED", message)
 
     def test_module_checkout_uses_private_integration_baseline(self) -> None:
         """Overlay a module patch set onto exact xWalk-rpi5 submodules."""
