@@ -712,8 +712,9 @@ class GerritServerSetupTest(unittest.TestCase):
             self.assertIn(value, installer)
             self.assertIn(value, local)
         self.assertIn("## Local Gerrit", installer)
-        self.assertIn("ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalkPiCarAI", local)
-        self.assertIn("https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalkPiCarAI", local)
+        self.assertIn("ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalk-rpi5", local)
+        self.assertIn("https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalk-rpi5", local)
+        self.assertIn("HEAD:refs/for/main", local)
 
     def test_installer_has_no_forbidden_execution_commands(self) -> None:
         """The executable installer does not contain privileged management commands."""

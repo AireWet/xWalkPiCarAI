@@ -29,19 +29,19 @@ connectivity()
 {
     planned "connectivity" "$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT"
     if [[ "$XWALK_MODE" == "dry-run" ]]; then
-        xwalk_log "check-connectivity" "validation" "MyPiCarX" "Gerrit SSH" "unchecked" \
+        xwalk_log "check-connectivity" "validation" "xWalk-rpi5" "Gerrit SSH" "unchecked" \
             "planned" "Planned Gerrit connectivity check" \
             "Provisioning requires authenticated Gerrit SSH." "Planned"
         return
     fi
     local version
     if ! version="$(xwalk_ssh gerrit version 2>&1)"; then
-        xwalk_log "check-connectivity" "validation" "MyPiCarX" "Gerrit SSH" "unreachable" \
+        xwalk_log "check-connectivity" "validation" "xWalk-rpi5" "Gerrit SSH" "unreachable" \
             "unreachable" "Gerrit connectivity failed" \
             "Provisioning cannot continue without authenticated Gerrit SSH." "Failed" "" "$version"
         return 1
     fi
-    xwalk_log "check-connectivity" "validation" "MyPiCarX" "Gerrit SSH" "unchecked" \
+    xwalk_log "check-connectivity" "validation" "xWalk-rpi5" "Gerrit SSH" "unchecked" \
         "reachable" "Verified Gerrit connectivity" \
         "Provisioning requires authenticated Gerrit SSH." "Verified" "$version"
 }
@@ -111,7 +111,9 @@ ensure_group()
 ensure_project()
 {
     local project="$1" existing="" parent="xWalk-Projects" current_parent="" current_head=""
+    local description=""
     [[ "$project" == "xWalk-Projects" ]] && parent="All-Projects"
+    [[ "$project" == "xWalk-rpi5" ]] && description="Integrated Raspberry Pi 5 xWalk product"
     planned "repository" "$project"
     if [[ "$XWALK_MODE" == "dry-run" ]]; then
         xwalk_log "ensure-repository" "Provisioning" "$project" "repository" "unknown" "present" \
@@ -121,11 +123,19 @@ ensure_project()
             "Assign permission-only parent" "A common parent prevents unsafe All-Projects inheritance." "Planned"
         xwalk_log "set-default-branch" "Provisioning" "$project" "HEAD" "unknown" "refs/heads/main" \
             "Configure main as default" "All module and integration workflows target main." "Planned"
+        if [[ -n "$description" ]]; then
+            xwalk_log "set-description" "Provisioning" "$project" "description" "unknown" \
+                "$description" "Configure integration repository description" \
+                "The private superproject must be identifiable as the Raspberry Pi 5 product." "Planned"
+        fi
         return
     fi
     existing="$(xwalk_ssh gerrit ls-projects 2>/dev/null | grep -F -x -- "$project" || true)"
     if [[ -z "$existing" ]]; then
-        xwalk_ssh gerrit create-project --branch main --parent "$parent" "$project" || fail_log \
+        local -a create_arguments=(gerrit create-project --branch main --parent "$parent")
+        [[ -z "$description" ]] || create_arguments+=(--description "$description")
+        create_arguments+=("$project")
+        xwalk_ssh "${create_arguments[@]}" || fail_log \
             "create-repository" "Provisioning" "$project" "repository" \
             "Independent Gerrit review requires this repository."
         xwalk_log "create-repository" "Provisioning" "$project" "repository" "absent" "present" \
@@ -140,6 +150,15 @@ ensure_project()
         xwalk_log "discover-repository" "Provisioning" "$project" "repository" "present" "present" \
             "Discovered Gerrit repository" "Existing repository data must be preserved." "Skipped" \
             "Exact project-name match succeeded"
+    fi
+    if [[ -n "$description" ]]; then
+        xwalk_ssh gerrit set-project --description "$description" "$project" || fail_log \
+            "set-description" "Provisioning" "$project" "description" \
+            "The integration repository requires its fixed product description."
+        xwalk_log "set-description" "Provisioning" "$project" "description" "compatible-or-unknown" \
+            "$description" "Configured integration repository description" \
+            "The private superproject is the Raspberry Pi 5 product integration repository." "Applied" \
+            "Gerrit accepted the idempotent description update"
     fi
     current_parent="$(xwalk_ssh gerrit get-project-parent "$project" 2>/dev/null || true)"
     if [[ "$current_parent" == "$parent" ]]; then

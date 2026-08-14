@@ -50,8 +50,8 @@ jobs:
           --output-on-failure --no-tests=error
       - name: Validate deployment configuration without hardware
         run: >-
-          build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}/xWalkController/xWalkApp/xwalk-picarx-control
-          --deployment-config="$PWD/xWalkController/xWalkConfig/picar-x.conf" --diagnose --no-hardware
+          build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}/xWalk-rpi5/xWalkController/xWalkApp/xwalk-picarx-control
+          --deployment-config="$PWD/xWalk-rpi5/xWalkController/xWalkConfig/picar-x.conf" --diagnose --no-hardware
       - name: Test xWalkAgent aggregate
         run: >-
           ctest --test-dir build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
@@ -211,7 +211,7 @@ jobs:
       - name: Run deterministic soak smoke
         run: ctest --preset host-debug -L soak
       - name: Validate soak report
-        run: python3 -m json.tool build-host/cmake/xWalkHal/simulation/xWalkRobotHat/xwalk-robot-hat-soak-report.json
+        run: python3 -m json.tool build-host/cmake/xWalk-rpi5/xWalkHal/simulation/xWalkRobotHat/xwalk-robot-hat-soak-report.json
 
   static-analysis:
     runs-on: ubuntu-24.04

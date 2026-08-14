@@ -626,7 +626,7 @@ def main() -> int:
         Zero after successful validation or generation; otherwise one.
     """
     repository_directory = pathlib.Path(__file__).resolve().parents[2]
-    component_directory = repository_directory / "xWalkIW"
+    component_directory = repository_directory / "xWalk-rpi5" / "xWalkIW"
     generated_directory = component_directory / "auto-gen"
     parser = argparse.ArgumentParser(
         description="Validate or generate the xWalkIW I2C and Controller schemas."
@@ -676,6 +676,7 @@ def main() -> int:
         type=pathlib.Path,
         default=(
             repository_directory
+            / "xWalk-rpi5"
             / "xWalkLibrary"
             / "common"
             / "include"

@@ -17,13 +17,13 @@ import_mode="${XWALK_IMPORT_MODE:-none}"
 
 validate_source()
 {
-    [[ -f "$source_root/AGENTS.md" ]] || { echo "Source is not the MyPiCarX workspace" >&2; return 2; }
-    [[ -z "$(git -C "$source_root" status --porcelain)" ]] || {
-        echo "History splitting requires a clean source repository" >&2
-        return 2
-    }
+    [[ -f "$source_root/AGENTS.md" ]] || { echo "Source is not the xWalk workspace" >&2; return 2; }
     case "$import_mode" in none|review|direct) ;; *) echo "XWALK_IMPORT_MODE must be none, review or direct" >&2; return 2 ;; esac
     if [[ "$XWALK_MODE" == "apply" ]]; then
+        [[ -z "$(git -C "$source_root" status --porcelain)" ]] || {
+            echo "History splitting requires a clean source repository" >&2
+            return 2
+        }
         command -v git-filter-repo >/dev/null 2>&1 || command -v git-filter-repo.py >/dev/null 2>&1 || {
             echo "Missing git-filter-repo. Ask the administrator to provide the approved git-filter-repo command." >&2
             return 2

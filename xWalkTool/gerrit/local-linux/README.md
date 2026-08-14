@@ -82,55 +82,55 @@ CHANGE_REF='refs/changes/NN/CHANGE_NUMBER/PATCH_SET'
 SSH Fetch & Checkout:
 
 ```bash
-git fetch ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalkPiCarAI "$CHANGE_REF" && git checkout FETCH_HEAD
+git fetch ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalk-rpi5 "$CHANGE_REF" && git checkout FETCH_HEAD
 ```
 
 SSH Fetch & Cherry Pick:
 
 ```bash
-git fetch ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalkPiCarAI "$CHANGE_REF" && git cherry-pick FETCH_HEAD
+git fetch ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalk-rpi5 "$CHANGE_REF" && git cherry-pick FETCH_HEAD
 ```
 
 SSH Clone:
 
 ```bash
-git clone ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalkPiCarAI
+git clone ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalk-rpi5
 ```
 
 SSH Push for Review:
 
 ```bash
-git push ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalkPiCarAI HEAD:refs/for/master
+git push ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalk-rpi5 HEAD:refs/for/main
 ```
 
 HTTP Fetch & Checkout:
 
 ```bash
-git fetch https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalkPiCarAI "$CHANGE_REF" && git checkout FETCH_HEAD
+git fetch https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalk-rpi5 "$CHANGE_REF" && git checkout FETCH_HEAD
 ```
 
 HTTP Fetch & Cherry Pick:
 
 ```bash
-git fetch https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalkPiCarAI "$CHANGE_REF" && git cherry-pick FETCH_HEAD
+git fetch https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalk-rpi5 "$CHANGE_REF" && git cherry-pick FETCH_HEAD
 ```
 
 HTTP Clone:
 
 ```bash
-git clone https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalkPiCarAI
+git clone https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalk-rpi5
 ```
 
 HTTP Push for Review:
 
 ```bash
-git push https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalkPiCarAI HEAD:refs/for/master
+git push https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalk-rpi5 HEAD:refs/for/main
 ```
 
 HTTP Git prompts for the individual local Gerrit password. Keep the trusted
 self-signed certificate enabled and never place the password in the URL. Both
 push commands create or update a Gerrit review and cannot bypass protected
-`master`.
+`main`.
 
 ## Access boundary
 

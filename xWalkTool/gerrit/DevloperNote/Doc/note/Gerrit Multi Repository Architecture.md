@@ -2,15 +2,15 @@
 
 ## Scope and safety state
 
-The target architecture has nine Gerrit-only component repositories and one
-private Gerrit integration repository. GitHub contains only `MyPiCarX`. The
+The target architecture has eight Gerrit-only component repositories and one
+private Gerrit integration repository. GitHub contains only `xWalk-rpi5`. The
 migration tools stage work in new clones so the source monorepo remains usable
 until the administrator validates and submits the migration. A dry run is a
 plan, not proof that Gerrit repositories or permissions exist.
 
 The component repositories are `DevloperNote`, `xWalkAgent`,
 `xWalkAudioResources`, `xWalkController`, `xWalkHal`, `xWalkIW`,
-`xWalkLibrary`, `xWalkTool`, and `xWalkTrace`. `MyPiCarX` records them as exact
+`xWalkLibrary`, and `xWalkTrace`. `xWalk-rpi5` records them as exact
 submodule gitlinks together with top-level integration files, CMake entry
 points, GitHub workflows, and integration history. Reproducible builds must use
 `git submodule update --init --recursive`; they must not use uncontrolled
@@ -42,9 +42,8 @@ The optional permission-only parent is `xWalk-Projects`.
 | `xWalkAgent` | No access | Read/clone | Full/Owner | Read and Verified |
 | `xWalkLibrary` | Read/clone | Review push | Full/Owner | Read and Verified |
 | `xWalkTrace` | Read/clone | Review push | Full/Owner | Read and Verified |
-| `xWalkTool` | No access | No access | Full/Owner | Read and Verified |
 | `xWalkAudioResources` | No access | No access | Full/Owner | Read and Verified |
-| `MyPiCarX` | No access | No access | Full/Owner | Read, uplift review push and Verified |
+| `xWalk-rpi5` | No access | No access | Full/Owner | Read, uplift review push and Verified |
 
 Review push means read plus upload to `refs/for/main`; it does not grant direct
 branch push, submit, force push, branch deletion, ACL administration, or
@@ -103,7 +102,7 @@ xWalkTool/gerrit/shell-script/gerrit-submodule-migrate.sh --dry-run
 ```
 
 ```bash
-export XWALK_INTEGRATION_OUTPUT_DIR="/safe/new/MyPiCarX-integration"; export XWALK_CONFIRM_SUBMODULES="CREATE_INTEGRATION_CLONE"; xWalkTool/gerrit/shell-script/gerrit-submodule-migrate.sh --apply
+export XWALK_INTEGRATION_OUTPUT_DIR="/safe/new/xWalk-rpi5"; export XWALK_CONFIRM_SUBMODULES="CREATE_INTEGRATION_CLONE"; xWalkTool/gerrit/shell-script/gerrit-submodule-migrate.sh --apply
 ```
 
 The resulting commit must be reviewed before replacing the monorepo baseline.
@@ -115,7 +114,7 @@ and the absence of component GitHub remotes.
 An authorized user clones the private integration project with:
 
 ```bash
-git clone --recurse-submodules ssh://USER@GERRIT_SERVER_HOST:GERRIT_SSH_PORT/MyPiCarX
+git clone --recurse-submodules ssh://USER@GERRIT_SERVER_HOST:GERRIT_SSH_PORT/xWalk-rpi5
 ```
 
 Existing clones update safely with:
@@ -127,13 +126,21 @@ git pull --ff-only && git submodule sync --recursive && git submodule update --i
 A module change is committed and reviewed inside that module:
 
 ```bash
-cd MyPiCarX/xWalkHal && git switch main && git pull --ff-only origin main && git add . && git commit -s -m "Update HAL implementation" && git push origin HEAD:refs/for/main
+cd xWalk-rpi5/xWalkHal && git switch main && git pull --ff-only origin main && git add . && git commit -s -m "Update HAL implementation" && git push origin HEAD:refs/for/main
 ```
 
 Coordinated API work uses a Gerrit topic:
 
 ```bash
 git push origin HEAD:refs/for/main%topic=TOPIC_NAME
+```
+
+After every related change is submitted, the topic-uplift entry point accepts
+one repository, full commit, and Gerrit change triple per component. It updates
+all listed gitlinks in one commit and runs integration validation once:
+
+```bash
+xWalkTool/gerrit/shell-script/gerrit-topic-uplift.sh --dry-run TOPIC_NAME xWalkLibrary LIBRARY_COMMIT LIBRARY_CHANGE xWalkHal HAL_COMMIT HAL_CHANGE
 ```
 
 The partner documentation workflow is:
@@ -168,7 +175,7 @@ Dependencies come from exact `xWalkLibrary`, `xWalkTrace`, and
 resources and audio consumers; documentation changes validate formatting and
 links. Cross-repository topics test all participating revisions. Until every
 split repository has a self-contained standalone entry point, trusted Gerrit
-CI must validate the patch in an exact `MyPiCarX` integration checkout and the
+CI must validate the patch in an exact `xWalk-rpi5` integration checkout and the
 migration must not be declared complete.
 
 ## Automatic uplift and recovery
@@ -184,19 +191,20 @@ xWalkTool/gerrit/shell-script/gerrit-auto-uplift.sh --dry-run xWalkHal FULL_COMM
 xWalkTool/gerrit/shell-script/gerrit-auto-uplift.sh --apply xWalkHal FULL_COMMIT_ID GERRIT_CHANGE TOPIC
 ```
 
-Apply acquires a lock, clones clean `MyPiCarX`, proves the component commit is
+Apply acquires a lock, clones clean `xWalk-rpi5`, proves the component commit is
 reachable from its Gerrit `main`, changes only that gitlink, creates a
 signed-off uplift commit, runs the complete host integration build, tests, and
 `--no-hardware` diagnostic, then uploads `refs/for/main`. Automatic submission
-is disabled by default. A failure leaves Gerrit `MyPiCarX/main` and the last
+is disabled by default. A failure leaves Gerrit `xWalk-rpi5/main` and the last
 verified baseline unchanged. Retry after correcting the module, dependency, or
-concurrent-uplift conflict; never force-push. Coordinated topics should be
-uplifted in dependency order under one topic and validated together.
+concurrent-uplift conflict; never force-push. The topic-uplift entry point
+batches related submitted revisions into one signed-off integration commit,
+one complete validation, and one Gerrit review.
 
 ## GitHub policy and Actions checkout
 
-Only a submitted and integration-verified `MyPiCarX/main` may synchronize to
-the configured GitHub `MyPiCarX` repository. Component GitHub repositories,
+Only a submitted and integration-verified `xWalk-rpi5/main` may synchronize to
+the configured GitHub `xWalk-rpi5` repository. Component GitHub repositories,
 component GitHub remotes, `git push --mirror`, `git push --all`, wildcard
 refspecs, force push, and `git submodule foreach git push` are prohibited.
 
@@ -268,8 +276,8 @@ identities. Missing credentials are recorded as `Skipped`, never as success.
 Read checks do not prove review upload, label, submit, force-push, branch
 deletion, or ACL administration. Test those negative and positive operations
 with disposable changes and the correct individual accounts, then inspect each
-`refs/meta/config`. The partner must be unable to list or clone `xWalkTool`,
-`xWalkAudioResources`, and `MyPiCarX`; CI must be unable to administer ACLs or
+`refs/meta/config`. The partner must be unable to list or clone
+`xWalkAudioResources` and `xWalk-rpi5`; CI must be unable to administer ACLs or
 force-push.
 
 ## Adding another module
@@ -285,7 +293,7 @@ repository.
 Create the replacement key on the account or CI secret owner, upload its
 public half, verify read/vote or owner behavior, rotate the protected secret,
 restart only the user-owned CI process, then revoke the old public key. Rotate
-GitHub's least-privilege `MyPiCarX` deploy credential separately. Never display
+GitHub's least-privilege `xWalk-rpi5` deploy credential separately. Never display
 or commit private keys, tokens, cookies, authorization headers, or passwords.
 
 ## Administrator actions and limitations

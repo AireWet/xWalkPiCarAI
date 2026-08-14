@@ -3,8 +3,8 @@
 set -eu
 
 repository_root="$(CDPATH='' cd -- "$(dirname -- "$0")/../../.." && pwd)"
-configuration_file="$repository_root/xWalkController/xWalkConfig/picar-x.conf"
-configuration_directory="$repository_root/xWalkController/xWalkConfig/picar-x.d"
+configuration_file="$repository_root/xWalk-rpi5/xWalkController/xWalkConfig/picar-x.conf"
+configuration_directory="$repository_root/xWalk-rpi5/xWalkController/xWalkConfig/picar-x.d"
 ollama_file="$configuration_directory/ai/providers/ollama.conf"
 
 test -r "$configuration_file"
@@ -14,10 +14,10 @@ test -r "$configuration_directory/ai/providers/gemini.conf"
 test -r "$configuration_directory/ai/providers/grok.conf"
 test -r "$configuration_directory/ai/providers/anthropic.conf"
 test -r "$configuration_directory/ai/providers/openai-compatible.conf"
-test -r "$repository_root/xWalkLibrary/x86_64/lib/libvosk.so"
-test -r "$repository_root/xWalkLibrary/aarch64/lib/libvosk.so"
+test -r "$repository_root/xWalk-rpi5/xWalkLibrary/x86_64/lib/libvosk.so"
+test -r "$repository_root/xWalk-rpi5/xWalkLibrary/aarch64/lib/libvosk.so"
 test -d \
-    "$repository_root/xWalkLibrary/common/models/vosk/vosk-model-small-en-us-0.15"
+    "$repository_root/xWalk-rpi5/xWalkLibrary/common/models/vosk/vosk-model-small-en-us-0.15"
 grep -q '^voice_vosk_library = /usr/lib/xwalk/libvosk.so$' \
     "$configuration_directory/voice.conf"
 grep -q '^voice_vosk_model = /usr/share/xwalk/models/vosk/vosk-model-small-en-us-0.15$' \

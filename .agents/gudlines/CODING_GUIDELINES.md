@@ -2,7 +2,7 @@
 
 ## Purpose and authority
 
-This guide records the conventions already established in `xWalkLibrary/common`,
+This guide records the conventions already established in `xWalk-rpi5/xWalkLibrary/common`,
 `xWalkI2c`, `xWalkPwm`, and `xWalkServo`. Apply it to new code and to code changed during
 maintenance. Preserve the surrounding file's local style when it differs, but
 do not copy accidental inconsistencies such as trailing whitespace or uneven
@@ -20,32 +20,28 @@ After implementation and host verification, commit the code locally and upload
 the commit only to Gerrit:
 
 ```bash
-git push gerrit HEAD:refs/for/master
+git push origin HEAD:refs/for/main
 ```
 
 Active patch-set uploads trigger Gerrit CI automatically. When verification
 must be deferred, upload the change as WIP:
 
 ```bash
-git push gerrit HEAD:refs/for/master%wip
+git push origin HEAD:refs/for/main%wip
 ```
 
 For a WIP change, use Gerrit's **Mark As Active** button as the Activate action.
 The WIP-to-active transition triggers CI for the current patch set. Moving an
 active change into WIP does not trigger CI.
 
-Never push a change directly to a GitHub remote or GitHub `master`, including
-before Gerrit verification. A Gerrit change may be submitted only after its
-current patch set satisfies the configured review and automatic verification
-requirements. The Gerrit CI service then mirrors the submitted Gerrit commit to
-GitHub in response to the `change-merged` event. Only Joxy
-(`joxjoh24@student.hh.se`) may merge into GitHub `master`. The service may
-fast-forward a directly applicable Joxy-owned change to `master`; it publishes
-every other owner's submitted change to the dedicated GitHub review branch and
-opens or updates a pull request for Joxy. A stacked Joxy change also uses the
-pull-request path when directly updating `master` would include another owner's
-unmerged GitHub work. Treat the service as the only supported GitHub write path
-for repository changes.
+Never push a component change to GitHub. GitHub contains only the integrated
+`xWalk-rpi5` repository. A Gerrit change may be submitted only after its current
+patch set satisfies the configured review and automatic verification
+requirements. After a component submission, CI uplifts only its exact gitlink
+into `xWalk-rpi5`, validates the complete product, and uploads the integration
+change for review. Only a submitted, approved, integration-verified
+`xWalk-rpi5/main` commit may be fast-forwarded to GitHub `xWalk-rpi5/main` by
+the dedicated synchronization service.
 
 ## Language and compiler expectations
 
@@ -62,7 +58,7 @@ for repository changes.
   `xwalk::hal`, `xwalk::agent`, and `xwalk::controller`; do not use `hal::int32`
   or another HAL-qualified generic alias from Agent or Controller code.
 - Declare every reusable standard-library data type behind a documented alias
-  in `xWalkLibrary/common/xHal_Rpi5CarTypes.h`. Production modules and tests use
+  in `xWalk-rpi5/xWalkLibrary/common/xHal_Rpi5CarTypes.h`. Production modules and tests use
   the project alias instead of spelling the standard type directly. This
   includes containers, exceptions, streams, filesystem paths and metadata,
   synchronization types, and error codes.
@@ -72,7 +68,7 @@ for repository changes.
   `XWalkLineCalibration` belong in `xHal_Rpi5CarLineTrackerTypes.h`.
 - Direct `std::` qualification remains appropriate for standard functions,
   algorithms, namespace constants, and the underlying type on the right side
-  of an alias declared in `xWalkLibrary/common`. Doxygen `@throws` fields use the real
+  of an alias declared in `xWalk-rpi5/xWalkLibrary/common`. Doxygen `@throws` fields use the real
   standard exception name presented to API callers, except where a public
   project exception alias such as `filesystemerror` is part of the interface.
 - Make narrowing and signed/unsigned conversions explicit with `static_cast`.
@@ -108,93 +104,93 @@ layout:
 .project                     Eclipse CDT workspace and host-build configuration
 .cproject                    Eclipse CDT C++17 indexing and include-path configuration
 .settings/                   Eclipse CDT project preferences
-DevloperNote/Doc/note/       C++ Markdown documentation mirroring upstream pages
-DevloperNote/index.md        C++ architecture and module documentation index
+xWalk-rpi5/DevloperNote/Doc/note/       C++ Markdown documentation mirroring upstream pages
+xWalk-rpi5/DevloperNote/index.md        C++ architecture and module documentation index
 Doc/image/                   hardware and project images referenced by documentation
-xWalkTool/                   workspace maintenance, verification, provisioning, and overlay resources
+xWalkTool/                   external administration, migration, verification, and uplift tooling
 xWalkTool/xWalkJiraImport/   installable host-only historical Git-to-Jira importer
-xWalkAgent/                  application coordinators composed from caller-owned HAL objects
-xWalkAgent/xWalkVehicle/     movement and autonomous-response Agent group
-xWalkAgent/xWalkVehicle/xWalkPicarx/ complete PiCar-X movement and sensing coordinator
-xWalkAgent/xWalkVehicle/xWalkLineTracking/ bounded grayscale line following
-xWalkAgent/xWalkVehicle/xWalkMoveExample/ bounded movement example
-xWalkAgent/xWalkVehicle/xWalkKeyboardControl/ keyboard-driven movement coordination
-xWalkAgent/xWalkVehicle/xWalkObstacleAvoidance/ ultrasonic movement decisions
-xWalkAgent/xWalkVehicle/xWalkCliffDetection/ grayscale cliff-response state machine
-xWalkAgent/xWalkVehicle/xWalkSelfDrive/ preset gestures, sounds, and action flow
-xWalkAgent/xWalkCalibration/ sensor, servo, and motor calibration Agent group
-xWalkAgent/xWalkCalibration/xWalkGrayscaleCalibration/ grayscale reference calibration
-xWalkAgent/xWalkCalibration/xWalkServoMotorCalibration/ servo and motor calibration
-xWalkAgent/xWalkCalibration/xWalkServoZeroing/ ordered Robot HAT servo zeroing
-xWalkAgent/xWalkVision/      camera, detection, tracking, and video Agent group
-xWalkAgent/xWalkVision/xWalkComputerVision/ color, face, QR, and photograph coordination
-xWalkAgent/xWalkVision/xWalkFaceTracking/ face-to-camera-servo coordination
-xWalkAgent/xWalkVision/xWalkBullFight/ red-target pursuit coordination
-xWalkAgent/xWalkVision/xWalkTreasureHunt/ color driving and spoken-prompt coordination
-xWalkAgent/xWalkVision/xWalkVideoRecording/ continuous OpenCV AVI coordination
-xWalkAgent/xWalkVision/xWalkVideoCar/ camera-assisted driving coordination
-xWalkAgent/xWalkVision/xWalkCameraCapture/ camera-to-voice image callback adaptation
-xWalkAgent/xWalkMedia/       sound and music Agent group
-xWalkAgent/xWalkMedia/xWalkSoundBackgroundMusic/ sound and background music coordination
-xWalkAgent/xWalkVoice/       speech and conversational Agent group
-xWalkAgent/xWalkVoice/xWalkLocalVoiceChatbot/ local voice-assistant loop
-xWalkAgent/xWalkVoice/xWalkVoicePromptCar/ spoken movement demonstration
-xWalkAgent/xWalkVoice/xWalkStorytellingRobot/ narrated movement sequence
-xWalkAgent/xWalkVoice/xWalkVoiceControlledCar/ Vosk wake-word movement commands
-xWalkAgent/xWalkVoice/xWalkTextVisionTalk/ image-grounded Ollama conversation
-xWalkAgent/xWalkVoice/xWalkOnlineLlmTest/ OpenAI-compatible text conversation
-xWalkAgent/xWalkVoice/xWalkVoiceActiveCar/ sensor-aware Rolly voice car
-xWalkAgent/xWalkVoice/xWalkVoiceActiveCarGpt/ English GPT Buddy voice car
-xWalkAgent/xWalkVoice/xWalkGptCar/ upstream GPT PiCar-X assistant
-xWalkAgent/xWalkConnectivity/ external-control and transaction Agent group
-xWalkAgent/xWalkConnectivity/xWalkAppControl/ mobile-app vehicle coordination
-xWalkAgent/xWalkConnectivity/xWalkSpiTransfer/ bounded SPI transaction coordination
-xWalkAgent/xWalkPlatform/    process composition Agent group
-xWalkAgent/xWalkPlatform/xWalkBoot/ host-stub and Raspberry Pi process composition
-xWalkController/             standalone command-line aggregate that imports xWalkAgent
-xWalkController/xWalkConfig/ layered controller deployment and calibration configuration
-xWalkController/xWalkHandler/ typed handler implementation and direct host test
-xWalkController/xWalkApp/     command parsing, entry points, generated help, and application tests
-xWalkController/xWalkTest/xGoogleTest/ centralized CLI host-test runner and XML selection
-xWalkController/xWalkTest/xSequenceTest/ bounded CLI command-sequence verification
-xWalkAudioResources/music/   packaged background-music resources
-xWalkAudioResources/sounds/  packaged sound-effect resources
-xWalkIW/                     I2C and Controller Protobuf DTOs and gRPC interface definitions
-xWalkLibrary/                common public headers, portable dependencies, models, and native assets
-xWalkLibrary/common/         common interface target, headers, configuration, and documentation
+xWalk-rpi5/xWalkAgent/                  application coordinators composed from caller-owned HAL objects
+xWalk-rpi5/xWalkAgent/xWalkVehicle/     movement and autonomous-response Agent group
+xWalk-rpi5/xWalkAgent/xWalkVehicle/xWalkPicarx/ complete PiCar-X movement and sensing coordinator
+xWalk-rpi5/xWalkAgent/xWalkVehicle/xWalkLineTracking/ bounded grayscale line following
+xWalk-rpi5/xWalkAgent/xWalkVehicle/xWalkMoveExample/ bounded movement example
+xWalk-rpi5/xWalkAgent/xWalkVehicle/xWalkKeyboardControl/ keyboard-driven movement coordination
+xWalk-rpi5/xWalkAgent/xWalkVehicle/xWalkObstacleAvoidance/ ultrasonic movement decisions
+xWalk-rpi5/xWalkAgent/xWalkVehicle/xWalkCliffDetection/ grayscale cliff-response state machine
+xWalk-rpi5/xWalkAgent/xWalkVehicle/xWalkSelfDrive/ preset gestures, sounds, and action flow
+xWalk-rpi5/xWalkAgent/xWalkCalibration/ sensor, servo, and motor calibration Agent group
+xWalk-rpi5/xWalkAgent/xWalkCalibration/xWalkGrayscaleCalibration/ grayscale reference calibration
+xWalk-rpi5/xWalkAgent/xWalkCalibration/xWalkServoMotorCalibration/ servo and motor calibration
+xWalk-rpi5/xWalkAgent/xWalkCalibration/xWalkServoZeroing/ ordered Robot HAT servo zeroing
+xWalk-rpi5/xWalkAgent/xWalkVision/      camera, detection, tracking, and video Agent group
+xWalk-rpi5/xWalkAgent/xWalkVision/xWalkComputerVision/ color, face, QR, and photograph coordination
+xWalk-rpi5/xWalkAgent/xWalkVision/xWalkFaceTracking/ face-to-camera-servo coordination
+xWalk-rpi5/xWalkAgent/xWalkVision/xWalkBullFight/ red-target pursuit coordination
+xWalk-rpi5/xWalkAgent/xWalkVision/xWalkTreasureHunt/ color driving and spoken-prompt coordination
+xWalk-rpi5/xWalkAgent/xWalkVision/xWalkVideoRecording/ continuous OpenCV AVI coordination
+xWalk-rpi5/xWalkAgent/xWalkVision/xWalkVideoCar/ camera-assisted driving coordination
+xWalk-rpi5/xWalkAgent/xWalkVision/xWalkCameraCapture/ camera-to-voice image callback adaptation
+xWalk-rpi5/xWalkAgent/xWalkMedia/       sound and music Agent group
+xWalk-rpi5/xWalkAgent/xWalkMedia/xWalkSoundBackgroundMusic/ sound and background music coordination
+xWalk-rpi5/xWalkAgent/xWalkVoice/       speech and conversational Agent group
+xWalk-rpi5/xWalkAgent/xWalkVoice/xWalkLocalVoiceChatbot/ local voice-assistant loop
+xWalk-rpi5/xWalkAgent/xWalkVoice/xWalkVoicePromptCar/ spoken movement demonstration
+xWalk-rpi5/xWalkAgent/xWalkVoice/xWalkStorytellingRobot/ narrated movement sequence
+xWalk-rpi5/xWalkAgent/xWalkVoice/xWalkVoiceControlledCar/ Vosk wake-word movement commands
+xWalk-rpi5/xWalkAgent/xWalkVoice/xWalkTextVisionTalk/ image-grounded Ollama conversation
+xWalk-rpi5/xWalkAgent/xWalkVoice/xWalkOnlineLlmTest/ OpenAI-compatible text conversation
+xWalk-rpi5/xWalkAgent/xWalkVoice/xWalkVoiceActiveCar/ sensor-aware Rolly voice car
+xWalk-rpi5/xWalkAgent/xWalkVoice/xWalkVoiceActiveCarGpt/ English GPT Buddy voice car
+xWalk-rpi5/xWalkAgent/xWalkVoice/xWalkGptCar/ upstream GPT PiCar-X assistant
+xWalk-rpi5/xWalkAgent/xWalkConnectivity/ external-control and transaction Agent group
+xWalk-rpi5/xWalkAgent/xWalkConnectivity/xWalkAppControl/ mobile-app vehicle coordination
+xWalk-rpi5/xWalkAgent/xWalkConnectivity/xWalkSpiTransfer/ bounded SPI transaction coordination
+xWalk-rpi5/xWalkAgent/xWalkPlatform/    process composition Agent group
+xWalk-rpi5/xWalkAgent/xWalkPlatform/xWalkBoot/ host-stub and Raspberry Pi process composition
+xWalk-rpi5/xWalkController/             standalone command-line aggregate that imports xWalkAgent
+xWalk-rpi5/xWalkController/xWalkConfig/ layered controller deployment and calibration configuration
+xWalk-rpi5/xWalkController/xWalkHandler/ typed handler implementation and direct host test
+xWalk-rpi5/xWalkController/xWalkApp/     command parsing, entry points, generated help, and application tests
+xWalk-rpi5/xWalkController/xWalkTest/xGoogleTest/ centralized CLI host-test runner and XML selection
+xWalk-rpi5/xWalkController/xWalkTest/xSequenceTest/ bounded CLI command-sequence verification
+xWalk-rpi5/xWalkAudioResources/music/   packaged background-music resources
+xWalk-rpi5/xWalkAudioResources/sounds/  packaged sound-effect resources
+xWalk-rpi5/xWalkIW/                     I2C and Controller Protobuf DTOs and gRPC interface definitions
+xWalk-rpi5/xWalkLibrary/                common public headers, portable dependencies, models, and native assets
+xWalk-rpi5/xWalkLibrary/common/         common interface target, headers, configuration, and documentation
 CMakeLists.txt               workspace and HAL aggregate build
-xWalkHal/interface/          low-level platform interfaces and common services
-xWalkHal/device/             hardware device abstractions
-xWalkHal/sensor/             sensor and actuator components
-xWalkHal/layer1/             higher-level robot services and features
-xWalkHal/layer1/xWalkBoardControl/ board control, discovery, and firmware information
-xWalkHal/sensor/xWalkBuzzer/ active GPIO and passive PWM buzzer control
-xWalkHal/device/xWalkCamera/ backend-neutral capture plus Linux CSI and USB providers
-xWalkHal/interface/xWalkConfig/ section-aware and flat key-value configuration persistence
-xWalkHal/layer1/xWalkGPT/    speech coordination plus Linux Vosk and Espeak providers
-xWalkHal/sensor/xWalkLed/    GPIO and three-channel PWM LED control
-xWalkHal/interface/xWalkLanguageModel/ provider-neutral conversation and prompting control
-xWalkHal/layer1/xWalkMusic/  music theory, PCM tone, and injected audio control
-xWalkHal/layer1/xWalkRobot/  coordinated multi-servo robot control
-xWalkHal/layer1/xWalkSpeaker/ bounded asynchronous audio-file playback control
-xWalkTrace/                  filtered callback-based embedded diagnostics
-xWalkHal/device/xWalkUserButton/ active-low button events and press timing
-xWalkHal/device/xWalkUltrasonic/ two-pin ultrasonic distance measurement
-xWalkHal/interface/xWalkUtils/ injected platform utilities and bounded lazy caching
-xWalkHal/layer1/xWalkVoiceAssistant/ synchronous speech, model, and response coordination
-xWalkHal/sensor/xWalkLineTracker/ grayscale sensing and line-position estimation
-xWalkHal/device/xWalkAdc/    Robot HAT analog-to-digital converter module
-xWalkHal/interface/xWalkAudio/ shared ALSA PCM and mixer ownership
-xWalkHal/interface/xWalkGpio/ Robot HAT digital GPIO module and Linux backend
-xWalkHal/interface/xWalkSpi/ bounded callback-driven SPI and Linux spidev backend
-xWalkHal/sensor/xWalkMotor/  single and paired Robot HAT motor control
-xWalkHal/<Group>/xWalk<Module>/include/ public module headers
-xWalkHal/<Group>/xWalk<Module>/src/ hardware-independent implementation
-xWalkHal/<Group>/xWalk<Module>/test/ host-side tests and test helpers
-xWalkHal/<Group>/xWalk<Module>/hardware/ optional platform backend and hardware tests
-xWalkHal/xWalkTest/xGoogleTest/ centralized HAL host/hardware runner and XML selection
-xWalkHal/xWalkTest/xExample/ centralized ported examples with core and hardware layers
-xWalkHal/xWalkTest/xSequenceTest/ bounded opt-in sequence and integration tests
+xWalk-rpi5/xWalkHal/interface/          low-level platform interfaces and common services
+xWalk-rpi5/xWalkHal/device/             hardware device abstractions
+xWalk-rpi5/xWalkHal/sensor/             sensor and actuator components
+xWalk-rpi5/xWalkHal/layer1/             higher-level robot services and features
+xWalk-rpi5/xWalkHal/layer1/xWalkBoardControl/ board control, discovery, and firmware information
+xWalk-rpi5/xWalkHal/sensor/xWalkBuzzer/ active GPIO and passive PWM buzzer control
+xWalk-rpi5/xWalkHal/device/xWalkCamera/ backend-neutral capture plus Linux CSI and USB providers
+xWalk-rpi5/xWalkHal/interface/xWalkConfig/ section-aware and flat key-value configuration persistence
+xWalk-rpi5/xWalkHal/layer1/xWalkGPT/    speech coordination plus Linux Vosk and Espeak providers
+xWalk-rpi5/xWalkHal/sensor/xWalkLed/    GPIO and three-channel PWM LED control
+xWalk-rpi5/xWalkHal/interface/xWalkLanguageModel/ provider-neutral conversation and prompting control
+xWalk-rpi5/xWalkHal/layer1/xWalkMusic/  music theory, PCM tone, and injected audio control
+xWalk-rpi5/xWalkHal/layer1/xWalkRobot/  coordinated multi-servo robot control
+xWalk-rpi5/xWalkHal/layer1/xWalkSpeaker/ bounded asynchronous audio-file playback control
+xWalk-rpi5/xWalkTrace/                  filtered callback-based embedded diagnostics
+xWalk-rpi5/xWalkHal/device/xWalkUserButton/ active-low button events and press timing
+xWalk-rpi5/xWalkHal/device/xWalkUltrasonic/ two-pin ultrasonic distance measurement
+xWalk-rpi5/xWalkHal/interface/xWalkUtils/ injected platform utilities and bounded lazy caching
+xWalk-rpi5/xWalkHal/layer1/xWalkVoiceAssistant/ synchronous speech, model, and response coordination
+xWalk-rpi5/xWalkHal/sensor/xWalkLineTracker/ grayscale sensing and line-position estimation
+xWalk-rpi5/xWalkHal/device/xWalkAdc/    Robot HAT analog-to-digital converter module
+xWalk-rpi5/xWalkHal/interface/xWalkAudio/ shared ALSA PCM and mixer ownership
+xWalk-rpi5/xWalkHal/interface/xWalkGpio/ Robot HAT digital GPIO module and Linux backend
+xWalk-rpi5/xWalkHal/interface/xWalkSpi/ bounded callback-driven SPI and Linux spidev backend
+xWalk-rpi5/xWalkHal/sensor/xWalkMotor/  single and paired Robot HAT motor control
+xWalk-rpi5/xWalkHal/<Group>/xWalk<Module>/include/ public module headers
+xWalk-rpi5/xWalkHal/<Group>/xWalk<Module>/src/ hardware-independent implementation
+xWalk-rpi5/xWalkHal/<Group>/xWalk<Module>/test/ host-side tests and test helpers
+xWalk-rpi5/xWalkHal/<Group>/xWalk<Module>/hardware/ optional platform backend and hardware tests
+xWalk-rpi5/xWalkHal/xWalkTest/xGoogleTest/ centralized HAL host/hardware runner and XML selection
+xWalk-rpi5/xWalkHal/xWalkTest/xExample/ centralized ported examples with core and hardware layers
+xWalk-rpi5/xWalkHal/xWalkTest/xSequenceTest/ bounded opt-in sequence and integration tests
 ```
 
 For a module with `core` and `hardware` layers, keep the hardware-independent
@@ -253,13 +249,13 @@ runtime, carry the CTest `hardware;sequence` labels, and remain disabled in the
 hardware XML profile until explicitly selected. Keep reusable, host-testable
 logic under `core/include` and `core/src`; keep platform adapters and physical
 implementations under `hardware/include` and `hardware/src`. Keep the single
-sequence-runner process entry point at `xWalkHal/xWalkTest/xSequenceTest/main.cpp`.
+sequence-runner process entry point at `xWalk-rpi5/xWalkHal/xWalkTest/xSequenceTest/main.cpp`.
 Keep CLI usage, argument validation, and selector dispatch in the dedicated
 hardware-layer `XWalkSequenceTestRunner`; `main.cpp` only delegates to it.
 
-Port upstream example programs under `xWalkHal/xWalkTest/xExample`, keeping reusable
+Port upstream example programs under `xWalk-rpi5/xWalkHal/xWalkTest/xExample`, keeping reusable
 behavior in `core` and Raspberry Pi composition in `hardware`. Keep its only
-process entry point at `xWalkHal/xWalkTest/xExample/main.cpp`; individual example
+process entry point at `xWalk-rpi5/xWalkHal/xWalkTest/xExample/main.cpp`; individual example
 sources must not define `main()`. Add only real supplied examples. Select them
 through the `xExample` executable using their formal selector names. Keep
 default board, AI, and bounded selector arguments in the module YAML file and
@@ -274,7 +270,7 @@ and adapters in `namespace xwalk::hal::example`; reserve
 Keep reviewed portable third-party dependencies and offline AI runtime assets under the root-level
 `xWalkLibrary`. Store the workspace-wide common public headers, architecture-independent models, and
 configuration directly under `common`; keep the `xWalkLibraryCommon` interface target, its CMake definition,
-and module documentation in `xWalkLibrary/common`. Store native `bin`, `include`, `lib`, and
+and module documentation in `xWalk-rpi5/xWalkLibrary/common`. Store native `bin`, `include`, `lib`, and
 `share` content under an explicit `x86_64` or `aarch64` prefix. Record the upstream version, architecture,
 source URL, checksum, license, and runtime path in that directory.
 Architecture-specific native libraries must never be loaded by a mismatched target. Let
@@ -325,7 +321,7 @@ retaining normal compiler warnings and compilation checks.
 
 - Put production declarations in `namespace xwalk::hal`. Put tests in
   `namespace xwalk::hal::test`. End a namespace with a named comment.
-- Put every non-member production function in `xWalkLibrary/common` under
+- Put every non-member production function in `xWalk-rpi5/xWalkLibrary/common` under
   `namespace xwalk::hal::common`. Call it with the `common::` qualifier from a
   module, except the file facilities described below, which live directly in
   `xwalk::hal`. Do not add anonymous or module-local free production helpers.
@@ -353,7 +349,7 @@ retaining normal compiler warnings and compilation checks.
   `main()` consumes the same parsed argument structure and retains only signal
   setup, resource validation, boot selection, and hardware composition.
 - Put reusable filesystem operations in
-  `xWalkLibrary/common/xHal_Rpi5CarFileFunctions.h`. Production modules and
+  `xWalk-rpi5/xWalkLibrary/common/xHal_Rpi5CarFileFunctions.h`. Production modules and
   tests call these functions directly through `xwalk::hal`, matching project
   types such as `uint32`; do not place file facilities in a nested `common`
   namespace. Keep filesystem data types behind the aliases declared in
@@ -361,7 +357,7 @@ retaining normal compiler warnings and compilation checks.
 - Keep file stream modes and filesystem operation options behind common typed
   constants. Use `FILE_OPEN_WRITE_TRUNCATE` and `FILE_PERMISSION_REPLACE`
   instead of spelling `std::ios` or
-  `std::filesystem::perm_options` outside `xWalkLibrary/common`. Use
+  `std::filesystem::perm_options` outside `xWalk-rpi5/xWalkLibrary/common`. Use
   `readFileLine()` instead of calling `std::getline` on a file stream
   from a module.
 - Use `FILE_OPEN_READ_BINARY` and `readFileContents()` when binary property data
@@ -479,7 +475,7 @@ retaining normal compiler warnings and compilation checks.
 - Keep `compilerPath`, `cppStandard`, and `intelliSenseMode` consistent with the
   compiler and C++ language version selected by CMake. This project currently
   uses `/usr/bin/c++`, C++17, and `linux-gcc-x64`.
-- Ensure IntelliSense can reach `xWalkLibrary/common`. Project aliases such as
+- Ensure IntelliSense can reach `xWalk-rpi5/xWalkLibrary/common`. Project aliases such as
   `uint8`, `uint16`, `uint32`, and `float64` are declared there and are expected
   to be available through the module include chain.
 - An unknown project type followed by an incorrect function signature or an
@@ -628,13 +624,13 @@ retaining normal compiler warnings and compilation checks.
   persisting credentials. Do not duplicate AI values in the tracked systemd
   environment file.
 - Store AI model selections only in the authenticated
-  `xWalkLibrary/X_WALK_LICENSE.KEY` file produced by
+  `xWalk-rpi5/xWalkLibrary/X_WALK_LICENSE.KEY` file produced by
   `xWalkTool/python/xWalkLicenseTool`. Store API credentials only in the
   developer's mode-`0600` `~/.netrc` under the documented actual provider
   hostnames. Use a fresh SecretBox key and nonce, retain the versioned `XWL1` header,
   and keep the decryption key outside the repository. The committed
   `xWalkTool/environment/xWalkLicense.cfg` remains an empty model template.
-  Keep `xWalkLibrary/X_WALK_LICENSE.KEY` ignored and untracked because its
+  Keep `xWalk-rpi5/xWalkLibrary/X_WALK_LICENSE.KEY` ignored and untracked because its
   authenticated ciphertext and serial are deployment-specific.
   `xWalkEnv.sh` must validate the complete model allowlist and supported netrc
   entries before exporting anything, skip missing or empty unused-provider
@@ -803,7 +799,7 @@ retaining normal compiler warnings and compilation checks.
   and protocol output remains separate at application and Agent interaction
   boundaries: preserve help, version text, protocol responses, and conversation
   output when trace decoration would change their interface contract.
-  `xWalkController/xWalkHandler` is trace-only for its own status, result,
+  `xWalk-rpi5/xWalkController/xWalkHandler` is trace-only for its own status, result,
   warning, and failure records; it must not call its output callback for those
   records.
 - Keep `XWALK_VERBOSE(format, ...)` only as a disabled no-op for source
@@ -813,7 +809,7 @@ retaining normal compiler warnings and compilation checks.
   `steady_clock` initialization point with microseconds. Do not describe one
   trace call as an operation-duration measurement.
 - Run the class-based
-  `xWalkTrace/pre-compiler/xHal_Rpi5CarTracePreCompiler.py` before trace
+  `xWalk-rpi5/xWalkTrace/pre-compiler/xHal_Rpi5CarTracePreCompiler.py` before trace
   compilation. Its
   token-aware scan covers the complete project root, including generated
   project sources and participating nested repositories, rejects every
@@ -1267,7 +1263,7 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
   `xHal_Rpi5CarCommon.h`. Do not scatter unexplained hardware literals through
   production code.
 - Place public hardware constants shared by module declarations, sources, or
-  tests in `xWalkLibrary/common/xHal_Rpi5CarCommon.h`. Module headers must not
+  tests in `xWalk-rpi5/xWalkLibrary/common/xHal_Rpi5CarCommon.h`. Module headers must not
   redeclare those constants. This includes ultrasonic sound-speed, timing,
   attempt-count, timeout-result, and invalid-pulse-result macros.
 - Make byte order explicit when encoding register data.
@@ -1317,7 +1313,7 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
 - Keep all hardware-test build options `OFF` by default. Never run a hardware
   test as part of ordinary verification or without the correct Raspberry Pi and
   Robot HAT safety setup.
-- Compile-check the hardware targets after changes to `xWalkLibrary/common`, `xWalkI2c`, `xWalkSpi`,
+- Compile-check the hardware targets after changes to `xWalk-rpi5/xWalkLibrary/common`, `xWalkI2c`, `xWalkSpi`,
   `xWalkAudio`, `xWalkMusic`, `xWalkSpeaker`, `xWalkPwm`, `xWalkServo`, `xWalkGpio`,
   `xWalkUltrasonic`,
   `xWalkLineTracker`, `xWalkAdxl345`, `xWalkBuzzer`, `xWalkLed`,
@@ -1346,7 +1342,7 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
   exist. Give the dependency a dedicated binary directory.
 - Resolve the workspace-level `xWalkLibraryCommon` target source from
   `../../../xWalkLibrary/common` when configuring an individual grouped HAL
-  submodule. The workspace root imports it from `xWalkLibrary/common`.
+  submodule. The workspace root imports it from `xWalk-rpi5/xWalkLibrary/common`.
 - Name feature options `XWALK_<MODULE>_BUILD_<MODE>_TESTS` and default them to
   `OFF`.
 - Register tests with descriptive stable names and labels.
@@ -1388,9 +1384,9 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
   executable once with CTest. Keep physical hardware unavailable in these
   application tests.
 - Keep the one tracked controller deployment file at
-  `xWalkController/xWalkConfig/picar-x.conf`. Select Robot HAT revisions through
+  `xWalk-rpi5/xWalkController/xWalkConfig/picar-x.conf`. Select Robot HAT revisions through
   its `hardware_board` value; do not maintain separate board-profile files.
-- Keep CLI-owned unit tests under `xWalkController/xWalkTest/xGoogleTest`. Let
+- Keep CLI-owned unit tests under `xWalk-rpi5/xWalkController/xWalkTest/xGoogleTest`. Let
   that directory own the `xCliGoogleTest` process entry point so it can coexist
   with the HAL `xGoogleTest` target. Compile assertion-based unit-test entry
   points with distinct renamed functions, isolate them in child processes, and
@@ -1398,7 +1394,7 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
   directory. Name each GoogleTest suite after its owning Controller or Agent
   functional group. Build and register this runner only in CLI host mode.
 - Keep bounded multi-command CLI verification under
-  `xWalkController/xWalkTest/xSequenceTest`. Let that directory own the
+  `xWalk-rpi5/xWalkController/xWalkTest/xSequenceTest`. Let that directory own the
   independent `xCliSequenceTest` process entry point and GoogleTest sequence
   registration plus complete host and disabled-hardware XML inventories. Name
   sequence suites after their owning Controller or Agent functional group and
@@ -1618,7 +1614,7 @@ For a new implementation or a changed public behavior:
 
 1. Place the declaration and implementation in the correct responsibility
    files.
-2. Move reusable non-member production logic into `xWalkLibrary/common` and
+2. Move reusable non-member production logic into `xWalk-rpi5/xWalkLibrary/common` and
    `xwalk::hal::common`; keep class-specific logic in methods.
 3. Preserve dependency injection and the host/hardware boundary.
 4. Validate inputs, conversions, register limits, and ownership assumptions.
@@ -1636,107 +1632,107 @@ For a new implementation or a changed public behavior:
 Typical host verification commands are:
 
 ```bash
-cmake -S xWalkController -B xWalkController/build-host -DXWALK_CLI_BUILD_HOST=ON -DCMAKE_BUILD_TYPE=Debug
-cmake --build xWalkController/build-host --parallel
-ctest --test-dir xWalkController/build-host --output-on-failure
+cmake -S xWalkController -B xWalk-rpi5/xWalkController/build-host -DXWALK_CLI_BUILD_HOST=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build xWalk-rpi5/xWalkController/build-host --parallel
+ctest --test-dir xWalk-rpi5/xWalkController/build-host --output-on-failure
 
-cmake -S xWalkAgent -B xWalkAgent/build-host -DXWALK_AGENT_BUILD_HOST=ON -DCMAKE_BUILD_TYPE=Debug
-cmake --build xWalkAgent/build-host --parallel
-ctest --test-dir xWalkAgent/build-host --output-on-failure
+cmake -S xWalkAgent -B xWalk-rpi5/xWalkAgent/build-host -DXWALK_AGENT_BUILD_HOST=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build xWalk-rpi5/xWalkAgent/build-host --parallel
+ctest --test-dir xWalk-rpi5/xWalkAgent/build-host --output-on-failure
 
-cmake -S xWalkHal/interface/xWalkI2c -B xWalkHal/interface/xWalkI2c/build-host -DXWALK_I2C_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/interface/xWalkI2c -B xWalk-rpi5/xWalkHal/interface/xWalkI2c/build-host -DXWALK_I2C_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkI2c/build-host --parallel
 ctest --test-dir xWalkI2c/build-host --output-on-failure
 
-cmake -S xWalkHal/interface/xWalkSpi -B xWalkHal/interface/xWalkSpi/build-host -DXWALK_SPI_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/interface/xWalkSpi -B xWalk-rpi5/xWalkHal/interface/xWalkSpi/build-host -DXWALK_SPI_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkSpi/build-host --parallel
 ctest --test-dir xWalkSpi/build-host --output-on-failure
 
-cmake -S xWalkHal/interface/xWalkAudio -B xWalkHal/interface/xWalkAudio/build-host -DXWALK_AUDIO_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/interface/xWalkAudio -B xWalk-rpi5/xWalkHal/interface/xWalkAudio/build-host -DXWALK_AUDIO_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkAudio/build-host --parallel
 ctest --test-dir xWalkAudio/build-host --output-on-failure
 
-cmake -S xWalkHal/layer1/xWalkMusic -B xWalkHal/layer1/xWalkMusic/build-host -DXWALK_MUSIC_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/layer1/xWalkMusic -B xWalk-rpi5/xWalkHal/layer1/xWalkMusic/build-host -DXWALK_MUSIC_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkMusic/build-host --parallel
 ctest --test-dir xWalkMusic/build-host --output-on-failure
 
-cmake -S xWalkHal/layer1/xWalkSpeaker -B xWalkHal/layer1/xWalkSpeaker/build-host -DXWALK_SPEAKER_BUILD_HOST_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/layer1/xWalkSpeaker -B xWalk-rpi5/xWalkHal/layer1/xWalkSpeaker/build-host -DXWALK_SPEAKER_BUILD_HOST_TESTS=ON
 cmake --build xWalkSpeaker/build-host --parallel
 ctest --test-dir xWalkSpeaker/build-host --output-on-failure
 
-cmake -S xWalkHal/device/xWalkPwm -B xWalkHal/device/xWalkPwm/build-host -DXWALK_PWM_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/device/xWalkPwm -B xWalk-rpi5/xWalkHal/device/xWalkPwm/build-host -DXWALK_PWM_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkPwm/build-host --parallel
 ctest --test-dir xWalkPwm/build-host --output-on-failure
 
-cmake -S xWalkHal/device/xWalkServo -B xWalkHal/device/xWalkServo/build-host -DXWALK_SERVO_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/device/xWalkServo -B xWalk-rpi5/xWalkHal/device/xWalkServo/build-host -DXWALK_SERVO_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkServo/build-host --parallel
 ctest --test-dir xWalkServo/build-host --output-on-failure
 
-cmake -S xWalkHal/device/xWalkAdc -B xWalkHal/device/xWalkAdc/build-host -DXWALK_ADC_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/device/xWalkAdc -B xWalk-rpi5/xWalkHal/device/xWalkAdc/build-host -DXWALK_ADC_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkAdc/build-host --parallel
 ctest --test-dir xWalkAdc/build-host --output-on-failure
 
-cmake -S xWalkHal/interface/xWalkGpio -B xWalkHal/interface/xWalkGpio/build-host -DXWALK_GPIO_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/interface/xWalkGpio -B xWalk-rpi5/xWalkHal/interface/xWalkGpio/build-host -DXWALK_GPIO_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkGpio/build-host --parallel
 ctest --test-dir xWalkGpio/build-host --output-on-failure
 
-cmake -S xWalkHal/sensor/xWalkMotor -B xWalkHal/sensor/xWalkMotor/build-host -DXWALK_MOTOR_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/sensor/xWalkMotor -B xWalk-rpi5/xWalkHal/sensor/xWalkMotor/build-host -DXWALK_MOTOR_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkMotor/build-host --parallel
 ctest --test-dir xWalkMotor/build-host --output-on-failure
 
-cmake -S xWalkHal/interface/xWalkConfig -B xWalkHal/interface/xWalkConfig/build-host -DXWALK_CONFIG_BUILD_HOST_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/interface/xWalkConfig -B xWalk-rpi5/xWalkHal/interface/xWalkConfig/build-host -DXWALK_CONFIG_BUILD_HOST_TESTS=ON
 cmake --build xWalkConfig/build-host --parallel
 ctest --test-dir xWalkConfig/build-host --output-on-failure
 
-cmake -S xWalkHal/layer1/xWalkBoardControl -B xWalkHal/layer1/xWalkBoardControl/build-host -DXWALK_BOARD_CONTROL_BUILD_HOST_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/layer1/xWalkBoardControl -B xWalk-rpi5/xWalkHal/layer1/xWalkBoardControl/build-host -DXWALK_BOARD_CONTROL_BUILD_HOST_TESTS=ON
 cmake --build xWalkBoardControl/build-host --parallel
 ctest --test-dir xWalkBoardControl/build-host --output-on-failure
 
-cmake -S xWalkTrace -B xWalkTrace/build-host -DXWALK_TRACE_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
-cmake --build xWalkTrace/build-host --parallel
-ctest --test-dir xWalkTrace/build-host --output-on-failure
+cmake -S xWalkTrace -B xWalk-rpi5/xWalkTrace/build-host -DXWALK_TRACE_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build xWalk-rpi5/xWalkTrace/build-host --parallel
+ctest --test-dir xWalk-rpi5/xWalkTrace/build-host --output-on-failure
 
-cmake -S xWalkHal/layer1/xWalkGPT -B xWalkHal/layer1/xWalkGPT/build-host -DXWALK_GPT_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/layer1/xWalkGPT -B xWalk-rpi5/xWalkHal/layer1/xWalkGPT/build-host -DXWALK_GPT_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkGPT/build-host --parallel
 ctest --test-dir xWalkGPT/build-host --output-on-failure
 
-cmake -S xWalkHal/interface/xWalkLanguageModel -B xWalkHal/interface/xWalkLanguageModel/build-host -DXWALK_LANGUAGE_MODEL_BUILD_HOST_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/interface/xWalkLanguageModel -B xWalk-rpi5/xWalkHal/interface/xWalkLanguageModel/build-host -DXWALK_LANGUAGE_MODEL_BUILD_HOST_TESTS=ON
 cmake --build xWalkLanguageModel/build-host --parallel
 ctest --test-dir xWalkLanguageModel/build-host --output-on-failure
 
-cmake -S xWalkHal/layer1/xWalkVoiceAssistant -B build/xWalkVoiceAssistant-host -DXWALK_VOICE_ASSISTANT_BUILD_HOST_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/layer1/xWalkVoiceAssistant -B build/xWalkVoiceAssistant-host -DXWALK_VOICE_ASSISTANT_BUILD_HOST_TESTS=ON
 cmake --build build/xWalkVoiceAssistant-host --parallel
 ctest --test-dir build/xWalkVoiceAssistant-host --output-on-failure
 
-cmake -S xWalkHal/interface/xWalkUtils -B build-utils-host -DXWALK_UTILS_BUILD_HOST_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/interface/xWalkUtils -B build-utils-host -DXWALK_UTILS_BUILD_HOST_TESTS=ON
 cmake --build build-utils-host --parallel
 ctest --test-dir build-utils-host --output-on-failure
 
-cmake -S xWalkHal/layer1/xWalkRobot -B xWalkHal/layer1/xWalkRobot/build-host -DXWALK_ROBOT_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/layer1/xWalkRobot -B xWalk-rpi5/xWalkHal/layer1/xWalkRobot/build-host -DXWALK_ROBOT_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkRobot/build-host --parallel
 ctest --test-dir xWalkRobot/build-host --output-on-failure
 
-cmake -S xWalkHal/device/xWalkUltrasonic -B xWalkHal/device/xWalkUltrasonic/build-host -DXWALK_ULTRASONIC_BUILD_HOST_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/device/xWalkUltrasonic -B xWalk-rpi5/xWalkHal/device/xWalkUltrasonic/build-host -DXWALK_ULTRASONIC_BUILD_HOST_TESTS=ON
 cmake --build xWalkUltrasonic/build-host --parallel
 ctest --test-dir xWalkUltrasonic/build-host --output-on-failure
 
-cmake -S xWalkHal/sensor/xWalkLineTracker -B xWalkHal/sensor/xWalkLineTracker/build-host -DXWALK_LINE_TRACKER_BUILD_HOST_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/sensor/xWalkLineTracker -B xWalk-rpi5/xWalkHal/sensor/xWalkLineTracker/build-host -DXWALK_LINE_TRACKER_BUILD_HOST_TESTS=ON
 cmake --build xWalkLineTracker/build-host --parallel
 ctest --test-dir xWalkLineTracker/build-host --output-on-failure
 
-cmake -S xWalkHal/device/xWalkAdxl345 -B xWalkHal/device/xWalkAdxl345/build-host -DXWALK_ADXL345_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/device/xWalkAdxl345 -B xWalk-rpi5/xWalkHal/device/xWalkAdxl345/build-host -DXWALK_ADXL345_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkAdxl345/build-host --parallel
 ctest --test-dir xWalkAdxl345/build-host --output-on-failure
 
-cmake -S xWalkHal/sensor/xWalkBuzzer -B xWalkHal/sensor/xWalkBuzzer/build-host -DXWALK_BUZZER_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/sensor/xWalkBuzzer -B xWalk-rpi5/xWalkHal/sensor/xWalkBuzzer/build-host -DXWALK_BUZZER_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkBuzzer/build-host --parallel
 ctest --test-dir xWalkBuzzer/build-host --output-on-failure
 
-cmake -S xWalkHal/sensor/xWalkLed -B xWalkHal/sensor/xWalkLed/build-host -DXWALK_LED_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/sensor/xWalkLed -B xWalk-rpi5/xWalkHal/sensor/xWalkLed/build-host -DXWALK_LED_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkLed/build-host --parallel
 ctest --test-dir xWalkLed/build-host --output-on-failure
 
-cmake -S xWalkHal/device/xWalkUserButton -B xWalkHal/device/xWalkUserButton/build-host -DXWALK_USER_BUTTON_BUILD_HOST_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/device/xWalkUserButton -B xWalk-rpi5/xWalkHal/device/xWalkUserButton/build-host -DXWALK_USER_BUTTON_BUILD_HOST_TESTS=ON
 cmake --build xWalkUserButton/build-host --parallel
 ctest --test-dir xWalkUserButton/build-host --output-on-failure
 
@@ -1745,106 +1741,106 @@ ctest --test-dir xWalkUserButton/build-host --output-on-failure
 Typical Linux hardware compilation commands are:
 
 ```bash
-cmake -S xWalkController -B xWalkController/build-rpi -DXWALK_CLI_BUILD_RPI=ON -DCMAKE_BUILD_TYPE=Debug
-cmake --build xWalkController/build-rpi --parallel
-ctest --test-dir xWalkController/build-rpi -N -L hardware
+cmake -S xWalkController -B xWalk-rpi5/xWalkController/build-rpi -DXWALK_CLI_BUILD_RPI=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build xWalk-rpi5/xWalkController/build-rpi --parallel
+ctest --test-dir xWalk-rpi5/xWalkController/build-rpi -N -L hardware
 
-cmake -S xWalkAgent -B xWalkAgent/build-rpi -DXWALK_AGENT_BUILD_RPI=ON -DCMAKE_BUILD_TYPE=Debug
-cmake --build xWalkAgent/build-rpi --parallel
-ctest --test-dir xWalkAgent/build-rpi -N -L hardware
+cmake -S xWalkAgent -B xWalk-rpi5/xWalkAgent/build-rpi -DXWALK_AGENT_BUILD_RPI=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build xWalk-rpi5/xWalkAgent/build-rpi --parallel
+ctest --test-dir xWalk-rpi5/xWalkAgent/build-rpi -N -L hardware
 
-cmake -S xWalkHal/interface/xWalkI2c -B xWalkHal/interface/xWalkI2c/build-rpi -DXWALK_I2C_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/interface/xWalkI2c -B xWalk-rpi5/xWalkHal/interface/xWalkI2c/build-rpi -DXWALK_I2C_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkI2c/build-rpi --parallel
 ctest --test-dir xWalkI2c/build-rpi -N -L hardware
 
-cmake -S xWalkHal/interface/xWalkSpi -B xWalkHal/interface/xWalkSpi/build-rpi -DXWALK_SPI_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/interface/xWalkSpi -B xWalk-rpi5/xWalkHal/interface/xWalkSpi/build-rpi -DXWALK_SPI_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkSpi/build-rpi --parallel
 ctest --test-dir xWalkSpi/build-rpi -N -L hardware
 
-cmake -S xWalkHal/interface/xWalkAudio -B xWalkHal/interface/xWalkAudio/build-rpi -DXWALK_AUDIO_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/interface/xWalkAudio -B xWalk-rpi5/xWalkHal/interface/xWalkAudio/build-rpi -DXWALK_AUDIO_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkAudio/build-rpi --parallel
 ctest --test-dir xWalkAudio/build-rpi -N -L hardware
 
-cmake -S xWalkHal/layer1/xWalkMusic -B xWalkHal/layer1/xWalkMusic/build-rpi -DXWALK_MUSIC_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/layer1/xWalkMusic -B xWalk-rpi5/xWalkHal/layer1/xWalkMusic/build-rpi -DXWALK_MUSIC_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkMusic/build-rpi --parallel
 ctest --test-dir xWalkMusic/build-rpi -N -L hardware
 
-cmake -S xWalkHal/layer1/xWalkSpeaker -B xWalkHal/layer1/xWalkSpeaker/build-rpi -DXWALK_SPEAKER_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/layer1/xWalkSpeaker -B xWalk-rpi5/xWalkHal/layer1/xWalkSpeaker/build-rpi -DXWALK_SPEAKER_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkSpeaker/build-rpi --parallel
 ctest --test-dir xWalkSpeaker/build-rpi -N -L hardware
 
-cmake -S xWalkHal/device/xWalkPwm -B xWalkHal/device/xWalkPwm/build-rpi -DXWALK_PWM_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/device/xWalkPwm -B xWalk-rpi5/xWalkHal/device/xWalkPwm/build-rpi -DXWALK_PWM_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkPwm/build-rpi --parallel
 ctest --test-dir xWalkPwm/build-rpi -N -L hardware
 
-cmake -S xWalkHal/device/xWalkServo -B xWalkHal/device/xWalkServo/build-rpi -DXWALK_SERVO_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/device/xWalkServo -B xWalk-rpi5/xWalkHal/device/xWalkServo/build-rpi -DXWALK_SERVO_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkServo/build-rpi --parallel
 ctest --test-dir xWalkServo/build-rpi -N -L hardware
 
-cmake -S xWalkHal/device/xWalkAdc -B xWalkHal/device/xWalkAdc/build-rpi -DXWALK_ADC_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/device/xWalkAdc -B xWalk-rpi5/xWalkHal/device/xWalkAdc/build-rpi -DXWALK_ADC_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkAdc/build-rpi --parallel
 ctest --test-dir xWalkAdc/build-rpi -N -L hardware
 
-cmake -S xWalkHal/interface/xWalkGpio -B xWalkHal/interface/xWalkGpio/build-rpi -DXWALK_GPIO_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/interface/xWalkGpio -B xWalk-rpi5/xWalkHal/interface/xWalkGpio/build-rpi -DXWALK_GPIO_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkGpio/build-rpi --parallel
 ctest --test-dir xWalkGpio/build-rpi -N -L hardware
 
-cmake -S xWalkHal/sensor/xWalkMotor -B xWalkHal/sensor/xWalkMotor/build-rpi -DXWALK_MOTOR_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/sensor/xWalkMotor -B xWalk-rpi5/xWalkHal/sensor/xWalkMotor/build-rpi -DXWALK_MOTOR_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkMotor/build-rpi --parallel
 ctest --test-dir xWalkMotor/build-rpi -N -L hardware
 
-cmake -S xWalkHal/interface/xWalkConfig -B xWalkHal/interface/xWalkConfig/build-rpi -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/interface/xWalkConfig -B xWalk-rpi5/xWalkHal/interface/xWalkConfig/build-rpi -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkConfig/build-rpi --parallel
 
-cmake -S xWalkHal/layer1/xWalkBoardControl -B xWalkHal/layer1/xWalkBoardControl/build-rpi -DXWALK_BOARD_CONTROL_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/layer1/xWalkBoardControl -B xWalk-rpi5/xWalkHal/layer1/xWalkBoardControl/build-rpi -DXWALK_BOARD_CONTROL_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkBoardControl/build-rpi --parallel
 ctest --test-dir xWalkBoardControl/build-rpi -N -L hardware
 
-cmake -S xWalkTrace -B xWalkTrace/build-rpi -DXWALK_TRACE_BUILD_HARDWARE_TESTS=ON
-cmake --build xWalkTrace/build-rpi --parallel
-ctest --test-dir xWalkTrace/build-rpi -N -L hardware
+cmake -S xWalkTrace -B xWalk-rpi5/xWalkTrace/build-rpi -DXWALK_TRACE_BUILD_HARDWARE_TESTS=ON
+cmake --build xWalk-rpi5/xWalkTrace/build-rpi --parallel
+ctest --test-dir xWalk-rpi5/xWalkTrace/build-rpi -N -L hardware
 
-cmake -S xWalkHal/layer1/xWalkGPT -B xWalkHal/layer1/xWalkGPT/build-rpi -DXWALK_GPT_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/layer1/xWalkGPT -B xWalk-rpi5/xWalkHal/layer1/xWalkGPT/build-rpi -DXWALK_GPT_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkGPT/build-rpi --parallel
 ctest --test-dir xWalkGPT/build-rpi -N -L hardware
 
-cmake -S xWalkHal/interface/xWalkLanguageModel -B xWalkHal/interface/xWalkLanguageModel/build-rpi -DXWALK_LANGUAGE_MODEL_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/interface/xWalkLanguageModel -B xWalk-rpi5/xWalkHal/interface/xWalkLanguageModel/build-rpi -DXWALK_LANGUAGE_MODEL_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkLanguageModel/build-rpi --parallel
 ctest --test-dir xWalkLanguageModel/build-rpi -N -L hardware
 
-cmake -S xWalkHal/layer1/xWalkVoiceAssistant -B build-va-rpi -DXWALK_VOICE_ASSISTANT_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/layer1/xWalkVoiceAssistant -B build-va-rpi -DXWALK_VOICE_ASSISTANT_BUILD_HARDWARE_TESTS=ON
 cmake --build build-va-rpi --parallel
 ctest --test-dir build-va-rpi -N -L hardware
 
-cmake -S xWalkHal/interface/xWalkUtils -B build-utils-rpi -DXWALK_UTILS_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/interface/xWalkUtils -B build-utils-rpi -DXWALK_UTILS_BUILD_HARDWARE_TESTS=ON
 cmake --build build-utils-rpi --parallel
 ctest --test-dir build-utils-rpi -N -L hardware
 
-cmake -S xWalkHal/layer1/xWalkRobot -B xWalkHal/layer1/xWalkRobot/build-rpi -DXWALK_ROBOT_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -S xWalk-rpi5/xWalkHal/layer1/xWalkRobot -B xWalk-rpi5/xWalkHal/layer1/xWalkRobot/build-rpi -DXWALK_ROBOT_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkRobot/build-rpi --parallel
 ctest --test-dir xWalkRobot/build-rpi -N -L hardware
 
-cmake -S xWalkHal/device/xWalkUltrasonic -B xWalkHal/device/xWalkUltrasonic/build-rpi -DXWALK_ULTRASONIC_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/device/xWalkUltrasonic -B xWalk-rpi5/xWalkHal/device/xWalkUltrasonic/build-rpi -DXWALK_ULTRASONIC_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkUltrasonic/build-rpi --parallel
 ctest --test-dir xWalkUltrasonic/build-rpi -N -L hardware
 
-cmake -S xWalkHal/sensor/xWalkLineTracker -B xWalkHal/sensor/xWalkLineTracker/build-rpi -DXWALK_LINE_TRACKER_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/sensor/xWalkLineTracker -B xWalk-rpi5/xWalkHal/sensor/xWalkLineTracker/build-rpi -DXWALK_LINE_TRACKER_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkLineTracker/build-rpi --parallel
 ctest --test-dir xWalkLineTracker/build-rpi -N -L hardware
 
-cmake -S xWalkHal/device/xWalkAdxl345 -B xWalkHal/device/xWalkAdxl345/build-rpi -DXWALK_ADXL345_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/device/xWalkAdxl345 -B xWalk-rpi5/xWalkHal/device/xWalkAdxl345/build-rpi -DXWALK_ADXL345_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkAdxl345/build-rpi --parallel
 ctest --test-dir xWalkAdxl345/build-rpi -N -L hardware
 
-cmake -S xWalkHal/sensor/xWalkBuzzer -B xWalkHal/sensor/xWalkBuzzer/build-rpi -DXWALK_BUZZER_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/sensor/xWalkBuzzer -B xWalk-rpi5/xWalkHal/sensor/xWalkBuzzer/build-rpi -DXWALK_BUZZER_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkBuzzer/build-rpi --parallel
 ctest --test-dir xWalkBuzzer/build-rpi -N -L hardware
 
-cmake -S xWalkHal/sensor/xWalkLed -B xWalkHal/sensor/xWalkLed/build-rpi -DXWALK_LED_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/sensor/xWalkLed -B xWalk-rpi5/xWalkHal/sensor/xWalkLed/build-rpi -DXWALK_LED_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkLed/build-rpi --parallel
 ctest --test-dir xWalkLed/build-rpi -N -L hardware
 
-cmake -S xWalkHal/device/xWalkUserButton -B xWalkHal/device/xWalkUserButton/build-rpi -DXWALK_USER_BUTTON_BUILD_HARDWARE_TESTS=ON
+cmake -S xWalk-rpi5/xWalkHal/device/xWalkUserButton -B xWalk-rpi5/xWalkHal/device/xWalkUserButton/build-rpi -DXWALK_USER_BUTTON_BUILD_HARDWARE_TESTS=ON
 cmake --build xWalkUserButton/build-rpi --parallel
 ctest --test-dir xWalkUserButton/build-rpi -N -L hardware
 

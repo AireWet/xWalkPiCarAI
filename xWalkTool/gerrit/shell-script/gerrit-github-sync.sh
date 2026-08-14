@@ -12,17 +12,17 @@ xwalk_load_config
 
 validate_remote()
 {
-    local value="$GITHUB_MYPICARX_REMOTE" path
-    [[ -n "$value" ]] || { echo "Set GITHUB_MYPICARX_REMOTE" >&2; return 2; }
+    local value="$GITHUB_XWALK_RPI5_REMOTE" path
+    [[ -n "$value" ]] || { echo "Set GITHUB_XWALK_RPI5_REMOTE" >&2; return 2; }
     path="${value##*:}"
     path="${path##*/}"
     path="${path%.git}"
-    [[ "$path" == "MyPiCarX" ]] || {
-        echo "GitHub destination repository must be named exactly MyPiCarX" >&2
+    [[ "$path" == "xWalk-rpi5" ]] || {
+        echo "GitHub destination repository must be named exactly xWalk-rpi5" >&2
         return 2
     }
-    [[ "$GITHUB_MYPICARX_BRANCH" == "main" ]] || {
-        echo "Only GitHub MyPiCarX/main synchronization is supported" >&2
+    [[ "$GITHUB_XWALK_RPI5_BRANCH" == "main" ]] || {
+        echo "Only GitHub xWalk-rpi5/main synchronization is supported" >&2
         return 2
     }
 }
@@ -34,21 +34,21 @@ main()
     local submitted_owner="${XWALK_SUBMITTED_OWNER_EMAIL:-}"
     if [[ "$XWALK_MODE" == "dry-run" ]]; then
         echo "[dry-run] git push github refs/heads/main:refs/heads/main"
-        xwalk_log "github-sync" "GitHub" "MyPiCarX" "refs/heads/main" "unknown" \
+        xwalk_log "github-sync" "GitHub" "xWalk-rpi5" "refs/heads/main" "unknown" \
             "verified-gerrit-main" "Plan the sole permitted GitHub synchronization" \
-            "Only a submitted and integration-verified MyPiCarX commit may reach GitHub." "Planned" \
+            "Only a submitted and integration-verified xWalk-rpi5 commit may reach GitHub." "Planned" \
             "Destination name and exact refspec validated"
         return
     fi
     [[ "$GITHUB_PUSH_ENABLED" == "true" ]] || {
-        xwalk_log "github-sync" "GitHub" "MyPiCarX" "refs/heads/main" "unchanged" "unchanged" \
+        xwalk_log "github-sync" "GitHub" "xWalk-rpi5" "refs/heads/main" "unchanged" "unchanged" \
             "Skipped GitHub synchronization" "GITHUB_PUSH_ENABLED is not true." "Skipped" \
             "No remote write attempted"
         return
     }
     [[ -n "$GITHUB_DIRECT_PUSH_OWNER_EMAIL" && \
         "${submitted_owner,,}" == "${GITHUB_DIRECT_PUSH_OWNER_EMAIL,,}" ]] || {
-        xwalk_log "github-sync" "GitHub" "MyPiCarX" "refs/heads/main" "unchanged" "unchanged" \
+        xwalk_log "github-sync" "GitHub" "xWalk-rpi5" "refs/heads/main" "unchanged" "unchanged" \
             "Skipped unauthorized direct synchronization" \
             "Only the configured repository owner may publish directly to GitHub main." "Skipped" \
             "No remote write attempted"
@@ -61,30 +61,42 @@ main()
     work="$(mktemp -d -t xwalk-github-sync-XXXXXXXX)"
     trap 'rm -rf -- "$work"' EXIT
     git -C "$work" init --quiet
-    git -C "$work" remote add gerrit \
-        "ssh://$GERRIT_CI_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/MyPiCarX"
-    if ! git -C "$work" fetch --quiet gerrit refs/heads/main:refs/heads/main; then
-        xwalk_log "github-sync" "GitHub" "MyPiCarX" "refs/heads/main" "unknown" "unchanged" \
+    git -C "$work" remote add origin \
+        "ssh://$GERRIT_CI_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/xWalk-rpi5"
+    if ! git -C "$work" fetch --quiet origin refs/heads/main:refs/remotes/origin/main; then
+        xwalk_log "github-sync" "GitHub" "xWalk-rpi5" "refs/heads/main" "unknown" "unchanged" \
             "Gerrit main fetch failed" "Synchronization requires the submitted Gerrit integration branch." \
             "Failed" "" "Sanitized Gerrit fetch failure"
         return 1
     fi
+    git -C "$work" switch --quiet --create main refs/remotes/origin/main
+    git -C "$work" reset --keep refs/remotes/origin/main
     fetched="$(git -C "$work" rev-parse refs/heads/main)"
     [[ "$fetched" == "$revision" ]] || {
-        xwalk_log "github-sync" "GitHub" "MyPiCarX" "refs/heads/main" "$fetched" "unchanged" \
+        xwalk_log "github-sync" "GitHub" "xWalk-rpi5" "refs/heads/main" "$fetched" "unchanged" \
             "Rejected unverified Gerrit main" \
             "The submitted Gerrit tip does not match the integration-verified commit." "Failed" \
             "Fetched exact Gerrit main" "Verified commit mismatch" "" "$fetched" "$revision"
         return 1
     }
-    git -C "$work" remote add github "$GITHUB_MYPICARX_REMOTE"
+    [[ "$(git -C "$work" remote get-url origin)" == */xWalk-rpi5 ]] || {
+        echo "Current repository is not the Gerrit xWalk-rpi5 integration repository" >&2
+        return 2
+    }
+    git -C "$work" remote add github "$GITHUB_XWALK_RPI5_REMOTE"
+    if git -C "$work" fetch --quiet github refs/heads/main:refs/remotes/github/main 2>/dev/null; then
+        git -C "$work" merge-base --is-ancestor refs/remotes/github/main refs/heads/main || {
+            echo "GitHub main is not an ancestor of Gerrit main; refusing non-fast-forward push" >&2
+            return 1
+        }
+    fi
     if git -C "$work" push github refs/heads/main:refs/heads/main; then
-        xwalk_log "github-sync" "GitHub" "MyPiCarX" "refs/heads/main" "previous" "$revision" \
+        xwalk_log "github-sync" "GitHub" "xWalk-rpi5" "refs/heads/main" "previous" "$revision" \
             "Synchronized verified integration commit" \
-            "Only submitted MyPiCarX integration history is permitted on GitHub." "Verified" \
+            "Only submitted xWalk-rpi5 integration history is permitted on GitHub." "Verified" \
             "Exact non-force main-to-main refspec succeeded" "" "" "" "" "$revision"
     else
-        xwalk_log "github-sync" "GitHub" "MyPiCarX" "refs/heads/main" "previous" "unchanged" \
+        xwalk_log "github-sync" "GitHub" "xWalk-rpi5" "refs/heads/main" "previous" "unchanged" \
             "GitHub synchronization failed" "The exact protected push was rejected." "Failed" \
             "" "Sanitized git push failure"
         return 1

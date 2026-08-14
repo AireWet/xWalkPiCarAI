@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Test Gerrit event selection and guarded MyPiCarX synchronization."""
+"""Test Gerrit event selection and guarded xWalk-rpi5 synchronization."""
 
 from __future__ import annotations
 
@@ -23,9 +23,9 @@ class XWalkGerritCiTest(unittest.TestCase):
         """Create a verifier without initializing host service resources."""
 
         self.ci = XWalkGerritCi.__new__(XWalkGerritCi)
-        self.ci.project = "MyPiCarX"
+        self.ci.project = "xWalk-rpi5"
         self.ci.branch = "main"
-        self.ci.github_remote = "git@github.com:example/MyPiCarX.git"
+        self.ci.github_remote = "git@github.com:example/xWalk-rpi5.git"
         self.ci.github_branch = "main"
         self.ci.github_push_enabled = True
         self.ci.github_direct_push_owner_email = "owner@example.test"
@@ -38,7 +38,7 @@ class XWalkGerritCiTest(unittest.TestCase):
         """Return one target-project event with a current patch-set payload."""
 
         change: dict[str, object] = {
-            "project": "MyPiCarX",
+            "project": "xWalk-rpi5",
             "branch": "main",
         }
         if wip is not None:
@@ -83,8 +83,8 @@ class XWalkGerritCiTest(unittest.TestCase):
         event = self.verification_event("comment-added", False)
         self.assertFalse(self.ci.matching_verification_event(event))
 
-    def test_exact_mypicarx_destination_is_allowed(self) -> None:
-        """Allow only the configured MyPiCarX main synchronization."""
+    def test_exact_xwalk_rpi5_destination_is_allowed(self) -> None:
+        """Allow only the configured xWalk-rpi5 main synchronization."""
 
         self.assertTrue(self.ci.validate_github_destination())
 
@@ -94,6 +94,11 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.ci.github_remote = "git@github.com:example/xWalkHal.git"
         self.assertFalse(self.ci.validate_github_destination())
 
+    def test_xwalk_tool_is_not_a_ci_product_repository(self) -> None:
+        """Keep administration tooling out of component and integration CI selection."""
+
+        self.assertNotIn("xWalkTool", self.ci.repositories)
+
     def test_disabled_github_push_is_rejected(self) -> None:
         """Require the explicit GitHub synchronization enable switch."""
 
@@ -101,7 +106,7 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.assertFalse(self.ci.validate_github_destination())
 
     def test_non_main_integration_branch_is_rejected(self) -> None:
-        """Reject any source branch other than MyPiCarX main."""
+        """Reject any source branch other than xWalk-rpi5 main."""
 
         self.ci.branch = "review"
         self.assertFalse(self.ci.validate_github_destination())
@@ -125,18 +130,18 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.assertTrue(self.ci.matching_uplift_event(event))
 
     def test_integration_project_never_uplifts_itself(self) -> None:
-        """Keep MyPiCarX submission on the guarded GitHub path."""
+        """Keep xWalk-rpi5 submission on the guarded GitHub path."""
 
         self.ci.uplift_enabled = True
         event = {
             "type": "change-merged",
-            "change": {"project": "MyPiCarX", "branch": "main", "number": 153},
+            "change": {"project": "xWalk-rpi5", "branch": "main", "number": 153},
             "newRev": "1" * 40,
         }
         self.assertFalse(self.ci.matching_uplift_event(event))
 
     def test_module_checkout_uses_private_integration_baseline(self) -> None:
-        """Overlay a module patch set onto exact MyPiCarX submodules."""
+        """Overlay a module patch set onto exact xWalk-rpi5 submodules."""
 
         self.ci.project = "xWalkHal"
         self.ci.user = "ci"
@@ -145,7 +150,7 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.ci.private_key = pathlib.Path("/key")
         self.ci.state_directory = pathlib.Path("/state")
         commands = [command for command, unused_environment in self.ci.checkout_commands("refs/changes/1")]
-        self.assertIn("/MyPiCarX", commands[1][-1])
+        self.assertIn("/xWalk-rpi5", commands[1][-1])
         self.assertIn(["git", "submodule", "update", "--init", "--recursive"], commands)
         self.assertIn(
             ["git", "-C", "xWalkHal", "fetch", "origin", "refs/changes/1"], commands

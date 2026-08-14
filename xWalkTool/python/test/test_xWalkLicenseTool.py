@@ -198,7 +198,9 @@ class XWalkLicenseToolTest(unittest.TestCase):
     def test_magic_header_and_fixed_output_path(self) -> None:
         """The output uses the version header and xWalkLibrary location."""
         self.tool.encrypt(self.variables)
-        expected_path = self.project_root / "xWalkLibrary" / "X_WALK_LICENSE.KEY"
+        expected_path = (
+            self.project_root / "xWalk-rpi5" / "xWalkLibrary" / "X_WALK_LICENSE.KEY"
+        )
         self.assertEqual(self.tool.license_path, expected_path)
         self.assertTrue(expected_path.read_bytes().startswith(b"XWL1"))
 

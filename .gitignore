@@ -37,8 +37,8 @@ CMakeUserPresets.json
 *.la
 *.so
 *.so.*
-!/xWalkLibrary/aarch64/lib/libvosk.so
-!/xWalkLibrary/x86_64/lib/libvosk.so
+!/xWalk-rpi5/xWalkLibrary/aarch64/lib/libvosk.so
+!/xWalk-rpi5/xWalkLibrary/x86_64/lib/libvosk.so
 *.dylib
 *.dll
 *.exe
@@ -118,8 +118,8 @@ Desktop.ini
 # Local deployment configuration and credentials
 .netrc
 *.netrc
-/xWalkLibrary/X_WALK_LICENSE.KEY
-/xWalkController/xWalkConfig/picar-x.local.conf
+/xWalk-rpi5/xWalkLibrary/X_WALK_LICENSE.KEY
+/xWalk-rpi5/xWalkController/xWalkConfig/picar-x.local.conf
 **/xWalkLicense.*.json
 **/xWalkLicense.*.cfg
 !/xWalkTool/environment/xWalkLicense.cfg

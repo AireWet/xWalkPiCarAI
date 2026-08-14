@@ -33,7 +33,7 @@ class XWalkGerritAclTest(unittest.TestCase):
     def test_private_repository_blocks_inherited_read(self) -> None:
         """Stop inherited read without denying explicitly allowed identities."""
 
-        permissions = self.permissions("xWalkTool")
+        permissions = self.permissions("xWalkAudioResources")
         self.assertIn(
             ("refs/*", "exclusiveGroupPermissions", "inherited-read", "read"), permissions
         )
@@ -51,11 +51,17 @@ class XWalkGerritAclTest(unittest.TestCase):
     def test_ci_can_upload_only_integration_reviews(self) -> None:
         """Grant uplift upload to CI only in the private superproject."""
 
-        integration = self.permissions("MyPiCarX")
+        integration = self.permissions("xWalk-rpi5")
         component = self.permissions("xWalkAgent")
         permission = ("refs/for/refs/heads/main", "push", "ci", "ALLOW")
         self.assertIn(permission, integration)
         self.assertNotIn(permission, component)
+
+    def test_xwalk_tool_is_not_a_product_repository(self) -> None:
+        """Keep administration and migration tooling outside the product repository set."""
+
+        with self.assertRaises(ValueError):
+            rules("xWalkTool", "owners", "partners", "ci", False)
 
     def test_direct_documentation_push_defaults_off(self) -> None:
         """Require an explicit option before partners can bypass review."""
@@ -73,7 +79,7 @@ class XWalkGerritAclTest(unittest.TestCase):
         """Replace stale access sections without losing project settings."""
 
         existing = "[project]\n\tdescription = retained\n[access \"refs/*\"]\n\tread = group old\n"
-        rewritten = config_text(existing, "xWalkTool", "owners", "partners", "ci", False)
+        rewritten = config_text(existing, "xWalkAudioResources", "owners", "partners", "ci", False)
         self.assertIn("description = retained", rewritten)
         self.assertNotIn("group old", rewritten)
         self.assertIn("exclusiveGroupPermissions = read", rewritten)

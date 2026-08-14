@@ -43,7 +43,7 @@ xWalkTool/
 │   ├── shell-script/
 │   │   ├── gerrit-setup.sh
 │   │   └── multi-repository provisioning, migration, uplift, and synchronization tools
-│   └── DevloperNote/
+│   └── xWalk-rpi5/DevloperNote/
 │       ├── index.md
 │       └── Doc/
 │           └── note/
@@ -160,7 +160,7 @@ xWalkTool/python/xWalkLicenseTool decrypt --output /tmp/xWalkLicense.decrypted.j
 ```
 
 Only the empty model template may be committed. The repository ignores
-`xWalkLibrary/X_WALK_LICENSE.KEY`; authenticated ciphertext is deployment-specific
+`xWalk-rpi5/xWalkLibrary/X_WALK_LICENSE.KEY`; authenticated ciphertext is deployment-specific
 and must never be committed or pushed. Filled templates, decrypted files, and
 the generated decryption key must also remain outside Git. See the detailed
 licence-key guide for deployment and security limitations.
@@ -303,7 +303,7 @@ With no argument, the script configures, builds, and runs the complete host CTes
 meaningful argument is `clean`; the script does not currently provide a help option. A normal invocation configures
 `xWalkController`
 with the host backend, a Debug build, and `compile_commands.json`. It writes only below
-`xWalkController/build-eclipse-host` and does not select Raspberry Pi backends.
+`xWalk-rpi5/xWalkController/build-eclipse-host` and does not select Raspberry Pi backends.
 
 ### Coverage
 

@@ -13,11 +13,11 @@ import sys
 PUBLIC = {"DevloperNote", "xWalkHal", "xWalkLibrary", "xWalkTrace"}
 PARTNER_REVIEW = {"DevloperNote", "xWalkHal", "xWalkController", "xWalkLibrary", "xWalkTrace"}
 PARTNER_READ = PARTNER_REVIEW | {"xWalkIW", "xWalkAgent"}
-PRIVATE_PARTNER = {"xWalkTool", "xWalkAudioResources", "MyPiCarX"}
+PRIVATE_PARTNER = {"xWalkAudioResources", "xWalk-rpi5"}
 REPOSITORIES = (
     "xWalk-Projects",
     "DevloperNote", "xWalkAgent", "xWalkAudioResources", "xWalkController", "xWalkHal",
-    "xWalkIW", "xWalkLibrary", "xWalkTool", "xWalkTrace", "MyPiCarX",
+    "xWalkIW", "xWalkLibrary", "xWalkTrace", "xWalk-rpi5",
 )
 
 
@@ -75,7 +75,7 @@ def rules(repository: str, owner: str, partner: str, ci: str, direct_devnote: bo
                 "refs/heads/main", "push", partner, "ALLOW",
                 "Explicit optional setting permits direct documentation push.",
             ))
-    if repository == "MyPiCarX":
+    if repository == "xWalk-rpi5":
         result.append(Rule(
             "refs/for/refs/heads/main", "push", ci, "ALLOW",
             "CI uploads verified automatic integration uplifts for review.",

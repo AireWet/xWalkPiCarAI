@@ -30,8 +30,8 @@ export GERRIT_ADMIN_USER="joxy"
 export GERRIT_ADMIN_NAME="Joxy John"
 export GERRIT_ADMIN_ROLE="Student"
 export GERRIT_ADMIN_EMAIL="joxjoh24@student.hh.se"
-export GERRIT_PROJECT="xWalkPiCarAI"
-export GERRIT_BRANCH="master"
+export GERRIT_PROJECT="xWalk-rpi5"
+export GERRIT_BRANCH="main"
 export GERRIT_HTTPS_PORT="18443"
 export GERRIT_SSH_PORT="29418"
 export GERRIT_HTTP_PORT="8080"
@@ -199,7 +199,7 @@ For the assessed local host, configure:
 
 - web review: `https://GERRIT_SERVER_HOST:GERRIT_HTTPS_PORT/`;
 - Gerrit SSH: `GERRIT_SERVER_HOST:GERRIT_SSH_PORT`;
-- project: `xWalkPiCarAI`;
+- project: `xWalk-rpi5`;
 - review branch: `master`.
 
 Assess, install, and later restart the local instance with:
@@ -229,7 +229,7 @@ for the administrator workflow and deployment limitations.
 ## Multi-repository migration
 
 The guarded multi-repository tools use `config/multi-repo.conf`. They prepare
-nine component repositories and the private `MyPiCarX` integration repository.
+eight component repositories and the private `xWalk-rpi5` integration repository.
 They never create component repositories on GitHub, edit Gerrit's internal Git
 directories, force-push the source monorepo, or convert this working tree in
 place.
@@ -254,13 +254,19 @@ initial `refs/heads/main` import, then separately set
 Prepare a separate integration clone containing exact Gerrit gitlinks:
 
 ```bash
-export XWALK_INTEGRATION_OUTPUT_DIR="/safe/new/MyPiCarX-integration"; export XWALK_CONFIRM_SUBMODULES="CREATE_INTEGRATION_CLONE"; xWalkTool/gerrit/shell-script/gerrit-submodule-migrate.sh --apply
+export XWALK_INTEGRATION_OUTPUT_DIR="/safe/new/xWalk-rpi5"; export XWALK_CONFIRM_SUBMODULES="CREATE_INTEGRATION_CLONE"; xWalkTool/gerrit/shell-script/gerrit-submodule-migrate.sh --apply
+```
+
+Plan one coordinated uplift for submitted changes sharing a Gerrit topic:
+
+```bash
+xWalkTool/gerrit/shell-script/gerrit-topic-uplift.sh --dry-run TOPIC xWalkLibrary FULL_COMMIT CHANGE xWalkHal FULL_COMMIT CHANGE
 ```
 
 Normal module upload:
 
 ```bash
-cd MyPiCarX/xWalkHal && git switch main && git pull --ff-only origin main && git add . && git commit -s -m "Update HAL implementation" && git push origin HEAD:refs/for/main
+cd xWalk-rpi5/xWalkHal && git switch main && git pull --ff-only origin main && git add . && git commit -s -m "Update HAL implementation" && git push origin HEAD:refs/for/main
 ```
 
 Existing integration clones synchronize exact recorded revisions with:

@@ -4,7 +4,7 @@ set -eu
 
 SCRIPT_DIRECTORY=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 REPOSITORY_ROOT=$(CDPATH='' cd -- "${SCRIPT_DIRECTORY}/../.." && pwd)
-BUILD_DIRECTORY="${REPOSITORY_ROOT}/xWalkController/build-eclipse-host"
+BUILD_DIRECTORY="${REPOSITORY_ROOT}/xWalk-rpi5/xWalkController/build-eclipse-host"
 
 if [ "${1:-}" = "clean" ]
 then

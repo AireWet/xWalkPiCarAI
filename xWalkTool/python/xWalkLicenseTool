@@ -49,7 +49,9 @@ class XWalkLicenseTool:
             if project_root is not None
             else Path(__file__).resolve().parents[2]
         )
-        self.license_path = self.project_root / "xWalkLibrary" / "X_WALK_LICENSE.KEY"
+        self.license_path = (
+            self.project_root / "xWalk-rpi5" / "xWalkLibrary" / "X_WALK_LICENSE.KEY"
+        )
 
     @classmethod
     def validate_variables(cls, variables: object) -> dict[str, str]:

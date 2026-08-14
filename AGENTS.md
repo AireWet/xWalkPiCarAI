@@ -9,7 +9,7 @@ read and follow both knowledge-base documents:
 - [`.agents/gudlines/DOCUMENTATION_GUIDELINES.md`](.agents/gudlines/DOCUMENTATION_GUIDELINES.md)
 
 Treat these files as the coding, architecture, and documentation knowledge base
-for the complete `MyPiCarX` workspace, including `xWalkLibrary/common`, `xWalkHal`,
+for the complete `MyPiCarX` workspace, including `xWalk-rpi5/xWalkLibrary/common`, `xWalkHal`,
 `xWalkAgent`, and `xWalkController`.
 
 Apply the guide to every future implementation. Preserve intentional existing
@@ -50,29 +50,28 @@ HAT setup is connected and safe.
 
 ## Gerrit-only publication
 
-Never push repository changes directly to GitHub, including through the
-`origin` or `github-actions` remotes. Commit changes locally, then upload them
-only to Gerrit for review with:
+Never push component changes directly to GitHub. Commit them in their
+independent component repository and upload them only to Gerrit `main` with:
 
 ```bash
-git push gerrit HEAD:refs/for/master
+git push origin HEAD:refs/for/main
 ```
 
 An active upload triggers Gerrit CI automatically. To defer CI, upload the
 change as WIP:
 
 ```bash
-git push gerrit HEAD:refs/for/master%wip
+git push origin HEAD:refs/for/main%wip
 ```
 
 For a WIP change, Gerrit's **Mark As Active** button is the Activate action.
 Clearing WIP through that button triggers CI for the current patch set. Moving
 an active change into WIP must not trigger CI.
 
-Only Joxy (`joxjoh24@student.hh.se`) may merge into GitHub `master`. After
-Gerrit's **Submit** action, the CI service may mirror a directly applicable
-Joxy-owned change to GitHub `master`. A submitted change owned by anyone else,
-or a change stacked on GitHub work still awaiting review, must be pushed to the
-dedicated GitHub review branch and presented to Joxy as a pull request. Do not
-use a direct GitHub push as a preliminary, backup, or alternate publication
+GitHub contains only the integrated `xWalk-rpi5` repository. Component
+repositories must not have GitHub remotes. After an integration change passes
+complete CI, receives approval, and is submitted to Gerrit `xWalk-rpi5/main`,
+the dedicated synchronization service may fast-forward that exact submitted
+commit to GitHub `xWalk-rpi5/main`. Do not use a direct, force, mirror, wildcard,
+or component GitHub push as a preliminary, backup, or alternate publication
 path.

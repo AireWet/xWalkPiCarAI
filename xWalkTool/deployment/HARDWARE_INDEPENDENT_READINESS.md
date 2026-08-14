@@ -53,7 +53,7 @@ report is simulated configuration evidence, not device discovery or hardware
 verification.
 
 The Robot HAT simulator is documented in
-[`xWalkHal/simulation/xWalkRobotHat/README.md`](../../xWalkHal/simulation/xWalkRobotHat/README.md).
+[`xWalk-rpi5/xWalkHal/simulation/xWalkRobotHat/README.md`](../../xWalkHal/simulation/xWalkRobotHat/README.md).
 It covers the default `0x14` I2C address, register state, PWM P0 through P15, ADC
 A0 through A7, GPIO, grayscale values, ultrasonic distance, battery voltage,
 encoded camera frames, deterministic event order and logical delays, and
@@ -76,7 +76,7 @@ cover entering and standing pedestrians, vehicle/pedestrian risk, bicycle,
 multiple users, occlusion, poor lighting, motion blur, empty road, false-positive
 challenge, camera interruption and normal end-of-video. Their immutable sources,
 licenses, transformations and SHA-256 values are recorded in
-`xWalkAgent/xWalkVision/test/assets/manifests/manifest.json`; behavior annotations
+`xWalk-rpi5/xWalkAgent/xWalkVision/test/assets/manifests/manifest.json`; behavior annotations
 are separate and validated before decode tests. No trained YOLO or Random Forest artifact is included, so
 these tests establish media and control-flow safety rather than model accuracy.
 

@@ -39,7 +39,7 @@ deactivate
 ## Licence tool
 
 `xWalkLicenseTool` encrypts non-secret model selections into the fixed
-`xWalkLibrary/X_WALK_LICENSE.KEY` path. Copy the empty model template outside
+`xWalk-rpi5/xWalkLibrary/X_WALK_LICENSE.KEY` path. Copy the empty model template outside
 the repository, restrict the copy, and fill only model values in that external file:
 
 ```sh

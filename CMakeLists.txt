@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.16)
 
 project(xWalk VERSION 1.0.0 LANGUAGES CXX)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/xWalkLibrary/XWalkDependencies.cmake)
+set(XWALK_RPI5_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/xWalk-rpi5")
+
+include(${XWALK_RPI5_ROOT}/xWalkLibrary/XWalkDependencies.cmake)
 include(CTest)
 include(GNUInstallDirs)
 
@@ -273,50 +275,50 @@ else()
     message(STATUS "xWalk HAL production mode: verification targets are disabled")
 endif()
 
-add_subdirectory(xWalkLibrary/common)
-add_subdirectory(xWalkIW)
-add_subdirectory(xWalkTrace)
-add_subdirectory(xWalkHal/interface/xWalkI2c)
-add_subdirectory(xWalkHal/interface/xWalkSpi)
-add_subdirectory(xWalkHal/interface/xWalkGpio)
-add_subdirectory(xWalkHal/interface/xWalkAudio)
-add_subdirectory(xWalkHal/interface/xWalkConfig)
-add_subdirectory(xWalkHal/interface/xWalkUtils)
-add_subdirectory(xWalkHal/interface/xWalkLanguageModel)
-add_subdirectory(xWalkHal/device/xWalkPwm)
-add_subdirectory(xWalkHal/device/xWalkAdc)
-add_subdirectory(xWalkHal/device/xWalkServo)
-add_subdirectory(xWalkHal/device/xWalkAdxl345)
-add_subdirectory(xWalkHal/device/xWalkUltrasonic)
-add_subdirectory(xWalkHal/device/xWalkCamera)
-add_subdirectory(xWalkHal/device/xWalkUserButton)
-add_subdirectory(xWalkHal/sensor/xWalkLineTracker)
-add_subdirectory(xWalkHal/sensor/xWalkMotor)
-add_subdirectory(xWalkHal/sensor/xWalkLed)
-add_subdirectory(xWalkHal/sensor/xWalkBuzzer)
-add_subdirectory(xWalkHal/layer1/xWalkMusic)
-add_subdirectory(xWalkHal/layer1/xWalkSpeaker)
-add_subdirectory(xWalkHal/layer1/xWalkBoardControl)
-add_subdirectory(xWalkHal/layer1/xWalkRobot)
-add_subdirectory(xWalkHal/layer1/xWalkGPT)
-add_subdirectory(xWalkHal/layer1/xWalkVoiceAssistant)
+add_subdirectory(xWalk-rpi5/xWalkLibrary/common)
+add_subdirectory(xWalk-rpi5/xWalkIW)
+add_subdirectory(xWalk-rpi5/xWalkTrace)
+add_subdirectory(xWalk-rpi5/xWalkHal/interface/xWalkI2c)
+add_subdirectory(xWalk-rpi5/xWalkHal/interface/xWalkSpi)
+add_subdirectory(xWalk-rpi5/xWalkHal/interface/xWalkGpio)
+add_subdirectory(xWalk-rpi5/xWalkHal/interface/xWalkAudio)
+add_subdirectory(xWalk-rpi5/xWalkHal/interface/xWalkConfig)
+add_subdirectory(xWalk-rpi5/xWalkHal/interface/xWalkUtils)
+add_subdirectory(xWalk-rpi5/xWalkHal/interface/xWalkLanguageModel)
+add_subdirectory(xWalk-rpi5/xWalkHal/device/xWalkPwm)
+add_subdirectory(xWalk-rpi5/xWalkHal/device/xWalkAdc)
+add_subdirectory(xWalk-rpi5/xWalkHal/device/xWalkServo)
+add_subdirectory(xWalk-rpi5/xWalkHal/device/xWalkAdxl345)
+add_subdirectory(xWalk-rpi5/xWalkHal/device/xWalkUltrasonic)
+add_subdirectory(xWalk-rpi5/xWalkHal/device/xWalkCamera)
+add_subdirectory(xWalk-rpi5/xWalkHal/device/xWalkUserButton)
+add_subdirectory(xWalk-rpi5/xWalkHal/sensor/xWalkLineTracker)
+add_subdirectory(xWalk-rpi5/xWalkHal/sensor/xWalkMotor)
+add_subdirectory(xWalk-rpi5/xWalkHal/sensor/xWalkLed)
+add_subdirectory(xWalk-rpi5/xWalkHal/sensor/xWalkBuzzer)
+add_subdirectory(xWalk-rpi5/xWalkHal/layer1/xWalkMusic)
+add_subdirectory(xWalk-rpi5/xWalkHal/layer1/xWalkSpeaker)
+add_subdirectory(xWalk-rpi5/xWalkHal/layer1/xWalkBoardControl)
+add_subdirectory(xWalk-rpi5/xWalkHal/layer1/xWalkRobot)
+add_subdirectory(xWalk-rpi5/xWalkHal/layer1/xWalkGPT)
+add_subdirectory(xWalk-rpi5/xWalkHal/layer1/xWalkVoiceAssistant)
 
 if(XWALK_HAL_BUILD_HOST)
-    add_subdirectory(xWalkHal/simulation/xWalkRobotHat)
-    add_subdirectory(xWalkHal/interface/test)
-    add_subdirectory(xWalkHal/device/test)
-    add_subdirectory(xWalkHal/sensor/test)
-    add_subdirectory(xWalkHal/layer1/test)
+    add_subdirectory(xWalk-rpi5/xWalkHal/simulation/xWalkRobotHat)
+    add_subdirectory(xWalk-rpi5/xWalkHal/interface/test)
+    add_subdirectory(xWalk-rpi5/xWalkHal/device/test)
+    add_subdirectory(xWalk-rpi5/xWalkHal/sensor/test)
+    add_subdirectory(xWalk-rpi5/xWalkHal/layer1/test)
 endif()
 
 if(XWALK_HAL_BUILD_RPI)
-    add_subdirectory(xWalkHal/xWalkTest/xExample)
+    add_subdirectory(xWalk-rpi5/xWalkHal/xWalkTest/xExample)
 endif()
 if(BUILD_TESTING)
-    add_subdirectory(xWalkHal/xWalkTest/xSequenceTest)
+    add_subdirectory(xWalk-rpi5/xWalkHal/xWalkTest/xSequenceTest)
 endif()
 if(XWALK_HAL_BUILD_CLI OR XWALK_HAL_BUILD_HOST OR XWALK_HAL_BUILD_RPI)
-    add_subdirectory(xWalkController)
+    add_subdirectory(xWalk-rpi5/xWalkController)
 endif()
 if(XWALK_BUILD_FUZZERS)
     add_subdirectory(xWalkTool/fuzz)
@@ -371,7 +373,7 @@ if(XWALK_HAL_BUILD_RPI)
         xWalkUtilsLinux)
 endif()
 if(XWALK_HAL_BUILD_CENTRAL_TESTS)
-    add_subdirectory(xWalkHal/xWalkTest/xGoogleTest)
+    add_subdirectory(xWalk-rpi5/xWalkHal/xWalkTest/xGoogleTest)
 endif()
 
 if(BUILD_TESTING)
@@ -429,17 +431,17 @@ if(BUILD_TESTING)
         COMMAND "${CMAKE_COMMAND}"
             -DCMAKE_SYSTEM_PROCESSOR=x86_64
             -DXWALK_EXPECTED_ARCHITECTURE=x86_64
-            -P "${CMAKE_CURRENT_SOURCE_DIR}/xWalkLibrary/test/xWalkLibraryArchitectureTest.cmake")
+            -P "${XWALK_RPI5_ROOT}/xWalkLibrary/test/xWalkLibraryArchitectureTest.cmake")
     add_test(NAME xWalkLibraryAarch64ArchitectureHostTest
         COMMAND "${CMAKE_COMMAND}"
             -DCMAKE_SYSTEM_PROCESSOR=aarch64
             -DXWALK_EXPECTED_ARCHITECTURE=aarch64
-            -P "${CMAKE_CURRENT_SOURCE_DIR}/xWalkLibrary/test/xWalkLibraryArchitectureTest.cmake")
+            -P "${XWALK_RPI5_ROOT}/xWalkLibrary/test/xWalkLibraryArchitectureTest.cmake")
     add_test(NAME xWalkLibraryUnsupportedArchitectureHostTest
         COMMAND "${CMAKE_COMMAND}"
             -DCMAKE_SYSTEM_PROCESSOR=armv7l
             -DXWALK_EXPECTED_ARCHITECTURE=unsupported
-            -P "${CMAKE_CURRENT_SOURCE_DIR}/xWalkLibrary/test/xWalkLibraryArchitectureTest.cmake")
+            -P "${XWALK_RPI5_ROOT}/xWalkLibrary/test/xWalkLibraryArchitectureTest.cmake")
     set_tests_properties(
         xWalkLibraryX86ArchitectureHostTest
         xWalkLibraryAarch64ArchitectureHostTest
@@ -458,7 +460,7 @@ if(XWALK_CPPCHECK_EXECUTABLE AND CMAKE_EXPORT_COMPILE_COMMANDS)
             "--project=${CMAKE_BINARY_DIR}/compile_commands.json"
             --enable=warning,performance,portability
             --error-exitcode=1
-            "-i${CMAKE_CURRENT_SOURCE_DIR}/xWalkIW/auto-gen"
+            "-i${XWALK_RPI5_ROOT}/xWalkIW/auto-gen"
             --suppress=missingIncludeSystem
             --suppress=assertWithSideEffect
             "--suppressions-list=${XWALK_CPPCHECK_SUPPRESSIONS}"
@@ -469,7 +471,7 @@ if(XWALK_CPPCHECK_EXECUTABLE AND CMAKE_EXPORT_COMPILE_COMMANDS)
             "--project=${CMAKE_BINARY_DIR}/compile_commands.json"
             --enable=warning,style,performance,portability
             --inconclusive
-            "-i${CMAKE_CURRENT_SOURCE_DIR}/xWalkIW/auto-gen"
+            "-i${XWALK_RPI5_ROOT}/xWalkIW/auto-gen"
             --suppress=missingIncludeSystem
             "--suppressions-list=${XWALK_CPPCHECK_SUPPRESSIONS}"
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"

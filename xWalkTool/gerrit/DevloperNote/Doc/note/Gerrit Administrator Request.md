@@ -16,16 +16,16 @@ Gerrit operator:
 For the multi-repository migration, also authorize or provide:
 
 - creation of `xWalk-Owners`, `xWalk-Partners`, and non-administrator `xWalk-CI` groups;
-- creation of permission-only `xWalk-Projects`, nine component projects, and private `MyPiCarX`;
+- creation of permission-only `xWalk-Projects`, eight component projects, and private `xWalk-rpi5`;
 - owner-approved `refs/meta/config` updates implementing the documented matrix;
 - one-time initial `main` imports after split-history verification;
 - separate individual partner and CI accounts with separate public SSH keys;
-- CI `Verified -1..+1` and `MyPiCarX` review-upload rights without administration;
+- CI `Verified -1..+1` and `xWalk-rpi5` review-upload rights without administration;
 - confirmation that the configured Gerrit ports are reachable from the eduVPN subnet.
 
 The request does not include component GitHub repositories. Only the submitted
-and verified private `MyPiCarX` integration branch may later synchronize to the
-single configured GitHub `MyPiCarX` repository.
+and verified private `xWalk-rpi5` integration branch may later synchronize to the
+single configured GitHub `xWalk-rpi5` repository.
 
 Requested host: `@@SERVER_IP@@`
 

@@ -14,8 +14,8 @@ find . \
     -path './build-host' -prune -o \
     -path './build-rpi' -prune -o \
     -path './build-aarch64' -prune -o \
-    -path './xWalkLibrary/x86_64' -prune -o \
-    -path './xWalkLibrary/aarch64' -prune -o \
+    -path './xWalk-rpi5/xWalkLibrary/x86_64' -prune -o \
+    -path './xWalk-rpi5/xWalkLibrary/aarch64' -prune -o \
     -path '*/third_party/*' -prune -o \
     -path '*/auto-gen/*' -prune -o \
     -type f -name '*.sh' -print0 |

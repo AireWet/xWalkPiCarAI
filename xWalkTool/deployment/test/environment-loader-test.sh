@@ -6,7 +6,7 @@ repository_root="$(CDPATH='' cd -- "$(dirname -- "$0")/../../.." && pwd)"
 fixture_root="$(mktemp -d)"
 trap 'rm -rf "$fixture_root"' EXIT
 
-mkdir -p "$fixture_root/xWalkLibrary" "$fixture_root/xWalkTool/python" \
+mkdir -p "$fixture_root/xWalk-rpi5/xWalkLibrary" "$fixture_root/xWalkTool/python" \
     "$fixture_root/xWalkTool/shell" "$fixture_root/xWalkTool/environment"
 cp "$repository_root/xWalkTool/python/xWalkLicenseTool" \
     "$fixture_root/xWalkTool/python/xWalkLicenseTool"
@@ -46,7 +46,7 @@ decryption_key="$(
     printf '%s\n' "$encryption_output" | sed -n '/^Decryption key:$/ {n;p;}'
 )"
 test -n "$decryption_key"
-license_file="$fixture_root/xWalkLibrary/X_WALK_LICENSE.KEY"
+license_file="$fixture_root/xWalk-rpi5/xWalkLibrary/X_WALK_LICENSE.KEY"
 test "$(stat -c '%a' "$license_file")" = 600
 
 decrypted_fixture="$fixture_root/decrypted-models.json"

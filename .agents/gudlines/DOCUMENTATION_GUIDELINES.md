@@ -21,7 +21,7 @@ Keep cross-module documentation in `DevloperNote` and module-specific behavior
 in the owning module README. Use this documentation layout:
 
 ```text
-DevloperNote/
+xWalk-rpi5/DevloperNote/
     Doc/
         note/                Markdown documentation pages
         image/               Referenced hardware and project images
@@ -29,16 +29,16 @@ DevloperNote/
 
 Documentation must:
 
-- keep mirrored Markdown in `DevloperNote/Doc/note` and copied images in
-  `DevloperNote/Doc/image`;
+- keep mirrored Markdown in `xWalk-rpi5/DevloperNote/Doc/note` and copied images in
+  `xWalk-rpi5/DevloperNote/Doc/image`;
 - omit CMake files, make files, generated build directories, binaries, and
-  rendered output from `DevloperNote/Doc`;
-- maintain `DevloperNote/index.md` as the C++ architecture and module reference index;
-- name Markdown files under `DevloperNote/Doc/note` with readable title-case words separated by spaces;
+  rendered output from `xWalk-rpi5/DevloperNote/Doc`;
+- maintain `xWalk-rpi5/DevloperNote/index.md` as the C++ architecture and module reference index;
+- name Markdown files under `xWalk-rpi5/DevloperNote/Doc/note` with readable title-case words separated by spaces;
   preserve established uppercase acronyms such as `API`, `GPIO`, `I2C`, `MCU`, `PWM`, and `TTS`;
 - provide one `.md` page for every upstream documentation-source `.rst` page;
 - discard language-specific installation, imports, scripts, and API examples;
-- copy reusable hardware and project images into `DevloperNote/Doc/image` and
+- copy reusable hardware and project images into `xWalk-rpi5/DevloperNote/Doc/image` and
   reference them from the corresponding Markdown page;
 - omit installation, application, and language-specific screenshots, replacing
   each one with a descriptive heading and a `TODO:` placeholder;
@@ -56,7 +56,7 @@ Documentation must:
 - preserve upstream source and license attribution for adapted documentation.
 
 Do not copy generated HTML, Sphinx templates, translation catalogs, community
-advertising blocks, or unresolved substitution tokens into `DevloperNote/Doc`.
+advertising blocks, or unresolved substitution tokens into `xWalk-rpi5/DevloperNote/Doc`.
 
 ## File headers
 

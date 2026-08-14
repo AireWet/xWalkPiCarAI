@@ -20,6 +20,7 @@ expectation()
         partner:xWalkHal|partner:xWalkController|partner:xWalkLibrary|partner:xWalkTrace) echo review ;;
         partner:xWalkIW|partner:xWalkAgent) echo read ;;
         partner:*) echo deny ;;
+        ci:xWalk-rpi5) echo review-verify ;;
         ci:*) echo verify ;;
         owner:*) echo owner ;;
     esac
@@ -55,7 +56,8 @@ check_authenticated_read()
         result="deny"
     fi
     status=Verified
-    case "$expected:$result" in deny:deny|read:read|review:read|develop:read|verify:read|owner:read) ;;
+    case "$expected:$result" in
+        deny:deny|read:read|review:read|develop:read|verify:read|review-verify:read|owner:read) ;;
         *) status=Failed ;;
     esac
     xwalk_log "verify-$identity-access" "validation" "$repository" "$identity" "unchecked" \

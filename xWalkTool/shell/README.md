@@ -34,6 +34,8 @@ The recommended Python environment is documented in the
 | `run-clang-static-analyzer.sh` | Runs a clean Clang Static Analyzer build | Host-only |
 | `run-host-shellcheck.sh` | Checks all repository-owned shell scripts | Read-only |
 | `run-host-quality.sh` | Runs the complete host-quality workflow | Host-only |
+| `validate-integration-metadata.sh` | Validates eight exact Gerrit submodule gitlinks | Read-only |
+| `checkout-gerrit-submodules.sh` | Initializes private Gerrit submodules with a temporary SSH identity | CI-only |
 | `provision-hardware.sh` | Writes verified hardware identities to one configuration file | Hardware-specific |
 | `setup-rpi.sh` | Checks, previews, or applies Raspberry Pi provisioning | `--apply` is privileged |
 | `xWalkEnv.sh` | Combines authenticated models with private netrc credentials | Must be sourced |
@@ -102,6 +104,20 @@ xWalkTool/shell/setup-rpi.sh --help
 xWalkTool/shell/provision-hardware.sh --help
 ```
 
+## GitHub integration metadata
+
+GitHub Actions uses `validate-integration-metadata.sh` for metadata-only checks
+and `checkout-gerrit-submodules.sh` when a read-only Gerrit identity is
+available. The checkout helper validates metadata before it configures the
+temporary SSH command and initializes the exact recorded submodule commits.
+
+Neither helper pushes refs or configures GitHub remotes in component
+submodules. Metadata-only validation can be exercised without credentials:
+
+```sh
+XWALK_GITHUB_METADATA_ONLY=true xWalkTool/shell/checkout-gerrit-submodules.sh
+```
+
 ## Licence environment loader
 
 `xWalkEnv.sh` must be sourced so that it can export values into the current
@@ -111,7 +127,7 @@ shell:
 source xWalkTool/shell/xWalkEnv.sh
 ```
 
-The loader authenticates `xWalkLibrary/X_WALK_LICENSE.KEY` with
+The loader authenticates `xWalk-rpi5/xWalkLibrary/X_WALK_LICENSE.KEY` with
 `xWalkTool/python/xWalkLicenseTool`. It privately requests the decryption key,
 validates the decrypted model names against
 `xWalkTool/environment/xWalkLicense.cfg`, loads API credentials from the
@@ -124,10 +140,10 @@ before returning. The encrypted licence and netrc files must also have mode
 `0600`. Executing the script instead of sourcing it fails because a child
 process cannot update its parent shell environment.
 
-See the [licence-key workflow](../../DevloperNote/Doc/note/License%20Key%20Workflow.md)
+See the [licence-key workflow](../../xWalk-rpi5/DevloperNote/Doc/note/License%20Key%20Workflow.md)
 for encryption, decryption, virtual-environment setup, and key-storage rules.
 The dedicated
-[environment loader guide](../../DevloperNote/Doc/note/xWalk%20Environment%20Loader%20Guide.md)
+[environment loader guide](../../xWalk-rpi5/DevloperNote/Doc/note/xWalk%20Environment%20Loader%20Guide.md)
 documents the validation order, failure behavior, and shell-environment lifetime.
 
 ## Verification

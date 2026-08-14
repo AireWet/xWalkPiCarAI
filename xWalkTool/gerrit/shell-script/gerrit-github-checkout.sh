@@ -9,7 +9,7 @@ logger="$script_dir/../py-src/xWalkGerritChangeLog.py"
 log_checkout()
 {
     python3 "$logger" --operation "github-submodule-checkout" --category "CI" \
-        --repository "MyPiCarX" --target ".gitmodules" --previous-value "$1" \
+        --repository "xWalk-rpi5" --target ".gitmodules" --previous-value "$1" \
         --new-value "$2" --change-summary "$3" --change-explanation \
         "GitHub Actions may initialize only exact recorded Gerrit component revisions." \
         --requested-by "CI" --executed-by "GitHub-Actions" --mode "apply" \

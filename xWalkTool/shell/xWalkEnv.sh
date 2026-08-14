@@ -11,7 +11,7 @@ _xwalk_load_environment() {
 
     script_directory="$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
     repository_root="$(CDPATH='' cd -- "$script_directory/../.." && pwd)"
-    license_file="$repository_root/xWalkLibrary/X_WALK_LICENSE.KEY"
+    license_file="$repository_root/xWalk-rpi5/xWalkLibrary/X_WALK_LICENSE.KEY"
     license_tool="$repository_root/xWalkTool/python/xWalkLicenseTool"
     template_file="$repository_root/xWalkTool/environment/xWalkLicense.cfg"
 

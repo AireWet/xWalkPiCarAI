@@ -199,7 +199,7 @@ xWalkGPT
 Internal: xWalkBoardControl, xWalkLibraryCommon, xWalkAudio
 APT: libasound2-dev, alsa-utils, libatomic1, espeak-ng, libttspico-utils, linux-libc-dev, libi2c-dev,
   i2c-tools, gpiod
-Project runtime: `xWalkLibrary/{aarch64,x86_64}` supplies Vosk and `common` supplies its voice model
+Project runtime: `xWalk-rpi5/xWalkLibrary/{aarch64,x86_64}` supplies Vosk and `common` supplies its voice model
 
 xWalkVoiceAssistant
 Internal: xWalkGPT, xWalkLanguageModel, xWalkLibraryCommon

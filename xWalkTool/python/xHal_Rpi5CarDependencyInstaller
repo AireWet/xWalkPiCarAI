@@ -287,13 +287,21 @@ def vosk_status(repository_root: pathlib.Path = REPOSITORY_ROOT) -> tuple[bool, 
     if configured_library:
         library_path = pathlib.Path(configured_library)
     elif architecture is not None:
-        library_path = repository_root / "xWalkLibrary" / architecture / "lib" / "libvosk.so"
+        library_path = (
+            repository_root
+            / "xWalk-rpi5"
+            / "xWalkLibrary"
+            / architecture
+            / "lib"
+            / "libvosk.so"
+        )
     else:
         return False, f"xWalkLibrary has no Vosk runtime for {platform.machine()}"
     model_path = (
         pathlib.Path(configured_model)
         if configured_model
         else repository_root
+        / "xWalk-rpi5"
         / "xWalkLibrary"
         / "common"
         / "models"

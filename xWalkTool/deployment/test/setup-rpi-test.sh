@@ -11,13 +11,13 @@ mkdir -p "$fixture_root/etc" "$fixture_root/proc/device-tree" \
 printf 'ID=ubuntu\nVERSION_ID="24.04"\n' > "$fixture_root/etc/os-release"
 printf 'Raspberry Pi 5 Model B Rev 1.0\000' > "$fixture_root/proc/device-tree/model"
 printf '# retained fixture setting\ndtparam=audio=on\n' > "$fixture_root/boot/firmware/config.txt"
-cp "$repository_root/xWalkController/xWalkConfig/picar-x.conf" \
+cp "$repository_root/xWalk-rpi5/xWalkController/xWalkConfig/picar-x.conf" \
     "$fixture_root/var/lib/xwalk/picar-x.conf"
-cp -a "$repository_root/xWalkController/xWalkConfig/picar-x.d" \
+cp -a "$repository_root/xWalk-rpi5/xWalkController/xWalkConfig/picar-x.d" \
     "$fixture_root/var/lib/xwalk/picar-x.d"
-vosk_model_directory="$repository_root/xWalkLibrary/common/models/vosk"
+vosk_model_directory="$repository_root/xWalk-rpi5/xWalkLibrary/common/models/vosk"
 sed -i \
-    "s|^voice_vosk_library = .*|voice_vosk_library = $repository_root/xWalkLibrary/x86_64/lib/libvosk.so|" \
+    "s|^voice_vosk_library = .*|voice_vosk_library = $repository_root/xWalk-rpi5/xWalkLibrary/x86_64/lib/libvosk.so|" \
     "$fixture_root/var/lib/xwalk/picar-x.d/voice.conf"
 sed -i \
     "s|^voice_vosk_model = .*|voice_vosk_model = $vosk_model_directory/vosk-model-small-en-us-0.15|" \

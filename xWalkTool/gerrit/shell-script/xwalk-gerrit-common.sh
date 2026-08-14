@@ -9,12 +9,12 @@ xwalk_logger="$xwalk_root/py-src/xWalkGerritChangeLog.py"
 # shellcheck disable=SC2034 # These arrays are consumed by scripts that source this helper.
 xwalk_repositories=(
     DevloperNote xWalkAgent xWalkAudioResources xWalkController xWalkHal
-    xWalkIW xWalkLibrary xWalkTool xWalkTrace MyPiCarX
+    xWalkIW xWalkLibrary xWalkTrace xWalk-rpi5
 )
 # shellcheck disable=SC2034 # Consumed by scripts that source this helper.
 xwalk_components=(
     DevloperNote xWalkAgent xWalkAudioResources xWalkController xWalkHal
-    xWalkIW xWalkLibrary xWalkTool xWalkTrace
+    xWalkIW xWalkLibrary xWalkTrace
 )
 
 xwalk_load_config()
@@ -26,13 +26,14 @@ xwalk_load_config()
     : "${GERRIT_SSH_PORT:=29418}"
     : "${GERRIT_ADMIN_USERNAME:?Set GERRIT_ADMIN_USERNAME}"
     : "${GERRIT_CI_USERNAME:=xwalk-ci}"
+    : "${GERRIT_BASE_URL:=ssh://$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT}"
     : "${GERRIT_OWNER_GROUP:=xWalk-Owners}"
     : "${GERRIT_PARTNER_GROUP:=xWalk-Partners}"
     : "${GERRIT_CI_GROUP:=xWalk-CI}"
     : "${GERRIT_PARTNER_DEVNOTE_DIRECT_PUSH:=false}"
     : "${GERRIT_UPLIFT_AUTO_SUBMIT:=false}"
-    : "${GITHUB_MYPICARX_REMOTE:=}"
-    : "${GITHUB_MYPICARX_BRANCH:=main}"
+    : "${GITHUB_XWALK_RPI5_REMOTE:=}"
+    : "${GITHUB_XWALK_RPI5_BRANCH:=main}"
     : "${GITHUB_PUSH_ENABLED:=false}"
     case "$GERRIT_SERVER_HOST:$GERRIT_ADMIN_USERNAME" in
         *FROM_ASSESSMENT*|*GERRIT_ADMIN_USERNAME*)
@@ -50,6 +51,10 @@ xwalk_load_config()
     }
     [[ "$GERRIT_CI_USERNAME" =~ ^[A-Za-z0-9._-]+$ ]] || {
         echo "GERRIT_CI_USERNAME contains unsupported characters" >&2
+        return 2
+    }
+    [[ "$GERRIT_BASE_URL" =~ ^(ssh|https?)://[^[:space:]]+$ ]] || {
+        echo "GERRIT_BASE_URL must be an SSH or HTTP(S) Gerrit base URL" >&2
         return 2
     }
     local group setting

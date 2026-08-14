@@ -18,15 +18,15 @@ plan_component()
     local component="$1" verification=""
     [[ "$XWALK_MODE" != "dry-run" ]] || verification="Fixed allowlist entry validated"
     printf '[%s] convert %s to Gerrit submodule\n' "$XWALK_MODE" "$component"
-    xwalk_log "add-submodule" "submodule" "MyPiCarX" "$component" "tracked-directory" \
+    xwalk_log "add-submodule" "submodule" "xWalk-rpi5" "$component" "tracked-directory" \
         "exact-gerrit-gitlink" "Convert component directory to a Gerrit submodule" \
         "The private integration repository must record an exact verified component commit." \
         "$XWALK_STATUS" "$verification"
-    xwalk_log "set-submodule-url" "submodule" "MyPiCarX" ".gitmodules:$component:url" \
-        "none" "../$component" "Configure relative Gerrit submodule URL" \
-        "Relative URLs preserve the authenticated Gerrit host without a developer username." \
+    xwalk_log "set-submodule-url" "submodule" "xWalk-rpi5" ".gitmodules:$component:url" \
+        "none" "$GERRIT_BASE_URL/$component" "Configure Gerrit submodule URL" \
+        "Every integration component must resolve only through Gerrit." \
         "$XWALK_STATUS" "$verification"
-    xwalk_log "set-submodule-branch" "submodule" "MyPiCarX" ".gitmodules:$component:branch" \
+    xwalk_log "set-submodule-branch" "submodule" "xWalk-rpi5" ".gitmodules:$component:branch" \
         "none" "main" "Record the maintenance branch" \
         "Uplift discovery uses main while builds remain pinned to the gitlink." "$XWALK_STATUS" \
         "$verification"
@@ -34,22 +34,23 @@ plan_component()
 
 apply_component()
 {
-    local component="$1" url commit
-    url="ssh://$GERRIT_ADMIN_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/$component"
+    local component="$1" url clone_url commit
+    url="${GERRIT_BASE_URL%/}/$component"
+    clone_url="ssh://$GERRIT_ADMIN_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/$component"
     git -C "$output" rm -r --quiet -- "$component"
-    git -C "$output" submodule add --force -b main "$url" "$component"
-    git -C "$output" config -f .gitmodules "submodule.$component.url" "../$component"
+    git -C "$output" submodule add --force -b main "$clone_url" "$component"
+    git -C "$output" config -f .gitmodules "submodule.$component.url" "$url"
     commit="$(git -C "$output/$component" rev-parse HEAD)"
     git -C "$output" add .gitmodules "$component"
-    xwalk_log "add-submodule" "submodule" "MyPiCarX" "$component" "tracked-directory" "$commit" \
+    xwalk_log "add-submodule" "submodule" "xWalk-rpi5" "$component" "tracked-directory" "$commit" \
         "Added exact Gerrit component gitlink" \
         "The integration repository records a reproducible verified component revision." "Applied" \
         "gitlink and .gitmodules entry staged" "" "" "" "" "$commit"
-    xwalk_log "set-submodule-url" "submodule" "MyPiCarX" ".gitmodules:$component:url" \
-        "generated-absolute-url" "../$component" "Configured relative Gerrit submodule URL" \
-        "The URL inherits the authenticated Gerrit endpoint and contains no developer username." \
+    xwalk_log "set-submodule-url" "submodule" "xWalk-rpi5" ".gitmodules:$component:url" \
+        "none" "$url" "Configured Gerrit submodule URL" \
+        "The exact component repository remains hosted only by Gerrit." \
         "Applied" "git config -f .gitmodules read-back succeeded"
-    xwalk_log "set-submodule-branch" "submodule" "MyPiCarX" ".gitmodules:$component:branch" \
+    xwalk_log "set-submodule-branch" "submodule" "xWalk-rpi5" ".gitmodules:$component:branch" \
         "unset" "main" "Configured submodule maintenance branch" \
         "Automated uplift checks target the component main branch." "Applied" \
         "git config -f .gitmodules read-back succeeded"
@@ -57,12 +58,12 @@ apply_component()
 
 main()
 {
-    local component
+    local component file integration_remote
     for component in "${xwalk_components[@]}"; do
         [[ -d "$source_root/$component" ]] || { echo "Missing allowlisted component: $component" >&2; return 2; }
         [[ "$XWALK_MODE" == "dry-run" ]] && plan_component "$component"
     done
-    [[ "$XWALK_MODE" == "apply" ]] || return
+    [[ "$XWALK_MODE" == "apply" ]] || return 0
     [[ -z "$(git -C "$source_root" status --porcelain)" ]] || {
         echo "Submodule migration requires a clean source repository" >&2
         return 2
@@ -75,6 +76,19 @@ main()
     echo "Selected integration output: $output"
     git clone --quiet --no-local "$source_root" "$output"
     trap 'rm -rf -- "$output"' ERR INT TERM
+    mkdir -p "$output/scripts"
+    git -C "$output" mv xWalkTool scripts/integration
+    git -C "$output" rm -r --quiet -- scripts/integration/gerrit \
+        scripts/integration/xWalkJiraImport
+    git -C "$output" rm --quiet -- .github/workflows/host-quality.yml
+    while IFS= read -r -d '' file; do
+        sed -i 's#xWalkTool/#scripts/integration/#g' "$output/$file"
+    done < <(git -C "$output" grep -Il -z 'xWalkTool/' -- ':!scripts/integration/gerrit/**' || true)
+    git -C "$output" add --all
+    xwalk_log "relocate-integration-tools" "migration" "xWalk-rpi5" "scripts/integration" \
+        "xWalkTool" "controlled-top-level-CI-helpers" "Relocated integration support" \
+        "xWalkTool is not a product component or integration submodule." "Applied" \
+        "Gerrit administration and migration tooling excluded"
     for component in "${xwalk_components[@]}"; do apply_component "$component"; done
     git -C "$output" submodule sync --recursive
     git -C "$output" submodule update --init --recursive
@@ -82,11 +96,25 @@ main()
     git -C "$output" submodule foreach --quiet \
         'if git remote -v | grep -qi github; then echo "Forbidden GitHub remote in $name" >&2; exit 1; fi'
     git -C "$output" -c user.name=xWalk-Automation -c user.email=automation.invalid \
-        commit -s -m "Convert xWalk components to Gerrit submodules"
-    xwalk_log "validate-submodules" "validation" "MyPiCarX" ".gitmodules" "absent" "valid" \
+        commit -s -m "Create xWalk-rpi5 integration repository"
+    integration_remote="${GERRIT_BASE_URL%/}/xWalk-rpi5"
+    git -C "$output" remote set-url origin "$integration_remote"
+    xwalk_log "validate-submodules" "validation" "xWalk-rpi5" ".gitmodules" "absent" "valid" \
         "Validated exact Gerrit submodules" \
         "Reproducible integration requires exact commits and no component GitHub remotes." "Verified" \
         "Recursive initialization and remote policy checks succeeded"
+    if [[ "${XWALK_CONFIRM_INTEGRATION_UPLOAD:-}" == "PUSH_XWALK_RPI5_TO_GERRIT" ]]; then
+        git -C "$output" push origin HEAD:refs/for/main
+        xwalk_log "upload-initial-integration" "migration" "xWalk-rpi5" "refs/for/main" \
+            "not-uploaded" "uploaded" "Uploaded initial integration review" \
+            "The new product baseline must pass Gerrit review before submission." "Applied" \
+            "Gerrit accepted the explicit review refspec"
+    else
+        xwalk_log "upload-initial-integration" "migration" "xWalk-rpi5" "refs/for/main" \
+            "not-uploaded" "not-uploaded" "Skipped initial integration upload" \
+            "Explicit remote-write confirmation was unavailable." "Skipped" \
+            "Set XWALK_CONFIRM_INTEGRATION_UPLOAD=PUSH_XWALK_RPI5_TO_GERRIT"
+    fi
     trap - ERR INT TERM
     printf 'Prepared integration clone: %s\n' "$output"
 }
