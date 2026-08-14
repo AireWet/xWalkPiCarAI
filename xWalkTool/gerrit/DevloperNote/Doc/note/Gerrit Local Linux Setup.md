@@ -15,7 +15,7 @@ Run the assessment:
 xWalkTool/gerrit/local-linux/gerrit-local.sh assess
 ```
 
-The local configuration uses assessed Wi-Fi address `192.168.1.158`, HTTPS
+The local configuration requires an assessed Wi-Fi or Ethernet address, HTTPS
 port `18443`, and Gerrit SSH port `29419`. Its Gerrit 3.14.2 URL selects
 immutable official object generation `1783941312319403`. The downloaded WAR
 matched official bucket size and MD5 metadata before its SHA-256 was recorded.
@@ -47,8 +47,7 @@ Print the configured HTTPS address:
 git config --file "$HOME/gerrit-site/etc/gerrit.config" --get gerrit.canonicalWebUrl
 ```
 
-For the assessed host, the browser address is
-`https://192.168.1.158:18443/`.
+The printed browser address contains the assessed host and configured HTTPS port.
 
 Open that address locally after verifying and trusting the generated public
 certificate. Access from another LAN computer depends on existing host and

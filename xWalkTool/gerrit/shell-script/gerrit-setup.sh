@@ -39,8 +39,8 @@ load_conf()
     [ -r "$conf" ] || { echo "Missing Gerrit configuration: $conf" >&2; exit 2; }
     # shellcheck source=/dev/null
     . "$conf"
-    server_ip="${GERRIT_SERVER_IP:-${EDUVPN_SERVER_IP:-}}"
-    case "$server_ip" in
+    server_host="${GERRIT_SERVER_HOST:-${GERRIT_SERVER_IP:-${EDUVPN_SERVER_IP:-}}}"
+    case "$server_host" in
         ""|SERVER_IP_FROM_ASSESSMENT|LOCAL_LINUX_IP_FROM_ASSESSMENT)
             echo "Set the server IP in $conf" >&2
             exit 2
@@ -50,6 +50,13 @@ load_conf()
         echo "Set GERRIT_SHA256 in $conf" >&2
         exit 2
     }
+    storage_path="${GERRIT_STORAGE_PATH:-}"
+    http_port="${GERRIT_HTTP_PORT:-8080}"
+    ssh_port="${GERRIT_SSH_PORT:-29418}"
+    https_port="${GERRIT_HTTPS_PORT:-18443}"
+    http_listen_url="${GERRIT_HTTP_LISTEN_URL:-proxy-https://127.0.0.1:${http_port}/}"
+    canonical_web_url="${GERRIT_CANONICAL_WEB_URL:-https://${server_host}:${https_port}/}"
+    ssh_listen_address="${GERRIT_SSH_LISTEN_ADDRESS:-127.0.0.1:${ssh_port}}"
 }
 
 read_pass()
@@ -84,7 +91,8 @@ install()
     load_conf
     read_pass
     python3 "$installer" install \
-        --server-ip "$server_ip" \
+        --server-host "$server_host" \
+        --storage-path "$storage_path" \
         --gerrit-url "$GERRIT_URL" \
         --gerrit-sha256 "$GERRIT_SHA256" \
         --admin-username "$GERRIT_ADMIN_USER" \
@@ -93,9 +101,12 @@ install()
         --admin-email "$GERRIT_ADMIN_EMAIL" \
         --project-name "$GERRIT_PROJECT" \
         --project-branch "$GERRIT_BRANCH" \
-        --https-port "$GERRIT_HTTPS_PORT" \
-        --ssh-port "$GERRIT_SSH_PORT" \
-        --init-http-port "$GERRIT_HTTP_PORT" \
+        --https-port "$https_port" \
+        --ssh-port "$ssh_port" \
+        --http-port "$http_port" \
+        --http-listen-url "$http_listen_url" \
+        --canonical-web-url "$canonical_web_url" \
+        --ssh-listen-address "$ssh_listen_address" \
         --process-manager "$GERRIT_PROCESS_MANAGER"
     unset GERRIT_ADMIN_PASSWORD
     start
@@ -103,13 +114,21 @@ install()
 
 usage()
 {
-    echo "Usage: gerrit-setup.sh assess|install|start" >&2
+    echo "Usage: gerrit-setup.sh assess|validate-storage|install|start" >&2
     exit 2
 }
 
 [ "$#" -ge 1 ] || usage
 case "$1" in
     assess) [ "$#" -eq 1 ] || usage; need_inst; python3 "$installer" assess ;;
+    validate-storage)
+        [ "$#" -eq 1 ] || usage
+        need_inst
+        [ -r "$conf" ] || { echo "Missing Gerrit configuration: $conf" >&2; exit 2; }
+        # shellcheck source=/dev/null
+        . "$conf"
+        python3 "$installer" validate-storage --storage-path "${GERRIT_STORAGE_PATH:-}"
+        ;;
     install) [ "$#" -eq 1 ] || usage; install ;;
     start) [ "$#" -eq 1 ] || usage; start ;;
     *) usage ;;

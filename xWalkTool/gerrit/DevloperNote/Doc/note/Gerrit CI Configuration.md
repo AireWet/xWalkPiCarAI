@@ -31,7 +31,7 @@ Keep the Gerrit and GitHub private keys on the server outside Git with mode
 Copy the rendered environment example and protect it:
 
 ```bash
-cp "$HOME/gerrit-site/docs/XWALK_CI_ENV.example" "$HOME/.xwalk-ci.env" && chmod 600 "$HOME/.xwalk-ci.env"
+cp "@@GERRIT_SITE@@/docs/XWALK_CI_ENV.example" "$HOME/.xwalk-ci.env" && chmod 600 "$HOME/.xwalk-ci.env"
 ```
 
 Review every endpoint and replace the two private-key paths if required. The
@@ -61,5 +61,5 @@ at `https://@@SERVER_IP@@:@@HTTPS_PORT@@/ci/`.
 Validate the dashboard through HTTPS:
 
 ```bash
-curl --cacert "$HOME/gerrit-site/etc/gerrit-self-signed.crt" https://@@SERVER_IP@@:@@HTTPS_PORT@@/ci/health
+curl --cacert "@@GERRIT_SITE@@/etc/gerrit-self-signed.crt" https://@@SERVER_IP@@:@@HTTPS_PORT@@/ci/health
 ```

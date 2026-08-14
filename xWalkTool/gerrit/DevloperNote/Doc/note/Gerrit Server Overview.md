@@ -4,12 +4,16 @@
 
 This directory documents the complete user-owned Gerrit installation for the
 college server. Gerrit @@GERRIT_VERSION@@ runs as the normal Linux user from
-`$HOME/gerrit-site`; its authoritative repositories are stored in
-`$HOME/gerrit-site/git`.
+`@@GERRIT_SITE@@`; its authoritative repositories are stored in
+`@@GERRIT_SITE@@/git`.
 
 - Web URL: `https://@@SERVER_IP@@:@@HTTPS_PORT@@/`
 - Public project changes: `https://@@SERVER_IP@@:@@HTTPS_PORT@@/q/project:@@PROJECT_NAME@@`
 - Gerrit SSH: `@@SERVER_IP@@:@@SSH_PORT@@`
+- Gerrit site: `@@GERRIT_SITE@@`
+- Canonical URL: `@@CANONICAL_WEB_URL@@`
+- Internal HTTP listener: `@@HTTP_LISTEN_URL@@`
+- Gerrit SSH listener: `@@SSH_LISTEN_ADDRESS@@`
 - Initial administrator: `@@ADMIN_USERNAME@@`
 - Project: `@@PROJECT_NAME@@`
 - Target branch: `@@PROJECT_BRANCH@@`

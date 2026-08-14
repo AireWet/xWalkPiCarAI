@@ -2,6 +2,7 @@
 set -eu
 # shellcheck source=/dev/null
 . "$HOME/gerrit-env.sh"
+"$HOME/bin/gerrit-site-check" >/dev/null
 [ "$GERRIT_PROXY_MODE" = "local-http" ] || exit 0
 [ "$#" -eq 1 ] || { echo "Usage: gerrit-caddy-control start|stop|status|reload" >&2; exit 2; }
 [ -x "$CADDY_HOME/caddy" ] || { echo "Missing Caddy binary" >&2; exit 2; }

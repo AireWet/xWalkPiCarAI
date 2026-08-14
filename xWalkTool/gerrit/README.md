@@ -1,12 +1,15 @@
 # Gerrit installer
 
 This directory provides the non-root Gerrit installer for the college server.
-Run it as the normal Linux user. It installs only below `$HOME` and does not
-use `sudo`, a system package manager, a system service, or a network tunnel.
+Run it as the normal Linux user. Applications and controls remain below
+`$HOME`; the Gerrit site may use a validated administrator-provided disk. The
+installer does not use `sudo`, a system package manager, a system service, or a
+network tunnel.
 
 ## Installer layout
 
 - `shell-script/gerrit-setup.sh`: installer entry point;
+- `shell-script/gerrit-storage-check.sh`: reversible storage validation entry point;
 - `py-src/xWalkGerritServerSetup.py`: assessment and installation logic;
 - `bin/`: management commands installed into `$HOME/bin`;
 - `config/gerrit-setup.conf`: Gerrit installer configuration;
@@ -20,6 +23,8 @@ Edit `config/gerrit-setup.conf` before installation:
 
 ```bash
 export EDUVPN_SERVER_IP="SERVER_IP_FROM_ASSESSMENT"
+export GERRIT_STORAGE_PATH=""
+export GERRIT_SERVER_HOST="$EDUVPN_SERVER_IP"
 export GERRIT_SHA256="OFFICIAL_GERRIT_WAR_SHA256"
 export GERRIT_ADMIN_USER="joxy"
 export GERRIT_ADMIN_NAME="Joxy John"
@@ -29,7 +34,10 @@ export GERRIT_PROJECT="xWalkPiCarAI"
 export GERRIT_BRANCH="master"
 export GERRIT_HTTPS_PORT="18443"
 export GERRIT_SSH_PORT="29418"
-export GERRIT_HTTP_PORT="18080"
+export GERRIT_HTTP_PORT="8080"
+export GERRIT_HTTP_LISTEN_URL="proxy-https://127.0.0.1:${GERRIT_HTTP_PORT}/"
+export GERRIT_CANONICAL_WEB_URL="https://${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/"
+export GERRIT_SSH_LISTEN_ADDRESS="${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}"
 ```
 
 Replace the first two placeholders with:
@@ -46,6 +54,28 @@ script reads it without echo and exports `GERRIT_ADMIN_PASSWORD` only to the
 Python installer process. Do not place passwords, private keys, or tokens in
 this repository.
 
+## Gerrit storage
+
+Leave `GERRIT_STORAGE_PATH` empty to use `$HOME/gerrit-site`. For a persistent
+shared disk, set the absolute site path supplied by the administrator:
+
+```bash
+export GERRIT_STORAGE_PATH="/path/provided/by/administrator"
+```
+
+Validate it before installation:
+
+```bash
+xWalkTool/gerrit/shell-script/gerrit-storage-check.sh
+```
+
+The check prints the resolved path and verifies its mount, ownership,
+permissions, file locking, directory creation, read/write/remove operations,
+and free space. It rejects symbolic escapes and broad paths. Only the college
+account running Gerrit manages the site. Partners use Gerrit web and SSH and
+must never modify `$GERRIT_SITE/git`, `db`, `index`, `data`, `cache`, or `etc`
+directly. Never run two Gerrit processes against one site.
+
 ## Assess the server
 
 Run the read-only assessment from the repository root:
@@ -56,7 +86,7 @@ xWalkTool/gerrit/shell-script/gerrit-setup.sh assess
 
 Confirm the persistent home filesystem, disk quota, Java compatibility,
 physical network interface, selected server IP, and free ports. The default
-ports are HTTPS `18443`, Gerrit SSH `29418`, and loopback HTTP `18080`.
+ports are HTTPS `18443`, Gerrit SSH `29418`, and loopback HTTP `8080`.
 
 ## Install and start Gerrit
 
@@ -141,21 +171,21 @@ upload a change for review; they do not push directly to the protected branch.
 | Content | Installed path |
 |---|---|
 | Gerrit application | `$HOME/apps/gerrit` |
-| Gerrit site | `$HOME/gerrit-site` |
-| Authoritative repositories | `$HOME/gerrit-site/git` |
+| Gerrit site | `$GERRIT_STORAGE_PATH`, or `$HOME/gerrit-site` when empty |
+| Authoritative repositories | `$GERRIT_SITE/git` |
 | Caddy application | `$HOME/apps/caddy` |
 | Caddy configuration | `$HOME/gerrit-proxy` |
 | Management commands | `$HOME/bin` |
-| Rendered guides | `$HOME/gerrit-site/docs` |
+| Rendered guides | `$GERRIT_SITE/docs` |
 | Backups | `$HOME/backups/gerrit` |
 
 Print the installed HTTPS address with:
 
 ```bash
-git config --file "$HOME/gerrit-site/etc/gerrit.config" --get gerrit.canonicalWebUrl
+git config --file "$GERRIT_SITE/etc/gerrit.config" --get gerrit.canonicalWebUrl
 ```
 
-Continue with `$HOME/gerrit-site/docs/Gerrit Admin Setup.md`
+Continue with `$GERRIT_SITE/docs/Gerrit Admin Setup.md`
 after the installer completes.
 
 ## Local Gerrit
@@ -165,10 +195,10 @@ Linux computer. It reuses the non-root installer but does not reuse the college
 server configuration. Its configuration is stored in
 `local-linux/gerrit-local.conf`.
 
-For the assessed local host, use:
+For the assessed local host, configure:
 
-- web review: `https://192.168.1.158:18443/`;
-- Gerrit SSH: `192.168.1.158:29419`;
+- web review: `https://GERRIT_SERVER_HOST:GERRIT_HTTPS_PORT/`;
+- Gerrit SSH: `GERRIT_SERVER_HOST:GERRIT_SSH_PORT`;
 - project: `xWalkPiCarAI`;
 - review branch: `master`.
 

@@ -37,7 +37,7 @@ ssh -p @@SSH_PORT@@ @@ADMIN_USERNAME@@@@@SERVER_IP@@ gerrit set-account --full-n
 
 Do not copy unresolved source fields into the terminal. During installation,
 the Python installer replaces them in
-`$HOME/gerrit-site/docs/Gerrit Admin Setup.md` with the configured server
+`@@GERRIT_SITE@@/docs/Gerrit Admin Setup.md` with the configured server
 values.
 
 Use these sources for every value:
@@ -54,7 +54,7 @@ Use these sources for every value:
 On the server, confirm the effective Gerrit SSH address with:
 
 ```bash
-git config --file "$HOME/gerrit-site/etc/gerrit.config" --get sshd.listenAddress
+git config --file "@@GERRIT_SITE@@/etc/gerrit.config" --get sshd.listenAddress
 ```
 
 It prints `SERVER_IP:SSH_PORT`. The administrator username remains the value

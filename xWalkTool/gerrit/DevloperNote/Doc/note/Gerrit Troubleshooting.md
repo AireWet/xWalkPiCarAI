@@ -11,7 +11,7 @@ account and listen on the configured addresses.
 Print the canonical URL with:
 
 ```bash
-git config --file "$HOME/gerrit-site/etc/gerrit.config" --get gerrit.canonicalWebUrl
+git config --file "@@GERRIT_SITE@@/etc/gerrit.config" --get gerrit.canonicalWebUrl
 ```
 
 If local HTTPS works but a remote browser cannot connect, verify eduVPN,
@@ -41,3 +41,30 @@ event-stream account permissions, and `https://@@SERVER_IP@@:@@HTTPS_PORT@@/ci/`
 
 If a quality tool is missing, ask the server administrator to provide the
 approved dependency. Do not install system packages without authorization.
+
+## Network diagnostics
+
+Confirm the configured listeners:
+
+```bash
+ss -lnt | grep -E ':(@@HTTPS_PORT@@|@@SSH_PORT@@|@@HTTP_PORT@@)[[:space:]]'
+```
+
+Test the local web and Gerrit SSH endpoints:
+
+```bash
+curl --fail --silent http://127.0.0.1:@@HTTP_PORT@@/config/server/version
+```
+
+```bash
+curl --cacert "@@GERRIT_SITE@@/etc/gerrit-self-signed.crt" @@CANONICAL_WEB_URL@@config/server/version
+```
+
+```bash
+ssh -v -p @@SSH_PORT@@ @@ADMIN_USERNAME@@@@@SERVER_IP@@
+```
+
+Repeat both tests through eduVPN. Shared storage does not provide network
+access. If remote tests fail while local tests pass, ask the administrator to
+allow TCP @@HTTPS_PORT@@ and @@SSH_PORT@@ to `@@SERVER_IP@@` only from the
+approved eduVPN subnet.

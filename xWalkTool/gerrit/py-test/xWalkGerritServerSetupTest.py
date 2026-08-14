@@ -31,7 +31,7 @@ def caddy_arguments(server_ip: str, https_port: int, backend_port: int) -> types
         admin_username="joxy",
         server_ip=server_ip,
         https_port=https_port,
-        init_http_port=backend_port,
+        http_port=backend_port,
     )
 
 
@@ -68,7 +68,7 @@ def create_caddy_fixture(
         site,
     )
     configuration = SETUP.write_caddy_configuration(
-        arguments, home, certificate, private_key, caddy_password_hash(binary)
+        arguments, home, site, certificate, private_key, caddy_password_hash(binary)
     )
     return types.SimpleNamespace(
         site=site, caddy_home=caddy_home, binary=binary,
@@ -118,7 +118,8 @@ def documentation_replacements() -> dict[str, str]:
         "GERRIT_VERSION": "3.14.2", "JAVA_VERSION": "Java 21",
         "JAVA_HOME": "/usr/lib/jvm/java-21", "JAVA_SOURCE": "server-provided Java 21 runtime",
         "JAVA_SHA256": "not applicable to server-provided Java", "SERVER_IP": "10.20.30.40",
-        "HTTPS_PORT": "18443", "SSH_PORT": "29418", "PROJECT_NAME": "MyPiCarX",
+        "HTTPS_PORT": "18443", "SSH_PORT": "29418", "HTTP_PORT": "8080",
+        "PROJECT_NAME": "MyPiCarX",
         "PROJECT_BRANCH": "master", "INTERFACE": "ens3", "HOME": "/home/joxy",
         "GERRIT_SHA256": "a" * 64,
         "GERRIT_URL": "https://example.invalid/gerrit.war", "ADMIN_USERNAME": "joxy",
@@ -127,6 +128,10 @@ def documentation_replacements() -> dict[str, str]:
         "CADDY_VERSION": "v2.11.3", "CADDY_URL": "https://example.invalid/caddy.tar.gz",
         "CADDY_SHA256": "b" * 64, "CERTIFICATE_FINGERPRINT": "sha256 fingerprint",
         "INSTALL_DATE": "2026-08-13T00:00:00+00:00",
+        "GERRIT_SITE": "/shared storage/joxy/gerrit-site",
+        "CANONICAL_WEB_URL": "https://10.20.30.40:18443/",
+        "SSH_LISTEN_ADDRESS": "10.20.30.40:29418",
+        "HTTP_LISTEN_URL": "proxy-https://127.0.0.1:8080/",
     }
 
 
@@ -136,6 +141,7 @@ def expected_documentation_names() -> set[str]:
     return {
         "Gerrit Server Overview.md", "Gerrit Setup Installer.md",
         "Gerrit Local Linux Setup.md",
+        "Gerrit Administrator Request.md", "Gerrit Storage and Migration.md",
         "Gerrit Admin Setup.md", "Gerrit User Configuration.md",
         "Gerrit CI Configuration.md", "Gerrit Backup and Restore.md",
         "Gerrit Security and Remote Access.md", "Gerrit Troubleshooting.md",
@@ -162,6 +168,117 @@ class GerritServerSetupTest(unittest.TestCase):
             SETUP.validate_server_ip("10.20.30.40", addresses)
         with self.assertRaises(SETUP.SetupError):
             SETUP.validate_server_ip("172.17.0.1", addresses)
+
+    def test_storage_defaults_to_home_and_supports_spaces(self) -> None:
+        """Home fallback and an absolute shared path containing spaces validate safely."""
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            home = pathlib.Path(temporary_directory)
+            shared_parent = home / "shared disk"
+            shared_parent.mkdir()
+            mount = {"target": str(home), "source": "/dev/test", "fstype": "ext4", "options": "rw"}
+            with mock.patch.object(SETUP, "storage_mount", return_value=mount):
+                fallback, unused_mount = SETUP.validate_storage_path(None, home, 1)
+                shared, unused_mount = SETUP.validate_storage_path(
+                    str(shared_parent / "gerrit site"), home, 1
+                )
+            self.assertEqual(fallback, home / "gerrit-site")
+            self.assertEqual(shared, shared_parent / "gerrit site")
+            self.assertEqual(list(home.glob(".gerrit-storage-check-*")), [])
+            self.assertEqual(list(shared_parent.glob(".gerrit-storage-check-*")), [])
+
+    def test_storage_rejects_unsafe_missing_and_symbolic_paths(self) -> None:
+        """Broad, relative, missing-parent, and symbolic storage paths are rejected."""
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            home = pathlib.Path(temporary_directory)
+            with self.assertRaisesRegex(SETUP.SetupError, "broad"):
+                SETUP.resolve_storage_path(str(home), home)
+            with self.assertRaisesRegex(SETUP.SetupError, "absolute"):
+                SETUP.resolve_storage_path("relative/gerrit-site", home)
+            with self.assertRaisesRegex(SETUP.SetupError, "parent does not exist"):
+                SETUP.validate_storage_path(str(home / "missing" / "site"), home, 1)
+            actual = home / "actual"
+            actual.mkdir()
+            link = home / "linked"
+            link.symlink_to(actual, target_is_directory=True)
+            with self.assertRaisesRegex(SETUP.SetupError, "symbolic-link"):
+                SETUP.resolve_storage_path(str(link / "gerrit-site"), home)
+
+    def test_storage_rejects_read_only_full_and_unwritable_mounts(self) -> None:
+        """Read-only, insufficient, and permission-denied storage never proceeds."""
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            home = pathlib.Path(temporary_directory)
+            target = str(home / "gerrit-site")
+            read_only = {
+                "target": str(home), "source": "/dev/test", "fstype": "ext4", "options": "ro",
+            }
+            with mock.patch.object(SETUP, "storage_mount", return_value=read_only):
+                with self.assertRaisesRegex(SETUP.SetupError, "read-only"):
+                    SETUP.validate_storage_path(target, home, 1)
+            writable = {
+                "target": str(home), "source": "/dev/test", "fstype": "ext4", "options": "rw",
+            }
+            disk = types.SimpleNamespace(total=100, used=99, free=1)
+            with mock.patch.object(SETUP, "storage_mount", return_value=writable):
+                with mock.patch.object(SETUP.shutil, "disk_usage", return_value=disk):
+                    with self.assertRaisesRegex(SETUP.SetupError, "insufficient"):
+                        SETUP.validate_storage_path(target, home, 2)
+                with mock.patch.object(SETUP.tempfile, "mkdtemp", side_effect=PermissionError("denied")):
+                    with self.assertRaisesRegex(SETUP.SetupError, "ownership and permissions"):
+                        SETUP.validate_storage_path(target, home, 1)
+            temporary = {"target": str(home), "source": "tmpfs", "fstype": "tmpfs", "options": "rw"}
+            with mock.patch.object(SETUP, "storage_mount", return_value=temporary):
+                with self.assertRaisesRegex(SETUP.SetupError, "not confirmed persistent"):
+                    SETUP.validate_storage_path(target, home, 1)
+
+    def test_endpoint_validation_requires_safe_explicit_bindings(self) -> None:
+        """Configured endpoints reject wildcards, mismatched ports, and occupied ports."""
+
+        addresses = [{"interface": "ens3", "address": "10.20.30.40", "scope": "global"}]
+        arguments = types.SimpleNamespace(
+            canonical_web_url="https://10.20.30.40:18443/",
+            http_listen_url="proxy-https://127.0.0.1:8080/", http_port=8080,
+            ssh_listen_address="10.20.30.40:29418", ssh_port=29418,
+            https_port=18443, server_ip="10.20.30.40",
+        )
+        SETUP.validate_endpoint_configuration(arguments, addresses)
+        arguments.ssh_listen_address = "0.0.0.0:29418"
+        with self.assertRaisesRegex(SETUP.SetupError, "specific"):
+            SETUP.validate_endpoint_configuration(arguments, addresses)
+        arguments.ssh_listen_address = "10.20.30.40:29418"
+        arguments.canonical_web_url = "https://different.example:18443/"
+        with self.assertRaisesRegex(SETUP.SetupError, "host must match"):
+            SETUP.validate_endpoint_configuration(arguments, addresses)
+        arguments.canonical_web_url = "https://10.20.30.40:18443/"
+        arguments.ssh_listen_address = "10.20.30.40:29418"
+        with mock.patch.object(SETUP, "port_is_free", return_value=False):
+            with self.assertRaisesRegex(SETUP.SetupError, "occupied"):
+                SETUP.validate_ports(arguments)
+
+    def test_repeated_install_preserves_existing_site(self) -> None:
+        """A repeated installation stops before changing an existing Gerrit site."""
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            home = pathlib.Path(temporary_directory)
+            site = home / "gerrit-site"
+            site.mkdir()
+            marker = site / "preserve-me"
+            marker.write_text("existing data\n", encoding="utf-8")
+            arguments = types.SimpleNamespace(
+                storage_path=None, http_listen_url=None, canonical_web_url=None,
+                ssh_listen_address=None, http_port=8080, ssh_port=29418,
+                https_port=18443, server_ip="10.20.30.40",
+            )
+            mount = {
+                "target": str(home), "source": "/dev/test", "fstype": "ext4", "options": "rw",
+            }
+            with mock.patch.object(SETUP.pathlib.Path, "home", return_value=home):
+                with mock.patch.object(SETUP, "validate_storage_path", return_value=(site, mount)):
+                    with self.assertRaisesRegex(SETUP.SetupError, "No files were changed"):
+                        SETUP.install(arguments)
+            self.assertEqual(marker.read_text(encoding="utf-8"), "existing data\n")
 
     def test_verified_download_rejects_non_https_source(self) -> None:
         """Artifacts cannot be fetched over an unauthenticated transport."""
@@ -213,15 +330,16 @@ class GerritServerSetupTest(unittest.TestCase):
             {
                 "admin_email", "admin_full_name", "admin_role", "admin_username",
                 "caddy_sha256", "caddy_url", "command", "gerrit_sha256",
-                "gerrit_url", "https_port", "init_http_port", "jdk_sha256", "jdk_url",
-                "process_manager", "project_branch", "project_name", "server_ip", "ssh_port",
+                "gerrit_url", "https_port", "http_listen_url", "http_port", "jdk_sha256",
+                "jdk_url", "canonical_web_url", "process_manager", "project_branch",
+                "project_name", "server_ip", "ssh_listen_address", "ssh_port", "storage_path",
             },
         )
 
     def test_initialization_installs_standard_download_commands(self) -> None:
         """Install Gerrit's official download command provider from the verified WAR."""
 
-        arguments = types.SimpleNamespace(init_http_port=18080, ssh_port=29418)
+        arguments = types.SimpleNamespace(http_port=18080, ssh_port=29418)
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = pathlib.Path(temporary_directory)
             with mock.patch.object(SETUP, "run") as run_command:
@@ -235,7 +353,9 @@ class GerritServerSetupTest(unittest.TestCase):
 
         arguments = types.SimpleNamespace(
             server_ip="10.20.30.40", https_port=18443, ssh_port=29418,
-            init_http_port=18080,
+            http_port=18080, canonical_web_url="https://review.example:18443/",
+            ssh_listen_address="10.20.30.40:29418",
+            http_listen_url="proxy-https://127.0.0.1:18080/",
         )
         with tempfile.TemporaryDirectory() as temporary_directory:
             config = pathlib.Path(temporary_directory) / "gerrit.config"
@@ -299,7 +419,8 @@ class GerritServerSetupTest(unittest.TestCase):
             home = pathlib.Path(temporary_directory)
             (home / "gerrit-site" / "logs").mkdir(parents=True)
             configuration = SETUP.write_caddy_configuration(
-                arguments, home, home / "certificate.pem", home / "private-key.pem",
+                arguments, home, home / "gerrit-site", home / "certificate.pem",
+                home / "private-key.pem",
                 "$2a$14$" + "A" * 53,
             )
             content = configuration.read_text(encoding="utf-8")
@@ -344,7 +465,7 @@ class GerritServerSetupTest(unittest.TestCase):
             home = pathlib.Path(temporary_directory)
             fixture = create_caddy_fixture(home, arguments)
             SETUP.write_environment(
-                home, pathlib.Path("/unused-java"), "local-http", fixture.caddy_home
+                home, fixture.site, pathlib.Path("/unused-java"), "local-http", fixture.caddy_home
             )
             bin_directory = home / "bin"
             bin_directory.mkdir()
@@ -385,6 +506,69 @@ class GerritServerSetupTest(unittest.TestCase):
             )
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertNotIn("sudo", template.read_text(encoding="utf-8"))
+
+    def test_management_check_accepts_owned_site_outside_home_with_spaces(self) -> None:
+        """Generated controls accept one resolved owner-managed shared Gerrit site."""
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = pathlib.Path(temporary_directory)
+            home = root / "user home"
+            commands = home / "bin"
+            commands.mkdir(parents=True)
+            site = root / "shared disk" / "gerrit site"
+            site.mkdir(parents=True)
+            (home / "gerrit-env.sh").write_text(
+                f"export GERRIT_SITE='{site}'\n", encoding="utf-8"
+            )
+            checker = commands / "gerrit-site-check"
+            shutil.copyfile(GERRIT_ROOT / "bin" / checker.name, checker)
+            checker.chmod(0o700)
+            result = subprocess.run(
+                [str(checker)], check=False, env={**os.environ, "HOME": str(home)},
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(result.stdout.strip(), str(site))
+
+    def test_management_commands_start_restart_status_and_stop_shared_site(self) -> None:
+        """User controls operate one exact shared site and shut it down cleanly."""
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = pathlib.Path(temporary_directory)
+            home = root / "home"
+            commands = home / "bin"
+            commands.mkdir(parents=True)
+            site = root / "shared path" / "gerrit-site"
+            control_directory = site / "bin"
+            control_directory.mkdir(parents=True)
+            state = site / "running"
+            control = control_directory / "gerrit.sh"
+            control.write_text(
+                "#!/bin/sh\ncase \"$1\" in\n"
+                f"start) touch '{state}' ;;\n"
+                f"stop) rm -f '{state}' ;;\n"
+                f"status) test -f '{state}' ;;\n"
+                "*) exit 2 ;;\nesac\n",
+                encoding="utf-8",
+            )
+            control.chmod(0o700)
+            (home / "gerrit-env.sh").write_text(
+                f"export GERRIT_SITE='{site}'\nexport GERRIT_PROXY_MODE='none'\n",
+                encoding="utf-8",
+            )
+            for name in ("gerrit-site-check", "gerrit-start", "gerrit-stop",
+                         "gerrit-restart", "gerrit-status"):
+                target = commands / name
+                shutil.copyfile(GERRIT_ROOT / "bin" / name, target)
+                target.chmod(0o700)
+            environment = {**os.environ, "HOME": str(home)}
+            for action in ("gerrit-start", "gerrit-status", "gerrit-restart", "gerrit-stop"):
+                result = subprocess.run(
+                    [str(commands / action)], check=False, env=environment,
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertFalse(state.exists())
 
     def test_setup_script(self) -> None:
         """The repository setup command uses the Python installer and safe controls."""
@@ -527,8 +711,8 @@ class GerritServerSetupTest(unittest.TestCase):
             self.assertIn(value, installer)
             self.assertIn(value, local)
         self.assertIn("## Local Gerrit", installer)
-        self.assertIn("ssh://joxy@192.168.1.158:29419/xWalkPiCarAI", local)
-        self.assertIn("https://joxy@192.168.1.158:18443/xWalkPiCarAI", local)
+        self.assertIn("ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalkPiCarAI", local)
+        self.assertIn("https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalkPiCarAI", local)
 
     def test_installer_has_no_forbidden_execution_commands(self) -> None:
         """The executable installer does not contain privileged management commands."""

@@ -2,7 +2,7 @@
 set -eu
 # shellcheck source=/dev/null
 . "$HOME/gerrit-env.sh"
-case "$GERRIT_SITE" in "$HOME"/*) ;; *) echo "Unsafe GERRIT_SITE: $GERRIT_SITE" >&2; exit 2 ;; esac
+"$HOME/bin/gerrit-site-check" >/dev/null
 config="$GERRIT_SITE/etc/gerrit.config"
 [ -r "$config" ] || { echo "Missing Gerrit configuration" >&2; exit 2; }
 auth_type="$(git config --file "$config" --get auth.type)"

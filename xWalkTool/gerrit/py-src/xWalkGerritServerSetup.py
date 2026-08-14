@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Assess and install a non-root Gerrit server in the current user's home."""
+"""Assess and install a non-root Gerrit server on validated user-owned storage."""
 
 from __future__ import annotations
 
 import argparse
 import datetime
+import fcntl
 import hashlib
 import ipaddress
 import json
@@ -13,11 +14,13 @@ import pathlib
 import re
 import shutil
 import socket
+import stat
 import subprocess
 import sys
 import tarfile
 import tempfile
 import urllib.request
+import urllib.parse
 
 
 GERRIT_VERSION = "3.14.2"
@@ -41,10 +44,18 @@ CADDY_ARTIFACTS = {
 REJECTED_INTERFACES = ("docker", "virbr", "vbox", "vmnet")
 ASSESSMENT_PROGRAMS = (
     "git", "ssh", "ssh-keygen", "ssh-keyscan", "curl", "wget", "tar",
-    "unzip", "openssl", "keytool", "readlink", "ss", "nc", "nohup", "screen", "tmux",
+    "unzip", "openssl", "keytool", "readlink", "findmnt", "stat", "ss", "nc",
+    "nohup", "screen", "tmux",
 )
 REQUIRED_PROGRAMS = (
-    "git", "ssh", "ssh-keygen", "ssh-keyscan", "curl", "tar", "openssl", "readlink", "ss",
+    "awk", "df", "du", "findmnt", "free", "git", "ip", "openssl", "ps", "readlink",
+    "sed", "sha256sum", "ssh", "ssh-keygen", "ssh-keyscan", "ss", "stat", "tar", "curl",
+)
+MINIMUM_FREE_BYTES = 10 * 1024**3
+UNSAFE_STORAGE_PATHS = (
+    pathlib.Path("/"), pathlib.Path("/home"), pathlib.Path("/mnt"),
+    pathlib.Path("/media"), pathlib.Path("/opt"), pathlib.Path("/srv"),
+    pathlib.Path("/tmp"), pathlib.Path("/usr"), pathlib.Path("/var"),
 )
 
 
@@ -166,6 +177,118 @@ def persistent_storage(home: pathlib.Path) -> tuple[bool, str]:
     return persistent, json.dumps(filesystem, sort_keys=True)
 
 
+def storage_mount(path: pathlib.Path) -> dict[str, object]:
+    """Return the mounted filesystem containing one validated parent path."""
+
+    result = run(["findmnt", "-J", "-T", str(path), "-o", "TARGET,SOURCE,FSTYPE,OPTIONS"])
+    filesystems = json.loads(result.stdout).get("filesystems", [])
+    if not filesystems:
+        raise SetupError(f"No mounted filesystem contains {path}")
+    return filesystems[0]
+
+
+def has_symbolic_component(path: pathlib.Path) -> bool:
+    """Return whether an existing component of an absolute path is symbolic."""
+
+    current = pathlib.Path(path.anchor)
+    for part in path.parts[1:]:
+        current /= part
+        if current.is_symlink():
+            return True
+        if not current.exists():
+            break
+    return False
+
+
+def resolve_storage_path(value: str | None, home: pathlib.Path) -> pathlib.Path:
+    """Resolve the requested Gerrit site and reject broad or symbolic paths."""
+
+    requested = pathlib.Path(value).expanduser() if value else home / "gerrit-site"
+    if not requested.is_absolute():
+        raise SetupError("GERRIT_STORAGE_PATH must be an absolute path")
+    normalized = pathlib.Path(os.path.abspath(requested))
+    if has_symbolic_component(normalized):
+        raise SetupError(f"GERRIT_STORAGE_PATH contains a symbolic-link component: {normalized}")
+    resolved = normalized.resolve(strict=False)
+    unsafe = set(UNSAFE_STORAGE_PATHS) | {home.resolve()}
+    if resolved in unsafe:
+        raise SetupError(f"Refusing unsafe broad Gerrit storage path: {resolved}")
+    if resolved.parent == resolved:
+        raise SetupError(f"Refusing unsafe Gerrit storage path: {resolved}")
+    return resolved
+
+
+def validate_storage_path(
+    value: str | None,
+    home: pathlib.Path,
+    minimum_free_bytes: int = MINIMUM_FREE_BYTES,
+) -> tuple[pathlib.Path, dict[str, object]]:
+    """Safely verify storage permissions, locking, mount state, and capacity."""
+
+    site = resolve_storage_path(value, home)
+    parent = site.parent
+    if not parent.is_dir():
+        raise SetupError(f"Gerrit storage parent does not exist: {parent}")
+    if site.exists() and not site.is_dir():
+        raise SetupError(f"Gerrit storage path exists but is not a directory: {site}")
+    if (site / "etc" / "gerrit.config").is_file():
+        raise SetupError(
+            f"Existing Gerrit site detected at {site}; storage write probes were not run there"
+        )
+    if site.exists() and site.stat().st_uid != os.geteuid():
+        raise SetupError(f"Gerrit storage directory is not owned by the current user: {site}")
+    mount = storage_mount(parent)
+    filesystem_type = str(mount.get("fstype", "unknown"))
+    if filesystem_type in {"tmpfs", "ramfs", "overlay"}:
+        raise SetupError(
+            f"Gerrit storage is not confirmed persistent: {filesystem_type} at "
+            f"{mount.get('target', parent)}"
+        )
+    options = str(mount.get("options", "")).split(",")
+    if "ro" in options:
+        raise SetupError(f"Gerrit storage filesystem is read-only: {mount.get('target', parent)}")
+    probe_root = site if site.exists() else parent
+    usage = shutil.disk_usage(probe_root)
+    if usage.free < minimum_free_bytes:
+        required_gib = minimum_free_bytes / 1024**3
+        raise SetupError(
+            f"Gerrit storage has insufficient free space: {usage.free} bytes; "
+            f"at least {required_gib:.0f} GiB is required"
+        )
+    temporary: pathlib.Path | None = None
+    try:
+        temporary = pathlib.Path(tempfile.mkdtemp(prefix=".gerrit-storage-check-", dir=probe_root))
+        if temporary.stat().st_uid != os.geteuid():
+            raise SetupError("Temporary Gerrit storage directory has unexpected ownership")
+        temporary.chmod(0o700)
+        if stat.S_IMODE(temporary.stat().st_mode) != 0o700:
+            raise SetupError("Gerrit storage does not preserve Linux directory permissions")
+        child = temporary / "directory"
+        child.mkdir(mode=0o700)
+        probe = temporary / "lock-test"
+        probe.write_text("write-test\n", encoding="utf-8")
+        if probe.read_text(encoding="utf-8") != "write-test\n":
+            raise SetupError("Gerrit storage read-after-write validation failed")
+        probe.write_text("modify-test\n", encoding="utf-8")
+        probe.chmod(0o600)
+        if stat.S_IMODE(probe.stat().st_mode) != 0o600:
+            raise SetupError("Gerrit storage does not preserve Linux file permissions")
+        with probe.open("r+", encoding="utf-8") as lock_file:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+        probe.unlink()
+        child.rmdir()
+    except (OSError, PermissionError) as error:
+        raise SetupError(
+            f"Gerrit storage validation failed for {site}: {error}. Use {home / 'gerrit-site'} "
+            "or ask the administrator to correct the shared-disk ownership and permissions."
+        ) from error
+    finally:
+        if temporary is not None:
+            shutil.rmtree(temporary, ignore_errors=True)
+    return site, mount
+
+
 def optional_command_output(arguments: list[str], unavailable: str) -> str:
     """Return optional command output or a stable unavailable description."""
 
@@ -252,6 +375,48 @@ def validate_authentication(args: argparse.Namespace) -> None:
         raise SetupError("GERRIT_ADMIN_PASSWORD must be set and contain at least 12 characters")
     if any(character in password for character in ("\r", "\n", "\0")):
         raise SetupError("GERRIT_ADMIN_PASSWORD cannot contain control characters")
+
+
+def split_listen_address(value: str, option: str) -> tuple[str, int]:
+    """Parse one host-and-port listen address without accepting wildcards."""
+
+    if value.count(":") != 1:
+        raise SetupError(f"{option} must use HOST:PORT syntax")
+    host, port_text = value.rsplit(":", 1)
+    if not host or host in {"*", "0.0.0.0"} or not port_text.isdigit():
+        raise SetupError(f"{option} must use a specific HOST:PORT endpoint")
+    port = int(port_text)
+    if port <= 1024 or port > 65535:
+        raise SetupError(f"{option} must use an unprivileged valid port")
+    return host, port
+
+
+def validate_endpoint_configuration(args: argparse.Namespace, addresses: list[dict[str, object]]) -> None:
+    """Validate canonical, internal HTTP, and explicit Gerrit SSH endpoints."""
+
+    canonical = urllib.parse.urlsplit(args.canonical_web_url)
+    if canonical.scheme != "https" or not canonical.hostname or canonical.username:
+        raise SetupError("GERRIT_CANONICAL_WEB_URL must be an HTTPS URL without credentials")
+    if not args.canonical_web_url.endswith("/"):
+        raise SetupError("GERRIT_CANONICAL_WEB_URL must end with /")
+    if canonical.hostname != args.server_ip:
+        raise SetupError(
+            "GERRIT_CANONICAL_WEB_URL host must match GERRIT_SERVER_HOST so the generated "
+            "certificate and bound HTTPS endpoint remain valid"
+        )
+    expected_http = f"proxy-https://127.0.0.1:{args.http_port}/"
+    if args.http_listen_url != expected_http:
+        raise SetupError(
+            "GERRIT_HTTP_LISTEN_URL must keep the authenticated Gerrit backend on "
+            f"{expected_http}"
+        )
+    ssh_host, ssh_port = split_listen_address(
+        args.ssh_listen_address, "GERRIT_SSH_LISTEN_ADDRESS"
+    )
+    if ssh_port != args.ssh_port:
+        raise SetupError("GERRIT_SSH_LISTEN_ADDRESS port must match GERRIT_SSH_PORT")
+    if ssh_host != "127.0.0.1":
+        validate_server_ip(ssh_host, addresses)
 
 
 def select_caddy_artifact(args: argparse.Namespace, architecture: str) -> None:
@@ -401,11 +566,17 @@ def git_config_values(config: pathlib.Path, section_key: str, values: tuple[str,
         run(["git", "config", "--file", str(config), "--add", section_key, value])
 
 
-def copy_templates(source_root: pathlib.Path, home: pathlib.Path, replacements: dict[str, str]) -> None:
+def copy_templates(
+    source_root: pathlib.Path,
+    home: pathlib.Path,
+    replacements: dict[str, str],
+    site: pathlib.Path | None = None,
+) -> None:
     """Copy reviewed scripts and render documentation placeholders."""
 
     bin_directory = home / "bin"
-    docs_directory = home / "gerrit-site" / "docs"
+    selected_site = site or home / "gerrit-site"
+    docs_directory = selected_site / "docs"
     bin_directory.mkdir(parents=True, exist_ok=True)
     docs_directory.mkdir(parents=True, exist_ok=True)
     note_directory = source_root / "DevloperNote" / "Doc" / "note"
@@ -413,10 +584,10 @@ def copy_templates(source_root: pathlib.Path, home: pathlib.Path, replacements: 
     render_templates(source_root / "bin", bin_directory, replacements, 0o700)
     render_templates(note_directory, docs_directory, replacements, 0o600)
     render_file(ci_config, docs_directory / ci_config.name, replacements, 0o600)
-    copy_tool_assets(source_root, home)
+    copy_tool_assets(source_root, home, selected_site)
 
 
-def copy_tool_assets(source_root: pathlib.Path, home: pathlib.Path) -> None:
+def copy_tool_assets(source_root: pathlib.Path, home: pathlib.Path, site: pathlib.Path) -> None:
     """Install the CI runner and UI plugin into the user-owned Gerrit service."""
 
     tool_directory = home / "apps" / "gerrit" / "tools"
@@ -425,7 +596,7 @@ def copy_tool_assets(source_root: pathlib.Path, home: pathlib.Path) -> None:
         target = tool_directory / name
         shutil.copyfile(source_root / "py-src" / name, target)
         target.chmod(0o700 if name == "xWalkGerritCi.py" else 0o600)
-    plugin = home / "gerrit-site" / "plugins" / "xWalkReviewControls.js"
+    plugin = site / "plugins" / "xWalkReviewControls.js"
     plugin.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(source_root / "xWalkReviewControls.js", plugin)
     plugin.chmod(0o600)
@@ -506,10 +677,10 @@ def curl_config_value(value: str) -> str:
     return value.replace("\\", "\\\\").replace('"', '\\"')
 
 
-def caddy_global_block(home: pathlib.Path) -> str:
+def caddy_global_block(site: pathlib.Path) -> str:
     """Build the global Caddy configuration block."""
 
-    runtime_log = json.dumps(str(home / "gerrit-site" / "logs" / "caddy-runtime.log"))
+    runtime_log = json.dumps(str(site / "logs" / "caddy-runtime.log"))
     return (
         "{\n"
         "    admin off\n"
@@ -595,9 +766,9 @@ def caddy_site_block(
     """Build the IP-bound Caddy site block."""
 
     ci_route = caddy_ci_route()
-    git_route = caddy_git_route(users, args.init_http_port)
-    login_route = caddy_login_route(users, args.init_http_port)
-    public_route = caddy_public_route(args.init_http_port)
+    git_route = caddy_git_route(users, args.http_port)
+    login_route = caddy_login_route(users, args.http_port)
+    public_route = caddy_public_route(args.http_port)
     return (
         f"https://{args.server_ip}:{args.https_port} {{\n"
         f"    bind {args.server_ip}\n"
@@ -615,6 +786,7 @@ def caddy_site_block(
 def write_caddy_configuration(
     args: argparse.Namespace,
     home: pathlib.Path,
+    site: pathlib.Path,
     certificate: pathlib.Path,
     private_key: pathlib.Path,
     password_hash: str,
@@ -628,8 +800,8 @@ def write_caddy_configuration(
     users.write_text(f"{args.admin_username} {password_hash}\n", encoding="utf-8")
     users.chmod(0o600)
     configuration = configuration_directory / "Caddyfile"
-    access_log = home / "gerrit-site" / "logs" / "caddy-access.log"
-    content = caddy_global_block(home)
+    access_log = site / "logs" / "caddy-access.log"
+    content = caddy_global_block(site)
     content += caddy_site_block(args, certificate, private_key, users, access_log)
     configuration.write_text(content, encoding="utf-8")
     configuration.chmod(0o600)
@@ -638,6 +810,7 @@ def write_caddy_configuration(
 
 def write_environment(
     home: pathlib.Path,
+    site: pathlib.Path,
     java_home: pathlib.Path,
     proxy_mode: str,
     caddy_home: pathlib.Path | None,
@@ -649,7 +822,7 @@ def write_environment(
     target.write_text(
         "#!/bin/sh\n"
         f"export JAVA_HOME='{java_home}'\n"
-        f"export GERRIT_SITE='{home / 'gerrit-site'}'\n"
+        f"export GERRIT_SITE='{site}'\n"
         f"export GERRIT_PROXY_MODE='{proxy_mode}'\n"
         f"export CADDY_HOME='{caddy_home or ''}'\n"
         f"export CADDY_CONFIG='{home / 'gerrit-proxy' / 'Caddyfile'}'\n"
@@ -667,11 +840,18 @@ def write_environment(
 def validate_ports(args: argparse.Namespace) -> None:
     """Require valid unused addresses for every Gerrit endpoint."""
 
-    for port in (args.https_port, args.ssh_port, args.init_http_port):
+    for port in (args.https_port, args.ssh_port, args.http_port):
         if port <= 1024 or port > 65535:
             raise SetupError(f"All service ports must be unprivileged and valid: {port}")
-    for port in (args.https_port, args.ssh_port, args.init_http_port):
-        address = "127.0.0.1" if port == args.init_http_port else args.server_ip
+    ssh_host, _ = split_listen_address(
+        args.ssh_listen_address, "GERRIT_SSH_LISTEN_ADDRESS"
+    )
+    endpoints = (
+        (args.server_ip, args.https_port),
+        (ssh_host, args.ssh_port),
+        ("127.0.0.1", args.http_port),
+    )
+    for address, port in endpoints:
         if not port_is_free(address, port):
             raise SetupError(f"Required address is occupied: {address}:{port}")
 
@@ -683,15 +863,26 @@ def validate_install(args: argparse.Namespace, home: pathlib.Path) -> str:
     report = assessment(home)
     if not report["storage_persistent"]:
         raise SetupError(f"Home storage is not confirmed persistent: {report['mount']}")
-    if report["disk_free_bytes"] < 10 * 1024**3:
-        raise SetupError("At least 10 GiB of free home-filesystem space is required")
     missing = [name for name in REQUIRED_PROGRAMS if command_path(name) is None]
     if missing:
-        raise SetupError(f"Missing required programs: {', '.join(missing)}")
+        request = ", ".join(missing)
+        raise SetupError(
+            f"Missing required programs: {request}. Ask the server administrator to make "
+            "these commands available in your login environment without privilege escalation."
+        )
     interface = validate_server_ip(args.server_ip, report["addresses"])
+    validate_endpoint_configuration(args, report["addresses"])
     validate_ports(args)
     select_caddy_artifact(args, str(report["architecture"]))
     validate_authentication(args)
+    if args.process_manager == "systemd":
+        missing_systemd = [name for name in ("systemctl", "systemd-run") if command_path(name) is None]
+        systemd_state = str(report["user_systemd"])
+        if missing_systemd or systemd_state in {"", "offline", "failed", "user systemd unavailable"}:
+            raise SetupError(
+                "User-level systemd is unavailable; set GERRIT_PROCESS_MANAGER=nohup "
+                "or ask the administrator to enable the user manager"
+            )
     if run(["git", "check-ref-format", "--branch", args.project_branch], check=False).returncode != 0:
         raise SetupError(f"Invalid --project-branch: {args.project_branch}")
     return interface
@@ -709,13 +900,14 @@ def process_environment(java_home: pathlib.Path) -> dict[str, str]:
 def install_runtimes(
     args: argparse.Namespace,
     home: pathlib.Path,
+    site: pathlib.Path,
 ) -> tuple[pathlib.Path, pathlib.Path, str, dict[str, str]]:
     """Install Java and Caddy and write their shared environment."""
 
     java_home = install_portable_java(args, home)
     caddy_home, version = install_portable_caddy(args, home)
     environment = process_environment(java_home)
-    write_environment(home, java_home, "local-http", caddy_home, args.process_manager)
+    write_environment(home, site, java_home, "local-http", caddy_home, args.process_manager)
     return java_home, caddy_home, version, environment
 
 
@@ -755,11 +947,26 @@ def initialize_site(
     )
     config = site / "etc" / "gerrit.config"
     git_config(config, "gerrit.basePath", "git")
-    git_config(config, "gerrit.canonicalWebUrl", f"http://127.0.0.1:{args.init_http_port}/")
-    git_config(config, "httpd.listenUrl", f"http://127.0.0.1:{args.init_http_port}/")
+    git_config(config, "gerrit.canonicalWebUrl", f"http://127.0.0.1:{args.http_port}/")
+    git_config(config, "httpd.listenUrl", f"http://127.0.0.1:{args.http_port}/")
     git_config(config, "sshd.listenAddress", f"127.0.0.1:{args.ssh_port}")
     git_config(config, "auth.type", "OPENID")
     return config
+
+
+def protect_site_permissions(site: pathlib.Path) -> None:
+    """Apply owner-only access to Gerrit's site and sensitive top-level data."""
+
+    site.chmod(0o700)
+    for name in ("cache", "data", "db", "etc", "git", "index", "logs", "plugins", "tmp"):
+        directory = site / name
+        if directory.is_dir():
+            directory.chmod(0o700)
+    for name in ("gerrit.config", "secure.config", "ssh_host_ecdsa_key", "ssh_host_ed25519_key",
+                 "ssh_host_rsa_key"):
+        sensitive = site / "etc" / name
+        if sensitive.is_file():
+            sensitive.chmod(0o600)
 
 
 def validate_loopback_site(
@@ -775,7 +982,7 @@ def validate_loopback_site(
         run(
             [
                 "curl", "--fail", "--silent", "--show-error",
-                f"http://127.0.0.1:{args.init_http_port}/config/server/version",
+                f"http://127.0.0.1:{args.http_port}/config/server/version",
             ]
         )
     finally:
@@ -804,9 +1011,9 @@ def backup_initial_configuration(home: pathlib.Path, site: pathlib.Path) -> path
 def configure_final_site(args: argparse.Namespace, config: pathlib.Path) -> None:
     """Configure public reviews, protected login, and IP-bound SSH."""
 
-    git_config(config, "gerrit.canonicalWebUrl", f"https://{args.server_ip}:{args.https_port}/")
-    git_config(config, "sshd.listenAddress", f"{args.server_ip}:{args.ssh_port}")
-    git_config(config, "httpd.listenUrl", f"proxy-https://127.0.0.1:{args.init_http_port}/")
+    git_config(config, "gerrit.canonicalWebUrl", args.canonical_web_url)
+    git_config(config, "sshd.listenAddress", args.ssh_listen_address)
+    git_config(config, "httpd.listenUrl", args.http_listen_url)
     git_config(config, "auth.type", "HTTP")
     git_config(config, "auth.httpHeader", "X-Gerrit-User")
     git_config(config, "auth.httpTrustedProxyNetworks", "127.0.0.1/32")
@@ -853,6 +1060,7 @@ def documentation_values(
         "SERVER_IP": args.server_ip,
         "HTTPS_PORT": str(args.https_port),
         "SSH_PORT": str(args.ssh_port),
+        "HTTP_PORT": str(args.http_port),
         "PROJECT_NAME": args.project_name,
         "PROJECT_BRANCH": args.project_branch,
         "HOME": str(pathlib.Path.home().resolve()),
@@ -863,6 +1071,10 @@ def documentation_values(
         "ADMIN_EMAIL": args.admin_email,
         "CERTIFICATE_FINGERPRINT": fingerprint,
         "INSTALL_DATE": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "GERRIT_SITE": str(args.site),
+        "CANONICAL_WEB_URL": args.canonical_web_url,
+        "SSH_LISTEN_ADDRESS": args.ssh_listen_address,
+        "HTTP_LISTEN_URL": args.http_listen_url,
     })
     return values
 
@@ -914,8 +1126,8 @@ def print_installation(
     """Print installed endpoints, trust material, and remaining remote gates."""
 
     print(f"Installed Gerrit {GERRIT_VERSION} at {site}")
-    print(f"HTTPS: https://{args.server_ip}:{args.https_port}/")
-    print(f"SSH: {args.server_ip}:{args.ssh_port}")
+    print(f"HTTPS: {args.canonical_web_url}")
+    print(f"SSH: {args.ssh_listen_address}")
     print(f"Self-signed certificate for client trust: {certificate}")
     print(f"Certificate {fingerprint}")
     print("Internal use only: each user must verify and import this public certificate.")
@@ -928,22 +1140,51 @@ def install(args: argparse.Namespace) -> None:
 
     home = pathlib.Path.home().resolve()
     os.umask(0o077)
-    interface = validate_install(args, home)
-
-    site = home / "gerrit-site"
+    if args.http_listen_url is None:
+        args.http_listen_url = f"proxy-https://127.0.0.1:{args.http_port}/"
+    if args.canonical_web_url is None:
+        args.canonical_web_url = f"https://{args.server_ip}:{args.https_port}/"
+    if args.ssh_listen_address is None:
+        args.ssh_listen_address = f"127.0.0.1:{args.ssh_port}"
+    requested_site = resolve_storage_path(args.storage_path, home)
+    if (requested_site / "etc" / "gerrit.config").is_file():
+        raise SetupError(
+            f"Existing Gerrit site found at {requested_site}. No files were changed. "
+            "Use the documented backup, stop, migration, and validation procedure."
+        )
+    previous_site = home / "gerrit-site"
+    if requested_site != previous_site and previous_site.exists():
+        raise SetupError(
+            f"Existing home Gerrit site found at {previous_site}. Stop Gerrit and follow the "
+            f"documented migration procedure before selecting {requested_site}; "
+            "the original was not changed."
+        )
+    site, mount = validate_storage_path(args.storage_path, home)
+    args.site = site
+    print(f"Selected Gerrit site: {site}")
+    print(f"Storage filesystem: {json.dumps(mount, sort_keys=True)}")
+    if site.exists() and any(site.iterdir()):
+        raise SetupError(
+            f"Non-empty Gerrit destination found at {site}. No files were changed. "
+            "Use the documented backup, stop, migration, and validation procedure."
+        )
     if site.exists():
-        raise SetupError(f"Existing Gerrit site found; back it up and use a reviewed upgrade procedure: {site}")
-    java_home, caddy_home, caddy_version_value, environment = install_runtimes(args, home)
+        site.chmod(0o700)
+    interface = validate_install(args, home)
+    java_home, caddy_home, caddy_version_value, environment = install_runtimes(args, home, site)
     war = install_gerrit_war(args, home, java_home)
     config = initialize_site(args, site, java_home, war)
+    protect_site_permissions(site)
     validate_loopback_site(args, site, environment)
     backup = backup_initial_configuration(home, site)
     certificate, private_key, fingerprint = configure_self_signed_certificate(args, site)
-    write_caddy_configuration(args, home, certificate, private_key, hash_local_password(caddy_home))
+    write_caddy_configuration(
+        args, home, site, certificate, private_key, hash_local_password(caddy_home)
+    )
     configure_final_site(args, config)
-    (site / "etc").chmod(0o700)
+    protect_site_permissions(site)
     values = documentation_values(args, java_home, caddy_version_value, interface, fingerprint)
-    copy_templates(pathlib.Path(__file__).resolve().parents[1], home, values)
+    copy_templates(pathlib.Path(__file__).resolve().parents[1], home, values, site)
     validate_final_site(args, home, site, certificate, environment)
     print_installation(args, site, certificate, fingerprint, backup)
 
@@ -952,13 +1193,18 @@ def add_install_args(install_parser: argparse.ArgumentParser) -> None:
     """Add the non-root Gerrit installation arguments."""
 
     install_parser.add_argument(
-        "--server-ip",
+        "--server-host", "--server-ip",
+        dest="server_ip",
         required=True,
         help="assigned college-server IPv4 address proven reachable through eduVPN",
     )
+    install_parser.add_argument("--storage-path")
     install_parser.add_argument("--https-port", type=int, default=18443)
     install_parser.add_argument("--ssh-port", type=int, default=29418)
-    install_parser.add_argument("--init-http-port", type=int, default=18080)
+    install_parser.add_argument("--http-port", "--init-http-port", dest="http_port", type=int, default=8080)
+    install_parser.add_argument("--http-listen-url")
+    install_parser.add_argument("--canonical-web-url")
+    install_parser.add_argument("--ssh-listen-address")
     install_parser.add_argument("--gerrit-url", default=GERRIT_URL)
     install_parser.add_argument("--gerrit-sha256", required=True)
     install_parser.add_argument("--jdk-url")
@@ -980,6 +1226,10 @@ def parser() -> argparse.ArgumentParser:
     argument_parser = argparse.ArgumentParser(description=__doc__)
     subparsers = argument_parser.add_subparsers(dest="command", required=True)
     subparsers.add_parser("assess", help="perform the read-only server assessment")
+    storage_parser = subparsers.add_parser(
+        "validate-storage", help="safely validate a home or shared-disk Gerrit site"
+    )
+    storage_parser.add_argument("--storage-path")
     install_parser = subparsers.add_parser(
         "install",
         help="install after assessment, local administrator password, and checksum are available",
@@ -995,6 +1245,10 @@ def main() -> int:
     try:
         if arguments.command == "assess":
             print_assessment(assessment(pathlib.Path.home().resolve()))
+        elif arguments.command == "validate-storage":
+            site, mount = validate_storage_path(arguments.storage_path, pathlib.Path.home().resolve())
+            print(f"Selected Gerrit site: {site}")
+            print(f"Storage validation passed: {json.dumps(mount, sort_keys=True)}")
         else:
             install(arguments)
     except (OSError, SetupError, ValueError, json.JSONDecodeError) as error:

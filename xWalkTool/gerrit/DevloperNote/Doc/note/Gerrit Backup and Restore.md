@@ -8,6 +8,10 @@ CI only when required for consistency, creates a timestamped archive below
 restarts services that were previously running. It never deletes older
 backups.
 
+The command reads the active site from `$HOME/gerrit-env.sh`, so shared storage
+is supported. Backups remain outside the active site under
+`$HOME/backups/gerrit`.
+
 The archive includes repositories, NoteDb data, configuration, indexes,
 plugins, host keys, HTTPS configuration, Caddy configuration and password
 hashes, the Gerrit WAR, installed CI/UI assets, retained CI state and logs, and
@@ -19,7 +23,7 @@ data and are not backup content.
 Do not perform a destructive restore without explicit approval.
 
 1. Stop Gerrit and CI.
-2. Rename the damaged `$HOME/gerrit-site` to a timestamped quarantine path.
+2. Preserve the damaged `@@GERRIT_SITE@@` as a timestamped quarantine path.
 3. Verify the selected archive with `sha256sum -c`.
 4. Inspect it with `tar -tzf`.
 5. Extract into a new private temporary directory.

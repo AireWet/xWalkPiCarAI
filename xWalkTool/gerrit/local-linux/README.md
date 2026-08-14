@@ -23,7 +23,7 @@ The checked local configuration records the assessed Wi-Fi address and the
 immutable official Gerrit object generation:
 
 ```bash
-export GERRIT_SERVER_IP="192.168.1.158"
+export GERRIT_SERVER_IP="LOCAL_LINUX_IP_FROM_ASSESSMENT"
 export GERRIT_URL="https://storage.googleapis.com/download/storage/v1/b/gerrit-releases/o/gerrit-3.14.2.war?generation=1783941312319403&alt=media"
 export GERRIT_SHA256="3ae33de96f7efb640a0f63b62309330e3981682f448ffe9178763f470ba3ba7a"
 ```
@@ -34,6 +34,10 @@ update the address if the local DHCP assignment changes. Keep the
 administrator password out of this file and out of Git. Local Gerrit SSH uses
 `29419` to avoid collision with the system Gerrit service.
 
+Leave `GERRIT_STORAGE_PATH` empty for the local `$HOME/gerrit-site` fallback.
+Use a different path only after running `gerrit-storage-check.sh`. Never point
+the local and college instances at the same Gerrit site.
+
 ## Install and start
 
 Run:
@@ -42,8 +46,8 @@ Run:
 xWalkTool/gerrit/local-linux/gerrit-local.sh install
 ```
 
-The script securely prompts for the initial `joxy` password, installs below
-`$HOME`, starts Gerrit and Caddy, and validates HTTPS. It never uses `sudo`.
+The script securely prompts for the initial `joxy` password, installs the local
+profile, starts Gerrit and Caddy, and validates HTTPS. It never uses `sudo`.
 The local profile runs Caddy as a transient user-level systemd service so it
 continues after the installer exits; it does not create a system service.
 
@@ -59,7 +63,7 @@ Print the browser address with:
 git config --file "$HOME/gerrit-site/etc/gerrit.config" --get gerrit.canonicalWebUrl
 ```
 
-For the assessed host, this prints `https://192.168.1.158:18443/`.
+This prints the HTTPS URL built from the assessed local host and configured port.
 
 Trust only the generated public certificate after checking its fingerprint.
 Never distribute `$HOME/gerrit-site/etc/gerrit-self-signed.key`.
@@ -78,49 +82,49 @@ CHANGE_REF='refs/changes/NN/CHANGE_NUMBER/PATCH_SET'
 SSH Fetch & Checkout:
 
 ```bash
-git fetch ssh://joxy@192.168.1.158:29419/xWalkPiCarAI "$CHANGE_REF" && git checkout FETCH_HEAD
+git fetch ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalkPiCarAI "$CHANGE_REF" && git checkout FETCH_HEAD
 ```
 
 SSH Fetch & Cherry Pick:
 
 ```bash
-git fetch ssh://joxy@192.168.1.158:29419/xWalkPiCarAI "$CHANGE_REF" && git cherry-pick FETCH_HEAD
+git fetch ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalkPiCarAI "$CHANGE_REF" && git cherry-pick FETCH_HEAD
 ```
 
 SSH Clone:
 
 ```bash
-git clone ssh://joxy@192.168.1.158:29419/xWalkPiCarAI
+git clone ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalkPiCarAI
 ```
 
 SSH Push for Review:
 
 ```bash
-git push ssh://joxy@192.168.1.158:29419/xWalkPiCarAI HEAD:refs/for/master
+git push ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalkPiCarAI HEAD:refs/for/master
 ```
 
 HTTP Fetch & Checkout:
 
 ```bash
-git fetch https://joxy@192.168.1.158:18443/xWalkPiCarAI "$CHANGE_REF" && git checkout FETCH_HEAD
+git fetch https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalkPiCarAI "$CHANGE_REF" && git checkout FETCH_HEAD
 ```
 
 HTTP Fetch & Cherry Pick:
 
 ```bash
-git fetch https://joxy@192.168.1.158:18443/xWalkPiCarAI "$CHANGE_REF" && git cherry-pick FETCH_HEAD
+git fetch https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalkPiCarAI "$CHANGE_REF" && git cherry-pick FETCH_HEAD
 ```
 
 HTTP Clone:
 
 ```bash
-git clone https://joxy@192.168.1.158:18443/xWalkPiCarAI
+git clone https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalkPiCarAI
 ```
 
 HTTP Push for Review:
 
 ```bash
-git push https://joxy@192.168.1.158:18443/xWalkPiCarAI HEAD:refs/for/master
+git push https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalkPiCarAI HEAD:refs/for/master
 ```
 
 HTTP Git prompts for the individual local Gerrit password. Keep the trusted

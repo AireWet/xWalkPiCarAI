@@ -91,3 +91,17 @@
 
 Your Gerrit username can differ from your college Linux username. Never reuse
 another person's account, browser session, or SSH key.
+
+Generic partner templates are:
+
+```bash
+git clone ssh://PARTNER_USERNAME@GERRIT_SERVER_HOST:GERRIT_SSH_PORT/PROJECT_NAME
+```
+
+```bash
+git push ssh://PARTNER_USERNAME@GERRIT_SERVER_HOST:GERRIT_SSH_PORT/PROJECT_NAME HEAD:refs/for/main
+```
+
+Replace every token with administrator-provided values. The partner generates
+and retains the private key only on their computer and never receives direct
+write access to `@@GERRIT_SITE@@`.

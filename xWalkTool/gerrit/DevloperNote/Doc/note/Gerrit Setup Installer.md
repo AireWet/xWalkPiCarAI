@@ -25,6 +25,18 @@ Obtain the official Gerrit WAR SHA-256 checksum. Set it and the detected server
 IP in `xWalkTool/gerrit/config/gerrit-setup.conf`. Do not store the administrator
 password in that file.
 
+Leave `GERRIT_STORAGE_PATH` empty for `@@HOME@@/gerrit-site`, or set it to the
+absolute site path supplied by the server administrator. Validate it first:
+
+```bash
+xWalkTool/gerrit/shell-script/gerrit-storage-check.sh
+```
+
+The installer prints the resolved site before changing anything. It rejects a
+missing or read-only mount, unsafe broad paths, symbolic escapes, insufficient
+space, missing Linux permissions, or failed file-locking and file-operation
+checks.
+
 ```bash
 xWalkTool/gerrit/shell-script/gerrit-setup.sh install
 ```
@@ -45,13 +57,13 @@ xWalkTool/gerrit/shell-script/gerrit-setup.sh start
 ## Installed paths
 
 - Gerrit application: `$HOME/apps/gerrit`
-- Gerrit site: `$HOME/gerrit-site`
-- Authoritative repositories: `$HOME/gerrit-site/git`
+- Gerrit site: `@@GERRIT_SITE@@`
+- Authoritative repositories: `@@GERRIT_SITE@@/git`
 - Caddy application: `$HOME/apps/caddy`
 - Caddy configuration: `$HOME/gerrit-proxy`
 - CI programs: `$HOME/apps/gerrit/tools`
 - Commands: `$HOME/bin`
-- Rendered guides: `$HOME/gerrit-site/docs`
+- Rendered guides: `@@GERRIT_SITE@@/docs`
 - Backups: `$HOME/backups/gerrit`
 
 ## Service operation
@@ -64,7 +76,15 @@ server reboot is supported. Do not create a system-level service.
 Print the installed web address with:
 
 ```bash
-git config --file "$HOME/gerrit-site/etc/gerrit.config" --get gerrit.canonicalWebUrl
+git config --file "@@GERRIT_SITE@@/etc/gerrit.config" --get gerrit.canonicalWebUrl
 ```
 
 Continue with the administrator configuration before onboarding users.
+
+## Process management
+
+The generated commands use Gerrit's own control script and the exact validated
+site. `nohup` is the portable default. `tmux` or `screen` may retain an
+interactive session after logout but cannot guarantee startup after reboot.
+Select user-level systemd only when assessment confirms the user manager and
+required commands work. No system-level unit is created.

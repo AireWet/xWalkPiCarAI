@@ -8,6 +8,8 @@ for the user-owned college-server deployment.
 
 - [Server overview](Doc/note/Gerrit%20Server%20Overview.md)
 - [Setup installer](Doc/note/Gerrit%20Setup%20Installer.md)
+- [Storage and migration](Doc/note/Gerrit%20Storage%20and%20Migration.md)
+- [Administrator request](Doc/note/Gerrit%20Administrator%20Request.md)
 - [Local Linux setup](Doc/note/Gerrit%20Local%20Linux%20Setup.md)
 - [Administrator setup](Doc/note/Gerrit%20Admin%20Setup.md)
 - [User configuration](Doc/note/Gerrit%20User%20Configuration.md)
@@ -17,4 +19,4 @@ for the user-owned college-server deployment.
 - [Troubleshooting](Doc/note/Gerrit%20Troubleshooting.md)
 
 The Python installer renders the pages with the detected server values and
-installs them in `$HOME/gerrit-site/docs`.
+installs them in the selected `$GERRIT_SITE/docs` directory.

@@ -3,12 +3,14 @@ set -eu
 umask 077
 # shellcheck source=/dev/null
 . "$HOME/gerrit-env.sh"
-case "$GERRIT_SITE" in "$HOME"/*) ;; *) echo "Unsafe GERRIT_SITE: $GERRIT_SITE" >&2; exit 2 ;; esac
+"$HOME/bin/gerrit-site-check" >/dev/null
 backup_root="$HOME/backups/gerrit"
 case "$backup_root" in "$HOME"/*) ;; *) echo "Unsafe backup root" >&2; exit 2 ;; esac
 mkdir -p "$backup_root"
 available_kib="$(df -Pk "$backup_root" | awk 'NR == 2 {print $4}')"
-set -- "$GERRIT_SITE/git" "$GERRIT_SITE/etc" "$GERRIT_SITE/data" "$GERRIT_SITE/index" "$GERRIT_SITE/plugins" "$HOME/apps/gerrit"
+set -- "$GERRIT_SITE/git" "$GERRIT_SITE/etc" "$GERRIT_SITE/data" \
+    "$GERRIT_SITE/index" "$GERRIT_SITE/plugins" "$HOME/apps/gerrit" "$HOME/gerrit-env.sh"
+if [ -e "$GERRIT_SITE/db" ]; then set -- "$@" "$GERRIT_SITE/db"; fi
 if [ "$GERRIT_PROXY_MODE" = "local-http" ]; then set -- "$@" "$HOME/apps/caddy" "$HOME/gerrit-proxy"; fi
 if [ -e "$HOME/gerrit-ci" ]; then set -- "$@" "$HOME/gerrit-ci"; fi
 required_kib="$(du -sk "$@" 2>/dev/null | awk '{sum += $1} END {print sum * 2}')"
@@ -36,13 +38,16 @@ restart_if_needed()
 }
 trap restart_if_needed EXIT
 trap 'exit 130' HUP INT TERM
-set -- gerrit-site/git gerrit-site/etc gerrit-site/data gerrit-site/index gerrit-site/plugins apps/gerrit gerrit-env.sh
-if [ -e "$HOME/gerrit-site/db" ]; then set -- "$@" gerrit-site/db; fi
-if [ "$GERRIT_PROXY_MODE" = "local-http" ]; then set -- "$@" apps/caddy gerrit-proxy; fi
-if [ -e "$HOME/gerrit-ci" ]; then set -- "$@" gerrit-ci; fi
-tar -C "$HOME" -czf "$archive" "$@"
+set -- "$GERRIT_SITE/git" "$GERRIT_SITE/etc" "$GERRIT_SITE/data" "$GERRIT_SITE/index" \
+    "$GERRIT_SITE/plugins" "$HOME/apps/gerrit" "$HOME/gerrit-env.sh"
+if [ -e "$GERRIT_SITE/db" ]; then set -- "$@" "$GERRIT_SITE/db"; fi
+if [ "$GERRIT_PROXY_MODE" = "local-http" ]; then set -- "$@" "$HOME/apps/caddy" "$HOME/gerrit-proxy"; fi
+if [ -e "$HOME/gerrit-ci" ]; then set -- "$@" "$HOME/gerrit-ci"; fi
+tar -czf "$archive" "$@"
 tar -tzf "$archive" >/dev/null
 sha256sum "$archive" > "$archive.sha256"
 tar -tzf "$archive" | sed -n '1,40p'
 ls -lh "$archive" "$archive.sha256"
 cat "$archive.sha256"
+printf 'Restore only while Gerrit is stopped. Verify with: sha256sum -c %s\n' "$archive.sha256"
+echo "Extract into a new private temporary directory, inspect paths, then follow the rendered restore guide."

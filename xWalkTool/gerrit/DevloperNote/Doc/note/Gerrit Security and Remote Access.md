@@ -3,7 +3,7 @@
 ## HTTPS and certificate trust
 
 The browser endpoint is `https://@@SERVER_IP@@:@@HTTPS_PORT@@/`. Distribute
-only `$HOME/gerrit-site/etc/gerrit-self-signed.crt` through an authenticated
+only `@@GERRIT_SITE@@/etc/gerrit-self-signed.crt` through an authenticated
 channel and compare its SHA-256 fingerprint out of band:
 `@@CERTIFICATE_FINGERPRINT@@`. Never distribute the private key, expose a
 password, or disable certificate validation.
