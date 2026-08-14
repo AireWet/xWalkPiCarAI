@@ -82,6 +82,60 @@ xWalkTool/gerrit/shell-script/gerrit-setup.sh start
 
 This starts Gerrit only when it is stopped and always runs `gerrit-check`.
 
+## Download button
+
+The installer adds Gerrit's official `download-commands` plugin and configures
+the change **Download** button for SSH and authenticated HTTP. After signing in,
+select the required protocol and copy one of these generated options:
+
+- **Checkout**: `git fetch` followed by `git checkout FETCH_HEAD`;
+- **Cherry Pick**: `git fetch` followed by `git cherry-pick FETCH_HEAD`;
+- **Clone**: clone the project through SSH or authenticated HTTPS;
+- **Patch File → Zip**: download the selected patch set as a zipped patch.
+
+Gerrit replaces the example change ref below with the selected patch set's real
+`refs/changes/...` value:
+
+```bash
+CHANGE_REF='refs/changes/NN/CHANGE_NUMBER/PATCH_SET'
+```
+
+```bash
+git fetch ssh://USERNAME@SERVER_IP:SSH_PORT/PROJECT "$CHANGE_REF" && git checkout FETCH_HEAD
+```
+
+```bash
+git fetch ssh://USERNAME@SERVER_IP:SSH_PORT/PROJECT "$CHANGE_REF" && git cherry-pick FETCH_HEAD
+```
+
+```bash
+git clone ssh://USERNAME@SERVER_IP:SSH_PORT/PROJECT
+```
+
+```bash
+git push ssh://USERNAME@SERVER_IP:SSH_PORT/PROJECT HEAD:refs/for/BRANCH
+```
+
+```bash
+git fetch https://USERNAME@SERVER_IP:HTTPS_PORT/PROJECT "$CHANGE_REF" && git checkout FETCH_HEAD
+```
+
+```bash
+git fetch https://USERNAME@SERVER_IP:HTTPS_PORT/PROJECT "$CHANGE_REF" && git cherry-pick FETCH_HEAD
+```
+
+```bash
+git clone https://USERNAME@SERVER_IP:HTTPS_PORT/PROJECT
+```
+
+```bash
+git push https://USERNAME@SERVER_IP:HTTPS_PORT/PROJECT HEAD:refs/for/BRANCH
+```
+
+HTTPS commands prompt for the user's individual password. Never embed the
+password in a URL or disable TLS certificate verification. Both push commands
+upload a change for review; they do not push directly to the protected branch.
+
 ## Installed paths
 
 | Content | Installed path |
@@ -104,6 +158,40 @@ git config --file "$HOME/gerrit-site/etc/gerrit.config" --get gerrit.canonicalWe
 Continue with `$HOME/gerrit-site/docs/Gerrit Admin Setup.md`
 after the installer completes.
 
-For a temporary installation on the current Linux computer, use
-[`local-linux/README.md`](local-linux/README.md). The local module reuses this
-installer and keeps its configuration separate from the college deployment.
+## Local Gerrit
+
+The `local-linux` profile provides a separate Gerrit deployment for the current
+Linux computer. It reuses the non-root installer but does not reuse the college
+server configuration. Its configuration is stored in
+`local-linux/gerrit-local.conf`.
+
+For the assessed local host, use:
+
+- web review: `https://192.168.1.158:18443/`;
+- Gerrit SSH: `192.168.1.158:29419`;
+- project: `xWalkPiCarAI`;
+- review branch: `master`.
+
+Assess, install, and later restart the local instance with:
+
+```bash
+xWalkTool/gerrit/local-linux/gerrit-local.sh assess
+```
+
+```bash
+xWalkTool/gerrit/local-linux/gerrit-local.sh install
+```
+
+```bash
+xWalkTool/gerrit/local-linux/gerrit-local.sh start
+```
+
+Reassess the host and update `GERRIT_SERVER_IP` if its Wi-Fi or Ethernet address
+changes. The local Gerrit **Download** button provides separate SSH and HTTPS
+commands for clone, fetch and checkout, fetch and cherry-pick, and push for
+review. It also provides a zipped patch file.
+
+See [`local-linux/README.md`](local-linux/README.md) for the exact local Git
+commands and
+[`Gerrit Local Linux Setup.md`](DevloperNote/Doc/note/Gerrit%20Local%20Linux%20Setup.md)
+for the administrator workflow and deployment limitations.

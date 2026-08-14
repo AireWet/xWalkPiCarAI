@@ -21,41 +21,72 @@
    Never upload or share `id_ed25519`.
 9. Test with
    `ssh -p @@SSH_PORT@@ your_gerrit_username@@@SERVER_IP@@`.
-10. Open a change's **Download** menu to copy the standard **Checkout**,
-    **Cherry Pick**, **Pull**, or **Format Patch** command. Select either SSH or
-    authenticated HTTP. The HTTP password is the individual password assigned
-    by the administrator; never put it in a command or Git remote URL. Checkout
-    and Cherry Pick show the required `git fetch` followed by the corresponding
-    `git checkout` or `git cherry-pick` command.
+10. Open a change's **Download** menu. Gerrit supplies the real change ref in
+    the form `refs/changes/NN/CHANGE_NUMBER/PATCH_SET`; copy that value into
+    `CHANGE_REF` before using the commands below:
+
+    ```bash
+    CHANGE_REF='refs/changes/NN/CHANGE_NUMBER/PATCH_SET'
+    ```
+
 11. Clone with SSH:
 
-    `git clone ssh://your_gerrit_username@@@SERVER_IP@@:@@SSH_PORT@@/@@PROJECT_NAME@@`
+    ```bash
+    git clone ssh://your_gerrit_username@@@SERVER_IP@@:@@SSH_PORT@@/@@PROJECT_NAME@@
+    ```
 
-    Or clone through authenticated HTTPS:
+12. Fetch and check out a patch set with SSH:
 
-    `git clone https://your_gerrit_username@@@SERVER_IP@@:@@HTTPS_PORT@@/@@PROJECT_NAME@@`
+    ```bash
+    git fetch ssh://your_gerrit_username@@@SERVER_IP@@:@@SSH_PORT@@/@@PROJECT_NAME@@ "$CHANGE_REF" && git checkout FETCH_HEAD
+    ```
+
+13. Fetch and cherry-pick a patch set with SSH:
+
+    ```bash
+    git fetch ssh://your_gerrit_username@@@SERVER_IP@@:@@SSH_PORT@@/@@PROJECT_NAME@@ "$CHANGE_REF" && git cherry-pick FETCH_HEAD
+    ```
+
+14. Clone through authenticated HTTPS:
+
+    ```bash
+    git clone https://your_gerrit_username@@@SERVER_IP@@:@@HTTPS_PORT@@/@@PROJECT_NAME@@
+    ```
+
+15. Fetch and check out a patch set through authenticated HTTPS:
+
+    ```bash
+    git fetch https://your_gerrit_username@@@SERVER_IP@@:@@HTTPS_PORT@@/@@PROJECT_NAME@@ "$CHANGE_REF" && git checkout FETCH_HEAD
+    ```
+
+16. Fetch and cherry-pick a patch set through authenticated HTTPS:
+
+    ```bash
+    git fetch https://your_gerrit_username@@@SERVER_IP@@:@@HTTPS_PORT@@/@@PROJECT_NAME@@ "$CHANGE_REF" && git cherry-pick FETCH_HEAD
+    ```
 
     Git prompts for the password. TLS certificate verification must remain
-    enabled.
-12. To download files in the change screen, use **Patch File → Zip** for a
+    enabled. Never put the password in the command, Git remote URL, shell
+    history, documentation, or repository.
+17. To download files in the change screen, use **Patch File → Zip** for a
     zipped patch or **Archive → TGZ** for a repository snapshot. Gerrit 3.14
     intentionally excludes repository ZIP archives for browser security, so a
     TGZ archive is the standard safe snapshot option.
-13. In the clone, install the hook:
+18. In the clone, install the hook:
 
    ```bash
    scp -P @@SSH_PORT@@ your_gerrit_username@@@SERVER_IP@@:hooks/commit-msg .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg
    ```
 
-14. Create a branch, commit, verify the `Change-Id`, and run
+19. Create a branch, commit, verify the `Change-Id`, and run
     `git push origin HEAD:refs/for/@@PROJECT_BRANCH@@`.
-15. Open another user's change, click **Reply**, add comments and select a
+20. Open another user's change, click **Reply**, add comments and select a
     Code-Review vote.
-16. Revise your change with `git commit --amend`, keeping its `Change-Id`, then
+21. Revise your change with `git commit --amend`, keeping its `Change-Id`, then
     push to `refs/for/@@PROJECT_BRANCH@@` again.
-17. Submit only after the configured review requirements pass and only if your
+22. Submit only after the configured review requirements pass and only if your
     group has Submit permission.
-18. Report a lost device or compromised key immediately so the administrator
+23. Report a lost device or compromised key immediately so the administrator
     can revoke that specific public key.
 
 Your Gerrit username can differ from your college Linux username. Never reuse

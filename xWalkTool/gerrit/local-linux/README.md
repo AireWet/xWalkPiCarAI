@@ -64,6 +64,70 @@ For the assessed host, this prints `https://192.168.1.158:18443/`.
 Trust only the generated public certificate after checking its fingerprint.
 Never distribute `$HOME/gerrit-site/etc/gerrit-self-signed.key`.
 
+## Local Download button
+
+Sign in to the local Gerrit page, open a change and select **Download**. Choose
+SSH or HTTP to copy **Checkout**, **Cherry Pick**, or **Clone**. Use
+**Patch File → Zip** to download a zipped patch. Gerrit inserts the selected patch set's
+real change ref. Copy the exact value displayed for the selected patch set:
+
+```bash
+CHANGE_REF='refs/changes/NN/CHANGE_NUMBER/PATCH_SET'
+```
+
+SSH Fetch & Checkout:
+
+```bash
+git fetch ssh://joxy@192.168.1.158:29419/xWalkPiCarAI "$CHANGE_REF" && git checkout FETCH_HEAD
+```
+
+SSH Fetch & Cherry Pick:
+
+```bash
+git fetch ssh://joxy@192.168.1.158:29419/xWalkPiCarAI "$CHANGE_REF" && git cherry-pick FETCH_HEAD
+```
+
+SSH Clone:
+
+```bash
+git clone ssh://joxy@192.168.1.158:29419/xWalkPiCarAI
+```
+
+SSH Push for Review:
+
+```bash
+git push ssh://joxy@192.168.1.158:29419/xWalkPiCarAI HEAD:refs/for/master
+```
+
+HTTP Fetch & Checkout:
+
+```bash
+git fetch https://joxy@192.168.1.158:18443/xWalkPiCarAI "$CHANGE_REF" && git checkout FETCH_HEAD
+```
+
+HTTP Fetch & Cherry Pick:
+
+```bash
+git fetch https://joxy@192.168.1.158:18443/xWalkPiCarAI "$CHANGE_REF" && git cherry-pick FETCH_HEAD
+```
+
+HTTP Clone:
+
+```bash
+git clone https://joxy@192.168.1.158:18443/xWalkPiCarAI
+```
+
+HTTP Push for Review:
+
+```bash
+git push https://joxy@192.168.1.158:18443/xWalkPiCarAI HEAD:refs/for/master
+```
+
+HTTP Git prompts for the individual local Gerrit password. Keep the trusted
+self-signed certificate enabled and never place the password in the URL. Both
+push commands create or update a Gerrit review and cannot bypass protected
+`master`.
+
 ## Access boundary
 
 The URL is reachable only where the local Linux host and network allow the

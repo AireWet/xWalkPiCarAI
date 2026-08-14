@@ -54,6 +54,61 @@ Open that address locally after verifying and trusting the generated public
 certificate. Access from another LAN computer depends on existing host and
 network policy. The module does not modify firewall, router, or DNS settings.
 
+## Local Download and review workflow
+
+Sign in at `https://@@SERVER_IP@@:@@HTTPS_PORT@@/`, open a change, and select
+**Download**. Choose SSH or authenticated HTTPS. Gerrit substitutes the selected
+patch set's real `refs/changes/...` ref for the example below:
+
+```bash
+CHANGE_REF='refs/changes/NN/CHANGE_NUMBER/PATCH_SET'
+```
+
+Use SSH to fetch and check out the patch set:
+
+```bash
+git fetch ssh://your_gerrit_username@@@SERVER_IP@@:@@SSH_PORT@@/@@PROJECT_NAME@@ "$CHANGE_REF" && git checkout FETCH_HEAD
+```
+
+Use SSH to fetch and cherry-pick the patch set:
+
+```bash
+git fetch ssh://your_gerrit_username@@@SERVER_IP@@:@@SSH_PORT@@/@@PROJECT_NAME@@ "$CHANGE_REF" && git cherry-pick FETCH_HEAD
+```
+
+Clone or upload a new review through SSH:
+
+```bash
+git clone ssh://your_gerrit_username@@@SERVER_IP@@:@@SSH_PORT@@/@@PROJECT_NAME@@
+```
+
+```bash
+git push ssh://your_gerrit_username@@@SERVER_IP@@:@@SSH_PORT@@/@@PROJECT_NAME@@ HEAD:refs/for/@@PROJECT_BRANCH@@
+```
+
+The equivalent authenticated HTTPS commands are:
+
+```bash
+git fetch https://your_gerrit_username@@@SERVER_IP@@:@@HTTPS_PORT@@/@@PROJECT_NAME@@ "$CHANGE_REF" && git checkout FETCH_HEAD
+```
+
+```bash
+git fetch https://your_gerrit_username@@@SERVER_IP@@:@@HTTPS_PORT@@/@@PROJECT_NAME@@ "$CHANGE_REF" && git cherry-pick FETCH_HEAD
+```
+
+```bash
+git clone https://your_gerrit_username@@@SERVER_IP@@:@@HTTPS_PORT@@/@@PROJECT_NAME@@
+```
+
+```bash
+git push https://your_gerrit_username@@@SERVER_IP@@:@@HTTPS_PORT@@/@@PROJECT_NAME@@ HEAD:refs/for/@@PROJECT_BRANCH@@
+```
+
+HTTPS prompts for the user's individual password. Do not place the password in
+the URL or disable certificate verification. Select **Patch File → Zip** when a
+Git checkout is not required. The push commands upload to Gerrit review and do
+not directly update the protected branch.
+
 ## Deployment separation
 
 Do not treat local testing as college-server validation. The later college

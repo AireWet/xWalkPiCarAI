@@ -495,10 +495,40 @@ class GerritServerSetupTest(unittest.TestCase):
             self.assertIn("https://10.20.30.40:18443/q/project:MyPiCarX", guides)
             self.assertIn("gerrit.canonicalWebUrl", guides)
             self.assertIn("refs/for/master", guides)
+            self.assertIn("git fetch ssh://your_gerrit_username@10.20.30.40:29418/MyPiCarX", guides)
+            self.assertIn("git fetch https://your_gerrit_username@10.20.30.40:18443/MyPiCarX", guides)
+            self.assertIn("git checkout FETCH_HEAD", guides)
+            self.assertIn("git cherry-pick FETCH_HEAD", guides)
+            self.assertIn("git clone ssh://your_gerrit_username@10.20.30.40:29418/MyPiCarX", guides)
+            self.assertIn("git clone https://your_gerrit_username@10.20.30.40:18443/MyPiCarX", guides)
+            local_guide = (documentation / "Gerrit Local Linux Setup.md").read_text(encoding="utf-8")
+            self.assertIn("## Local Download and review workflow", local_guide)
+            self.assertIn("git push ssh://your_gerrit_username@10.20.30.40:29418/MyPiCarX "
+                          "HEAD:refs/for/master", local_guide)
+            self.assertIn("git push https://your_gerrit_username@10.20.30.40:18443/MyPiCarX "
+                          "HEAD:refs/for/master", local_guide)
+            self.assertIn("Patch File → Zip", local_guide)
             self.assertIn('username" != "joxy', installed_commands)
             self.assertTrue((home / "apps" / "gerrit" / "tools" / "xWalkGerritCi.py").is_file())
             self.assertTrue((home / "gerrit-site" / "plugins" / "xWalkReviewControls.js").is_file())
             self.assertIn("XWALK_CI_LOG_WEB_URL=https://10.20.30.40:18443/ci", guides)
+
+    def test_readmes_document_standard_download_button_commands(self) -> None:
+        """Document SSH, HTTP, clone, checkout, cherry-pick, and zipped patches."""
+
+        installer = (GERRIT_ROOT / "README.md").read_text(encoding="utf-8")
+        local = (GERRIT_ROOT / "local-linux" / "README.md").read_text(encoding="utf-8")
+        expected = (
+            "git checkout FETCH_HEAD", "git cherry-pick FETCH_HEAD", "git clone ssh://",
+            "git clone https://", "git push ssh://", "git push https://",
+            "HEAD:refs/for/", "Patch File → Zip",
+        )
+        for value in expected:
+            self.assertIn(value, installer)
+            self.assertIn(value, local)
+        self.assertIn("## Local Gerrit", installer)
+        self.assertIn("ssh://joxy@192.168.1.158:29419/xWalkPiCarAI", local)
+        self.assertIn("https://joxy@192.168.1.158:18443/xWalkPiCarAI", local)
 
     def test_installer_has_no_forbidden_execution_commands(self) -> None:
         """The executable installer does not contain privileged management commands."""
