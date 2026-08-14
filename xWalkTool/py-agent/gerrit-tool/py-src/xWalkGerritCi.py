@@ -353,6 +353,7 @@ class XWalkGerritCi:
     def execute_verification(
         self, ref: str, directory: Path, log_path: Path,
         verification_project: str | None = None,
+        verification_environment: dict[str, str] | None = None,
     ) -> tuple[bool, dict[str, bool]]:
         """Checkout one patch set and execute the unchanged quality matrix."""
 
@@ -367,11 +368,44 @@ class XWalkGerritCi:
                 for command in self.standalone_commands(directory, target_project)
             )
             results = (
-                XWalkGerritQuality(directory, log).run_all() if standalone_passed else {}
+                XWalkGerritQuality(
+                    directory, log, verification_environment
+                ).run_all() if standalone_passed else {}
             )
             if target_project not in self.integration_repositories:
                 results = {f"{target_project} standalone": standalone_passed, **results}
+            report_directory = directory / "build-host/codescene"
+            if report_directory.is_dir():
+                shutil.copytree(
+                    report_directory, log_path.with_suffix(".codescene"), dirs_exist_ok=True,
+                )
         return checkout_passed and all(results.values()), results
+
+    @classmethod
+    def code_health_environment(cls, event: dict[str, Any]) -> dict[str, str]:
+        """Build exact, non-secret Gerrit patchset metadata for CodeScene."""
+
+        revision = str(event["patchSet"]["revision"])
+        project = str(event["change"]["project"])
+        environment = {
+            **os.environ,
+            "GERRIT_CHANGE_NUMBER": str(event["change"]["number"]),
+            "GERRIT_PATCHSET_NUMBER": str(event["patchSet"]["number"]),
+            "GERRIT_PATCHSET_REVISION": revision,
+            "GERRIT_REFSPEC": str(event["patchSet"]["ref"]),
+            "GERRIT_PROJECT": project,
+            "GERRIT_BRANCH": str(event["change"]["branch"]),
+            "XWALK_CODESCENE_BASE_REVISION": f"{revision}^",
+            "XWALK_CODESCENE_REVISION": revision,
+        }
+        environment.pop("XWALK_CODESCENE_UNAVAILABLE_REASON", None)
+        if project not in cls.integration_repositories:
+            environment["XWALK_CODESCENE_UNAVAILABLE_REASON"] = (
+                "This component patch set is verified in its overlaid integration checkout, "
+                "but the installed CodeScene project must analyse the integrated MyPiCarX "
+                "Git history after uplift or through licensed native Gerrit integration."
+            )
+        return environment
 
     def report_module_results(
         self, change: int, patch_set: int, log_path: Path, results_url: str,
@@ -392,11 +426,31 @@ class XWalkGerritCi:
                 self.log_server.normalize_status(item.get("status")) == "PASSED"
                 for item in checks
             )
-            message = "\n".join([
-                str(job["name"]),
-                f"Status: {status}",
+            lines = [
+                str(job["name"]), f"Status: {status}",
                 f"Duration: {self.log_server.format_duration(job.get('duration_seconds'))}",
                 f"Tests passed: {completed}/{len(checks)}",
+            ]
+            if identifier == "codescene-code-health":
+                summary_path = log_path.with_suffix(".codescene") / "summary.json"
+                try:
+                    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+                except (OSError, json.JSONDecodeError):
+                    summary = {}
+                changed_count = summary.get("changed_files_analysed")
+                if not isinstance(changed_count, int):
+                    changed_count = "unavailable"
+                lines.extend([
+                    f"Changed files analysed: {changed_count}",
+                    f"Code-health degradation: {summary.get('code_health_degradation', 'UNKNOWN')}",
+                    f"Quality gate: {summary.get('quality_gate', 'UNAVAILABLE')}",
+                ])
+                if summary.get("analysis_link"):
+                    lines.append(f"Analysis: {summary['analysis_link']}")
+                if summary.get("reason"):
+                    lines.append(f"Diagnostic: {summary['reason']}")
+            message = "\n".join([
+                *lines,
                 f"Module tests and log: {self.log_server.job_url(change, patch_set, identifier)}",
                 f"Overall dependency graph: {results_url}",
             ])
@@ -448,7 +502,8 @@ class XWalkGerritCi:
         )
         try:
             passed, quality_results = self.execute_verification(
-                ref, temporary_directory, log_path, project
+                ref, temporary_directory, log_path, project,
+                self.code_health_environment(event),
             )
         finally:
             shutil.rmtree(temporary_directory, ignore_errors=True)

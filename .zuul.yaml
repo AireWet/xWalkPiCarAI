@@ -228,6 +228,21 @@
         - build-host/deploy.sha256
 
 - job:
+    name: xwalk-code-health
+    description: MyPiCarX changed-code CodeScene delta analysis and rollout policy.
+    nodeset: xwalk-ubuntu-24.04
+    run: xWalkTool/shell-agent/env-tool/playbooks/zuul/run-host-quality-job.yaml
+    post-run: xWalkTool/shell-agent/env-tool/playbooks/zuul/collect-host-quality-artifacts.yaml
+    timeout: 1200
+    dependencies:
+      - xwalk-shellcheck
+      - xwalk-deployment-scripts
+    vars:
+      xwalk_ci_job: codescene
+      xwalk_ci_artifact_paths:
+        - build-host/codescene
+
+- job:
     name: xwalk-host-quality-gate
     description: xWalk final Host Quality dependency verification.
     nodeset: xwalk-ubuntu-24.04
@@ -253,6 +268,7 @@
       - xwalk-valgrind
       - xwalk-clang-static-analyzer
       - xwalk-staged-install
+      - xwalk-code-health
     vars:
       xwalk_ci_job: host-quality-gate
 
@@ -278,6 +294,7 @@
         - xwalk-valgrind
         - xwalk-clang-static-analyzer
         - xwalk-staged-install
+        - xwalk-code-health
         - xwalk-host-quality-gate
     gate:
       jobs: *xwalk-host-quality-jobs

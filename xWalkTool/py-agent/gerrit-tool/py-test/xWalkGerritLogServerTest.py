@@ -111,6 +111,14 @@ class XWalkGerritLogServerTest(unittest.TestCase):
         self.assertIn('class="graph-node status-queued"', page)
         self.assertIn("QUEUED", page)
 
+    def test_unavailable_code_health_is_visible_without_failing_the_final_gate(self) -> None:
+        """Distinguish a non-blocking service outage from a completed analysis."""
+
+        page = self.render(self.state({"codescene-code-health": "UNAVAILABLE"}))
+        self.assertIn('class="graph-node status-unavailable"', page)
+        self.assertIn("UNAVAILABLE", page)
+        self.assertIn('Overall status: <strong class="passed">PASSED</strong>', page)
+
     def test_missing_duration_and_long_check_name_are_safe(self) -> None:
         """Keep optional durations and long names readable."""
 
@@ -158,13 +166,16 @@ class XWalkGerritLogServerTest(unittest.TestCase):
             self.assertIn(f'id="job-{identifier}"', page)
             self.assertIn(f'/changes/9/2/jobs/{identifier}', page)
 
-    def test_required_ten_module_nodes_are_rendered(self) -> None:
-        """Expose the requested ten parallel modules between preparation and gate."""
+    def test_required_eleven_module_nodes_are_rendered(self) -> None:
+        """Expose the ten build modules and Code Health between preparation and gate."""
 
         page = self.render(self.state())
         module_identifiers = [identifier for identifier, unused in self.log_server.MODULES[1:-1]]
-        self.assertEqual(len(module_identifiers), 10)
-        for name in ("xWalkAgent", "xWalkHal", "xWalk Quality", "xWalk Deployment"):
+        self.assertEqual(len(module_identifiers), 11)
+        for name in (
+            "xWalkAgent", "xWalkHal", "xWalk Quality", "xWalk Deployment",
+            "MyPiCarX / Code Health",
+        ):
             self.assertIn(name, page)
 
     def test_dependency_relationship_is_explained_semantically(self) -> None:

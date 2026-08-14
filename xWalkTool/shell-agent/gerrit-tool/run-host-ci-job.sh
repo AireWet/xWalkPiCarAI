@@ -143,6 +143,7 @@ run_staged_install() {
 
 validate_ci_metadata() {
     local ansible_home="$repository_root/build-host/ansible"
+    xWalkTool/py-agent/dev-tool/xWalkCodeHealth validate-config
     python3 xWalkTool/py-agent/dev-tool/xWalkZuulValidator .zuul.yaml
     ANSIBLE_HOME="$ansible_home" ANSIBLE_LOCAL_TEMP="$ansible_home/local" \
         ansible-playbook --syntax-check \
@@ -272,6 +273,11 @@ case "$job" in
     clang-static-analyzer)
         require_no_arguments "$@"
         xWalkTool/shell-agent/quality-tool/run-clang-static-analyzer.sh
+        ;;
+    codescene)
+        require_no_arguments "$@"
+        xWalkTool/py-agent/dev-tool/xWalkCodeHealth validate-config
+        xWalkTool/py-agent/dev-tool/xWalkCodeHealth analyze
         ;;
     shellcheck)
         require_no_arguments "$@"

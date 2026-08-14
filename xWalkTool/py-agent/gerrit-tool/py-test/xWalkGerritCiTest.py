@@ -43,6 +43,7 @@ class XWalkGerritCiTest(unittest.TestCase):
         """Return one target-project event with a current patch-set payload."""
 
         change: dict[str, object] = {
+            "number": 41,
             "project": "xWalk-rpi5",
             "branch": "main",
         }
@@ -290,6 +291,36 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.assertTrue(any("xWalkHal\nStatus: WAITING" in message for message in messages))
         self.assertTrue(any("Module tests and log:" in message for message in messages))
 
+    def test_code_health_uses_exact_gerrit_patchset_metadata(self) -> None:
+        """Analyse the reviewed revision and its parent with non-secret correlation IDs."""
+
+        event = self.verification_event("patchset-created", False)
+        event["patchSet"]["revision"] = "a" * 40
+        environment = self.ci.code_health_environment(event)
+        self.assertEqual(environment["GERRIT_CHANGE_NUMBER"], "41")
+        self.assertEqual(environment["GERRIT_PATCHSET_NUMBER"], "3")
+        self.assertEqual(environment["GERRIT_PATCHSET_REVISION"], "a" * 40)
+        self.assertEqual(environment["GERRIT_REFSPEC"], "refs/changes/41/41/3")
+        self.assertEqual(environment["XWALK_CODESCENE_REVISION"], "a" * 40)
+        self.assertEqual(environment["XWALK_CODESCENE_BASE_REVISION"], f"{'a' * 40}^")
+
+    def test_code_health_module_is_a_separate_gerrit_result(self) -> None:
+        """Expose CodeScene details without adding a new Gerrit vote label."""
+
+        module = next(
+            item for item in MODULES if item.identifier == "codescene-code-health"
+        )
+        self.assertEqual(module.name, "MyPiCarX / Code Health")
+        self.assertEqual(module.checks[0].arguments, ("codescene",))
+
+    def test_component_patchset_does_not_analyse_unrelated_integration_head(self) -> None:
+        """Mark component delta unavailable until native integration or uplift."""
+
+        event = self.verification_event("patchset-created", False)
+        event["change"]["project"] = "xWalkHal"
+        environment = self.ci.code_health_environment(event)
+        self.assertIn("integrated MyPiCarX", environment["XWALK_CODESCENE_UNAVAILABLE_REASON"])
+
 
 class XWalkGerritQualityTest(unittest.TestCase):
     """Verify the structured, resource-safe Gerrit module graph."""
@@ -331,6 +362,46 @@ class XWalkGerritQualityTest(unittest.TestCase):
         self.assertNotIn("secret-value", redacted)
         self.assertNotIn("user:password", redacted)
         self.assertNotIn("OPENSSH PRIVATE KEY-----\nsecret", redacted)
+
+    def test_unavailable_code_health_is_visible_but_non_blocking_in_rollout(self) -> None:
+        """Retain an unavailable state while allowing the boolean dependency policy."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = pathlib.Path(directory)
+            report = workspace / "build-host/codescene"
+            report.mkdir(parents=True)
+            (report / "summary.json").write_text(
+                json.dumps({"status": "UNAVAILABLE"}), encoding="utf-8"
+            )
+            quality = XWalkGerritQuality(workspace, io.StringIO())
+            module = next(
+                item for item in MODULES if item.identifier == "codescene-code-health"
+            )
+            completed = mock.Mock(returncode=0)
+            with mock.patch("xWalkGerritQuality.subprocess.run", return_value=completed):
+                passed = quality.run_module(module)
+        self.assertTrue(passed)
+        self.assertEqual(quality.job_state(module.identifier)["status"], "UNAVAILABLE")
+
+    def test_degraded_code_health_is_visible_but_non_blocking_in_rollout(self) -> None:
+        """Show a failed advisory delta without converting it into strict enforcement."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = pathlib.Path(directory)
+            report = workspace / "build-host/codescene"
+            report.mkdir(parents=True)
+            (report / "summary.json").write_text(
+                json.dumps({"status": "FAILED"}), encoding="utf-8"
+            )
+            quality = XWalkGerritQuality(workspace, io.StringIO())
+            module = next(
+                item for item in MODULES if item.identifier == "codescene-code-health"
+            )
+            completed = mock.Mock(returncode=0)
+            with mock.patch("xWalkGerritQuality.subprocess.run", return_value=completed):
+                passed = quality.run_module(module)
+        self.assertTrue(passed)
+        self.assertEqual(quality.job_state(module.identifier)["status"], "FAILED")
 
     def test_failed_preparation_skips_modules_and_fails_gate(self) -> None:
         """Do not run dependent modules after Preparation fails."""

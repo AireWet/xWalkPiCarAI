@@ -95,6 +95,16 @@ class XWalkGerritHostQualityGraphTest(unittest.TestCase):
         self.assertIn('all(.[]; .result == "success")', gate_commands)
         self.assertEqual(self.jobs[GATE.identifier].get("if"), "always()")
 
+    def test_code_health_has_full_history_and_no_secret_reference(self) -> None:
+        """Support exact deltas while keeping forked pull requests secret-free."""
+
+        job = self.jobs["codescene-code-health"]
+        checkout = next(step for step in job["steps"] if step.get("uses") == "actions/checkout@v6")
+        self.assertEqual(checkout["with"]["fetch-depth"], 0)
+        serialized = str(job)
+        self.assertNotIn("secrets.", serialized)
+        self.assertIn("xWalkCodeHealth analyze", serialized)
+
 
 if __name__ == "__main__":
     unittest.main()

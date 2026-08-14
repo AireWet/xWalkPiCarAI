@@ -398,6 +398,11 @@ if(BUILD_TESTING)
             "${XWALK_WORKSPACE_ROOT}/xWalkTool/py-agent/dev-tool/test/test_xWalkLicenseTool.py")
     set_tests_properties(xWalkLicenseToolHostTest PROPERTIES
         LABELS "host;deployment;security")
+    add_test(NAME xWalkCodeHealthHostTest
+        COMMAND "${Python3_EXECUTABLE}"
+            "${XWALK_WORKSPACE_ROOT}/xWalkTool/py-agent/dev-tool/test/test_xWalkCodeHealth.py")
+    set_tests_properties(xWalkCodeHealthHostTest PROPERTIES
+        LABELS "host;tooling;network-free;quality")
     add_test(NAME xWalkJiraImportHostTest
         COMMAND "${Python3_EXECUTABLE}" -m unittest discover
             -s test -p "test_xWalkJiraImport*.py")

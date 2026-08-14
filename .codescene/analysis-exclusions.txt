@@ -1,0 +1,6 @@
+build-host/**
+**/build/**
+**/build-*/**
+**/auto-gen/**
+**/generated/**
+**/Testing/**

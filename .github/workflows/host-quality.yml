@@ -214,6 +214,32 @@ jobs:
           name: staged-install-checksums
           path: build-host/deploy.sha256
 
+  codescene-code-health:
+    name: MyPiCarX / Code Health
+    needs: preparation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Validate MyPiCarX CodeScene component configuration
+        run: xWalkTool/py-agent/dev-tool/xWalkCodeHealth validate-config
+      - name: Analyse changed code with the licensed CodeScene CLI when available
+        env:
+          GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          XWALK_CODESCENE_BASE_REVISION: ${{ github.event.pull_request.base.sha || github.event.before }}
+          XWALK_CODESCENE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+          XWALK_CODESCENE_STRICT: ${{ vars.XWALK_CODESCENE_STRICT || 'false' }}
+        run: xWalkTool/py-agent/dev-tool/xWalkCodeHealth analyze
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: mypicarx-code-health-${{ github.run_id }}-${{ github.run_attempt }}
+          path: build-host/codescene
+          if-no-files-found: warn
+
   host-quality-gate:
     name: xWalk Host Quality Gate
     runs-on: ubuntu-24.04
@@ -229,6 +255,7 @@ jobs:
       - xwalk-streaming
       - xwalk-quality
       - xwalk-deployment
+      - codescene-code-health
     steps:
       - name: Verify all xWalk module results
         env:

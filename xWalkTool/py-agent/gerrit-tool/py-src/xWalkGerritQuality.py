@@ -110,6 +110,9 @@ MODULES = (
         check("scripts", "Deployment and provisioning scripts", "deployment-scripts"),
         check("staged-install", "Staged installation and artifact validation", "staged-install"),
     )),
+    XWalkModulePlan("codescene-code-health", "MyPiCarX / Code Health", ("preparation",), (
+        check("delta", "CodeScene changed-code delta analysis", "codescene"),
+    )),
 )
 
 GATE = XWalkModulePlan(
@@ -130,11 +133,14 @@ class XWalkGerritQuality:
         re.DOTALL,
     )
 
-    def __init__(self, workspace: Path, log: TextIO) -> None:
+    def __init__(
+        self, workspace: Path, log: TextIO, environment: dict[str, str] | None = None,
+    ) -> None:
         """Store checkout paths and initialize the structured result model."""
 
         self.workspace = workspace
         self.log = log
+        self.environment = os.environ.copy() if environment is None else environment.copy()
         self.dispatcher = workspace / "xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh"
         self.lock = threading.Lock()
         log_name = getattr(log, "name", "")
@@ -200,7 +206,7 @@ class XWalkGerritQuality:
         if status == "RUNNING":
             target["started_at"] = self.timestamp()
         target["status"] = status
-        if status in {"PASSED", "FAILED", "SKIPPED", "CANCELLED"}:
+        if status in {"PASSED", "FAILED", "SKIPPED", "CANCELLED", "UNAVAILABLE"}:
             target["completed_at"] = self.timestamp()
             if started is not None:
                 target["duration_seconds"] = round(now - started, 3)
@@ -225,13 +231,24 @@ class XWalkGerritQuality:
         with tempfile.TemporaryFile(mode="w+", encoding="utf-8") as output:
             result = subprocess.run(
                 command, cwd=self.workspace, stdout=output, stderr=subprocess.STDOUT,
-                check=False, text=True, env=os.environ.copy(),
+                check=False, text=True, env=self.environment.copy(),
             )
             output.seek(0)
             retained = self.redact(output.read())
         status = "PASSED" if result.returncode == 0 else "FAILED"
         if result.returncode < 0:
             status = "CANCELLED"
+        if module.identifier == "codescene-code-health" and result.returncode == 0:
+            try:
+                summary = json.loads(
+                    (self.workspace / "build-host/codescene/summary.json").read_text(
+                        encoding="utf-8"
+                    )
+                )
+            except (OSError, json.JSONDecodeError):
+                summary = {}
+            if summary.get("status") in {"FAILED", "UNAVAILABLE"}:
+                status = str(summary["status"])
         with self.lock:
             self.log.write(
                 f"\n{'-' * 24} CHECK {module.identifier}/{plan.identifier} {'-' * 24}\n"
@@ -254,7 +271,15 @@ class XWalkGerritQuality:
         for item in plan.checks:
             passed = self.run_check(plan, item) and passed
         cancelled = any(item["status"] == "CANCELLED" for item in job["checks"])
-        status = "PASSED" if passed else ("CANCELLED" if cancelled else "FAILED")
+        unavailable = any(item["status"] == "UNAVAILABLE" for item in job["checks"])
+        reported_failure = any(item["status"] == "FAILED" for item in job["checks"])
+        status = (
+            "UNAVAILABLE" if passed and unavailable
+            else "FAILED" if passed and reported_failure
+            else "PASSED" if passed
+            else "CANCELLED" if cancelled
+            else "FAILED"
+        )
         with self.lock:
             self.update_status(job, status, started)
             self.log.write(f"\n[{status}] {plan.identifier}\n")

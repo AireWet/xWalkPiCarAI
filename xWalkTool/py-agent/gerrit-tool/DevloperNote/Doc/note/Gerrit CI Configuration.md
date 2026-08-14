@@ -38,15 +38,17 @@ xWalk Preparation -> xWalkAgent      -> xWalk Host Quality Gate
                   -> xWalk Streaming ->
                   -> xWalk Quality   ->
                   -> xWalk Deployment ->
+                  -> MyPiCarX / Code Health ->
 ```
 
-Preparation runs first. The ten independent module nodes then run with bounded parallelism. The xWalk Quality node
+Preparation runs first. The eleven independent module nodes then run with bounded parallelism. The xWalk Quality node
 runs its compiler, sanitizer, static-analysis, runtime-analysis, and coverage checks sequentially so incompatible
 instrumentation never shares one build. The gate passes only when every required node passes. A failed Preparation
 marks dependent modules `SKIPPED`; failed, cancelled, skipped, missing, or malformed results cannot produce a
 passing gate.
 
-The dashboard supports `WAITING`, `PENDING`, `QUEUED`, `RUNNING`, `PASSED`, `FAILED`, `SKIPPED`, and `CANCELLED`.
+The dashboard supports `WAITING`, `PENDING`, `QUEUED`, `RUNNING`, `PASSED`, `FAILED`, `SKIPPED`, `CANCELLED`, and
+`UNAVAILABLE`.
 Every graph node links to its module details and retained output. The raw full-log link and complete log remain on
 the main page.
 
@@ -65,6 +67,7 @@ the main page.
 | xWalk Streaming | Loopback HTTP, MJPEG, limits, lifecycle, timeouts, slow clients, and backpressure |
 | xWalk Quality | Compiler builds, sanitizers, analysis, stress, fuzz, Valgrind, and coverage |
 | xWalk Deployment | Deployment/provisioning scripts, staged install, resources, linkage, permissions, checksums |
+| MyPiCarX / Code Health | Exact-revision CodeScene CLI delta when available, changed-file component mapping, and rollout policy |
 
 The xWalk Quality node keeps the graph module-oriented without reducing coverage. Every prior compiler, sanitizer,
 runtime-analysis, coverage, fuzz, stress, analyzer, and timeout selection remains in the shared dispatcher and is
@@ -89,7 +92,8 @@ reported as an individual test result on the node's detail page.
 ## Gerrit result calculation
 
 After checkout and any component standalone validation, the worker runs the complete module graph. It reports
-`Verified +1` only when Preparation, every product module, every quality group, Deployment, and the final gate
+`Verified +1` only when Preparation, every product module, every quality group, Deployment, Code Health under its
+configured enforcement policy, and the final gate
 pass. Any checkout, standalone, module, or gate failure reports `Verified -1`. The worker posts the overall
 dashboard link when verification starts. After execution, it posts one uniquely tagged Gerrit change-log entry
 for Preparation and each module, then posts the Host Quality Gate as the single entry that carries the final

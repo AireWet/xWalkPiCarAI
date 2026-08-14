@@ -31,9 +31,10 @@ a:focus-visible { outline:3px solid #58a6ff; outline-offset:3px; }
 .graph-node strong,.graph-node small { display:block; }
 .status-passed { border-color:#3fb950; } .status-failed { border-color:#f85149; }
 .status-running { border-color:#58a6ff; } .status-cancelled { border-color:#d29922; }
+.status-unavailable { border-color:#d29922; }
 .status-waiting,.status-pending,.status-queued,.status-skipped { border-color:#8b949e; }
 .passed { color:#3fb950; } .failed { color:#f85149; } .running { color:#58a6ff; }
-.cancelled { color:#d29922; } .waiting,.pending,.queued,.skipped { color:#8b949e; }
+.cancelled,.unavailable { color:#d29922; } .waiting,.pending,.queued,.skipped { color:#8b949e; }
 .connector { color:#8b949e; font-size:1.5rem; text-align:center; }
 .details { display:grid; gap:16px; margin-top:24px; }
 .job-detail { scroll-margin-top:16px; }
@@ -55,10 +56,11 @@ pre { background:#010409; border:1px solid #30363d; border-radius:8px; overflow:
 
 VALID_STATUSES = {
     "WAITING", "PENDING", "QUEUED", "RUNNING", "PASSED", "FAILED", "SKIPPED", "CANCELLED",
+    "UNAVAILABLE",
 }
 STATUS_ICONS = {
     "WAITING": "○", "PENDING": "○", "QUEUED": "◷", "RUNNING": "●", "PASSED": "✓",
-    "FAILED": "✕", "SKIPPED": "—", "CANCELLED": "!",
+    "FAILED": "✕", "SKIPPED": "—", "CANCELLED": "!", "UNAVAILABLE": "?",
 }
 
 
@@ -93,6 +95,7 @@ class XWalkGerritLogServer:
         ("xwalk-streaming", "xWalk Streaming"),
         ("xwalk-quality", "xWalk Quality"),
         ("xwalk-deployment", "xWalk Deployment"),
+        ("codescene-code-health", "MyPiCarX / Code Health"),
         ("host-quality-gate", "xWalk Host Quality Gate"),
     )
     MODULE_NAMES = dict(MODULES)
