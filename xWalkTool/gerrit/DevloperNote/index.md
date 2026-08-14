@@ -14,6 +14,7 @@ for the user-owned college-server deployment.
 - [Administrator setup](Doc/note/Gerrit%20Admin%20Setup.md)
 - [User configuration](Doc/note/Gerrit%20User%20Configuration.md)
 - [CI configuration](Doc/note/Gerrit%20CI%20Configuration.md)
+- [Multi-repository architecture](Doc/note/Gerrit%20Multi%20Repository%20Architecture.md)
 - [Backup and restore](Doc/note/Gerrit%20Backup%20and%20Restore.md)
 - [Security and remote access](Doc/note/Gerrit%20Security%20and%20Remote%20Access.md)
 - [Troubleshooting](Doc/note/Gerrit%20Troubleshooting.md)

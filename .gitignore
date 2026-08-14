@@ -85,6 +85,7 @@ junit.xml
 *.swo
 *~
 /core.[0-9]*
+/xWalkTool/gerrit/logs/runtime/
 
 # Tool, language, and editor caches
 .cache/

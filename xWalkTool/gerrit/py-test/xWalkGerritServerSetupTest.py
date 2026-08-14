@@ -144,6 +144,7 @@ def expected_documentation_names() -> set[str]:
         "Gerrit Administrator Request.md", "Gerrit Storage and Migration.md",
         "Gerrit Admin Setup.md", "Gerrit User Configuration.md",
         "Gerrit CI Configuration.md", "Gerrit Backup and Restore.md",
+        "Gerrit Multi Repository Architecture.md",
         "Gerrit Security and Remote Access.md", "Gerrit Troubleshooting.md",
         "XWALK_CI_ENV.example",
     }

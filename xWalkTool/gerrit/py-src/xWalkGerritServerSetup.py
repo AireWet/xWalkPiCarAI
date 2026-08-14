@@ -592,10 +592,27 @@ def copy_tool_assets(source_root: pathlib.Path, home: pathlib.Path, site: pathli
 
     tool_directory = home / "apps" / "gerrit" / "tools"
     tool_directory.mkdir(parents=True, exist_ok=True)
-    for name in ("xWalkGerritCi.py", "xWalkGerritLogServer.py", "xWalkGerritQuality.py"):
+    for name in (
+        "xWalkGerritChangeLog.py", "xWalkGerritCi.py", "xWalkGerritLogServer.py",
+        "xWalkGerritQuality.py",
+    ):
         target = tool_directory / name
         shutil.copyfile(source_root / "py-src" / name, target)
         target.chmod(0o700 if name == "xWalkGerritCi.py" else 0o600)
+    architecture_root = site / "gerrit-tools"
+    for relative in (
+        pathlib.Path("config/multi-repo.conf"),
+        pathlib.Path("py-src/xWalkGerritAcl.py"),
+        pathlib.Path("py-src/xWalkGerritChangeLog.py"),
+        pathlib.Path("shell-script/xwalk-gerrit-common.sh"),
+        pathlib.Path("shell-script/gerrit-auto-uplift.sh"),
+        pathlib.Path("shell-script/gerrit-github-checkout.sh"),
+        pathlib.Path("shell-script/gerrit-github-sync.sh"),
+    ):
+        target = architecture_root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source_root / relative, target)
+        target.chmod(0o700 if relative.suffix == ".sh" else 0o600)
     plugin = site / "plugins" / "xWalkReviewControls.js"
     plugin.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(source_root / "xWalkReviewControls.js", plugin)

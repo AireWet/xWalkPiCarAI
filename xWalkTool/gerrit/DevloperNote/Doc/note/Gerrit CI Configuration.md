@@ -14,17 +14,29 @@ verification; a WIP patch set waits until **Activate** emits a
 `wip-state-changed` event. The complete quality matrix runs before one
 aggregate `Verified +1` or `Verified -1` vote is reported.
 
-A `change-merged` event retains the owner-aware GitHub publication flow. Only
-the dedicated service process may use the repository-scoped mirror key.
+A `change-merged` event can synchronize only a submitted, integration-verified
+`MyPiCarX/main` commit to the configured GitHub `MyPiCarX` repository. Component
+repositories are never pushed to GitHub. Synchronization remains disabled
+unless `GITHUB_PUSH_ENABLED=true`; only the dedicated service process may use
+the least-privilege repository key.
 
 ## Service account
 
 Create an individual `xwalk-ci` Gerrit account, register only its public SSH
-key, add it to `Service Users`, and grant only `Verified -1..+1` for
-`@@PROJECT_NAME@@`. Do not grant Submit or server administration.
+key, add it to `Service Users` and `xWalk-CI`, and grant `Read` plus
+`Verified -1..+1` on all ten repositories. Grant review upload only on
+`MyPiCarX` for automatic uplifts. Do not grant Submit, force push, branch
+deletion, ACL ownership, or server administration.
 
 Keep the Gerrit and GitHub private keys on the server outside Git with mode
 `0600`. Never reuse a developer key.
+
+Run one CI worker per configured Gerrit repository until the event consumer is
+deployed as a multi-project scheduler. Set `GERRIT_PROJECT` to that exact
+repository and `GERRIT_BRANCH=main`. A component worker must run its standalone
+validation and required consumer compatibility checks. The `MyPiCarX` worker
+runs the complete integration matrix. Do not report `Verified +1` for a split
+module until its standalone entry point and exact dependencies are available.
 
 ## Environment
 

@@ -19,12 +19,18 @@ xWalkTool/
 │   ├── bin/
 │   ├── config/
 │   │   ├── gerrit-setup.conf
+│   │   ├── multi-repo.conf
 │   │   └── XWALK_CI_ENV.example
+│   ├── logs/
+│   │   ├── change-log.csv
+│   │   └── change-log.md
 │   ├── local-linux/
 │   │   ├── README.md
 │   │   ├── gerrit-local.conf
 │   │   └── gerrit-local.sh
 │   ├── py-src/
+│   │   ├── xWalkGerritAcl.py
+│   │   ├── xWalkGerritChangeLog.py
 │   │   ├── xWalkGerritCi.py
 │   │   ├── xWalkGerritLogServer.py
 │   │   ├── xWalkGerritQuality.py
@@ -35,7 +41,8 @@ xWalkTool/
 │   │   ├── xWalkGerritServerSetupTest.py
 │   │   └── xWalkReviewControlsTest.js
 │   ├── shell-script/
-│   │   └── gerrit-setup.sh
+│   │   ├── gerrit-setup.sh
+│   │   └── multi-repository provisioning, migration, uplift, and synchronization tools
 │   └── DevloperNote/
 │       ├── index.md
 │       └── Doc/

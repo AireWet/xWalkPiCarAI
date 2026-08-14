@@ -225,3 +225,52 @@ See [`local-linux/README.md`](local-linux/README.md) for the exact local Git
 commands and
 [`Gerrit Local Linux Setup.md`](DevloperNote/Doc/note/Gerrit%20Local%20Linux%20Setup.md)
 for the administrator workflow and deployment limitations.
+
+## Multi-repository migration
+
+The guarded multi-repository tools use `config/multi-repo.conf`. They prepare
+nine component repositories and the private `MyPiCarX` integration repository.
+They never create component repositories on GitHub, edit Gerrit's internal Git
+directories, force-push the source monorepo, or convert this working tree in
+place.
+
+Review a complete provisioning and ACL plan:
+
+```bash
+xWalkTool/gerrit/shell-script/gerrit-multi-repo-provision.sh --dry-run
+```
+
+Prepare history-preserving component repositories in a new directory:
+
+```bash
+export XWALK_SPLIT_OUTPUT_DIR="/safe/new/output"; export XWALK_CONFIRM_SPLIT="SPLIT_COMPONENT_HISTORY"; xWalkTool/gerrit/shell-script/gerrit-history-split.sh --apply
+```
+
+The default `XWALK_IMPORT_MODE=none` performs no remote push. Select `review`
+for `refs/for/main` or `direct` only when the administrator has authorized the
+initial `refs/heads/main` import, then separately set
+`XWALK_CONFIRM_IMPORT=PUSH_COMPONENTS_TO_GERRIT`.
+
+Prepare a separate integration clone containing exact Gerrit gitlinks:
+
+```bash
+export XWALK_INTEGRATION_OUTPUT_DIR="/safe/new/MyPiCarX-integration"; export XWALK_CONFIRM_SUBMODULES="CREATE_INTEGRATION_CLONE"; xWalkTool/gerrit/shell-script/gerrit-submodule-migrate.sh --apply
+```
+
+Normal module upload:
+
+```bash
+cd MyPiCarX/xWalkHal && git switch main && git pull --ff-only origin main && git add . && git commit -s -m "Update HAL implementation" && git push origin HEAD:refs/for/main
+```
+
+Existing integration clones synchronize exact recorded revisions with:
+
+```bash
+git pull --ff-only && git submodule sync --recursive && git submodule update --init --recursive
+```
+
+Operational records are appended to the protected runtime directory selected
+by `XWALK_CHANGE_LOG_DIR`. The files in `logs/` are schema/report templates,
+not machine-specific runtime records. See
+[`Gerrit Multi Repository Architecture.md`](DevloperNote/Doc/note/Gerrit%20Multi%20Repository%20Architecture.md)
+before applying provisioning, ACL, migration, uplift, or GitHub synchronization.

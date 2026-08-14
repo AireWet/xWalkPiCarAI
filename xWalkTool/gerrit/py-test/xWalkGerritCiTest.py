@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Test owner-aware GitHub destination selection for Gerrit submissions."""
+"""Test Gerrit event selection and guarded MyPiCarX synchronization."""
 
 from __future__ import annotations
 
 import io
+import json
 import pathlib
 import sys
 import unittest
@@ -22,8 +23,13 @@ class XWalkGerritCiTest(unittest.TestCase):
         """Create a verifier without initializing host service resources."""
 
         self.ci = XWalkGerritCi.__new__(XWalkGerritCi)
-        self.ci.project = "xWalkPiCarAI"
-        self.ci.branch = "master"
+        self.ci.project = "MyPiCarX"
+        self.ci.branch = "main"
+        self.ci.github_remote = "git@github.com:example/MyPiCarX.git"
+        self.ci.github_branch = "main"
+        self.ci.github_push_enabled = True
+        self.ci.github_direct_push_owner_email = "owner@example.test"
+        self.ci.uplift_enabled = False
 
     @staticmethod
     def verification_event(
@@ -32,8 +38,8 @@ class XWalkGerritCiTest(unittest.TestCase):
         """Return one target-project event with a current patch-set payload."""
 
         change: dict[str, object] = {
-            "project": "xWalkPiCarAI",
-            "branch": "master",
+            "project": "MyPiCarX",
+            "branch": "main",
         }
         if wip is not None:
             change["wip"] = wip
@@ -77,70 +83,122 @@ class XWalkGerritCiTest(unittest.TestCase):
         event = self.verification_event("comment-added", False)
         self.assertFalse(self.ci.matching_verification_event(event))
 
-    def test_joxy_change_targets_master(self) -> None:
-        """Allow Joxy when GitHub is exactly at the submitted change parent."""
+    def test_exact_mypicarx_destination_is_allowed(self) -> None:
+        """Allow only the configured MyPiCarX main synchronization."""
 
-        branch = XWalkGerritCi.select_github_branch(
-            "joxjoh24@student.hh.se",
-            "joxjoh24@student.hh.se",
-            "master",
-            "gerrit-submitted",
-            "parent",
-            "parent",
+        self.assertTrue(self.ci.validate_github_destination())
+
+    def test_component_github_destination_is_rejected(self) -> None:
+        """Never synchronize an individual component repository to GitHub."""
+
+        self.ci.github_remote = "git@github.com:example/xWalkHal.git"
+        self.assertFalse(self.ci.validate_github_destination())
+
+    def test_disabled_github_push_is_rejected(self) -> None:
+        """Require the explicit GitHub synchronization enable switch."""
+
+        self.ci.github_push_enabled = False
+        self.assertFalse(self.ci.validate_github_destination())
+
+    def test_non_main_integration_branch_is_rejected(self) -> None:
+        """Reject any source branch other than MyPiCarX main."""
+
+        self.ci.branch = "review"
+        self.assertFalse(self.ci.validate_github_destination())
+
+    def test_non_main_github_branch_is_rejected(self) -> None:
+        """Reject any GitHub target branch other than main."""
+
+        self.ci.github_branch = "review"
+        self.assertFalse(self.ci.validate_github_destination())
+
+    def test_submitted_component_triggers_enabled_uplift(self) -> None:
+        """Select a merged module revision for automatic integration review."""
+
+        self.ci.project = "xWalkHal"
+        self.ci.uplift_enabled = True
+        event = {
+            "type": "change-merged",
+            "change": {"project": "xWalkHal", "branch": "main", "number": 152},
+            "newRev": "0" * 40,
+        }
+        self.assertTrue(self.ci.matching_uplift_event(event))
+
+    def test_integration_project_never_uplifts_itself(self) -> None:
+        """Keep MyPiCarX submission on the guarded GitHub path."""
+
+        self.ci.uplift_enabled = True
+        event = {
+            "type": "change-merged",
+            "change": {"project": "MyPiCarX", "branch": "main", "number": 153},
+            "newRev": "1" * 40,
+        }
+        self.assertFalse(self.ci.matching_uplift_event(event))
+
+    def test_module_checkout_uses_private_integration_baseline(self) -> None:
+        """Overlay a module patch set onto exact MyPiCarX submodules."""
+
+        self.ci.project = "xWalkHal"
+        self.ci.user = "ci"
+        self.ci.host = "gerrit.example"
+        self.ci.port = "29418"
+        self.ci.private_key = pathlib.Path("/key")
+        self.ci.state_directory = pathlib.Path("/state")
+        commands = [command for command, unused_environment in self.ci.checkout_commands("refs/changes/1")]
+        self.assertIn("/MyPiCarX", commands[1][-1])
+        self.assertIn(["git", "submodule", "update", "--init", "--recursive"], commands)
+        self.assertIn(
+            ["git", "-C", "xWalkHal", "fetch", "origin", "refs/changes/1"], commands
         )
-        self.assertEqual(branch, "master")
 
-    def test_joxy_email_comparison_is_case_insensitive(self) -> None:
-        """Treat email casing as insignificant for the configured owner."""
+    def test_code_module_has_standalone_build_and_test(self) -> None:
+        """Run the required standalone CMake workflow before integration CI."""
 
-        branch = XWalkGerritCi.select_github_branch(
-            "JOXJOH24@STUDENT.HH.SE",
-            "joxjoh24@student.hh.se",
-            "master",
-            "gerrit-submitted",
-            "parent",
-            "parent",
-        )
-        self.assertEqual(branch, "master")
+        self.ci.project = "xWalkHal"
+        commands = self.ci.standalone_commands(pathlib.Path("/workspace"))
+        self.assertEqual(commands[0][0:2], ["cmake", "--fresh"])
+        self.assertIn("-DXWALK_STANDALONE_BUILD=ON", commands[0])
+        self.assertEqual(commands[-1][0], "ctest")
 
-    def test_other_owner_targets_review_branch(self) -> None:
-        """Route every non-Joxy owner through a GitHub pull request."""
+    def test_github_sync_requires_ci_verified_revision(self) -> None:
+        """Match the submitted commit and CI account's Verified +1 approval."""
 
-        branch = XWalkGerritCi.select_github_branch(
-            "partner@example.com",
-            "joxjoh24@student.hh.se",
-            "master",
-            "gerrit-submitted",
-            "parent",
-            "parent",
-        )
-        self.assertEqual(branch, "gerrit-submitted")
+        self.ci.user = "xwalk-ci"
+        self.ci.host = "gerrit.example"
+        self.ci.port = "29418"
+        self.ci.private_key = pathlib.Path("/key")
+        self.ci.state_directory = pathlib.Path("/state")
+        query = {
+            "currentPatchSet": {
+                "revision": "a" * 40,
+                "approvals": [
+                    {"type": "Verified", "value": "1", "by": {"username": "xwalk-ci"}}
+                ],
+            }
+        }
+        result = mock.Mock(returncode=0, stdout=f"{json.dumps(query)}\n")
+        with mock.patch("xWalkGerritCi.subprocess.run", return_value=result):
+            self.assertTrue(self.ci.submitted_revision_verified(12, "a" * 40))
 
-    def test_missing_owner_targets_review_branch(self) -> None:
-        """Fail safely when Gerrit does not expose an owner email."""
+    def test_github_sync_rejects_another_accounts_vote(self) -> None:
+        """Do not accept a Verified vote attributed to another account."""
 
-        branch = XWalkGerritCi.select_github_branch(
-            "",
-            "joxjoh24@student.hh.se",
-            "master",
-            "gerrit-submitted",
-            "parent",
-            "parent",
-        )
-        self.assertEqual(branch, "gerrit-submitted")
-
-    def test_stacked_change_targets_review_branch(self) -> None:
-        """Prevent a later Joxy change from bypassing an earlier pending PR."""
-
-        branch = XWalkGerritCi.select_github_branch(
-            "joxjoh24@student.hh.se",
-            "joxjoh24@student.hh.se",
-            "master",
-            "gerrit-submitted",
-            "gerrit-parent",
-            "github-tip",
-        )
-        self.assertEqual(branch, "gerrit-submitted")
+        self.ci.user = "xwalk-ci"
+        self.ci.host = "gerrit.example"
+        self.ci.port = "29418"
+        self.ci.private_key = pathlib.Path("/key")
+        self.ci.state_directory = pathlib.Path("/state")
+        query = {
+            "currentPatchSet": {
+                "revision": "b" * 40,
+                "approvals": [
+                    {"type": "Verified", "value": "1", "by": {"username": "other-ci"}}
+                ],
+            }
+        }
+        result = mock.Mock(returncode=0, stdout=f"{json.dumps(query)}\n")
+        with mock.patch("xWalkGerritCi.subprocess.run", return_value=result):
+            self.assertFalse(self.ci.submitted_revision_verified(13, "b" * 40))
 
 
 class XWalkGerritQualityTest(unittest.TestCase):
