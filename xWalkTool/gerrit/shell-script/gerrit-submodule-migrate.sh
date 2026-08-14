@@ -15,10 +15,11 @@ output="${XWALK_INTEGRATION_OUTPUT_DIR:-}"
 
 plan_component()
 {
-    local component="$1" verification=""
+    local component="$1" component_path verification=""
+    component_path="$(xwalk_component_path "$component")"
     [[ "$XWALK_MODE" != "dry-run" ]] || verification="Fixed allowlist entry validated"
     printf '[%s] convert %s to Gerrit submodule\n' "$XWALK_MODE" "$component"
-    xwalk_log "add-submodule" "submodule" "xWalk-rpi5" "$component" "tracked-directory" \
+    xwalk_log "add-submodule" "submodule" "xWalk-rpi5" "xWalk-rpi5/$component_path" "tracked-directory" \
         "exact-gerrit-gitlink" "Convert component directory to a Gerrit submodule" \
         "The private integration repository must record an exact verified component commit." \
         "$XWALK_STATUS" "$verification"
@@ -34,15 +35,17 @@ plan_component()
 
 apply_component()
 {
-    local component="$1" url clone_url commit
+    local component="$1" component_path product_path url clone_url commit
+    component_path="$(xwalk_component_path "$component")"
+    product_path="xWalk-rpi5/$component_path"
     url="${GERRIT_BASE_URL%/}/$component"
     clone_url="ssh://$GERRIT_ADMIN_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/$component"
-    git -C "$output" rm -r --quiet -- "$component"
-    git -C "$output" submodule add --force -b main "$clone_url" "$component"
+    git -C "$output" rm -r --quiet -- "$product_path"
+    git -C "$output" submodule add --force --name "$component" -b main "$clone_url" "$product_path"
     git -C "$output" config -f .gitmodules "submodule.$component.url" "$url"
-    commit="$(git -C "$output/$component" rev-parse HEAD)"
-    git -C "$output" add .gitmodules "$component"
-    xwalk_log "add-submodule" "submodule" "xWalk-rpi5" "$component" "tracked-directory" "$commit" \
+    commit="$(git -C "$output/$product_path" rev-parse HEAD)"
+    git -C "$output" add .gitmodules "$product_path"
+    xwalk_log "add-submodule" "submodule" "xWalk-rpi5" "$product_path" "tracked-directory" "$commit" \
         "Added exact Gerrit component gitlink" \
         "The integration repository records a reproducible verified component revision." "Applied" \
         "gitlink and .gitmodules entry staged" "" "" "" "" "$commit"
@@ -58,9 +61,13 @@ apply_component()
 
 main()
 {
-    local component file integration_remote
+    local component component_path file integration_remote
     for component in "${xwalk_components[@]}"; do
-        [[ -d "$source_root/$component" ]] || { echo "Missing allowlisted component: $component" >&2; return 2; }
+        component_path="$(xwalk_component_path "$component")"
+        [[ -d "$source_root/xWalk-rpi5/$component_path" ]] || {
+            echo "Missing allowlisted component: $component" >&2
+            return 2
+        }
         [[ "$XWALK_MODE" == "dry-run" ]] && plan_component "$component"
     done
     [[ "$XWALK_MODE" == "apply" ]] || return 0

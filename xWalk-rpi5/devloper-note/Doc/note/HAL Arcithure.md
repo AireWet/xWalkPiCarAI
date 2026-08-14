@@ -68,7 +68,7 @@ MyPiCarX/
 │   └── xWalkTest/                centralized CLI and sequence verification
 ├── xWalkTool/                    maintenance, deployment, licence, and verification tools
 ├── Doc/note/                     cross-module C++ documentation index
-└── xWalk-rpi5/DevloperNote/                 architecture and implementation notes
+└── xWalk-rpi5/devloper-note/                 architecture and implementation notes
 ```
 
 The aggregate HAL CMake file includes every HAL module present in the source tree and does not reference
@@ -317,8 +317,8 @@ When extending the architecture:
 | --- | --- |
 | Coding rules | `.agents/gudlines/CODING_GUIDELINES.md` |
 | Documentation rules | `.agents/gudlines/DOCUMENTATION_GUIDELINES.md` |
-| C++ documentation index | `xWalk-rpi5/DevloperNote/index.md` |
+| C++ documentation index | `xWalk-rpi5/devloper-note/index.md` |
 | Module API contracts | `xWalk-rpi5/xWalkHal/xWalk<Module>/include` |
 | Module behavior and tests | `xWalk-rpi5/xWalkHal/xWalk<Module>/README.md` |
-| Hardware and backends | `xWalk-rpi5/DevloperNote/Doc/note/HAL Hardware Architecture.md` |
-| CLI composition and plan | `xWalk-rpi5/DevloperNote/Doc/note/CLI Architecture.md` |
+| Hardware and backends | `xWalk-rpi5/devloper-note/Doc/note/HAL Hardware Architecture.md` |
+| CLI composition and plan | `xWalk-rpi5/devloper-note/Doc/note/CLI Architecture.md` |

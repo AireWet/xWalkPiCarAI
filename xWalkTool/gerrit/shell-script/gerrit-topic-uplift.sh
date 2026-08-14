@@ -39,10 +39,11 @@ done
 
 plan()
 {
-    local index
+    local index component_path
     for index in "${!repositories[@]}"; do
+        component_path="$(xwalk_component_path "${repositories[$index]}")"
         xwalk_log "uplift-topic-submodule" "uplift" "${repositories[$index]}" \
-            "xWalk-rpi5/${repositories[$index]}" "recorded-commit" "${commits[$index]}" \
+            "xWalk-rpi5/$component_path" "recorded-commit" "${commits[$index]}" \
             "Plan coordinated topic uplift" \
             "Related change ${changes[$index]} belongs to Gerrit topic $topic." "Planned" \
             "Repository allowlist and full commit validated" "" "${changes[$index]}" "" \
@@ -55,7 +56,7 @@ plan()
 
 apply()
 {
-    local state work index repository commit change old_commit changed message
+    local state work index repository component_path commit change old_commit changed message
     state="${XWALK_UPLIFT_STATE_DIR:-$HOME/.local/state/xwalk-gerrit/uplift}"
     mkdir -p "$state"
     chmod 700 "$state"
@@ -70,19 +71,20 @@ apply()
     message="Gerrit-Topic: $topic"
     for index in "${!repositories[@]}"; do
         repository="${repositories[$index]}"
+        component_path="$(xwalk_component_path "$repository")"
         commit="${commits[$index]}"
         change="${changes[$index]}"
-        old_commit="$(git -C "$work/xWalk-rpi5/$repository" rev-parse HEAD)"
-        git -C "$work/xWalk-rpi5/$repository" fetch --quiet origin main
-        git -C "$work/xWalk-rpi5/$repository" merge-base --is-ancestor "$commit" origin/main || {
+        old_commit="$(git -C "$work/xWalk-rpi5/$component_path" rev-parse HEAD)"
+        git -C "$work/xWalk-rpi5/$component_path" fetch --quiet origin main
+        git -C "$work/xWalk-rpi5/$component_path" merge-base --is-ancestor "$commit" origin/main || {
             echo "$repository commit is not reachable from origin/main" >&2
             return 1
         }
-        git -C "$work/xWalk-rpi5/$repository" checkout --quiet --detach "$commit"
-        git -C "$work/xWalk-rpi5" add "$repository"
+        git -C "$work/xWalk-rpi5/$component_path" checkout --quiet --detach "$commit"
+        git -C "$work/xWalk-rpi5" add "$component_path"
         message+=$'\n\n'"Component: $repository"$'\n'"Previous-Commit: $old_commit"$'\n'\
 "New-Commit: $commit"$'\n'"Gerrit-Change: $change"$'\n'"Submitted-Revision: $commit"
-        xwalk_log "uplift-topic-submodule" "uplift" "$repository" "xWalk-rpi5/$repository" \
+        xwalk_log "uplift-topic-submodule" "uplift" "$repository" "xWalk-rpi5/$component_path" \
             "$old_commit" "$commit" "Updated coordinated topic gitlink" \
             "Related change $change belongs to Gerrit topic $topic." "Applied" \
             "Submitted commit is reachable from component main" "" "$change" "$old_commit" "$commit"

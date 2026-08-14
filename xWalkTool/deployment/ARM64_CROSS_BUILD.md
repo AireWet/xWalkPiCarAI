@@ -32,7 +32,7 @@ The preset is the preferred reproducible profile. The equivalent explicit
 commands are:
 
 ```sh
-cmake -S . -B build-aarch64 -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/aarch64-linux-gnu.cmake -DXWALK_AARCH64_SYSROOT=/absolute/path/to/arm64-sysroot -DXWALK_BUILD_RPI=ON -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build-aarch64 -DCMAKE_TOOLCHAIN_FILE=xWalk-rpi5/cmake/toolchains/aarch64-linux-gnu.cmake -DXWALK_AARCH64_SYSROOT=/absolute/path/to/arm64-sysroot -DXWALK_BUILD_RPI=ON -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release
 cmake --build build-aarch64 --parallel
 find build-aarch64 -type f -perm -111 -exec file {} \;
 ```
@@ -49,7 +49,7 @@ diagnosis only and must not be used for a deployable build.
 After the ARM64 build succeeds, package only from that target build directory:
 
 ```sh
-cmake -S . -B build-aarch64 -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/aarch64-linux-gnu.cmake -DXWALK_AARCH64_SYSROOT=/absolute/path/to/arm64-sysroot -DXWALK_BUILD_RPI=ON -DXWALK_ENABLE_PACKAGING=ON -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build-aarch64 -DCMAKE_TOOLCHAIN_FILE=xWalk-rpi5/cmake/toolchains/aarch64-linux-gnu.cmake -DXWALK_AARCH64_SYSROOT=/absolute/path/to/arm64-sysroot -DXWALK_BUILD_RPI=ON -DXWALK_ENABLE_PACKAGING=ON -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release
 cpack --config build-aarch64/CPackConfig.cmake
 ```
 

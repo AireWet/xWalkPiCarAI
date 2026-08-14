@@ -36,11 +36,11 @@ printf -v ssh_command '%q ' ssh -i "$GERRIT_SUBMODULE_SSH_KEY_FILE" -o BatchMode
     -o "UserKnownHostsFile=$GERRIT_SSH_KNOWN_HOSTS_FILE" \
     -p "$GERRIT_SSH_PORT"
 git -C "$root" config --local core.sshCommand "$ssh_command"
-while read -r key path; do
+while read -r key _path; do
     name="${key#submodule.}"
     name="${name%.path}"
     git -C "$root" config --local "submodule.$name.url" \
-        "ssh://$GERRIT_SUBMODULE_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/$path"
+        "ssh://$GERRIT_SUBMODULE_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/$name"
 done < <(git -C "$root" config -f .gitmodules --get-regexp '^submodule\..*\.path$')
 git -C "$root" submodule sync --recursive
 git -C "$root" submodule update --init --recursive

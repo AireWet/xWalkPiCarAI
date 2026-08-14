@@ -42,13 +42,14 @@ void testDistanceMeasurement() {
 /** @brief Verifies timeout-only retry and invalid-pulse behavior. */
 void testRetryAndStatusResults() {
   TestBackend backend;
-  backend.behavior = EchoBehavior::TimeoutThenPulse;
+  backend.behavior = EchoBehavior::TimeoutThenInvalid;
   const XWalkHal::XWalkGpioCallbacks callbackSet = callbacks();
   XWalkHal::XWalkGpio trigger(&backend, callbackSet, "D2");
   XWalkHal::XWalkGpio echo(&backend, callbackSet, "D3");
   XWalkHal::XWalkUltrasonic ultrasonic(trigger, echo, 5'000U);
   const XWalkHal::float64 distanceCentimeters = ultrasonic.read(2U);
-  assert(distanceCentimeters > 10.0);
+  assert(distanceCentimeters ==
+         XHAL_RPI5CAR_ULTRASONIC_INVALID_PULSE_RESULT_CM);
   assert(backend.triggerCount == 2U);
   backend.behavior = EchoBehavior::Invalid;
   backend.triggerCount = 0U;

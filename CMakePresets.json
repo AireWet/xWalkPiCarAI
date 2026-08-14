@@ -145,7 +145,7 @@
       "binaryDir": "${sourceDir}/build-aarch64/cmake",
       "cacheVariables": {
         "BUILD_TESTING": "OFF",
-        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/toolchains/aarch64-linux-gnu.cmake",
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/xWalk-rpi5/cmake/toolchains/aarch64-linux-gnu.cmake",
         "XWALK_AARCH64_SYSROOT": "$env{XWALK_AARCH64_SYSROOT}",
         "XWALK_BUILD_RPI": "ON",
         "XWALK_ENABLE_PACKAGING": "ON"

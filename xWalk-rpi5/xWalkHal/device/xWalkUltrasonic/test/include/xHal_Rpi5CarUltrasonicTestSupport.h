@@ -19,7 +19,7 @@ enum class EchoBehavior : uint8
     Pulse = 0U,
     Timeout = 1U,
     Invalid = 2U,
-    TimeoutThenPulse = 3U
+    TimeoutThenInvalid = 3U
 };
 
 /** @brief Stores simulated trigger traffic and echo waveform state. */

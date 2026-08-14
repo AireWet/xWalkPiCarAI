@@ -275,8 +275,8 @@ Existing integration clones synchronize exact recorded revisions with:
 git pull --ff-only && git submodule sync --recursive && git submodule update --init --recursive
 ```
 
-Operational records are appended to the protected runtime directory selected
-by `XWALK_CHANGE_LOG_DIR`. The files in `logs/` are schema/report templates,
-not machine-specific runtime records. See
+Source changes are recorded in Gerrit commit messages and review history. CI
+votes and synchronization results are posted directly to the affected Gerrit
+change. No CSV or Markdown operation logs are created. See
 [`Gerrit Multi Repository Architecture.md`](DevloperNote/Doc/note/Gerrit%20Multi%20Repository%20Architecture.md)
 before applying provisioning, ACL, migration, uplift, or GitHub synchronization.

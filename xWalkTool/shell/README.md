@@ -25,7 +25,6 @@ The recommended Python environment is documented in the
 | Script | Purpose | Safety boundary |
 |---|---|---|
 | `clean-build.sh` | Finds and removes generated CMake and Python output | Use `--dry-run` first |
-| `eclipse-build.sh` | Configures, builds, and tests the Eclipse CLI host tree | Host-only |
 | `run-host-coverage.sh` | Builds, tests, and creates the host coverage report | Host-only |
 | `check-host-quality-dependencies.sh` | Reports analysis tool paths and versions | Read-only |
 | `run-host-sanitizer.sh` | Runs isolated ASan/UBSan, LSan, or TSan verification | Host-only |
@@ -52,18 +51,6 @@ Interactive cleanup asks for confirmation. Automation must opt in explicitly:
 
 ```sh
 xWalkTool/shell/clean-build.sh --yes
-```
-
-Configure, build, and run the Eclipse CLI host tests:
-
-```sh
-xWalkTool/shell/eclipse-build.sh
-```
-
-Clean that script's host build tree:
-
-```sh
-xWalkTool/shell/eclipse-build.sh clean
 ```
 
 Run the root host coverage preset and generate the configured report:
@@ -140,10 +127,10 @@ before returning. The encrypted licence and netrc files must also have mode
 `0600`. Executing the script instead of sourcing it fails because a child
 process cannot update its parent shell environment.
 
-See the [licence-key workflow](../../xWalk-rpi5/DevloperNote/Doc/note/License%20Key%20Workflow.md)
+See the [licence-key workflow](../../xWalk-rpi5/devloper-note/Doc/note/License%20Key%20Workflow.md)
 for encryption, decryption, virtual-environment setup, and key-storage rules.
 The dedicated
-[environment loader guide](../../xWalk-rpi5/DevloperNote/Doc/note/xWalk%20Environment%20Loader%20Guide.md)
+[environment loader guide](../../xWalk-rpi5/devloper-note/Doc/note/xWalk%20Environment%20Loader%20Guide.md)
 documents the validation order, failure behavior, and shell-environment lifetime.
 
 ## Verification

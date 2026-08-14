@@ -40,8 +40,6 @@ options, backend ownership, safety constraints, and verification commands remain
   and removal of generated CMake and Python output.
 - [Dependency installer script flags](Doc/note/Dependency%20Installer%20Script%20Flags.md): complete option,
   default, compatibility alias, combination, and exit-status reference.
-- [Eclipse build script guide](Doc/note/Eclipse%20Build%20Script%20Guide.md): host configuration, compilation
-  database generation, build, and clean behavior.
 - [Hardware provisioning script guide](Doc/note/Hardware%20Provisioning%20Script%20Guide.md): Robot HAT profile
   and Linux device validation with configuration persistence.
 - [Host coverage script guide](Doc/note/Host%20Coverage%20Script%20Guide.md): foreground configure, build, test,

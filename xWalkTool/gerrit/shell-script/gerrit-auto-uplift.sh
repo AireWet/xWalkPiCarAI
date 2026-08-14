@@ -20,12 +20,13 @@ topic="${5:-}"
 xwalk_load_config
 xwalk_repository "$repository"
 [[ "$repository" != "xWalk-rpi5" ]] || { echo "Cannot uplift xWalk-rpi5 into itself" >&2; exit 2; }
+component_path="$(xwalk_component_path "$repository")"
 [[ "$submitted_commit" =~ ^[0-9a-fA-F]{40}$ ]] || { echo "Submitted commit must be a full ID" >&2; exit 2; }
 [[ -z "$topic" || "$topic" =~ ^[A-Za-z0-9._-]{1,80}$ ]] || { echo "Unsafe Gerrit topic" >&2; exit 2; }
 
 plan()
 {
-    xwalk_log "uplift-submodule" "uplift" "$repository" "xWalk-rpi5/$repository" "recorded-commit" \
+    xwalk_log "uplift-submodule" "uplift" "$repository" "xWalk-rpi5/$component_path" "recorded-commit" \
         "$submitted_commit" "Plan automatic component uplift" \
         "Submitted module change $source_change requires an integration review." "Planned" \
         "Full commit ID, repository allowlist and topic validated" "" "$source_change" "" "$submitted_commit"
@@ -53,19 +54,19 @@ apply()
         "url.ssh://$GERRIT_CI_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/.insteadOf=${GERRIT_BASE_URL%/}/" \
         clone --quiet --recurse-submodules \
         "ssh://$GERRIT_CI_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/xWalk-rpi5" "$work/xWalk-rpi5"
-    old_commit="$(git -C "$work/xWalk-rpi5/$repository" rev-parse HEAD)"
-    git -C "$work/xWalk-rpi5/$repository" fetch --quiet origin main
-    git -C "$work/xWalk-rpi5/$repository" merge-base --is-ancestor "$submitted_commit" origin/main || {
-        xwalk_log "uplift-submodule" "uplift" "$repository" "xWalk-rpi5/$repository" "$old_commit" \
+    old_commit="$(git -C "$work/xWalk-rpi5/$component_path" rev-parse HEAD)"
+    git -C "$work/xWalk-rpi5/$component_path" fetch --quiet origin main
+    git -C "$work/xWalk-rpi5/$component_path" merge-base --is-ancestor "$submitted_commit" origin/main || {
+        xwalk_log "uplift-submodule" "uplift" "$repository" "xWalk-rpi5/$component_path" "$old_commit" \
             "unchanged" "Rejected unreachable uplift commit" \
             "Only commits reachable from the module Gerrit main are eligible." "Failed" \
             "git merge-base --is-ancestor failed" "Submitted commit is not on origin/main" "$source_change"
         return 1
     }
-    git -C "$work/xWalk-rpi5/$repository" checkout --quiet --detach "$submitted_commit"
-    git -C "$work/xWalk-rpi5" add "$repository"
+    git -C "$work/xWalk-rpi5/$component_path" checkout --quiet --detach "$submitted_commit"
+    git -C "$work/xWalk-rpi5" add "$component_path"
     changed="$(git -C "$work/xWalk-rpi5" diff --cached --name-only)"
-    [[ "$changed" == "$repository" ]] || {
+    [[ "$changed" == "$component_path" ]] || {
         echo "Uplift changed more than the selected submodule pointer" >&2
         return 1
     }
@@ -74,7 +75,7 @@ apply()
         -m "Component: $repository" -m "Previous-Commit: $old_commit" \
         -m "New-Commit: $submitted_commit" -m "Gerrit-Change: $source_change" \
         -m "Submitted-Revision: $submitted_commit" -m "Gerrit-Topic: ${topic:-none}"
-    xwalk_log "uplift-submodule" "uplift" "$repository" "xWalk-rpi5/$repository" "$old_commit" \
+    xwalk_log "uplift-submodule" "uplift" "$repository" "xWalk-rpi5/$component_path" "$old_commit" \
         "$submitted_commit" "Updated exact submodule pointer" \
         "Submitted module change $source_change passed module verification." "Applied" \
         "Only the selected gitlink changed" "" "$source_change" "$old_commit" "$submitted_commit"

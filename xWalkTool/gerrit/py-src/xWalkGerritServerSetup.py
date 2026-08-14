@@ -593,8 +593,7 @@ def copy_tool_assets(source_root: pathlib.Path, home: pathlib.Path, site: pathli
     tool_directory = home / "apps" / "gerrit" / "tools"
     tool_directory.mkdir(parents=True, exist_ok=True)
     for name in (
-        "xWalkGerritChangeLog.py", "xWalkGerritCi.py", "xWalkGerritLogServer.py",
-        "xWalkGerritQuality.py",
+        "xWalkGerritCi.py", "xWalkGerritLogServer.py", "xWalkGerritQuality.py",
     ):
         target = tool_directory / name
         shutil.copyfile(source_root / "py-src" / name, target)
@@ -603,7 +602,6 @@ def copy_tool_assets(source_root: pathlib.Path, home: pathlib.Path, site: pathli
     for relative in (
         pathlib.Path("config/multi-repo.conf"),
         pathlib.Path("py-src/xWalkGerritAcl.py"),
-        pathlib.Path("py-src/xWalkGerritChangeLog.py"),
         pathlib.Path("shell-script/xwalk-gerrit-common.sh"),
         pathlib.Path("shell-script/gerrit-auto-uplift.sh"),
         pathlib.Path("shell-script/gerrit-github-checkout.sh"),

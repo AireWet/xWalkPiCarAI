@@ -101,11 +101,14 @@ layout:
 
 ```text
 .vscode/                     workspace configuration for HAL and CLI
-.project                     Eclipse CDT workspace and host-build configuration
-.cproject                    Eclipse CDT C++17 indexing and include-path configuration
-.settings/                   Eclipse CDT project preferences
-xWalk-rpi5/DevloperNote/Doc/note/       C++ Markdown documentation mirroring upstream pages
-xWalk-rpi5/DevloperNote/index.md        C++ architecture and module documentation index
+xWalk-rpi5/.project                     Eclipse CDT product and host-build configuration
+xWalk-rpi5/.cproject                    Eclipse CDT C++17 indexing and include-path configuration
+xWalk-rpi5/.settings/                   Eclipse CDT project preferences
+xWalk-rpi5/eclipse-build.sh             Eclipse CDT host-build helper
+xWalk-rpi5/<component>/.project         independently importable Eclipse component loader
+xWalk-rpi5/<component>/.cproject        C/C++ component indexing configuration when applicable
+xWalk-rpi5/devloper-note/Doc/note/      C++ Markdown documentation mirroring upstream pages
+xWalk-rpi5/devloper-note/index.md       C++ architecture and module documentation index
 Doc/image/                   hardware and project images referenced by documentation
 xWalkTool/                   external administration, migration, verification, and uplift tooling
 xWalkTool/xWalkJiraImport/   installable host-only historical Git-to-Jira importer
@@ -501,23 +504,30 @@ retaining normal compiler warnings and compilation checks.
 
 ### Eclipse CDT configuration
 
-- Keep the root `.project`, `.cproject`, and `.settings` files synchronized with
-  the complete workspace layout. Eclipse builds use
-  `xWalkTool/shell/eclipse-build.sh`; CMake remains the authoritative build and
+- Keep `xWalk-rpi5/.project`, `xWalk-rpi5/.cproject`, and
+  `xWalk-rpi5/.settings` synchronized with the integrated product layout.
+  Eclipse builds use `xWalk-rpi5/eclipse-build.sh`; CMake remains the authoritative build and
   test configuration.
+- Keep a uniquely named `.project` in each supported component repository root so it can be imported
+  independently. C/C++ components also own `.cproject` and CDT indexer preferences.
+  `xWalkAudioResources` uses a resource project plus UTF-8 preferences. The documentation component
+  intentionally has no Eclipse metadata.
+- Component Eclipse loaders provide indexing and navigation only. Do not attach an unverified standalone
+  builder to a component whose CMake entry point is not independently configurable. Use the integration
+  loader for the complete build and test workflow.
 - Store project-wide Eclipse text encoding in
-  `.settings/org.eclipse.core.resources.prefs` and keep it set to UTF-8.
+  `xWalk-rpi5/.settings/org.eclipse.core.resources.prefs` and keep it set to UTF-8.
 - Keep project-specific CDT indexer settings in
-  `.settings/org.eclipse.cdt.core.prefs`. Use the Fast Indexer and index source
+  `xWalk-rpi5/.settings/org.eclipse.cdt.core.prefs`. Use the Fast Indexer and index source
   files outside the active build plus unused C++ headers so newly added modules
   remain navigable before their first successful build.
-- Keep generated `build*` and `CMakeFiles` trees excluded in `.cproject`. Do not
+- Keep generated `build*` and `CMakeFiles` trees excluded in `xWalk-rpi5/.cproject`. Do not
   add generated sources or build output as Eclipse source roots.
 - When adding or moving a module, update its public and test include paths in
-  `.cproject` in the same change. Remove stale paths and preserve the C++17
+  `xWalk-rpi5/.cproject` in the same change. Remove stale paths and preserve the C++17
   language setting.
-- Validate `.project` and `.cproject` as XML after editing them. Validate each
-  `.prefs` file as unique `key=value` entries with no malformed lines.
+- Validate the integration and component `.project` and `.cproject` files as XML after editing them.
+  Validate each `.prefs` file as unique `key=value` entries with no malformed lines.
 
 ## Class design and ownership
 

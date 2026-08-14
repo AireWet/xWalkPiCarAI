@@ -14,17 +14,19 @@ components=(
 
 declare -A expected=()
 for component in "${components[@]}"; do
-    expected["$component"]=1
+    expected_path="$component"
+    [[ "$component" != DevloperNote ]] || expected_path="devloper-note"
+    expected["$expected_path"]=1
     path="$(git -C "$root" config -f .gitmodules --get "submodule.$component.path")"
     url="$(git -C "$root" config -f .gitmodules --get "submodule.$component.url")"
     branch="$(git -C "$root" config -f .gitmodules --get "submodule.$component.branch")"
-    [[ "$path" == "$component" ]] || { echo "Invalid path for $component" >&2; exit 1; }
+    [[ "$path" == "$expected_path" ]] || { echo "Invalid path for $component" >&2; exit 1; }
     [[ "$branch" == main ]] || { echo "Invalid branch for $component" >&2; exit 1; }
     [[ "$url" != *github.com* && "$url" == */"$component" ]] || {
         echo "Submodule $component must point only to its Gerrit repository" >&2
         exit 1
     }
-    mode="$(git -C "$root" ls-files --stage -- "$component" | awk '{print $1}')"
+    mode="$(git -C "$root" ls-files --stage -- "$path" | awk '{print $1}')"
     [[ "$mode" == 160000 ]] || { echo "Missing gitlink for $component" >&2; exit 1; }
 done
 

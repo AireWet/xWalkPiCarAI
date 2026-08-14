@@ -21,16 +21,12 @@ xWalkTool/
 │   │   ├── gerrit-setup.conf
 │   │   ├── multi-repo.conf
 │   │   └── XWALK_CI_ENV.example
-│   ├── logs/
-│   │   ├── change-log.csv
-│   │   └── change-log.md
 │   ├── local-linux/
 │   │   ├── README.md
 │   │   ├── gerrit-local.conf
 │   │   └── gerrit-local.sh
 │   ├── py-src/
 │   │   ├── xWalkGerritAcl.py
-│   │   ├── xWalkGerritChangeLog.py
 │   │   ├── xWalkGerritCi.py
 │   │   ├── xWalkGerritLogServer.py
 │   │   ├── xWalkGerritQuality.py
@@ -43,7 +39,7 @@ xWalkTool/
 │   ├── shell-script/
 │   │   ├── gerrit-setup.sh
 │   │   └── multi-repository provisioning, migration, uplift, and synchronization tools
-│   └── xWalk-rpi5/DevloperNote/
+│   └── DevloperNote/
 │       ├── index.md
 │       └── Doc/
 │           └── note/
@@ -76,14 +72,13 @@ xWalkTool/
 └── shell/
     ├── README.md
     ├── clean-build.sh
-    ├── eclipse-build.sh
     ├── provision-hardware.sh
     ├── run-host-coverage.sh
     ├── setup-rpi.sh
     └── xWalkEnv.sh
 ```
 
-The directory contains six Bash scripts, one package manifest, ten Python
+The directory contains Bash scripts, one package manifest, ten Python
 tools, their host tests, three quality-tool configurations, Gerrit CI assets, deployment assets,
 two compiled Device Tree blobs, the empty model-selection configuration, and this
 README. The applicable project and third-party license terms are in the
@@ -91,20 +86,19 @@ workspace-root `LICENSE`; there is no separate `xWalkTool/LICENSE` file.
 
 ## Detailed guides
 
-- [xWalkTool overview](../DevloperNote/Doc/note/xWalkTool%20Overview.md)
+- [xWalkTool overview](../xWalk-rpi5/devloper-note/Doc/note/xWalkTool%20Overview.md)
 - [Jira history importer](xWalkJiraImport/README.md)
 - [Combined Gerrit server, CI, and review controls](gerrit/README.md)
-- [Clean build script](../DevloperNote/Doc/note/Clean%20Build%20Script%20Guide.md)
-- [Eclipse build script](../DevloperNote/Doc/note/Eclipse%20Build%20Script%20Guide.md)
-- [Host coverage script](../DevloperNote/Doc/note/Host%20Coverage%20Script%20Guide.md)
-- [CMake dependencies](../DevloperNote/Doc/note/Dependency%20Installer%20Guide.md)
-- [Dependency installer flags](../DevloperNote/Doc/note/Dependency%20Installer%20Script%20Flags.md)
-- [Raspberry Pi setup script](../DevloperNote/Doc/note/Raspberry%20Pi%20Setup%20Script%20Guide.md)
-- [Hardware provisioning script](../DevloperNote/Doc/note/Hardware%20Provisioning%20Script%20Guide.md)
-- [Device Tree overlay assets](../DevloperNote/Doc/note/Device%20Tree%20Overlay%20Assets%20Guide.md)
-- [Licence-key workflow](../DevloperNote/Doc/note/License%20Key%20Workflow.md)
-- [xWalk licence tool](../DevloperNote/Doc/note/xWalk%20Licence%20Tool%20Guide.md)
-- [xWalk environment loader](../DevloperNote/Doc/note/xWalk%20Environment%20Loader%20Guide.md)
+- [Clean build script](../xWalk-rpi5/devloper-note/Doc/note/Clean%20Build%20Script%20Guide.md)
+- [Host coverage script](../xWalk-rpi5/devloper-note/Doc/note/Host%20Coverage%20Script%20Guide.md)
+- [CMake dependencies](../xWalk-rpi5/devloper-note/Doc/note/Dependency%20Installer%20Guide.md)
+- [Dependency installer flags](../xWalk-rpi5/devloper-note/Doc/note/Dependency%20Installer%20Script%20Flags.md)
+- [Raspberry Pi setup script](../xWalk-rpi5/devloper-note/Doc/note/Raspberry%20Pi%20Setup%20Script%20Guide.md)
+- [Hardware provisioning script](../xWalk-rpi5/devloper-note/Doc/note/Hardware%20Provisioning%20Script%20Guide.md)
+- [Device Tree overlay assets](../xWalk-rpi5/devloper-note/Doc/note/Device%20Tree%20Overlay%20Assets%20Guide.md)
+- [Licence-key workflow](../xWalk-rpi5/devloper-note/Doc/note/License%20Key%20Workflow.md)
+- [xWalk licence tool](../xWalk-rpi5/devloper-note/Doc/note/xWalk%20Licence%20Tool%20Guide.md)
+- [xWalk environment loader](../xWalk-rpi5/devloper-note/Doc/note/xWalk%20Environment%20Loader%20Guide.md)
 - [Python tools and virtual environment](python/README.md)
 - [Shell tools](shell/README.md)
 
@@ -118,7 +112,6 @@ workspace-root `LICENSE`; there is no separate `xWalkTool/LICENSE` file.
 | `python/xHal_Rpi5CarDependencyInstaller` | Installs dependencies and configures verified v5 boot | Privileged |
 | `python/xWalkLicenseTool` | Authenticates model settings without storing API credentials | Host-safe |
 | `shell/clean-build.sh` | Finds and optionally deletes generated output | Dry-run is non-destructive |
-| `shell/eclipse-build.sh` | Configures, builds, tests, or cleans the Eclipse CLI host tree | Host-only |
 | `shell/run-host-coverage.sh` | Runs the root coverage preset, tests, and `gcovr` | Foreground and host-only |
 | `shell/setup-rpi.sh` | Inspects, plans, validates, or applies Raspberry Pi provisioning | Apply is privileged |
 | `shell/provision-hardware.sh` | Records selected GPIO, I2C, SPI, and board identity | Modifies one config file |
@@ -285,26 +278,6 @@ Cleanup is restricted to named CMake build output, detected in-source CMake
 output, and recognized Python caches, coverage data, and package-build output.
 Generated output can be rebuilt, but cleanup results cannot be recovered directly.
 
-### Eclipse host build
-
-Configure and build the established Eclipse CLI host directory:
-
-```sh
-xWalkTool/shell/eclipse-build.sh
-```
-
-Remove that generated build tree, including stale dependency metadata:
-
-```sh
-xWalkTool/shell/eclipse-build.sh clean
-```
-
-With no argument, the script configures, builds, and runs the complete host CTest inventory. The only
-meaningful argument is `clean`; the script does not currently provide a help option. A normal invocation configures
-`xWalkController`
-with the host backend, a Debug build, and `compile_commands.json`. It writes only below
-`xWalk-rpi5/xWalkController/build-eclipse-host` and does not select Raspberry Pi backends.
-
 ### Coverage
 
 Run coverage in the foreground:
@@ -419,7 +392,7 @@ usable label and at least 28 lines, and replaces the configuration atomically. I
 claims GPIO, I2C, SPI, PWM, servo, or motor outputs.
 
 The Raspberry Pi deployment guide remains the authoritative end-to-end procedure:
-[Deployment Guide](../DevloperNote/Doc/note/Deployment%20Guide.md).
+[Deployment Guide](../xWalk-rpi5/devloper-note/Doc/note/Deployment%20Guide.md).
 
 ## xWalkIW generator status
 
@@ -469,7 +442,7 @@ provisioning scripts:
 /usr/lib/xwalk/xWalkTool/environment/xWalkLicense.cfg
 ```
 
-The cleanup, Eclipse, coverage, generator, and overlay files remain source-development assets. They are not
+The cleanup, coverage, generator, and overlay files remain source-development assets. They are not
 required by the installed CLI. Mutable runtime configuration remains under `/etc/xwalk` and `/var/lib/xwalk`,
 not under this source directory.
 

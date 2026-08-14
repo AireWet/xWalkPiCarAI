@@ -33,12 +33,12 @@ boolean read(contextpointer context, uint8 pin)
     TestBackend& backend = *static_cast<TestBackend*>(context);
     ++backend.echoReadCount;
     EchoBehavior activeBehavior = backend.behavior;
-    if ((activeBehavior == EchoBehavior::TimeoutThenPulse) && (backend.triggerCount > 1U))
+    if ((activeBehavior == EchoBehavior::TimeoutThenInvalid) && (backend.triggerCount > 1U))
     {
-        activeBehavior = EchoBehavior::Pulse;
+        activeBehavior = EchoBehavior::Invalid;
     }
     if ((activeBehavior == EchoBehavior::Timeout) ||
-        (activeBehavior == EchoBehavior::TimeoutThenPulse))
+        (activeBehavior == EchoBehavior::TimeoutThenInvalid))
     {
         return false;
     }

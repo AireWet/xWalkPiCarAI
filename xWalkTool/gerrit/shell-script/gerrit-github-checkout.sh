@@ -3,17 +3,10 @@ set -Eeuo pipefail
 umask 077
 
 root="$(git rev-parse --show-toplevel)"
-script_dir="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)"
-logger="$script_dir/../py-src/xWalkGerritChangeLog.py"
 
 log_checkout()
 {
-    python3 "$logger" --operation "github-submodule-checkout" --category "CI" \
-        --repository "xWalk-rpi5" --target ".gitmodules" --previous-value "$1" \
-        --new-value "$2" --change-summary "$3" --change-explanation \
-        "GitHub Actions may initialize only exact recorded Gerrit component revisions." \
-        --requested-by "CI" --executed-by "GitHub-Actions" --mode "apply" \
-        --status "$4" --verification "${5:-}" --error-summary "${6:-}"
+    printf '[%s] xWalk-rpi5: %s\n' "$4" "$3"
 }
 
 [[ -f "$root/.gitmodules" ]] || {
@@ -63,12 +56,12 @@ printf -v ssh_command '%q ' ssh -i "$GERRIT_SUBMODULE_SSH_KEY_FILE" -o BatchMode
     -p "$GERRIT_SSH_PORT"
 git -C "$root" config --local core.sshCommand "$ssh_command"
 git -C "$root" submodule sync --recursive
-while read -r key path; do
+while read -r key _path; do
     name="${key#submodule.}"
     name="${name%.path}"
     override_names+=("$name")
     git -C "$root" config --local "submodule.$name.url" \
-        "ssh://$GERRIT_SUBMODULE_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/$path"
+        "ssh://$GERRIT_SUBMODULE_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/$name"
 done < <(git -C "$root" config -f .gitmodules --get-regexp '^submodule\..*\.path$')
 if ! git -C "$root" submodule update --init --recursive; then
     log_checkout "recorded" "not-initialized" "Private Gerrit submodule checkout failed" "Failed" "" \

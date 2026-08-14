@@ -248,20 +248,12 @@ build-host/integration/xWalkController/xWalkApp/xwalk-picarx-control --deploymen
 
 Ordinary CI never actuates physical hardware.
 
-## Per-operation change logs
+## Gerrit change history
 
-`xWalkGerritChangeLog.py` is the shared logger. It writes locked CSV and
-Markdown reports with UTC timestamps, unique IDs, one-line escaped values, and
-secret redaction. Runtime logs default to a mode-`0700` user state directory
-and support `XWALK_CHANGE_LOG_DIR`. `xWalkTool/gerrit/logs/change-log.csv` and
-`change-log.md` are sanitized templates; environment-specific runtime logs are
-ignored by Git.
-
-Provisioning, each individual ACL, each repository split/import, each
-submodule, module CI vote, integration build/test, uplift, review upload,
-submission decision, permission check, retry, failure, recovery, and GitHub
-sync must be recorded independently. A missing mandatory log is a failed
-operation.
+Record source changes in the Gerrit commit message and review history. CI votes,
+validation results, and synchronization outcomes are posted directly to the
+affected Gerrit change. Do not create CSV or Markdown operation logs in the
+source repository.
 
 ## Permission verification
 

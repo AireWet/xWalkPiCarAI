@@ -16,7 +16,6 @@ from typing import Any, TextIO
 
 from xWalkGerritLogServer import XWalkGerritLogServer
 from xWalkGerritQuality import XWalkGerritQuality
-from xWalkGerritChangeLog import XWalkChangeLog
 
 
 class XWalkGerritCi:
@@ -87,7 +86,6 @@ class XWalkGerritCi:
             int(os.environ.get("XWALK_CI_LOG_HTTP_PORT", "8091")),
             os.environ.get("XWALK_CI_LOG_WEB_URL", "http://127.0.0.1:8091"),
         )
-        self.change_log = XWalkChangeLog()
 
     @staticmethod
     def validate_private_key(path: Path) -> None:
@@ -386,19 +384,6 @@ class XWalkGerritCi:
             change, patch_set, passed, quality_results, results_url, log_path
         )
         reported = self.report(change, patch_set, vote, message)
-        self.change_log.append({
-            "operation": "module-ci-vote", "category": "CI", "repository": self.project,
-            "target": f"change {change} patch set {patch_set}", "previous_value": "unverified",
-            "new_value": f"Verified {vote:+d}", "change_summary": "Completed Gerrit patch-set CI",
-            "change_explanation": "Each module patch set must pass its configured quality gate.",
-            "requested_by": "Gerrit", "executed_by": "CI", "mode": "apply",
-            "status": "Verified" if passed and reported else "Failed",
-            "verification": message if reported else "",
-            "error_summary": "" if passed and reported else (
-                "Quality gate failed" if reported else "Vote failed"
-            ),
-            "related_change": str(change), "commit_after": revision,
-        })
         print(f"{message}; Gerrit report accepted={reported}", flush=True)
 
     def mirror_commands(
@@ -508,16 +493,6 @@ class XWalkGerritCi:
 
         if not self.submitted_revision_verified(change, revision):
             message = "GitHub synchronization skipped: submitted revision lacks CI Verified +1"
-            self.change_log.append({
-                "operation": "github-sync", "category": "GitHub", "repository": "xWalk-rpi5",
-                "target": "refs/heads/main", "previous_value": "unchanged",
-                "new_value": "unchanged", "change_summary": "Rejected unverified synchronization",
-                "change_explanation": "GitHub accepts only submitted integration revisions verified by CI.",
-                "requested_by": "Gerrit", "executed_by": "CI", "mode": "apply",
-                "status": "Skipped", "verification": "Gerrit approval query completed",
-                "error_summary": message, "related_change": str(change),
-                "commit_after": revision,
-            })
             self.post_message(change, patch_set, message)
             print(message, flush=True)
             return
@@ -536,17 +511,6 @@ class XWalkGerritCi:
             mirrored, target_branch, owner_email, revision, log_path
         )
         reported = self.post_message(change, patch_set, message)
-        self.change_log.append({
-            "operation": "github-sync", "category": "GitHub", "repository": "xWalk-rpi5",
-            "target": "refs/heads/main", "previous_value": "previous GitHub main",
-            "new_value": revision if mirrored else "unchanged",
-            "change_summary": "Synchronized submitted integration" if mirrored else "GitHub sync failed",
-            "change_explanation": "Only verified submitted xWalk-rpi5 integration may reach GitHub.",
-            "requested_by": "Gerrit", "executed_by": "CI", "mode": "apply",
-            "status": "Verified" if mirrored and reported else "Failed", "verification": message,
-            "error_summary": "" if mirrored else "Sanitized synchronization failure",
-            "related_change": str(change), "commit_after": revision,
-        })
         print(f"{message}; Gerrit report accepted={reported}", flush=True)
 
     def matching_verification_event(self, event: dict[str, Any]) -> bool:

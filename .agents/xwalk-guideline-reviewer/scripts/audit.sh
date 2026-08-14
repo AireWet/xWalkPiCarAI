@@ -103,28 +103,28 @@ do
     esac
 done
 
-if [ ! -f "${REPOSITORY_ROOT}/xWalk-rpi5/DevloperNote/index.md" ]
+if [ ! -f "${REPOSITORY_ROOT}/xWalk-rpi5/devloper-note/index.md" ]
 then
-    report_issue "documentation-index" "xWalk-rpi5/DevloperNote/index.md is missing"
+    report_issue "documentation-index" "xWalk-rpi5/devloper-note/index.md is missing"
 fi
 
 while IFS= read -r unexpected_file
 do
     report_issue "documentation-layout" \
-        "${unexpected_file}: Markdown must be under xWalk-rpi5/DevloperNote/Doc/note"
+        "${unexpected_file}: Markdown must be under xWalk-rpi5/devloper-note/Doc/note"
 done < <(
-    find "${REPOSITORY_ROOT}/xWalk-rpi5/DevloperNote/Doc" -type f -name '*.md' \
-        ! -path '*/DevloperNote/Doc/note/*' -print 2>/dev/null
+    find "${REPOSITORY_ROOT}/xWalk-rpi5/devloper-note/Doc" -type f -name '*.md' \
+        ! -path '*/devloper-note/Doc/note/*' -print 2>/dev/null
 )
 
 while IFS= read -r unexpected_file
 do
     report_issue "documentation-layout" \
-        "${unexpected_file}: images must be under xWalk-rpi5/DevloperNote/Doc/image"
+        "${unexpected_file}: images must be under xWalk-rpi5/devloper-note/Doc/image"
 done < <(
-    find "${REPOSITORY_ROOT}/xWalk-rpi5/DevloperNote/Doc" -type f \
+    find "${REPOSITORY_ROOT}/xWalk-rpi5/devloper-note/Doc" -type f \
         \( -name '*.png' -o -name '*.jpg' -o -name '*.jpeg' \) \
-        ! -path '*/DevloperNote/Doc/image/*' -print 2>/dev/null
+        ! -path '*/devloper-note/Doc/image/*' -print 2>/dev/null
 )
 
 printf 'SUMMARY|files=%u|issues=%u\n' "${#TEXT_FILES[@]}" "${ISSUE_COUNT}"

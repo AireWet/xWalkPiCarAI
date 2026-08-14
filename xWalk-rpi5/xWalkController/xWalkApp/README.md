@@ -14,8 +14,8 @@ the same parsing, boot-support, and typed command-activation contracts. Command
 dispatch converts CLI text into the typed request structures from
 `xWalkControllerConfigTypes.h` before invoking a handler.
 The complete command-to-endpoint trace is documented in
-[Controller Command Flow](../../DevloperNote/Doc/note/Controller%20Command%20Flow.md), including the boot macro,
-typed request,
+[Controller Command Flow](../../devloper-note/Doc/note/Controller%20Command%20Flow.md), including the boot
+macro, typed request,
 handler, Agent or HAL service, and final hardware, file, process, or network boundary.
 `xControllerApplicationSupport.cpp` separately owns
 signal state and the terminal, timing, and audio callback adapters.

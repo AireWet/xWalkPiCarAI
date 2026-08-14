@@ -39,13 +39,15 @@ validate_source()
 
 split_component()
 {
-    local component="$1" after remote ref component_root
+    local component="$1" component_path source_path after remote ref component_root
+    component_path="$(xwalk_component_path "$component")"
+    source_path="xWalk-rpi5/$component_path"
     local destination_root="${output_root:-[XWALK_SPLIT_OUTPUT_DIR]}"
     local destination="$destination_root/$component"
-    component_root="$(git -C "$source_root/$component" rev-parse --show-toplevel)"
+    component_root="$(git -C "$source_root/$source_path" rev-parse --show-toplevel)"
     printf '[%s] split %s at %s\n' "$XWALK_MODE" "$component" "$source_commit"
     if [[ "$XWALK_MODE" == "dry-run" ]]; then
-        xwalk_log "split-history" "migration" "$component" "$component/" "$source_commit" \
+        xwalk_log "split-history" "migration" "$component" "$source_path/" "$source_commit" \
             "filtered-main" "Plan history-preserving component split" \
             "Independent Gerrit review requires component-scoped history." "Planned" \
             "Fixed component allowlist and source commit validated" "" "" "$source_commit"
@@ -82,11 +84,12 @@ split_component()
         git clone --quiet --no-local "$component_root" "$destination"
     else
         git clone --quiet --no-local "$source_root" "$destination"
-        git -C "$destination" filter-repo --force --path "$component/" --path-rename "$component/:"
+        git -C "$destination" filter-repo --force --path "$source_path/" \
+            --path-rename "$source_path/:"
     fi
     git -C "$destination" branch -M main
     after="$(git -C "$destination" rev-parse HEAD)"
-    xwalk_log "split-history" "migration" "$component" "$component/" "$source_commit" "$after" \
+    xwalk_log "split-history" "migration" "$component" "$source_path/" "$source_commit" "$after" \
         "Split component history" "Independent Gerrit review requires component-scoped history." \
         "Applied" "git filter-repo completed in an independent clone" "" "" "$source_commit" "$after"
     remote="ssh://$GERRIT_ADMIN_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/$component"
@@ -132,9 +135,13 @@ main()
 {
     validate_source
     [[ "$XWALK_MODE" == "dry-run" ]] || mkdir -m 700 "$output_root"
-    local component
+    local component component_path
     for component in "${xwalk_components[@]}"; do
-        [[ -d "$source_root/$component" ]] || { echo "Missing allowlisted component: $component" >&2; return 2; }
+        component_path="$(xwalk_component_path "$component")"
+        [[ -d "$source_root/xWalk-rpi5/$component_path" ]] || {
+            echo "Missing allowlisted component: $component" >&2
+            return 2
+        }
         split_component "$component"
     done
     [[ "$(git -C "$source_root" rev-parse HEAD)" == "$source_commit" ]] || {

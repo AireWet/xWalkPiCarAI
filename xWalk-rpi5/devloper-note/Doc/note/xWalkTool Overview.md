@@ -10,8 +10,6 @@ review whether it is read-only, writes generated output, changes configuration, 
 
 - `shell/clean-build.sh` finds and removes generated CMake and Python output. See the
   [clean build guide](Clean%20Build%20Script%20Guide.md).
-- `shell/eclipse-build.sh` builds or cleans the Eclipse-oriented CLI host tree. See the
-  [Eclipse build guide](Eclipse%20Build%20Script%20Guide.md).
 - `shell/run-host-coverage.sh` runs host coverage in the foreground. See the
   [host coverage guide](Host%20Coverage%20Script%20Guide.md).
 - `xWalkJiraImport/` is the installable, host-only historical Git-to-Jira importer. Its
@@ -48,7 +46,7 @@ contracts in the two guides above.
 | Class | Tools | Expected effects |
 | --- | --- | --- |
 | Read-only | Script help and dry-run tools, including `xWalkJiraImport` | Reports information only |
-| Host generated output | `eclipse-build.sh`, `run-host-coverage.sh run` | Creates or updates build output |
+| Host generated output | `run-host-coverage.sh run` | Updates build output |
 | Destructive host maintenance | `clean-build.sh --yes` | Deletes discovered CMake and Python output |
 | Target configuration | `provision-hardware.sh` | Replaces one selected writable configuration atomically |
 | Privileged target setup | `setup-rpi.sh --apply` | Changes target provisioning state |

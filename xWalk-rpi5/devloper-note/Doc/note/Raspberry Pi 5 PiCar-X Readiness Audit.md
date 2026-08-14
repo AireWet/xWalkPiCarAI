@@ -1584,7 +1584,8 @@ than hidden by the final count.
   backpressure, and camera-loss shutdown. It is not a network listener.
 - `xWalk-rpi5/xWalkAgent/xWalkVision/xWalkVideoRecording/hardware/src/xAgent_Rpi5CarVideoRecordingOpenCv.cpp`: retain the
   released rollback context explicitly so focused Clang-Tidy reports no ignored `nodiscard` result.
-- `cmake/toolchains/aarch64-linux-gnu.cmake` and `xWalkTool/deployment`: reviewed-sysroot cross-build guardrails
+- `xWalk-rpi5/cmake/toolchains/aarch64-linux-gnu.cmake` and `xWalkTool/deployment`: reviewed-sysroot cross-build
+  guardrails
   and
   hardware-independent/wheels-up guidance. The dependency audit confines `pkg-config`, reports all missing target
   package families in one run, inspects linker inputs, and rejects host path contamination.
@@ -1596,9 +1597,10 @@ than hidden by the final count.
   per-stage initialization faults, emergency recovery without command replay, and active-movement shutdown checks.
 - `CMakePresets.json`, the AArch64 toolchain, and host CI: a reviewed-sysroot cross profile, reliable sysroot
   propagation through compiler probes, and deployment-manifest validation in host and staged-install jobs.
-- `xWalk-rpi5/DevloperNote/Doc/note/Raspberry Pi Setup Script Guide.md`: synchronize the documented package list.
+- `xWalk-rpi5/devloper-note/Doc/note/Raspberry Pi Setup Script Guide.md`: synchronize the documented
+  package list.
 - This audit report was updated with the current validation evidence and corrections above.
-- `xWalk-rpi5/DevloperNote/index.md`: link this report from the workspace documentation index.
+- `xWalk-rpi5/devloper-note/index.md`: link this report from the workspace documentation index.
 
 The repository's unrelated pre-existing uncommitted work remains user-owned and was preserved. No commit, push,
 pull request, hardware access, credential access, or real cloud request was performed.

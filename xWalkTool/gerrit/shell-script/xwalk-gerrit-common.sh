@@ -4,7 +4,6 @@ set -Eeuo pipefail
 xwalk_dir="$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 xwalk_root="$(CDPATH='' cd -- "$xwalk_dir/.." && pwd -P)"
 xwalk_config="${XWALK_GERRIT_MULTI_REPO_CONFIG:-$xwalk_root/config/multi-repo.conf}"
-xwalk_logger="$xwalk_root/py-src/xWalkGerritChangeLog.py"
 
 # shellcheck disable=SC2034 # These arrays are consumed by scripts that source this helper.
 xwalk_repositories=(
@@ -98,6 +97,20 @@ xwalk_repository()
     return 2
 }
 
+xwalk_component_path()
+{
+    case "$1" in
+        DevloperNote) printf '%s\n' "devloper-note" ;;
+        xWalkAgent|xWalkAudioResources|xWalkController|xWalkHal|xWalkIW|xWalkLibrary|xWalkTrace)
+            printf '%s\n' "$1"
+            ;;
+        *)
+            echo "Component is not in the fixed allowlist: $1" >&2
+            return 2
+            ;;
+    esac
+}
+
 xwalk_new_output_path()
 {
     local candidate="$1" source_root="$2" resolved parent
@@ -133,18 +146,8 @@ xwalk_new_output_path()
 
 xwalk_log()
 {
-    local operation="$1" category="$2" repository="$3" target="$4"
-    local previous="$5" new="$6" summary="$7" explanation="$8"
-    local status="$9" verification="${10:-}" error="${11:-}" related="${12:-}"
-    local before="${13:-}" after="${14:-}"
-    python3 "$xwalk_logger" \
-        --operation="$operation" --category="$category" --repository="$repository" \
-        --target="$target" --previous-value="$previous" --new-value="$new" \
-        --change-summary="$summary" --change-explanation="$explanation" \
-        --requested-by="${XWALK_REQUESTED_BY:-user}" \
-        --executed-by="${XWALK_EXECUTED_BY:-automation}" --mode="$XWALK_MODE" \
-        --status="$status" --verification="$verification" --error-summary="$error" \
-        --related-change="$related" --commit-before="$before" --commit-after="$after"
+    local operation="$1" repository="$3" status="$9"
+    printf '[%s] %s: %s\n' "$status" "$repository" "$operation"
 }
 
 xwalk_ssh()

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-    <name>MyPiCarX</name>
-    <comment>xWalk C++17 HAL, Agent, and CLI workspace</comment>
+    <name>xWalk-rpi5</name>
+    <comment>xWalk Raspberry Pi 5 integrated C++17 product workspace</comment>
     <projects/>
     <buildSpec>
         <buildCommand>
@@ -18,7 +18,7 @@
                 </dictionary>
                 <dictionary>
                     <key>org.eclipse.cdt.make.core.build.arguments</key>
-                    <value>&quot;${workspace_loc:/${ProjName}/xWalkTool/shell/eclipse-build.sh}&quot;</value>
+                    <value>&quot;${workspace_loc:/${ProjName}/eclipse-build.sh}&quot;</value>
                 </dictionary>
                 <dictionary>
                     <key>org.eclipse.cdt.make.core.build.target.auto</key>

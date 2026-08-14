@@ -74,9 +74,9 @@ supported API keys with the authenticated model settings. See the detailed guide
 
 The tool requests the decryption key interactively. It never accepts the key as
 a command-line option. Delete temporary plaintext after use. See the full
-[licence-key workflow](../../DevloperNote/Doc/note/License%20Key%20Workflow.md)
+[licence-key workflow](../../xWalk-rpi5/devloper-note/Doc/note/License%20Key%20Workflow.md)
 for commit policy, deployment, and security limitations. The dedicated
-[licence tool guide](../../DevloperNote/Doc/note/xWalk%20Licence%20Tool%20Guide.md)
+[licence tool guide](../../xWalk-rpi5/devloper-note/Doc/note/xWalk%20Licence%20Tool%20Guide.md)
 documents serial-number output, invocation forms, and exit behavior.
 
 Run the host-only licence tests:
