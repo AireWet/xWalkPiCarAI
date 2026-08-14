@@ -85,7 +85,7 @@ junit.xml
 *.swo
 *~
 /core.[0-9]*
-/xWalkTool/gerrit/logs/runtime/
+/xWalkTool/py-agent/gerrit-tool/logs/runtime/
 
 # Tool, language, and editor caches
 .cache/
@@ -103,7 +103,6 @@ __pycache__/
 *.py[cod]
 .codex/
 /.xWalkPyEnv/
-/xWalkTool/.xWalkPyEnv/
 *.egg-info/
 .eggs/
 pip-wheel-metadata/
@@ -122,7 +121,7 @@ Desktop.ini
 /xWalk-rpi5/xWalkController/xWalkConfig/picar-x.local.conf
 **/xWalkLicense.*.json
 **/xWalkLicense.*.cfg
-!/xWalkTool/environment/xWalkLicense.cfg
+!/xWalkTool/shell-agent/env-tool/license/xWalkLicense.cfg
 **/xWalkLicense.decrypted.json
 **/decrypted-license*.json
 **/decrypted-environment*.json

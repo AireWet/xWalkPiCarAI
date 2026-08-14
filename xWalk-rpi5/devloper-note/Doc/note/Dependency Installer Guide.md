@@ -94,7 +94,7 @@ The Protobuf compiler and gRPC C++ plugin are not required merely to compile tho
 are required after a schema change when regenerating the `xWalk-rpi5/xWalkIW/auto-gen` tree:
 
 ```sh
-xWalkTool/python/xHal_Rpi5CarIwGenerator --generate-cpp
+xWalkTool/py-agent/dev-tool/xHal_Rpi5CarIwGenerator --generate-cpp
 ```
 
 ### ALSA

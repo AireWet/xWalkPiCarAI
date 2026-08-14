@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Validate integration metadata
-        run: xWalkTool/shell/validate-integration-metadata.sh
+        run: xWalkTool/shell-agent/gerrit-tool/validate-integration-metadata.sh
 
   private-integration:
     if: vars.XWALK_GERRIT_PRIVATE_CI_ENABLED == 'true'
@@ -43,20 +43,20 @@ jobs:
           GERRIT_SUBMODULE_USERNAME: ${{ vars.GERRIT_SUBMODULE_USERNAME }}
           GERRIT_SERVER_HOST: ${{ vars.GERRIT_SERVER_HOST }}
           GERRIT_SSH_PORT: ${{ vars.GERRIT_SSH_PORT }}
-        run: xWalkTool/shell/checkout-gerrit-submodules.sh
+        run: xWalkTool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
       - name: Install host dependencies
         run: sudo apt-get update && sudo apt-get install --yes clang cmake ninja-build libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Select compiler
         run: |
           if [ "${{ matrix.compiler }}" = clang ]; then echo "CC=clang" >> "$GITHUB_ENV"; echo "CXX=clang++" >> "$GITHUB_ENV"; else echo "CC=gcc" >> "$GITHUB_ENV"; echo "CXX=g++" >> "$GITHUB_ENV"; fi
       - name: Configure complete integration
-        run: cmake --fresh -S . -B build-host/integration -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DXWALK_ENABLE_STRICT_WARNINGS=ON
+        run: cmake --fresh -S xWalk-rpi5 -B build-host/integration -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DXWALK_ENABLE_STRICT_WARNINGS=ON
       - name: Build complete integration
         run: cmake --build build-host/integration --parallel
       - name: Test complete integration
         run: ctest --test-dir build-host/integration --output-on-failure --no-tests=error
       - name: Run host-safe diagnostic
-        run: build-host/integration/xWalk-rpi5/xWalkController/xWalkApp/xwalk-picarx-control --deployment-config="$PWD/xWalk-rpi5/xWalkController/xWalkConfig/picar-x.conf" --diagnose --no-hardware
+        run: build-host/integration/xWalkController/xWalkApp/xwalk-picarx-control --deployment-config="$PWD/xWalk-rpi5/xWalkController/xWalkConfig/picar-x.conf" --diagnose --no-hardware
       - name: Remove temporary credentials
         if: always()
         run: rm -f -- "$RUNNER_TEMP/xwalk-gerrit/id_ed25519" "$RUNNER_TEMP/xwalk-gerrit/known_hosts"
@@ -82,11 +82,11 @@ jobs:
           GERRIT_SUBMODULE_USERNAME: ${{ vars.GERRIT_SUBMODULE_USERNAME }}
           GERRIT_SERVER_HOST: ${{ vars.GERRIT_SERVER_HOST }}
           GERRIT_SSH_PORT: ${{ vars.GERRIT_SSH_PORT }}
-        run: xWalkTool/shell/checkout-gerrit-submodules.sh
+        run: xWalkTool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
       - name: Install sanitizer dependencies
         run: sudo apt-get update && sudo apt-get install --yes clang cmake ninja-build libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Configure ASan and UBSan
-        run: CC=clang CXX=clang++ cmake --fresh -S . -B build-host/sanitizers -G Ninja -DCMAKE_BUILD_TYPE=Debug -DXWALK_ENABLE_SANITIZERS=ON -DXWALK_ENABLE_STRICT_WARNINGS=ON
+        run: CC=clang CXX=clang++ cmake --fresh -S xWalk-rpi5 -B build-host/sanitizers -G Ninja -DCMAKE_BUILD_TYPE=Debug -DXWALK_ENABLE_SANITIZERS=ON -DXWALK_ENABLE_STRICT_WARNINGS=ON
       - name: Build and test ASan and UBSan
         run: cmake --build build-host/sanitizers --parallel && ctest --test-dir build-host/sanitizers --output-on-failure --no-tests=error
       - name: Remove temporary credentials

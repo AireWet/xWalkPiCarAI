@@ -15,8 +15,8 @@ option is selected.
 Inspect the target without changing it:
 
 ```sh
-xWalkTool/shell/setup-rpi.sh --check --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
-xWalkTool/shell/setup-rpi.sh --dry-run --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --check --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --dry-run --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
 ```
 
 Use the real profile and GPIO device. The script detects Raspberry Pi OS or Ubuntu, the Pi model, and the
@@ -86,7 +86,7 @@ cmake --build --preset coverage --parallel
 ctest --preset coverage
 ```
 
-Use `xWalkTool/shell/run-host-coverage.sh run` after the coverage test when `gcovr` is
+Use `xWalkTool/shell-agent/quality-tool/run-host-coverage.sh run` after the coverage test when `gcovr` is
 available. ThreadSanitizer has its own `thread-sanitizer` configure, build, and
 test presets and must not be combined with AddressSanitizer.
 
@@ -149,7 +149,7 @@ unsafe installed file permissions, and retains a checksum manifest for the stage
 [Host Production Readiness Work](Host%20Production%20Readiness%20Work.md) for local commands and the evidence
 boundary.
 
-Use `xWalkTool/shell/run-host-coverage.sh run` for foreground-only coverage. The script does not create a detached
+Use `xWalkTool/shell-agent/quality-tool/run-host-coverage.sh run` for foreground-only coverage. The script does not create a detached
 process, install packages, or request privileges.
 
 ## Installed layout and staging
@@ -160,9 +160,9 @@ resources rather than separate project shared objects.
 | Path | Purpose |
 | --- | --- |
 | `/usr/bin/xwalk-picarx-control` | CLI executable |
-| `/usr/lib/xwalk/xWalkTool/shell/xWalkEnv.sh` | Authenticated licence environment loader |
-| `/usr/lib/xwalk/xWalkTool/python/xWalkLicenseTool` | Licence encryption and decryption tool |
-| `/usr/lib/xwalk/xWalkTool/environment/xWalkLicense.cfg` | Empty model-selection input template |
+| `/usr/lib/xwalk/xWalkTool/shell-agent/env-tool/license/xWalkEnv.sh` | Authenticated licence environment loader |
+| `/usr/lib/xwalk/xWalkTool/py-agent/dev-tool/xWalkLicenseTool` | Licence encryption and decryption tool |
+| `/usr/lib/xwalk/xWalkTool/shell-agent/env-tool/license/xWalkLicense.cfg` | Empty model-selection input template |
 | `/etc/xwalk/picar-x.conf` | Administrator-controlled configuration manifest |
 | `/etc/xwalk/picar-x.d/` | Functional defaults and separate AI-provider profiles |
 | `/var/lib/xwalk/picar-x.conf` | Writable active manifest, created once by setup |

@@ -40,8 +40,8 @@ Neither value is added to conversation history or Doctor output. Calibration
 writes remain in the primary file; included defaults are never rewritten by
 `XWalkConfigStore`.
 
-`xWalkTool/shell/xWalkEnv.sh` is the reviewed environment-loader boundary. It
-uses `xWalkTool/python/xWalkLicenseTool` to authenticate and decrypt the
+`xWalkTool/shell-agent/env-tool/license/xWalkEnv.sh` is the reviewed environment-loader boundary. It
+uses `xWalkTool/py-agent/dev-tool/xWalkLicenseTool` to authenticate and decrypt the
 fixed `xWalk-rpi5/xWalkLibrary/X_WALK_LICENSE.KEY` model settings, then reads API
 credentials from the developer's mode-`0600` `~/.netrc`. It validates every
 supported model and credential name before exporting anything, never evaluates
@@ -49,7 +49,7 @@ values as shell syntax, and removes its mode-`0600` temporary JSON file. Source
 the loader so the variables remain in the calling shell:
 
 ```sh
-source xWalkTool/shell/xWalkEnv.sh
+source xWalkTool/shell-agent/env-tool/license/xWalkEnv.sh
 ```
 
 Create the encrypted model file from the committed empty template or repeated

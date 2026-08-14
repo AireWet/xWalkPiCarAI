@@ -13,72 +13,78 @@ confirmed.
 xWalkTool/
 ├── README.md
 ├── apt-packages.txt
-├── gerrit/
-│   ├── README.md
-│   ├── xWalkReviewControls.js
-│   ├── bin/
-│   ├── config/
-│   │   ├── gerrit-setup.conf
-│   │   ├── multi-repo.conf
-│   │   └── XWALK_CI_ENV.example
-│   ├── local-linux/
+├── cpp-tool/
+│   ├── fuzz/
 │   │   ├── README.md
-│   │   ├── gerrit-local.conf
-│   │   └── gerrit-local.sh
-│   ├── py-src/
-│   │   ├── xWalkGerritAcl.py
-│   │   ├── xWalkGerritCi.py
-│   │   ├── xWalkGerritLogServer.py
-│   │   ├── xWalkGerritQuality.py
-│   │   └── xWalkGerritServerSetup.py
-│   ├── py-test/
-│   │   ├── xWalkGerritCiTest.py
-│   │   ├── xWalkGerritLogServerTest.py
-│   │   ├── xWalkGerritServerSetupTest.py
-│   │   └── xWalkReviewControlsTest.js
-│   ├── shell-script/
-│   │   ├── gerrit-setup.sh
-│   │   └── multi-repository provisioning, migration, uplift, and synchronization tools
-│   └── DevloperNote/
-│       ├── index.md
-│       └── Doc/
-│           └── note/
-├── xWalkJiraImport/
-│   ├── pyproject.toml
+│   │   ├── corpus/
+│   │   └── src/
+│   └── quality/
+│       ├── README.md
+│       └── probes/
+├── py-agent/
 │   ├── README.md
-│   ├── requirements.txt
-│   ├── test/
-│   └── xWalkJiraImport/
-├── deployment/
-│   ├── debian/
-│   ├── systemd/
-│   ├── test/
-│   ├── tmpfiles/
-│   └── udev/
-├── dtoverlays/
-│   ├── sunfounder-robothat5.dtbo
-│   └── sunfounder-servohat+.dtbo
-├── environment/
-│   ├── .clang-tidy
-│   ├── .cppcheck-suppressions
-│   ├── gcovr.cfg
-│   └── xWalkLicense.cfg
-├── python/
-│   ├── README.md
-│   ├── xHal_Rpi5CarDependencyInstaller
-│   ├── xHal_Rpi5CarIwGenerator
-│   ├── xWalkLicenseTool
-│   └── test/
-└── shell/
+│   ├── board-tool/
+│   │   ├── pyproject.toml
+│   │   ├── README.md
+│   │   ├── requirements.txt
+│   │   ├── test/
+│   │   └── py-src/xWalkJiraImport/
+│   ├── dev-tool/
+│   │   ├── README.md
+│   │   ├── xHal_Rpi5CarDependencyInstaller
+│   │   ├── xHal_Rpi5CarIwGenerator
+│   │   ├── xWalkLicenseTool
+│   │   ├── xWalkZuulValidator
+│   │   └── test/
+│   └── gerrit-tool/
+│       ├── README.md
+│       ├── xWalkReviewControls.js
+│       ├── bin/
+│       ├── config/
+│       ├── local-linux/
+│       ├── py-src/
+│       ├── py-test/
+│       ├── shell-script/
+│       └── DevloperNote/
+└── shell-agent/
     ├── README.md
-    ├── clean-build.sh
-    ├── provision-hardware.sh
-    ├── run-host-coverage.sh
-    ├── setup-rpi.sh
-    └── xWalkEnv.sh
+    ├── board-tool/
+    │   └── xWalkJiraImport.sh
+    ├── gerrit-tool/
+    │   ├── checkout-gerrit-submodules.sh
+    │   ├── run-host-ci-job.sh
+    │   └── validate-integration-metadata.sh
+    ├── deploy-tool/
+    │   ├── debian/
+    │   ├── provision-hardware.sh
+    │   ├── setup-rpi.sh
+    │   ├── systemd/
+    │   ├── test/
+    │   ├── tmpfiles/
+    │   └── udev/
+    ├── env-tool/
+    │   ├── dtoverlays/
+    │   │   ├── sunfounder-robothat5.dtbo
+    │   │   └── sunfounder-servohat+.dtbo
+    │   ├── license/
+    │   │   ├── xWalkEnv.sh
+    │   │   └── xWalkLicense.cfg
+    │   ├── playbooks/
+    │   │   └── zuul/
+    │   └── quality/
+    │       ├── .clang-tidy
+    │       ├── .cppcheck-suppressions
+    │       └── gcovr.cfg
+    ├── repo-tool/
+    │   └── clean-build.sh
+    └── quality-tool/
+        ├── run-host-coverage.sh
+        ├── run-host-sanitizer.sh
+        ├── run-host-valgrind.sh
+        └── test/
 ```
 
-The directory contains Bash scripts, one package manifest, ten Python
+The directory contains Bash scripts, one package manifest, Python
 tools, their host tests, three quality-tool configurations, Gerrit CI assets, deployment assets,
 two compiled Device Tree blobs, the empty model-selection configuration, and this
 README. The applicable project and third-party license terms are in the
@@ -87,8 +93,10 @@ workspace-root `LICENSE`; there is no separate `xWalkTool/LICENSE` file.
 ## Detailed guides
 
 - [xWalkTool overview](../xWalk-rpi5/devloper-note/Doc/note/xWalkTool%20Overview.md)
-- [Jira history importer](xWalkJiraImport/README.md)
-- [Combined Gerrit server, CI, and review controls](gerrit/README.md)
+- [C++ host quality](cpp-tool/quality/README.md)
+- [C++ fuzz testing](cpp-tool/fuzz/README.md)
+- [Jira history importer](py-agent/board-tool/README.md)
+- [Combined Gerrit server, CI, and review controls](py-agent/gerrit-tool/README.md)
 - [Clean build script](../xWalk-rpi5/devloper-note/Doc/note/Clean%20Build%20Script%20Guide.md)
 - [Host coverage script](../xWalk-rpi5/devloper-note/Doc/note/Host%20Coverage%20Script%20Guide.md)
 - [CMake dependencies](../xWalk-rpi5/devloper-note/Doc/note/Dependency%20Installer%20Guide.md)
@@ -99,32 +107,41 @@ workspace-root `LICENSE`; there is no separate `xWalkTool/LICENSE` file.
 - [Licence-key workflow](../xWalk-rpi5/devloper-note/Doc/note/License%20Key%20Workflow.md)
 - [xWalk licence tool](../xWalk-rpi5/devloper-note/Doc/note/xWalk%20Licence%20Tool%20Guide.md)
 - [xWalk environment loader](../xWalk-rpi5/devloper-note/Doc/note/xWalk%20Environment%20Loader%20Guide.md)
-- [Python tools and virtual environment](python/README.md)
-- [Shell tools](shell/README.md)
+- [Developer tools](py-agent/dev-tool/README.md)
+- [Python environment guidance](py-agent/README.md)
+- [Shell agent](shell-agent/README.md)
 
 ## Responsibility summary
 
 | Path | Responsibility | Host safety |
 |---|---|---|
 | `apt-packages.txt` | Lists and maps host, Raspberry Pi, quality, packaging, and optional packages | Read-only |
-| `xWalkJiraImport` | Installs the historical Git-to-Jira importer | Dry-run by default |
-| `gerrit` | Runs Gerrit, CI, logs, and review controls | User-owned service |
-| `python/xHal_Rpi5CarDependencyInstaller` | Installs dependencies and configures verified v5 boot | Privileged |
-| `python/xWalkLicenseTool` | Authenticates model settings without storing API credentials | Host-safe |
-| `shell/clean-build.sh` | Finds and optionally deletes generated output | Dry-run is non-destructive |
-| `shell/run-host-coverage.sh` | Runs the root coverage preset, tests, and `gcovr` | Foreground and host-only |
-| `shell/setup-rpi.sh` | Inspects, plans, validates, or applies Raspberry Pi provisioning | Apply is privileged |
-| `shell/provision-hardware.sh` | Records selected GPIO, I2C, SPI, and board identity | Modifies one config file |
-| `shell/xWalkEnv.sh` | Exports authenticated models and private netrc credentials | Interactive decryption |
-| `python/xHal_Rpi5CarIwGenerator` | Validates and generates xWalkIW Protobuf/gRPC sources | Host-only generation |
-| `environment/` | Stores quality settings and the empty model template | Host-safe configuration |
-| `deployment/` | Stores packaging, service, permission, and test assets | Host validation and installation |
-| `dtoverlays/` | Stores the unchanged Robot HAT Device Tree blobs | Raspberry Pi boot assets |
+| `cpp-tool` | Groups C++ quality probes, fuzz targets, and their documentation | Host-only |
+| `cpp-tool/fuzz` | Stores C++ fuzz harnesses and seed corpora | Host-only |
+| `cpp-tool/quality` | Documents host quality checks and stores sanitizer probes | Host-only |
+| `py-agent` | Groups Python development, board-integration, and Gerrit administration tools | Mixed; see child modules |
+| `py-agent/board-tool` | Stores the installable historical Git-to-Jira importer | Dry-run by default |
+| `py-agent/dev-tool` | Stores executable Python development utilities and their host tests | Mixed; see tool documentation |
+| `py-agent/gerrit-tool` | Runs Gerrit, CI, logs, and review controls | User-owned service |
+| `py-agent/dev-tool/xHal_Rpi5CarDependencyInstaller` | Installs dependencies and configures verified v5 boot | Privileged |
+| `py-agent/dev-tool/xWalkLicenseTool` | Authenticates model settings without storing API credentials | Host-safe |
+| `py-agent/dev-tool/xWalkZuulValidator` | Validates repository Zuul structure | Host-safe |
+| `shell-agent/board-tool/` | Runs the board importer directly from source | Dry-run by default |
+| `shell-agent/gerrit-tool/` | Dispatches CI jobs and validates Gerrit integration metadata | Host-safe automation |
+| `shell-agent/deploy-tool/` | Stores provisioning scripts, packaging assets, and tests | Apply is privileged |
+| `shell-agent/env-tool/` | Groups quality, licence, and boot-overlay modules | Mixed; see child modules |
+| `shell-agent/env-tool/dtoverlays/` | Stores Robot HAT Device Tree blobs | RPi boot assets |
+| `shell-agent/env-tool/license/` | Stores the model template and environment loader | Interactive decryption |
+| `shell-agent/env-tool/playbooks/` | Stores Zuul Ansible playbooks | Host-safe CI configuration |
+| `shell-agent/env-tool/quality/` | Stores Clang-Tidy, Cppcheck, and gcovr settings | Host-safe configuration |
+| `shell-agent/repo-tool/` | Finds and optionally deletes generated output | Dry-run is non-destructive |
+| `shell-agent/quality-tool/` | Runs coverage, sanitizers, analysis, ShellCheck, and Valgrind | Host-only |
+| `py-agent/dev-tool/xHal_Rpi5CarIwGenerator` | Validates and generates xWalkIW Protobuf/gRPC sources | Host-only generation |
 
 ## Licence environment
 
 Install PyNaCl through the supported dependency workflow (`python3-nacl` on
-Debian-family systems). Copy `environment/xWalkLicense.cfg` to a mode-`0600`
+Debian-family systems). Copy `shell-agent/env-tool/license/xWalkLicense.cfg` to a mode-`0600`
 location outside the repository and fill only the model settings in that copy.
 Never put values into the committed template. Store fixed-provider API credentials only in the developer's
 mode-`0600` `~/.netrc` using the documented actual provider hostnames.
@@ -132,14 +149,14 @@ mode-`0600` `~/.netrc` using the documented actual provider hostnames.
 Encrypt the protected copy:
 
 ```sh
-xWalkTool/python/xWalkLicenseTool encrypt --config /secure/location/xWalkLicense.cfg
+xWalkTool/py-agent/dev-tool/xWalkLicenseTool encrypt --config /secure/location/xWalkLicense.cfg
 ```
 
 Or supply repeated manual values, recognizing that they can be retained in
 shell history or exposed through process inspection:
 
 ```sh
-xWalkTool/python/xWalkLicenseTool encrypt --env OPENAI_MODEL='gpt-model' --env GEMINI_MODEL='gemini-model'
+xWalkTool/py-agent/dev-tool/xWalkLicenseTool encrypt --env OPENAI_MODEL='gpt-model' --env GEMINI_MODEL='gemini-model'
 ```
 
 Replace the quoted example text with the real values. Do not type angle-bracket
@@ -149,7 +166,7 @@ Decrypt only to an explicit temporary path. The key is requested privately and
 the resulting JSON receives mode `0600`:
 
 ```sh
-xWalkTool/python/xWalkLicenseTool decrypt --output /tmp/xWalkLicense.decrypted.json
+xWalkTool/py-agent/dev-tool/xWalkLicenseTool decrypt --output /tmp/xWalkLicense.decrypted.json
 ```
 
 Only the empty model template may be committed. The repository ignores
@@ -176,19 +193,19 @@ reviewable manifest and contains the machine-readable package-manager catalog us
 Check every automatically selected dependency without changing the machine:
 
 ```sh
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --check
+xWalkTool/py-agent/dev-tool/xHal_Rpi5CarDependencyInstaller --check
 ```
 
 Preview installation after detecting the operating system and device:
 
 ```sh
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --dry-run
+xWalkTool/py-agent/dev-tool/xHal_Rpi5CarDependencyInstaller --dry-run
 ```
 
 Install all supported catalog scopes for the automatically detected platform:
 
 ```sh
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller
+xWalkTool/py-agent/dev-tool/xHal_Rpi5CarDependencyInstaller
 ```
 
 The default includes required, native-audio, quality, release, generator, and external scopes. The installer
@@ -206,10 +223,10 @@ project prefix.
 Specify a platform and device when automatic detection is not appropriate:
 
 ```sh
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --os ubuntu --device host --required-only
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --os fedora --device host --required-only
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --os arch --device host --required-only
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --os macos --device host --required-only
+xWalkTool/py-agent/dev-tool/xHal_Rpi5CarDependencyInstaller --os ubuntu --device host --required-only
+xWalkTool/py-agent/dev-tool/xHal_Rpi5CarDependencyInstaller --os fedora --device host --required-only
+xWalkTool/py-agent/dev-tool/xHal_Rpi5CarDependencyInstaller --os arch --device host --required-only
+xWalkTool/py-agent/dev-tool/xHal_Rpi5CarDependencyInstaller --os macos --device host --required-only
 ```
 
 Supported package families are Debian/Ubuntu/Raspberry Pi OS through APT, Fedora/RHEL through DNF,
@@ -227,7 +244,7 @@ The script returns non-zero after `--check` or installation when selected depend
 On a Raspberry Pi with a physically verified Robot HAT v5, review the boot plan before installation:
 
 ```sh
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --os raspbian --device rpi --profile robot_hat_v5 --camera csi --required-only --dry-run
+xWalkTool/py-agent/dev-tool/xHal_Rpi5CarDependencyInstaller --os raspbian --device rpi --profile robot_hat_v5 --camera csi --required-only --dry-run
 ```
 
 The Raspberry Pi path requires the supported v5 UUID before changing anything. It verifies the bundled
@@ -244,9 +261,9 @@ It detects `/boot/firmware/config.txt` with `/boot/firmware/overlays` or `/boot/
 `/boot/overlays`. It never reboots automatically. Reboot and complete passive diagnostics and physical
 hardware acceptance before movement.
 
-There is no verified Robot HAT v4 overlay in `xWalkTool/dtoverlays`. The Servo HAT+ blob must not be used as
-a v4 substitute. Selecting `--device rpi --profile robot_hat_v4` therefore fails without changing the boot
-configuration.
+There is no verified Robot HAT v4 overlay in
+`xWalkTool/shell-agent/env-tool/dtoverlays`. The Servo HAT+ blob must not be used as a v4 substitute.
+Selecting `--device rpi --profile robot_hat_v4` therefore fails without changing the boot configuration.
 
 Raspberry Pi provisioning should still use `setup-rpi.sh --dry-run` before `--apply`. The guarded v5 path can
 configure boot interfaces and its overlay, but it does not configure runtime groups, udev rules, exact device
@@ -257,13 +274,13 @@ identity, or mutable deployment configuration.
 Preview every generated build target without deleting anything:
 
 ```sh
-xWalkTool/shell/clean-build.sh --dry-run
+xWalkTool/shell-agent/repo-tool/clean-build.sh --dry-run
 ```
 
 Interactive cleanup requires confirmation. Non-interactive cleanup requires the explicit `--yes` option:
 
 ```sh
-xWalkTool/shell/clean-build.sh --yes
+xWalkTool/shell-agent/repo-tool/clean-build.sh --yes
 ```
 
 Options:
@@ -283,7 +300,7 @@ Generated output can be rebuilt, but cleanup results cannot be recovered directl
 Run coverage in the foreground:
 
 ```sh
-xWalkTool/shell/run-host-coverage.sh run
+xWalkTool/shell-agent/quality-tool/run-host-coverage.sh run
 ```
 
 The required `run` action performs these steps in order:
@@ -293,16 +310,16 @@ The required `run` action performs these steps in order:
 3. Configures the root CMake `coverage` preset with `cmake --fresh`.
 4. Builds the coverage preset.
 5. Runs its CTest preset.
-6. Generates the reports defined by `xWalkTool/environment/gcovr.cfg`.
+6. Generates the reports defined by `xWalkTool/shell-agent/env-tool/quality/gcovr.cfg`.
 
-Use `xWalkTool/shell/run-host-coverage.sh --help` to print usage. Any other action exits with status 2.
+Use `xWalkTool/shell-agent/quality-tool/run-host-coverage.sh --help` to print usage. Any other action exits with status 2.
 
 The script searches for a system `gcovr` executable and then
 `build-host/tools/gcovr-venv/bin/gcovr`. It fails before configuring when neither exists. It never installs
 packages, requests privileges, creates a detached process, or accesses physical hardware.
 
 Coverage uses the root `coverage` preset and
-`xWalkTool/environment/gcovr.cfg`. Reports are written to:
+`xWalkTool/shell-agent/env-tool/quality/gcovr.cfg`. Reports are written to:
 
 ```text
 build-host/coverage/coverage.html
@@ -320,19 +337,19 @@ explicit Robot HAT profile, runtime user, and GPIO device. Inspection and planni
 Show available options:
 
 ```sh
-xWalkTool/shell/setup-rpi.sh --help
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --help
 ```
 
 Run a non-modifying plan after physically identifying the board revision:
 
 ```sh
-xWalkTool/shell/setup-rpi.sh --dry-run --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --dry-run --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
 ```
 
 Run required validation without changing the system:
 
 ```sh
-xWalkTool/shell/setup-rpi.sh --check --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --check --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
 ```
 
 The complete option set is:
@@ -374,13 +391,13 @@ the preceding dry-run output. It must not be invoked by host tests or CI.
 requires an explicit v4/v5 profile and an existing writable configuration file:
 
 ```sh
-xWalkTool/shell/provision-hardware.sh --help
+xWalkTool/shell-agent/deploy-tool/provision-hardware.sh --help
 ```
 
 Example after the target devices and board revision have been verified:
 
 ```sh
-xWalkTool/shell/provision-hardware.sh --profile robot_hat_v4 --config /var/lib/xwalk/picar-x.conf --gpio-device /dev/gpiochip0 --i2c-device /dev/i2c-1 --spi-device /dev/spidev0.0
+xWalkTool/shell-agent/deploy-tool/provision-hardware.sh --profile robot_hat_v4 --config /var/lib/xwalk/picar-x.conf --gpio-device /dev/gpiochip0 --i2c-device /dev/i2c-1 --spi-device /dev/spidev0.0
 ```
 
 `--profile` and `--config` are mandatory. The device options select exact device nodes. If
@@ -401,9 +418,9 @@ Protobuf/XML contracts and generating routed C++ Protobuf and gRPC sources. Its
 supported actions are:
 
 ```sh
-xWalkTool/python/xHal_Rpi5CarIwGenerator --help
-xWalkTool/python/xHal_Rpi5CarIwGenerator --check
-xWalkTool/python/xHal_Rpi5CarIwGenerator --generate-cpp
+xWalkTool/py-agent/dev-tool/xHal_Rpi5CarIwGenerator --help
+xWalkTool/py-agent/dev-tool/xHal_Rpi5CarIwGenerator --check
+xWalkTool/py-agent/dev-tool/xHal_Rpi5CarIwGenerator --generate-cpp
 ```
 
 The default input root is `xWalkIW`. The aggregate build validates its
@@ -437,9 +454,9 @@ provisioning scripts:
 ```text
 /usr/lib/xwalk/setup-rpi.sh
 /usr/lib/xwalk/provision-hardware.sh
-/usr/lib/xwalk/xWalkTool/shell/xWalkEnv.sh
-/usr/lib/xwalk/xWalkTool/python/xWalkLicenseTool
-/usr/lib/xwalk/xWalkTool/environment/xWalkLicense.cfg
+/usr/lib/xwalk/xWalkTool/shell-agent/env-tool/license/xWalkEnv.sh
+/usr/lib/xwalk/xWalkTool/py-agent/dev-tool/xWalkLicenseTool
+/usr/lib/xwalk/xWalkTool/shell-agent/env-tool/license/xWalkLicense.cfg
 ```
 
 The cleanup, coverage, generator, and overlay files remain source-development assets. They are not
@@ -451,14 +468,14 @@ not under this source directory.
 The following checks do not access physical hardware:
 
 ```sh
-bash -n xWalkTool/shell/*.sh
-xWalkTool/shell/clean-build.sh --dry-run
-xWalkTool/shell/run-host-coverage.sh --help
-xWalkTool/shell/setup-rpi.sh --help
-xWalkTool/shell/provision-hardware.sh --help
-xWalkTool/python/xHal_Rpi5CarIwGenerator --help
-bash xWalkTool/deployment/test/setup-rpi-test.sh
-bash xWalkTool/deployment/test/environment-loader-test.sh
+find xWalkTool/shell-agent -type f -name '*.sh' -print0 | xargs -0 bash -n
+xWalkTool/shell-agent/repo-tool/clean-build.sh --dry-run
+xWalkTool/shell-agent/quality-tool/run-host-coverage.sh --help
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --help
+xWalkTool/shell-agent/deploy-tool/provision-hardware.sh --help
+xWalkTool/py-agent/dev-tool/xHal_Rpi5CarIwGenerator --help
+bash xWalkTool/shell-agent/deploy-tool/test/setup-rpi-test.sh
+bash xWalkTool/shell-agent/deploy-tool/test/environment-loader-test.sh
 ```
 
 Do not run `setup-rpi.sh --apply`, direct overlay installation, hardware-labelled CTest targets, or actuator

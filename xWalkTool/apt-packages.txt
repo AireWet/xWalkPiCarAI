@@ -1,7 +1,7 @@
 # xWalk operating-system package manifest
 #
 # Package names are derived from the repository CMake checks, GitHub Actions workflow,
-# xWalkTool/shell/setup-rpi.sh, deployment validation commands, and the xWalkIW generator.
+# xWalkTool/shell-agent/deploy-tool/setup-rpi.sh, deployment validation commands, and the xWalkIW generator.
 # The human-readable lists use Debian/Ubuntu names. The machine-readable catalog at the
 # end maps supported dependencies to apt, dnf, pacman, and Homebrew package names.
 # Packages marked OPTIONAL are not required for the normal host or Raspberry Pi runtime.
@@ -28,11 +28,13 @@ HOST NATIVE AUDIO AND RPI-COMPATIBLE BUILD - OPTIONAL
 libsndfile1-dev
 
 HOST QUALITY CHECKS - OPTIONAL
-# These packages support the repository's static analysis, coverage, and shell checks.
+# These packages support CI metadata validation, static analysis, coverage, and shell checks.
+ansible-core
 clang
 clang-tidy
 cppcheck
 gcovr
+python3-yaml
 shellcheck
 
 HOST DEBIAN PACKAGE AND DEPLOYMENT VALIDATION - OPTIONAL
@@ -46,7 +48,7 @@ udev
 systemd
 
 RASPBERRY PI BUILD AND RUNTIME - REQUIRED COMMON PACKAGES
-# This list intentionally matches required_packages in xWalkTool/shell/setup-rpi.sh.
+# This list intentionally matches required_packages in xWalkTool/shell-agent/deploy-tool/setup-rpi.sh.
 build-essential
 cmake
 ninja-build
@@ -221,7 +223,7 @@ NOT MANAGED BY THIS APT MANIFEST
 # its validation explicitly with --with-vosk or --with-ollama.
 
 XWALK MACHINE-READABLE PACKAGE CATALOG V1
-# Parsed by xWalkTool/python/xHal_Rpi5CarDependencyInstaller. Do not change the field order.
+# Parsed by xWalkTool/py-agent/dev-tool/xHal_Rpi5CarDependencyInstaller. Do not change the field order.
 # group|group-id|comma-separated report modules
 # package|id|scope|targets|groups|apt|dnf|pacman|brew
 # A dash means that the dependency is unavailable or not applicable to that package family.
@@ -273,9 +275,11 @@ package|camera-csi|camera-csi|rpi|camera|rpicam-apps|-|-|-
 package|camera-usb|camera-usb|rpi|camera|ffmpeg|ffmpeg|ffmpeg|ffmpeg
 
 package|clang|quality|host,rpi|quality|clang|clang|clang|llvm
+package|ansible-core|quality|host,rpi|quality|ansible-core|ansible-core|ansible-core|ansible
 package|clang-tidy|quality|host,rpi|quality|clang-tidy|clang-tools-extra|clang|llvm
 package|cppcheck|quality|host,rpi|quality|cppcheck|cppcheck|cppcheck|cppcheck
 package|gcovr|quality|host,rpi|quality|gcovr|gcovr|gcovr|gcovr
+package|pyyaml|quality|host,rpi|quality|python3-yaml|python3-pyyaml|python-yaml|pyyaml
 package|shellcheck|quality|host,rpi|quality|shellcheck|ShellCheck|shellcheck|shellcheck
 
 package|dpkg-dev|release|host,rpi|release|dpkg-dev|-|-|-

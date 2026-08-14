@@ -146,18 +146,18 @@ if(XWALK_CLI_INSTALL_RUNTIME)
         "${CMAKE_CURRENT_SOURCE_DIR}/../devloper-note/Doc/note/Installation.md"
         DESTINATION "${CMAKE_INSTALL_DATADIR}/doc/xwalk")
     install(PROGRAMS
-        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/shell/setup-rpi.sh"
-        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/shell/provision-hardware.sh"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/shell-agent/deploy-tool/setup-rpi.sh"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/shell-agent/deploy-tool/provision-hardware.sh"
         DESTINATION "lib/xwalk")
     install(PROGRAMS
-        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/shell/xWalkEnv.sh"
-        DESTINATION "lib/xwalk/xWalkTool/shell")
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/shell-agent/env-tool/license/xWalkEnv.sh"
+        DESTINATION "lib/xwalk/xWalkTool/shell-agent/env-tool/license")
     install(PROGRAMS
-        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/python/xWalkLicenseTool"
-        DESTINATION "lib/xwalk/xWalkTool/python")
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/py-agent/dev-tool/xWalkLicenseTool"
+        DESTINATION "lib/xwalk/xWalkTool/py-agent/dev-tool")
     install(FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/environment/xWalkLicense.cfg"
-        DESTINATION "lib/xwalk/xWalkTool/environment")
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/shell-agent/env-tool/license/xWalkLicense.cfg"
+        DESTINATION "lib/xwalk/xWalkTool/shell-agent/env-tool/license")
     if(XWALK_INSTALL_ENCRYPTED_LICENSE)
         set(xwalk_encrypted_license
             "${CMAKE_CURRENT_SOURCE_DIR}/../xWalkLibrary/X_WALK_LICENSE.KEY")
@@ -178,16 +178,16 @@ if(XWALK_CLI_INSTALL_RUNTIME)
             PERMISSIONS OWNER_READ OWNER_WRITE)
     endif()
     install(FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/deployment/udev/99-xwalk-picarx.rules.in"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/shell-agent/deploy-tool/udev/99-xwalk-picarx.rules.in"
         DESTINATION "${CMAKE_INSTALL_DATADIR}/xwalk/deployment/udev")
     install(FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/deployment/systemd/xwalk.service"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/shell-agent/deploy-tool/systemd/xwalk.service"
         DESTINATION "lib/systemd/system")
     install(FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/deployment/systemd/xwalk-service.conf"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/shell-agent/deploy-tool/systemd/xwalk-service.conf"
         DESTINATION "${XWALK_INSTALL_CONFIG_DIR}"
         PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ)
     install(FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/deployment/tmpfiles/xwalk.conf"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/shell-agent/deploy-tool/tmpfiles/xwalk.conf"
         DESTINATION "lib/tmpfiles.d")
 endif()

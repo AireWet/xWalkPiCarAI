@@ -1,6 +1,6 @@
 # xWalk environment loader guide
 
-[`xWalkTool/shell/xWalkEnv.sh`](../../../../xWalkTool/shell/xWalkEnv.sh) loads the
+[`xWalkTool/shell-agent/env-tool/license/xWalkEnv.sh`](../../../../xWalkTool/shell-agent/env-tool/license/xWalkEnv.sh) loads the
 authenticated licence environment into the current interactive Bash process.
 It must be sourced because an executed child process cannot modify its parent
 shell environment.
@@ -11,8 +11,8 @@ The loader requires:
 
 - Bash with indexed and associative array support;
 - Python 3 and PyNaCl;
-- the executable `xWalkTool/python/xWalkLicenseTool`;
-- the empty model-only `xWalkTool/environment/xWalkLicense.cfg` template;
+- the executable `xWalkTool/py-agent/dev-tool/xWalkLicenseTool`;
+- the empty model-only `xWalkTool/shell-agent/env-tool/license/xWalkLicense.cfg` template;
 - a per-user mode-`0600` `~/.netrc` containing any fixed-provider credentials
   selected by the deployment; and
 - a provisioned `xWalk-rpi5/xWalkLibrary/X_WALK_LICENSE.KEY` file with mode `0600`.
@@ -25,7 +25,7 @@ layout below `/usr/lib/xwalk`.
 From the repository root, source the loader:
 
 ```sh
-source xWalkTool/shell/xWalkEnv.sh
+source xWalkTool/shell-agent/env-tool/license/xWalkEnv.sh
 ```
 
 It requests the decryption key through the licence tool's private prompt. On
@@ -36,7 +36,7 @@ authenticated `X_WALK_LICENSE_SERIAL` value is validated but is not exported.
 Executing the file is an error:
 
 ```sh
-xWalkTool/shell/xWalkEnv.sh
+xWalkTool/shell-agent/env-tool/license/xWalkEnv.sh
 ```
 
 That form returns `2` and explains that the script must be sourced.
@@ -79,8 +79,8 @@ place the decryption key in a unit, script, configuration file, or command line.
 Run Bash syntax validation and the isolated fake-secret integration test:
 
 ```sh
-bash -n xWalkTool/shell/xWalkEnv.sh
-bash xWalkTool/deployment/test/environment-loader-test.sh
+bash -n xWalkTool/shell-agent/env-tool/license/xWalkEnv.sh
+bash xWalkTool/shell-agent/deploy-tool/test/environment-loader-test.sh
 ```
 
 The integration test sets `XWALK_NETRC_FILE` to a temporary fake netrc file and

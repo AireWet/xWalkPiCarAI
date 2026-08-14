@@ -1,6 +1,6 @@
 # Host Coverage Script Guide
 
-[`xWalkTool/shell/run-host-coverage.sh`](../../../../xWalkTool/shell/run-host-coverage.sh)
+[`xWalkTool/shell-agent/quality-tool/run-host-coverage.sh`](../../../../xWalkTool/shell-agent/quality-tool/run-host-coverage.sh)
 configures, builds, tests, and reports host coverage in the foreground. It does
 not create a detached process, install packages, request privileges,
 or access Raspberry Pi hardware.
@@ -20,13 +20,13 @@ documented repository-local virtual environment before running coverage.
 Show usage without starting a build:
 
 ```sh
-xWalkTool/shell/run-host-coverage.sh --help
+xWalkTool/shell-agent/quality-tool/run-host-coverage.sh --help
 ```
 
 Run the complete workflow:
 
 ```sh
-xWalkTool/shell/run-host-coverage.sh run
+xWalkTool/shell-agent/quality-tool/run-host-coverage.sh run
 ```
 
 `run` is the only execution action. Missing or unknown actions print usage and exit with status 2.
@@ -41,7 +41,7 @@ The script performs these foreground steps in order:
 4. Run `cmake --fresh --preset coverage`.
 5. Run `cmake --build --preset coverage --parallel`.
 6. Run `ctest --preset coverage`.
-7. Run `gcovr` with `xWalkTool/environment/gcovr.cfg`.
+7. Run `gcovr` with `xWalkTool/shell-agent/env-tool/quality/gcovr.cfg`.
 
 Any failing step stops the workflow and returns its failure status. No process is intentionally left running
 in the background.
@@ -54,7 +54,7 @@ measured baseline is 80.7, 85.2, and 66.6 percent respectively.
 ## Output
 
 The coverage preset uses `build-host/coverage`. The
-`xWalkTool/environment/gcovr.cfg` configuration prints a terminal summary and
+`xWalkTool/shell-agent/env-tool/quality/gcovr.cfg` configuration prints a terminal summary and
 generates:
 
 ```text
@@ -63,7 +63,7 @@ build-host/coverage/coverage.xml
 ```
 
 The report excludes tests, generated sources, third-party content, and build
-directories according to `xWalkTool/environment/gcovr.cfg`. Coverage
+directories according to `xWalkTool/shell-agent/env-tool/quality/gcovr.cfg`. Coverage
 percentages must be reported only after `gcovr` finishes successfully.
 
 ## Missing gcovr
@@ -82,8 +82,8 @@ installation method.
 ## Safe verification
 
 ```sh
-bash -n xWalkTool/shell/run-host-coverage.sh
-xWalkTool/shell/run-host-coverage.sh --help
+bash -n xWalkTool/shell-agent/quality-tool/run-host-coverage.sh
+xWalkTool/shell-agent/quality-tool/run-host-coverage.sh --help
 ```
 
 These commands do not build or run tests. The `run` action creates generated output and may take several

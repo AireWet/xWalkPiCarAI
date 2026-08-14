@@ -1,4 +1,4 @@
-name: Host quality
+name: xWalk Host Quality
 
 on:
   push:
@@ -9,8 +9,32 @@ permissions:
   contents: read
 
 jobs:
+  shellcheck:
+    name: xWalk Shell Script Analysis
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install shell and CI metadata validators
+        run: sudo apt-get update && sudo apt-get install --yes ansible-core python3-yaml shellcheck
+      - name: Analyze every repository-owned shell script
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh shellcheck
+
+  deployment-scripts:
+    name: xWalk Deployment Script Tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install script validation dependencies
+        run: sudo apt-get update && sudo apt-get install --yes shellcheck
+      - name: Validate deployment scripts
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh deployment-scripts
+
   build-and-test:
-    name: ${{ matrix.compiler }} ${{ matrix.build_type }}
+    name: xWalk Build & Test (${{ matrix.compiler }}, ${{ matrix.build_type }})
+    needs:
+      - shellcheck
+      - deployment-scripts
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -25,67 +49,14 @@ jobs:
           clang libclang-rt-18-dev cmake ninja-build libasound2-dev libcurl4-openssl-dev
           libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Select compiler
-        run: |
-          if [ "${{ matrix.compiler }}" = clang ]; then
-              echo "CC=clang" >> "$GITHUB_ENV"
-              echo "CXX=clang++" >> "$GITHUB_ENV"
-          else
-              echo "CC=gcc" >> "$GITHUB_ENV"
-              echo "CXX=g++" >> "$GITHUB_ENV"
-          fi
-      - name: Configure
+      - name: Configure, build, test, and diagnose xWalk
         run: >-
-          cmake --fresh -S .
-          -B build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
-          -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-          -DXWALK_ENABLE_STRICT_WARNINGS=ON
-      - name: Build
-        run: >-
-          cmake --build build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
-          --parallel
-      - name: Test
-        run: >-
-          ctest --test-dir build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
-          --output-on-failure --no-tests=error
-      - name: Validate deployment configuration without hardware
-        run: >-
-          build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}/xWalk-rpi5/xWalkController/xWalkApp/xwalk-picarx-control
-          --deployment-config="$PWD/xWalk-rpi5/xWalkController/xWalkConfig/picar-x.conf" --diagnose --no-hardware
-      - name: Test xWalkAgent aggregate
-        run: >-
-          ctest --test-dir build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
-          --output-on-failure --no-tests=error -L agent-aggregate
-      - name: Test xWalkAgent functional groups
-        run: >-
-          ctest --test-dir build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
-          --output-on-failure --no-tests=error -L agent-group
-      - name: Test simulator scenarios
-        run: >-
-          ctest --test-dir build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
-          --output-on-failure --no-tests=error -L simulation
-      - name: Test recorded vision scenarios
-        run: >-
-          ctest --test-dir build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
-          --output-on-failure --no-tests=error -L recorded-media
-      - name: Test streaming lifecycle and backpressure
-        run: >-
-          ctest --test-dir build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}
-          --output-on-failure --no-tests=error -L streaming
-      - name: Test host-safe HAL sequences
-        run: >-
-          build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}/xGoogleTest
-          TEST_SUITE_XWALK_SEQUENCE:1 --gtest_brief=1
-      - name: Test centralized CLI controller cases
-        run: >-
-          build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}/xCliGoogleTest
-          --gtest_brief=1
-      - name: Test CLI controller-to-HAL sequences
-        run: >-
-          build-host/ci-${{ matrix.compiler }}-${{ matrix.build_type }}/xCliSequenceTest
-          --gtest_brief=1
+          xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh build-and-test
+          ${{ matrix.compiler }} ${{ matrix.build_type }}
 
   asan-ubsan:
+    name: xWalk Address & Undefined Behavior Sanitizers
+    needs: build-and-test
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
@@ -97,9 +68,11 @@ jobs:
           libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Build and test with AddressSanitizer and UndefinedBehaviorSanitizer
-        run: xWalkTool/shell/run-host-sanitizer.sh asan
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh asan-ubsan
 
   leak-sanitizer:
+    name: xWalk Leak Sanitizer
+    needs: build-and-test
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
@@ -111,9 +84,11 @@ jobs:
           libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
           protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Verify LSan and run the leak-enabled suite
-        run: xWalkTool/shell/run-host-sanitizer.sh lsan
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh leak-sanitizer
 
   thread-sanitizer:
+    name: xWalk Thread Sanitizer
+    needs: build-and-test
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -125,9 +100,11 @@ jobs:
           libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Verify TSan and run focused concurrency tests
-        run: xWalkTool/shell/run-host-sanitizer.sh tsan
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh thread-sanitizer
 
   stress-tests:
+    name: xWalk Host Stress Tests
+    needs: build-and-test
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
@@ -137,14 +114,12 @@ jobs:
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
           libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Configure strict host build
-        run: cmake --fresh --preset sanity
-      - name: Build
-        run: cmake --build --preset sanity --parallel
       - name: Repeat every host test until failure
-        run: ctest --preset host-stress
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh stress-tests
 
   recorded-scenarios:
+    name: xWalk Recorded Vision Scenarios
+    needs: build-and-test
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
@@ -154,15 +129,12 @@ jobs:
           libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev
           libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
           protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Configure and build recorded scenarios
-        run: >-
-          cmake --fresh --preset host-debug && cmake --build --preset host-debug
-          --target xWalkComputerVisionOpenCvHostTest xWalkVideoRecordingOpenCvHostTest xWalkRoadUserSafetyTest
-          --parallel
-      - name: Verify asset checksums, licenses, annotations, and decoding
-        run: ctest --preset host-debug -L recorded-media
+      - name: Build and verify recorded scenarios
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh recorded-scenarios
 
   streaming:
+    name: xWalk Video Streaming Tests
+    needs: build-and-test
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
@@ -172,12 +144,12 @@ jobs:
           libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev
           libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
           protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Configure and build socket streaming tests
-        run: cmake --fresh --preset host-debug && cmake --build --preset host-debug --target xWalkVideoStreamingTest --parallel
-      - name: Run loopback HTTP and MJPEG lifecycle tests
-        run: ctest --preset host-debug -L streaming
+      - name: Build and run loopback HTTP and MJPEG lifecycle tests
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh streaming
 
   fuzz-smoke:
+    name: xWalk Fuzz Smoke Tests
+    needs: build-and-test
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -188,15 +160,12 @@ jobs:
           libasound2-dev libcurl4-openssl-dev libjson-c-dev libopencv-dev
           libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
           protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Configure and build fuzzers
-        run: cmake --fresh --preset fuzz && cmake --build --preset fuzz --parallel
-      - name: Run bounded fuzz smoke
-        run: >-
-          for fuzz_name in configuration protobuf grpc http_requests camera_sources model_metadata scenarios i2c_payloads image_decode; do
-          build-host/fuzz/xWalkTool/fuzz/xWalkFuzz_${fuzz_name} -runs=1000 -artifact_prefix=/tmp/xwalk-fuzz-
-          xWalkTool/fuzz/corpus/${fuzz_name} || exit 1; done
+      - name: Build and run bounded fuzz smoke
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh fuzz-smoke
 
   soak-smoke:
+    name: xWalk Robot HAT Soak Test
+    needs: build-and-test
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
@@ -206,14 +175,12 @@ jobs:
           libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev
           libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
           protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Configure and build soak test
-        run: cmake --fresh --preset host-debug && cmake --build --preset host-debug --target xWalkRobotHatSoakTest --parallel
-      - name: Run deterministic soak smoke
-        run: ctest --preset host-debug -L soak
-      - name: Validate soak report
-        run: python3 -m json.tool build-host/cmake/xWalk-rpi5/xWalkHal/simulation/xWalkRobotHat/xwalk-robot-hat-soak-report.json
+      - name: Build, run, and validate deterministic soak smoke
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh soak-smoke
 
   static-analysis:
+    name: xWalk Static Analysis
+    needs: build-and-test
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
@@ -223,14 +190,12 @@ jobs:
           cmake ninja-build clang-tidy cppcheck libasound2-dev libcurl4-openssl-dev
           libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Configure
-        run: cmake --fresh --preset clang-tidy
-      - name: Run Clang-Tidy while building
-        run: cmake --build --preset clang-tidy --parallel
-      - name: Run Cppcheck
-        run: cmake --build build-host/clang-tidy --target cppcheck
+      - name: Run Clang-Tidy and Cppcheck
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh static-analysis
 
   coverage:
+    name: xWalk Code Coverage
+    needs: build-and-test
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
@@ -240,10 +205,8 @@ jobs:
           clang llvm cmake ninja-build gcovr libasound2-dev libcurl4-openssl-dev
           libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Build, test, and generate GCC coverage reports
-        run: xWalkTool/shell/run-host-coverage.sh run gcc
-      - name: Build, test, and generate Clang coverage reports
-        run: xWalkTool/shell/run-host-coverage.sh run clang
+      - name: Build, test, and generate GCC and Clang coverage reports
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh coverage
       - uses: actions/upload-artifact@v6
         with:
           name: coverage-report
@@ -257,6 +220,8 @@ jobs:
             build-host/coverage-clang/html
 
   valgrind:
+    name: xWalk Valgrind Analysis
+    needs: build-and-test
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -267,12 +232,12 @@ jobs:
           libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev
           libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
           protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Test Valgrind descriptor classification
-        run: xWalkTool/shell/test/validate-valgrind-descriptors-test.sh
-      - name: Run focused CTest MemCheck suite
-        run: xWalkTool/shell/run-host-valgrind.sh
+      - name: Validate descriptors and run focused CTest MemCheck suite
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh valgrind
 
   clang-static-analyzer:
+    name: xWalk Clang Static Analyzer
+    needs: build-and-test
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -284,7 +249,7 @@ jobs:
           libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
           protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
       - name: Run Clang Static Analyzer
-        run: xWalkTool/shell/run-clang-static-analyzer.sh
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh clang-static-analyzer
       - uses: actions/upload-artifact@v6
         if: always()
         with:
@@ -292,28 +257,9 @@ jobs:
           path: build-host/clang-analyzer/reports
           if-no-files-found: ignore
 
-  shellcheck:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install ShellCheck
-        run: sudo apt-get update && sudo apt-get install --yes shellcheck
-      - name: Analyze every repository-owned shell script
-        run: xWalkTool/shell/run-host-shellcheck.sh
-
-  deployment-scripts:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install script validation dependencies
-        run: sudo apt-get update && sudo apt-get install --yes shellcheck
-      - name: Check shell scripts
-        run: shellcheck xWalkTool/shell/*.sh xWalkTool/deployment/*.sh xWalkTool/deployment/test/*.sh
-      - name: Test provisioning behavior
-        run: bash xWalkTool/deployment/test/setup-rpi-test.sh
-
   staged-install:
+    name: xWalk Staged Installation
+    needs: build-and-test
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
@@ -323,45 +269,46 @@ jobs:
           cmake ninja-build libasound2-dev libcurl4-openssl-dev
           libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
           protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Configure release installation
-        run: >-
-          cmake --fresh -S . -B build-host/install -G Ninja
-          -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
-      - name: Build
-        run: cmake --build build-host/install --parallel
-      - name: Stage exact system layout
-        run: DESTDIR="$PWD/build-host/deploy" cmake --install build-host/install
-      - name: Verify staged resources and executable
-        run: |
-          test -x build-host/deploy/usr/bin/xwalk-picarx-control
-          test -x build-host/deploy/usr/lib/xwalk/xWalkTool/shell/xWalkEnv.sh
-          test -x build-host/deploy/usr/lib/xwalk/xWalkTool/python/xWalkLicenseTool
-          test -r build-host/deploy/usr/lib/xwalk/xWalkTool/environment/xWalkLicense.cfg
-          test ! -e build-host/deploy/usr/lib/xwalk/xWalkLibrary/X_WALK_LICENSE.KEY
-          test -r build-host/deploy/etc/xwalk/picar-x.conf
-          test -r build-host/deploy/etc/xwalk/picar-x.d/hardware.conf
-          test -r build-host/deploy/etc/xwalk/picar-x.d/ai/providers/gemini.conf
-          test -r build-host/deploy/usr/lib/xwalk/libvosk.so
-          test -r build-host/deploy/usr/share/xwalk/models/vosk/vosk-model-small-en-us-0.15/am/final.mdl
-          test -r build-host/deploy/usr/share/xwalk/sounds/car-double-horn.wav
-          test -r build-host/deploy/usr/share/xwalk/sounds/car-start-engine.wav
-          test -r build-host/deploy/usr/share/xwalk/music/slow-trail-Ahjay_Stelino.mp3
-          cd /tmp
-          "$GITHUB_WORKSPACE/build-host/deploy/usr/bin/xwalk-picarx-control" --help
-          "$GITHUB_WORKSPACE/build-host/deploy/usr/bin/xwalk-picarx-control" --deployment-config="$GITHUB_WORKSPACE/build-host/deploy/etc/xwalk/picar-x.conf" --diagnose --no-hardware
-      - name: Reject developer paths in installed configuration
-        run: >-
-          if grep -R --fixed-strings "$GITHUB_WORKSPACE"
-          build-host/deploy/etc build-host/deploy/usr/share/xwalk/config; then exit 1; fi
-      - name: Inspect linked libraries
-        run: ldd build-host/deploy/usr/bin/xwalk-picarx-control
-      - name: Reject unsafe installed permissions
-        run: test -z "$(find build-host/deploy -type f -perm /022 -print -quit)"
-      - name: Record staged artifact checksums
-        run: >-
-          find build-host/deploy -type f -print0 | sort -z |
-          xargs -0 sha256sum > build-host/deploy.sha256
+      - name: Build and verify the staged installation
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh staged-install
       - uses: actions/upload-artifact@v6
         with:
           name: staged-install-checksums
           path: build-host/deploy.sha256
+
+  host-quality-gate:
+    name: xWalk Host Quality Gate
+    runs-on: ubuntu-24.04
+    if: always()
+    needs:
+      - build-and-test
+      - asan-ubsan
+      - leak-sanitizer
+      - thread-sanitizer
+      - stress-tests
+      - recorded-scenarios
+      - streaming
+      - fuzz-smoke
+      - soak-smoke
+      - static-analysis
+      - coverage
+      - valgrind
+      - clang-static-analyzer
+      - shellcheck
+      - deployment-scripts
+      - staged-install
+
+    steps:
+      - name: Verify all xWalk Host Quality jobs
+        env:
+          JOB_RESULTS: ${{ toJSON(needs) }}
+        run: |
+          printf '%s\n' "$JOB_RESULTS" | jq .
+
+          if ! printf '%s\n' "$JOB_RESULTS" |
+              jq --exit-status 'all(.[]; .result == "success")' >/dev/null; then
+              echo "::error::One or more xWalk Host Quality jobs did not succeed."
+              exit 1
+          fi
+
+          echo "All xWalk Host Quality jobs completed successfully."

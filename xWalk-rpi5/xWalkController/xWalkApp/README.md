@@ -471,7 +471,7 @@ objects after reset and stores calibration in `/var/lib/xwalk/picar-x.conf` by d
 `--deployment-config` option for another absolute deployment path.
 
 Use the `hardware_board` value in `../xWalkConfig/picar-x.d/hardware.conf`. Run
-`xWalkTool/shell/provision-hardware.sh --profile <profile> --config <file>` to discover and record one GPIO
+`xWalkTool/shell-agent/deploy-tool/provision-hardware.sh --profile <profile> --config <file>` to discover and record one GPIO
 device, kernel chip name, and label. Provisioning rejects a v4 selection when the v5 UUID is present and rejects
 a v5 selection when that UUID is absent. It never interprets failure to detect v5 as proof of v4.
 

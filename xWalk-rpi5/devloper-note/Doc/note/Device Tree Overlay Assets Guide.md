@@ -1,7 +1,8 @@
 # Device Tree Overlay Assets Guide
 
-`xWalkTool/dtoverlays` contains compiled Raspberry Pi Device Tree overlay blobs associated with SunFounder
-boards. They are binary boot-configuration assets, not shell scripts, runtime libraries, or Git metadata.
+`xWalkTool/shell-agent/env-tool/dtoverlays` contains compiled Raspberry Pi Device Tree overlay blobs
+associated with SunFounder boards. They are binary boot-configuration assets, not shell scripts, runtime
+libraries, or Git metadata.
 
 ## Files
 
@@ -32,14 +33,14 @@ devices from appearing correctly and can invalidate GPIO, audio, or peripheral a
 Identify the files without installing them:
 
 ```sh
-file xWalkTool/dtoverlays/*.dtbo
-sha256sum xWalkTool/dtoverlays/*.dtbo
+file xWalkTool/shell-agent/env-tool/dtoverlays/*.dtbo
+sha256sum xWalkTool/shell-agent/env-tool/dtoverlays/*.dtbo
 ```
 
 If the Device Tree compiler is installed, render a blob for review without modifying the target:
 
 ```sh
-dtc -I dtb -O dts xWalkTool/dtoverlays/sunfounder-robothat5.dtbo
+dtc -I dtb -O dts xWalkTool/shell-agent/env-tool/dtoverlays/sunfounder-robothat5.dtbo
 ```
 
 Warnings from decompilation require review and are not evidence that an overlay is safe for the attached
@@ -61,13 +62,13 @@ HAT v4 substitute. The installer rejects v4 instead of guessing or activating th
 For a physically verified Robot HAT v5 whose supported UUID is already exposed locally, inspect the plan:
 
 ```sh
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --device rpi --profile robot_hat_v5 --required-only --dry-run
+xWalkTool/py-agent/dev-tool/xHal_Rpi5CarDependencyInstaller --device rpi --profile robot_hat_v5 --required-only --dry-run
 ```
 
 Apply only after reviewing the package, backup, overlay, I2C, and SPI changes:
 
 ```sh
-xWalkTool/python/xHal_Rpi5CarDependencyInstaller --device rpi --profile robot_hat_v5 --required-only
+xWalkTool/py-agent/dev-tool/xHal_Rpi5CarDependencyInstaller --device rpi --profile robot_hat_v5 --required-only
 ```
 
 The installer verifies the source checksum, rejects its known bundled overlay conflict, preserves one

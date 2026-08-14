@@ -18,7 +18,7 @@ if(NOT TARGET xWalkLibraryCommon)
 endif()
 
 set(XWALK_IW_GENERATOR
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/python/xHal_Rpi5CarIwGenerator)
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/py-agent/dev-tool/xHal_Rpi5CarIwGenerator)
 set(XWALK_IW_GENERATED_INCLUDE_DIRECTORY
     ${CMAKE_CURRENT_SOURCE_DIR}/auto-gen/include)
 set(XWALK_IW_GENERATED_SOURCE_DIRECTORY
@@ -43,7 +43,7 @@ foreach(generated_file IN LISTS XWALK_IW_GENERATED_FILES)
     if(NOT EXISTS "${generated_file}")
         message(FATAL_ERROR
             "Missing xWalkIW generated file: ${generated_file}. "
-            "Run xWalkTool/python/xHal_Rpi5CarIwGenerator --generate-cpp before configuring CMake.")
+            "Run xWalkTool/py-agent/dev-tool/xHal_Rpi5CarIwGenerator --generate-cpp before configuring CMake.")
     endif()
 endforeach()
 

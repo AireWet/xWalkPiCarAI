@@ -85,7 +85,7 @@ int main(int argumentCount, char* argumentValues[])
 #endif
 
     xwalk::hal::test::TestRunner runner(
-        profile, executableDirectory / "xWalk-rpi5" / "xWalkHal",
+        profile, executableDirectory / "xWalkHal",
         runtimeConfigurationPath);
         runner.registerTests();
         const xwalk::hal::boolean standardFilterSelected =

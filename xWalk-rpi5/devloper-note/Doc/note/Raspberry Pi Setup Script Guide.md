@@ -1,7 +1,7 @@
 # Raspberry Pi Setup Script Guide
 
 This guide explains how to use
-[`xWalkTool/shell/setup-rpi.sh`](../../../../xWalkTool/shell/setup-rpi.sh) to inspect,
+[`xWalkTool/shell-agent/deploy-tool/setup-rpi.sh`](../../../../xWalkTool/shell-agent/deploy-tool/setup-rpi.sh) to inspect,
 plan, validate, and provision a Raspberry Pi for xWalk. The script prepares operating-system dependencies and
 device access. It does not prove that actuators are wired correctly or physically safe.
 
@@ -31,7 +31,7 @@ neither exists.
 Run the source-tree command from the repository root:
 
 ```sh
-xWalkTool/shell/setup-rpi.sh --help
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --help
 ```
 
 After installation, the equivalent script is normally `/usr/lib/xwalk/setup-rpi.sh`.
@@ -100,7 +100,7 @@ be enabled or available. Do not guess a GPIO controller when more than one is li
 Use the verified profile, existing runtime user, and exact GPIO device:
 
 ```sh
-xWalkTool/shell/setup-rpi.sh --dry-run --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --dry-run --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
 ```
 
 The dry run reports:
@@ -120,7 +120,7 @@ Only an administrator should run apply mode. The script uses the current root ac
 individual privileged commands when available:
 
 ```sh
-xWalkTool/shell/setup-rpi.sh --apply --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --apply --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
 ```
 
 Do not add a Robot HAT overlay merely to make profile validation succeed. Robot HAT v5 requires its already
@@ -136,7 +136,7 @@ receives the new supplementary groups.
 Run the same selection in check mode:
 
 ```sh
-xWalkTool/shell/setup-rpi.sh --check --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --check --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
 ```
 
 Then inspect identity and permissions:
@@ -228,8 +228,8 @@ Common failures:
 These commands check script syntax and provisioning behavior without accessing Raspberry Pi hardware:
 
 ```sh
-bash -n xWalkTool/shell/setup-rpi.sh xWalkTool/shell/provision-hardware.sh
-bash xWalkTool/deployment/test/setup-rpi-test.sh
+bash -n xWalkTool/shell-agent/deploy-tool/setup-rpi.sh xWalkTool/shell-agent/deploy-tool/provision-hardware.sh
+bash xWalkTool/shell-agent/deploy-tool/test/setup-rpi-test.sh
 ```
 
 Do not run `--apply`, hardware-labelled CTest tests, or actuator commands during ordinary host verification.

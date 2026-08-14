@@ -88,7 +88,8 @@ the dedicated synchronization service.
 ## Project structure
 
 Keep each C++ module independently configurable with its own `CMakeLists.txt`
-and README. The workspace root `CMakeLists.txt` composes every HAL module and
+and README. The `xWalk-rpi5/CMakeLists.txt` product entry point composes every
+HAL module and
 maps the `XWALK_HAL_BUILD_HOST` and `XWALK_HAL_BUILD_RPI` flags to module
 verification options. The `xWalkHal` directory intentionally has no aggregate
 `CMakeLists.txt`. Both aggregate flags default to `OFF` and must not be enabled
@@ -111,7 +112,24 @@ xWalk-rpi5/devloper-note/Doc/note/      C++ Markdown documentation mirroring ups
 xWalk-rpi5/devloper-note/index.md       C++ architecture and module documentation index
 Doc/image/                   hardware and project images referenced by documentation
 xWalkTool/                   external administration, migration, verification, and uplift tooling
-xWalkTool/xWalkJiraImport/   installable host-only historical Git-to-Jira importer
+xWalkTool/cpp-tool/          grouped C++ quality probes, fuzz harnesses, corpora, and documentation
+xWalkTool/cpp-tool/fuzz/     C++ fuzz harnesses and seed corpora
+xWalkTool/cpp-tool/quality/  host quality documentation and sanitizer availability probes
+xWalkTool/py-agent/          grouped Python development, board-integration, and Gerrit administration tooling
+xWalkTool/py-agent/board-tool/ host-only board tooling with the importer package under py-src/xWalkJiraImport
+xWalkTool/py-agent/dev-tool/ executable dependency, interface-generation, licence utilities, and host tests
+xWalkTool/py-agent/gerrit-tool/   Gerrit server, CI, review-control, and multi-repository administration tooling
+xWalkTool/shell-agent/       host-safe repository automation and configuration
+xWalkTool/shell-agent/board-tool/ source launcher for the board importer
+xWalkTool/shell-agent/gerrit-tool/ Gerrit and GitHub Host Quality dispatch and metadata checks
+xWalkTool/shell-agent/deploy-tool/ provisioning, packaging assets, and deployment tests
+xWalkTool/shell-agent/env-tool/ grouped environment assets and configuration
+xWalkTool/shell-agent/env-tool/dtoverlays/ reviewed Raspberry Pi boot overlay blobs
+xWalkTool/shell-agent/env-tool/license/ model template and authenticated environment loader
+xWalkTool/shell-agent/env-tool/playbooks/ repository-controlled Zuul Ansible playbooks
+xWalkTool/shell-agent/env-tool/quality/ Clang-Tidy, Cppcheck, and gcovr configuration
+xWalkTool/shell-agent/quality-tool/ host quality, sanitizer, coverage, and analysis runners
+xWalkTool/shell-agent/repo-tool/ repository maintenance utilities
 xWalk-rpi5/xWalkAgent/                  application coordinators composed from caller-owned HAL objects
 xWalk-rpi5/xWalkAgent/xWalkVehicle/     movement and autonomous-response Agent group
 xWalk-rpi5/xWalkAgent/xWalkVehicle/xWalkPicarx/ complete PiCar-X movement and sensing coordinator
@@ -161,7 +179,7 @@ xWalk-rpi5/xWalkAudioResources/sounds/  packaged sound-effect resources
 xWalk-rpi5/xWalkIW/                     I2C and Controller Protobuf DTOs and gRPC interface definitions
 xWalk-rpi5/xWalkLibrary/                common public headers, portable dependencies, models, and native assets
 xWalk-rpi5/xWalkLibrary/common/         common interface target, headers, configuration, and documentation
-CMakeLists.txt               workspace and HAL aggregate build
+xWalk-rpi5/CMakeLists.txt    product and HAL aggregate build
 xWalk-rpi5/xWalkHal/interface/          low-level platform interfaces and common services
 xWalk-rpi5/xWalkHal/device/             hardware device abstractions
 xWalk-rpi5/xWalkHal/sensor/             sensor and actuator components
@@ -230,6 +248,13 @@ executable. Verify LSan and TSan availability with the dedicated negative
 probes, and classify runtime initialization failures as environment blocks
 rather than passes. Use the root presets for repeat-under-load host verification
 so a failure stops the bounded repetition immediately.
+
+Keep GitHub and Gerrit/Zuul Host Quality behavior aligned through
+`xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh`. GitHub retains its workflow under
+`.github/workflows`, while Gerrit uses repository-controlled `.zuul.yaml` jobs
+and Ansible playbooks. Use `dependencies:` for Zuul execution ordering;
+`parent:` remains limited to job inheritance. Keep every CI job device-free and
+retain the controller's `--diagnose --no-hardware` validation.
 
 Keep HAL unit-test implementations in each owning module's existing `test/`
 tree. The central `xGoogleTest` target may compile those sources and adapt
@@ -635,11 +660,11 @@ retaining normal compiler warnings and compilation checks.
   environment file.
 - Store AI model selections only in the authenticated
   `xWalk-rpi5/xWalkLibrary/X_WALK_LICENSE.KEY` file produced by
-  `xWalkTool/python/xWalkLicenseTool`. Store API credentials only in the
+  `xWalkTool/py-agent/dev-tool/xWalkLicenseTool`. Store API credentials only in the
   developer's mode-`0600` `~/.netrc` under the documented actual provider
   hostnames. Use a fresh SecretBox key and nonce, retain the versioned `XWL1` header,
   and keep the decryption key outside the repository. The committed
-  `xWalkTool/environment/xWalkLicense.cfg` remains an empty model template.
+  `xWalkTool/shell-agent/env-tool/license/xWalkLicense.cfg` remains an empty model template.
   Keep `xWalk-rpi5/xWalkLibrary/X_WALK_LICENSE.KEY` ignored and untracked because its
   authenticated ciphertext and serial are deployment-specific.
   `xWalkEnv.sh` must validate the complete model allowlist and supported netrc

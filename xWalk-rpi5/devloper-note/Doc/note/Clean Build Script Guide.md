@@ -1,6 +1,6 @@
 # Clean Build Script Guide
 
-[`xWalkTool/shell/clean-build.sh`](../../../../xWalkTool/shell/clean-build.sh)
+[`xWalkTool/shell-agent/repo-tool/clean-build.sh`](../../../../xWalkTool/shell-agent/repo-tool/clean-build.sh)
 discovers generated CMake and Python output throughout the MyPiCarX workspace
 and optionally removes it. Use it when a clean configure is needed, stale CMake
 caches must be discarded, or Python caches must be regenerated.
@@ -8,7 +8,7 @@ caches must be discarded, or Python caches must be regenerated.
 ## Requirements
 
 - Run the checked-in script from this workspace.
-- Keep the root `AGENTS.md`, root `CMakeLists.txt`, and HAL module CMake files present so the script can verify
+- Keep the root `AGENTS.md`, `xWalk-rpi5/CMakeLists.txt`, and HAL module CMake files present so the script can verify
   the workspace.
 - Provide `cmake` on `PATH`; deletion uses `cmake -E`.
 
@@ -32,7 +32,7 @@ rejected rather than assumed.
 Always inspect the target list first:
 
 ```sh
-xWalkTool/shell/clean-build.sh --dry-run
+xWalkTool/shell-agent/repo-tool/clean-build.sh --dry-run
 ```
 
 The preview prints directories named `build` or `build-*` anywhere below the
@@ -49,13 +49,13 @@ identified as a Python package by `pyproject.toml`, `setup.py`, or `setup.cfg`.
 Interactive cleanup:
 
 ```sh
-xWalkTool/shell/clean-build.sh
+xWalkTool/shell-agent/repo-tool/clean-build.sh
 ```
 
 Non-interactive cleanup after reviewing the dry run:
 
 ```sh
-xWalkTool/shell/clean-build.sh --yes
+xWalkTool/shell-agent/repo-tool/clean-build.sh --yes
 ```
 
 The script first asks CMake to clean configured build directories when possible.
@@ -75,9 +75,9 @@ the script partway through deletion; an interrupted cleanup may leave a partiall
 ## Verification
 
 ```sh
-bash -n xWalkTool/shell/clean-build.sh
-xWalkTool/shell/clean-build.sh --help
-xWalkTool/shell/clean-build.sh --dry-run
+bash -n xWalkTool/shell-agent/repo-tool/clean-build.sh
+xWalkTool/shell-agent/repo-tool/clean-build.sh --help
+xWalkTool/shell-agent/repo-tool/clean-build.sh --dry-run
 ```
 
 The verification commands above do not remove files.

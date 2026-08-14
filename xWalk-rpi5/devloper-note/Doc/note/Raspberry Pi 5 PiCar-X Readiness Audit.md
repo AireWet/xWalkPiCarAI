@@ -369,7 +369,7 @@ camera hardware](https://www.raspberrypi.com/documentation/accessories/camera.ht
 <td>Raspberry Pi 5</td>
 <td>Pi 5, Pi-compatible Robot HAT</td>
 <td>Pi model/board guards and RPI composition</td>
-<td><code>xWalkTool/shell/setup-rpi.sh</code>, <code>xWalkBoot</code></td>
+<td><code>xWalkTool/shell-agent/deploy-tool/setup-rpi.sh</code>, <code>xWalkBoot</code></td>
 <td>Yes, composition mocked</td>
 <td>Blocked at Protobuf sysroot</td>
 <td>Pending</td>
@@ -1033,11 +1033,11 @@ The setup script supports both OS families for non-camera dependencies.
 Inspect the script before use, then run it with the observed board revision and user:
 
 ``` bash
-./xWalkTool/shell/setup-rpi.sh --help
+./xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --help
 ```
 
 ``` bash
-sudo ./xWalkTool/shell/setup-rpi.sh --board v5 --runtime-user "$USER" --gpio-device /dev/gpiochip0
+sudo ./xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --board v5 --runtime-user "$USER" --gpio-device /dev/gpiochip0
 ```
 
 The script installs the compiler, CMake, Ninja, Git-related build tooling, Protobuf/gRPC dependencies, I2C tools
@@ -1513,7 +1513,7 @@ percent lines, 85.2 percent functions, and 66.6 percent branches. LSan reports
 The intentional Clang TSan race probe and four focused project tests pass when
 loopback access is granted. The LSan result is not recorded as passed. The exact
 native-host reproduction commands and result terminology are in
-`xWalkTool/quality/README.md`.
+`xWalkTool/cpp-tool/quality/README.md`.
 
 - Clean Debug configuration with tests, strict warnings and compile commands: successful.
 - Complete clean strict Debug and Release host builds: 597 build steps successful in each profile.
@@ -1571,7 +1571,7 @@ than hidden by the final count.
 - `xWalk-rpi5/xWalkController/xWalkTest/xGoogleTest/CMakeLists.txt` and
   `xWalk-rpi5/xWalkController/xWalkTest/xSequenceTest/CMakeLists.txt`: serialize controller aggregate wrappers for the same
   shared-child-fixture reason.
-- `xWalkTool/shell/setup-rpi.sh`: install the Protobuf, gRPC, GoogleTest and TinyXML2 development packages required
+- `xWalkTool/shell-agent/deploy-tool/setup-rpi.sh`: install the Protobuf, gRPC, GoogleTest and TinyXML2 development packages required
   by a clean Raspberry Pi build.
 - `xWalk-rpi5/xWalkHal/simulation/xWalkRobotHat`, the atomic I2C/ADC path, motor/servo lifecycle code, and their tests:
   deterministic device-free Robot HAT behaviour, fault injection, paired-stop, watchdog, and actuator lifecycle
@@ -1584,7 +1584,8 @@ than hidden by the final count.
   backpressure, and camera-loss shutdown. It is not a network listener.
 - `xWalk-rpi5/xWalkAgent/xWalkVision/xWalkVideoRecording/hardware/src/xAgent_Rpi5CarVideoRecordingOpenCv.cpp`: retain the
   released rollback context explicitly so focused Clang-Tidy reports no ignored `nodiscard` result.
-- `xWalk-rpi5/cmake/toolchains/aarch64-linux-gnu.cmake` and `xWalkTool/deployment`: reviewed-sysroot cross-build
+- `xWalk-rpi5/cmake/toolchains/aarch64-linux-gnu.cmake` and `xWalkTool/shell-agent/deploy-tool`: reviewed-sysroot
+  cross-build
   guardrails
   and
   hardware-independent/wheels-up guidance. The dependency audit confines `pkg-config`, reports all missing target

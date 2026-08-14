@@ -66,7 +66,7 @@ a workspace build.
 | `../xWalkLibrary` | Architecture-selected portable dependencies and shared Vosk model |
 | `../xWalkIW` | Protobuf and gRPC interface module imported by the aggregate |
 | `../xWalkController` | Standalone CLI aggregate included by host and RPI aggregate builds |
-| `../../xWalkTool/dtoverlays` | Robot HAT and Servo HAT+ Raspberry Pi boot overlays |
+| `../../xWalkTool/shell-agent/env-tool/dtoverlays` | Robot HAT and Servo HAT+ Raspberry Pi boot overlays |
 | Linux GPIO, I2C, and SPI UAPI headers | Required when `XWALK_BUILD_RPI=ON` |
 
 On Debian or Ubuntu, install the normal build dependencies with:

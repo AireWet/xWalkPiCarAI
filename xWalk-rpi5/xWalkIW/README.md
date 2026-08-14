@@ -31,7 +31,7 @@ xWalk-rpi5/xWalkIW/
 ```
 
 The executable source generator lives at
-`../../xWalkTool/python/xHal_Rpi5CarIwGenerator`. Generated headers and sources
+`../../xWalkTool/py-agent/dev-tool/xHal_Rpi5CarIwGenerator`. Generated headers and sources
 must not be edited manually. CMake validates the source schemas on every build.
 
 ## Protocol contract
@@ -138,8 +138,8 @@ Run these commands from the workspace root after changing a Protobuf or XML
 input:
 
 ```bash
-xWalkTool/python/xHal_Rpi5CarIwGenerator --check
-xWalkTool/python/xHal_Rpi5CarIwGenerator --generate-cpp
+xWalkTool/py-agent/dev-tool/xHal_Rpi5CarIwGenerator --check
+xWalkTool/py-agent/dev-tool/xHal_Rpi5CarIwGenerator --generate-cpp
 ```
 
 Generation requires `protoc`, `grpc_cpp_plugin`, and the Protobuf development
