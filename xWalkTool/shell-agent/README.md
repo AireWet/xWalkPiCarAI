@@ -24,16 +24,16 @@ The recommended Python environment is documented in the
 
 | Module | Purpose | Safety boundary |
 |---|---|---|
-| `board-tool/` | Runs the Jira history importer from the checked-out `py-src` package | Dry-run by default |
-| `gerrit-tool/` | Dispatches Host Quality jobs and validates Gerrit submodule metadata | CI and host-only |
-| `deploy-tool/` | Provides provisioning, packaging assets, and deployment tests | `--apply` is privileged |
-| `env-tool/` | Groups quality, licence, and boot-overlay configuration | Mixed; see child modules |
+| [`board-tool/`](board-tool/README.md) | Runs the Jira history importer from the checked-out `py-src` package | Dry-run by default |
+| [`gerrit-tool/`](gerrit-tool/README.md) | Prepares Gerrit reviews, dispatches Host Quality jobs, and validates submodule metadata | CI and host-only |
+| [`deploy-tool/`](deploy-tool/README.md) | Provides provisioning, packaging assets, and deployment tests | `--apply` is privileged |
+| [`env-tool/`](env-tool/README.md) | Groups quality, licence, boot-overlay, and Zuul configuration | Mixed; see its guide |
 | `env-tool/dtoverlays/` | Stores Raspberry Pi Device Tree blobs | Target boot assets |
 | `env-tool/license/` | Stores the model template and environment loader | Loader must be sourced |
 | `env-tool/playbooks/` | Stores repository-controlled Zuul Ansible playbooks | Host-safe CI configuration |
 | `env-tool/quality/` | Stores Clang-Tidy, Cppcheck, and gcovr settings | Host-safe configuration |
-| `repo-tool/` | Finds and removes generated CMake and Python output | Use `--dry-run` first |
-| `quality-tool/` | Runs coverage, sanitizers, static analysis, ShellCheck, and Valgrind | Host-only |
+| [`repo-tool/`](repo-tool/README.md) | Finds and removes generated CMake and Python output | Use `--dry-run` first |
+| [`quality-tool/`](quality-tool/README.md) | Runs coverage, sanitizers, static analysis, ShellCheck, and Valgrind | Host-only |
 
 ## Host maintenance
 

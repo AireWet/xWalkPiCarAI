@@ -126,21 +126,21 @@ CI uses the same wrappers. LSan and TSan jobs require a native Linux runner
 whose security policy permits sanitizer initialization; a restricted runner
 must report the environment block instead of converting it into success.
 
-GitHub Actions and Gerrit/Zuul use the shared job dispatcher so their
-substantive Host Quality commands remain aligned:
+GitHub Actions and the repository-owned Gerrit event worker use the shared job
+dispatcher so their substantive Host Quality commands remain aligned:
 
 ```bash
 xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh build-and-test gcc Debug
 ```
 
-The existing GitHub workflow remains under `.github/workflows`. Gerrit uses
-`.zuul.yaml` and `xWalkTool/shell-agent/env-tool/playbooks/zuul`; Gerrit does not execute the GitHub workflow.
-See the Gerrit CI configuration guide for the required external Zuul service,
-node image, event triggers, log collection, and `Verified` permissions.
+The GitHub workflow remains under `.github/workflows`. The current Gerrit
+service uses `xWalkGerritCi.py`, `xWalkGerritQuality.py`, and the server-rendered
+`xWalkGerritLogServer.py` dashboard; Gerrit does not execute the GitHub
+workflow. See the Gerrit CI configuration guide for event triggers, module
+state, log retention, service operation, and `Verified` permissions.
 
 The ShellCheck job also runs the repository-owned `xWalkZuulValidator`, which
-checks job definitions, execution dependencies, cycles, playbook paths, and
-registration in both project pipelines. It then runs `ansible-playbook
---syntax-check` for every Zuul playbook. Zuul has no supported `zuul-lint`
-command; the connected Zuul scheduler remains the authoritative schema
-validator for repository job configuration.
+checks the retained optional Zuul definitions, execution dependencies, cycles,
+playbook paths, and registration in both project pipelines. It then runs
+`ansible-playbook --syntax-check` for every retained playbook. These checks do
+not activate Zuul or make it the current Gerrit CI backend.

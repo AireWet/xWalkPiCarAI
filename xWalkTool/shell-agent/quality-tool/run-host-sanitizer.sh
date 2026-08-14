@@ -33,7 +33,7 @@ run_asan() {
 }
 
 run_lsan() {
-    require_tool clang++ LEAK_SANITIZER
+    require_tool g++ LEAK_SANITIZER
     local tracer
     tracer="$(tracer_pid)"
     if [ "${tracer:-0}" != "0" ]; then
@@ -44,7 +44,7 @@ run_lsan() {
     local probe_directory="$repository_root/build-host/leak-sanitizer-probe"
     local probe_log="$probe_directory/probe.log"
     mkdir -p "$probe_directory"
-    clang++ -std=c++17 -g -fno-omit-frame-pointer -fsanitize=address,undefined \
+    g++ -std=c++17 -g -fno-omit-frame-pointer -fsanitize=address,undefined \
         "$repository_root/xWalkTool/cpp-tool/quality/probes/xWalkLeakSanitizerProbe.cpp" \
         -o "$probe_directory/xWalkLeakSanitizerProbe" || return 1
     ASAN_OPTIONS="detect_leaks=1:halt_on_error=1" timeout 30s \
@@ -87,7 +87,8 @@ run_lsan() {
 }
 
 run_tsan() {
-    require_tool clang++ THREAD_SANITIZER
+    require_tool g++ THREAD_SANITIZER
+    require_tool setarch THREAD_SANITIZER
     local aslr
     aslr="$(cat /proc/sys/kernel/randomize_va_space)"
     printf 'ThreadSanitizer ASLR setting: randomize_va_space=%s\n' "$aslr"
@@ -95,10 +96,13 @@ run_tsan() {
     local probe_directory="$repository_root/build-host/thread-sanitizer-probe"
     local probe_log="$probe_directory/probe.log"
     mkdir -p "$probe_directory"
-    clang++ -std=c++17 -g -O1 -fPIE -pie -fno-omit-frame-pointer -fsanitize=thread \
+    g++ -std=c++17 -g -O1 -fPIE -pie -fno-omit-frame-pointer -fsanitize=thread \
         "$repository_root/xWalkTool/cpp-tool/quality/probes/xWalkThreadSanitizerProbe.cpp" \
         -o "$probe_directory/xWalkThreadSanitizerProbe" || return 1
+    local architecture
+    architecture="$(uname -m)"
     TSAN_OPTIONS="halt_on_error=1:history_size=7" timeout 120s \
+        setarch "$architecture" -R \
         "$probe_directory/xWalkThreadSanitizerProbe" >"$probe_log" 2>&1
     local probe_status=$?
     if [ "$probe_status" -eq 124 ]; then
@@ -119,7 +123,8 @@ run_tsan() {
     cmake --build build-host/thread-sanitizer --parallel || return 1
     local test_log="$repository_root/build-host/thread-sanitizer/ctest.log"
     TSAN_OPTIONS="halt_on_error=1:history_size=7" \
-        ctest --test-dir build-host/thread-sanitizer --output-on-failure --no-tests=error --timeout 120 \
+        setarch "$architecture" -R ctest --test-dir build-host/thread-sanitizer \
+        --output-on-failure --no-tests=error --timeout 120 \
         -j 1 -L 'streaming|simulation|lifecycle' \
         -E 'xWalkComputerVisionOpenCvHostTest|xCliSequenceTest' >"$test_log" 2>&1
     local test_status=$?

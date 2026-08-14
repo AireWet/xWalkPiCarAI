@@ -59,6 +59,43 @@ run_build_and_test() {
     "$build_directory/xCliSequenceTest" --gtest_brief=1
 }
 
+module_build_directory() {
+    printf 'build-host/module-%s\n' "$1"
+}
+
+configure_module() {
+    local module="$1"
+    local build_directory
+    build_directory="$(module_build_directory "$module")"
+    cmake --fresh -S "$product_root" -B "$build_directory" -G Ninja \
+        -DCMAKE_BUILD_TYPE=Debug -DXWALK_ENABLE_STRICT_WARNINGS=ON
+    cmake --build "$build_directory" --parallel
+}
+
+run_module_ctest() {
+    local module="$1"
+    shift
+    ctest --test-dir "$(module_build_directory "$module")" \
+        --output-on-failure --no-tests=error "$@"
+}
+
+run_trace_standalone() {
+    local build_directory="build-host/module-xwalk-trace"
+    cmake --fresh -S "$product_root/xWalkTrace" -B "$build_directory" -G Ninja \
+        -DCMAKE_BUILD_TYPE=Debug -DXWALK_STANDALONE_BUILD=ON \
+        -DXWALK_TRACE_BUILD_HOST_TESTS=ON
+    cmake --build "$build_directory" --parallel
+    ctest --test-dir "$build_directory" --output-on-failure --no-tests=error
+}
+
+run_controller_diagnostic() {
+    local build_directory
+    build_directory="$(module_build_directory xwalk-controller)"
+    "$build_directory/xWalkController/xWalkApp/xwalk-picarx-control" \
+        --deployment-config="$product_root/xWalkController/xWalkConfig/picar-x.conf" \
+        --diagnose --no-hardware
+}
+
 run_fuzz_smoke() {
     cmake --fresh -S "$product_root" --preset fuzz
     cmake --build build-host/fuzz --target xWalkFuzzers --parallel
@@ -117,6 +154,71 @@ validate_ci_metadata() {
 
 cd "$repository_root"
 case "$job" in
+    preparation)
+        require_no_arguments "$@"
+        xWalkTool/shell-agent/quality-tool/run-host-shellcheck.sh
+        validate_ci_metadata
+        ;;
+    xwalk-agent-build) require_no_arguments "$@"; configure_module xwalk-agent ;;
+    xwalk-agent-aggregate)
+        require_no_arguments "$@"
+        run_module_ctest xwalk-agent -L agent-aggregate
+        ;;
+    xwalk-agent-groups)
+        require_no_arguments "$@"
+        run_module_ctest xwalk-agent -L agent-group
+        ;;
+    xwalk-agent-functional)
+        require_no_arguments "$@"
+        run_module_ctest xwalk-agent -R \
+            'xWalk(Picarx|LineTracking|MoveExample|KeyboardControl|ObstacleAvoidance|CliffDetection|SelfDrive|GrayscaleCalibration|ServoMotorCalibration|ServoZeroing|LocalVoiceChatbot|VoiceActiveCar|VoiceActiveCarGpt|GptCar|SpiTransfer|Boot)HostTest'
+        ;;
+    xwalk-controller-build) require_no_arguments "$@"; configure_module xwalk-controller ;;
+    xwalk-controller-tests)
+        require_no_arguments "$@"
+        run_module_ctest xwalk-controller -R 'xWalk(Controller|App)HostTest|xCli.*HostTest'
+        ;;
+    xwalk-controller-diagnostic) require_no_arguments "$@"; run_controller_diagnostic ;;
+    xwalk-hal-build) require_no_arguments "$@"; configure_module xwalk-hal ;;
+    xwalk-hal-unit)
+        require_no_arguments "$@"
+        run_module_ctest xwalk-hal -R '^xGoogleTest$'
+        ;;
+    xwalk-hal-groups)
+        require_no_arguments "$@"
+        run_module_ctest xwalk-hal -L group-tests
+        ;;
+    xwalk-hal-simulation)
+        require_no_arguments "$@"
+        run_module_ctest xwalk-hal -L simulation
+        ;;
+    xwalk-hal-soak)
+        require_no_arguments "$@"
+        run_module_ctest xwalk-hal -L soak
+        python3 -m json.tool \
+            "$(module_build_directory xwalk-hal)/xWalkHal/simulation/xWalkRobotHat/xwalk-robot-hat-soak-report.json"
+        ;;
+    xwalk-iw-build) require_no_arguments "$@"; configure_module xwalk-iw ;;
+    xwalk-iw-tests)
+        require_no_arguments "$@"
+        run_module_ctest xwalk-iw -R '^xWalkIwSchemaHostTest$|^xGoogleTest$'
+        ;;
+    xwalk-library-build) require_no_arguments "$@"; configure_module xwalk-library ;;
+    xwalk-library-tests)
+        require_no_arguments "$@"
+        run_module_ctest xwalk-library -R '^xWalkLibrary.*HostTest$|^xGoogleTest$'
+        ;;
+    xwalk-trace-tests) require_no_arguments "$@"; run_trace_standalone ;;
+    xwalk-vision-build) require_no_arguments "$@"; configure_module xwalk-vision ;;
+    xwalk-vision-tests)
+        require_no_arguments "$@"
+        run_module_ctest xwalk-vision -L recorded-media
+        ;;
+    xwalk-streaming-build) require_no_arguments "$@"; configure_module xwalk-streaming ;;
+    xwalk-streaming-tests)
+        require_no_arguments "$@"
+        run_module_ctest xwalk-streaming -L streaming
+        ;;
     build-and-test) run_build_and_test "$@" ;;
     asan-ubsan) require_no_arguments "$@"; xWalkTool/shell-agent/quality-tool/run-host-sanitizer.sh asan ;;
     leak-sanitizer) require_no_arguments "$@"; xWalkTool/shell-agent/quality-tool/run-host-sanitizer.sh lsan ;;
@@ -178,7 +280,6 @@ case "$job" in
         ;;
     deployment-scripts)
         require_no_arguments "$@"
-        xWalkTool/shell-agent/quality-tool/run-host-shellcheck.sh
         bash xWalkTool/shell-agent/deploy-tool/test/setup-rpi-test.sh
         ;;
     staged-install) require_no_arguments "$@"; run_staged_install ;;

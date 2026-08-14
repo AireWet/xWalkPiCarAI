@@ -1,365 +1,335 @@
 #!/usr/bin/env python3
-"""Run the complete xWalk host-quality gate for one Gerrit patch set."""
+"""Run and record the module-oriented xWalk Host Quality graph."""
 
 from __future__ import annotations
 
-import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass
+from datetime import datetime, timezone
+import json
+import os
 from pathlib import Path
+import re
 import subprocess
-from typing import Callable, TextIO
+import tempfile
+import threading
+import time
+from typing import TextIO
+
+
+@dataclass(frozen=True)
+class XWalkCheckPlan:
+    """Describe one repository-owned validation command."""
+
+    identifier: str
+    name: str
+    arguments: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class XWalkModulePlan:
+    """Describe one visible CI module and its dependencies."""
+
+    identifier: str
+    name: str
+    needs: tuple[str, ...]
+    checks: tuple[XWalkCheckPlan, ...]
+
+
+def check(identifier: str, name: str, *arguments: str) -> XWalkCheckPlan:
+    """Create one concise immutable check declaration."""
+
+    return XWalkCheckPlan(identifier, name, arguments)
+
+
+PREPARATION = XWalkModulePlan(
+    "preparation", "xWalk Preparation", (),
+    (check("metadata", "Shell scripts and CI metadata", "preparation"),),
+)
+
+MODULES = (
+    XWalkModulePlan("xwalk-agent", "xWalkAgent", ("preparation",), (
+        check("build", "Configure and build xWalkAgent", "xwalk-agent-build"),
+        check("aggregate", "Agent aggregate tests", "xwalk-agent-aggregate"),
+        check("groups", "Agent functional-group tests", "xwalk-agent-groups"),
+        check("functional", "Agent configuration and communication tests", "xwalk-agent-functional"),
+    )),
+    XWalkModulePlan("xwalk-controller", "xWalkController", ("preparation",), (
+        check("build", "Configure and build xWalkController", "xwalk-controller-build"),
+        check("tests", "Controller, CLI, and Controller-to-HAL tests", "xwalk-controller-tests"),
+        check("diagnostic", "Device-free deployment diagnosis", "xwalk-controller-diagnostic"),
+    )),
+    XWalkModulePlan("xwalk-hal", "xWalkHal", ("preparation",), (
+        check("build", "Configure and build xWalkHal", "xwalk-hal-build"),
+        check("unit", "HAL unit and host-safe sequence tests", "xwalk-hal-unit"),
+        check("groups", "HAL interface, device, sensor, and layer tests", "xwalk-hal-groups"),
+        check("simulation", "Robot HAT and lifecycle simulations", "xwalk-hal-simulation"),
+        check("soak", "Device-free Robot HAT soak test", "xwalk-hal-soak"),
+    )),
+    XWalkModulePlan("xwalk-iw", "xWalkIW", ("preparation",), (
+        check("build", "Configure and build xWalkIW", "xwalk-iw-build"),
+        check("tests", "Schema, serialization, gRPC, signal, and transport tests", "xwalk-iw-tests"),
+    )),
+    XWalkModulePlan("xwalk-library", "xWalkLibrary", ("preparation",), (
+        check("build", "Configure and build xWalkLibrary consumers", "xwalk-library-build"),
+        check(
+            "tests", "Shared-library, configuration, utility, licence, and architecture tests",
+            "xwalk-library-tests",
+        ),
+    )),
+    XWalkModulePlan("xwalk-trace", "xWalkTrace", ("preparation",), (
+        check("tests", "Trace formatting, routing, macro, and selector tests", "xwalk-trace-tests"),
+    )),
+    XWalkModulePlan("xwalk-vision", "xWalk Vision", ("preparation",), (
+        check("build", "Configure and build recorded vision scenarios", "xwalk-vision-build"),
+        check("tests", "Recorded media, OpenCV scenarios, safety, and assets", "xwalk-vision-tests"),
+    )),
+    XWalkModulePlan("xwalk-streaming", "xWalk Streaming", ("preparation",), (
+        check("build", "Configure and build xWalk Streaming", "xwalk-streaming-build"),
+        check(
+            "tests", "Loopback HTTP, MJPEG, lifecycle, timeout, and backpressure tests",
+            "xwalk-streaming-tests",
+        ),
+    )),
+    XWalkModulePlan("xwalk-quality", "xWalk Quality", ("preparation",), (
+        check("gcc-debug", "GCC Debug build and tests", "build-and-test", "gcc", "Debug"),
+        check("gcc-release", "GCC Release build and tests", "build-and-test", "gcc", "Release"),
+        check("clang-debug", "Clang Debug build and tests", "build-and-test", "clang", "Debug"),
+        check("clang-release", "Clang Release build and tests", "build-and-test", "clang", "Release"),
+        check("asan-ubsan", "AddressSanitizer and UndefinedBehaviorSanitizer", "asan-ubsan"),
+        check("leak-sanitizer", "LeakSanitizer", "leak-sanitizer"),
+        check("thread-sanitizer", "ThreadSanitizer", "thread-sanitizer"),
+        check("static-analysis", "Clang-Tidy and Cppcheck", "static-analysis"),
+        check("clang-static-analyzer", "Clang Static Analyzer", "clang-static-analyzer"),
+        check("stress-tests", "Host stress tests", "stress-tests"),
+        check("fuzz-smoke", "Bounded fuzz smoke tests", "fuzz-smoke"),
+        check("valgrind", "Valgrind analysis", "valgrind"),
+        check("coverage", "GCC and Clang coverage", "coverage"),
+    )),
+    XWalkModulePlan("xwalk-deployment", "xWalk Deployment", ("preparation",), (
+        check("scripts", "Deployment and provisioning scripts", "deployment-scripts"),
+        check("staged-install", "Staged installation and artifact validation", "staged-install"),
+    )),
+)
+
+GATE = XWalkModulePlan(
+    "host-quality-gate", "xWalk Host Quality Gate",
+    tuple(module.identifier for module in MODULES), (),
+)
 
 
 class XWalkGerritQuality:
-    """Run host-quality jobs with resource isolation and retain all results."""
+    """Execute the shared CI dispatcher and persist live module state."""
+
+    SECRET_ASSIGNMENT = re.compile(
+        r"(?i)\b([A-Z0-9_]*(?:PASSWORD|TOKEN|SECRET|PRIVATE_KEY|AUTHORIZATION|COOKIE)[A-Z0-9_]*)=([^\s]+)"
+    )
+    AUTHENTICATED_URL = re.compile(r"(https?://)[^/@\s:]+:[^/@\s]+@")
+    PRIVATE_KEY = re.compile(
+        r"-----BEGIN [^-]*PRIVATE KEY-----.*?-----END [^-]*PRIVATE KEY-----",
+        re.DOTALL,
+    )
 
     def __init__(self, workspace: Path, log: TextIO) -> None:
-        """Store the isolated checkout and combined verification log."""
+        """Store checkout paths and initialize the structured result model."""
 
         self.workspace = workspace
-        self.product_workspace = workspace / "xWalk-rpi5"
         self.log = log
-
-    def environment(self, overrides: dict[str, str] | None = None) -> dict[str, str]:
-        """Return a clean command environment with GitHub-compatible paths."""
-
-        environment = os.environ.copy()
-        environment["GITHUB_WORKSPACE"] = str(self.workspace)
-        if overrides is not None:
-            environment.update(overrides)
-        return environment
-
-    def run_command(
-        self,
-        command: list[str],
-        environment: dict[str, str] | None = None,
-        working_directory: Path | None = None,
-    ) -> bool:
-        """Run one quality command and report whether its status is successful."""
-
-        directory = self.workspace if working_directory is None else working_directory
-        self.log.write(f"\n$ {' '.join(command)}\n")
-        self.log.flush()
-        result = subprocess.run(
-            command,
-            cwd=directory,
-            env=self.environment(environment),
-            stdout=self.log,
-            stderr=subprocess.STDOUT,
-            check=False,
-            text=True,
-        )
-        return result.returncode == 0
-
-    def run_steps(
-        self,
-        name: str,
-        steps: list[tuple[list[str], dict[str, str] | None]],
-        working_directory: Path | None = None,
-    ) -> bool:
-        """Run one job until its first failed step, matching GitHub Actions."""
-
-        self.log.write(f"\n{'=' * 24} {name} {'=' * 24}\n")
-        self.log.flush()
-        passed = True
-        for command, environment in steps:
-            if passed:
-                passed = self.run_command(command, environment, working_directory)
-        result_text = "PASSED" if passed else "FAILED"
-        self.log.write(f"\n[{result_text}] {name}\n")
-        self.log.flush()
-        return passed
-
-    def compiler_steps(
-        self, compiler: str, build_type: str,
-    ) -> list[tuple[list[str], dict[str, str]]]:
-        """Build one compiler matrix job without changing its commands."""
-
-        build_directory = f"build-host/ci-{compiler}-{build_type}"
-        environment = {
-            "CC": "clang" if compiler == "clang" else "gcc",
-            "CXX": "clang++" if compiler == "clang" else "g++",
+        self.dispatcher = workspace / "xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh"
+        self.lock = threading.Lock()
+        log_name = getattr(log, "name", "")
+        self.state_path = Path(log_name).with_suffix(".json") if log_name else None
+        self.plans = (PREPARATION, *MODULES, GATE)
+        self.state = {
+            "schema_version": 1,
+            "name": "xWalk Host Quality",
+            "updated_at": self.timestamp(),
+            "jobs": [self.initial_job(plan) for plan in self.plans],
         }
-        executable_directory = self.workspace / build_directory
-        configure = [
-            "cmake", "--fresh", "-S", str(self.product_workspace),
-            "-B", build_directory, "-G", "Ninja",
-            f"-DCMAKE_BUILD_TYPE={build_type}", "-DXWALK_ENABLE_STRICT_WARNINGS=ON",
-        ]
-        ctest = ["ctest", "--test-dir", build_directory, "--output-on-failure", "--no-tests=error"]
-        return [
-            (configure, environment),
-            (["cmake", "--build", build_directory, "--parallel"], environment),
-            (ctest, environment), (ctest + ["-L", "agent-aggregate"], environment),
-            (ctest + ["-L", "agent-group"], environment),
-            (
-                [str(executable_directory / "xGoogleTest"),
-                 "TEST_SUITE_XWALK_SEQUENCE:1", "--gtest_brief=1"],
-                environment,
-            ),
-            ([str(executable_directory / "xCliGoogleTest"), "--gtest_brief=1"], environment),
-            ([str(executable_directory / "xCliSequenceTest"), "--gtest_brief=1"], environment),
-        ]
-
-    def compiler_job(self, compiler: str, build_type: str) -> bool:
-        """Run one complete compiler and build-type matrix job."""
-
-        return self.run_steps(f"{compiler} {build_type}", self.compiler_steps(compiler, build_type))
-
-    def preset_job(
-        self,
-        name: str,
-        preset: str,
-        test_preset: str,
-        environment: dict[str, str] | None = None,
-        timeout: str | None = None,
-        disable_aslr: bool = False,
-    ) -> bool:
-        """Configure, build and test one CMake preset-based job."""
-
-        test_command = ["ctest", "--preset", test_preset]
-        if timeout is not None:
-            test_command.extend(["--timeout", timeout])
-        if disable_aslr:
-            test_command = ["setarch", "x86_64", "-R", *test_command]
-        return self.run_steps(
-            name,
-            [
-                (["cmake", "--fresh", "--preset", preset], environment),
-                (["cmake", "--build", "--preset", preset, "--parallel"], environment),
-                (test_command, environment),
-            ],
-            self.product_workspace,
-        )
-
-    def static_analysis_job(self) -> bool:
-        """Run Clang-Tidy compilation and the configured Cppcheck target."""
-
-        return self.run_steps(
-            "static-analysis",
-            [
-                (["cmake", "--fresh", "--preset", "clang-tidy"], None),
-                (["cmake", "--build", "--preset", "clang-tidy", "--parallel"], None),
-                (["cmake", "--build", "../build-host/clang-tidy", "--target", "cppcheck"],
-                 None),
-            ],
-            self.product_workspace,
-        )
-
-    def coverage_job(self) -> bool:
-        """Run the enforced host coverage build, tests and report generation."""
-
-        return self.run_steps(
-            "coverage",
-            [(["bash", "xWalkTool/shell-agent/quality-tool/run-host-coverage.sh", "run"], None)],
-        )
-
-    def deployment_scripts_job(self) -> bool:
-        """Validate every deployment shell script and provisioning behavior."""
-
-        shell_scripts = sorted(self.workspace.glob("xWalkTool/shell-agent/**/*.sh"))
-        deployment_tests = sorted(self.workspace.glob("xWalkTool/shell-agent/deploy-tool/test/*.sh"))
-        shellcheck_command = [
-            "shellcheck",
-            *(str(path.relative_to(self.workspace)) for path in shell_scripts),
-            *(str(path.relative_to(self.workspace)) for path in deployment_tests),
-        ]
-        return self.run_steps(
-            "deployment-scripts",
-            [
-                (shellcheck_command, None),
-                (["bash", "xWalkTool/shell-agent/deploy-tool/test/setup-rpi-test.sh"], None),
-            ],
-        )
+        self.write_state()
 
     @staticmethod
-    def staged_required_paths() -> list[tuple[str, str]]:
-        """Return every path required from the staged release installation."""
+    def timestamp() -> str:
+        """Return an ISO 8601 UTC timestamp."""
 
-        return [
-            ("-x", "usr/bin/xwalk-picarx-control"),
-            ("-x", "usr/lib/xwalk/xWalkTool/shell-agent/env-tool/license/xWalkEnv.sh"),
-            ("-x", "usr/lib/xwalk/xWalkTool/py-agent/dev-tool/xWalkLicenseTool"),
-            ("-r", "usr/lib/xwalk/xWalkTool/shell-agent/env-tool/license/xWalkLicense.cfg"),
-            ("!", "usr/lib/xwalk/xWalkLibrary/X_WALK_LICENSE.KEY"),
-            ("-r", "etc/xwalk/picar-x.conf"),
-            ("-r", "etc/xwalk/picar-x.d/hardware.conf"),
-            ("-r", "etc/xwalk/picar-x.d/ai/providers/gemini.conf"),
-            ("-r", "usr/lib/xwalk/libvosk.so"),
-            ("-r", "usr/share/xwalk/models/vosk/vosk-model-small-en-us-0.15/am/final.mdl"),
-            ("-r", "usr/share/xwalk/sounds/car-double-horn.wav"),
-            ("-r", "usr/share/xwalk/sounds/car-start-engine.wav"),
-            ("-r", "usr/share/xwalk/music/slow-trail-Ahjay_Stelino.mp3"),
-        ]
+        return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
-    def staged_install_steps(self, deploy_directory: Path) -> list[tuple[list[str], dict[str, str] | None]]:
-        """Build release installation, path, linkage, and integrity steps."""
+    @staticmethod
+    def initial_job(plan: XWalkModulePlan) -> dict[str, object]:
+        """Create one serializable pending module result."""
 
-        steps: list[tuple[list[str], dict[str, str] | None]] = [
-            (
-                ["cmake", "--fresh", "-S", str(self.product_workspace),
-                 "-B", "build-host/install",
-                 "-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release",
-                 "-DCMAKE_INSTALL_PREFIX=/usr"],
-                None,
-            ),
-            (["cmake", "--build", "build-host/install", "--parallel"], None),
-            (["cmake", "--install", "build-host/install"],
-             {"DESTDIR": str(deploy_directory)}),
-        ]
-        for test_flag, relative_path in self.staged_required_paths():
-            deployed_path = str(deploy_directory / relative_path)
-            command = (
-                ["test", "!", "-e", deployed_path]
-                if test_flag == "!" else ["test", test_flag, deployed_path]
+        return {
+            "id": plan.identifier, "name": plan.name, "needs": list(plan.needs),
+            "log_link": f"jobs/{plan.identifier}",
+            "status": "WAITING", "started_at": None, "completed_at": None,
+            "duration_seconds": None,
+            "checks": [
+                {
+                    "id": item.identifier, "name": item.name, "status": "WAITING",
+                    "started_at": None, "completed_at": None, "duration_seconds": None,
+                }
+                for item in plan.checks
+            ],
+        }
+
+    def write_state(self) -> None:
+        """Atomically publish the latest non-secret execution state."""
+
+        if self.state_path is None:
+            return
+        self.state["updated_at"] = self.timestamp()
+        temporary = self.state_path.with_suffix(".json.tmp")
+        temporary.write_text(json.dumps(self.state, indent=2) + "\n", encoding="utf-8")
+        temporary.replace(self.state_path)
+
+    def job_state(self, identifier: str) -> dict[str, object]:
+        """Return one known job state by stable identifier."""
+
+        return next(job for job in self.state["jobs"] if job["id"] == identifier)
+
+    def check_state(self, module: str, identifier: str) -> dict[str, object]:
+        """Return one known check state by stable identifiers."""
+
+        job = self.job_state(module)
+        return next(item for item in job["checks"] if item["id"] == identifier)
+
+    def update_status(self, target: dict[str, object], status: str, started: float | None = None) -> None:
+        """Update one job or check status, timestamps, and elapsed time."""
+
+        now = time.monotonic()
+        if status == "RUNNING":
+            target["started_at"] = self.timestamp()
+        target["status"] = status
+        if status in {"PASSED", "FAILED", "SKIPPED", "CANCELLED"}:
+            target["completed_at"] = self.timestamp()
+            if started is not None:
+                target["duration_seconds"] = round(now - started, 3)
+        self.write_state()
+
+    @classmethod
+    def redact(cls, output: str) -> str:
+        """Remove common credential forms before retaining command output."""
+
+        output = cls.PRIVATE_KEY.sub("[REDACTED PRIVATE KEY]", output)
+        output = cls.AUTHENTICATED_URL.sub(r"\1[REDACTED]@", output)
+        return cls.SECRET_ASSIGNMENT.sub(r"\1=[REDACTED]", output)
+
+    def run_check(self, module: XWalkModulePlan, plan: XWalkCheckPlan) -> bool:
+        """Run one dispatcher selection and retain its bounded module log section."""
+
+        state = self.check_state(module.identifier, plan.identifier)
+        started = time.monotonic()
+        with self.lock:
+            self.update_status(state, "RUNNING")
+        command = [str(self.dispatcher), *plan.arguments]
+        with tempfile.TemporaryFile(mode="w+", encoding="utf-8") as output:
+            result = subprocess.run(
+                command, cwd=self.workspace, stdout=output, stderr=subprocess.STDOUT,
+                check=False, text=True, env=os.environ.copy(),
             )
-            steps.append((command, None))
-        return steps
+            output.seek(0)
+            retained = self.redact(output.read())
+        status = "PASSED" if result.returncode == 0 else "FAILED"
+        if result.returncode < 0:
+            status = "CANCELLED"
+        with self.lock:
+            self.log.write(
+                f"\n{'-' * 24} CHECK {module.identifier}/{plan.identifier} {'-' * 24}\n"
+                f"$ {' '.join(command)}\n{retained}\n[{status}] {module.identifier}/{plan.identifier}\n"
+            )
+            self.log.flush()
+            self.update_status(state, status, started)
+        return result.returncode == 0
 
-    def staged_validation_steps(self, executable: Path) -> list[tuple[list[str], None]]:
-        """Build runtime, relocation, permission, and checksum validation steps."""
+    def run_module(self, plan: XWalkModulePlan) -> bool:
+        """Run every check in one visible module and retain all failures."""
 
-        help_command = "cd /tmp && \"$GITHUB_WORKSPACE/build-host/deploy/usr/bin/xwalk-picarx-control\" --help"
-        relocation = (
-            "if grep -R --fixed-strings \"$GITHUB_WORKSPACE\" build-host/deploy/etc "
-            "build-host/deploy/usr/share/xwalk/config; then exit 1; fi"
-        )
-        permissions = "test -z \"$(find build-host/deploy -type f -perm /022 -print -quit)\""
-        checksum = (
-            "find build-host/deploy -type f -print0 | sort -z | "
-            "xargs -0 sha256sum > build-host/deploy.sha256"
-        )
-        return [
-            (["bash", "-c", help_command], None), (["bash", "-c", relocation], None),
-            (["ldd", str(executable)], None), (["bash", "-c", permissions], None),
-            (["bash", "-c", checksum], None),
-        ]
-
-    def staged_install_job(self) -> bool:
-        """Build, stage and validate the exact release installation layout."""
-
-        deploy_directory = self.workspace / "build-host/deploy"
-        steps = self.staged_install_steps(deploy_directory)
-        executable = deploy_directory / "usr/bin/xwalk-picarx-control"
-        steps.extend(self.staged_validation_steps(executable))
-        return self.run_steps("staged-install", steps)
-
-    def current_gerrit_job(self) -> bool:
-        """Retain the original strict Gerrit Debug build and complete CTest run."""
-
-        return self.run_steps(
-            "gerrit-host",
-            [
-                (
-                    ["cmake", "--fresh", "-S", str(self.product_workspace),
-                     "-B", "build-host/gerrit",
-                     "-G", "Ninja", "-DCMAKE_BUILD_TYPE=Debug",
-                     "-DXWALK_ENABLE_STRICT_WARNINGS=ON"],
-                    None,
-                ),
-                (["cmake", "--build", "build-host/gerrit", "--parallel"], None),
-                (["ctest", "--test-dir", "build-host/gerrit", "--output-on-failure",
-                  "--no-tests=error"], None),
-            ],
-        )
-
-    def thread_sanitizer_job(self) -> bool:
-        """Run TSan in a non-root namespace with a private loopback interface."""
-
-        command = (
-            "ip link set lo up && "
-            "exec bash xWalkTool/shell-agent/quality-tool/run-host-sanitizer.sh tsan"
-        )
-        return self.run_steps(
-            "thread-sanitizer",
-            [
-                (
-                    [
-                        "unshare", "--user", "--map-root-user", "--net", "--pid",
-                        "--fork", "--mount-proc", "sh", "-c", command,
-                    ],
-                    None,
-                ),
-            ],
-        )
-
-    def quality_jobs(self) -> list[tuple[str, Callable[[], bool]]]:
-        """Return the unchanged complete host-quality job matrix."""
-
-        return [
-            ("gerrit-host", self.current_gerrit_job),
-            ("gcc Debug", lambda: self.compiler_job("gcc", "Debug")),
-            ("gcc Release", lambda: self.compiler_job("gcc", "Release")),
-            ("clang Debug", lambda: self.compiler_job("clang", "Debug")),
-            ("clang Release", lambda: self.compiler_job("clang", "Release")),
-            ("sanitizers", lambda: self.run_steps(
-                "sanitizers",
-                [(["bash", "xWalkTool/shell-agent/quality-tool/run-host-sanitizer.sh", "asan"], None)],
-            )),
-            ("thread-sanitizer", self.thread_sanitizer_job),
-            ("stress-tests", lambda: self.preset_job(
-                "stress-tests", "sanity", "host-stress")),
-            ("static-analysis", self.static_analysis_job),
-            ("coverage", self.coverage_job),
-            ("deployment-scripts", self.deployment_scripts_job),
-            ("staged-install", self.staged_install_job),
-        ]
+        job = self.job_state(plan.identifier)
+        started = time.monotonic()
+        with self.lock:
+            self.update_status(job, "RUNNING")
+            self.log.write(f"\n{'=' * 24} MODULE {plan.identifier} {'=' * 24}\n")
+            self.log.flush()
+        passed = True
+        for item in plan.checks:
+            passed = self.run_check(plan, item) and passed
+        cancelled = any(item["status"] == "CANCELLED" for item in job["checks"])
+        status = "PASSED" if passed else ("CANCELLED" if cancelled else "FAILED")
+        with self.lock:
+            self.update_status(job, status, started)
+            self.log.write(f"\n[{status}] {plan.identifier}\n")
+            self.log.flush()
+        return passed
 
     @staticmethod
     def worker_count(job_count: int) -> int:
-        """Return the bounded configured parallel quality-job count."""
+        """Return the bounded module worker count configured for this host."""
 
         try:
             return max(1, min(job_count, int(os.environ.get("XWALK_CI_MAX_WORKERS", "4"))))
         except ValueError:
             return min(job_count, 4)
 
-    def execute_jobs(
-        self, jobs: list[tuple[str, Callable[[], bool]]],
-    ) -> dict[str, bool]:
-        """Execute independent jobs concurrently and retain every result."""
+    def skip_modules(self, plans: tuple[XWalkModulePlan, ...]) -> None:
+        """Mark modules and checks skipped after a failed prerequisite."""
+
+        for plan in plans:
+            job = self.job_state(plan.identifier)
+            self.update_status(job, "SKIPPED")
+            for item in job["checks"]:
+                self.update_status(item, "SKIPPED")
+
+    def execute_modules(self, plans: tuple[XWalkModulePlan, ...]) -> dict[str, bool]:
+        """Execute independent modules concurrently with bounded host load."""
 
         results: dict[str, bool] = {}
+        for plan in plans:
+            self.update_status(self.job_state(plan.identifier), "QUEUED")
         with ThreadPoolExecutor(
-            max_workers=self.worker_count(len(jobs)), thread_name_prefix="xwalk-ci"
+            max_workers=self.worker_count(len(plans)), thread_name_prefix="xwalk-module"
         ) as executor:
-            pending = {executor.submit(job): name for name, job in jobs}
+            pending = {executor.submit(self.run_module, plan): plan for plan in plans}
             for future in as_completed(pending):
-                name = pending[future]
+                plan = pending[future]
                 try:
-                    results[name] = future.result()
+                    results[plan.identifier] = future.result()
                 except Exception as error:  # pragma: no cover - defensive worker boundary
-                    self.log.write(f"\n[FAILED] {name}: {error}\n")
-                    self.log.flush()
-                    results[name] = False
-        return {name: results.get(name, False) for name, unused_job in jobs}
+                    with self.lock:
+                        self.log.write(f"\n[FAILED] {plan.identifier}: {self.redact(str(error))}\n")
+                        self.update_status(self.job_state(plan.identifier), "FAILED")
+                    results[plan.identifier] = False
+        return results
+
+    def finalize_gate(self, module_results: dict[str, bool]) -> bool:
+        """Set the final gate from every required module result."""
+
+        gate = self.job_state(GATE.identifier)
+        started = time.monotonic()
+        self.update_status(gate, "RUNNING")
+        passed = all(module_results.get(identifier, False) for identifier in GATE.needs)
+        self.update_status(gate, "PASSED" if passed else "FAILED", started)
+        return passed
 
     def write_summary(self, results: dict[str, bool]) -> None:
-        """Write the quality summary in deterministic job order."""
+        """Write the deterministic module summary retained by legacy readers."""
 
         self.log.write("\n======================== QUALITY SUMMARY ========================\n")
-        for name, passed in results.items():
-            result_text = "PASSED" if passed else "FAILED"
-            self.log.write(f"[{result_text}] {name}\n")
+        for identifier, passed in results.items():
+            self.log.write(f"[{'PASSED' if passed else 'FAILED'}] {identifier}\n")
         self.log.flush()
 
-    @staticmethod
-    def partition_jobs(
-        jobs: list[tuple[str, Callable[[], bool]]],
-    ) -> tuple[list[tuple[str, Callable[[], bool]]], list[tuple[str, Callable[[], bool]]]]:
-        """Separate TSan from jobs whose parallel builds can starve its runtime."""
-
-        isolated = [job for job in jobs if job[0] == "thread-sanitizer"]
-        parallel = [job for job in jobs if job[0] != "thread-sanitizer"]
-        return isolated, parallel
-
     def run_all(self) -> dict[str, bool]:
-        """Run all isolated quality jobs with bounded host concurrency."""
+        """Run Preparation, resource-safe modules, and the aggregate gate."""
 
-        jobs = self.quality_jobs()
-        isolated, parallel = self.partition_jobs(jobs)
-        results = self.execute_jobs(isolated)
-        results.update(self.execute_jobs(parallel))
-        ordered_results = {name: results.get(name, False) for name, unused_job in jobs}
-        self.write_summary(ordered_results)
-        return ordered_results
+        self.update_status(self.job_state(PREPARATION.identifier), "QUEUED")
+        preparation_passed = self.run_module(PREPARATION)
+        results = {PREPARATION.identifier: preparation_passed}
+        if not preparation_passed:
+            self.skip_modules(MODULES)
+            module_results = {plan.identifier: False for plan in MODULES}
+        else:
+            module_results = self.execute_modules(MODULES)
+        results.update(module_results)
+        results[GATE.identifier] = self.finalize_gate(module_results)
+        self.write_summary(results)
+        return results

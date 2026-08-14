@@ -8,208 +8,185 @@ on:
 permissions:
   contents: read
 
+env:
+  XWALK_HOST_PACKAGES: >-
+    ansible-core clang clang-tools cmake cppcheck gcovr jq libasound2-dev
+    libclang-rt-18-dev libcurl4-openssl-dev libgmock-dev libgrpc++-dev
+    libgtest-dev libjson-c-dev libopencv-dev libprotobuf-dev libtinyxml2-dev
+    libyaml-cpp-dev llvm ninja-build nodejs protobuf-compiler
+    protobuf-compiler-grpc python3-nacl python3-yaml shellcheck valgrind
+
 jobs:
-  shellcheck:
-    name: xWalk Shell Script Analysis
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install shell and CI metadata validators
-        run: sudo apt-get update && sudo apt-get install --yes ansible-core python3-yaml shellcheck
-      - name: Analyze every repository-owned shell script
-        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh shellcheck
-
-  deployment-scripts:
-    name: xWalk Deployment Script Tests
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install script validation dependencies
-        run: sudo apt-get update && sudo apt-get install --yes shellcheck
-      - name: Validate deployment scripts
-        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh deployment-scripts
-
-  build-and-test:
-    name: xWalk Build & Test (${{ matrix.compiler }}, ${{ matrix.build_type }})
-    needs:
-      - shellcheck
-      - deployment-scripts
-    runs-on: ubuntu-24.04
-    strategy:
-      fail-fast: false
-      matrix:
-        compiler: [gcc, clang]
-        build_type: [Debug, Release]
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install host dependencies
-        run: >-
-          sudo apt-get update && sudo apt-get install --yes
-          clang libclang-rt-18-dev cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
-          protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Configure, build, test, and diagnose xWalk
-        run: >-
-          xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh build-and-test
-          ${{ matrix.compiler }} ${{ matrix.build_type }}
-
-  asan-ubsan:
-    name: xWalk Address & Undefined Behavior Sanitizers
-    needs: build-and-test
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install host dependencies
-        run: >-
-          sudo apt-get update && sudo apt-get install --yes
-          cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
-          protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Build and test with AddressSanitizer and UndefinedBehaviorSanitizer
-        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh asan-ubsan
-
-  leak-sanitizer:
-    name: xWalk Leak Sanitizer
-    needs: build-and-test
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install host dependencies
-        run: >-
-          sudo apt-get update && sudo apt-get install --yes clang cmake ninja-build
-          libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev
-          libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
-          protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Verify LSan and run the leak-enabled suite
-        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh leak-sanitizer
-
-  thread-sanitizer:
-    name: xWalk Thread Sanitizer
-    needs: build-and-test
+  preparation:
+    name: xWalk Preparation
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
-      - name: Install host dependencies
-        run: >-
-          sudo apt-get update && sudo apt-get install --yes
-          cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
-          protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Verify TSan and run focused concurrency tests
-        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh thread-sanitizer
+      - name: Install xWalk host validation dependencies
+        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+      - name: Validate shell scripts and CI metadata
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh preparation
 
-  stress-tests:
-    name: xWalk Host Stress Tests
-    needs: build-and-test
+  xwalk-agent:
+    name: xWalkAgent
+    needs: preparation
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-      - name: Install host dependencies
-        run: >-
-          sudo apt-get update && sudo apt-get install --yes
-          cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
-          protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Repeat every host test until failure
-        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh stress-tests
+      - name: Install xWalk host dependencies
+        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+      - name: Configure and build xWalkAgent
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-agent-build
+      - name: Run xWalkAgent aggregate tests
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-agent-aggregate
+      - name: Run xWalkAgent functional-group tests
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-agent-groups
+      - name: Run xWalkAgent configuration and communication tests
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-agent-functional
 
-  recorded-scenarios:
-    name: xWalk Recorded Vision Scenarios
-    needs: build-and-test
+  xwalk-controller:
+    name: xWalkController
+    needs: preparation
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-      - name: Install host dependencies
-        run: >-
-          sudo apt-get update && sudo apt-get install --yes cmake ninja-build
-          libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev
-          libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
-          protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Build and verify recorded scenarios
-        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh recorded-scenarios
+      - name: Install xWalk host dependencies
+        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+      - name: Configure and build xWalkController
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-controller-build
+      - name: Run controller, CLI, and Controller-to-HAL tests
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-controller-tests
+      - name: Run device-free deployment configuration diagnosis
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-controller-diagnostic
 
-  streaming:
-    name: xWalk Video Streaming Tests
-    needs: build-and-test
+  xwalk-hal:
+    name: xWalkHal
+    needs: preparation
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-      - name: Install host dependencies
-        run: >-
-          sudo apt-get update && sudo apt-get install --yes cmake ninja-build
-          libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev
-          libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
-          protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Build and run loopback HTTP and MJPEG lifecycle tests
-        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh streaming
+      - name: Install xWalk host dependencies
+        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+      - name: Configure and build xWalkHal
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-hal-build
+      - name: Run HAL unit and host-safe sequence tests
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-hal-unit
+      - name: Run HAL interface, device, sensor, and layer tests
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-hal-groups
+      - name: Run Robot HAT and lifecycle simulations
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-hal-simulation
+      - name: Run the device-free Robot HAT soak test
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-hal-soak
 
-  fuzz-smoke:
-    name: xWalk Fuzz Smoke Tests
-    needs: build-and-test
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install fuzz dependencies
-        run: >-
-          sudo apt-get update && sudo apt-get install --yes clang cmake ninja-build
-          libasound2-dev libcurl4-openssl-dev libjson-c-dev libopencv-dev
-          libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
-          protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Build and run bounded fuzz smoke
-        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh fuzz-smoke
-
-  soak-smoke:
-    name: xWalk Robot HAT Soak Test
-    needs: build-and-test
+  xwalk-iw:
+    name: xWalkIW
+    needs: preparation
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-      - name: Install host dependencies
-        run: >-
-          sudo apt-get update && sudo apt-get install --yes cmake ninja-build
-          libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev
-          libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
-          protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Build, run, and validate deterministic soak smoke
-        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh soak-smoke
+      - name: Install xWalk host dependencies
+        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+      - name: Configure and build xWalkIW
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-iw-build
+      - name: Run schema, serialization, gRPC, signal, and transport tests
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-iw-tests
 
-  static-analysis:
-    name: xWalk Static Analysis
-    needs: build-and-test
+  xwalk-library:
+    name: xWalkLibrary
+    needs: preparation
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-      - name: Install analysis dependencies
-        run: >-
-          sudo apt-get update && sudo apt-get install --yes
-          cmake ninja-build clang-tidy cppcheck libasound2-dev libcurl4-openssl-dev
-          libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
-          protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
+      - name: Install xWalk host dependencies
+        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+      - name: Configure and build xWalkLibrary consumers
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-library-build
+      - name: Run shared-library, configuration, utility, licence, and architecture tests
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-library-tests
+
+  xwalk-trace:
+    name: xWalkTrace
+    needs: preparation
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install xWalk host dependencies
+        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+      - name: Build and run Trace formatting, routing, macro, and selector tests
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-trace-tests
+
+  xwalk-vision:
+    name: xWalk Vision
+    needs: preparation
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install xWalk host dependencies
+        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+      - name: Configure and build recorded vision scenarios
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-vision-build
+      - name: Validate recorded media, OpenCV scenarios, safety, and assets
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-vision-tests
+
+  xwalk-streaming:
+    name: xWalk Streaming
+    needs: preparation
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install xWalk host dependencies
+        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+      - name: Configure and build xWalk Streaming
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-streaming-build
+      - name: Run loopback HTTP, MJPEG, lifecycle, timeout, and backpressure tests
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-streaming-tests
+
+  xwalk-quality:
+    name: xWalk Quality
+    needs: preparation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install xWalk quality dependencies
+        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+      - name: Run GCC Debug build and tests
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh build-and-test gcc Debug
+      - name: Run GCC Release build and tests
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh build-and-test gcc Release
+      - name: Run Clang Debug build and tests
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh build-and-test clang Debug
+      - name: Run Clang Release build and tests
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh build-and-test clang Release
+      - name: Run AddressSanitizer and UndefinedBehaviorSanitizer
+        run: timeout --signal=TERM 20m xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh asan-ubsan
+      - name: Run LeakSanitizer
+        run: timeout --signal=TERM 20m xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh leak-sanitizer
+      - name: Run ThreadSanitizer
+        run: timeout --signal=TERM 10m xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh thread-sanitizer
       - name: Run Clang-Tidy and Cppcheck
         run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh static-analysis
-
-  coverage:
-    name: xWalk Code Coverage
-    needs: build-and-test
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install coverage dependencies
-        run: >-
-          sudo apt-get update && sudo apt-get install --yes
-          clang llvm cmake ninja-build gcovr libasound2-dev libcurl4-openssl-dev
-          libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
-          protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Build, test, and generate GCC and Clang coverage reports
+      - name: Run Clang Static Analyzer
+        run: timeout --signal=TERM 30m xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh clang-static-analyzer
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: clang-static-analyzer-report
+          path: build-host/clang-analyzer/reports
+          if-no-files-found: ignore
+      - name: Run host stress tests
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh stress-tests
+      - name: Run bounded fuzz smoke tests
+        run: timeout --signal=TERM 10m xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh fuzz-smoke
+      - name: Run Valgrind analysis
+        run: timeout --signal=TERM 30m xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh valgrind
+      - name: Generate GCC and Clang coverage
         run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh coverage
       - uses: actions/upload-artifact@v6
+        if: always()
         with:
-          name: coverage-report
+          name: xwalk-coverage-reports
           path: |
             build-host/coverage/coverage.html
             build-host/coverage/coverage.*.html
@@ -218,58 +195,19 @@ jobs:
             build-host/coverage-clang/coverage-summary.txt
             build-host/coverage-clang/coverage.json
             build-host/coverage-clang/html
-
-  valgrind:
-    name: xWalk Valgrind Analysis
-    needs: build-and-test
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install host and Valgrind dependencies
-        run: >-
-          sudo apt-get update && sudo apt-get install --yes cmake ninja-build valgrind
-          libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev
-          libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
-          protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Validate descriptors and run focused CTest MemCheck suite
-        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh valgrind
-
-  clang-static-analyzer:
-    name: xWalk Clang Static Analyzer
-    needs: build-and-test
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install host and analyzer dependencies
-        run: >-
-          sudo apt-get update && sudo apt-get install --yes clang clang-tools libclang-rt-18-dev cmake ninja-build
-          libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev
-          libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler
-          protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Run Clang Static Analyzer
-        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh clang-static-analyzer
-      - uses: actions/upload-artifact@v6
-        if: always()
-        with:
-          name: clang-static-analyzer-report
-          path: build-host/clang-analyzer/reports
           if-no-files-found: ignore
 
-  staged-install:
-    name: xWalk Staged Installation
-    needs: build-and-test
+  xwalk-deployment:
+    name: xWalk Deployment
+    needs: preparation
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-      - name: Install host dependencies
-        run: >-
-          sudo apt-get update && sudo apt-get install --yes
-          cmake ninja-build libasound2-dev libcurl4-openssl-dev
-          libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl
-          protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
-      - name: Build and verify the staged installation
+      - name: Install xWalk deployment dependencies
+        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+      - name: Validate deployment and provisioning scripts
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh deployment-scripts
+      - name: Build and validate the staged installation
         run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh staged-install
       - uses: actions/upload-artifact@v6
         with:
@@ -281,25 +219,18 @@ jobs:
     runs-on: ubuntu-24.04
     if: always()
     needs:
-      - build-and-test
-      - asan-ubsan
-      - leak-sanitizer
-      - thread-sanitizer
-      - stress-tests
-      - recorded-scenarios
-      - streaming
-      - fuzz-smoke
-      - soak-smoke
-      - static-analysis
-      - coverage
-      - valgrind
-      - clang-static-analyzer
-      - shellcheck
-      - deployment-scripts
-      - staged-install
-
+      - xwalk-agent
+      - xwalk-controller
+      - xwalk-hal
+      - xwalk-iw
+      - xwalk-library
+      - xwalk-trace
+      - xwalk-vision
+      - xwalk-streaming
+      - xwalk-quality
+      - xwalk-deployment
     steps:
-      - name: Verify all xWalk Host Quality jobs
+      - name: Verify all xWalk module results
         env:
           JOB_RESULTS: ${{ toJSON(needs) }}
         run: |
@@ -307,8 +238,8 @@ jobs:
 
           if ! printf '%s\n' "$JOB_RESULTS" |
               jq --exit-status 'all(.[]; .result == "success")' >/dev/null; then
-              echo "::error::One or more xWalk Host Quality jobs did not succeed."
+              echo "::error::One or more xWalk module jobs did not succeed."
               exit 1
           fi
 
-          echo "All xWalk Host Quality jobs completed successfully."
+          echo "All xWalk module jobs completed successfully."

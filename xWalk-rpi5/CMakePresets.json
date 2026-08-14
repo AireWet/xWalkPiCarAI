@@ -56,8 +56,8 @@
       "inherits": "host-debug",
       "binaryDir": "${sourceParentDir}/build-host/leak-sanitizer",
       "environment": {
-        "CC": "clang",
-        "CXX": "clang++"
+        "CC": "gcc",
+        "CXX": "g++"
       },
       "cacheVariables": {
         "XWALK_ENABLE_SANITIZERS": "ON"
@@ -68,8 +68,8 @@
       "inherits": "host-debug",
       "binaryDir": "${sourceParentDir}/build-host/thread-sanitizer",
       "environment": {
-        "CC": "clang",
-        "CXX": "clang++"
+        "CC": "gcc",
+        "CXX": "g++"
       },
       "cacheVariables": {
         "XWALK_ENABLE_THREAD_SANITIZER": "ON"

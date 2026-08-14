@@ -1,120 +1,168 @@
 # Gerrit CI configuration
 
-## Architecture
+## Active architecture
 
-xWalk uses two independent Host Quality integrations:
+The local xWalk Gerrit service uses the repository-owned Python worker, not Zuul. `xWalkGerritCi.py` maintains a
+noninteractive SSH `gerrit stream-events` connection, selects active `patchset-created` and WIP-to-active events,
+fetches the exact patch-set ref into a temporary checkout, and invokes `xWalkGerritQuality.py`. The runner calls
+`xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh`, which is also used by GitHub Actions.
 
-- GitHub Actions reads `.github/workflows/host-quality.yml` for GitHub push and pull-request events.
-- Gerrit Code Review delegates patch-set and gate execution to an externally installed Zuul service.
-- Zuul reads the repository-owned `.zuul.yaml` and executes the Ansible playbooks under `xWalkTool/shell-agent/env-tool/playbooks/zuul`.
-- Both integrations call `xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh`, which owns the substantive host-safe commands.
+`xWalkGerritLogServer.py` serves the existing read-only dashboard through Caddy at
+`/ci/changes/<change>/<patch-set>`. Each run retains:
 
-Gerrit does not execute GitHub Actions YAML. Committing `.zuul.yaml` also does not install Zuul, Nodepool, an
-executor, a Gerrit connection, or a log server. A Gerrit or Zuul administrator must provide those services.
+- one complete redacted log named `change-<change>-<patch-set>-<timestamp>.log`;
+- one atomic structured-state sidecar with module/check status, dependencies, timestamps, and durations;
+- stable module routes below `/ci/changes/<change>/<patch-set>/jobs/<module>`.
 
-The previous local Gerrit event worker must not vote alongside Zuul. Disable that worker after Zuul is connected
-and verified, otherwise two services can race to report different `Verified` votes for the same patch set.
+The page and dependency connectors are server-rendered HTML and CSS. No JavaScript, client graph library, external
+CDN, or separate dashboard service is used. Historical logs without a structured sidecar retain raw and complete
+log access.
 
-## Repository-controlled job graph
+The repository also retains `.zuul.yaml` and example playbooks for a possible administrator-managed Zuul
+deployment. They are not used by the current worker and do not install or activate Zuul. Never run Zuul and the
+Python worker against the same project because competing services can race to vote on one patch set.
 
-The `xwalk-shellcheck` and `xwalk-deployment-scripts` jobs run first. The four GCC/Clang Debug/Release build jobs
-depend on both. Sanitizer, stress, scenario, streaming, fuzz, soak, analysis, coverage, Valgrind, and installation
-jobs depend on all four build jobs. `xwalk-host-quality-gate` has hard `dependencies:` on every preceding job.
+## Module dependency graph
 
-Zuul runs a job only after all hard dependencies complete successfully. An upstream failure marks dependent jobs
-as skipped, so the final gate cannot run or report success after a required failure. The gate playbook performs a
-lightweight repository metadata check; dependency processing is the authoritative aggregation mechanism.
-`parent:` is not used for ordering.
+GitHub Actions controls the appearance of its native rectangular job nodes. The Gerrit page renders the equivalent
+three-stage graph:
 
-Every job is registered in both the `check` and `gate` project pipelines. No repository configuration submits a
-change automatically.
-
-## Ubuntu 24.04 node image
-
-The repository defines the `xwalk-ubuntu-24.04` nodeset with the external label
-`ubuntu-24.04-xwalk-ci`. The Zuul administrator must map that label to a maintained Ubuntu 24.04 image containing
-the same compiler, CMake, Ninja, library, sanitizer, analyzer, coverage, Valgrind, ShellCheck, Python, Protobuf,
-gRPC, OpenCV, and Ansible dependencies used by GitHub Host Quality.
-
-Jobs never use interactive or password-based `sudo`. Package installation belongs in the node image or in a
-trusted administrator-owned base job. TSan and LSan must be allowed to initialize, and loopback sockets must be
-available for host streaming tests. No node may expose Raspberry Pi or Robot HAT devices to these jobs.
-
-The administrator-owned base job should run the standard Zuul `fetch-output` log collection. Repository
-post-playbooks stage available coverage, analyzer, Valgrind, soak, and staged-install reports below
-`$HOME/zuul-output/artifacts` for that mechanism.
-
-## Service account and Gerrit permissions
-
-Create a dedicated `xwalk-ci` Gerrit service account. Register only its public SSH key and store the private key in
-the Zuul connection secret store, outside this repository. Grant only:
-
-- read access to the xWalk project and its patch-set refs;
-- event-stream access required by the Gerrit driver;
-- `Verified -1..+1` on the project;
-- no project ownership, force push, branch deletion, or server administration.
-
-The recommended result mapping is `Verified +1` when every required job succeeds and `Verified -1` when any
-required job fails. Configure a Gerrit submit requirement that requires the current patch set to hold a successful
-CI `Verified +1` vote before submission.
-
-## Administrator-side Zuul configuration
-
-Pipeline definitions belong in a trusted Zuul config project, not this untrusted product repository. The following
-is an administrator-side example; replace `gerrit` with the configured connection name and adapt the gate approval
-to the reviewed local policy:
-
-```yaml
-- pipeline:
-    name: check
-    manager: independent
-    trigger:
-      gerrit:
-        - event: patchset-created
-        - event: wip-state-changed
-    success:
-      gerrit:
-        Verified: 1
-    failure:
-      gerrit:
-        Verified: -1
-
-- pipeline:
-    name: gate
-    manager: dependent
-    trigger:
-      gerrit:
-        - event: comment-added
-          approval:
-            - Code-Review: 2
-    success:
-      gerrit:
-        Verified: 1
-    failure:
-      gerrit:
-        Verified: -1
+```text
+xWalk Preparation -> xWalkAgent      -> xWalk Host Quality Gate
+                  -> xWalkController ->
+                  -> xWalkHal        ->
+                  -> xWalkIW         ->
+                  -> xWalkLibrary    ->
+                  -> xWalkTrace      ->
+                  -> xWalk Vision    ->
+                  -> xWalk Streaming ->
+                  -> xWalk Quality   ->
+                  -> xWalk Deployment ->
 ```
 
-The `patchset-created` event validates each active upload in `check`. If the Gerrit driver filters WIP changes,
-configure the WIP-to-active event according to the installed Gerrit and Zuul versions. The reviewed gate approval
-event enqueues the change in `gate` before submission. Do not add a submit reporter or automatic submission unless
-the project owner separately authorizes that server-side policy.
+Preparation runs first. The ten independent module nodes then run with bounded parallelism. The xWalk Quality node
+runs its compiler, sanitizer, static-analysis, runtime-analysis, and coverage checks sequentially so incompatible
+instrumentation never shares one build. The gate passes only when every required node passes. A failed Preparation
+marks dependent modules `SKIPPED`; failed, cancelled, skipped, missing, or malformed results cannot produce a
+passing gate.
 
-The administrator must also:
+The dashboard supports `WAITING`, `PENDING`, `QUEUED`, `RUNNING`, `PASSED`, `FAILED`, `SKIPPED`, and `CANCELLED`.
+Every graph node links to its module details and retained output. The raw full-log link and complete log remain on
+the main page.
 
-1. Install and operate Zuul, ZooKeeper, an executor, scheduler, web service, and an approved node provider.
-2. Configure the Gerrit connection and service-account key without exposing it to job nodes or logs.
-3. Add the xWalk Gerrit project to the tenant and allow repository `.zuul.yaml` configuration.
-4. Provide the `ubuntu-24.04-xwalk-ci` node label and a base job that copies the speculative checkout to the node.
-5. Make that base job collect `$HOME/zuul-output` through Zuul's standard `fetch-output` mechanism.
-6. Validate the `check` and `gate` event filters, `Verified` reporting, and submit requirement on a test change.
-7. Rotate the service key through the Zuul secret store and Gerrit account without changing repository files.
+## Module-to-test mapping
+
+| Module | Owned checks |
+|---|---|
+| xWalk Preparation | ShellCheck, CI YAML and Ansible metadata validation |
+| xWalkAgent | Aggregate tests, functional-group tests, configuration and communication handlers |
+| xWalkController | Controller lifecycle, CLI, Controller-to-HAL sequences, `--diagnose --no-hardware` |
+| xWalkHal | Unit and host-safe sequences, interface/device/sensor/layer groups, simulations, Robot HAT soak |
+| xWalkIW | Schema, serialization, gRPC, signal/payload, and transport-interface coverage |
+| xWalkLibrary | Shared utilities, configuration, licence, architecture, and direct-consumer integration |
+| xWalkTrace | Formatting, routing, error/warning macros, and error-signal selection |
+| xWalk Vision | Recorded media/scenarios, OpenCV, road-user safety, assets, annotations, and checksums |
+| xWalk Streaming | Loopback HTTP, MJPEG, limits, lifecycle, timeouts, slow clients, and backpressure |
+| xWalk Quality | Compiler builds, sanitizers, analysis, stress, fuzz, Valgrind, and coverage |
+| xWalk Deployment | Deployment/provisioning scripts, staged install, resources, linkage, permissions, checksums |
+
+The xWalk Quality node keeps the graph module-oriented without reducing coverage. Every prior compiler, sanitizer,
+runtime-analysis, coverage, fuzz, stress, analyzer, and timeout selection remains in the shared dispatcher and is
+reported as an individual test result on the node's detail page.
+
+## Original-job mapping
+
+| Previous flat job or GitHub node | Current module or quality group |
+|---|---|
+| `gerrit-host` | Product modules plus the xWalk Quality GCC Debug check |
+| `gcc Debug`, `gcc Release`, `clang Debug`, `clang Release` | xWalk Quality |
+| `asan-ubsan`, `leak-sanitizer`, `sanitizers`, `thread-sanitizer` | xWalk Quality |
+| `stress-tests`, `fuzz-smoke`, `valgrind` | xWalk Quality |
+| `static-analysis`, `clang-static-analyzer` | xWalk Quality |
+| `coverage` | xWalk Quality |
+| `recorded-scenarios` | xWalk Vision |
+| `streaming` | xWalk Streaming |
+| `soak-smoke` | xWalkHal |
+| `shellcheck` | xWalk Preparation |
+| `deployment-scripts`, `staged-install` | xWalk Deployment |
+
+## Gerrit result calculation
+
+After checkout and any component standalone validation, the worker runs the complete module graph. It reports
+`Verified +1` only when Preparation, every product module, every quality group, Deployment, and the final gate
+pass. Any checkout, standalone, module, or gate failure reports `Verified -1`. The worker posts the overall
+dashboard link when verification starts. After execution, it posts one uniquely tagged Gerrit change-log entry
+for Preparation and each module, then posts the Host Quality Gate as the single entry that carries the final
+`Verified` vote. It never submits the change.
+
+Grant the `xwalk-ci` service account only:
+
+- read access to the project and patch-set refs;
+- permission to consume the Gerrit event stream;
+- `Verified -1..+1` on the project.
+
+Keep ownership, branch administration, submit, force-push, passwords, private keys, and API tokens out of the CI
+identity and repository. Configure a Gerrit submit requirement that requires the current patch set's successful
+`Verified +1` vote.
+
+## Opening results and logs
+
+Open `/ci/changes/<change>/<patch-set>` for the graph, overall status, module details, complete log, and raw-log
+link. Select any module node or its **Open module log** link for that module's individual check states and output.
+Keyboard focus is visible, status is communicated by text and icon as well as colour, and the graph stacks
+vertically on narrow displays.
+
+## Adding a module or check
+
+To add a real validation group:
+
+1. Add a dispatcher selection to `run-host-ci-job.sh` that returns nonzero on failure and remains host-safe.
+2. Add the check to the matching `XWalkModulePlan`, or add a new module plan with `needs=("preparation",)`.
+3. Add the same GitHub job or named step and dependency in `.github/workflows/host-quality.yml`.
+4. Add the module display name to `XWalkGerritLogServer.MODULES` when introducing a new graph node.
+5. Add runner, dependency, gate, rendering, escaping, and module-route tests.
+6. Update this mapping only for a real module or meaningful validation group; never add an empty display job.
+
+## Installation and operation
+
+The installer copies the three CI Python programs into `$HOME/apps/gerrit/tools`. After installing Gerrit, start
+and inspect the worker separately:
+
+```bash
+"$HOME/bin/gerrit-ci-control" start
+"$HOME/bin/gerrit-ci-control" status
+"$HOME/bin/gerrit-ci-logs"
+```
+
+Verify the HTTPS route:
+
+```bash
+curl --fail --show-error --silent --cacert "$HOME/gerrit-site/etc/gerrit-self-signed.crt" "https://SERVER:18443/ci/health"
+```
+
+Set `XWALK_CADDY_TEST_BINARY` and `XWALK_CADDY_TEST_ARCHIVE` in `$HOME/.xwalk-ci.env` to the installed pinned
+Caddy executable and retained verified release archive. These opt-in inputs enable the real configuration,
+lifecycle, and extraction tests; they remain skipped on hosts that do not install the local HTTPS proxy.
+
+After a reviewed runner update is submitted, an administrator can reinstall the approved tool assets through the
+normal Gerrit installer workflow. For a controlled in-place update, stop the worker, copy the three reviewed Python
+files with their existing modes into `$HOME/apps/gerrit/tools`, and restart it. Do not replace files while the
+worker is running.
+
+```bash
+"$HOME/bin/gerrit-ci-control" stop
+install -m 0700 xWalkTool/py-agent/gerrit-tool/py-src/xWalkGerritCi.py "$HOME/apps/gerrit/tools/xWalkGerritCi.py"
+install -m 0600 xWalkTool/py-agent/gerrit-tool/py-src/xWalkGerritQuality.py "$HOME/apps/gerrit/tools/xWalkGerritQuality.py"
+install -m 0600 xWalkTool/py-agent/gerrit-tool/py-src/xWalkGerritLogServer.py "$HOME/apps/gerrit/tools/xWalkGerritLogServer.py"
+"$HOME/bin/gerrit-ci-control" start
+"$HOME/bin/gerrit-ci-control" status
+```
+
+Administrator-side work remains necessary for the service account, SSH key permissions, `Verified` label range,
+submit requirement, Caddy `/ci` proxy, host dependencies, and credential rotation. Repository changes do not alter
+those server settings.
 
 ## Host safety
 
-All jobs operate on the Zuul-provided speculative checkout. They use simulations, recorded fixtures, loopback
-networking, and the controller's `--diagnose --no-hardware` mode. They never run physical Raspberry Pi, GPIO,
-camera commissioning, motor, servo, sensor, or Robot HAT tests.
-
-GitHub synchronization remains a separate post-submit integration service. Zuul Host Quality does not push to
-GitHub and contains no GitHub, Gerrit, SSH, API, or password credentials.
+All jobs use simulated backends, recorded fixtures, loopback networking, and `--diagnose --no-hardware`. They never
+commission or actuate Raspberry Pi GPIO, I²C, SPI, cameras, audio devices, motors, servos, sensors, or a Robot HAT.

@@ -246,8 +246,11 @@ ThreadSanitizer, GCC coverage, and Clang coverage in separate host build
 directories. Never combine TSan with another sanitizer or coverage in one
 executable. Verify LSan and TSan availability with the dedicated negative
 probes, and classify runtime initialization failures as environment blocks
-rather than passes. Use the root presets for repeat-under-load host verification
-so a failure stops the bounded repetition immediately.
+rather than passes. Use the GCC sanitizer runtime for LSan and TSan on the
+reviewed Ubuntu host. Run TSan probe and test processes with per-process ASLR
+disabled through `setarch -R`; never change the host-wide kernel ASLR setting.
+Use the root presets for repeat-under-load host verification so a failure stops
+the bounded repetition immediately.
 
 Keep GitHub and Gerrit/Zuul Host Quality behavior aligned through
 `xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh`. GitHub retains its workflow under

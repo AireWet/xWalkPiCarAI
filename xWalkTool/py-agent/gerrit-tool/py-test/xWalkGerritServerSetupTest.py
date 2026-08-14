@@ -470,9 +470,11 @@ class GerritServerSetupTest(unittest.TestCase):
             )
             bin_directory = home / "bin"
             bin_directory.mkdir()
+            for name in ("gerrit-caddy-control", "gerrit-site-check"):
+                target = bin_directory / name
+                shutil.copyfile(GERRIT_ROOT / "bin" / name, target)
+                target.chmod(0o700)
             control = bin_directory / "gerrit-caddy-control"
-            shutil.copyfile(GERRIT_ROOT / "bin" / control.name, control)
-            control.chmod(0o700)
             environment = os.environ.copy()
             environment["HOME"] = str(home)
             try:

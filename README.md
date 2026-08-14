@@ -153,28 +153,38 @@ git config --file "$HOME/gerrit-site/etc/gerrit.config" --get gerrit.canonicalWe
 ```
 
 The local profile normally exposes Gerrit SSH on port `29419`. Installation details and troubleshooting are in the
-[local Gerrit guide](xWalkTool/py-agent/gerrit-tool/local-linux/README.md). Administrators operating the managed server profile
-should use the separate [Gerrit administration guide](xWalkTool/py-agent/gerrit-tool/README.md).
+[local Gerrit guide](xWalkTool/py-agent/gerrit-tool/local-linux/README.md). Administrators operating the managed
+server profile should use the separate [Gerrit administration guide](xWalkTool/py-agent/gerrit-tool/README.md).
 
 ### Run Gerrit Host Quality CI
 
-Gerrit Host Quality CI is implemented by an external Zuul deployment. Gerrit does not execute the GitHub Actions
-workflow, and this repository cannot start Zuul, Nodepool, or the executor. A Gerrit or Zuul administrator must
-install and start those services, connect Zuul to Gerrit, provide the `ubuntu-24.04-xwalk-ci` node label, and grant
-the Zuul service account permission to vote on `Verified`.
+The current local Gerrit integration uses the repository-owned Python event worker. It listens to Gerrit's SSH
+event stream, checks each active patch set in an isolated checkout, runs the module-oriented Host Quality graph,
+serves the existing `/ci/changes/<change>/<patch-set>` results page, and reports `Verified +1` or `Verified -1`.
+Gerrit does not execute the GitHub Actions workflow.
 
-The repository supplies the job graph in [`.zuul.yaml`](.zuul.yaml), its playbooks under `xWalkTool/shell-agent/env-tool/playbooks/zuul`, and the
-shared job implementation under `xWalkTool/shell-agent`. See the
-[Gerrit CI configuration guide](xWalkTool/py-agent/gerrit-tool/DevloperNote/Doc/note/Gerrit%20CI%20Configuration.md) for the
-required administrator-side setup and service checks. Do not run the legacy local Gerrit CI worker alongside Zuul,
-because both services could vote on the same patch set.
+Starting Gerrit does not start this worker. Start and inspect it separately:
 
-Starting Gerrit does not start Host Quality CI. The Zuul scheduler, executor, web service, and Nodepool launcher are
-administrator-managed services outside this repository. Their exact service commands depend on the external Zuul
-deployment; confirm that they are running and connected to Gerrit before uploading an active patch set.
+```bash
+"$HOME/bin/gerrit-ci-control" start
+"$HOME/bin/gerrit-ci-control" status
+"$HOME/bin/gerrit-ci-logs"
+```
 
-After Gerrit and Zuul are online, create a signed-off commit and upload an active patch set. The upload triggers
-the Zuul `check` pipeline automatically:
+Verify the server-rendered dashboard health without exposing credentials:
+
+```bash
+curl --fail --show-error --silent --cacert "$HOME/gerrit-site/etc/gerrit-self-signed.crt" "https://192.168.1.158:18443/ci/health"
+```
+
+The worker configuration and least-privilege `xwalk-ci` SSH identity are administrator-owned. See the
+[Gerrit CI configuration guide](xWalkTool/py-agent/gerrit-tool/DevloperNote/Doc/note/Gerrit%20CI%20Configuration.md)
+for installation, module mapping, dashboard routes, `Verified` calculation, and restart instructions. The retained
+`.zuul.yaml` is usable only if an administrator deliberately deploys Zuul; repository YAML does not install or
+activate Zuul, and two CI backends must never vote on the same project.
+
+After Gerrit and the selected CI worker are online, create a signed-off commit and upload an active patch set. The
+upload triggers Host Quality automatically:
 
 ```bash
 git add <files>
@@ -188,14 +198,12 @@ Upload work in progress without triggering CI by adding `%wip`:
 git push gerrit HEAD:refs/for/master%wip
 ```
 
-Selecting **Mark As Active** in Gerrit triggers CI for the current WIP patch set. The administrator-configured gate
-event runs the same Host Quality jobs before submission; repository configuration does not automatically submit a
-change.
+Selecting **Mark As Active** in Gerrit triggers CI for the current WIP patch set. CI does not submit a change.
 
 Run representative repository-owned checks locally before uploading:
 
 ```bash
-xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh shellcheck
+xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh preparation
 xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh deployment-scripts
 xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh build-and-test gcc Debug
 ```
