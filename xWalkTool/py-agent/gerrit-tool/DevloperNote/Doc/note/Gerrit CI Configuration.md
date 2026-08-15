@@ -97,17 +97,21 @@ configured enforcement policy, and the final gate
 pass. Any checkout, standalone, module, or gate failure reports `Verified -1`. The worker posts the overall
 dashboard link when verification starts. After execution, it posts one uniquely tagged Gerrit change-log entry
 for Preparation and each module, then posts the Host Quality Gate as the single entry that carries the final
-`Verified` vote. It never submits the change.
+`Verified` vote. By default it does not submit. When the guarded integrated
+submit policy is enabled, it re-queries the current `xWalkPiCarAI` patch set and
+requests submission only after Gerrit's complete submit record is `OK`.
 
 Grant the `xwalk-ci` service account only:
 
 - read access to the project and patch-set refs;
 - permission to consume the Gerrit event stream;
 - `Verified -1..+1` on the project.
+- integration-review upload and submit permission on `xWalkPiCarAI/master`.
 
-Keep ownership, branch administration, submit, force-push, passwords, private keys, and API tokens out of the CI
-identity and repository. Configure a Gerrit submit requirement that requires the current patch set's successful
-`Verified +1` vote.
+Keep ownership, direct branch push, force-push, `Code-Review`, passwords,
+private keys, and API tokens out of the CI identity and repository. Configure
+the current-patch-set requirements documented in the
+[integrated uplift workflow](Integrated%20Uplift%20Workflow.md).
 
 ## Opening results and logs
 

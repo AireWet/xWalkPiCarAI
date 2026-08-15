@@ -19,6 +19,11 @@ network tunnel.
 
 ## Required configuration
 
+The current integrated uplift and synchronization workflow is documented in
+[`Integrated Uplift Workflow.md`](DevloperNote/Doc/note/Integrated%20Uplift%20Workflow.md). It defines the eight
+component mappings, complete CI gate, current-patch-set submission checks, service-account boundaries, audit log,
+retries, recovery, and remaining administrator activation steps.
+
 Edit `config/gerrit-setup.conf` before installation:
 
 ```bash
@@ -30,9 +35,9 @@ export GERRIT_ADMIN_USER="joxy"
 export GERRIT_ADMIN_NAME="Joxy John"
 export GERRIT_ADMIN_ROLE="Student"
 export GERRIT_ADMIN_EMAIL="joxjoh24@student.hh.se"
-export GERRIT_PROJECT="xWalk-rpi5"
-export GERRIT_BRANCH="main"
-export GERRIT_VERIFICATION_TARGETS="xWalk-rpi5:main,xWalkPiCarAI:master"
+export GERRIT_PROJECT="xWalkPiCarAI"
+export GERRIT_BRANCH="master"
+export GERRIT_VERIFICATION_TARGETS="xWalkPiCarAI:master,DevloperNote:main,xWalkAgent:main,xWalkAudioResources:main,xWalkController:main,xWalkHal:main,xWalkIW:main,xWalkLibrary:main,xWalkTrace:main"
 export GERRIT_HTTPS_PORT="18443"
 export GERRIT_SSH_PORT="29418"
 export GERRIT_HTTP_PORT="8080"

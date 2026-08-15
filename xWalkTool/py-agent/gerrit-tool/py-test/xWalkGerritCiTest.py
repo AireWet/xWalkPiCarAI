@@ -25,6 +25,13 @@ class XWalkGerritCiTest(unittest.TestCase):
         """Create a verifier without initializing host service resources."""
 
         self.ci = XWalkGerritCi.__new__(XWalkGerritCi)
+        self.ci.user = "xwalk-ci"
+        self.ci.host = "gerrit.example"
+        self.ci.web_url = "https://gerrit.example"
+        self.ci.port = "29418"
+        self.ci.private_key = pathlib.Path("/key")
+        self.ci.github_private_key = pathlib.Path("/github-key")
+        self.ci.state_directory = pathlib.Path("/state")
         self.ci.project = "xWalk-rpi5"
         self.ci.branch = "main"
         self.ci.verification_targets = {
@@ -38,6 +45,12 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.ci.github_push_enabled = True
         self.ci.github_direct_push_owner_email = "owner@example.test"
         self.ci.uplift_enabled = False
+        self.ci.integration_project = "xWalkPiCarAI"
+        self.ci.integration_branch = "master"
+        self.ci.auto_submit = False
+        self.ci.auto_review = False
+        self.ci.retry_attempts = 1
+        self.ci.retry_delay_seconds = 0
 
     @staticmethod
     def verification_event(
@@ -387,8 +400,8 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.assertEqual(event["newRev"], revision)
         self.assertEqual(event["patchSet"], {"number": 2})
 
-    def test_module_checkout_uses_private_integration_baseline(self) -> None:
-        """Overlay a module patch set onto exact xWalk-rpi5 submodules."""
+    def test_module_checkout_uses_integrated_source_baseline(self) -> None:
+        """Overlay a module patch set onto the current xWalkPiCarAI source tree."""
 
         self.ci.project = "xWalkHal"
         self.ci.user = "ci"
@@ -397,11 +410,12 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.ci.private_key = pathlib.Path("/key")
         self.ci.state_directory = pathlib.Path("/state")
         commands = [command for command, unused_environment in self.ci.checkout_commands("refs/changes/1")]
-        self.assertIn("/xWalk-rpi5", commands[1][-1])
-        self.assertIn(["git", "submodule", "update", "--init", "--recursive"], commands)
+        self.assertIn("/xWalkPiCarAI", commands[1][-1])
         self.assertIn(
-            ["git", "-C", "xWalkHal", "fetch", "origin", "refs/changes/1"], commands
+            ["git", "-C", ".xwalk-overlay-xWalkHal", "fetch", "origin", "refs/changes/1"],
+            commands,
         )
+        self.assertTrue(any("overlay-gerrit-component.sh" in command[0] for command in commands))
 
     def test_legacy_monorepository_checkout_fetches_its_patch_set_directly(self) -> None:
         """Run the full graph from the reviewed legacy monorepository revision."""
@@ -527,6 +541,143 @@ class XWalkGerritCiTest(unittest.TestCase):
         event["change"]["project"] = "xWalkHal"
         environment = self.ci.code_health_environment(event)
         self.assertIn("integrated MyPiCarX", environment["XWALK_CODESCENE_UNAVAILABLE_REASON"])
+
+    def ready_change(self, revision: str = "a" * 40, patch_set: int = 2) -> dict[str, object]:
+        """Return one current integrated change satisfying every submit requirement."""
+
+        return {
+            "number": 82,
+            "project": "xWalkPiCarAI",
+            "branch": "master",
+            "status": "NEW",
+            "mergeable": True,
+            "currentPatchSet": {
+                "number": patch_set,
+                "revision": revision,
+                "approvals": [
+                    {"type": "Verified", "value": "1", "by": {"username": "xwalk-ci"}},
+                    {"type": "Code-Review", "value": "2", "by": {"username": "reviewer"}},
+                ],
+            },
+            "submitRecords": [{"status": "OK"}],
+        }
+
+    def test_failed_integrated_ci_produces_verified_minus_one(self) -> None:
+        """Convert any mandatory job failure into the blocking Gerrit vote."""
+
+        vote, message = self.ci.verification_message(
+            82, 2, False, {"gcc-debug": True, "clang-release": False},
+            "https://ci.example/82/2", pathlib.Path("failure.log"),
+        )
+        self.assertEqual(vote, -1)
+        self.assertIn("clang-release", message)
+
+    def test_missing_code_review_blocks_submission(self) -> None:
+        """Never submit an uplift without an authorized Code-Review +2."""
+
+        details = self.ready_change()
+        details["currentPatchSet"]["approvals"] = [
+            {"type": "Verified", "value": "1", "by": {"username": "xwalk-ci"}}
+        ]
+        ready, reason = self.ci.submission_readiness(details, 2, "a" * 40)
+        self.assertFalse(ready)
+        self.assertIn("Code-Review +2", reason)
+
+    def test_new_patchset_invalidates_old_approval_and_ci_result(self) -> None:
+        """Reject labels when the event revision is no longer Gerrit's current patch set."""
+
+        ready, reason = self.ci.submission_readiness(self.ready_change(patch_set=3), 2, "a" * 40)
+        self.assertFalse(ready)
+        self.assertIn("superseded", reason)
+
+    def test_successful_automatic_submission_uses_exact_patchset(self) -> None:
+        """Submit the current revision only after Gerrit reports every requirement satisfied."""
+
+        self.ci.user = "xwalk-ci"
+        self.ci.host = "gerrit.example"
+        self.ci.auto_submit = True
+        event = {
+            "change": {"number": 82, "project": "xWalkPiCarAI", "branch": "master"},
+            "patchSet": {"number": 2, "revision": "a" * 40},
+        }
+        completed = mock.Mock(returncode=0)
+        with mock.patch.object(self.ci, "change_details", return_value=self.ready_change()), \
+                mock.patch.object(self.ci, "run_ssh", return_value=completed) as run, \
+                mock.patch.object(self.ci, "append_changelog"):
+            submitted = self.ci.submit_if_ready(event)
+        self.assertTrue(submitted)
+        self.assertIn("--submit", run.call_args.args[0])
+        self.assertIn("82,2", run.call_args.args[0])
+
+    def test_integration_merge_cannot_create_recursive_uplift(self) -> None:
+        """Ignore integrated and GitHub events in the component-uplift selector."""
+
+        self.ci.uplift_enabled = True
+        event = {
+            "type": "change-merged",
+            "change": {"project": "xWalkPiCarAI", "branch": "master"},
+            "patchSet": {"number": 2},
+            "newRev": "a" * 40,
+        }
+        self.assertFalse(self.ci.matching_uplift_event(event))
+
+    def test_temporary_gerrit_failure_is_retried(self) -> None:
+        """Recover after a temporary SSH failure without hiding a permanent failure."""
+
+        self.ci.user = "xwalk-ci"
+        self.ci.host = "gerrit.example"
+        self.ci.port = "29418"
+        self.ci.private_key = pathlib.Path("/key")
+        self.ci.state_directory = pathlib.Path("/state")
+        self.ci.retry_attempts = 2
+        failed = mock.Mock(returncode=255)
+        passed = mock.Mock(returncode=0)
+        with mock.patch("xWalkGerritCi.subprocess.run", side_effect=[failed, passed]) as run, \
+                mock.patch("xWalkGerritCi.time.sleep"):
+            result = self.ci.run_ssh("gerrit version")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(run.call_count, 2)
+
+    def test_permanent_gerrit_validation_failure_is_not_retried(self) -> None:
+        """Stop immediately when Gerrit rejects a command for a non-network reason."""
+
+        self.ci.user = "xwalk-ci"
+        self.ci.host = "gerrit.example"
+        self.ci.port = "29418"
+        self.ci.private_key = pathlib.Path("/key")
+        self.ci.state_directory = pathlib.Path("/state")
+        self.ci.retry_attempts = 3
+        rejected = mock.Mock(returncode=1)
+        with mock.patch("xWalkGerritCi.subprocess.run", return_value=rejected) as run:
+            result = self.ci.run_ssh("gerrit review --submit 82,2")
+        self.assertEqual(result.returncode, 1)
+        run.assert_called_once()
+
+    def test_github_synchronization_failure_remains_failed(self) -> None:
+        """Do not convert a rejected GitHub push into a successful synchronization."""
+
+        revision = "a" * 40
+        with tempfile.TemporaryDirectory() as directory:
+            log_path = pathlib.Path(directory) / "mirror.log"
+            with mock.patch.object(self.ci, "mirror_commands", return_value=[]), \
+                    mock.patch.object(
+                        self.ci, "command_output",
+                        side_effect=[revision, f"{'b' * 40}\trefs/heads/main"],
+                    ), mock.patch.object(self.ci, "run_network_command", return_value=False):
+                mirrored, unused_branch = self.ci.execute_mirror(
+                    revision, "", pathlib.Path(directory), log_path
+                )
+        self.assertFalse(mirrored)
+
+    def test_uplift_script_has_lock_and_duplicate_event_marker(self) -> None:
+        """Keep concurrent and repeated source-merge events idempotent."""
+
+        script = (
+            pathlib.Path(__file__).parents[1] / "shell-script/gerrit-auto-uplift.sh"
+        ).read_text(encoding="utf-8")
+        self.assertIn("flock -x", script)
+        self.assertIn("Duplicate merged-change event was already processed", script)
+        self.assertIn("uplift-${module}-${source_change}", script)
 
 
 class XWalkGerritQualityTest(unittest.TestCase):

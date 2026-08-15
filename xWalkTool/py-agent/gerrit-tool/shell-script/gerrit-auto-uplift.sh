@@ -8,164 +8,206 @@ source "$script_dir/xwalk-gerrit-common.sh"
 
 usage()
 {
-    echo "Usage: gerrit-auto-uplift.sh --dry-run|--apply REPOSITORY COMMIT CHANGE [TOPIC]" >&2
+    echo "Usage: gerrit-auto-uplift.sh --dry-run|--apply MODULE COMMIT CHANGE PATCHSET" >&2
     exit 2
 }
-[[ "$#" -ge 4 && "$#" -le 5 ]] || usage
+
+[[ "$#" -eq 6 ]] || usage
 xwalk_mode "$1"
-repository="$2"
-submitted_commit="$3"
+module="$2"
+source_commit="$3"
 source_change="$4"
-topic="${5:-}"
+source_patchset="$5"
+source_topic="$6"
 xwalk_load_config
-xwalk_repository "$repository"
-[[ "$repository" != "xWalk-rpi5" ]] || { echo "Cannot uplift xWalk-rpi5 into itself" >&2; exit 2; }
-component_path="$(xwalk_component_path "$repository")"
-[[ "$submitted_commit" =~ ^[0-9a-fA-F]{40}$ ]] || { echo "Submitted commit must be a full ID" >&2; exit 2; }
-[[ -z "$topic" || "$topic" =~ ^[A-Za-z0-9._-]{1,80}$ ]] || { echo "Unsafe Gerrit topic" >&2; exit 2; }
+xwalk_repository "$module"
+component_path="$(xwalk_component_path "$module")"
+[[ "$module" != xWalk-rpi5-sim ]] || { echo "xWalk-rpi5-sim is not integrated into xWalkPiCarAI" >&2; exit 2; }
+[[ "$source_commit" =~ ^[0-9a-fA-F]{40}$ ]] || { echo "Source commit must be a full ID" >&2; exit 2; }
+[[ "$source_change" =~ ^[1-9][0-9]*$ ]] || { echo "Source change must be numeric" >&2; exit 2; }
+[[ "$source_patchset" =~ ^[1-9][0-9]*$ ]] || { echo "Source patchset must be numeric" >&2; exit 2; }
+[[ -z "$source_topic" || "$source_topic" =~ ^[A-Za-z0-9._-]{1,80}$ ]] || {
+    echo "Unsafe source Gerrit topic" >&2
+    exit 2
+}
+
+integration_remote="ssh://$GERRIT_CI_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/$GERRIT_INTEGRATION_PROJECT"
+module_remote="ssh://$GERRIT_CI_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/$module"
+topic="uplift-${module}-${source_change}"
+change_id="I$(printf '%s\n' "$GERRIT_INTEGRATION_PROJECT:$GERRIT_INTEGRATION_BRANCH:$module:$source_change" | sha1sum | awk '{print $1}')"
+source_reference="${source_change},${source_patchset}"
+integration_web_url="${GERRIT_WEB_URL:-${GERRIT_HTTP_BASE_URL:-https://$GERRIT_SERVER_HOST}}"
+integration_link="${integration_web_url%/}/q/change:${change_id}"
 
 plan()
 {
-    xwalk_log "uplift-submodule" "uplift" "$repository" "xWalk-rpi5/$component_path" "recorded-commit" \
-        "$submitted_commit" "Plan automatic component uplift" \
-        "Submitted module change $source_change requires an integration review." "Planned" \
-        "Full commit ID, repository allowlist and topic validated" "" "$source_change" "" "$submitted_commit"
-    xwalk_log "integration-build" "CI" "xWalk-rpi5" "build-host/integration" "not-run" "planned" \
-        "Plan complete integration build" "Every uplift must preserve the verified baseline." "Planned"
-    xwalk_log "integration-test" "CI" "xWalk-rpi5" "ctest" "not-run" "planned" \
-        "Plan complete integration tests" "A submodule uplift may affect cross-repository consumers." "Planned"
-    xwalk_log "upload-uplift-review" "uplift" "xWalk-rpi5" "refs/for/main" "not-uploaded" "planned" \
-        "Plan Gerrit uplift review" "Automatic uplifts remain reviewed unless explicit submission is enabled." \
-        "Planned" "No direct main push is planned" "" "$source_change"
+    printf 'Source module: %s\n' "$module"
+    printf 'Source Gerrit change: %s\n' "$source_reference"
+    printf 'Integrated repository: %s/%s\n' "$GERRIT_INTEGRATION_PROJECT" "$GERRIT_INTEGRATION_BRANCH"
+    printf 'Integrated topic: %s\n' "$topic"
+    printf 'Integrated Change-Id: %s\n' "$change_id"
+    xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
+        "$change_id" "not-created" "skipped" \
+        "Dry-run planned an integrated-source uplift review" "$integration_link"
 }
 
 apply()
 {
-    local state lock work old_commit changed ref review_output baseline latest_main
+    local state marker work integration source target changed baseline latest commit push_output review_number
+    local push_succeeded=false push_attempt
     state="${XWALK_UPLIFT_STATE_DIR:-$HOME/.local/state/xwalk-gerrit/uplift}"
-    mkdir -p "$state"
-    chmod 700 "$state"
-    lock="$state/uplift.lock"
-    exec 9>"$lock"
+    mkdir -p "$state/events"
+    chmod 700 "$state" "$state/events"
+    marker="$state/events/${module}-${source_change}-${source_patchset}-${source_commit}.done"
+    exec 9>"$state/uplift.lock"
     flock -x 9
+
+    if [[ -f "$marker" ]]; then
+        xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
+            "$change_id" "already-uploaded" "skipped" \
+            "Duplicate merged-change event was already processed" "$integration_link"
+        echo "Uplift already processed for $module change $source_reference"
+        return 0
+    fi
+
     work="$(mktemp -d -t xwalk-uplift-XXXXXXXX)"
     trap 'rm -rf -- "$work"' EXIT
-    git -c \
-        "url.ssh://$GERRIT_CI_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/.insteadOf=${GERRIT_BASE_URL%/}/" \
-        clone --quiet --recurse-submodules \
-        "ssh://$GERRIT_CI_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/xWalk-rpi5" "$work/xWalk-rpi5"
-    old_commit="$(git -C "$work/xWalk-rpi5/$component_path" rev-parse HEAD)"
-    git -C "$work/xWalk-rpi5/$component_path" fetch --quiet origin main
-    git -C "$work/xWalk-rpi5/$component_path" merge-base --is-ancestor "$submitted_commit" origin/main || {
-        xwalk_log "uplift-submodule" "uplift" "$repository" "xWalk-rpi5/$component_path" "$old_commit" \
-            "unchanged" "Rejected unreachable uplift commit" \
-            "Only commits reachable from the module Gerrit main are eligible." "Failed" \
-            "git merge-base --is-ancestor failed" "Submitted commit is not on origin/main" "$source_change"
-        return 1
-    }
-    git -C "$work/xWalk-rpi5/$component_path" checkout --quiet --detach "$submitted_commit"
-    git -C "$work/xWalk-rpi5" add "$component_path"
-    changed="$(git -C "$work/xWalk-rpi5" diff --cached --name-only)"
-    [[ "$changed" == "$component_path" ]] || {
-        echo "Uplift changed more than the selected submodule pointer" >&2
-        return 1
-    }
-    git -C "$work/xWalk-rpi5" -c user.name=xWalk-CI -c user.email=ci.invalid commit -s \
-        -m "Uplift $repository to $submitted_commit" \
-        -m "Component: $repository" -m "Previous-Commit: $old_commit" \
-        -m "New-Commit: $submitted_commit" -m "Gerrit-Change: $source_change" \
-        -m "Submitted-Revision: $submitted_commit" -m "Gerrit-Topic: ${topic:-none}"
-    xwalk_log "uplift-submodule" "uplift" "$repository" "xWalk-rpi5/$component_path" "$old_commit" \
-        "$submitted_commit" "Updated exact submodule pointer" \
-        "Submitted module change $source_change passed module verification." "Applied" \
-        "Only the selected gitlink changed" "" "$source_change" "$old_commit" "$submitted_commit"
-    if ! cmake --fresh -S "$work/xWalk-rpi5" -B "$work/xWalk-rpi5/build-host/integration" -G Ninja \
-        -DCMAKE_BUILD_TYPE=Debug -DXWALK_ENABLE_STRICT_WARNINGS=ON || \
-        ! cmake --build "$work/xWalk-rpi5/build-host/integration" --parallel; then
-        xwalk_log "integration-build" "CI" "xWalk-rpi5" "build-host/integration" "not-run" "failed" \
-            "Integration build failed" "The last verified baseline must be preserved." "Failed" \
-            "" "CMake configure or build failed" "$source_change"
+    integration="$work/integration"
+    source="$work/source"
+
+    if ! xwalk_retry git clone --quiet --branch "$GERRIT_INTEGRATION_BRANCH" \
+        "$integration_remote" "$integration"; then
+        xwalk_changelog "$module" "fetch" "$source_reference" "$source_commit" \
+            "$change_id" "unavailable" "failed" \
+            "Could not fetch the integrated Gerrit branch after retries" "$integration_link"
         return 1
     fi
-    xwalk_log "integration-build" "CI" "xWalk-rpi5" "build-host/integration" "not-run" "passed" \
-        "Completed integration build" "The uplift must compile with all recorded components." "Verified" \
-        "CMake configure and build succeeded" "" "$source_change"
-    if ! ctest --test-dir "$work/xWalk-rpi5/build-host/integration" --output-on-failure --no-tests=error || \
-        ! "$work/xWalk-rpi5/build-host/integration/xWalkController/xWalkApp/xwalk-picarx-control" \
-            --deployment-config="$work/xWalk-rpi5/xWalkController/xWalkConfig/picar-x.conf" \
-            --diagnose --no-hardware; then
-        xwalk_log "integration-test" "CI" "xWalk-rpi5" "ctest and diagnostic" "not-run" "failed" \
-            "Integration validation failed" "The last verified baseline must be preserved." "Failed" \
-            "" "CTest or host-safe diagnostic failed" "$source_change"
+    if ! xwalk_retry git clone --quiet --no-checkout "$module_remote" "$source" || \
+        ! xwalk_retry git -C "$source" fetch --quiet origin main; then
+        xwalk_changelog "$module" "fetch" "$source_reference" "$source_commit" \
+            "$change_id" "unavailable" "failed" \
+            "Could not fetch the source module after retries" "$integration_link"
         return 1
     fi
-    xwalk_log "integration-test" "CI" "xWalk-rpi5" "ctest and diagnostic" "not-run" "passed" \
-        "Completed host-safe integration validation" \
-        "Cross-repository behavior must pass before uplift review upload." "Verified" \
-        "CTest and --no-hardware diagnostic succeeded" "" "$source_change"
-    git -C "$work/xWalk-rpi5" fetch --quiet origin main
-    baseline="$(git -C "$work/xWalk-rpi5" rev-parse HEAD^)"
-    latest_main="$(git -C "$work/xWalk-rpi5" rev-parse origin/main)"
-    if [[ "$baseline" != "$latest_main" ]]; then
-        xwalk_log "retry-concurrent-uplift" "uplift" "xWalk-rpi5" "refs/heads/main" \
-            "$baseline" "$latest_main" "Retry after concurrent integration update" \
-            "A newer uplift changed main while validation was running." "Skipped" \
-            "Fresh clone and complete revalidation required" "" "$source_change"
-        rm -rf -- "$work"
-        trap - EXIT
+    if ! git -C "$source" merge-base --is-ancestor "$source_commit" origin/main; then
+        xwalk_changelog "$module" "fetch" "$source_reference" "$source_commit" \
+            "$change_id" "unresolved" "failed" \
+            "Source commit is not reachable from the module main branch" "$integration_link"
+        return 1
+    fi
+    xwalk_changelog "$module" "fetch" "$source_reference" "$source_commit" \
+        "$change_id" "$source_commit" "success" \
+        "Fetched and resolved the exact merged source commit" "$integration_link"
+
+    target="$integration/$GERRIT_INTEGRATION_SOURCE_ROOT/$component_path"
+    [[ -d "$target" && ! -L "$target" ]] || {
+        xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
+            "$change_id" "missing-target" "failed" \
+            "Integrated module directory is missing or symbolic" "$integration_link"
+        return 1
+    }
+    git -C "$integration" rm --quiet -r -- "$GERRIT_INTEGRATION_SOURCE_ROOT/$component_path"
+    mkdir -p "$target"
+    git -C "$source" archive "$source_commit" | tar -x -C "$target"
+    git -C "$integration" add -- "$GERRIT_INTEGRATION_SOURCE_ROOT/$component_path"
+    changed="$(git -C "$integration" diff --cached --name-only)"
+    if [[ -z "$changed" ]]; then
+        : > "$marker"
+        xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
+            "$change_id" "already-integrated" "skipped" \
+            "The exact source content is already present in the integrated branch" "$integration_link"
+        return 0
+    fi
+    if grep -Ev "^${GERRIT_INTEGRATION_SOURCE_ROOT}/${component_path}(/|$)" <<< "$changed" | grep -q .; then
+        xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
+            "$change_id" "invalid-diff" "failed" \
+            "Uplift modified content outside the selected module" "$integration_link"
+        return 1
+    fi
+
+    git -C "$integration" -c user.name=xWalk-CI -c user.email=ci.invalid commit -s \
+        -m "Uplift $module to $source_commit" \
+        -m "Source-Repository: $module" \
+        -m "Source-Commit: $source_commit" \
+        -m "Source-Change: $source_change" \
+        -m "Source-Patchset: $source_patchset" \
+        -m "Source-Topic: ${source_topic:-none}" \
+        -m "Change-Id: $change_id"
+    commit="$(git -C "$integration" rev-parse HEAD)"
+
+    git -C "$integration" diff --check HEAD^
+    if [[ -x "$integration/xWalkTool/shell-agent/gerrit-tool/validate-integration-metadata.sh" ]]; then
+        git -C "$integration" submodule update --init --recursive
+        (
+            cd "$integration"
+            xWalkTool/shell-agent/gerrit-tool/validate-integration-metadata.sh
+        )
+    fi
+
+    xwalk_retry git -C "$integration" fetch --quiet origin "$GERRIT_INTEGRATION_BRANCH"
+    baseline="$(git -C "$integration" rev-parse HEAD^)"
+    latest="$(git -C "$integration" rev-parse "origin/$GERRIT_INTEGRATION_BRANCH")"
+    if [[ "$baseline" != "$latest" ]]; then
+        xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
+            "$change_id" "$commit" "retrying" \
+            "Integrated branch changed while the uplift was prepared" "$integration_link"
         return 75
     fi
-    ref="refs/for/main%topic=component-uplift"
-    if review_output="$(git -C "$work/xWalk-rpi5" push origin "HEAD:$ref" 2>&1)"; then
-        xwalk_log "upload-uplift-review" "uplift" "xWalk-rpi5" "$ref" "not-uploaded" \
-            "uploaded" "Uploaded automatic uplift for Gerrit review" \
-            "Integration validation passed without direct main submission." "Applied" \
-            "Gerrit accepted refs/for/main" "" "$source_change" "$old_commit" "$submitted_commit"
-    else
-        xwalk_log "upload-uplift-review" "uplift" "xWalk-rpi5" "$ref" "not-uploaded" \
-            "unchanged" "Uplift review upload failed" "Gerrit rejected the review upload." "Failed" \
-            "" "Sanitized Gerrit push failure" "$source_change" "$old_commit" "$submitted_commit"
-        return 1
-    fi
-    local review_number
-    review_number="$(grep -oE '/\+/[0-9]+' <<< "$review_output" | tail -1 | grep -oE '[0-9]+' || true)"
-    if [[ "$GERRIT_UPLIFT_AUTO_SUBMIT" == "true" ]]; then
-        [[ -n "$review_number" ]] || { echo "Cannot identify uplift review for submission" >&2; return 1; }
-        if ssh -o BatchMode=yes -p "$GERRIT_SSH_PORT" \
-            "$GERRIT_CI_USERNAME@$GERRIT_SERVER_HOST" gerrit review --submit "$review_number"; then
-            xwalk_log "submit-uplift" "uplift" "xWalk-rpi5" "$review_number" "open" "submitted" \
-                "Automatically submitted uplift" \
-                "Explicit automatic-submit policy allowed submission after verification." "Verified" \
-                "Gerrit accepted submit" "" "$review_number"
-        else
-            xwalk_log "submit-uplift" "uplift" "xWalk-rpi5" "$review_number" "open" "open" \
-                "Automatic uplift submission failed" "Gerrit requirements were not satisfied." "Failed" \
-                "" "Sanitized Gerrit submit failure" "$review_number"
-            return 1
+
+    for ((push_attempt = 1; push_attempt <= GERRIT_UPLIFT_RETRY_ATTEMPTS; ++push_attempt)); do
+        if push_output="$(git -C "$integration" push origin \
+            "HEAD:refs/for/$GERRIT_INTEGRATION_BRANCH%topic=$topic" 2>&1)"; then
+            push_succeeded=true
+            break
         fi
-    else
-        xwalk_log "submit-uplift" "uplift" "xWalk-rpi5" "${review_number:-unknown}" "open" "open" \
-            "Skipped automatic uplift submission" "Automatic submit is disabled by policy." "Skipped" \
-            "Review remains open for normal approval"
+        grep -qi 'no new changes' <<< "$push_output" && break
+        ((push_attempt < GERRIT_UPLIFT_RETRY_ATTEMPTS)) || break
+        xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
+            "$change_id" "$commit" "retrying" \
+            "Gerrit review upload failed temporarily" "$integration_link"
+        sleep "$GERRIT_UPLIFT_RETRY_DELAY_SECONDS"
+    done
+    if [[ "$push_succeeded" == true ]]; then
+        review_number="$(grep -oE '/\+/[0-9]+' <<< "$push_output" | tail -1 | grep -oE '[0-9]+' || true)"
+        : > "$marker"
+        xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
+            "${review_number:-$change_id}" "$commit" "success" \
+            "Uploaded an active integrated Gerrit change; complete CI will start from patchset-created" \
+            "$integration_link"
+        printf 'Integrated Gerrit change: %s\n' "${review_number:-$change_id}"
+        printf 'Integrated Gerrit URL: %s\n' "$integration_link"
+        printf 'CI status: triggered by active patch-set upload\n'
+        return 0
     fi
+    if grep -qi 'no new changes' <<< "$push_output"; then
+        : > "$marker"
+        xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
+            "$change_id" "$commit" "skipped" \
+            "Gerrit already contains the same uplift patch set" "$integration_link"
+        return 0
+    fi
+    xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
+        "$change_id" "$commit" "failed" \
+        "Gerrit rejected the uplift review upload" "$integration_link"
+    return 1
 }
 
-if [[ "$XWALK_MODE" == "dry-run" ]]; then
+if [[ "$XWALK_MODE" == dry-run ]]; then
     plan
-else
-    status=1
-    for attempt in 1 2 3; do
-        if apply; then
-            exit 0
-        else
-            status=$?
-        fi
-        [[ "$status" -eq 75 ]] || exit "$status"
-        printf 'Concurrent uplift detected; retrying with a fresh baseline (%d/3)\n' "$attempt" >&2
-    done
-    xwalk_log "retry-concurrent-uplift" "uplift" "xWalk-rpi5" "refs/heads/main" \
-        "changed-repeatedly" "unchanged" "Concurrent uplift retries exhausted" \
-        "Three newer integration baselines prevented a safe review upload." "Failed" \
-        "Last verified baseline remains unchanged" "Concurrent uplift contention" "$source_change"
-    exit 1
+    exit 0
 fi
+
+status=1
+for ((attempt = 1; attempt <= GERRIT_UPLIFT_RETRY_ATTEMPTS; ++attempt)); do
+    if apply; then
+        exit 0
+    else
+        status=$?
+    fi
+    [[ "$status" -eq 75 ]] || exit "$status"
+    ((attempt < GERRIT_UPLIFT_RETRY_ATTEMPTS)) || break
+done
+xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
+    "$change_id" "not-uploaded" "failed" \
+    "Concurrent integrated-branch updates exhausted the retry limit" "$integration_link"
+exit 1

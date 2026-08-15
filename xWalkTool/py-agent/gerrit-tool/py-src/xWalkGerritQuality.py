@@ -112,6 +112,7 @@ MODULES = (
     XWalkModulePlan("xwalk-deployment", "xWalk Deployment", ("preparation",), (
         check("scripts", "Deployment and provisioning scripts", "deployment-scripts"),
         check("staged-install", "Staged installation and artifact validation", "staged-install"),
+        check("arm64", "ARM64 dependency audit and configured cross-build", "arm64"),
     )),
     XWalkModulePlan("codescene-code-health", "MyPiCarX / Code Health", ("preparation",), (
         check("delta", "CodeScene changed-code delta analysis", "codescene"),

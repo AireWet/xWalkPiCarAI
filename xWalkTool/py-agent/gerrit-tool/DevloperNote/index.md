@@ -1,5 +1,7 @@
 # Gerrit developer notes
 
+- [Integrated Uplift Workflow](Doc/note/Integrated%20Uplift%20Workflow.md)
+
 The Gerrit developer notes document installation, administration, individual
 user onboarding, continuous integration, recovery, security, and diagnostics
 for the user-owned college-server deployment.

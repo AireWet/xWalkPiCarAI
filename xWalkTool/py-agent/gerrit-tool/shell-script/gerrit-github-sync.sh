@@ -12,17 +12,21 @@ xwalk_load_config
 
 validate_remote()
 {
-    local value="$GITHUB_XWALK_RPI5_REMOTE" path
-    [[ -n "$value" ]] || { echo "Set GITHUB_XWALK_RPI5_REMOTE" >&2; return 2; }
+    local value="${GITHUB_INTEGRATION_REMOTE:-$GITHUB_XWALK_RPI5_REMOTE}" path
+    [[ -n "$value" ]] || { echo "Set GITHUB_INTEGRATION_REMOTE" >&2; return 2; }
+    [[ "$value" == git@* || "$value" == ssh://* ]] || {
+        echo "GitHub destination must use SSH credentials" >&2
+        return 2
+    }
     path="${value##*:}"
     path="${path##*/}"
     path="${path%.git}"
-    [[ "$path" == "xWalk-rpi5" ]] || {
-        echo "GitHub destination repository must be named exactly xWalk-rpi5" >&2
+    [[ "$path" == "$GERRIT_INTEGRATION_PROJECT" ]] || {
+        echo "GitHub destination repository must match $GERRIT_INTEGRATION_PROJECT" >&2
         return 2
     }
-    [[ "$GITHUB_XWALK_RPI5_BRANCH" == "main" ]] || {
-        echo "Only GitHub xWalk-rpi5/main synchronization is supported" >&2
+    [[ "${GITHUB_INTEGRATION_BRANCH:-$GITHUB_XWALK_RPI5_BRANCH}" == "$GERRIT_INTEGRATION_BRANCH" ]] || {
+        echo "GitHub branch must match the integrated Gerrit branch" >&2
         return 2
     }
 }
@@ -31,26 +35,21 @@ main()
 {
     validate_remote
     local revision="${XWALK_INTEGRATION_VERIFIED_COMMIT:-}" work fetched
-    local submitted_owner="${XWALK_SUBMITTED_OWNER_EMAIL:-}"
+    local github_remote="${GITHUB_INTEGRATION_REMOTE:-$GITHUB_XWALK_RPI5_REMOTE}"
+    local github_branch="${GITHUB_INTEGRATION_BRANCH:-$GITHUB_XWALK_RPI5_BRANCH}"
     if [[ "$XWALK_MODE" == "dry-run" ]]; then
-        echo "[dry-run] git push github refs/heads/main:refs/heads/main"
-        xwalk_log "github-sync" "GitHub" "xWalk-rpi5" "refs/heads/main" "unknown" \
+        echo "[dry-run] git push github refs/heads/$GERRIT_INTEGRATION_BRANCH:refs/heads/$github_branch"
+        xwalk_log "github-sync" "GitHub" "$GERRIT_INTEGRATION_PROJECT" \
+            "refs/heads/$GERRIT_INTEGRATION_BRANCH" "unknown" \
             "verified-gerrit-main" "Plan the sole permitted GitHub synchronization" \
-            "Only a submitted and integration-verified xWalk-rpi5 commit may reach GitHub." "Planned" \
+            "Only a submitted and integration-verified commit may reach GitHub." "Planned" \
             "Destination name and exact refspec validated"
         return
     fi
     [[ "$GITHUB_PUSH_ENABLED" == "true" ]] || {
-        xwalk_log "github-sync" "GitHub" "xWalk-rpi5" "refs/heads/main" "unchanged" "unchanged" \
+        xwalk_log "github-sync" "GitHub" "$GERRIT_INTEGRATION_PROJECT" \
+            "refs/heads/$GERRIT_INTEGRATION_BRANCH" "unchanged" "unchanged" \
             "Skipped GitHub synchronization" "GITHUB_PUSH_ENABLED is not true." "Skipped" \
-            "No remote write attempted"
-        return
-    }
-    [[ -n "$GITHUB_DIRECT_PUSH_OWNER_EMAIL" && \
-        "${submitted_owner,,}" == "${GITHUB_DIRECT_PUSH_OWNER_EMAIL,,}" ]] || {
-        xwalk_log "github-sync" "GitHub" "xWalk-rpi5" "refs/heads/main" "unchanged" "unchanged" \
-            "Skipped unauthorized direct synchronization" \
-            "Only the configured repository owner may publish directly to GitHub main." "Skipped" \
             "No remote write attempted"
         return
     }
@@ -62,43 +61,58 @@ main()
     trap 'rm -rf -- "$work"' EXIT
     git -C "$work" init --quiet
     git -C "$work" remote add origin \
-        "ssh://$GERRIT_CI_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/xWalk-rpi5"
-    if ! git -C "$work" fetch --quiet origin refs/heads/main:refs/remotes/origin/main; then
-        xwalk_log "github-sync" "GitHub" "xWalk-rpi5" "refs/heads/main" "unknown" "unchanged" \
+        "ssh://$GERRIT_CI_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/$GERRIT_INTEGRATION_PROJECT"
+    if ! xwalk_retry git -C "$work" fetch --quiet origin \
+        "refs/heads/$GERRIT_INTEGRATION_BRANCH:refs/remotes/origin/$GERRIT_INTEGRATION_BRANCH"; then
+        xwalk_log "github-sync" "GitHub" "$GERRIT_INTEGRATION_PROJECT" \
+            "refs/heads/$GERRIT_INTEGRATION_BRANCH" "unknown" "unchanged" \
             "Gerrit main fetch failed" "Synchronization requires the submitted Gerrit integration branch." \
             "Failed" "" "Sanitized Gerrit fetch failure"
         return 1
     fi
-    git -C "$work" switch --quiet --create main refs/remotes/origin/main
-    git -C "$work" reset --keep refs/remotes/origin/main
-    fetched="$(git -C "$work" rev-parse refs/heads/main)"
+    git -C "$work" switch --quiet --create "$GERRIT_INTEGRATION_BRANCH" \
+        "refs/remotes/origin/$GERRIT_INTEGRATION_BRANCH"
+    fetched="$(git -C "$work" rev-parse "refs/heads/$GERRIT_INTEGRATION_BRANCH")"
     [[ "$fetched" == "$revision" ]] || {
-        xwalk_log "github-sync" "GitHub" "xWalk-rpi5" "refs/heads/main" "$fetched" "unchanged" \
+        xwalk_log "github-sync" "GitHub" "$GERRIT_INTEGRATION_PROJECT" \
+            "refs/heads/$GERRIT_INTEGRATION_BRANCH" "$fetched" "unchanged" \
             "Rejected unverified Gerrit main" \
             "The submitted Gerrit tip does not match the integration-verified commit." "Failed" \
             "Fetched exact Gerrit main" "Verified commit mismatch" "" "$fetched" "$revision"
         return 1
     }
-    [[ "$(git -C "$work" remote get-url origin)" == */xWalk-rpi5 ]] || {
-        echo "Current repository is not the Gerrit xWalk-rpi5 integration repository" >&2
+    [[ "$(git -C "$work" remote get-url origin)" == */"$GERRIT_INTEGRATION_PROJECT" ]] || {
+        echo "Current repository is not the configured Gerrit integration repository" >&2
         return 2
     }
-    git -C "$work" remote add github "$GITHUB_XWALK_RPI5_REMOTE"
-    if git -C "$work" fetch --quiet github refs/heads/main:refs/remotes/github/main 2>/dev/null; then
-        git -C "$work" merge-base --is-ancestor refs/remotes/github/main refs/heads/main || {
-            echo "GitHub main is not an ancestor of Gerrit main; refusing non-fast-forward push" >&2
+    git -C "$work" remote add github "$github_remote"
+    if git -C "$work" fetch --quiet github \
+        "refs/heads/$github_branch:refs/remotes/github/$github_branch" 2>/dev/null; then
+        git -C "$work" merge-base --is-ancestor "refs/remotes/github/$github_branch" \
+            "refs/heads/$GERRIT_INTEGRATION_BRANCH" || {
+            echo "GitHub is not an ancestor of Gerrit; refusing non-fast-forward push" >&2
             return 1
         }
     fi
-    if git -C "$work" push github refs/heads/main:refs/heads/main; then
-        xwalk_log "github-sync" "GitHub" "xWalk-rpi5" "refs/heads/main" "previous" "$revision" \
+    if xwalk_retry git -C "$work" push github \
+        "refs/heads/$GERRIT_INTEGRATION_BRANCH:refs/heads/$github_branch" && \
+        [[ "$(git -C "$work" ls-remote github "refs/heads/$github_branch" | awk '{print $1}')" == "$revision" ]]; then
+        xwalk_log "github-sync" "GitHub" "$GERRIT_INTEGRATION_PROJECT" \
+            "refs/heads/$github_branch" "previous" "$revision" \
             "Synchronized verified integration commit" \
-            "Only submitted xWalk-rpi5 integration history is permitted on GitHub." "Verified" \
-            "Exact non-force main-to-main refspec succeeded" "" "" "" "" "$revision"
+            "Only submitted integrated Gerrit history is permitted on GitHub." "Verified" \
+            "Exact non-force branch refspec and read-back succeeded" "" "" "" "" "$revision"
+        xwalk_changelog "$GERRIT_INTEGRATION_PROJECT" "GitHub sync" "merged" "$revision" \
+            "submitted" "$revision" "success" \
+            "Pushed and read back the exact merged Gerrit commit" "$github_remote"
     else
-        xwalk_log "github-sync" "GitHub" "xWalk-rpi5" "refs/heads/main" "previous" "unchanged" \
+        xwalk_log "github-sync" "GitHub" "$GERRIT_INTEGRATION_PROJECT" \
+            "refs/heads/$github_branch" "previous" "unchanged" \
             "GitHub synchronization failed" "The exact protected push was rejected." "Failed" \
             "" "Sanitized git push failure"
+        xwalk_changelog "$GERRIT_INTEGRATION_PROJECT" "GitHub sync" "merged" "$revision" \
+            "submitted" "$revision" "failed" \
+            "GitHub push or exact SHA read-back failed" "$github_remote"
         return 1
     fi
     rm -rf -- "$work"

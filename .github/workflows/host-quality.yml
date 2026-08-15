@@ -209,6 +209,8 @@ jobs:
         run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
       - name: Validate deployment and provisioning scripts
         run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh deployment-scripts
+      - name: Validate ARM64 dependencies and configured cross-build
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh arm64
       - name: Build and validate the staged installation
         run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh staged-install
       - uses: actions/upload-artifact@v6

@@ -9,6 +9,7 @@ xwalk_config="${XWALK_GERRIT_MULTI_REPO_CONFIG:-$xwalk_root/config/multi-repo.co
 xwalk_repositories=(
     DevloperNote xWalkAgent xWalkAudioResources xWalkController xWalkHal
     xWalkIW xWalkLibrary xWalkTrace xWalk-rpi5-sim xWalk-rpi5
+    xWalkPiCarAI
 )
 # shellcheck disable=SC2034 # Consumed by scripts that source this helper.
 xwalk_components=(
@@ -29,10 +30,18 @@ xwalk_load_config()
     : "${GERRIT_OWNER_GROUP:=xWalk-Owners}"
     : "${GERRIT_PARTNER_GROUP:=xWalk-Partners}"
     : "${GERRIT_CI_GROUP:=xWalk-CI}"
+    : "${GERRIT_INTEGRATION_PROJECT:=xWalkPiCarAI}"
+    : "${GERRIT_INTEGRATION_BRANCH:=master}"
+    : "${GERRIT_INTEGRATION_SOURCE_ROOT:=xWalk-rpi5}"
     : "${GERRIT_PARTNER_DEVNOTE_DIRECT_PUSH:=false}"
     : "${GERRIT_UPLIFT_AUTO_SUBMIT:=false}"
+    : "${GERRIT_UPLIFT_AUTO_REVIEW:=false}"
+    : "${GERRIT_UPLIFT_RETRY_ATTEMPTS:=3}"
+    : "${GERRIT_UPLIFT_RETRY_DELAY_SECONDS:=5}"
     : "${GITHUB_XWALK_RPI5_REMOTE:=}"
     : "${GITHUB_XWALK_RPI5_BRANCH:=main}"
+    : "${GITHUB_INTEGRATION_REMOTE:=$GITHUB_XWALK_RPI5_REMOTE}"
+    : "${GITHUB_INTEGRATION_BRANCH:=$GERRIT_INTEGRATION_BRANCH}"
     : "${GITHUB_PUSH_ENABLED:=false}"
     case "$GERRIT_SERVER_HOST:$GERRIT_ADMIN_USERNAME" in
         *FROM_ASSESSMENT*|*GERRIT_ADMIN_USERNAME*)
@@ -64,7 +73,7 @@ xwalk_load_config()
         }
     done
     for setting in "$GERRIT_PARTNER_DEVNOTE_DIRECT_PUSH" "$GERRIT_UPLIFT_AUTO_SUBMIT" \
-        "$GITHUB_PUSH_ENABLED"; do
+        "$GERRIT_UPLIFT_AUTO_REVIEW" "$GITHUB_PUSH_ENABLED"; do
         [[ "$setting" == true || "$setting" == false ]] || {
             echo "Boolean configuration values must be true or false" >&2
             return 2
@@ -75,6 +84,26 @@ xwalk_load_config()
         echo "GERRIT_SSH_PORT must be an unprivileged valid port" >&2
         return 2
     fi
+    [[ "$GERRIT_INTEGRATION_PROJECT" =~ ^[A-Za-z0-9._-]+$ ]] || {
+        echo "GERRIT_INTEGRATION_PROJECT contains unsupported characters" >&2
+        return 2
+    }
+    [[ "$GERRIT_INTEGRATION_BRANCH" =~ ^[A-Za-z0-9._/-]+$ ]] || {
+        echo "GERRIT_INTEGRATION_BRANCH contains unsupported characters" >&2
+        return 2
+    }
+    [[ "$GERRIT_INTEGRATION_SOURCE_ROOT" =~ ^[A-Za-z0-9._/-]+$ ]] || {
+        echo "GERRIT_INTEGRATION_SOURCE_ROOT contains unsupported characters" >&2
+        return 2
+    }
+    [[ "$GERRIT_UPLIFT_RETRY_ATTEMPTS" =~ ^[1-9][0-9]*$ ]] || {
+        echo "GERRIT_UPLIFT_RETRY_ATTEMPTS must be positive" >&2
+        return 2
+    }
+    [[ "$GERRIT_UPLIFT_RETRY_DELAY_SECONDS" =~ ^[0-9]+$ ]] || {
+        echo "GERRIT_UPLIFT_RETRY_DELAY_SECONDS must be non-negative" >&2
+        return 2
+    }
 }
 
 xwalk_mode()
@@ -148,6 +177,56 @@ xwalk_log()
 {
     local operation="$1" repository="$3" status="$9"
     printf '[%s] %s: %s\n' "$status" "$repository" "$operation"
+}
+
+xwalk_changelog()
+{
+    local module="$1" operation="$2" source_change="$3" source_commit="$4"
+    local integrated_change="$5" integrated_commit="$6" result="$7"
+    local explanation="$8" link="$9" changelog
+    changelog="${XWALK_UPLIFT_CHANGELOG:-${XWALK_UPLIFT_STATE_DIR:-$HOME/.local/state/xwalk-gerrit/uplift}/changelog.jsonl}"
+    mkdir -p "$(dirname -- "$changelog")"
+    python3 - "$changelog" "$module" "$operation" "$source_change" "$source_commit" \
+        "$integrated_change" "$integrated_commit" "$result" "$explanation" "$link" <<'PY'
+import datetime
+import json
+import pathlib
+import sys
+
+path = pathlib.Path(sys.argv[1])
+entry = {
+    "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
+    "module": sys.argv[2],
+    "operation": sys.argv[3],
+    "source_change": sys.argv[4],
+    "source_commit": sys.argv[5],
+    "integrated_change": sys.argv[6],
+    "integrated_commit": sys.argv[7],
+    "result": sys.argv[8],
+    "explanation": sys.argv[9],
+    "link": sys.argv[10],
+}
+with path.open("a", encoding="utf-8") as stream:
+    stream.write(json.dumps(entry, sort_keys=True) + "\n")
+PY
+    chmod 600 "$changelog"
+}
+
+xwalk_retry()
+{
+    local attempt status=1
+    for ((attempt = 1; attempt <= GERRIT_UPLIFT_RETRY_ATTEMPTS; ++attempt)); do
+        if "$@"; then
+            return 0
+        else
+            status=$?
+        fi
+        ((attempt < GERRIT_UPLIFT_RETRY_ATTEMPTS)) || break
+        printf 'Temporary operation failed; retrying (%d/%d)\n' \
+            "$attempt" "$GERRIT_UPLIFT_RETRY_ATTEMPTS" >&2
+        sleep "$GERRIT_UPLIFT_RETRY_DELAY_SECONDS"
+    done
+    return "$status"
 }
 
 xwalk_ssh()

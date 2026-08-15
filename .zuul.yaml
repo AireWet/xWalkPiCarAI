@@ -16,6 +16,14 @@
       xwalk_ci_job: shellcheck
 
 - job:
+    name: xwalk-styler
+    description: xWalk C++ formatting, indentation, and 120-character line validation.
+    nodeset: xwalk-ubuntu-24.04
+    run: xWalkTool/shell-agent/env-tool/playbooks/zuul/run-host-quality-job.yaml
+    vars:
+      xwalk_ci_job: styler
+
+- job:
     name: xwalk-deployment-scripts
     description: xWalk deployment script tests and provisioning validation.
     nodeset: xwalk-ubuntu-24.04
@@ -228,6 +236,15 @@
         - build-host/deploy.sha256
 
 - job:
+    name: xwalk-arm64-validation
+    description: xWalk ARM64 dependency audit and configured cross-build validation.
+    nodeset: xwalk-ubuntu-24.04
+    run: xWalkTool/shell-agent/env-tool/playbooks/zuul/run-host-quality-job.yaml
+    dependencies: *xwalk-build-dependencies
+    vars:
+      xwalk_ci_job: arm64
+
+- job:
     name: xwalk-code-health
     description: MyPiCarX changed-code CodeScene delta analysis and rollout policy.
     nodeset: xwalk-ubuntu-24.04
@@ -268,6 +285,7 @@
       - xwalk-valgrind
       - xwalk-clang-static-analyzer
       - xwalk-staged-install
+      - xwalk-arm64-validation
       - xwalk-code-health
     vars:
       xwalk_ci_job: host-quality-gate
@@ -276,6 +294,7 @@
     check:
       jobs: &xwalk-host-quality-jobs
         - xwalk-shellcheck
+        - xwalk-styler
         - xwalk-deployment-scripts
         - xwalk-build-gcc-debug
         - xwalk-build-gcc-release
@@ -294,6 +313,7 @@
         - xwalk-valgrind
         - xwalk-clang-static-analyzer
         - xwalk-staged-install
+        - xwalk-arm64-validation
         - xwalk-code-health
         - xwalk-host-quality-gate
     gate:

@@ -42,6 +42,14 @@ and automatic verification requirements. The dedicated synchronization
 service may fast-forward only the exact submitted, approved, CI-verified
 integration revision to the matching GitHub branch.
 
+Every submitted component change must enter `xWalkPiCarAI/master` through a
+separate uplift review that replaces only the owning module source tree. The
+active uplift patch set runs the complete integrated CI graph. Submission
+requires the CI account's `Verified +1`, an authorized `Code-Review +2`, no
+unresolved blocking comments, a current mergeable patch set, and Gerrit's
+complete submit policy. Only the exact resulting merged commit may be
+synchronized to the configured GitHub `xWalkPiCarAI/master` branch.
+
 ## Language and compiler expectations
 
 - Write C++17. Declare `cxx_std_17` on every public library target that needs to

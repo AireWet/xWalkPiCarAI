@@ -66,6 +66,19 @@ class XWalkGerritAclTest(unittest.TestCase):
         self.assertIn(permission, integration)
         self.assertNotIn(permission, component)
 
+    def test_migration_integration_uses_master_and_current_submit_requirements(self) -> None:
+        """Protect xWalkPiCarAI master with review, verification, and comment requirements."""
+
+        permissions = self.permissions("xWalkPiCarAI")
+        self.assertIn(("refs/for/refs/heads/master", "push", "ci", "ALLOW"), permissions)
+        self.assertIn(("refs/heads/master", "label-Verified", "ci", "-1..+1"), permissions)
+        self.assertNotIn(("refs/heads/master", "label-Code-Review", "ci", "-2..+2"), permissions)
+        self.assertNotIn(("refs/heads/*", "push", "owners", "ALLOW"), permissions)
+        configured = config_text("", "xWalkPiCarAI", "owners", "partners", "ci", False)
+        self.assertIn('submit-requirement "Code-Review"', configured)
+        self.assertIn("label:Verified=MAX", configured)
+        self.assertIn("-has:unresolved", configured)
+
     def test_only_owners_can_push_project_access_configuration(self) -> None:
         """Permit the owner group to maintain reviewed repository ACLs."""
 

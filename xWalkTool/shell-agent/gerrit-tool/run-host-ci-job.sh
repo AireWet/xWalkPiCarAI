@@ -153,12 +153,23 @@ validate_ci_metadata() {
         xWalkTool/shell-agent/env-tool/playbooks/zuul/collect-host-quality-artifacts.yaml
 }
 
+run_arm64_validation() {
+    bash xWalkTool/shell-agent/deploy-tool/test/aarch64-dependency-audit-test.sh
+    if [[ -z "${XWALK_AARCH64_SYSROOT:-}" ]]; then
+        echo "ARM64 cross-build skipped: XWALK_AARCH64_SYSROOT is not configured on this runner"
+        return
+    fi
+    cmake --fresh -S "$product_root" --preset aarch64-rpi-release
+    cmake --build build-aarch64/cmake --parallel
+}
+
 cd "$repository_root"
 case "$job" in
     preparation)
         require_no_arguments "$@"
         xWalkTool/shell-agent/quality-tool/run-host-shellcheck.sh
         validate_ci_metadata
+        xWalkTool/shell-agent/gerrit-tool/validate-integration-metadata.sh
         ;;
     styler)
         require_no_arguments "$@"
@@ -287,11 +298,13 @@ case "$job" in
         require_no_arguments "$@"
         xWalkTool/shell-agent/quality-tool/run-host-shellcheck.sh
         validate_ci_metadata
+        xWalkTool/shell-agent/gerrit-tool/validate-integration-metadata.sh
         ;;
     deployment-scripts)
         require_no_arguments "$@"
         bash xWalkTool/shell-agent/deploy-tool/test/setup-rpi-test.sh
         ;;
+    arm64) require_no_arguments "$@"; run_arm64_validation ;;
     staged-install) require_no_arguments "$@"; run_staged_install ;;
     host-quality-gate)
         require_no_arguments "$@"

@@ -13,11 +13,12 @@ import sys
 PUBLIC = {"DevloperNote", "xWalkHal", "xWalkLibrary", "xWalkTrace"}
 PARTNER_REVIEW = {"DevloperNote", "xWalkHal", "xWalkController", "xWalkLibrary", "xWalkTrace"}
 PARTNER_READ = PARTNER_REVIEW | {"xWalkIW", "xWalkAgent"}
-PRIVATE_PARTNER = {"xWalkAudioResources", "xWalk-rpi5-sim", "xWalk-rpi5"}
+PRIVATE_PARTNER = {"xWalkAudioResources", "xWalk-rpi5-sim", "xWalk-rpi5", "xWalkPiCarAI"}
 REPOSITORIES = (
     "xWalk-Projects",
     "DevloperNote", "xWalkAgent", "xWalkAudioResources", "xWalkController", "xWalkHal",
     "xWalkIW", "xWalkLibrary", "xWalkTrace", "xWalk-rpi5-sim", "xWalk-rpi5",
+    "xWalkPiCarAI",
 )
 
 
@@ -37,6 +38,9 @@ def rules(repository: str, owner: str, partner: str, ci: str, direct_devnote: bo
 
     if repository not in REPOSITORIES:
         raise ValueError(f"Repository is not allowlisted: {repository}")
+    branch = "master" if repository == "xWalkPiCarAI" else "main"
+    branch_ref = f"refs/heads/{branch}"
+    review_ref = f"refs/for/{branch_ref}"
     result = [
         Rule(
             "refs/*", "exclusiveGroupPermissions", "inherited-read", "read",
@@ -49,12 +53,20 @@ def rules(repository: str, owner: str, partner: str, ci: str, direct_devnote: bo
             "refs/meta/config", "push", owner, "ALLOW",
             "Owners require push access to maintain the project ACL configuration.",
         ),
-        Rule("refs/heads/*", "push", owner, "ALLOW", "Owners maintain protected branches."),
-        Rule("refs/heads/*", "push", owner, "FORCE", "Only owners may perform authorized recovery."),
-        Rule("refs/heads/main", "submit", owner, "ALLOW", "Owners submit reviewed changes."),
-        Rule("refs/heads/main", "label-Code-Review", owner, "-2..+2", "Owners perform final review."),
-        Rule("refs/heads/main", "label-Verified", ci, "-1..+1", "CI records module verification."),
+        Rule(branch_ref, "submit", owner, "ALLOW", "Owners submit reviewed changes."),
+        Rule(branch_ref, "label-Code-Review", owner, "-2..+2", "Owners perform final review."),
+        Rule(branch_ref, "label-Verified", ci, "-1..+1", "CI records module verification."),
     ]
+    if repository == "xWalkPiCarAI":
+        result.append(Rule(
+            review_ref, "push", owner, "ALLOW",
+            "Owners upload integrated changes through review without direct branch push.",
+        ))
+    else:
+        result.extend([
+            Rule("refs/heads/*", "push", owner, "ALLOW", "Owners maintain protected branches."),
+            Rule("refs/heads/*", "push", owner, "FORCE", "Only owners may perform authorized recovery."),
+        ])
     if repository in PUBLIC:
         result.append(Rule(
             "refs/*", "read", "Anonymous Users", "ALLOW",
@@ -66,32 +78,47 @@ def rules(repository: str, owner: str, partner: str, ci: str, direct_devnote: bo
         result.append(Rule("refs/*", "read", partner, "DENY", "Partner access is prohibited for this repository."))
     if repository in PARTNER_REVIEW:
         result.append(Rule(
-            "refs/for/refs/heads/main", "push", partner, "ALLOW",
+            review_ref, "push", partner, "ALLOW",
             "Partners upload review changes without direct branch push.",
         ))
     if repository == "DevloperNote":
         result.extend([
-            Rule("refs/heads/main", "label-Code-Review", partner, "-2..+2", "Partners review documentation."),
-            Rule("refs/heads/main", "submit", partner, "ALLOW", "Partners may submit reviewed documentation."),
+            Rule(branch_ref, "label-Code-Review", partner, "-2..+2", "Partners review documentation."),
+            Rule(branch_ref, "submit", partner, "ALLOW", "Partners may submit reviewed documentation."),
         ])
         if direct_devnote:
             result.append(Rule(
                 "refs/heads/main", "push", partner, "ALLOW",
                 "Explicit optional setting permits direct documentation push.",
             ))
-    if repository == "xWalk-rpi5":
-        result.append(Rule(
-            "refs/for/refs/heads/main", "push", ci, "ALLOW",
-            "CI uploads verified automatic integration uplifts for review.",
-        ))
+    if repository in {"xWalk-rpi5", "xWalkPiCarAI"}:
+        result.extend([
+            Rule(
+                review_ref, "push", ci, "ALLOW",
+                "CI uploads automatic integration uplifts for review.",
+            ),
+            Rule(
+                branch_ref, "submit", ci, "ALLOW",
+                "The CI service may submit only after Gerrit requirements are satisfied.",
+            ),
+        ])
     return result
 
 
-def strip_access_sections(content: str) -> str:
-    """Remove only existing access sections while retaining unrelated project settings."""
+def strip_managed_sections(content: str) -> str:
+    """Remove managed ACL and submit sections while retaining unrelated settings."""
 
     sections = re.split(r"(?m)(?=^\[)", content)
-    retained = [section for section in sections if not section.startswith('[access "')]
+    managed_requirements = {
+        '[submit-requirement "Code-Review"]',
+        '[submit-requirement "Verified"]',
+        '[submit-requirement "No-Unresolved-Comments"]',
+    }
+    retained = [
+        section for section in sections
+        if not section.startswith('[access "')
+        and (not section.splitlines() or section.splitlines()[0] not in managed_requirements)
+    ]
     return "".join(retained).rstrip() + "\n"
 
 
@@ -102,7 +129,7 @@ def config_text(existing: str, repository: str, owner: str, partner: str, ci: st
     grouped: dict[str, list[Rule]] = {}
     for rule in rules(repository, owner, partner, ci, direct_devnote):
         grouped.setdefault(rule.ref, []).append(rule)
-    output = strip_access_sections(existing)
+    output = strip_managed_sections(existing)
     for ref, ref_rules in grouped.items():
         output += f'\n[access "{ref}"]\n'
         for rule in ref_rules:
@@ -112,6 +139,21 @@ def config_text(existing: str, repository: str, owner: str, partner: str, ci: st
             action = "deny " if rule.value == "DENY" else "+force " if rule.value == "FORCE" else ""
             range_value = f"{rule.value} " if ".." in rule.value else ""
             output += f"\t{rule.permission} = {action}{range_value}group {rule.group}\n"
+    if repository == "xWalkPiCarAI":
+        output += (
+            '\n[submit-requirement "Code-Review"]\n'
+            '\tdescription = Require an authorized reviewer on the current patch set\n'
+            '\tsubmittableIf = label:Code-Review=MAX\n'
+            '\tcanOverrideInChildProjects = false\n'
+            '\n[submit-requirement "Verified"]\n'
+            '\tdescription = Require complete integrated CI on the current patch set\n'
+            '\tsubmittableIf = label:Verified=MAX\n'
+            '\tcanOverrideInChildProjects = false\n'
+            '\n[submit-requirement "No-Unresolved-Comments"]\n'
+            '\tdescription = Require every blocking review comment to be resolved\n'
+            '\tsubmittableIf = -has:unresolved\n'
+            '\tcanOverrideInChildProjects = false\n'
+        )
     return output
 
 

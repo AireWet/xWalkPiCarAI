@@ -132,6 +132,7 @@ ensure_project()
     local description=""
     [[ "$project" == "xWalk-Projects" ]] && parent="All-Projects"
     [[ "$project" == "xWalk-rpi5" ]] && description="Integrated Raspberry Pi 5 xWalk product"
+    [[ "$project" == "xWalkPiCarAI" ]] && description="Current integrated xWalkPiCarAI product"
     planned "repository" "$project"
     if [[ "$XWALK_MODE" == "dry-run" ]]; then
         xwalk_log "ensure-repository" "Provisioning" "$project" "repository" "unknown" "present" \

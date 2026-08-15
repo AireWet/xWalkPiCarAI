@@ -183,26 +183,26 @@ migration must not be declared complete.
 
 ## Automatic uplift and recovery
 
-After a submitted module commit receives `Verified +1`, invoke the uplift tool
-with the full commit, source Gerrit change, and optional topic:
+After a module change is submitted, the event service invokes the uplift tool
+with its full commit, source Gerrit change, patch set, and optional source
+topic:
 
 ```bash
-xWalkTool/py-agent/gerrit-tool/shell-script/gerrit-auto-uplift.sh --dry-run xWalkHal FULL_COMMIT_ID GERRIT_CHANGE TOPIC
+xWalkTool/py-agent/gerrit-tool/shell-script/gerrit-auto-uplift.sh --dry-run xWalkHal FULL_COMMIT_ID GERRIT_CHANGE PATCHSET TOPIC
 ```
 
 ```bash
-xWalkTool/py-agent/gerrit-tool/shell-script/gerrit-auto-uplift.sh --apply xWalkHal FULL_COMMIT_ID GERRIT_CHANGE TOPIC
+xWalkTool/py-agent/gerrit-tool/shell-script/gerrit-auto-uplift.sh --apply xWalkHal FULL_COMMIT_ID GERRIT_CHANGE PATCHSET TOPIC
 ```
 
-Apply acquires a lock, clones clean `xWalk-rpi5`, proves the component commit is
-reachable from its Gerrit `main`, changes only that gitlink, creates a
-signed-off uplift commit, runs the complete host integration build, tests, and
-`--no-hardware` diagnostic, then uploads `refs/for/main`. Automatic submission
-is disabled by default. A failure leaves Gerrit `xWalk-rpi5/main` and the last
-verified baseline unchanged. Retry after correcting the module, dependency, or
-concurrent-uplift conflict; never force-push. The topic-uplift entry point
-batches related submitted revisions into one signed-off integration commit,
-one complete validation, and one Gerrit review.
+Apply acquires a lock, clones clean `xWalkPiCarAI/master`, proves the component
+commit is reachable from its Gerrit `main`, replaces only that integrated
+module source tree, creates a signed-off uplift commit, and uploads an active
+review. The patch-set event runs the complete integrated CI graph. Automatic
+review, submission, and GitHub synchronization are disabled until their
+separate service accounts and Gerrit policy are installed and tested. See
+the [integrated uplift workflow](Integrated%20Uplift%20Workflow.md) for the
+current controls and the future `xWalk-rpi5/main` transition.
 
 ## GitHub policy and Actions checkout
 
@@ -220,13 +220,11 @@ xWalkTool/py-agent/gerrit-tool/shell-script/gerrit-github-sync.sh --dry-run
 
 The event-driven service additionally requires `GITHUB_PUSH_ENABLED=true`, an
 exact integrated-project destination, and the configured CI account's
-`Verified +1` on the submitted revision. The standalone final-migration helper
-requires `XWALK_INTEGRATION_VERIFIED_COMMIT` equal to the fetched Gerrit `main`
-tip. The submitted owner must match the separately configured
-`GITHUB_DIRECT_PUSH_OWNER_EMAIL`. The only push refspec is
-the configured source branch to its same-named GitHub branch. A change owned by
-anyone else is not pushed directly; it must follow the repository owner's
-approved pull-request process.
+`Verified +1` on the submitted revision. The standalone synchronization helper
+requires `XWALK_INTEGRATION_VERIFIED_COMMIT` to equal the fetched Gerrit branch
+tip. The only push refspec is the configured source branch to its same-named
+GitHub branch. The helper reads the GitHub branch back and requires the exact
+Gerrit merge SHA.
 
 GitHub Actions uses `gerrit-github-checkout.sh` with a repository-scoped,
 read-only Gerrit deploy identity stored in GitHub Secrets. The helper scans the
