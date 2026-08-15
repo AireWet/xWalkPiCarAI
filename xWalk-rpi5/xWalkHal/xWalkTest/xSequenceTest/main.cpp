@@ -47,7 +47,6 @@
  */
 int main(int argumentCount, char* argumentValues[])
 {
-    return static_cast<int>(xwalk::hal::test::XWalkSequenceTestRunner::run(
-        static_cast<xwalk::hal::int32>(argumentCount), argumentValues)
-        );
+    return static_cast<int>(
+        xwalk::hal::test::XWalkSequenceTestRunner::run(static_cast<xwalk::hal::int32>(argumentCount), argumentValues));
 }

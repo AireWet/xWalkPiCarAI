@@ -37,38 +37,36 @@
 namespace xwalk::agent
 {
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/**
- * @brief Suspends calibration for one bounded interval.
- * @param[in,out] context Non-owning application context valid for the call duration.
- * @param[in] durationMs Requested delay in milliseconds.
- */
-using servomotorcalibrationdelaycallback = void (*)(
-    agent::contextpointer context, agent::uint32 durationMs);
+    /**
+     * @brief Suspends calibration for one bounded interval.
+     * @param[in,out] context Non-owning application context valid for the call duration.
+     * @param[in] durationMs Requested delay in milliseconds.
+     */
+    using servomotorcalibrationdelaycallback = void (*)(agent::contextpointer context, agent::uint32 durationMs);
 
-/**
- * @brief Reports whether the active calibration may continue.
- * @param[in,out] context Non-owning application context valid for the call duration.
- * @return `true` to continue or `false` to stop all motors.
- */
-using servomotorcalibrationcontinuecallback = agent::boolean (*)(
-    agent::contextpointer context);
+    /**
+     * @brief Reports whether the active calibration may continue.
+     * @param[in,out] context Non-owning application context valid for the call duration.
+     * @return `true` to continue or `false` to stop all motors.
+     */
+    using servomotorcalibrationcontinuecallback = agent::boolean (*)(agent::contextpointer context);
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-/** @brief Pending servo offsets and motor directions retained until save. */
-struct XWalkServoMotorCalibrationResult
-{
-    /** @brief Steering, camera-pan, and camera-tilt offsets in degrees. */
-    agent::fixedarray<agent::float64, 3U> servoOffsets{};
-    /** @brief Left and right motor directions containing only 1 or -1. */
-    agent::fixedarray<agent::int32, 2U> motorDirections{1, 1};
-};
+    /** @brief Pending servo offsets and motor directions retained until save. */
+    struct XWalkServoMotorCalibrationResult
+    {
+            /** @brief Steering, camera-pan, and camera-tilt offsets in degrees. */
+            agent::fixedarray<agent::float64, 3U> servoOffsets{};
+            /** @brief Left and right motor directions containing only 1 or -1. */
+            agent::fixedarray<agent::int32, 2U> motorDirections{1, 1};
+    };
 
 } /* namespace xwalk::agent */
 

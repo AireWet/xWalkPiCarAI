@@ -36,29 +36,30 @@
  * @namespace xwalk::hal
  * @brief Contains hardware abstraction components for the xWalk firmware.
  */
-namespace xwalk::hal {
+namespace xwalk::hal
+{
 
-/******************************************************************************
- * Public member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Public member function definitions
+     ******************************************************************************/
 
-/**
- * @brief Synthesizes and outputs one text value through the backend.
- *
- * @param[in] text
- * Text view forwarded synchronously without modification. The backend defines
- * supported encoding, language, length, and empty-text behavior.
- *
- * @pre
- * The Robot HAT speaker was enabled successfully during construction.
- *
- * @note
- * Any exception raised by the injected callback is propagated.
- */
-void XWalkTextToSpeech::speak(stringview text) {
-  speakCallback(backendContextPointer, text);
-  XWALK_HAL_TRACE_UID1(
-      RPI .362, "Text-to-speech completed for %zu character(s)", text.size());
-}
+    /**
+     * @brief Synthesizes and outputs one text value through the backend.
+     *
+     * @param[in] text
+     * Text view forwarded synchronously without modification. The backend defines
+     * supported encoding, language, length, and empty-text behavior.
+     *
+     * @pre
+     * The Robot HAT speaker was enabled successfully during construction.
+     *
+     * @note
+     * Any exception raised by the injected callback is propagated.
+     */
+    void XWalkTextToSpeech::speak(stringview text)
+    {
+        speakCallback(backendContextPointer, text);
+        XWALK_HAL_TRACE_UID1(RPI .362, "Text-to-speech completed for %zu character(s)", text.size());
+    }
 
 } /* namespace xwalk::hal */

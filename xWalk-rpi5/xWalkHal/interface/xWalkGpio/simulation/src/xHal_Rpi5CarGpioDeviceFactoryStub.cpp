@@ -13,11 +13,13 @@
 #include "xHal_Rpi5CarGpioHostStub.h"
 #include "xHal_Rpi5CarTrace.h"
 
-namespace xwalk::hal::sim {
+namespace xwalk::hal::sim
+{
 
-owningpointer<XWalkGpioDevice> createGpioDevice() {
-  XWALK_HAL_TRACE_UID0(RPI .078, "Creating host-mirror GPIO device");
-  return std::make_unique<XWalkGpioHostStub>();
-}
+    owningpointer<XWalkGpioDevice> createGpioDevice()
+    {
+        XWALK_HAL_TRACE_UID0(RPI .078, "Creating host-mirror GPIO device");
+        return std::make_unique<XWalkGpioHostStub>();
+    }
 
 } /* namespace xwalk::hal::sim */

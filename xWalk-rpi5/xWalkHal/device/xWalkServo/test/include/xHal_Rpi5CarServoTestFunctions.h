@@ -35,24 +35,24 @@
 namespace xwalk::hal::test
 {
 
-/******************************************************************************
- * Function declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Function declarations
+     ******************************************************************************/
 
-/** @brief Verifies period and prescaler configuration during construction. */
-void testServoInitialization();
+    /** @brief Verifies period and prescaler configuration during construction. */
+    void testServoInitialization();
 
-/** @brief Verifies angle clamping and angle-to-count conversion. */
-void testServoAngles();
+    /** @brief Verifies angle clamping and angle-to-count conversion. */
+    void testServoAngles();
 
-/** @brief Verifies direct pulse-duration clamping and conversion. */
-void testServoPulseWidths();
+    /** @brief Verifies direct pulse-duration clamping and conversion. */
+    void testServoPulseWidths();
 
-/** @brief Verifies rejection of non-finite servo commands. */
-void testServoValidation();
+    /** @brief Verifies rejection of non-finite servo commands. */
+    void testServoValidation();
 
-/** @brief Verifies persistent Servo trace-selector parsing and application. */
-void testServoTraceSelection();
+    /** @brief Verifies persistent Servo trace-selector parsing and application. */
+    void testServoTraceSelection();
 
 } /* namespace xwalk::hal::test */
 

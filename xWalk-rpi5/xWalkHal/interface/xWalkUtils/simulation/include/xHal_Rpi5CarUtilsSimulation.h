@@ -16,7 +16,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Runs representative Utils operations through the in-memory host stub. */
-int32 runUtilsSimulation();
+    /** @brief Runs representative Utils operations through the in-memory host stub. */
+    int32 runUtilsSimulation();
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_UTILS_SIMULATION_H */

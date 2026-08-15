@@ -13,25 +13,30 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Validates and applies one optional GPT trace selector. */
-class XWalkGptSimulationArguments final
-{
-    private:
-        string targetValue; boolean enabledValue; boolean updateValue;
-        boolean validValue; boolean helpValue;
-    protected:
-        static boolean targetIsValid(stringview target) noexcept;
-        void parseSelector(stringview selector);
-    public:
-        XWalkGptSimulationArguments(int32 count, charpointer values[]);
-        ~XWalkGptSimulationArguments();
-        XWalkGptSimulationArguments(const XWalkGptSimulationArguments&) = delete;
-        XWalkGptSimulationArguments& operator=(const XWalkGptSimulationArguments&) = delete;
-        XWalkGptSimulationArguments(XWalkGptSimulationArguments&&) = delete;
-        XWalkGptSimulationArguments& operator=(XWalkGptSimulationArguments&&) = delete;
-        boolean valid() const noexcept;
-        boolean helpRequested() const noexcept;
-        boolean applyTraceUpdate() const;
-};
+    /** @brief Validates and applies one optional GPT trace selector. */
+    class XWalkGptSimulationArguments final
+    {
+        private:
+            string targetValue;
+            boolean enabledValue;
+            boolean updateValue;
+            boolean validValue;
+            boolean helpValue;
+
+        protected:
+            static boolean targetIsValid(stringview target) noexcept;
+            void parseSelector(stringview selector);
+
+        public:
+            XWalkGptSimulationArguments(int32 count, charpointer values[]);
+            ~XWalkGptSimulationArguments();
+            XWalkGptSimulationArguments(const XWalkGptSimulationArguments&) = delete;
+            XWalkGptSimulationArguments& operator=(const XWalkGptSimulationArguments&) = delete;
+            XWalkGptSimulationArguments(XWalkGptSimulationArguments&&) = delete;
+            XWalkGptSimulationArguments& operator=(XWalkGptSimulationArguments&&) = delete;
+            boolean valid() const noexcept;
+            boolean helpRequested() const noexcept;
+            boolean applyTraceUpdate() const;
+    };
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_GPT_SIMULATION_ARGUMENTS_H */

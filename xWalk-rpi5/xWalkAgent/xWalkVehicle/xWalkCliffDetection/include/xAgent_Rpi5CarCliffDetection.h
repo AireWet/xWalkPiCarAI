@@ -42,89 +42,90 @@
 namespace xwalk::agent
 {
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
-
-/**
- * @class XWalkCliffDetection
- * @brief Acquires one grayscale sample and applies the cliff response.
- *
- * @details
- * Observes a caller-owned PiCar-X coordinator and scheduling callbacks. It
- * retains only whether the preceding completed sample was dangerous.
- */
-class XWalkCliffDetection final
-{
-private:
-    /**************************************************************************
-     * Private data members
-     **************************************************************************/
-
-    /** @brief Non-owning PiCar-X pointer that remains non-null for this lifetime. */
-    XWalkPicarx* picarxObject{nullptr};
-    /** @brief Nullable non-owning context forwarded synchronously to callbacks. */
-    agent::contextpointer callbackContext{nullptr};
-    /** @brief Non-null synchronous timing callback. */
-    cliffdetectiondelaycallback delayCallback{nullptr};
-    /** @brief Non-null synchronous cancellation callback. */
-    cliffdetectioncontinuecallback continueCallback{nullptr};
-    /** @brief True when the preceding completed sample selected danger behavior. */
-    agent::boolean lastDangerValue{};
-
-protected:
-    /**************************************************************************
-     * Protected member functions
-     **************************************************************************/
-
-    /** @brief Waits in cancellable slices no longer than 20 milliseconds. */
-    agent::boolean wait(agent::uint32 durationMs) const;
-
-public:
-    /**************************************************************************
-     * Public constructors and destructor
-     **************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
     /**
-     * @brief Binds caller-owned vehicle and synchronous scheduling operations.
-     * @param[in] picarx PiCar-X coordinator that must outlive this Agent.
-     * @param[in,out] context Optional callback context that must outlive this Agent.
-     * @param[in] delayOperation Non-null synchronous delay operation.
-     * @param[in] continueOperation Non-null synchronous cancellation query.
-     * @throws std::invalid_argument If either callback is null.
+     * @class XWalkCliffDetection
+     * @brief Acquires one grayscale sample and applies the cliff response.
+     *
+     * @details
+     * Observes a caller-owned PiCar-X coordinator and scheduling callbacks. It
+     * retains only whether the preceding completed sample was dangerous.
      */
-    XWalkCliffDetection(XWalkPicarx& picarx, agent::contextpointer context,
-        cliffdetectiondelaycallback delayOperation,
-        cliffdetectioncontinuecallback continueOperation);
+    class XWalkCliffDetection final
+    {
+        private:
+            /**************************************************************************
+             * Private data members
+             **************************************************************************/
 
-    /** @brief Performs a non-throwing emergency motor stop without releasing dependencies. */
-    ~XWalkCliffDetection() noexcept;
+            /** @brief Non-owning PiCar-X pointer that remains non-null for this lifetime. */
+            XWalkPicarx* picarxObject{nullptr};
+            /** @brief Nullable non-owning context forwarded synchronously to callbacks. */
+            agent::contextpointer callbackContext{nullptr};
+            /** @brief Non-null synchronous timing callback. */
+            cliffdetectiondelaycallback delayCallback{nullptr};
+            /** @brief Non-null synchronous cancellation callback. */
+            cliffdetectioncontinuecallback continueCallback{nullptr};
+            /** @brief True when the preceding completed sample selected danger behavior. */
+            agent::boolean lastDangerValue{};
 
-    XWalkCliffDetection(const XWalkCliffDetection&) = delete;
-    XWalkCliffDetection(XWalkCliffDetection&&) = delete;
-    XWalkCliffDetection& operator=(const XWalkCliffDetection&) = delete;
-    XWalkCliffDetection& operator=(XWalkCliffDetection&&) = delete;
+        protected:
+            /**************************************************************************
+             * Protected member functions
+             **************************************************************************/
 
-    /**************************************************************************
-     * Public member functions
-     **************************************************************************/
+            /** @brief Waits in cancellable slices no longer than 20 milliseconds. */
+            agent::boolean wait(agent::uint32 durationMs) const;
 
-    /**
-     * @brief Acquires grayscale data and applies one source-compatible response.
-     * @return Safe, danger, or cancelled step result.
-     * @warning Danger commands physical reverse movement at 80-percent requested speed.
-     */
-    XWalkCliffDetectionResult step();
+        public:
+            /**************************************************************************
+             * Public constructors and destructor
+             **************************************************************************/
 
-    /** @brief Stops both motors and resets the retained state to safe. */
-    void stop();
+            /**
+             * @brief Binds caller-owned vehicle and synchronous scheduling operations.
+             * @param[in] picarx PiCar-X coordinator that must outlive this Agent.
+             * @param[in,out] context Optional callback context that must outlive this Agent.
+             * @param[in] delayOperation Non-null synchronous delay operation.
+             * @param[in] continueOperation Non-null synchronous cancellation query.
+             * @throws std::invalid_argument If either callback is null.
+             */
+            XWalkCliffDetection(XWalkPicarx& picarx,
+                                agent::contextpointer context,
+                                cliffdetectiondelaycallback delayOperation,
+                                cliffdetectioncontinuecallback continueOperation);
 
-    /**
-     * @brief Reports whether the preceding completed sample selected danger.
-     * @return `true` for danger or `false` for safe/reset state.
-     */
-    agent::boolean lastDanger() const noexcept;
-};
+            /** @brief Performs a non-throwing emergency motor stop without releasing dependencies. */
+            ~XWalkCliffDetection() noexcept;
+
+            XWalkCliffDetection(const XWalkCliffDetection&) = delete;
+            XWalkCliffDetection(XWalkCliffDetection&&) = delete;
+            XWalkCliffDetection& operator=(const XWalkCliffDetection&) = delete;
+            XWalkCliffDetection& operator=(XWalkCliffDetection&&) = delete;
+
+            /**************************************************************************
+             * Public member functions
+             **************************************************************************/
+
+            /**
+             * @brief Acquires grayscale data and applies one source-compatible response.
+             * @return Safe, danger, or cancelled step result.
+             * @warning Danger commands physical reverse movement at 80-percent requested speed.
+             */
+            XWalkCliffDetectionResult step();
+
+            /** @brief Stops both motors and resets the retained state to safe. */
+            void stop();
+
+            /**
+             * @brief Reports whether the preceding completed sample selected danger.
+             * @return `true` for danger or `false` for safe/reset state.
+             */
+            agent::boolean lastDanger() const noexcept;
+    };
 
 } /* namespace xwalk::agent */
 

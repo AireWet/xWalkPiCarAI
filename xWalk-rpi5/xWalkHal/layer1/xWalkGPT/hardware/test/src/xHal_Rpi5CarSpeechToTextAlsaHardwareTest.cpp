@@ -15,33 +15,40 @@
 
 #include "xHal_Rpi5CarTrace.h"
 /** @brief Contains the deterministic recognition sink for this test. */
-namespace {
-XWalkHal::boolean ready(XWalkHal::contextpointer context) {
-  static_cast<void>(context);
-  return true;
-}
+namespace
+{
+    XWalkHal::boolean ready(XWalkHal::contextpointer context)
+    {
+        static_cast<void>(context);
+        return true;
+    }
 
-XWalkHal::string recognizePcm(XWalkHal::contextpointer context,
-                              const XWalkHal::bytevector &pcm,
-                              XWalkHal::uint32 rate, XWalkHal::uint8 channels) {
-  static_cast<void>(context);
-  const hal::boolean pcmRateChannelsInvalid = static_cast<hal::boolean>(
-      pcm.empty() || rate != 16'000U || channels != 1U);
-  if (pcmRateChannelsInvalid) {
-    XWALK_HAL_ERROR(XWALK_RUNTIME,
-                    "Speech hardware test received invalid microphone PCM");
-  }
-  return "microphone capture received";
-}
+    XWalkHal::string recognizePcm(XWalkHal::contextpointer context,
+                                  const XWalkHal::bytevector& pcm,
+                                  XWalkHal::uint32 rate,
+                                  XWalkHal::uint8 channels)
+    {
+        static_cast<void>(context);
+        const hal::boolean pcmRateChannelsInvalid =
+            static_cast<hal::boolean>(pcm.empty() || rate != 16'000U || channels != 1U);
+        if (pcmRateChannelsInvalid)
+        {
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Speech hardware test received invalid microphone PCM");
+        }
+        return "microphone capture received";
+    }
 
-XWalkHal::string recognizeFile(XWalkHal::contextpointer context,
-                               XWalkHal::stringview path) {
-  static_cast<void>(context);
-  static_cast<void>(path);
-  return {};
-}
+    XWalkHal::string recognizeFile(XWalkHal::contextpointer context, XWalkHal::stringview path)
+    {
+        static_cast<void>(context);
+        static_cast<void>(path);
+        return {};
+    }
 
-void cancel(XWalkHal::contextpointer context) { static_cast<void>(context); }
+    void cancel(XWalkHal::contextpointer context)
+    {
+        static_cast<void>(context);
+    }
 } /* namespace */
 
 /**
@@ -52,26 +59,24 @@ void cancel(XWalkHal::contextpointer context) { static_cast<void>(context); }
  * @warning Run only after confirming the intended microphone device and privacy
  * context.
  */
-XWalkHal::int32 main(XWalkHal::int32 argumentCount,
-                     XWalkHal::charpointer argumentValues[]) {
-  if (argumentCount != 2) {
-    XWALK_HAL_ERROR(
-        XWALK_INVAL,
-        "Speech hardware test requires an explicit ALSA microphone");
-  }
-  XWalkHal::XWalkSpeechToTextAlsaOperations recognizer{};
-  recognizer.recognizerReady = &ready;
-  recognizer.recognizePcm = &recognizePcm;
-  recognizer.recognizeFile = &recognizeFile;
-  recognizer.cancelRecognition = &cancel;
-  XWalkHal::XWalkSpeechToTextAlsa adapter(argumentValues[1], nullptr,
-                                          recognizer);
-  XWalkHal::XWalkSpeechToText speech(&adapter, adapter.callbacks());
-  const hal::boolean speechIsReadyListenInvalid = static_cast<hal::boolean>(
-      !speech.isReady() || speech.listen(100U).empty());
-  if (speechIsReadyListenInvalid) {
-    XWALK_HAL_ERROR(XWALK_RUNTIME,
-                    "Speech hardware test did not receive microphone PCM");
-  }
-  return 0;
+XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer argumentValues[])
+{
+    if (argumentCount != 2)
+    {
+        XWALK_HAL_ERROR(XWALK_INVAL, "Speech hardware test requires an explicit ALSA microphone");
+    }
+    XWalkHal::XWalkSpeechToTextAlsaOperations recognizer{};
+    recognizer.recognizerReady = &ready;
+    recognizer.recognizePcm = &recognizePcm;
+    recognizer.recognizeFile = &recognizeFile;
+    recognizer.cancelRecognition = &cancel;
+    XWalkHal::XWalkSpeechToTextAlsa adapter(argumentValues[1], nullptr, recognizer);
+    XWalkHal::XWalkSpeechToText speech(&adapter, adapter.callbacks());
+    const hal::boolean speechIsReadyListenInvalid =
+        static_cast<hal::boolean>(!speech.isReady() || speech.listen(100U).empty());
+    if (speechIsReadyListenInvalid)
+    {
+        XWALK_HAL_ERROR(XWALK_RUNTIME, "Speech hardware test did not receive microphone PCM");
+    }
+    return 0;
 }

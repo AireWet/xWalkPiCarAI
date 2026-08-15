@@ -48,73 +48,67 @@
 namespace xwalk::hal::example
 {
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/** @brief Commands one angle in degrees on servo channel one. */
-using servoexamplesetanglecallback = void (*)(contextpointer context,
-    float64 angleDegrees);
+    /** @brief Commands one angle in degrees on servo channel one. */
+    using servoexamplesetanglecallback = void (*)(contextpointer context, float64 angleDegrees);
 
-/** @brief Waits for one bounded duration during the sweep. */
-using servoexamplewaitcallback = void (*)(contextpointer context,
-    uint32 durationMilliseconds);
+    /** @brief Waits for one bounded duration during the sweep. */
+    using servoexamplewaitcallback = void (*)(contextpointer context, uint32 durationMilliseconds);
 
-/** @brief Reports one commanded angle using source-compatible output. */
-using servoexamplereportcallback = void (*)(contextpointer context,
-    int32 angleDegrees);
+    /** @brief Reports one commanded angle using source-compatible output. */
+    using servoexamplereportcallback = void (*)(contextpointer context, int32 angleDegrees);
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-/** @brief Complete injected operation table required by the servo example. */
-struct XWalkServoExampleCallbacks
-{
-    servoexamplesetanglecallback setAngle{nullptr};
-    servoexamplewaitcallback wait{nullptr};
-    servoexamplereportcallback report{nullptr};
-};
+    /** @brief Complete injected operation table required by the servo example. */
+    struct XWalkServoExampleCallbacks
+    {
+            servoexamplesetanglecallback setAngle{nullptr};
+            servoexamplewaitcallback wait{nullptr};
+            servoexamplereportcallback report{nullptr};
+    };
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/** @brief Runs bounded channel-one sweeps through injected operations. */
-class XWalkServoExample final
-{
-private:
+    /** @brief Runs bounded channel-one sweeps through injected operations. */
+    class XWalkServoExample final
+    {
+        private:
+            contextpointer callbackContext;
+            XWalkServoExampleCallbacks callbacks;
 
-    contextpointer callbackContext;
-    XWalkServoExampleCallbacks callbacks;
+        public:
+            /**
+             * @brief Binds the complete servo example operation table.
+             * @param[in,out] context Non-owning context forwarded to every callback.
+             * @param[in] exampleCallbacks Table containing three non-null callbacks.
+             * @throws std::invalid_argument If any callback is null.
+             */
+            XWalkServoExample(contextpointer context, const XWalkServoExampleCallbacks& exampleCallbacks);
 
-public:
+            /** @brief Prevents copying of non-owning callback bindings. */
+            XWalkServoExample(const XWalkServoExample&) = delete;
+            /** @brief Prevents moving of non-owning callback bindings. */
+            XWalkServoExample(XWalkServoExample&&) = delete;
+            /** @brief Prevents copy assignment of non-owning callback bindings. */
+            XWalkServoExample& operator=(const XWalkServoExample&) = delete;
+            /** @brief Prevents move assignment of non-owning callback bindings. */
+            XWalkServoExample& operator=(XWalkServoExample&&) = delete;
 
-    /**
-     * @brief Binds the complete servo example operation table.
-     * @param[in,out] context Non-owning context forwarded to every callback.
-     * @param[in] exampleCallbacks Table containing three non-null callbacks.
-     * @throws std::invalid_argument If any callback is null.
-     */
-    XWalkServoExample(contextpointer context,
-        const XWalkServoExampleCallbacks& exampleCallbacks);
-
-    /** @brief Prevents copying of non-owning callback bindings. */
-    XWalkServoExample(const XWalkServoExample&) = delete;
-    /** @brief Prevents moving of non-owning callback bindings. */
-    XWalkServoExample(XWalkServoExample&&) = delete;
-    /** @brief Prevents copy assignment of non-owning callback bindings. */
-    XWalkServoExample& operator=(const XWalkServoExample&) = delete;
-    /** @brief Prevents move assignment of non-owning callback bindings. */
-    XWalkServoExample& operator=(XWalkServoExample&&) = delete;
-
-    /**
-     * @brief Runs the exact ascending and descending source sweep.
-     * @param[in] cycleCount Complete cycles in the inclusive range 1 through 100.
-     * @throws std::out_of_range If `cycleCount` is outside its range.
-     */
-    void run(uint32 cycleCount);
-};
+            /**
+             * @brief Runs the exact ascending and descending source sweep.
+             * @param[in] cycleCount Complete cycles in the inclusive range 1 through 100.
+             * @throws std::out_of_range If `cycleCount` is outside its range.
+             */
+            void run(uint32 cycleCount);
+    };
 
 } /* namespace xwalk::hal::example */
 

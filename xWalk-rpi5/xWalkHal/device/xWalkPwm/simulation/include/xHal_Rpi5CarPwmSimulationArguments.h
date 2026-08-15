@@ -13,28 +13,30 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Validates and applies one optional PWM trace selector. */
-class XWalkPwmSimulationArguments final
-{
-    private:
-        string traceTargetValue;
-        boolean traceEnabledValue;
-        boolean traceUpdateRequestedValue;
-        boolean validValue;
-        boolean helpRequestedValue;
-    protected:
-        static boolean targetIsValid(stringview target) noexcept;
-        void parseSelector(stringview selector);
-    public:
-        XWalkPwmSimulationArguments(int32 argumentCount, charpointer argumentValues[]);
-        ~XWalkPwmSimulationArguments();
-        XWalkPwmSimulationArguments(const XWalkPwmSimulationArguments&) = delete;
-        XWalkPwmSimulationArguments& operator=(const XWalkPwmSimulationArguments&) = delete;
-        XWalkPwmSimulationArguments(XWalkPwmSimulationArguments&&) = delete;
-        XWalkPwmSimulationArguments& operator=(XWalkPwmSimulationArguments&&) = delete;
-        boolean valid() const noexcept;
-        boolean helpRequested() const noexcept;
-        boolean applyTraceUpdate() const;
-};
+    /** @brief Validates and applies one optional PWM trace selector. */
+    class XWalkPwmSimulationArguments final
+    {
+        private:
+            string traceTargetValue;
+            boolean traceEnabledValue;
+            boolean traceUpdateRequestedValue;
+            boolean validValue;
+            boolean helpRequestedValue;
+
+        protected:
+            static boolean targetIsValid(stringview target) noexcept;
+            void parseSelector(stringview selector);
+
+        public:
+            XWalkPwmSimulationArguments(int32 argumentCount, charpointer argumentValues[]);
+            ~XWalkPwmSimulationArguments();
+            XWalkPwmSimulationArguments(const XWalkPwmSimulationArguments&) = delete;
+            XWalkPwmSimulationArguments& operator=(const XWalkPwmSimulationArguments&) = delete;
+            XWalkPwmSimulationArguments(XWalkPwmSimulationArguments&&) = delete;
+            XWalkPwmSimulationArguments& operator=(XWalkPwmSimulationArguments&&) = delete;
+            boolean valid() const noexcept;
+            boolean helpRequested() const noexcept;
+            boolean applyTraceUpdate() const;
+    };
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_PWM_SIMULATION_ARGUMENTS_H */

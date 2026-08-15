@@ -109,80 +109,79 @@
 namespace xwalk::agent
 {
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-/**
- * @struct XWalkBootServices
- * @brief Publishes non-owning services valid only during one boot callback.
- */
-struct XWalkBootServices
-{
-    /** @brief Optional passive preflight lines selected by Doctor boot mode. */
-    const agent::stringvector* doctorLines{nullptr};
-    /** @brief Base PiCar-X coordinator, null for the SPI-only boot mode. */
-    XWalkPicarx* picarx{nullptr};
-    /** @brief Optional SPI transaction Agent selected by SPI-only boot mode. */
-    XWalkSpiTransfer* spiTransfer{nullptr};
-    /** @brief Optional twelve-channel servo-zeroing Agent. */
-    XWalkServoZeroing* servoZeroing{nullptr};
-    /** @brief Optional line-tracking coordinator selected by the boot mode. */
-    XWalkLineTracking* lineTracking{nullptr};
-    /** @brief Optional self-drive coordinator selected by the boot mode. */
-    XWalkSelfDrive* selfDrive{nullptr};
-    /** @brief Optional Music controller selected by an audio boot mode. */
-    hal::XWalkMusic* music{nullptr};
-    /** @brief Optional local voice-chatbot coordinator selected by voice-chat mode. */
-    XWalkLocalVoiceChatbot* localVoiceChatbot{nullptr};
-    /** @brief Optional sensor-aware voice-active-car coordinator. */
-    XWalkVoiceActiveCar* voiceActiveCar{nullptr};
-    /** @brief Optional wake-word voice-controlled-car coordinator. */
-    XWalkVoiceControlledCar* voiceControlledCar{nullptr};
-    /** @brief Optional spoken movement-demonstration coordinator. */
-    XWalkVoicePromptCar* voicePromptCar{nullptr};
-    /** @brief Optional boot-owned complete voice-assistant pipeline. */
-    hal::XWalkVoiceAssistant* voiceAssistant{nullptr};
-    /** @brief Optional boot-owned status LED used by the voice-active car. */
-    hal::XWalkLed* voiceStatusLed{nullptr};
-    /** @brief Optional boot-owned still-image capture Agent. */
-    XWalkCameraCapture* cameraCapture{nullptr};
-    /** @brief Optional interactive computer-vision Agent. */
-    XWalkComputerVision* computerVision{nullptr};
-    /** @brief Optional bounded camera-servo face-tracking Agent. */
-    XWalkFaceTracking* faceTracking{nullptr};
-    /** @brief Optional bounded red-target pursuit Agent. */
-    XWalkBullFight* bullFight{nullptr};
-    /** @brief Optional interactive color treasure-hunt Agent. */
-    XWalkTreasureHunt* treasureHunt{nullptr};
-    /** @brief Optional interactive video-recording Agent. */
-    XWalkVideoRecording* videoRecording{nullptr};
-    /** @brief Optional interactive camera-assisted driving Agent. */
-    XWalkVideoCar* videoCar{nullptr};
-    /** @brief Optional mobile-app vehicle-control Agent. */
-    XWalkAppControl* appControl{nullptr};
-    /** @brief Optional interactive sound-and-music Agent. */
-    XWalkSoundBackgroundMusic* soundBackgroundMusic{nullptr};
-    /** @brief Optional boot-owned speech-recognition coordinator. */
-    hal::XWalkSpeechToText* speechToText{nullptr};
-    /** @brief Optional boot-owned speech-synthesis coordinator. */
-    hal::XWalkTextToSpeech* textToSpeech{nullptr};
-    /** @brief Optional boot-owned language model for text-vision talk. */
-    hal::XWalkLanguageModel* languageModel{nullptr};
-};
+    /**
+     * @struct XWalkBootServices
+     * @brief Publishes non-owning services valid only during one boot callback.
+     */
+    struct XWalkBootServices
+    {
+            /** @brief Optional passive preflight lines selected by Doctor boot mode. */
+            const agent::stringvector* doctorLines{nullptr};
+            /** @brief Base PiCar-X coordinator, null for the SPI-only boot mode. */
+            XWalkPicarx* picarx{nullptr};
+            /** @brief Optional SPI transaction Agent selected by SPI-only boot mode. */
+            XWalkSpiTransfer* spiTransfer{nullptr};
+            /** @brief Optional twelve-channel servo-zeroing Agent. */
+            XWalkServoZeroing* servoZeroing{nullptr};
+            /** @brief Optional line-tracking coordinator selected by the boot mode. */
+            XWalkLineTracking* lineTracking{nullptr};
+            /** @brief Optional self-drive coordinator selected by the boot mode. */
+            XWalkSelfDrive* selfDrive{nullptr};
+            /** @brief Optional Music controller selected by an audio boot mode. */
+            hal::XWalkMusic* music{nullptr};
+            /** @brief Optional local voice-chatbot coordinator selected by voice-chat mode. */
+            XWalkLocalVoiceChatbot* localVoiceChatbot{nullptr};
+            /** @brief Optional sensor-aware voice-active-car coordinator. */
+            XWalkVoiceActiveCar* voiceActiveCar{nullptr};
+            /** @brief Optional wake-word voice-controlled-car coordinator. */
+            XWalkVoiceControlledCar* voiceControlledCar{nullptr};
+            /** @brief Optional spoken movement-demonstration coordinator. */
+            XWalkVoicePromptCar* voicePromptCar{nullptr};
+            /** @brief Optional boot-owned complete voice-assistant pipeline. */
+            hal::XWalkVoiceAssistant* voiceAssistant{nullptr};
+            /** @brief Optional boot-owned status LED used by the voice-active car. */
+            hal::XWalkLed* voiceStatusLed{nullptr};
+            /** @brief Optional boot-owned still-image capture Agent. */
+            XWalkCameraCapture* cameraCapture{nullptr};
+            /** @brief Optional interactive computer-vision Agent. */
+            XWalkComputerVision* computerVision{nullptr};
+            /** @brief Optional bounded camera-servo face-tracking Agent. */
+            XWalkFaceTracking* faceTracking{nullptr};
+            /** @brief Optional bounded red-target pursuit Agent. */
+            XWalkBullFight* bullFight{nullptr};
+            /** @brief Optional interactive color treasure-hunt Agent. */
+            XWalkTreasureHunt* treasureHunt{nullptr};
+            /** @brief Optional interactive video-recording Agent. */
+            XWalkVideoRecording* videoRecording{nullptr};
+            /** @brief Optional interactive camera-assisted driving Agent. */
+            XWalkVideoCar* videoCar{nullptr};
+            /** @brief Optional mobile-app vehicle-control Agent. */
+            XWalkAppControl* appControl{nullptr};
+            /** @brief Optional interactive sound-and-music Agent. */
+            XWalkSoundBackgroundMusic* soundBackgroundMusic{nullptr};
+            /** @brief Optional boot-owned speech-recognition coordinator. */
+            hal::XWalkSpeechToText* speechToText{nullptr};
+            /** @brief Optional boot-owned speech-synthesis coordinator. */
+            hal::XWalkTextToSpeech* textToSpeech{nullptr};
+            /** @brief Optional boot-owned language model for text-vision talk. */
+            hal::XWalkLanguageModel* languageModel{nullptr};
+    };
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/**
- * @brief Executes one application operation while boot services remain alive.
- * @param[in,out] context Nullable caller-owned application context.
- * @param[in,out] services Non-owning services valid only for this callback.
- * @return Application-defined process status.
- */
-using bootapplicationcallback = agent::int32 (*)(agent::contextpointer context,
-    XWalkBootServices& services);
+    /**
+     * @brief Executes one application operation while boot services remain alive.
+     * @param[in,out] context Nullable caller-owned application context.
+     * @param[in,out] services Non-owning services valid only for this callback.
+     * @return Application-defined process status.
+     */
+    using bootapplicationcallback = agent::int32 (*)(agent::contextpointer context, XWalkBootServices& services);
 
 } /* namespace xwalk::agent */
 

@@ -36,37 +36,38 @@
  * @namespace xwalk::hal::example
  * @brief Contains host-testable ports of upstream Robot HAT examples.
  */
-namespace xwalk::hal::example {
+namespace xwalk::hal::example
+{
 
-/******************************************************************************
- * Constructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Constructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Binds and validates one synchronous Pico2Wave speech operation.
- * @param[in,out] context Non-owning context forwarded to `speak`.
- * @param[in] speak Non-null operation accepting language and text views.
- * @throws std::invalid_argument If `speak` is null.
- */
-XWalkTtsPico2WaveExample::XWalkTtsPico2WaveExample(
-    contextpointer context, ttspico2wavespeakcallback speak)
-    : callbackContext(context), speakCallback(speak) {
-  if (speakCallback == nullptr) {
-    XWALK_HAL_ERROR(XWALK_INVAL,
-                    "Pico2Wave example requires a speech callback");
-  }
-}
+    /**
+     * @brief Binds and validates one synchronous Pico2Wave speech operation.
+     * @param[in,out] context Non-owning context forwarded to `speak`.
+     * @param[in] speak Non-null operation accepting language and text views.
+     * @throws std::invalid_argument If `speak` is null.
+     */
+    XWalkTtsPico2WaveExample::XWalkTtsPico2WaveExample(contextpointer context, ttspico2wavespeakcallback speak)
+        : callbackContext(context), speakCallback(speak)
+    {
+        if (speakCallback == nullptr)
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "Pico2Wave example requires a speech callback");
+        }
+    }
 
-/******************************************************************************
- * Public member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Public member function definitions
+     ******************************************************************************/
 
-/**
- * @brief Delivers the exact source language and message once.
- */
-void XWalkTtsPico2WaveExample::run() {
-  speakCallback(callbackContext, XWALK_TTS_PICO2WAVE_EXAMPLE_LANGUAGE,
-                XWALK_TTS_PICO2WAVE_EXAMPLE_MESSAGE);
-}
+    /**
+     * @brief Delivers the exact source language and message once.
+     */
+    void XWalkTtsPico2WaveExample::run()
+    {
+        speakCallback(callbackContext, XWALK_TTS_PICO2WAVE_EXAMPLE_LANGUAGE, XWALK_TTS_PICO2WAVE_EXAMPLE_MESSAGE);
+    }
 
 } /* namespace xwalk::hal::example */

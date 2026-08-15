@@ -43,82 +43,83 @@
 namespace xwalk::agent
 {
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
-
-/**
- * @class XWalkObstacleAvoidance
- * @brief Applies one bounded obstacle-avoidance decision to a PiCar-X vehicle.
- *
- * @details
- * Observes a caller-owned PiCar-X coordinator and scheduling callbacks. The
- * caller owns ultrasonic acquisition and repeated foreground scheduling.
- */
-class XWalkObstacleAvoidance final
-{
-private:
-    /**************************************************************************
-     * Private data members
-     **************************************************************************/
-
-    /** @brief Non-owning PiCar-X pointer that remains non-null for this lifetime. */
-    XWalkPicarx* picarxObject{nullptr};
-    /** @brief Nullable non-owning context forwarded synchronously to callbacks. */
-    agent::contextpointer callbackContext{nullptr};
-    /** @brief Non-null synchronous timing callback. */
-    obstacleavoidancedelaycallback delayCallback{nullptr};
-    /** @brief Non-null synchronous cancellation callback. */
-    obstacleavoidancecontinuecallback continueCallback{nullptr};
-
-protected:
-    /**************************************************************************
-     * Protected member functions
-     **************************************************************************/
-
-    /** @brief Waits in cancellable slices no longer than 20 milliseconds. */
-    agent::boolean wait(agent::uint32 durationMs) const;
-
-public:
-    /**************************************************************************
-     * Public constructors and destructor
-     **************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
     /**
-     * @brief Binds caller-owned vehicle and synchronous scheduling operations.
-     * @param[in] picarx PiCar-X coordinator that must outlive this Agent.
-     * @param[in,out] context Optional callback context that must outlive this Agent.
-     * @param[in] delayOperation Non-null synchronous delay operation.
-     * @param[in] continueOperation Non-null synchronous cancellation query.
-     * @throws std::invalid_argument If either callback is null.
+     * @class XWalkObstacleAvoidance
+     * @brief Applies one bounded obstacle-avoidance decision to a PiCar-X vehicle.
+     *
+     * @details
+     * Observes a caller-owned PiCar-X coordinator and scheduling callbacks. The
+     * caller owns ultrasonic acquisition and repeated foreground scheduling.
      */
-    XWalkObstacleAvoidance(XWalkPicarx& picarx, agent::contextpointer context,
-        obstacleavoidancedelaycallback delayOperation,
-        obstacleavoidancecontinuecallback continueOperation);
+    class XWalkObstacleAvoidance final
+    {
+        private:
+            /**************************************************************************
+             * Private data members
+             **************************************************************************/
 
-    /** @brief Performs a non-throwing emergency motor stop without releasing dependencies. */
-    ~XWalkObstacleAvoidance() noexcept;
+            /** @brief Non-owning PiCar-X pointer that remains non-null for this lifetime. */
+            XWalkPicarx* picarxObject{nullptr};
+            /** @brief Nullable non-owning context forwarded synchronously to callbacks. */
+            agent::contextpointer callbackContext{nullptr};
+            /** @brief Non-null synchronous timing callback. */
+            obstacleavoidancedelaycallback delayCallback{nullptr};
+            /** @brief Non-null synchronous cancellation callback. */
+            obstacleavoidancecontinuecallback continueCallback{nullptr};
 
-    XWalkObstacleAvoidance(const XWalkObstacleAvoidance&) = delete;
-    XWalkObstacleAvoidance(XWalkObstacleAvoidance&&) = delete;
-    XWalkObstacleAvoidance& operator=(const XWalkObstacleAvoidance&) = delete;
-    XWalkObstacleAvoidance& operator=(XWalkObstacleAvoidance&&) = delete;
+        protected:
+            /**************************************************************************
+             * Protected member functions
+             **************************************************************************/
 
-    /**************************************************************************
-     * Public member functions
-     **************************************************************************/
+            /** @brief Waits in cancellable slices no longer than 20 milliseconds. */
+            agent::boolean wait(agent::uint32 durationMs) const;
 
-    /**
-     * @brief Applies one source-compatible decision for a measured distance.
-     * @param[in] distanceCm Ultrasonic distance in centimeters; non-positive values are invalid.
-     * @return The applied movement band, sensor failure, or cancellation result.
-     * @warning Successful decisions may move the physical vehicle at 50-percent requested speed.
-     */
-    XWalkObstacleAvoidanceResult step(agent::float64 distanceCm);
+        public:
+            /**************************************************************************
+             * Public constructors and destructor
+             **************************************************************************/
 
-    /** @brief Stops both drive motors without changing steering. */
-    void stop();
-};
+            /**
+             * @brief Binds caller-owned vehicle and synchronous scheduling operations.
+             * @param[in] picarx PiCar-X coordinator that must outlive this Agent.
+             * @param[in,out] context Optional callback context that must outlive this Agent.
+             * @param[in] delayOperation Non-null synchronous delay operation.
+             * @param[in] continueOperation Non-null synchronous cancellation query.
+             * @throws std::invalid_argument If either callback is null.
+             */
+            XWalkObstacleAvoidance(XWalkPicarx& picarx,
+                                   agent::contextpointer context,
+                                   obstacleavoidancedelaycallback delayOperation,
+                                   obstacleavoidancecontinuecallback continueOperation);
+
+            /** @brief Performs a non-throwing emergency motor stop without releasing dependencies. */
+            ~XWalkObstacleAvoidance() noexcept;
+
+            XWalkObstacleAvoidance(const XWalkObstacleAvoidance&) = delete;
+            XWalkObstacleAvoidance(XWalkObstacleAvoidance&&) = delete;
+            XWalkObstacleAvoidance& operator=(const XWalkObstacleAvoidance&) = delete;
+            XWalkObstacleAvoidance& operator=(XWalkObstacleAvoidance&&) = delete;
+
+            /**************************************************************************
+             * Public member functions
+             **************************************************************************/
+
+            /**
+             * @brief Applies one source-compatible decision for a measured distance.
+             * @param[in] distanceCm Ultrasonic distance in centimeters; non-positive values are invalid.
+             * @return The applied movement band, sensor failure, or cancellation result.
+             * @warning Successful decisions may move the physical vehicle at 50-percent requested speed.
+             */
+            XWalkObstacleAvoidanceResult step(agent::float64 distanceCm);
+
+            /** @brief Stops both drive motors without changing steering. */
+            void stop();
+    };
 
 } /* namespace xwalk::agent */
 

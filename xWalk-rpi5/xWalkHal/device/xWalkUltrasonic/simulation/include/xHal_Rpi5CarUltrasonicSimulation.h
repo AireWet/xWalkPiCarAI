@@ -13,7 +13,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Exercises trigger, echo timing, and conversion through in-memory GPIO. */
-int32 runUltrasonicSimulation();
+    /** @brief Exercises trigger, echo timing, and conversion through in-memory GPIO. */
+    int32 runUltrasonicSimulation();
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_ULTRASONIC_SIMULATION_H */

@@ -41,44 +41,44 @@
 namespace xwalk::hal
 {
 
-/******************************************************************************
- * Enumeration declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Enumeration declarations
+     ******************************************************************************/
 
-/** @brief Identifies the recognized Robot HAT hardware revision. */
-enum class XWalkDeviceModel : uint8
-{
-    Unknown = 0U,   /**< No supported UUID was found. */
-    RobotHatV4 = 1U, /**< Default legacy configuration without a detected UUID. */
-    RobotHatV5 = 2U  /**< Robot HAT v5 identified by its device-tree UUID. */
-};
+    /** @brief Identifies the recognized Robot HAT hardware revision. */
+    enum class XWalkDeviceModel : uint8
+    {
+        Unknown = 0U,    /**< No supported UUID was found. */
+        RobotHatV4 = 1U, /**< Default legacy configuration without a detected UUID. */
+        RobotHatV5 = 2U  /**< Robot HAT v5 identified by its device-tree UUID. */
+    };
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-/** @brief Contains detected HAT metadata and board-specific configuration. */
-struct XWalkDeviceInformation
-{
-    /** @brief Product text read from the `product` device-tree property. */
-    string productName{};
-    /** @brief Unsigned hexadecimal value read from the `product_id` property. */
-    uint32 productId{};
-    /** @brief Unsigned hexadecimal value read from the `product_ver` property. */
-    uint32 productVersion{};
-    /** @brief UUID text used to recognize the supported HAT revision. */
-    string uuid{};
-    /** @brief Vendor text read from the `vendor` device-tree property. */
-    string vendor{};
-    /** @brief GPIO line offset controlling physical speaker enable. */
-    uint8 speakerEnablePin{XHAL_RPI5CAR_DEVICE_DEFAULT_SPEAKER_ENABLE_PIN};
-    /** @brief Board-specific motor-driver mode identifier. */
-    uint8 motorMode{XHAL_RPI5CAR_DEVICE_DEFAULT_MOTOR_MODE};
-    /** @brief Effective board configuration, defaulting to legacy Robot HAT v4. */
-    XWalkDeviceModel model{XWalkDeviceModel::RobotHatV4};
-    /** @brief `true` when a supported HAT UUID and all required properties were read. */
-    boolean detected{};
-};
+    /** @brief Contains detected HAT metadata and board-specific configuration. */
+    struct XWalkDeviceInformation
+    {
+            /** @brief Product text read from the `product` device-tree property. */
+            string productName{};
+            /** @brief Unsigned hexadecimal value read from the `product_id` property. */
+            uint32 productId{};
+            /** @brief Unsigned hexadecimal value read from the `product_ver` property. */
+            uint32 productVersion{};
+            /** @brief UUID text used to recognize the supported HAT revision. */
+            string uuid{};
+            /** @brief Vendor text read from the `vendor` device-tree property. */
+            string vendor{};
+            /** @brief GPIO line offset controlling physical speaker enable. */
+            uint8 speakerEnablePin{XHAL_RPI5CAR_DEVICE_DEFAULT_SPEAKER_ENABLE_PIN};
+            /** @brief Board-specific motor-driver mode identifier. */
+            uint8 motorMode{XHAL_RPI5CAR_DEVICE_DEFAULT_MOTOR_MODE};
+            /** @brief Effective board configuration, defaulting to legacy Robot HAT v4. */
+            XWalkDeviceModel model{XWalkDeviceModel::RobotHatV4};
+            /** @brief `true` when a supported HAT UUID and all required properties were read. */
+            boolean detected{};
+    };
 
 } /* namespace xwalk::hal */
 

@@ -41,11 +41,11 @@
 namespace xwalk::hal::sim
 {
 
-/**
- * @brief Creates the SPI device implementation selected by the build.
- * @return Owned simulation or physical Linux device-operation implementation.
- */
-owningpointer<XWalkSpiDevice> createSpiDevice();
+    /**
+     * @brief Creates the SPI device implementation selected by the build.
+     * @return Owned simulation or physical Linux device-operation implementation.
+     */
+    owningpointer<XWalkSpiDevice> createSpiDevice();
 
 } /* namespace xwalk::hal::sim */
 

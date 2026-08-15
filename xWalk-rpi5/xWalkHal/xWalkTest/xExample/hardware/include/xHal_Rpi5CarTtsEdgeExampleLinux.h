@@ -25,41 +25,38 @@
 namespace xwalk::hal::example
 {
 
-/** @brief Executes one live Edge TTS playback request without a shell. */
-class XWalkTtsEdgeExampleLinux final
-{
-private:
+    /** @brief Executes one live Edge TTS playback request without a shell. */
+    class XWalkTtsEdgeExampleLinux final
+    {
+        private:
+            /** @brief Owned non-empty executable name or path. */
+            string executableName;
 
-    /** @brief Owned non-empty executable name or path. */
-    string executableName;
+        protected:
+            /** @brief Resolves a callback context into its required Linux adapter. */
+            static XWalkTtsEdgeExampleLinux& adapter(contextpointer context);
+            /** @brief Executes one synchronous Edge cloud synthesis and playback. */
+            static void speak(contextpointer context, stringview voice, stringview text);
 
-protected:
+        public:
+            /**
+             * @brief Stores one deployment-selected Edge playback executable.
+             * @param[in] executable Non-empty executable name or path.
+             * @throws std::invalid_argument If `executable` is empty.
+             */
+            explicit XWalkTtsEdgeExampleLinux(stringview executable);
 
-    /** @brief Resolves a callback context into its required Linux adapter. */
-    static XWalkTtsEdgeExampleLinux& adapter(contextpointer context);
-    /** @brief Executes one synchronous Edge cloud synthesis and playback. */
-    static void speak(contextpointer context, stringview voice, stringview text);
+            XWalkTtsEdgeExampleLinux(const XWalkTtsEdgeExampleLinux&) = delete;
+            XWalkTtsEdgeExampleLinux(XWalkTtsEdgeExampleLinux&&) = delete;
+            XWalkTtsEdgeExampleLinux& operator=(const XWalkTtsEdgeExampleLinux&) = delete;
+            XWalkTtsEdgeExampleLinux& operator=(XWalkTtsEdgeExampleLinux&&) = delete;
 
-public:
-
-    /**
-     * @brief Stores one deployment-selected Edge playback executable.
-     * @param[in] executable Non-empty executable name or path.
-     * @throws std::invalid_argument If `executable` is empty.
-     */
-    explicit XWalkTtsEdgeExampleLinux(stringview executable);
-
-    XWalkTtsEdgeExampleLinux(const XWalkTtsEdgeExampleLinux&) = delete;
-    XWalkTtsEdgeExampleLinux(XWalkTtsEdgeExampleLinux&&) = delete;
-    XWalkTtsEdgeExampleLinux& operator=(const XWalkTtsEdgeExampleLinux&) = delete;
-    XWalkTtsEdgeExampleLinux& operator=(XWalkTtsEdgeExampleLinux&&) = delete;
-
-    /**
-     * @brief Synthesizes and plays the fixed Edge TTS message once.
-     * @warning Uses a remote cloud service and produces audible output.
-     */
-    void run();
-};
+            /**
+             * @brief Synthesizes and plays the fixed Edge TTS message once.
+             * @warning Uses a remote cloud service and produces audible output.
+             */
+            void run();
+    };
 
 } /* namespace xwalk::hal::example */
 

@@ -37,15 +37,15 @@
 namespace xwalk::hal::sim
 {
 
-/******************************************************************************
- * Function declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Function declarations
+     ******************************************************************************/
 
-/**
- * @brief Creates the I2C device implementation selected by the build.
- * @return Owned simulation or physical Linux device-operation implementation.
- */
-owningpointer<XWalkI2cDevice> createI2cDevice();
+    /**
+     * @brief Creates the I2C device implementation selected by the build.
+     * @return Owned simulation or physical Linux device-operation implementation.
+     */
+    owningpointer<XWalkI2cDevice> createI2cDevice();
 
 } /* namespace xwalk::hal::sim */
 

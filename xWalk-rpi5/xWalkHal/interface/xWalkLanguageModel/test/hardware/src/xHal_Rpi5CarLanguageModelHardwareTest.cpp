@@ -43,17 +43,15 @@
  * @warning Run only after approving the endpoint, model, prompt, and network
  * policy.
  */
-XWalkHal::int32 main(XWalkHal::int32 argumentCount,
-                     XWalkHal::charpointer argumentValues[]) {
-  if (argumentCount != 4) {
-    XWALK_HAL_ERROR(
-        XWALK_INVAL,
-        "Ollama hardware test requires endpoint, model, and prompt");
-  }
-  XWalkHal::XWalkLanguageModelOllama backend(argumentValues[1],
-                                             argumentValues[2]);
-  XWalkHal::XWalkLanguageModel model(&backend, backend.callbacks());
-  model.setMaximumMessages(4U);
-  static_cast<void>(model.prompt(argumentValues[3]));
-  return 0;
+XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer argumentValues[])
+{
+    if (argumentCount != 4)
+    {
+        XWALK_HAL_ERROR(XWALK_INVAL, "Ollama hardware test requires endpoint, model, and prompt");
+    }
+    XWalkHal::XWalkLanguageModelOllama backend(argumentValues[1], argumentValues[2]);
+    XWalkHal::XWalkLanguageModel model(&backend, backend.callbacks());
+    model.setMaximumMessages(4U);
+    static_cast<void>(model.prompt(argumentValues[3]));
+    return 0;
 }

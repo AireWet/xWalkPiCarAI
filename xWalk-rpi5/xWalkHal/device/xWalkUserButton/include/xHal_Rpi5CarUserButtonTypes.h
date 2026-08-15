@@ -41,28 +41,28 @@
 namespace xwalk::hal
 {
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/**
- * @brief Callback invoked for a user-button event without state data.
- *
- * @param[in,out] context
- * Non-owning callback context whose interpretation is callback-specific.
- */
-using userbuttoncallback = void (*)(contextpointer context);
+    /**
+     * @brief Callback invoked for a user-button event without state data.
+     *
+     * @param[in,out] context
+     * Non-owning callback context whose interpretation is callback-specific.
+     */
+    using userbuttoncallback = void (*)(contextpointer context);
 
-/**
- * @brief Callback invoked when user-button pressed state changes.
- *
- * @param[in,out] context
- * Non-owning callback context whose interpretation is callback-specific.
- *
- * @param[in] pressed
- * `true` for a press transition or `false` for a release transition.
- */
-using userbuttonstatecallback = void (*)(contextpointer context, boolean pressed);
+    /**
+     * @brief Callback invoked when user-button pressed state changes.
+     *
+     * @param[in,out] context
+     * Non-owning callback context whose interpretation is callback-specific.
+     *
+     * @param[in] pressed
+     * `true` for a press transition or `false` for a release transition.
+     */
+    using userbuttonstatecallback = void (*)(contextpointer context, boolean pressed);
 
 } /* namespace xwalk::hal */
 

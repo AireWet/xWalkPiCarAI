@@ -38,29 +38,29 @@
 namespace xwalk::hal::test
 {
 
-/******************************************************************************
- * Constructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Constructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Constructs an empty in-memory I2C recording backend.
- *
- * @post
- * All interaction records are empty and no simulated address is present.
- */
-XWalkPwmTestI2c::XWalkPwmTestI2c() = default;
+    /**
+     * @brief Constructs an empty in-memory I2C recording backend.
+     *
+     * @post
+     * All interaction records are empty and no simulated address is present.
+     */
+    XWalkPwmTestI2c::XWalkPwmTestI2c() = default;
 
-/******************************************************************************
- * Destructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Destructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Destroys the test double and its recorded data.
- *
- * @pre
- * Any separately created `XWalkI2c` object whose context points here has
- * already been destroyed or will no longer be used.
- */
-XWalkPwmTestI2c::~XWalkPwmTestI2c() = default;
+    /**
+     * @brief Destroys the test double and its recorded data.
+     *
+     * @pre
+     * Any separately created `XWalkI2c` object whose context points here has
+     * already been destroyed or will no longer be used.
+     */
+    XWalkPwmTestI2c::~XWalkPwmTestI2c() = default;
 
 } /* namespace xwalk::hal::test */

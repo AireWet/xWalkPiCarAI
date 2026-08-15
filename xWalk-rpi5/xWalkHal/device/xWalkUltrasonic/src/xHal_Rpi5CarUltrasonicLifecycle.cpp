@@ -37,48 +37,46 @@
  * @namespace xwalk::hal
  * @brief Contains hardware abstraction components for the xWalk firmware.
  */
-namespace xwalk::hal {
+namespace xwalk::hal
+{
 
-/******************************************************************************
- * Constructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Constructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Constructs a distance sensor from caller-owned GPIO objects.
- *
- * @param[in] trigger
- * GPIO object reconfigured as the trigger output; it must outlive this object.
- *
- * @param[in] echo
- * GPIO object reconfigured as a pull-down echo input; it must outlive this
- * object.
- *
- * @param[in] timeoutMicroseconds
- * Maximum echo acquisition interval in microseconds; zero requests an immediate
- * timeout.
- *
- * @post
- * `trigger` is configured as an output and `echo` as a pull-down input.
- */
-XWalkUltrasonic::XWalkUltrasonic(XWalkGpio &trigger, XWalkGpio &echo,
-                                 uint32 timeoutMicroseconds)
-    : triggerPin(&trigger), echoPin(&echo),
-      timeoutMicrosecondsValue(timeoutMicroseconds) {
-  triggerPin->setup(XWalkGpioMode::Output, XWalkGpioPull::None);
-  echoPin->setup(XWalkGpioMode::Input, XWalkGpioPull::Down);
-  XWALK_HAL_TRACE_UID1(RPI .202,
-                       "Ultrasonic sensor constructed with timeout %u us",
-                       timeoutMicrosecondsValue);
-}
+    /**
+     * @brief Constructs a distance sensor from caller-owned GPIO objects.
+     *
+     * @param[in] trigger
+     * GPIO object reconfigured as the trigger output; it must outlive this object.
+     *
+     * @param[in] echo
+     * GPIO object reconfigured as a pull-down echo input; it must outlive this
+     * object.
+     *
+     * @param[in] timeoutMicroseconds
+     * Maximum echo acquisition interval in microseconds; zero requests an immediate
+     * timeout.
+     *
+     * @post
+     * `trigger` is configured as an output and `echo` as a pull-down input.
+     */
+    XWalkUltrasonic::XWalkUltrasonic(XWalkGpio& trigger, XWalkGpio& echo, uint32 timeoutMicroseconds)
+        : triggerPin(&trigger), echoPin(&echo), timeoutMicrosecondsValue(timeoutMicroseconds)
+    {
+        triggerPin->setup(XWalkGpioMode::Output, XWalkGpioPull::None);
+        echoPin->setup(XWalkGpioMode::Input, XWalkGpioPull::Down);
+        XWALK_HAL_TRACE_UID1(RPI .202, "Ultrasonic sensor constructed with timeout %u us", timeoutMicrosecondsValue);
+    }
 
-/******************************************************************************
- * Destructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Destructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Destroys the sensor without releasing its non-owning GPIO
- * dependencies.
- */
-XWalkUltrasonic::~XWalkUltrasonic() = default;
+    /**
+     * @brief Destroys the sensor without releasing its non-owning GPIO
+     * dependencies.
+     */
+    XWalkUltrasonic::~XWalkUltrasonic() = default;
 
 } /* namespace xwalk::hal */

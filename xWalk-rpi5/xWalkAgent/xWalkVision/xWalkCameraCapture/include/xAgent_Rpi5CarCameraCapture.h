@@ -37,48 +37,48 @@
 namespace xwalk::agent
 {
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/**
- * @class XWalkCameraCapture
- * @brief Supplies bounded still images to application coordinators.
- */
-class XWalkCameraCapture final
-{
-    private:
-        /** @brief Non-owning camera pointer that remains valid for this object. */
-        hal::XWalkCamera* cameraObject{nullptr};
-        /** @brief Owned non-empty JPEG destination path. */
-        agent::string outputPathValue{};
+    /**
+     * @class XWalkCameraCapture
+     * @brief Supplies bounded still images to application coordinators.
+     */
+    class XWalkCameraCapture final
+    {
+        private:
+            /** @brief Non-owning camera pointer that remains valid for this object. */
+            hal::XWalkCamera* cameraObject{nullptr};
+            /** @brief Owned non-empty JPEG destination path. */
+            agent::string outputPathValue{};
 
-    public:
-        /**
-         * @brief Binds one camera and one reusable output path.
-         * @param[in] camera Caller-owned HAL camera that outlives this object.
-         * @param[in] outputPath Non-empty destination overwritten by each capture.
-         */
-        XWalkCameraCapture(hal::XWalkCamera& camera, agent::stringview outputPath);
+        public:
+            /**
+             * @brief Binds one camera and one reusable output path.
+             * @param[in] camera Caller-owned HAL camera that outlives this object.
+             * @param[in] outputPath Non-empty destination overwritten by each capture.
+             */
+            XWalkCameraCapture(hal::XWalkCamera& camera, agent::stringview outputPath);
 
-        /** @brief Releases no caller-owned camera resource. */
-        ~XWalkCameraCapture();
+            /** @brief Releases no caller-owned camera resource. */
+            ~XWalkCameraCapture();
 
-        XWalkCameraCapture(const XWalkCameraCapture&) = delete;
-        XWalkCameraCapture& operator=(const XWalkCameraCapture&) = delete;
-        XWalkCameraCapture(XWalkCameraCapture&&) = delete;
-        XWalkCameraCapture& operator=(XWalkCameraCapture&&) = delete;
+            XWalkCameraCapture(const XWalkCameraCapture&) = delete;
+            XWalkCameraCapture& operator=(const XWalkCameraCapture&) = delete;
+            XWalkCameraCapture(XWalkCameraCapture&&) = delete;
+            XWalkCameraCapture& operator=(XWalkCameraCapture&&) = delete;
 
-        /** @brief Captures one image and returns its owned destination path. */
-        agent::string capture();
+            /** @brief Captures one image and returns its owned destination path. */
+            agent::string capture();
 
-        /**
-         * @brief Adapts this object to a voice-active image callback.
-         * @param[in,out] context Non-null pointer to a live capture Agent.
-         * @return Captured image path.
-         */
-        static agent::string captureImage(agent::contextpointer context);
-};
+            /**
+             * @brief Adapts this object to a voice-active image callback.
+             * @param[in,out] context Non-null pointer to a live capture Agent.
+             * @return Captured image path.
+             */
+            static agent::string captureImage(agent::contextpointer context);
+    };
 
 } /* namespace xwalk::agent */
 

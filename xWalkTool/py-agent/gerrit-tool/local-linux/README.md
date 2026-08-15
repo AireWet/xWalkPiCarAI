@@ -47,15 +47,20 @@ xWalkTool/py-agent/gerrit-tool/local-linux/gerrit-local.sh install
 ```
 
 The script securely prompts for the initial `joxy` password, installs the local
-profile, starts Gerrit and Caddy, and validates HTTPS. It never uses `sudo`.
-The local profile runs Caddy as a transient user-level systemd service so it
-continues after the installer exits; it does not create a system service.
+profile, starts Gerrit and Caddy, starts CI when `$HOME/.xwalk-ci.env` exists,
+and validates HTTPS. It never uses `sudo`. The local profile runs Caddy and the
+configured CI worker as transient user-level systemd services so they continue
+after the start command exits; it does not create a system service.
 
 After a reboot, start the existing installation with:
 
 ```bash
 xWalkTool/py-agent/gerrit-tool/local-linux/gerrit-local.sh start
 ```
+
+This command starts any stopped Gerrit, Caddy, and configured CI process. The
+matching stop, status, and restart controls include CI when the protected CI
+environment exists.
 
 Print the browser address with:
 

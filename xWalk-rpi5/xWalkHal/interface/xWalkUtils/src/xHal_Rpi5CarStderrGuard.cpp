@@ -36,64 +36,65 @@
  * @namespace xwalk::hal
  * @brief Contains hardware abstraction components for the xWalk firmware.
  */
-namespace xwalk::hal {
+namespace xwalk::hal
+{
 
-/******************************************************************************
- * Constructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Constructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Begins standard-error suppression through an injected backend.
- *
- * @param[in,out] backendContext
- * Nullable non-owning context used by both callbacks.
- *
- * @param[in] redirect
- * Non-null callback that begins suppression and returns a restore token.
- *
- * @param[in] restore
- * Non-null callback used during destruction.
- */
-XWalkStderrGuard::XWalkStderrGuard(contextpointer backendContext,
-                                   utilityredirectcallback redirect,
-                                   utilityrestorecallback restore)
-    : backendContextPointer(backendContext), restoreCallback(restore),
-      restoreToken(0) {
-  validateCallbacks(redirect, restore);
-  restoreToken = redirect(backendContextPointer);
-  XWALK_HAL_TRACE_UID0(RPI .128, "Utility standard-error guard activated");
-}
+    /**
+     * @brief Begins standard-error suppression through an injected backend.
+     *
+     * @param[in,out] backendContext
+     * Nullable non-owning context used by both callbacks.
+     *
+     * @param[in] redirect
+     * Non-null callback that begins suppression and returns a restore token.
+     *
+     * @param[in] restore
+     * Non-null callback used during destruction.
+     */
+    XWalkStderrGuard::XWalkStderrGuard(contextpointer backendContext,
+                                       utilityredirectcallback redirect,
+                                       utilityrestorecallback restore)
+        : backendContextPointer(backendContext), restoreCallback(restore), restoreToken(0)
+    {
+        validateCallbacks(redirect, restore);
+        restoreToken = redirect(backendContextPointer);
+        XWALK_HAL_TRACE_UID0(RPI .128, "Utility standard-error guard activated");
+    }
 
-/******************************************************************************
- * Destructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Destructor definitions
+     ******************************************************************************/
 
-/** @brief Restores standard error without releasing backend ownership. */
-XWalkStderrGuard::~XWalkStderrGuard() {
-  restoreCallback(backendContextPointer, restoreToken);
-  XWALK_HAL_TRACE_UID0(RPI .129,
-                       "Utility standard-error guard restored output");
-}
+    /** @brief Restores standard error without releasing backend ownership. */
+    XWalkStderrGuard::~XWalkStderrGuard()
+    {
+        restoreCallback(backendContextPointer, restoreToken);
+        XWALK_HAL_TRACE_UID0(RPI .129, "Utility standard-error guard restored output");
+    }
 
-/******************************************************************************
- * Protected member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Protected member function definitions
+     ******************************************************************************/
 
-/**
- * @brief Validates both operations before beginning suppression.
- *
- * @param[in] redirect
- * Callback that must be non-null.
- *
- * @param[in] restore
- * Callback that must be non-null.
- */
-void XWalkStderrGuard::validateCallbacks(utilityredirectcallback redirect,
-                                         utilityrestorecallback restore) {
-  if ((redirect == nullptr) || (restore == nullptr)) {
-    XWALK_HAL_ERROR(XWALK_INVAL,
-                    "Standard-error redirect callbacks must not be null");
-  }
-}
+    /**
+     * @brief Validates both operations before beginning suppression.
+     *
+     * @param[in] redirect
+     * Callback that must be non-null.
+     *
+     * @param[in] restore
+     * Callback that must be non-null.
+     */
+    void XWalkStderrGuard::validateCallbacks(utilityredirectcallback redirect, utilityrestorecallback restore)
+    {
+        if ((redirect == nullptr) || (restore == nullptr))
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "Standard-error redirect callbacks must not be null");
+        }
+    }
 
 } /* namespace xwalk::hal */

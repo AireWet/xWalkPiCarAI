@@ -37,25 +37,28 @@
  * @namespace xwalk::ctrl
  * @brief Contains Controller command interfaces for the xWalk firmware.
  */
-namespace xwalk::ctrl {
+namespace xwalk::ctrl
+{
 
-/******************************************************************************
- * Member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Member function definitions
+     ******************************************************************************/
 
-/** @brief Executes one image-grounded typed conversation command. */
-::ctrl::int32 XWalkController::XWALK_handlerTextVisionTalk(
-    const XWalkLifecycleRequest &request) {
-  if (textVisionTalkObject == nullptr) {
-    XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Text-vision-talk backend unavailable");
-    return 3;
-  }
-  if (request.action == XWalkLifecycleAction::Stop) {
-    textVisionTalkObject->stop();
-    XWALK_CTRL_TRACE_UID0(CTRL .081, "Text vision talk stopped");
-    return 0;
-  }
-  return textVisionTalkObject->run();
-}
+    /** @brief Executes one image-grounded typed conversation command. */
+    ::ctrl::int32 XWalkController::XWALK_handlerTextVisionTalk(const XWalkLifecycleRequest& request)
+    {
+        if (textVisionTalkObject == nullptr)
+        {
+            XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Text-vision-talk backend unavailable");
+            return 3;
+        }
+        if (request.action == XWalkLifecycleAction::Stop)
+        {
+            textVisionTalkObject->stop();
+            XWALK_CTRL_TRACE_UID0(CTRL .081, "Text vision talk stopped");
+            return 0;
+        }
+        return textVisionTalkObject->run();
+    }
 
 } /* namespace xwalk::ctrl */

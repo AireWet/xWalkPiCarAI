@@ -581,6 +581,108 @@ class GerritServerSetupTest(unittest.TestCase):
                 self.assertEqual(result.returncode, 0, result.stderr)
             self.assertFalse(state.exists())
 
+    def test_management_commands_include_configured_ci_lifecycle(self) -> None:
+        """Start, status, restart, and stop include CI when its environment exists."""
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            home = pathlib.Path(temporary_directory)
+            commands = home / "bin"
+            commands.mkdir()
+            site = home / "gerrit-site"
+            control_directory = site / "bin"
+            control_directory.mkdir(parents=True)
+            gerrit_state = site / "gerrit-running"
+            ci_state = site / "ci-running"
+            gerrit_control = control_directory / "gerrit.sh"
+            gerrit_control.write_text(
+                "#!/bin/sh\ncase \"$1\" in\n"
+                f"start) touch '{gerrit_state}' ;;\n"
+                f"stop) rm -f '{gerrit_state}' ;;\n"
+                f"status) test -f '{gerrit_state}' ;;\n"
+                "*) exit 2 ;;\nesac\n",
+                encoding="utf-8",
+            )
+            gerrit_control.chmod(0o700)
+            (home / "gerrit-env.sh").write_text(
+                f"export GERRIT_SITE='{site}'\nexport GERRIT_PROXY_MODE='none'\n",
+                encoding="utf-8",
+            )
+            (home / ".xwalk-ci.env").write_text("GERRIT_PROJECT=test\n", encoding="utf-8")
+            ci_control = commands / "gerrit-ci-control"
+            ci_control.write_text(
+                "#!/bin/sh\ncase \"$1\" in\n"
+                f"start) test -f '{gerrit_state}' && touch '{ci_state}' ;;\n"
+                f"stop) rm -f '{ci_state}' ;;\n"
+                f"status) test -f '{ci_state}' ;;\n"
+                "*) exit 2 ;;\nesac\n",
+                encoding="utf-8",
+            )
+            ci_control.chmod(0o700)
+            for name in (
+                "gerrit-site-check", "gerrit-start", "gerrit-stop",
+                "gerrit-restart", "gerrit-status",
+            ):
+                target = commands / name
+                shutil.copyfile(GERRIT_ROOT / "bin" / name, target)
+                target.chmod(0o700)
+            environment = {**os.environ, "HOME": str(home)}
+            for action in ("gerrit-start", "gerrit-status", "gerrit-restart"):
+                result = subprocess.run(
+                    [str(commands / action)], check=False, env=environment,
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertTrue(gerrit_state.is_file())
+                self.assertTrue(ci_state.is_file())
+            result = subprocess.run(
+                [str(commands / "gerrit-stop")], check=False, env=environment,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertFalse(gerrit_state.exists())
+            self.assertFalse(ci_state.exists())
+
+    def test_management_start_rolls_back_new_gerrit_when_ci_fails(self) -> None:
+        """A configured CI startup failure stops Gerrit started by the same command."""
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            home = pathlib.Path(temporary_directory)
+            commands = home / "bin"
+            commands.mkdir()
+            site = home / "gerrit-site"
+            control_directory = site / "bin"
+            control_directory.mkdir(parents=True)
+            state = site / "gerrit-running"
+            control = control_directory / "gerrit.sh"
+            control.write_text(
+                "#!/bin/sh\ncase \"$1\" in\n"
+                f"start) touch '{state}' ;;\n"
+                f"stop) rm -f '{state}' ;;\n"
+                f"status) test -f '{state}' ;;\n"
+                "*) exit 2 ;;\nesac\n",
+                encoding="utf-8",
+            )
+            control.chmod(0o700)
+            (home / "gerrit-env.sh").write_text(
+                f"export GERRIT_SITE='{site}'\nexport GERRIT_PROXY_MODE='none'\n",
+                encoding="utf-8",
+            )
+            (home / ".xwalk-ci.env").write_text("GERRIT_PROJECT=test\n", encoding="utf-8")
+            ci_control = commands / "gerrit-ci-control"
+            ci_control.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
+            ci_control.chmod(0o700)
+            for name in ("gerrit-site-check", "gerrit-start"):
+                target = commands / name
+                shutil.copyfile(GERRIT_ROOT / "bin" / name, target)
+                target.chmod(0o700)
+            result = subprocess.run(
+                [str(commands / "gerrit-start")], check=False,
+                env={**os.environ, "HOME": str(home)},
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+            )
+            self.assertEqual(result.returncode, 1)
+            self.assertFalse(state.exists())
+
     def test_setup_script(self) -> None:
         """The repository setup command uses the Python installer and safe controls."""
 

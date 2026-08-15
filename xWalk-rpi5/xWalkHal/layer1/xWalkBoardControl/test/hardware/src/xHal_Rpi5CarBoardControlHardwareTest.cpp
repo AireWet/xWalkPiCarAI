@@ -39,23 +39,23 @@
 namespace
 {
 
-/**
- * @brief Provides the required callback binding without generating test audio.
- *
- * @param[in,out] context
- * Unused nullable context.
- *
- * @param[in] durationMs
- * Unused priming duration because this test never enables the speaker.
- *
- * @warning
- * This callback must not be used to enable physical speaker power.
- */
-void unusedSpeakerPrime(XWalkHal::contextpointer context, XWalkHal::uint32 durationMs)
-{
-    static_cast<void>(context);
-    static_cast<void>(durationMs);
-}
+    /**
+     * @brief Provides the required callback binding without generating test audio.
+     *
+     * @param[in,out] context
+     * Unused nullable context.
+     *
+     * @param[in] durationMs
+     * Unused priming duration because this test never enables the speaker.
+     *
+     * @warning
+     * This callback must not be used to enable physical speaker power.
+     */
+    void unusedSpeakerPrime(XWalkHal::contextpointer context, XWalkHal::uint32 durationMs)
+    {
+        static_cast<void>(context);
+        static_cast<void>(durationMs);
+    }
 
 } /* namespace */
 
@@ -76,23 +76,18 @@ XWalkHal::int32 main()
 {
     XWalkHal::XWalkI2cLinux i2cBackend;
     XWalkHal::XWalkI2c i2c(&i2cBackend,
-        XHAL_I2C_PROBE_CALLBACK(XWalkHal::XWalkI2cLinux),
-        XHAL_I2C_WRITE_REGISTER_CALLBACK(XWalkHal::XWalkI2cLinux),
-        XHAL_I2C_READ_CALLBACK(XWalkHal::XWalkI2cLinux));
-    XWalkHal::XWalkAdc batteryAdc(i2c,
-        XHAL_RPI5CAR_BOARD_CONTROL_BATTERY_ADC_CHANNEL,
-        XHAL_RPI5CAR_ADC_ADDRESS_1);
+                           XHAL_I2C_PROBE_CALLBACK(XWalkHal::XWalkI2cLinux),
+                           XHAL_I2C_WRITE_REGISTER_CALLBACK(XWalkHal::XWalkI2cLinux),
+                           XHAL_I2C_READ_CALLBACK(XWalkHal::XWalkI2cLinux));
+    XWalkHal::XWalkAdc batteryAdc(i2c, XHAL_RPI5CAR_BOARD_CONTROL_BATTERY_ADC_CHANNEL, XHAL_RPI5CAR_ADC_ADDRESS_1);
 
     XWalkHal::XWalkGpioLinux resetBackend;
-    const XWalkHal::XWalkGpioCallbacks callbacks =
-        XHAL_GPIO_CALLBACKS(XWalkHal::XWalkGpioLinux);
+    const XWalkHal::XWalkGpioCallbacks callbacks = XHAL_GPIO_CALLBACKS(XWalkHal::XWalkGpioLinux);
     XWalkHal::XWalkGpio resetGpio(&resetBackend, callbacks, "MCURST");
 
     XWalkHal::XWalkGpioLinux speakerBackend;
-    XWalkHal::XWalkGpio speakerGpio(&speakerBackend, callbacks,
-        XHAL_RPI5CAR_DEVICE_DEFAULT_SPEAKER_ENABLE_PIN);
-    XWalkHal::XWalkBoardControl control(resetGpio, speakerGpio, batteryAdc,
-        nullptr, &unusedSpeakerPrime);
+    XWalkHal::XWalkGpio speakerGpio(&speakerBackend, callbacks, XHAL_RPI5CAR_DEVICE_DEFAULT_SPEAKER_ENABLE_PIN);
+    XWalkHal::XWalkBoardControl control(resetGpio, speakerGpio, batteryAdc, nullptr, &unusedSpeakerPrime);
     control.disableSpeaker();
     return 0;
 }

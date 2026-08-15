@@ -17,7 +17,9 @@ does not download, license, activate, or guess endpoints for CodeScene.
 The repository-owned adapter is `xWalkTool/py-agent/dev-tool/xWalkCodeHealth`. It validates project configuration,
 resolves full Git commit IDs, calculates changed files, invokes `cs delta --output-format json BASE REVISION` only
 when an executable is configured, and writes reports below `build-host/codescene`. It never invokes an undocumented
-API.
+API. The adapter resolves an explicit `XWALK_CODESCENE_CLI`, the service `PATH`, and CodeScene's official
+`~/.local/bin/cs` installation location in that order. This keeps a non-login CI service independent of interactive
+shell path initialization.
 
 Official references:
 
@@ -98,6 +100,13 @@ CodeScene failed gate is also reported without blocking in rollout mode. Set `XW
 the CLI is licensed, available, and its baseline behavior is confirmed; then unavailable and failed gates return
 nonzero and block the existing Verified gate.
 
+Install the official CLI as the operating-system account that runs `gerrit-ci-control`; the official installer
+places the executable at `~/.local/bin/cs`. Store its personal access token only as `CS_ACCESS_TOKEN` in the
+mode-0600 `~/.xwalk-ci.env` file. For CodeScene Enterprise, also set `CS_ONPREM_URL` to the licensed server URL.
+The hosted codescene.io service does not require `CS_ONPREM_URL`. Restart the CI service after changing this
+environment, verify `cs version`, and keep strict enforcement disabled until one real delta returns a valid JSON
+gate result. Never put the token in this repository, a Gerrit comment, a command argument, or a retained diagnostic.
+
 If the licensed CodeScene edition supports native Gerrit integration, configure it administrator-side using the
 official Gerrit integration guide. Otherwise retain the repository CLI delta when available and rely on compilation,
 tests, sanitizers, and static analysis before submit; full CodeScene repository analysis occurs after the accepted
@@ -154,7 +163,8 @@ ctest --test-dir build-host/codescene-validation --output-on-failure --no-tests=
 | Missing Git history or shallow clone | Use `fetch-depth: 0`; verify both full revision IDs with `git cat-file -e COMMIT^{commit}`. |
 | Wrong Gerrit patch set | Compare the summary revision/refspec with the event and `git rev-parse HEAD`; rerun the current patch set, not branch head. |
 | Incorrect GitHub commit | Compare `GITHUB_HEAD_SHA`, `GITHUB_SHA`, and the submitted Gerrit revision; reject any non-fast-forward synchronization. |
-| CodeScene CLI unavailable | Install and activate the officially licensed CLI on the CI runner, set `XWALK_CODESCENE_CLI` to its executable, or retain non-blocking mode and use native GitHub analysis. |
+| CLI executable unavailable | Install it for the CI OS account; the adapter also checks `~/.local/bin/cs`. |
+| CLI activation unavailable | Put `CS_ACCESS_TOKEN` and optional `CS_ONPREM_URL` only in the CI environment. |
 | No analysis link | Local/offline CLI output may not supply a link; use the retained JSON and commit correlation instead of inventing a URL. |
 
 ## Rollback

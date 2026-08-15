@@ -35,34 +35,37 @@
  * Namespace definitions
  ******************************************************************************/
 
-namespace xwalk::hal::test::config {
+namespace xwalk::hal::test::config
+{
 
-/**
- * @brief Reports a failed expectation through the trace service.
- * @param[in] condition Result that must be true for success.
- * @param[in] message Diagnostic retained only for synchronous trace output.
- * @return The unchanged `condition` value.
- */
-boolean expect(boolean condition, stringview message) {
-  if (condition == false) {
-    const string ownedMessage(message);
-    XWALK_HAL_ERROR(XWALK_EXCEPTION, "xWalkConfig test expectation failed: %s",
-                    ownedMessage.c_str());
-  }
-  return condition;
-}
+    /**
+     * @brief Reports a failed expectation through the trace service.
+     * @param[in] condition Result that must be true for success.
+     * @param[in] message Diagnostic retained only for synchronous trace output.
+     * @return The unchanged `condition` value.
+     */
+    boolean expect(boolean condition, stringview message)
+    {
+        if (condition == false)
+        {
+            const string ownedMessage(message);
+            XWALK_HAL_ERROR(XWALK_EXCEPTION, "xWalkConfig test expectation failed: %s", ownedMessage.c_str());
+        }
+        return condition;
+    }
 
-/**
- * @brief Writes deterministic initial section-aware configuration content.
- * @param[in] path Test-owned file path whose parent directory exists.
- */
-void writeFixture(const filesystempath &path) {
-  outputfilestream file(path, FILE_OPEN_WRITE_TRUNCATE);
-  file << "# retained comment\n";
-  file << "root = first\n\n";
-  file << "[motor]\n";
-  file << "speed = 40\n";
-  file << "direction = forward\n";
-}
+    /**
+     * @brief Writes deterministic initial section-aware configuration content.
+     * @param[in] path Test-owned file path whose parent directory exists.
+     */
+    void writeFixture(const filesystempath& path)
+    {
+        outputfilestream file(path, FILE_OPEN_WRITE_TRUNCATE);
+        file << "# retained comment\n";
+        file << "root = first\n\n";
+        file << "[motor]\n";
+        file << "speed = 40\n";
+        file << "direction = forward\n";
+    }
 
 } /* namespace xwalk::hal::test::config */

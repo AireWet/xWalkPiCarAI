@@ -20,20 +20,16 @@
  */
 int main()
 {
-    const xwalk::hal::XWalkVoiceAssistantConfiguration assistant =
-        xwalk::agent::XWalkGptCar::assistantConfiguration();
-    const xwalk::agent::XWalkVoiceActiveCarConfiguration car =
-        xwalk::agent::XWalkGptCar::carConfiguration();
+    const xwalk::hal::XWalkVoiceAssistantConfiguration assistant = xwalk::agent::XWalkGptCar::assistantConfiguration();
+    const xwalk::agent::XWalkVoiceActiveCarConfiguration car = xwalk::agent::XWalkGptCar::carConfiguration();
     assert(assistant.instructions.find("PaiCar-X") != xwalk::agent::string::npos);
     assert(assistant.instructions.find("\"actions\"") != xwalk::agent::string::npos);
     assert(car.withImage);
     assert(!car.sensorEnabled);
-    assert(car.responseFormat ==
-        xwalk::agent::XWalkVoiceActiveCarResponseFormat::Json);
+    assert(car.responseFormat == xwalk::agent::XWalkVoiceActiveCarResponseFormat::Json);
 
-    const xwalk::agent::XWalkVoiceActiveCarResponse response =
-        xwalk::agent::XWalkVoiceActiveCar::parseJsonResponse(
-            R"({"actions":["honking","wave hands"],"answer":"Hello!"})");
+    const xwalk::agent::XWalkVoiceActiveCarResponse response = xwalk::agent::XWalkVoiceActiveCar::parseJsonResponse(
+        R"({"actions":["honking","wave hands"],"answer":"Hello!"})");
     assert(response.text == "Hello!");
     assert(response.actions.size() == 2U);
     assert(response.actions[0U] == "honking");

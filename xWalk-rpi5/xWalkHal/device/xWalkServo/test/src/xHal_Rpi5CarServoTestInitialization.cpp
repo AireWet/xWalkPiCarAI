@@ -41,41 +41,43 @@
 namespace xwalk::hal::test
 {
 
-/******************************************************************************
- * Test function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Test function definitions
+     ******************************************************************************/
 
-/**
- * @brief Verifies Servo construction configures the Python-compatible timer.
- *
- * @post
- * The assertions confirm a 4095-count period and rounded prescaler value 352.
- */
-void testServoInitialization()
-{
-    XWalkServoTestI2c bus;
-    XWalkI2c i2c(&bus, &XWalkServoTestI2c::probeCallback, &XWalkServoTestI2c::writeRegisterCallback,
-        &XWalkServoTestI2c::readCallback);
-    XWalkPwmTimerState timerState;
-    XWalkPwm pwm(i2c, 0U, 0x14U, timerState);
-    bus.clearWrites();
-    XWalkServo servo(pwm);
+    /**
+     * @brief Verifies Servo construction configures the Python-compatible timer.
+     *
+     * @post
+     * The assertions confirm a 4095-count period and rounded prescaler value 352.
+     */
+    void testServoInitialization()
+    {
+        XWalkServoTestI2c bus;
+        XWalkI2c i2c(&bus,
+                     &XWalkServoTestI2c::probeCallback,
+                     &XWalkServoTestI2c::writeRegisterCallback,
+                     &XWalkServoTestI2c::readCallback);
+        XWalkPwmTimerState timerState;
+        XWalkPwm pwm(i2c, 0U, 0x14U, timerState);
+        bus.clearWrites();
+        XWalkServo servo(pwm);
 
-    assert(bus.writeCount() == 0U);
-    assert(servo.isInitialized() == false);
-    assert(servo.initialize());
-    assert(servo.isInitialized());
-    assert(servo.initialize() == false);
+        assert(bus.writeCount() == 0U);
+        assert(servo.isInitialized() == false);
+        assert(servo.initialize());
+        assert(servo.isInitialized());
+        assert(servo.initialize() == false);
 
-    const bytevector expectedPeriodBytes{0x0FU, 0xFFU};
-    const bytevector expectedPrescalerBytes{0x01U, 0x5FU};
-    assert(bus.writeCount() == 2U);
-    assert(bus.writeRegister(0U) == 0x44U);
-    assert(bus.writeData(0U) == expectedPeriodBytes);
-    assert(bus.writeRegister(1U) == 0x40U);
-    assert(bus.writeData(1U) == expectedPrescalerBytes);
-    assert(pwm.period() == 4095U);
-    assert(pwm.prescaler() == 352U);
-}
+        const bytevector expectedPeriodBytes{0x0FU, 0xFFU};
+        const bytevector expectedPrescalerBytes{0x01U, 0x5FU};
+        assert(bus.writeCount() == 2U);
+        assert(bus.writeRegister(0U) == 0x44U);
+        assert(bus.writeData(0U) == expectedPeriodBytes);
+        assert(bus.writeRegister(1U) == 0x40U);
+        assert(bus.writeData(1U) == expectedPrescalerBytes);
+        assert(pwm.period() == 4095U);
+        assert(pwm.prescaler() == 352U);
+    }
 
 } /* namespace xwalk::hal::test */

@@ -26,37 +26,37 @@
 namespace xwalk::hal::example
 {
 
-/** @brief Composes synchronous final-result recognition with Linux services. */
-class XWalkSttVoskWithoutStreamExampleLinux final
-{
-private:
+    /** @brief Composes synchronous final-result recognition with Linux services. */
+    class XWalkSttVoskWithoutStreamExampleLinux final
+    {
+        private:
+            /** @brief Temporarily bound speech coordinator valid only during `run()`. */
+            XWalkSpeechToText* speechToTextObject{nullptr};
 
-    /** @brief Temporarily bound speech coordinator valid only during `run()`. */
-    XWalkSpeechToText* speechToTextObject{nullptr};
+        protected:
+            /** @brief Resolves a callback context with one live speech binding. */
+            static XWalkSttVoskWithoutStreamExampleLinux& adapter(contextpointer context);
+            /** @brief Captures and recognizes one bounded utterance. */
+            static string listen(contextpointer context, uint32 timeoutMs);
+            /** @brief Prints one literal prompt or final transcript. */
+            static void report(contextpointer context, stringview text);
 
-protected:
-
-    /** @brief Resolves a callback context with one live speech binding. */
-    static XWalkSttVoskWithoutStreamExampleLinux& adapter(contextpointer context);
-    /** @brief Captures and recognizes one bounded utterance. */
-    static string listen(contextpointer context, uint32 timeoutMs);
-    /** @brief Prints one literal prompt or final transcript. */
-    static void report(contextpointer context, stringview text);
-
-public:
-
-    /**
-     * @brief Runs bounded non-streaming Vosk sessions.
-     * @param[in] sessionCount Session count from one through 100.
-     * @param[in] timeoutMs Maximum capture duration for each session.
-     * @param[in] microphoneDevice Non-empty ALSA capture device name.
-     * @param[in] libraryName Non-empty Vosk shared-library name or path.
-     * @param[in] modelPath Non-empty English Vosk model directory.
-     * @warning Captures live microphone audio synchronously.
-     */
-    void run(uint32 sessionCount, uint32 timeoutMs,
-        stringview microphoneDevice, stringview libraryName, stringview modelPath);
-};
+        public:
+            /**
+             * @brief Runs bounded non-streaming Vosk sessions.
+             * @param[in] sessionCount Session count from one through 100.
+             * @param[in] timeoutMs Maximum capture duration for each session.
+             * @param[in] microphoneDevice Non-empty ALSA capture device name.
+             * @param[in] libraryName Non-empty Vosk shared-library name or path.
+             * @param[in] modelPath Non-empty English Vosk model directory.
+             * @warning Captures live microphone audio synchronously.
+             */
+            void run(uint32 sessionCount,
+                     uint32 timeoutMs,
+                     stringview microphoneDevice,
+                     stringview libraryName,
+                     stringview modelPath);
+    };
 
 } /* namespace xwalk::hal::example */
 

@@ -20,23 +20,28 @@
 #include "xHal_Rpi5CarTtsEspeakExample.h"
 
 #include "xHal_Rpi5CarTrace.h"
-namespace xwalk::hal::example {
+namespace xwalk::hal::example
+{
 
-/** @brief Binds and validates one configured synchronous speech operation. */
-XWalkTtsEspeakExample::XWalkTtsEspeakExample(contextpointer context,
-                                             ttsespeakspeakcallback speak)
-    : callbackContext(context), speakCallback(speak) {
-  if (speakCallback == nullptr) {
-    XWALK_HAL_ERROR(XWALK_INVAL, "Espeak example requires a speech callback");
-  }
-}
+    /** @brief Binds and validates one configured synchronous speech operation. */
+    XWalkTtsEspeakExample::XWalkTtsEspeakExample(contextpointer context, ttsespeakspeakcallback speak)
+        : callbackContext(context), speakCallback(speak)
+    {
+        if (speakCallback == nullptr)
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "Espeak example requires a speech callback");
+        }
+    }
 
-/** @brief Delivers every exact source setting and message once. */
-void XWalkTtsEspeakExample::run() {
-  speakCallback(callbackContext, XWALK_TTS_ESPEAK_EXAMPLE_AMPLITUDE,
-                XWALK_TTS_ESPEAK_EXAMPLE_SPEED, XWALK_TTS_ESPEAK_EXAMPLE_GAP,
-                XWALK_TTS_ESPEAK_EXAMPLE_PITCH,
-                XWALK_TTS_ESPEAK_EXAMPLE_MESSAGE);
-}
+    /** @brief Delivers every exact source setting and message once. */
+    void XWalkTtsEspeakExample::run()
+    {
+        speakCallback(callbackContext,
+                      XWALK_TTS_ESPEAK_EXAMPLE_AMPLITUDE,
+                      XWALK_TTS_ESPEAK_EXAMPLE_SPEED,
+                      XWALK_TTS_ESPEAK_EXAMPLE_GAP,
+                      XWALK_TTS_ESPEAK_EXAMPLE_PITCH,
+                      XWALK_TTS_ESPEAK_EXAMPLE_MESSAGE);
+    }
 
 } /* namespace xwalk::hal::example */

@@ -26,7 +26,6 @@
 
 #include "xController.h"
 
-
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -38,37 +37,37 @@
 namespace xwalk::ctrl
 {
 
-/******************************************************************************
- * Member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Member function definitions
+     ******************************************************************************/
 
-/**
- * @brief Executes the move command.
- * @param[in] request Validated action, speed percentage, and duration.
- * @return Zero after movement and the final stop complete.
- */
-::ctrl::int32 XWalkController::XWALK_handlerMove(const XWalkMoveRequest& request)
-{
-    if (request.action == XWalkMoveAction::Demo)
+    /**
+     * @brief Executes the move command.
+     * @param[in] request Validated action, speed percentage, and duration.
+     * @return Zero after movement and the final stop complete.
+     */
+    ::ctrl::int32 XWalkController::XWALK_handlerMove(const XWalkMoveRequest& request)
     {
-        return XWALK_handlerMoveExample();
-    }
-    const ::ctrl::boolean operationRequested = operationMayContinue();
-    if (operationRequested == false)
-    {
+        if (request.action == XWalkMoveAction::Demo)
+        {
+            return XWALK_handlerMoveExample();
+        }
+        const ::ctrl::boolean operationRequested = operationMayContinue();
+        if (operationRequested == false)
+        {
+            return 0;
+        }
+        if (request.action == XWalkMoveAction::Forward)
+        {
+            picarxObject->forward(request.speedPercent);
+        }
+        else
+        {
+            picarxObject->backward(request.speedPercent);
+        }
+        static_cast<void>(delayWhileOperationRequested(request.durationMs));
+        picarxObject->stop();
         return 0;
     }
-    if (request.action == XWalkMoveAction::Forward)
-    {
-        picarxObject->forward(request.speedPercent);
-    }
-    else
-    {
-        picarxObject->backward(request.speedPercent);
-    }
-    static_cast<void>(delayWhileOperationRequested(request.durationMs));
-    picarxObject->stop();
-    return 0;
-}
 
 } /* namespace xwalk::ctrl */

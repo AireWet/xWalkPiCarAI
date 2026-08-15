@@ -37,25 +37,28 @@
  * @namespace xwalk::ctrl
  * @brief Contains Controller command interfaces for the xWalk firmware.
  */
-namespace xwalk::ctrl {
+namespace xwalk::ctrl
+{
 
-/******************************************************************************
- * Member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Member function definitions
+     ******************************************************************************/
 
-/** @brief Executes one online text-only conversation command. */
-::ctrl::int32 XWalkController::XWALK_handlerOnlineLlmTest(
-    const XWalkLifecycleRequest &request) {
-  if (onlineLlmTestObject == nullptr) {
-    XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Online-LLM-test backend unavailable");
-    return 3;
-  }
-  if (request.action == XWalkLifecycleAction::Stop) {
-    onlineLlmTestObject->stop();
-    XWALK_CTRL_TRACE_UID0(CTRL .078, "Online LLM test stopped");
-    return 0;
-  }
-  return onlineLlmTestObject->run();
-}
+    /** @brief Executes one online text-only conversation command. */
+    ::ctrl::int32 XWalkController::XWALK_handlerOnlineLlmTest(const XWalkLifecycleRequest& request)
+    {
+        if (onlineLlmTestObject == nullptr)
+        {
+            XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Online-LLM-test backend unavailable");
+            return 3;
+        }
+        if (request.action == XWalkLifecycleAction::Stop)
+        {
+            onlineLlmTestObject->stop();
+            XWALK_CTRL_TRACE_UID0(CTRL .078, "Online LLM test stopped");
+            return 0;
+        }
+        return onlineLlmTestObject->run();
+    }
 
 } /* namespace xwalk::ctrl */

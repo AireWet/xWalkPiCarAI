@@ -36,90 +36,100 @@
  * @namespace xwalk::hal
  * @brief Contains hardware abstraction components for the xWalk firmware.
  */
-namespace xwalk::hal {
+namespace xwalk::hal
+{
 
-/******************************************************************************
- * Constructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Constructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Constructs a coordinator from caller-owned pipeline components.
- *
- * @param[in,out] speechToText
- * Speech-recognition object that must outlive this coordinator.
- *
- * @param[in,out] languageModel
- * Language-model object that must outlive this coordinator.
- *
- * @param[in,out] textToSpeech
- * Speech-output object that must outlive this coordinator.
- *
- * @param[in] assistantConfiguration
- * Startup instructions and optional welcome text copied by value.
- *
- * @param[in,out] callbackContext
- * Nullable non-owning context used by optional callbacks.
- *
- * @param[in] assistantCallbacks
- * Optional lifecycle and response-parser callbacks copied by value.
- */
-XWalkVoiceAssistant::XWalkVoiceAssistant(
-    XWalkSpeechToText &speechToText, XWalkLanguageModel &languageModel,
-    XWalkTextToSpeech &textToSpeech,
-    const XWalkVoiceAssistantConfiguration &assistantConfiguration,
-    contextpointer callbackContext,
-    const XWalkVoiceAssistantCallbacks &assistantCallbacks)
-    : speechToTextPointer(&speechToText), languageModelPointer(&languageModel),
-      textToSpeechPointer(&textToSpeech),
-      callbackContextPointer(callbackContext), callbacks(assistantCallbacks),
-      configuration(assistantConfiguration), runningValue(false) {
-  languageModelPointer->setInstructions(configuration.instructions);
-  XWALK_HAL_TRACE_UID0(RPI .370, "Voice assistant coordinator constructed");
-}
-
-/******************************************************************************
- * Destructor definitions
- ******************************************************************************/
-
-/** @brief Stops a running assistant without releasing caller-owned
- * dependencies. */
-XWalkVoiceAssistant::~XWalkVoiceAssistant() {
-  if (runningValue) {
-    runningValue = false;
-    speechToTextPointer->stop();
-    invokeEvent(callbacks.onStop);
-  }
-}
-
-/******************************************************************************
- * Public member function definitions
- ******************************************************************************/
-
-/** @brief Starts the assistant and optionally speaks its welcome text. */
-void XWalkVoiceAssistant::start() {
-  if (!runningValue) {
-    runningValue = true;
-    invokeEvent(callbacks.onStart);
-    const hal::boolean welcomeAvailable =
-        static_cast<hal::boolean>(!configuration.welcome.empty());
-    if (welcomeAvailable) {
-      textToSpeechPointer->speak(configuration.welcome);
+    /**
+     * @brief Constructs a coordinator from caller-owned pipeline components.
+     *
+     * @param[in,out] speechToText
+     * Speech-recognition object that must outlive this coordinator.
+     *
+     * @param[in,out] languageModel
+     * Language-model object that must outlive this coordinator.
+     *
+     * @param[in,out] textToSpeech
+     * Speech-output object that must outlive this coordinator.
+     *
+     * @param[in] assistantConfiguration
+     * Startup instructions and optional welcome text copied by value.
+     *
+     * @param[in,out] callbackContext
+     * Nullable non-owning context used by optional callbacks.
+     *
+     * @param[in] assistantCallbacks
+     * Optional lifecycle and response-parser callbacks copied by value.
+     */
+    XWalkVoiceAssistant::XWalkVoiceAssistant(XWalkSpeechToText& speechToText,
+                                             XWalkLanguageModel& languageModel,
+                                             XWalkTextToSpeech& textToSpeech,
+                                             const XWalkVoiceAssistantConfiguration& assistantConfiguration,
+                                             contextpointer callbackContext,
+                                             const XWalkVoiceAssistantCallbacks& assistantCallbacks)
+        : speechToTextPointer(&speechToText), languageModelPointer(&languageModel), textToSpeechPointer(&textToSpeech),
+          callbackContextPointer(callbackContext), callbacks(assistantCallbacks), configuration(assistantConfiguration),
+          runningValue(false)
+    {
+        languageModelPointer->setInstructions(configuration.instructions);
+        XWALK_HAL_TRACE_UID0(RPI .370, "Voice assistant coordinator constructed");
     }
-    XWALK_HAL_TRACE_UID0(RPI .371, "Voice assistant coordinator started");
-  }
-}
 
-/** @brief Stops recognition and reports the assistant stop event. */
-void XWalkVoiceAssistant::stop() {
-  if (runningValue) {
-    runningValue = false;
-    speechToTextPointer->stop();
-    invokeEvent(callbacks.onStop);
-    XWALK_HAL_TRACE_UID0(RPI .372, "Voice assistant coordinator stopped");
-  }
-}
+    /******************************************************************************
+     * Destructor definitions
+     ******************************************************************************/
 
-/** @brief Reports whether the assistant has been started and not stopped. */
-boolean XWalkVoiceAssistant::isRunning() const { return runningValue; }
+    /** @brief Stops a running assistant without releasing caller-owned
+     * dependencies. */
+    XWalkVoiceAssistant::~XWalkVoiceAssistant()
+    {
+        if (runningValue)
+        {
+            runningValue = false;
+            speechToTextPointer->stop();
+            invokeEvent(callbacks.onStop);
+        }
+    }
+
+    /******************************************************************************
+     * Public member function definitions
+     ******************************************************************************/
+
+    /** @brief Starts the assistant and optionally speaks its welcome text. */
+    void XWalkVoiceAssistant::start()
+    {
+        if (!runningValue)
+        {
+            runningValue = true;
+            invokeEvent(callbacks.onStart);
+            const hal::boolean welcomeAvailable = static_cast<hal::boolean>(!configuration.welcome.empty());
+            if (welcomeAvailable)
+            {
+                textToSpeechPointer->speak(configuration.welcome);
+            }
+            XWALK_HAL_TRACE_UID0(RPI .371, "Voice assistant coordinator started");
+        }
+    }
+
+    /** @brief Stops recognition and reports the assistant stop event. */
+    void XWalkVoiceAssistant::stop()
+    {
+        if (runningValue)
+        {
+            runningValue = false;
+            speechToTextPointer->stop();
+            invokeEvent(callbacks.onStop);
+            XWALK_HAL_TRACE_UID0(RPI .372, "Voice assistant coordinator stopped");
+        }
+    }
+
+    /** @brief Reports whether the assistant has been started and not stopped. */
+    boolean XWalkVoiceAssistant::isRunning() const
+    {
+        return runningValue;
+    }
 
 } /* namespace xwalk::hal */

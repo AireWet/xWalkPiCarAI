@@ -19,26 +19,29 @@
 namespace
 {
 
-/** @brief Verifies explicit stop, bounded foreground cancellation, and cleanup. */
-void testCliffDetection(
-    xwalk::agent::test::ControllerCommandTestContext& context)
-{
-    xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
-    assert(sequence.run({{"cliff-detection", "stop"}}) == 0);
+    /** @brief Verifies explicit stop, bounded foreground cancellation, and cleanup. */
+    void testCliffDetection(xwalk::agent::test::ControllerCommandTestContext& context)
+    {
+        xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
+        assert(sequence.run({{"cliff-detection", "stop"}}) == 0);
 
+        const ctrl::uint32 queryStart = context.state->operationQueries;
+        context.state->operationQueryLimit = queryStart + 2U;
+        assert(xwalk::ctrl::XWALK_runControllerCommand(*context.controller, {"cliff-detection", "start"}) == 0);
+        assert(context.state->operationQueries == (queryStart + 3U));
 
-    const ctrl::uint32 queryStart = context.state->operationQueries;
-    context.state->operationQueryLimit = queryStart + 2U;
-    assert(xwalk::ctrl::XWALK_runControllerCommand(*context.controller, {"cliff-detection", "start"}) == 0);
-    assert(context.state->operationQueries == (queryStart + 3U));
-
-    assert(context.motors->left().speed() == 0.0);
-    assert(context.motors->right().speed() == 0.0);
-    assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"controller.continue", "hal.i2c.write", "controller.continue",
-            "hal.i2c.write", "controller.continue", "hal.i2c.write",
-            }));
-}
+        assert(context.motors->left().speed() == 0.0);
+        assert(context.motors->right().speed() == 0.0);
+        assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
+                                                         {
+                                                             "controller.continue",
+                                                             "hal.i2c.write",
+                                                             "controller.continue",
+                                                             "hal.i2c.write",
+                                                             "controller.continue",
+                                                             "hal.i2c.write",
+                                                         }));
+    }
 
 } /* namespace */
 
@@ -50,6 +53,5 @@ void testCliffDetection(
  */
 int xWalkCliffDetectionCommandSequenceHostTest(int argc, char* argv[])
 {
-    return xwalk::agent::test::runControllerCommandHostTest(
-        argc, argv, &testCliffDetection);
+    return xwalk::agent::test::runControllerCommandHostTest(argc, argv, &testCliffDetection);
 }

@@ -38,30 +38,29 @@
 namespace xwalk::agent
 {
 
-/******************************************************************************
- * Constructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Constructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Constructs an armed safety guard around one caller-owned coordinator.
- * @param[in] picarx PiCar-X coordinator that must outlive this guard.
- */
-XWalkPicarxSafetyGuard::XWalkPicarxSafetyGuard(XWalkPicarx& picarx) noexcept
-    : picarxObject(&picarx)
-{
-}
+    /**
+     * @brief Constructs an armed safety guard around one caller-owned coordinator.
+     * @param[in] picarx PiCar-X coordinator that must outlive this guard.
+     */
+    XWalkPicarxSafetyGuard::XWalkPicarxSafetyGuard(XWalkPicarx& picarx) noexcept : picarxObject(&picarx)
+    {
+    }
 
-/******************************************************************************
- * Destructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Destructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Latches actuator suppression and independently attempts to stop both motors.
- * @post The observed PiCar-X emergency-stop state is latched.
- */
-XWalkPicarxSafetyGuard::~XWalkPicarxSafetyGuard() noexcept
-{
-    static_cast<void>(picarxObject->emergencyStop());
-}
+    /**
+     * @brief Latches actuator suppression and independently attempts to stop both motors.
+     * @post The observed PiCar-X emergency-stop state is latched.
+     */
+    XWalkPicarxSafetyGuard::~XWalkPicarxSafetyGuard() noexcept
+    {
+        static_cast<void>(picarxObject->emergencyStop());
+    }
 
 } /* namespace xwalk::agent */

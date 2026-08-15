@@ -22,34 +22,32 @@
 namespace xwalk::agent
 {
 
-/**
- * @brief Runs configured spoken movement prompts.
- * @param[in,out] context Nullable caller-owned application context.
- * @param[in] callback Non-null synchronous application callback.
- * @param[in,out] config Loaded deployment configuration.
- * @param[in,out] boardControl Caller-owned board controller.
- * @param[in,out] picarx Caller-owned PiCar-X coordinator.
- * @return Status returned by `callback`.
- */
-agent::int32 XWalkBootRpi::runVoicePromptCar(agent::contextpointer context,
-    bootapplicationcallback callback, hal::XWalkConfigStore& config,
-    hal::XWalkBoardControl& boardControl, XWalkPicarx& picarx)
-{
-    hal::XWalkAudioAlsa audioBackend(
-        config.get("voice_playback_device", "default"),
-        config.get("voice_mixer_device", "default"),
-        config.get("voice_mixer_element", "PCM"));
-    hal::XWalkTextToSpeechEspeak espeak(
-        config.get("voice_espeak_executable", "espeak-ng"),
-        config.get("voice_espeak_voice", "en"));
-    hal::XWalkTextToSpeechAlsa speechBackend(
-        audioBackend, &espeak, espeak.operations());
-    hal::XWalkTextToSpeech textToSpeech(
-        boardControl, &speechBackend, speechBackend.callback());
-    XWalkBootServices services{};
-    services.picarx = &picarx;
-    services.textToSpeech = &textToSpeech;
-    return callback(context, services);
-}
+    /**
+     * @brief Runs configured spoken movement prompts.
+     * @param[in,out] context Nullable caller-owned application context.
+     * @param[in] callback Non-null synchronous application callback.
+     * @param[in,out] config Loaded deployment configuration.
+     * @param[in,out] boardControl Caller-owned board controller.
+     * @param[in,out] picarx Caller-owned PiCar-X coordinator.
+     * @return Status returned by `callback`.
+     */
+    agent::int32 XWalkBootRpi::runVoicePromptCar(agent::contextpointer context,
+                                                 bootapplicationcallback callback,
+                                                 hal::XWalkConfigStore& config,
+                                                 hal::XWalkBoardControl& boardControl,
+                                                 XWalkPicarx& picarx)
+    {
+        hal::XWalkAudioAlsa audioBackend(config.get("voice_playback_device", "default"),
+                                         config.get("voice_mixer_device", "default"),
+                                         config.get("voice_mixer_element", "PCM"));
+        hal::XWalkTextToSpeechEspeak espeak(config.get("voice_espeak_executable", "espeak-ng"),
+                                            config.get("voice_espeak_voice", "en"));
+        hal::XWalkTextToSpeechAlsa speechBackend(audioBackend, &espeak, espeak.operations());
+        hal::XWalkTextToSpeech textToSpeech(boardControl, &speechBackend, speechBackend.callback());
+        XWalkBootServices services{};
+        services.picarx = &picarx;
+        services.textToSpeech = &textToSpeech;
+        return callback(context, services);
+    }
 
 } /* namespace xwalk::agent */

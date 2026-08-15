@@ -4,10 +4,38 @@ set -eu
 . "$HOME/gerrit-env.sh"
 "$HOME/bin/gerrit-site-check" >/dev/null
 [ -x "$GERRIT_SITE/bin/gerrit.sh" ] || { echo "Missing Gerrit control script" >&2; exit 2; }
-"$GERRIT_SITE/bin/gerrit.sh" start
-if [ "$GERRIT_PROXY_MODE" = "local-http" ]; then
-    if ! "$HOME/bin/gerrit-caddy-control" start; then
+gerrit_started=false
+proxy_started=false
+if ! "$GERRIT_SITE/bin/gerrit.sh" status >/dev/null 2>&1; then
+    "$GERRIT_SITE/bin/gerrit.sh" start
+    gerrit_started=true
+fi
+rollback_started_services()
+{
+    if [ "$proxy_started" = true ]; then
+        "$HOME/bin/gerrit-caddy-control" stop || true
+    fi
+    if [ "$gerrit_started" = true ]; then
         "$GERRIT_SITE/bin/gerrit.sh" stop || true
+    fi
+}
+if [ "$GERRIT_PROXY_MODE" = "local-http" ]; then
+    if ! "$HOME/bin/gerrit-caddy-control" status >/dev/null 2>&1; then
+        if ! "$HOME/bin/gerrit-caddy-control" start; then
+            rollback_started_services
+            exit 1
+        fi
+        proxy_started=true
+    fi
+fi
+if [ -r "$HOME/.xwalk-ci.env" ]; then
+    [ -x "$HOME/bin/gerrit-ci-control" ] || {
+        echo "Missing installed Gerrit CI control command" >&2
+        rollback_started_services
+        exit 2
+    }
+    if ! "$HOME/bin/gerrit-ci-control" start; then
+        rollback_started_services
         exit 1
     fi
 fi

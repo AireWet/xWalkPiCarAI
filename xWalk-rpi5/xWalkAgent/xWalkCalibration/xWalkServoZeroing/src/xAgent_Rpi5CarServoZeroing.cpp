@@ -34,49 +34,42 @@
 namespace xwalk::agent
 {
 
-/******************************************************************************
- * Public member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Public member function definitions
+     ******************************************************************************/
 
-/**
- * @brief Pulses channels zero through eleven, zeros them, and idles.
- * @return `true` after every channel reaches zero; otherwise `false` for early cancellation.
- * @warning Commands physical servo movement when bound to the Raspberry Pi provider.
- */
-agent::boolean XWalkServoZeroing::run()
-{
-    for (agent::uint8 servoId = 0U;
-        servoId < XAGENT_RPI5CAR_SERVO_ZEROING_CHANNEL_COUNT; ++servoId)
+    /**
+     * @brief Pulses channels zero through eleven, zeros them, and idles.
+     * @return `true` after every channel reaches zero; otherwise `false` for early cancellation.
+     * @warning Commands physical servo movement when bound to the Raspberry Pi provider.
+     */
+    agent::boolean XWalkServoZeroing::run()
     {
-        callbacks.setAngle(
-            callbackContext, servoId, configurationValue.pulseAngleDegrees);
-        const agent::boolean pulseDelayCompleted =
-            wait(configurationValue.commandDelayMs);
-        if (pulseDelayCompleted == false)
+        for (agent::uint8 servoId = 0U; servoId < XAGENT_RPI5CAR_SERVO_ZEROING_CHANNEL_COUNT; ++servoId)
         {
-            return false;
+            callbacks.setAngle(callbackContext, servoId, configurationValue.pulseAngleDegrees);
+            const agent::boolean pulseDelayCompleted = wait(configurationValue.commandDelayMs);
+            if (pulseDelayCompleted == false)
+            {
+                return false;
+            }
+            callbacks.setAngle(callbackContext, servoId, configurationValue.zeroAngleDegrees);
+            const agent::boolean zeroDelayCompleted = wait(configurationValue.commandDelayMs);
+            if (zeroDelayCompleted == false)
+            {
+                return false;
+            }
         }
-        callbacks.setAngle(
-            callbackContext, servoId, configurationValue.zeroAngleDegrees);
-        const agent::boolean zeroDelayCompleted =
-            wait(configurationValue.commandDelayMs);
-        if (zeroDelayCompleted == false)
+        const agent::boolean processingLoopRequested{true};
+        while (processingLoopRequested)
         {
-            return false;
+            const agent::boolean waitSucceeded = static_cast<agent::boolean>(wait(configurationValue.idleDelayMs));
+            if (waitSucceeded == false)
+            {
+                break;
+            }
         }
+        return true;
     }
-    const agent::boolean processingLoopRequested{true};
-    while (processingLoopRequested)
-    {
-        const agent::boolean waitSucceeded =
-            static_cast<agent::boolean>(
-                wait(configurationValue.idleDelayMs));
-        if (waitSucceeded == false)
-        {
-            break;
-        }
-    }
-    return true;
-}
 
 } /* namespace xwalk::agent */

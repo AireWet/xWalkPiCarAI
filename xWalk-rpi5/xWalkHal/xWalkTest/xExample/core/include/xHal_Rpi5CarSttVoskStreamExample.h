@@ -44,78 +44,76 @@
 namespace xwalk::hal::example
 {
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/** @brief Reports one partial or final recognition result. */
-using sttvoskstreamresultcallback = void (*)(contextpointer context,
-    boolean done, stringview text);
+    /** @brief Reports one partial or final recognition result. */
+    using sttvoskstreamresultcallback = void (*)(contextpointer context, boolean done, stringview text);
 
-/** @brief Runs one bounded recognition stream and reports each yielded result. */
-using sttvoskstreamlistencallback = void (*)(contextpointer context,
-    uint32 timeoutMs, sttvoskstreamresultcallback reportResult);
+    /** @brief Runs one bounded recognition stream and reports each yielded result. */
+    using sttvoskstreamlistencallback = void (*)(contextpointer context,
+                                                 uint32 timeoutMs,
+                                                 sttvoskstreamresultcallback reportResult);
 
-/** @brief Reports the source-compatible speech prompt. */
-using sttvoskstreampromptcallback = void (*)(contextpointer context);
+    /** @brief Reports the source-compatible speech prompt. */
+    using sttvoskstreampromptcallback = void (*)(contextpointer context);
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-/** @brief Complete operation table required by the streaming Vosk example. */
-struct XWalkSttVoskStreamExampleCallbacks
-{
-    /** @brief Runs one bounded recognition stream. */
-    sttvoskstreamlistencallback listen{nullptr};
-    /** @brief Reports `Say something` before each stream. */
-    sttvoskstreampromptcallback reportPrompt{nullptr};
-    /** @brief Reports each partial or final result. */
-    sttvoskstreamresultcallback reportResult{nullptr};
-};
+    /** @brief Complete operation table required by the streaming Vosk example. */
+    struct XWalkSttVoskStreamExampleCallbacks
+    {
+            /** @brief Runs one bounded recognition stream. */
+            sttvoskstreamlistencallback listen{nullptr};
+            /** @brief Reports `Say something` before each stream. */
+            sttvoskstreampromptcallback reportPrompt{nullptr};
+            /** @brief Reports each partial or final result. */
+            sttvoskstreamresultcallback reportResult{nullptr};
+    };
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/** @brief Coordinates bounded Vosk streaming sessions through injected operations. */
-class XWalkSttVoskStreamExample final
-{
-private:
+    /** @brief Coordinates bounded Vosk streaming sessions through injected operations. */
+    class XWalkSttVoskStreamExample final
+    {
+        private:
+            /** @brief Non-owning context forwarded to every operation. */
+            contextpointer callbackContext;
+            /** @brief Complete validated operation table copied at construction. */
+            XWalkSttVoskStreamExampleCallbacks callbacks;
 
-    /** @brief Non-owning context forwarded to every operation. */
-    contextpointer callbackContext;
-    /** @brief Complete validated operation table copied at construction. */
-    XWalkSttVoskStreamExampleCallbacks callbacks;
+        public:
+            /**
+             * @brief Binds the complete streaming speech operation table.
+             * @param[in,out] context Non-owning context forwarded to every callback.
+             * @param[in] exampleCallbacks Table containing three non-null callbacks.
+             * @throws std::invalid_argument If any callback is null.
+             */
+            XWalkSttVoskStreamExample(contextpointer context,
+                                      const XWalkSttVoskStreamExampleCallbacks& exampleCallbacks);
 
-public:
+            /** @brief Prevents copying of non-owning callback bindings. */
+            XWalkSttVoskStreamExample(const XWalkSttVoskStreamExample&) = delete;
+            /** @brief Prevents moving of non-owning callback bindings. */
+            XWalkSttVoskStreamExample(XWalkSttVoskStreamExample&&) = delete;
+            /** @brief Prevents copy assignment of non-owning callback bindings. */
+            XWalkSttVoskStreamExample& operator=(const XWalkSttVoskStreamExample&) = delete;
+            /** @brief Prevents move assignment of non-owning callback bindings. */
+            XWalkSttVoskStreamExample& operator=(XWalkSttVoskStreamExample&&) = delete;
 
-    /**
-     * @brief Binds the complete streaming speech operation table.
-     * @param[in,out] context Non-owning context forwarded to every callback.
-     * @param[in] exampleCallbacks Table containing three non-null callbacks.
-     * @throws std::invalid_argument If any callback is null.
-     */
-    XWalkSttVoskStreamExample(contextpointer context,
-        const XWalkSttVoskStreamExampleCallbacks& exampleCallbacks);
-
-    /** @brief Prevents copying of non-owning callback bindings. */
-    XWalkSttVoskStreamExample(const XWalkSttVoskStreamExample&) = delete;
-    /** @brief Prevents moving of non-owning callback bindings. */
-    XWalkSttVoskStreamExample(XWalkSttVoskStreamExample&&) = delete;
-    /** @brief Prevents copy assignment of non-owning callback bindings. */
-    XWalkSttVoskStreamExample& operator=(const XWalkSttVoskStreamExample&) = delete;
-    /** @brief Prevents move assignment of non-owning callback bindings. */
-    XWalkSttVoskStreamExample& operator=(XWalkSttVoskStreamExample&&) = delete;
-
-    /**
-     * @brief Runs the requested number of bounded recognition sessions.
-     * @param[in] sessionCount Session count from one through 100.
-     * @param[in] timeoutMs Per-session timeout from one through 300,000 milliseconds.
-     * @throws std::out_of_range If either bounded argument is invalid.
-     */
-    void run(uint32 sessionCount, uint32 timeoutMs);
-};
+            /**
+             * @brief Runs the requested number of bounded recognition sessions.
+             * @param[in] sessionCount Session count from one through 100.
+             * @param[in] timeoutMs Per-session timeout from one through 300,000 milliseconds.
+             * @throws std::out_of_range If either bounded argument is invalid.
+             */
+            void run(uint32 sessionCount, uint32 timeoutMs);
+    };
 
 } /* namespace xwalk::hal::example */
 

@@ -34,24 +34,24 @@
 namespace xwalk::hal::test
 {
 
-XWalkInitAnglesSequence::XWalkInitAnglesSequence(
-    XWalkBoardControl& boardControl, XWalkRobot& robot,
-    XWalkServo& firstServo, XWalkServo& secondServo,
-    XWalkServo& thirdServo) noexcept
-    : boardControlObject(&boardControl), robotObject(&robot),
-      firstServoObject(&firstServo), secondServoObject(&secondServo),
-      thirdServoObject(&thirdServo)
-{
-}
+    XWalkInitAnglesSequence::XWalkInitAnglesSequence(XWalkBoardControl& boardControl,
+                                                     XWalkRobot& robot,
+                                                     XWalkServo& firstServo,
+                                                     XWalkServo& secondServo,
+                                                     XWalkServo& thirdServo) noexcept
+        : boardControlObject(&boardControl), robotObject(&robot), firstServoObject(&firstServo),
+          secondServoObject(&secondServo), thirdServoObject(&thirdServo)
+    {
+    }
 
-void XWalkInitAnglesSequence::run()
-{
-    boardControlObject->resetMcu();
-    common::sleepMilliseconds(10U);
-    robotObject->addServo(*firstServoObject, 10.0);
-    robotObject->addServo(*secondServoObject, 45.0);
-    robotObject->addServo(*thirdServoObject, -45.0);
-    robotObject->initialize();
-}
+    void XWalkInitAnglesSequence::run()
+    {
+        boardControlObject->resetMcu();
+        common::sleepMilliseconds(10U);
+        robotObject->addServo(*firstServoObject, 10.0);
+        robotObject->addServo(*secondServoObject, 45.0);
+        robotObject->addServo(*thirdServoObject, -45.0);
+        robotObject->initialize();
+    }
 
 } /* namespace xwalk::hal::test */

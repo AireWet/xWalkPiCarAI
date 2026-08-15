@@ -41,12 +41,12 @@
 namespace xwalk::agent::test
 {
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/** @brief Ordered CLI commands, where each inner sequence excludes the executable name. */
-using controllercommandsequence = std::vector<::ctrl::stringvector>;
+    /** @brief Ordered CLI commands, where each inner sequence excludes the executable name. */
+    using controllercommandsequence = std::vector<::ctrl::stringvector>;
 
 } /* namespace xwalk::agent::test */
 

@@ -21,30 +21,29 @@
 namespace xwalk::agent
 {
 
-/**
- * @brief Runs configured storytelling speech.
- * @param[in,out] context Nullable caller-owned application context.
- * @param[in] callback Non-null synchronous application callback.
- * @param[in,out] config Loaded deployment configuration.
- * @param[in,out] boardControl Caller-owned board controller.
- * @param[in,out] picarx Caller-owned PiCar-X coordinator.
- * @return Status returned by `callback`.
- */
-agent::int32 XWalkBootRpi::runStorytellingRobot(
-    agent::contextpointer context, bootapplicationcallback callback,
-    hal::XWalkConfigStore& config, hal::XWalkBoardControl& boardControl,
-    XWalkPicarx& picarx)
-{
-    hal::XWalkTextToSpeechPiper piper(
-        config.get("voice_piper_executable", "piper"),
-        config.get("voice_piper_playback_executable", "aplay"),
-        config.get("voice_piper_model", "en_US-amy-low"));
-    hal::XWalkTextToSpeech textToSpeech(
-        boardControl, &piper, piper.callback());
-    XWalkBootServices services{};
-    services.picarx = &picarx;
-    services.textToSpeech = &textToSpeech;
-    return callback(context, services);
-}
+    /**
+     * @brief Runs configured storytelling speech.
+     * @param[in,out] context Nullable caller-owned application context.
+     * @param[in] callback Non-null synchronous application callback.
+     * @param[in,out] config Loaded deployment configuration.
+     * @param[in,out] boardControl Caller-owned board controller.
+     * @param[in,out] picarx Caller-owned PiCar-X coordinator.
+     * @return Status returned by `callback`.
+     */
+    agent::int32 XWalkBootRpi::runStorytellingRobot(agent::contextpointer context,
+                                                    bootapplicationcallback callback,
+                                                    hal::XWalkConfigStore& config,
+                                                    hal::XWalkBoardControl& boardControl,
+                                                    XWalkPicarx& picarx)
+    {
+        hal::XWalkTextToSpeechPiper piper(config.get("voice_piper_executable", "piper"),
+                                          config.get("voice_piper_playback_executable", "aplay"),
+                                          config.get("voice_piper_model", "en_US-amy-low"));
+        hal::XWalkTextToSpeech textToSpeech(boardControl, &piper, piper.callback());
+        XWalkBootServices services{};
+        services.picarx = &picarx;
+        services.textToSpeech = &textToSpeech;
+        return callback(context, services);
+    }
 
 } /* namespace xwalk::agent */

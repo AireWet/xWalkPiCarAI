@@ -37,35 +37,35 @@
 namespace xwalk::hal::example
 {
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/** @brief Composes OpenAI image chat with Linux camera and terminal adapters. */
-class XWalkOpenAiImageExampleLinux final
-{
-protected:
+    /** @brief Composes OpenAI image chat with Linux camera and terminal adapters. */
+    class XWalkOpenAiImageExampleLinux final
+    {
+        protected:
+            /** @brief Prints `>>> ` and reads one terminal input line. */
+            static boolean readPrompt(contextpointer context, string& inputText);
+            /** @brief Writes one welcome or response fragment to standard output. */
+            static void write(contextpointer context, stringview text, boolean appendNewline, boolean flushOutput);
 
-    /** @brief Prints `>>> ` and reads one terminal input line. */
-    static boolean readPrompt(contextpointer context, string& inputText);
-    /** @brief Writes one welcome or response fragment to standard output. */
-    static void write(contextpointer context, stringview text,
-        boolean appendNewline, boolean flushOutput);
-
-public:
-
-    /**
-     * @brief Runs bounded camera chat through the OpenAI API.
-     * @param[in] apiKey Non-empty credential sourced outside process arguments.
-     * @param[in] maximumPrompts Prompt limit from one through 100.
-     * @param[in] connection Exact lowercase `csi` or `usb` camera connection.
-     * @param[in] captureExecutable Non-empty camera capture executable.
-     * @param[in] cameraDevice V4L2 device used only for USB capture.
-     * @warning Captures images and sends them with user prompts over HTTPS.
-     */
-    void run(stringview apiKey, uint32 maximumPrompts, stringview connection,
-        stringview captureExecutable, stringview cameraDevice);
-};
+        public:
+            /**
+             * @brief Runs bounded camera chat through the OpenAI API.
+             * @param[in] apiKey Non-empty credential sourced outside process arguments.
+             * @param[in] maximumPrompts Prompt limit from one through 100.
+             * @param[in] connection Exact lowercase `csi` or `usb` camera connection.
+             * @param[in] captureExecutable Non-empty camera capture executable.
+             * @param[in] cameraDevice V4L2 device used only for USB capture.
+             * @warning Captures images and sends them with user prompts over HTTPS.
+             */
+            void run(stringview apiKey,
+                     uint32 maximumPrompts,
+                     stringview connection,
+                     stringview captureExecutable,
+                     stringview cameraDevice);
+    };
 
 } /* namespace xwalk::hal::example */
 

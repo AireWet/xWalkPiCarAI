@@ -13,7 +13,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Exercises ADXL345 configuration and three-axis conversion in memory. */
-int32 runAdxl345Simulation();
+    /** @brief Exercises ADXL345 configuration and three-axis conversion in memory. */
+    int32 runAdxl345Simulation();
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_ADXL345_SIMULATION_H */

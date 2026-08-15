@@ -53,17 +53,17 @@ int main(int argumentCount, char* argumentValues[])
     {
         return 1;
     }
-    const xwalk::hal::stringview pcmDevice =
-        (argumentCount == 4) ? argumentValues[1] : "default";
-    const xwalk::hal::stringview mixerDevice =
-        (argumentCount == 4) ? argumentValues[2] : "default";
-    const xwalk::hal::stringview mixerElement =
-        (argumentCount == 4) ? argumentValues[3] : "PCM";
+    const xwalk::hal::stringview pcmDevice = (argumentCount == 4) ? argumentValues[1] : "default";
+    const xwalk::hal::stringview mixerDevice = (argumentCount == 4) ? argumentValues[2] : "default";
+    const xwalk::hal::stringview mixerElement = (argumentCount == 4) ? argumentValues[3] : "PCM";
 
     xwalk::hal::XWalkAudioAlsa audio(pcmDevice, mixerDevice, mixerElement);
     const xwalk::hal::XWalkAudioStreamConfiguration configuration{
-        44'100U, 1U, xwalk::hal::XWalkAudioSampleFormat::Signed16LittleEndian,
-        256U, XHAL_RPI5CAR_AUDIO_DEFAULT_LATENCY_US};
+        44'100U,
+        1U,
+        xwalk::hal::XWalkAudioSampleFormat::Signed16LittleEndian,
+        256U,
+        XHAL_RPI5CAR_AUDIO_DEFAULT_LATENCY_US};
     xwalk::hal::audiopcmhandle stream = audio.openStream(configuration);
     const xwalk::hal::size frameCount = 256U;
     const xwalk::hal::bytevector silence(frameCount * 2U, 0U);

@@ -48,13 +48,11 @@ int main()
     xwalk::hal::XWalkUtils utilities(&backend, backend.utilityCallbacks());
 
     utilities.info("xWalkUtils Linux hardware test");
-    const xwalk::hal::XWalkCommandResult commandResult =
-        utilities.runCommand("printf 'xwalk-utils-ready'");
+    const xwalk::hal::XWalkCommandResult commandResult = utilities.runCommand("printf 'xwalk-utils-ready'");
     const hal::boolean commandResultStatusOutputInvalid =
-        static_cast<hal::boolean>(
-            (commandResult.status != 0) || (commandResult.output != "xwalk-utils-ready") ||
-        (!utilities.commandExists("amixer")) || (utilities.ipAddress("lo") != "127.0.0.1") ||
-        utilities.username().empty());
+        static_cast<hal::boolean>((commandResult.status != 0) || (commandResult.output != "xwalk-utils-ready") ||
+                                  (!utilities.commandExists("amixer")) || (utilities.ipAddress("lo") != "127.0.0.1") ||
+                                  utilities.username().empty());
     if (commandResultStatusOutputInvalid)
     {
         return 1;

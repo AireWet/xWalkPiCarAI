@@ -20,16 +20,12 @@
  */
 int main()
 {
-    const auto assistant =
-        xwalk::agent::XWalkVoiceActiveCarGpt::assistantConfiguration();
+    const auto assistant = xwalk::agent::XWalkVoiceActiveCarGpt::assistantConfiguration();
     const auto car = xwalk::agent::XWalkVoiceActiveCarGpt::carConfiguration();
-    assert(assistant.instructions.find("Your name is Buddy") !=
-        xwalk::agent::string::npos);
-    assert(assistant.instructions.find("ACTIONS: ACTION1, ACTION2") !=
-        xwalk::agent::string::npos);
+    assert(assistant.instructions.find("Your name is Buddy") != xwalk::agent::string::npos);
+    assert(assistant.instructions.find("ACTIONS: ACTION1, ACTION2") != xwalk::agent::string::npos);
     assert(assistant.instructions.find("forward") != xwalk::agent::string::npos);
-    assert(assistant.instructions.find("start engine") !=
-        xwalk::agent::string::npos);
+    assert(assistant.instructions.find("start engine") != xwalk::agent::string::npos);
     assert(assistant.welcome == "Hi, I'm Buddy. Wake me up with: hey buddy");
     assert(car.tooCloseCm == 10.0);
     assert(car.withImage);
@@ -37,10 +33,7 @@ int main()
     assert(car.wakeEnabled);
     assert(car.wakeWord == "hey buddy");
     assert(car.answerOnWake == "Hi there");
-    assert(xwalk::agent::string(
-        xwalk::agent::XWalkVoiceActiveCarGpt::MODEL_NAME) == "gpt-4o-mini");
-    assert(xwalk::agent::string(
-        xwalk::agent::XWalkVoiceActiveCarGpt::SPEECH_VOICE) ==
-        "en_US-ryan-low");
+    assert(xwalk::agent::string(xwalk::agent::XWalkVoiceActiveCarGpt::MODEL_NAME) == "gpt-4o-mini");
+    assert(xwalk::agent::string(xwalk::agent::XWalkVoiceActiveCarGpt::SPEECH_VOICE) == "en_US-ryan-low");
     return 0;
 }

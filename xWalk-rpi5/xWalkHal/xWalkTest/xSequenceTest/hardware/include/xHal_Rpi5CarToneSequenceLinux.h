@@ -33,27 +33,25 @@
 namespace xwalk::hal::test
 {
 
-/** @brief Composes the tone sequence with the real Linux ALSA backend. */
-class XWalkToneSequenceLinux
-{
-protected:
+    /** @brief Composes the tone sequence with the real Linux ALSA backend. */
+    class XWalkToneSequenceLinux
+    {
+        protected:
+            /** @brief Traces one measure heading before its first note. */
+            static void reportMeasure(contextpointer context, uint8 measureNumber);
 
-    /** @brief Traces one measure heading before its first note. */
-    static void reportMeasure(contextpointer context, uint8 measureNumber);
-
-public:
-
-    /**
-     * @brief Plays the complete melody through explicitly selected ALSA devices.
-     *
-     * @param[in] pcmDevice Non-empty ALSA PCM playback device name.
-     * @param[in] mixerDevice Non-empty ALSA mixer device name.
-     * @param[in] mixerElement Non-empty ALSA mixer element name.
-     *
-     * @warning Produces approximately 48 seconds of audio at 80-percent volume.
-     */
-    void run(stringview pcmDevice, stringview mixerDevice, stringview mixerElement);
-};
+        public:
+            /**
+             * @brief Plays the complete melody through explicitly selected ALSA devices.
+             *
+             * @param[in] pcmDevice Non-empty ALSA PCM playback device name.
+             * @param[in] mixerDevice Non-empty ALSA mixer device name.
+             * @param[in] mixerElement Non-empty ALSA mixer element name.
+             *
+             * @warning Produces approximately 48 seconds of audio at 80-percent volume.
+             */
+            void run(stringview pcmDevice, stringview mixerDevice, stringview mixerElement);
+    };
 
 } /* namespace xwalk::hal::test */
 

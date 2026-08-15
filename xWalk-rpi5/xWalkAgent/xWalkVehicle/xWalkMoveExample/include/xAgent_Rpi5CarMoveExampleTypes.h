@@ -16,8 +16,8 @@
 namespace xwalk::agent
 {
 
-using moveexampledelaycallback = void (*)(agent::contextpointer context, agent::uint32 durationMs);
-using moveexamplecontinuecallback = agent::boolean (*)(agent::contextpointer context);
+    using moveexampledelaycallback = void (*)(agent::contextpointer context, agent::uint32 durationMs);
+    using moveexamplecontinuecallback = agent::boolean (*)(agent::contextpointer context);
 
 } /* namespace xwalk::agent */
 

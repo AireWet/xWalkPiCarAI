@@ -41,60 +41,60 @@
 namespace xwalk::hal::sim
 {
 
-/**
- * @class XWalkSpiSimulationArguments
- * @brief Validates and applies one optional simulation trace selector.
- */
-class XWalkSpiSimulationArguments final
-{
-    public:
-        /**
-         * @brief Parses the complete simulation process argument list.
-         * @param[in] argumentCount Number of process arguments, including the binary name.
-         * @param[in] argumentValues Non-null process argument array with `argumentCount` entries.
-         */
-        XWalkSpiSimulationArguments(int32 argumentCount, charpointer argumentValues[]);
+    /**
+     * @class XWalkSpiSimulationArguments
+     * @brief Validates and applies one optional simulation trace selector.
+     */
+    class XWalkSpiSimulationArguments final
+    {
+        public:
+            /**
+             * @brief Parses the complete simulation process argument list.
+             * @param[in] argumentCount Number of process arguments, including the binary name.
+             * @param[in] argumentValues Non-null process argument array with `argumentCount` entries.
+             */
+            XWalkSpiSimulationArguments(int32 argumentCount, charpointer argumentValues[]);
 
-        /** @brief Destroys owned selector text without external side effects. */
-        ~XWalkSpiSimulationArguments();
+            /** @brief Destroys owned selector text without external side effects. */
+            ~XWalkSpiSimulationArguments();
 
-        XWalkSpiSimulationArguments(const XWalkSpiSimulationArguments&) = delete;
-        XWalkSpiSimulationArguments& operator=(const XWalkSpiSimulationArguments&) = delete;
-        XWalkSpiSimulationArguments(XWalkSpiSimulationArguments&&) = delete;
-        XWalkSpiSimulationArguments& operator=(XWalkSpiSimulationArguments&&) = delete;
+            XWalkSpiSimulationArguments(const XWalkSpiSimulationArguments&) = delete;
+            XWalkSpiSimulationArguments& operator=(const XWalkSpiSimulationArguments&) = delete;
+            XWalkSpiSimulationArguments(XWalkSpiSimulationArguments&&) = delete;
+            XWalkSpiSimulationArguments& operator=(XWalkSpiSimulationArguments&&) = delete;
 
-        /** @brief Reports whether the complete process argument list is valid. */
-        boolean valid() const noexcept;
+            /** @brief Reports whether the complete process argument list is valid. */
+            boolean valid() const noexcept;
 
-        /** @brief Reports whether the caller requested command help. */
-        boolean helpRequested() const noexcept;
+            /** @brief Reports whether the caller requested command help. */
+            boolean helpRequested() const noexcept;
 
-        /** @brief Applies the parsed trace update to the global trace runtime. */
-        boolean applyTraceUpdate() const;
+            /** @brief Applies the parsed trace update to the global trace runtime. */
+            boolean applyTraceUpdate() const;
 
-    protected:
-        /** @brief Reports whether one selector target is `all` or `RPI.<digits>`. */
-        static boolean targetIsValid(stringview target) noexcept;
+        protected:
+            /** @brief Reports whether one selector target is `all` or `RPI.<digits>`. */
+            static boolean targetIsValid(stringview target) noexcept;
 
-        /** @brief Parses one selector and commits it only when completely valid. */
-        void parseSelector(stringview selector);
+            /** @brief Parses one selector and commits it only when completely valid. */
+            void parseSelector(stringview selector);
 
-    private:
-        /** @brief Parsed UID, module, `all`, or JSON path selected by the caller. */
-        string traceTargetValue;
+        private:
+            /** @brief Parsed UID, module, `all`, or JSON path selected by the caller. */
+            string traceTargetValue;
 
-        /** @brief Requested trace state when a non-JSON selector is present. */
-        boolean traceEnabledValue;
+            /** @brief Requested trace state when a non-JSON selector is present. */
+            boolean traceEnabledValue;
 
-        /** @brief Indicates that the caller supplied one trace selector. */
-        boolean traceUpdateRequestedValue;
+            /** @brief Indicates that the caller supplied one trace selector. */
+            boolean traceUpdateRequestedValue;
 
-        /** @brief Indicates that the complete process argument list is valid. */
-        boolean validValue;
+            /** @brief Indicates that the complete process argument list is valid. */
+            boolean validValue;
 
-        /** @brief Indicates that `--help` or `-h` was supplied. */
-        boolean helpRequestedValue;
-};
+            /** @brief Indicates that `--help` or `-h` was supplied. */
+            boolean helpRequestedValue;
+    };
 
 } /* namespace xwalk::hal::sim */
 

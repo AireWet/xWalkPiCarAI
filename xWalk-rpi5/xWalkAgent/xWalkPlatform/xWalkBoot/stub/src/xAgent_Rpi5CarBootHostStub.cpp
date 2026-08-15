@@ -30,37 +30,35 @@
 namespace xwalk::agent
 {
 
-/******************************************************************************
- * Constructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Constructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Constructs one host stub around caller-owned simulated services.
- * @param[in] simulatedServices Service pointers whose targets outlive this object.
- */
-XWalkBootHostStub::XWalkBootHostStub(
-    const XWalkBootServices& simulatedServices) noexcept:
-    services(simulatedServices)
-{
-}
+    /**
+     * @brief Constructs one host stub around caller-owned simulated services.
+     * @param[in] simulatedServices Service pointers whose targets outlive this object.
+     */
+    XWalkBootHostStub::XWalkBootHostStub(const XWalkBootServices& simulatedServices) noexcept
+        : services(simulatedServices)
+    {
+    }
 
-/******************************************************************************
- * Public member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Public member function definitions
+     ******************************************************************************/
 
-/**
- * @brief Executes one application callback with simulated services.
- * @param[in,out] context Nullable caller-owned application context.
- * @param[in] callback Non-null synchronous application callback.
- * @return Status returned by `callback`.
- * @throws std::invalid_argument If `callback` is null.
- * @throws std::logic_error If this object already started once.
- */
-agent::int32 XWalkBootHostStub::run(agent::contextpointer context,
-    bootapplicationcallback callback)
-{
-    begin(callback);
-    return callback(context, services);
-}
+    /**
+     * @brief Executes one application callback with simulated services.
+     * @param[in,out] context Nullable caller-owned application context.
+     * @param[in] callback Non-null synchronous application callback.
+     * @return Status returned by `callback`.
+     * @throws std::invalid_argument If `callback` is null.
+     * @throws std::logic_error If this object already started once.
+     */
+    agent::int32 XWalkBootHostStub::run(agent::contextpointer context, bootapplicationcallback callback)
+    {
+        begin(callback);
+        return callback(context, services);
+    }
 
 } /* namespace xwalk::agent */

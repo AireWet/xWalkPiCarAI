@@ -13,28 +13,30 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Validates and applies one optional Buzzer trace selector. */
-class XWalkBuzzerSimulationArguments final
-{
-    private:
-        string traceTargetValue;
-        boolean traceEnabledValue;
-        boolean traceUpdateRequestedValue;
-        boolean validValue;
-        boolean helpRequestedValue;
-    protected:
-        static boolean targetIsValid(stringview target) noexcept;
-        void parseSelector(stringview selector);
-    public:
-        XWalkBuzzerSimulationArguments(int32 argumentCount, charpointer argumentValues[]);
-        ~XWalkBuzzerSimulationArguments();
-        XWalkBuzzerSimulationArguments(const XWalkBuzzerSimulationArguments&) = delete;
-        XWalkBuzzerSimulationArguments& operator=(const XWalkBuzzerSimulationArguments&) = delete;
-        XWalkBuzzerSimulationArguments(XWalkBuzzerSimulationArguments&&) = delete;
-        XWalkBuzzerSimulationArguments& operator=(XWalkBuzzerSimulationArguments&&) = delete;
-        boolean valid() const noexcept;
-        boolean helpRequested() const noexcept;
-        boolean applyTraceUpdate() const;
-};
+    /** @brief Validates and applies one optional Buzzer trace selector. */
+    class XWalkBuzzerSimulationArguments final
+    {
+        private:
+            string traceTargetValue;
+            boolean traceEnabledValue;
+            boolean traceUpdateRequestedValue;
+            boolean validValue;
+            boolean helpRequestedValue;
+
+        protected:
+            static boolean targetIsValid(stringview target) noexcept;
+            void parseSelector(stringview selector);
+
+        public:
+            XWalkBuzzerSimulationArguments(int32 argumentCount, charpointer argumentValues[]);
+            ~XWalkBuzzerSimulationArguments();
+            XWalkBuzzerSimulationArguments(const XWalkBuzzerSimulationArguments&) = delete;
+            XWalkBuzzerSimulationArguments& operator=(const XWalkBuzzerSimulationArguments&) = delete;
+            XWalkBuzzerSimulationArguments(XWalkBuzzerSimulationArguments&&) = delete;
+            XWalkBuzzerSimulationArguments& operator=(XWalkBuzzerSimulationArguments&&) = delete;
+            boolean valid() const noexcept;
+            boolean helpRequested() const noexcept;
+            boolean applyTraceUpdate() const;
+    };
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_BUZZER_SIMULATION_ARGUMENTS_H */

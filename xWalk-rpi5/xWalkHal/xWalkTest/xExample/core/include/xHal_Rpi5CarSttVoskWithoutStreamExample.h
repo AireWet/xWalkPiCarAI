@@ -28,60 +28,52 @@
 namespace xwalk::hal::example
 {
 
-/** @brief Performs one bounded synchronous recognition request. */
-using sttvoskwithoutstreamlistencallback = string (*)(contextpointer context,
-    uint32 timeoutMs);
-/** @brief Reports one literal prompt or final transcript. */
-using sttvoskwithoutstreamreportcallback = void (*)(contextpointer context,
-    stringview text);
+    /** @brief Performs one bounded synchronous recognition request. */
+    using sttvoskwithoutstreamlistencallback = string (*)(contextpointer context, uint32 timeoutMs);
+    /** @brief Reports one literal prompt or final transcript. */
+    using sttvoskwithoutstreamreportcallback = void (*)(contextpointer context, stringview text);
 
-/** @brief Complete operation table required by the non-streaming example. */
-struct XWalkSttVoskWithoutStreamExampleCallbacks
-{
-    /** @brief Returns one final recognition result. */
-    sttvoskwithoutstreamlistencallback listen{nullptr};
-    /** @brief Reports prompts and final results. */
-    sttvoskwithoutstreamreportcallback report{nullptr};
-};
+    /** @brief Complete operation table required by the non-streaming example. */
+    struct XWalkSttVoskWithoutStreamExampleCallbacks
+    {
+            /** @brief Returns one final recognition result. */
+            sttvoskwithoutstreamlistencallback listen{nullptr};
+            /** @brief Reports prompts and final results. */
+            sttvoskwithoutstreamreportcallback report{nullptr};
+    };
 
-/** @brief Coordinates bounded non-streaming Vosk recognition sessions. */
-class XWalkSttVoskWithoutStreamExample final
-{
-private:
+    /** @brief Coordinates bounded non-streaming Vosk recognition sessions. */
+    class XWalkSttVoskWithoutStreamExample final
+    {
+        private:
+            /** @brief Non-owning context forwarded to every operation. */
+            contextpointer callbackContext;
+            /** @brief Complete validated callback table copied at construction. */
+            XWalkSttVoskWithoutStreamExampleCallbacks callbacks;
 
-    /** @brief Non-owning context forwarded to every operation. */
-    contextpointer callbackContext;
-    /** @brief Complete validated callback table copied at construction. */
-    XWalkSttVoskWithoutStreamExampleCallbacks callbacks;
+        public:
+            /**
+             * @brief Binds the complete non-streaming speech operation table.
+             * @param[in,out] context Non-owning context forwarded to every callback.
+             * @param[in] exampleCallbacks Table containing two non-null callbacks.
+             * @throws std::invalid_argument If either callback is null.
+             */
+            XWalkSttVoskWithoutStreamExample(contextpointer context,
+                                             const XWalkSttVoskWithoutStreamExampleCallbacks& exampleCallbacks);
 
-public:
+            XWalkSttVoskWithoutStreamExample(const XWalkSttVoskWithoutStreamExample&) = delete;
+            XWalkSttVoskWithoutStreamExample(XWalkSttVoskWithoutStreamExample&&) = delete;
+            XWalkSttVoskWithoutStreamExample& operator=(const XWalkSttVoskWithoutStreamExample&) = delete;
+            XWalkSttVoskWithoutStreamExample& operator=(XWalkSttVoskWithoutStreamExample&&) = delete;
 
-    /**
-     * @brief Binds the complete non-streaming speech operation table.
-     * @param[in,out] context Non-owning context forwarded to every callback.
-     * @param[in] exampleCallbacks Table containing two non-null callbacks.
-     * @throws std::invalid_argument If either callback is null.
-     */
-    XWalkSttVoskWithoutStreamExample(contextpointer context,
-        const XWalkSttVoskWithoutStreamExampleCallbacks& exampleCallbacks);
-
-    XWalkSttVoskWithoutStreamExample(
-        const XWalkSttVoskWithoutStreamExample&) = delete;
-    XWalkSttVoskWithoutStreamExample(
-        XWalkSttVoskWithoutStreamExample&&) = delete;
-    XWalkSttVoskWithoutStreamExample& operator=(
-        const XWalkSttVoskWithoutStreamExample&) = delete;
-    XWalkSttVoskWithoutStreamExample& operator=(
-        XWalkSttVoskWithoutStreamExample&&) = delete;
-
-    /**
-     * @brief Prompts, listens, and reports one result for every session.
-     * @param[in] sessionCount Session count from one through 100.
-     * @param[in] timeoutMs Per-session timeout from one through 300,000 milliseconds.
-     * @throws std::out_of_range If either bounded argument is invalid.
-     */
-    void run(uint32 sessionCount, uint32 timeoutMs);
-};
+            /**
+             * @brief Prompts, listens, and reports one result for every session.
+             * @param[in] sessionCount Session count from one through 100.
+             * @param[in] timeoutMs Per-session timeout from one through 300,000 milliseconds.
+             * @throws std::out_of_range If either bounded argument is invalid.
+             */
+            void run(uint32 sessionCount, uint32 timeoutMs);
+    };
 
 } /* namespace xwalk::hal::example */
 

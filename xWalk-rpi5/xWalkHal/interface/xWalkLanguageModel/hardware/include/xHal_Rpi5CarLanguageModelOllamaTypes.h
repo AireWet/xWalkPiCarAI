@@ -41,96 +41,99 @@
 namespace xwalk::hal
 {
 
-/******************************************************************************
- * Enumeration declarations
- ******************************************************************************/
-
-/**
- * @enum XWalkLanguageModelHttpDialect
- * @brief Selects the JSON and authentication contract used by the HTTP backend.
- */
-enum class XWalkLanguageModelHttpDialect : uint8
-{
-    /**
-     * @brief Uses Ollama `/api/chat` JSON without a required API key.
-     */
-    Ollama = 0U,
+    /******************************************************************************
+     * Enumeration declarations
+     ******************************************************************************/
 
     /**
-     * @brief Uses authenticated OpenAI-compatible `/chat/completions` JSON.
+     * @enum XWalkLanguageModelHttpDialect
+     * @brief Selects the JSON and authentication contract used by the HTTP backend.
      */
-    OpenAiChatCompletions = 1U
-};
+    enum class XWalkLanguageModelHttpDialect : uint8
+    {
+        /**
+         * @brief Uses Ollama `/api/chat` JSON without a required API key.
+         */
+        Ollama = 0U,
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+        /**
+         * @brief Uses authenticated OpenAI-compatible `/chat/completions` JSON.
+         */
+        OpenAiChatCompletions = 1U
+    };
 
-/**
- * @struct XWalkLanguageModelOllamaMessage
- * @brief Contains one owned language-model conversation message.
- */
-struct XWalkLanguageModelOllamaMessage
-{
-    /** @brief Valid system, user, or assistant participant role. */
-    XWalkLanguageModelRole role{XWalkLanguageModelRole::System};
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-    /** @brief Owned message content bounded by the provider text limit. */
-    string content{};
+    /**
+     * @struct XWalkLanguageModelOllamaMessage
+     * @brief Contains one owned language-model conversation message.
+     */
+    struct XWalkLanguageModelOllamaMessage
+    {
+            /** @brief Valid system, user, or assistant participant role. */
+            XWalkLanguageModelRole role{XWalkLanguageModelRole::System};
 
-    /** @brief Optional owned base64 image data without a URI prefix. */
-    string imageBase64{};
-};
+            /** @brief Owned message content bounded by the provider text limit. */
+            string content{};
 
-/**
- * @struct XWalkLanguageModelOllamaResponseState
- * @brief Retains one libcurl response and its request-specific byte bound.
- */
-struct XWalkLanguageModelOllamaResponseState
-{
-    /** @brief Owned response bytes appended only during one synchronous request. */
-    string response{};
+            /** @brief Optional owned base64 image data without a URI prefix. */
+            string imageBase64{};
+    };
 
-    /** @brief Maximum response bytes accepted by the active request. */
-    size maximumBytes{};
-};
+    /**
+     * @struct XWalkLanguageModelOllamaResponseState
+     * @brief Retains one libcurl response and its request-specific byte bound.
+     */
+    struct XWalkLanguageModelOllamaResponseState
+    {
+            /** @brief Owned response bytes appended only during one synchronous request. */
+            string response{};
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+            /** @brief Maximum response bytes accepted by the active request. */
+            size maximumBytes{};
+    };
 
-/** @brief Dynamically sized bounded sequence of owned model messages. */
-using languagemodelollamamessagevector = std::vector<XWalkLanguageModelOllamaMessage>;
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/**
- * @brief Sends one bounded JSON request and returns a bounded JSON response.
- *
- * @param[in,out] context Nullable non-owning transport context that outlives the backend.
- * @param[in] endpoint Non-empty selected chat endpoint retained only for this call.
- * @param[in] requestJson Complete JSON request within the documented request limit.
- * @param[in] authorizationHeader Empty text or one complete authorization header.
- * @param[in] timeoutMs Request timeout from 1 through 300,000 milliseconds.
- * @param[in] maximumResponseBytes Maximum response bytes accepted by the transport.
- * @return Owned complete JSON response.
- * @warning Request content and response content must not be logged by normal diagnostics.
- */
-using languagemodelollamapostcallback = string (*)(contextpointer context,
-    stringview endpoint, stringview requestJson, stringview authorizationHeader,
-    uint32 timeoutMs, size maximumResponseBytes);
+    /** @brief Dynamically sized bounded sequence of owned model messages. */
+    using languagemodelollamamessagevector = std::vector<XWalkLanguageModelOllamaMessage>;
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /**
+     * @brief Sends one bounded JSON request and returns a bounded JSON response.
+     *
+     * @param[in,out] context Nullable non-owning transport context that outlives the backend.
+     * @param[in] endpoint Non-empty selected chat endpoint retained only for this call.
+     * @param[in] requestJson Complete JSON request within the documented request limit.
+     * @param[in] authorizationHeader Empty text or one complete authorization header.
+     * @param[in] timeoutMs Request timeout from 1 through 300,000 milliseconds.
+     * @param[in] maximumResponseBytes Maximum response bytes accepted by the transport.
+     * @return Owned complete JSON response.
+     * @warning Request content and response content must not be logged by normal diagnostics.
+     */
+    using languagemodelollamapostcallback = string (*)(contextpointer context,
+                                                       stringview endpoint,
+                                                       stringview requestJson,
+                                                       stringview authorizationHeader,
+                                                       uint32 timeoutMs,
+                                                       size maximumResponseBytes);
 
-/**
- * @struct XWalkLanguageModelOllamaOperations
- * @brief Contains the complete injectable language-model HTTP transport table.
- */
-struct XWalkLanguageModelOllamaOperations
-{
-    /** @brief Sends one synchronous application/json POST request. */
-    languagemodelollamapostcallback postJson{nullptr};
-};
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
+
+    /**
+     * @struct XWalkLanguageModelOllamaOperations
+     * @brief Contains the complete injectable language-model HTTP transport table.
+     */
+    struct XWalkLanguageModelOllamaOperations
+    {
+            /** @brief Sends one synchronous application/json POST request. */
+            languagemodelollamapostcallback postJson{nullptr};
+    };
 
 } /* namespace xwalk::hal */
 

@@ -20,28 +20,28 @@
 namespace xwalk::agent
 {
 
-/** @brief Stores synchronized state owned by one WebSocket provider. */
-class XWalkAppControlWebSocketState final
-{
-public:
-    agent::string bindAddress;
-    agent::string name;
-    agent::string type;
-    XWalkAppControlInput input{};
-    XWalkAppControlTelemetry telemetry{};
-    mutable std::mutex mutex{};
-    std::atomic<agent::boolean> running{false};
-    std::atomic<agent::boolean> startupComplete{false};
-    std::atomic<agent::boolean> startupSucceeded{false};
-    std::thread worker{};
+    /** @brief Stores synchronized state owned by one WebSocket provider. */
+    class XWalkAppControlWebSocketState final
+    {
+        public:
+            agent::string bindAddress;
+            agent::string name;
+            agent::string type;
+            XWalkAppControlInput input{};
+            XWalkAppControlTelemetry telemetry{};
+            mutable std::mutex mutex{};
+            std::atomic<agent::boolean> running{false};
+            std::atomic<agent::boolean> startupComplete{false};
+            std::atomic<agent::boolean> startupSucceeded{false};
+            std::thread worker{};
 
-    explicit XWalkAppControlWebSocketState(agent::string address);
-    ~XWalkAppControlWebSocketState() noexcept;
-    void run(agent::uint16 port) noexcept;
-    void parse(const agent::string& message);
-    agent::string response() const;
-    static agent::string escaped(agent::stringview value);
-};
+            explicit XWalkAppControlWebSocketState(agent::string address);
+            ~XWalkAppControlWebSocketState() noexcept;
+            void run(agent::uint16 port) noexcept;
+            void parse(const agent::string& message);
+            agent::string response() const;
+            static agent::string escaped(agent::stringview value);
+    };
 
 } /* namespace xwalk::agent */
 

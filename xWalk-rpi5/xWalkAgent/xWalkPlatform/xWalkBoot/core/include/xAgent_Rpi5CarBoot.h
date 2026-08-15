@@ -36,40 +36,40 @@
 namespace xwalk::agent
 {
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/**
- * @class XWalkBoot
- * @brief Guards one platform boot implementation against repeated execution.
- */
-class XWalkBoot
-{
-    private:
-        /** @brief Records whether this object consumed its one run attempt. */
-        agent::boolean started{};
+    /**
+     * @class XWalkBoot
+     * @brief Guards one platform boot implementation against repeated execution.
+     */
+    class XWalkBoot
+    {
+        private:
+            /** @brief Records whether this object consumed its one run attempt. */
+            agent::boolean started{};
 
-    protected:
-        /** @brief Constructs an unstarted boot lifecycle. */
-        XWalkBoot() noexcept = default;
+        protected:
+            /** @brief Constructs an unstarted boot lifecycle. */
+            XWalkBoot() noexcept = default;
 
-        /** @brief Releases lifecycle state without touching platform resources. */
-        ~XWalkBoot() = default;
+            /** @brief Releases lifecycle state without touching platform resources. */
+            ~XWalkBoot() = default;
 
-        XWalkBoot(XWalkBoot&&) = delete;
-        XWalkBoot(const XWalkBoot&) = delete;
-        XWalkBoot& operator=(XWalkBoot&&) = delete;
-        XWalkBoot& operator=(const XWalkBoot&) = delete;
+            XWalkBoot(XWalkBoot&&) = delete;
+            XWalkBoot(const XWalkBoot&) = delete;
+            XWalkBoot& operator=(XWalkBoot&&) = delete;
+            XWalkBoot& operator=(const XWalkBoot&) = delete;
 
-        /**
-         * @brief Validates and consumes this object's one boot attempt.
-         * @param[in] callback Non-null synchronous application callback.
-         * @throws std::invalid_argument If `callback` is null.
-         * @throws std::logic_error If this object already started once.
-         */
-        void begin(bootapplicationcallback callback);
-};
+            /**
+             * @brief Validates and consumes this object's one boot attempt.
+             * @param[in] callback Non-null synchronous application callback.
+             * @throws std::invalid_argument If `callback` is null.
+             * @throws std::logic_error If this object already started once.
+             */
+            void begin(bootapplicationcallback callback);
+    };
 
 } /* namespace xwalk::agent */
 

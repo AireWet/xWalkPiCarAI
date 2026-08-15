@@ -18,8 +18,7 @@
 
 TEST(XWalkAgentPlatformGroup, Boot)
 {
-    const xwalk::agent::filesystempath binary =
-        xwalk::agent::test::childTestExecutable("xWalkBoot", "xWalkBootTest");
+    const xwalk::agent::filesystempath binary = xwalk::agent::test::childTestExecutable("xWalkBoot", "xWalkBootTest");
     const pid_t childProcess = ::fork();
     ASSERT_GE(childProcess, 0);
     if (childProcess == 0)

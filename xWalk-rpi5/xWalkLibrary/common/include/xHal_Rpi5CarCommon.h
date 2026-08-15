@@ -47,11 +47,12 @@
  * @warning
  * The context must point to a live `BACKEND_TYPE` object for every callback.
  */
-#define XHAL_I2C_PROBE_CALLBACK(BACKEND_TYPE) +[](xwalk::hal::contextpointer xwalkCallbackContext, \
-    xwalk::hal::uint8 xwalkCallbackAddress) -> xwalk::hal::boolean \
-    { \
-        BACKEND_TYPE& xwalkCallbackBackend = *static_cast<BACKEND_TYPE*>(xwalkCallbackContext); \
-        return xwalkCallbackBackend.probeDevice(xwalkCallbackAddress); \
+#define XHAL_I2C_PROBE_CALLBACK(BACKEND_TYPE)                                                                          \
+    +[](xwalk::hal::contextpointer xwalkCallbackContext,                                                               \
+        xwalk::hal::uint8 xwalkCallbackAddress) -> xwalk::hal::boolean                                                 \
+    {                                                                                                                  \
+        BACKEND_TYPE& xwalkCallbackBackend = *static_cast<BACKEND_TYPE*>(xwalkCallbackContext);                        \
+        return xwalkCallbackBackend.probeDevice(xwalkCallbackAddress);                                                 \
     }
 
 /**
@@ -64,27 +65,29 @@
  * @warning
  * The context must point to a live `BACKEND_TYPE` object for every callback.
  */
-#define XHAL_I2C_WRITE_REGISTER_CALLBACK(BACKEND_TYPE) \
-    +[](xwalk::hal::contextpointer xwalkCallbackContext, xwalk::hal::uint8 xwalkCallbackAddress, \
-        xwalk::hal::uint8 xwalkCallbackRegister, const xwalk::hal::bytevector& xwalkCallbackData) \
-    { \
-        BACKEND_TYPE& xwalkCallbackBackend = *static_cast<BACKEND_TYPE*>(xwalkCallbackContext); \
-        xwalkCallbackBackend.writeRegisterDevice( \
-            xwalkCallbackAddress, xwalkCallbackRegister, xwalkCallbackData); \
+#define XHAL_I2C_WRITE_REGISTER_CALLBACK(BACKEND_TYPE)                                                                 \
+    +[](xwalk::hal::contextpointer xwalkCallbackContext,                                                               \
+        xwalk::hal::uint8 xwalkCallbackAddress,                                                                        \
+        xwalk::hal::uint8 xwalkCallbackRegister,                                                                       \
+        const xwalk::hal::bytevector& xwalkCallbackData)                                                               \
+    {                                                                                                                  \
+        BACKEND_TYPE& xwalkCallbackBackend = *static_cast<BACKEND_TYPE*>(xwalkCallbackContext);                        \
+        xwalkCallbackBackend.writeRegisterDevice(xwalkCallbackAddress, xwalkCallbackRegister, xwalkCallbackData);      \
     }
 
 /**
  * @brief Creates a non-throwing I2C register-write status callback for a backend type.
  * @warning The context must point to a live `BACKEND_TYPE` object for every callback.
  */
-#define XHAL_I2C_TRY_WRITE_REGISTER_CALLBACK(BACKEND_TYPE) \
-    +[](xwalk::hal::contextpointer xwalkCallbackContext, xwalk::hal::uint8 xwalkCallbackAddress, \
-        xwalk::hal::uint8 xwalkCallbackRegister, \
-        const xwalk::hal::bytevector& xwalkCallbackData) noexcept -> xwalk::hal::boolean \
-    { \
-        BACKEND_TYPE& xwalkCallbackBackend = *static_cast<BACKEND_TYPE*>(xwalkCallbackContext); \
-        return xwalkCallbackBackend.tryWriteRegisterDevice( \
-            xwalkCallbackAddress, xwalkCallbackRegister, xwalkCallbackData); \
+#define XHAL_I2C_TRY_WRITE_REGISTER_CALLBACK(BACKEND_TYPE)                                                             \
+    +[](xwalk::hal::contextpointer xwalkCallbackContext,                                                               \
+        xwalk::hal::uint8 xwalkCallbackAddress,                                                                        \
+        xwalk::hal::uint8 xwalkCallbackRegister,                                                                       \
+        const xwalk::hal::bytevector& xwalkCallbackData) noexcept -> xwalk::hal::boolean                               \
+    {                                                                                                                  \
+        BACKEND_TYPE& xwalkCallbackBackend = *static_cast<BACKEND_TYPE*>(xwalkCallbackContext);                        \
+        return xwalkCallbackBackend.tryWriteRegisterDevice(                                                            \
+            xwalkCallbackAddress, xwalkCallbackRegister, xwalkCallbackData);                                           \
     }
 
 /**
@@ -93,12 +96,13 @@
  * @warning
  * The context must point to a live `BACKEND_TYPE` object for every callback.
  */
-#define XHAL_I2C_READ_CALLBACK(BACKEND_TYPE) +[](xwalk::hal::contextpointer xwalkCallbackContext, \
-    xwalk::hal::uint8 xwalkCallbackAddress, xwalk::hal::size xwalkCallbackLength) \
-    -> xwalk::hal::bytevector \
-    { \
-        BACKEND_TYPE& xwalkCallbackBackend = *static_cast<BACKEND_TYPE*>(xwalkCallbackContext); \
-        return xwalkCallbackBackend.readDevice(xwalkCallbackAddress, xwalkCallbackLength); \
+#define XHAL_I2C_READ_CALLBACK(BACKEND_TYPE)                                                                           \
+    +[](xwalk::hal::contextpointer xwalkCallbackContext,                                                               \
+        xwalk::hal::uint8 xwalkCallbackAddress,                                                                        \
+        xwalk::hal::size xwalkCallbackLength) -> xwalk::hal::bytevector                                                \
+    {                                                                                                                  \
+        BACKEND_TYPE& xwalkCallbackBackend = *static_cast<BACKEND_TYPE*>(xwalkCallbackContext);                        \
+        return xwalkCallbackBackend.readDevice(xwalkCallbackAddress, xwalkCallbackLength);                             \
     }
 
 /**
@@ -107,14 +111,15 @@
  * @warning
  * The context must point to a live `BACKEND_TYPE` object for every callback.
  */
-#define XHAL_I2C_READ_REGISTER_CALLBACK(BACKEND_TYPE) \
-    +[](xwalk::hal::contextpointer xwalkCallbackContext, xwalk::hal::uint8 xwalkCallbackAddress, \
-        xwalk::hal::uint8 xwalkCallbackRegister, xwalk::hal::size xwalkCallbackLength) \
-        -> xwalk::hal::bytevector \
-    { \
-        BACKEND_TYPE& xwalkCallbackBackend = *static_cast<BACKEND_TYPE*>(xwalkCallbackContext); \
-        return xwalkCallbackBackend.readRegisterDevice( \
-            xwalkCallbackAddress, xwalkCallbackRegister, xwalkCallbackLength); \
+#define XHAL_I2C_READ_REGISTER_CALLBACK(BACKEND_TYPE)                                                                  \
+    +[](xwalk::hal::contextpointer xwalkCallbackContext,                                                               \
+        xwalk::hal::uint8 xwalkCallbackAddress,                                                                        \
+        xwalk::hal::uint8 xwalkCallbackRegister,                                                                       \
+        xwalk::hal::size xwalkCallbackLength) -> xwalk::hal::bytevector                                                \
+    {                                                                                                                  \
+        BACKEND_TYPE& xwalkCallbackBackend = *static_cast<BACKEND_TYPE*>(xwalkCallbackContext);                        \
+        return xwalkCallbackBackend.readRegisterDevice(                                                                \
+            xwalkCallbackAddress, xwalkCallbackRegister, xwalkCallbackLength);                                         \
     }
 
 /******************************************************************************
@@ -190,8 +195,8 @@
 /** @brief Number of supported tagged-trace priorities. */
 #define XHAL_RPI5CAR_TRACE_PRIORITY_COUNT 4U
 #ifndef XWALK_TRACE_CONFIG_PATH
-/** @brief Generated trace XML path overridden by the xWalkTrace CMake target. */
-#define XWALK_TRACE_CONFIG_PATH "xwalk-traces.xml"
+    /** @brief Generated trace XML path overridden by the xWalkTrace CMake target. */
+    #define XWALK_TRACE_CONFIG_PATH "xwalk-traces.xml"
 #endif
 /** @brief Suffix used for a same-directory configuration replacement file. */
 #define XHAL_RPI5CAR_CONFIG_REPLACEMENT_SUFFIX ".tmp"
@@ -200,27 +205,27 @@
 /** @brief Separator used when serializing a configuration option and value. */
 #define XHAL_RPI5CAR_CONFIG_ASSIGNMENT_SEPARATOR " = "
 /** @brief Base register address for the twenty PWM channel outputs. */
-#define XHAL_RPI5CAR_PWM_CHANNEL_REG       0x20U
+#define XHAL_RPI5CAR_PWM_CHANNEL_REG 0x20U
 /** @brief Base prescaler register for PWM timers zero through three. */
-#define XHAL_RPI5CAR_PWM_PRESCALER_REG     0x40U
+#define XHAL_RPI5CAR_PWM_PRESCALER_REG 0x40U
 /** @brief Base period register for PWM timers zero through three. */
-#define XHAL_RPI5CAR_PWM_PERIOD_REG        0x44U
+#define XHAL_RPI5CAR_PWM_PERIOD_REG 0x44U
 /** @brief Base prescaler register for PWM timers four through six. */
-#define XHAL_RPI5CAR_PWM_PRESCALER_REG_2   0x50U
+#define XHAL_RPI5CAR_PWM_PRESCALER_REG_2 0x50U
 /** @brief Base period register for PWM timers four through six. */
-#define XHAL_RPI5CAR_PWM_PERIOD_REG_2      0x54U
+#define XHAL_RPI5CAR_PWM_PERIOD_REG_2 0x54U
 /** @brief Robot HAT PWM timer input clock frequency in Hertz. */
-#define XHAL_RPI5CAR_PWM_CLOCK_HZ          72'000'000.0
+#define XHAL_RPI5CAR_PWM_CLOCK_HZ 72'000'000.0
 /** @brief Default Robot HAT PWM output frequency in Hertz. */
 #define XHAL_RPI5CAR_PWM_DEFAULT_FREQUENCY_HZ 50.0
 /** @brief Number of prescaler values checked by the PWM frequency search. */
 #define XHAL_RPI5CAR_PWM_SEARCH_CANDIDATE_COUNT 10
 /** @brief Prescaler offsets searched on either side of the ideal value. */
-#define XHAL_RPI5CAR_PWM_SEARCH_RADIUS      5
+#define XHAL_RPI5CAR_PWM_SEARCH_RADIUS 5
 /** @brief Lowest valid prescaler candidate considered by the search. */
 #define XHAL_RPI5CAR_PWM_MIN_PRESCALER_CANDIDATE 1
 /** @brief Highest valid Robot HAT PWM channel index. */
-#define XHAL_RPI5CAR_PWM_MAX_CHANNEL       19U
+#define XHAL_RPI5CAR_PWM_MAX_CHANNEL 19U
 /** @brief Number of channels mapped four-at-a-time to timers zero to three. */
 #define XHAL_RPI5CAR_PWM_DIRECT_CHANNEL_COUNT 16U
 /** @brief Number of consecutive channels sharing each direct PWM timer. */
@@ -230,11 +235,11 @@
 /** @brief Channel mapped to PWM timer five. */
 #define XHAL_RPI5CAR_PWM_TIMER_FIVE_CHANNEL 18U
 /** @brief PWM timer index used by channels sixteen and seventeen. */
-#define XHAL_RPI5CAR_PWM_TIMER_FOUR        4U
+#define XHAL_RPI5CAR_PWM_TIMER_FOUR 4U
 /** @brief PWM timer index used by channel eighteen. */
-#define XHAL_RPI5CAR_PWM_TIMER_FIVE        5U
+#define XHAL_RPI5CAR_PWM_TIMER_FIVE 5U
 /** @brief PWM timer index used by channel nineteen. */
-#define XHAL_RPI5CAR_PWM_TIMER_SIX         6U
+#define XHAL_RPI5CAR_PWM_TIMER_SIX 6U
 /** @brief Number of independently driven color channels in one RGB LED. */
 #define XHAL_RPI5CAR_RGB_LED_CHANNEL_COUNT 3U
 /** @brief Array index and PWM dependency assigned to the red LED channel. */
@@ -482,8 +487,7 @@
 /** @brief Number of LED transitions required for one complete blink cycle. */
 #define XHAL_RPI5CAR_LED_TOGGLES_PER_CYCLE 2U
 /** @brief Highest blink count whose transition count fits the project `uint32` type. */
-#define XHAL_RPI5CAR_LED_MAX_BLINK_COUNT \
-    (XHAL_RPI5CAR_UINT32_MAX / XHAL_RPI5CAR_LED_TOGGLES_PER_CYCLE)
+#define XHAL_RPI5CAR_LED_MAX_BLINK_COUNT (XHAL_RPI5CAR_UINT32_MAX / XHAL_RPI5CAR_LED_TOGGLES_PER_CYCLE)
 /** @brief Delay chunk bounding LED blink-worker stop latency, in microseconds. */
 #define XHAL_RPI5CAR_LED_STOP_POLL_INTERVAL_US 10'000U
 /** @brief Logical GPIO level representing a pressed pull-up user button. */
@@ -499,17 +503,17 @@
 /** @brief Scale converting user-button timing from seconds to microseconds. */
 #define XHAL_RPI5CAR_USER_BUTTON_MICROSECONDS_PER_SECOND 1'000'000.0
 /** @brief Maximum value accepted by a 16-bit Robot HAT register. */
-#define XHAL_RPI5CAR_UINT16_MAX            0xFFFFU
+#define XHAL_RPI5CAR_UINT16_MAX 0xFFFFU
 /** @brief Maximum value representable by the project unsigned 32-bit type. */
-#define XHAL_RPI5CAR_UINT32_MAX            0xFFFFFFFFU
+#define XHAL_RPI5CAR_UINT32_MAX 0xFFFFFFFFU
 /** @brief First supported Robot HAT seven-bit I2C address. */
-#define XHAL_RPI5CAR_I2C_ADDRESS_1         0x14U
+#define XHAL_RPI5CAR_I2C_ADDRESS_1 0x14U
 /** @brief Second supported Robot HAT seven-bit I2C address. */
-#define XHAL_RPI5CAR_I2C_ADDRESS_2         0x15U
+#define XHAL_RPI5CAR_I2C_ADDRESS_2 0x15U
 /** @brief Third supported Robot HAT seven-bit I2C address. */
-#define XHAL_RPI5CAR_I2C_ADDRESS_3         0x16U
+#define XHAL_RPI5CAR_I2C_ADDRESS_3 0x16U
 /** @brief Default Linux device node used for Raspberry Pi I2C bus one. */
-#define XHAL_RPI5CAR_I2C_DEFAULT_DEVICE    "/dev/i2c-1"
+#define XHAL_RPI5CAR_I2C_DEFAULT_DEVICE "/dev/i2c-1"
 /** @brief Default Linux SPI controller and chip-select device. */
 #define XHAL_RPI5CAR_SPI_DEFAULT_DEVICE "/dev/spidev0.0"
 /** @brief Default SPI clock frequency in Hertz. */
@@ -525,23 +529,23 @@
 /** @brief Maximum bytes permitted in one bounded SPI transfer. */
 #define XHAL_RPI5CAR_SPI_MAXIMUM_TRANSFER_BYTES 256U
 /** @brief Number of attempts made for a Linux I2C operation. */
-#define XHAL_RPI5CAR_I2C_RETRY_COUNT       5U
+#define XHAL_RPI5CAR_I2C_RETRY_COUNT 5U
 /** @brief Maximum SMBus block payload length in bytes. */
-#define XHAL_RPI5CAR_I2C_SMBUS_BLOCK_MAX   32U
+#define XHAL_RPI5CAR_I2C_SMBUS_BLOCK_MAX 32U
 /** @brief First supported ADC seven-bit I2C address. */
-#define XHAL_RPI5CAR_ADC_ADDRESS_1          XHAL_RPI5CAR_I2C_ADDRESS_1
+#define XHAL_RPI5CAR_ADC_ADDRESS_1 XHAL_RPI5CAR_I2C_ADDRESS_1
 /** @brief Second supported ADC seven-bit I2C address. */
-#define XHAL_RPI5CAR_ADC_ADDRESS_2          XHAL_RPI5CAR_I2C_ADDRESS_2
+#define XHAL_RPI5CAR_ADC_ADDRESS_2 XHAL_RPI5CAR_I2C_ADDRESS_2
 /** @brief Highest supported ADC input channel index. */
-#define XHAL_RPI5CAR_ADC_MAX_CHANNEL        7U
+#define XHAL_RPI5CAR_ADC_MAX_CHANNEL 7U
 /** @brief Command bit selecting an ADC conversion read. */
-#define XHAL_RPI5CAR_ADC_READ_COMMAND       0x10U
+#define XHAL_RPI5CAR_ADC_READ_COMMAND 0x10U
 /** @brief Number of bytes returned for one ADC sample. */
-#define XHAL_RPI5CAR_ADC_READ_LENGTH        2U
+#define XHAL_RPI5CAR_ADC_READ_LENGTH 2U
 /** @brief ADC reference potential in volts. */
-#define XHAL_RPI5CAR_ADC_REFERENCE_VOLTAGE  3.3
+#define XHAL_RPI5CAR_ADC_REFERENCE_VOLTAGE 3.3
 /** @brief Maximum count produced by the 12-bit ADC. */
-#define XHAL_RPI5CAR_ADC_MAX_COUNT          4095U
+#define XHAL_RPI5CAR_ADC_MAX_COUNT 4095U
 /** @brief Default seven-bit I2C address of the ADXL345 accelerometer. */
 #define XHAL_RPI5CAR_ADXL345_ADDRESS 0x53U
 /** @brief Number of orthogonal acceleration axes reported by the ADXL345. */
@@ -607,11 +611,11 @@
 /** @brief Decimal scale used to round calibration and position values. */
 #define XHAL_RPI5CAR_LINE_TRACKER_ROUNDING_SCALE 100.0
 /** @brief Default Linux GPIO character device for the first controller. */
-#define XHAL_RPI5CAR_GPIO_DEFAULT_DEVICE    "/dev/gpiochip0"
+#define XHAL_RPI5CAR_GPIO_DEFAULT_DEVICE "/dev/gpiochip0"
 /** @brief Default GPIO interrupt debounce interval in milliseconds. */
 #define XHAL_RPI5CAR_GPIO_DEFAULT_DEBOUNCE_MS 200U
 /** @brief GPIO event polling interval used to bound backend shutdown latency, in milliseconds. */
-#define XHAL_RPI5CAR_GPIO_EVENT_POLL_MS     50
+#define XHAL_RPI5CAR_GPIO_EVENT_POLL_MS 50
 /** @brief Speed of sound used for ultrasonic conversion in meters per second. */
 #define XHAL_RPI5CAR_ULTRASONIC_SOUND_SPEED_MPS (343.3)
 /** @brief Ultrasonic inactive settling interval in microseconds. */
@@ -633,23 +637,23 @@
 /** @brief Maximum signed motor command in percent. */
 #define XHAL_RPI5CAR_MOTOR_MAX_SPEED_PERCENT 100.0
 /** @brief First valid one-based motor identifier. */
-#define XHAL_RPI5CAR_MOTOR_FIRST_ID          1U
+#define XHAL_RPI5CAR_MOTOR_FIRST_ID 1U
 /** @brief Second valid one-based motor identifier. */
-#define XHAL_RPI5CAR_MOTOR_SECOND_ID         2U
+#define XHAL_RPI5CAR_MOTOR_SECOND_ID 2U
 /** @brief Minimum supported servo angle in degrees. */
-#define XHAL_RPI5CAR_SERVO_MIN_ANGLE_DEG    (-90.0)
+#define XHAL_RPI5CAR_SERVO_MIN_ANGLE_DEG (-90.0)
 /** @brief Maximum supported servo angle in degrees. */
-#define XHAL_RPI5CAR_SERVO_MAX_ANGLE_DEG    90.0
+#define XHAL_RPI5CAR_SERVO_MAX_ANGLE_DEG 90.0
 /** @brief Minimum servo command pulse duration in microseconds. */
-#define XHAL_RPI5CAR_SERVO_MIN_PULSE_US     500.0
+#define XHAL_RPI5CAR_SERVO_MIN_PULSE_US 500.0
 /** @brief Maximum servo command pulse duration in microseconds. */
-#define XHAL_RPI5CAR_SERVO_MAX_PULSE_US     2500.0
+#define XHAL_RPI5CAR_SERVO_MAX_PULSE_US 2500.0
 /** @brief Servo PWM frame duration at 50 Hertz, in microseconds. */
-#define XHAL_RPI5CAR_SERVO_FRAME_US         20000.0
+#define XHAL_RPI5CAR_SERVO_FRAME_US 20000.0
 /** @brief Servo PWM frequency in Hertz. */
-#define XHAL_RPI5CAR_SERVO_FREQUENCY_HZ     50.0
+#define XHAL_RPI5CAR_SERVO_FREQUENCY_HZ 50.0
 /** @brief Servo PWM period in timer-count units. */
-#define XHAL_RPI5CAR_SERVO_PERIOD           4095.0
+#define XHAL_RPI5CAR_SERVO_PERIOD 4095.0
 /** @brief Lowest system-volume percentage accepted by the utilities module. */
 #define XHAL_RPI5CAR_UTILS_MINIMUM_VOLUME_PERCENT 0
 /** @brief Highest system-volume percentage accepted by the utilities module. */

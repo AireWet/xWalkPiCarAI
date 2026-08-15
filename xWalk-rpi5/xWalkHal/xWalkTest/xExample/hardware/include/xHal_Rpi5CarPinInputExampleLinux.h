@@ -38,42 +38,38 @@
 namespace xwalk::hal::example
 {
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/** @brief Composes bounded D3 input sampling with Linux GPIO and console I/O. */
-class XWalkPinInputExampleLinux final
-{
-private:
+    /** @brief Composes bounded D3 input sampling with Linux GPIO and console I/O. */
+    class XWalkPinInputExampleLinux final
+    {
+        private:
+            /** @brief Temporarily bound GPIO valid only during `run()`. */
+            XWalkGpio* gpioObject{nullptr};
 
-    /** @brief Temporarily bound GPIO valid only during `run()`. */
-    XWalkGpio* gpioObject{nullptr};
+        protected:
+            /** @brief Resolves a callback context with one bound GPIO object. */
+            static XWalkPinInputExampleLinux& adapter(contextpointer context);
+            /** @brief Reads one logical level from the bound D3 input. */
+            static boolean read(contextpointer context);
+            /** @brief Waits for one bounded sample interval. */
+            static void wait(contextpointer context, uint32 durationMilliseconds);
+            /** @brief Prints one sampled value as zero or one. */
+            static void report(contextpointer context, boolean value);
 
-protected:
-
-    /** @brief Resolves a callback context with one bound GPIO object. */
-    static XWalkPinInputExampleLinux& adapter(contextpointer context);
-    /** @brief Reads one logical level from the bound D3 input. */
-    static boolean read(contextpointer context);
-    /** @brief Waits for one bounded sample interval. */
-    static void wait(contextpointer context, uint32 durationMilliseconds);
-    /** @brief Prints one sampled value as zero or one. */
-    static void report(contextpointer context, boolean value);
-
-public:
-
-    /**
-     * @brief Samples physical D3 with pull-up at 100-millisecond intervals.
-     * @param[in] sampleCount Sample count from one through 36,000.
-     * @param[in] gpioDevice Linux GPIO character-device path.
-     * @param[in] chipName Optional exact kernel chip name.
-     * @param[in] chipLabel Optional exact kernel chip label.
-     * @warning Reads physical Robot HAT GPIO22.
-     */
-    void run(uint32 sampleCount, cstring gpioDevice,
-        stringview chipName, stringview chipLabel);
-};
+        public:
+            /**
+             * @brief Samples physical D3 with pull-up at 100-millisecond intervals.
+             * @param[in] sampleCount Sample count from one through 36,000.
+             * @param[in] gpioDevice Linux GPIO character-device path.
+             * @param[in] chipName Optional exact kernel chip name.
+             * @param[in] chipLabel Optional exact kernel chip label.
+             * @warning Reads physical Robot HAT GPIO22.
+             */
+            void run(uint32 sampleCount, cstring gpioDevice, stringview chipName, stringview chipLabel);
+    };
 
 } /* namespace xwalk::hal::example */
 

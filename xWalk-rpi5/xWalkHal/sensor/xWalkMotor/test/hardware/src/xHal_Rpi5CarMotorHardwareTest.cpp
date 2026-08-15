@@ -45,10 +45,12 @@
 XWalkHal::int32 main()
 {
     xwalk::hal::XWalkI2cLinux i2cBackend;
-    xwalk::hal::XWalkI2c i2c(&i2cBackend, XHAL_I2C_PROBE_CALLBACK(xwalk::hal::XWalkI2cLinux),
-        XHAL_I2C_WRITE_REGISTER_CALLBACK(xwalk::hal::XWalkI2cLinux),
-        XHAL_I2C_READ_CALLBACK(xwalk::hal::XWalkI2cLinux), nullptr,
-        XHAL_I2C_TRY_WRITE_REGISTER_CALLBACK(xwalk::hal::XWalkI2cLinux));
+    xwalk::hal::XWalkI2c i2c(&i2cBackend,
+                             XHAL_I2C_PROBE_CALLBACK(xwalk::hal::XWalkI2cLinux),
+                             XHAL_I2C_WRITE_REGISTER_CALLBACK(xwalk::hal::XWalkI2cLinux),
+                             XHAL_I2C_READ_CALLBACK(xwalk::hal::XWalkI2cLinux),
+                             nullptr,
+                             XHAL_I2C_TRY_WRITE_REGISTER_CALLBACK(xwalk::hal::XWalkI2cLinux));
     xwalk::hal::XWalkPwmTimerState timerState;
     xwalk::hal::XWalkPwm pwm(i2c, "P13", {}, timerState);
     xwalk::hal::XWalkGpioLinux gpioBackend;

@@ -38,62 +38,62 @@
 namespace
 {
 
-/**
- * @brief Runs one Agent hardware-profile group test in an isolated process.
- * @param[in] groupDirectory Group build-directory name.
- * @param[in] executableName Group hardware GoogleTest executable name.
- */
-void runHardwareGroupTest(const char* groupDirectory, const char* executableName)
-{
-    const xwalk::agent::filesystempath binary =
-        xwalk::agent::test::childTestExecutable(groupDirectory, executableName);
-    const pid_t childProcess = ::fork();
-    ASSERT_GE(childProcess, 0);
-    if (childProcess == 0)
+    /**
+     * @brief Runs one Agent hardware-profile group test in an isolated process.
+     * @param[in] groupDirectory Group build-directory name.
+     * @param[in] executableName Group hardware GoogleTest executable name.
+     */
+    void runHardwareGroupTest(const char* groupDirectory, const char* executableName)
     {
-        ::execl(binary.c_str(), binary.c_str(), static_cast<char*>(nullptr));
-        ::_exit(127);
+        const xwalk::agent::filesystempath binary =
+            xwalk::agent::test::childTestExecutable(groupDirectory, executableName);
+        const pid_t childProcess = ::fork();
+        ASSERT_GE(childProcess, 0);
+        if (childProcess == 0)
+        {
+            ::execl(binary.c_str(), binary.c_str(), static_cast<char*>(nullptr));
+            ::_exit(127);
+        }
+
+        int status{};
+        ASSERT_EQ(::waitpid(childProcess, &status, 0), childProcess);
+        ASSERT_TRUE(WIFEXITED(status));
+        EXPECT_EQ(WEXITSTATUS(status), 0);
     }
 
-    int status{};
-    ASSERT_EQ(::waitpid(childProcess, &status, 0), childProcess);
-    ASSERT_TRUE(WIFEXITED(status));
-    EXPECT_EQ(WEXITSTATUS(status), 0);
-}
+    TEST(XWalkAgentHardware, VehicleGroup)
+    {
+        runHardwareGroupTest("xWalkVehicle", "xWalkAgentVehicleGroupHardwareTest");
+    }
 
-TEST(XWalkAgentHardware, VehicleGroup)
-{
-    runHardwareGroupTest("xWalkVehicle", "xWalkAgentVehicleGroupHardwareTest");
-}
+    TEST(XWalkAgentHardware, CalibrationGroup)
+    {
+        runHardwareGroupTest("xWalkCalibration", "xWalkAgentCalibrationGroupHardwareTest");
+    }
 
-TEST(XWalkAgentHardware, CalibrationGroup)
-{
-    runHardwareGroupTest("xWalkCalibration", "xWalkAgentCalibrationGroupHardwareTest");
-}
+    TEST(XWalkAgentHardware, VisionGroup)
+    {
+        runHardwareGroupTest("xWalkVision", "xWalkAgentVisionGroupHardwareTest");
+    }
 
-TEST(XWalkAgentHardware, VisionGroup)
-{
-    runHardwareGroupTest("xWalkVision", "xWalkAgentVisionGroupHardwareTest");
-}
+    TEST(XWalkAgentHardware, MediaGroup)
+    {
+        runHardwareGroupTest("xWalkMedia", "xWalkAgentMediaGroupHardwareTest");
+    }
 
-TEST(XWalkAgentHardware, MediaGroup)
-{
-    runHardwareGroupTest("xWalkMedia", "xWalkAgentMediaGroupHardwareTest");
-}
+    TEST(XWalkAgentHardware, VoiceGroup)
+    {
+        runHardwareGroupTest("xWalkVoice", "xWalkAgentVoiceGroupHardwareTest");
+    }
 
-TEST(XWalkAgentHardware, VoiceGroup)
-{
-    runHardwareGroupTest("xWalkVoice", "xWalkAgentVoiceGroupHardwareTest");
-}
+    TEST(XWalkAgentHardware, ConnectivityGroup)
+    {
+        runHardwareGroupTest("xWalkConnectivity", "xWalkAgentConnectivityGroupHardwareTest");
+    }
 
-TEST(XWalkAgentHardware, ConnectivityGroup)
-{
-    runHardwareGroupTest("xWalkConnectivity", "xWalkAgentConnectivityGroupHardwareTest");
-}
-
-TEST(XWalkAgentHardware, PlatformGroup)
-{
-    runHardwareGroupTest("xWalkPlatform", "xWalkAgentPlatformGroupHardwareTest");
-}
+    TEST(XWalkAgentHardware, PlatformGroup)
+    {
+        runHardwareGroupTest("xWalkPlatform", "xWalkAgentPlatformGroupHardwareTest");
+    }
 
 } /* namespace */

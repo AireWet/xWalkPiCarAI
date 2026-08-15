@@ -129,14 +129,20 @@ To add a real validation group:
 
 ## Installation and operation
 
-The installer copies the three CI Python programs into `$HOME/apps/gerrit/tools`. After installing Gerrit, start
-and inspect the worker separately:
+The installer copies the three CI Python programs into `$HOME/apps/gerrit/tools`. After the protected
+`$HOME/.xwalk-ci.env` file exists, the Gerrit start, stop, status, and restart controls include the CI worker.
+Use the CI-specific controls for direct recovery and inspection:
 
 ```bash
 "$HOME/bin/gerrit-ci-control" start
 "$HOME/bin/gerrit-ci-control" status
 "$HOME/bin/gerrit-ci-logs"
 ```
+
+When `GERRIT_PROCESS_MANAGER=systemd`, the control launches a transient
+user-level service with failure restart and waits for both the worker process
+and its loopback health endpoint. The portable `nohup` mode applies the same
+health gate without creating a service.
 
 Verify the HTTPS route:
 

@@ -40,65 +40,84 @@
  * @namespace xwalk::hal::test
  * @brief Contains host-side verification components for the xWalk HAL.
  */
-namespace xwalk::hal::test {
+namespace xwalk::hal::test
+{
 
-/******************************************************************************
- * Anonymous namespace
- ******************************************************************************/
+    /******************************************************************************
+     * Anonymous namespace
+     ******************************************************************************/
 
-/**
- * @brief Contains test-runner functions private to this translation unit.
- */
-namespace {
+    /**
+     * @brief Contains test-runner functions private to this translation unit.
+     */
+    namespace
+    {
 
-/******************************************************************************
- * Private function definitions
- ******************************************************************************/
+        /******************************************************************************
+         * Private function definitions
+         ******************************************************************************/
 
-/** @brief Runs every registered PWM host-test scenario in sequence. */
-void runAllTests() {
-  xwalk::hal::test::testAddressAndTimerSelection();
-  xwalk::hal::test::testAllTimerMappings();
-  xwalk::hal::test::testBigEndianRegisterData();
-  xwalk::hal::test::testSharedPeriodAndPercentage();
-  xwalk::hal::test::testDefaultFrequency();
-  xwalk::hal::test::testValidation();
-  xwalk::hal::test::testTraceSelection();
-}
+        /** @brief Runs every registered PWM host-test scenario in sequence. */
+        void runAllTests()
+        {
+            xwalk::hal::test::testAddressAndTimerSelection();
+            xwalk::hal::test::testAllTimerMappings();
+            xwalk::hal::test::testBigEndianRegisterData();
+            xwalk::hal::test::testSharedPeriodAndPercentage();
+            xwalk::hal::test::testDefaultFrequency();
+            xwalk::hal::test::testValidation();
+            xwalk::hal::test::testTraceSelection();
+        }
 
-/**
- * @brief Dispatches one host-test scenario by its command-line name.
- *
- * @param[in] testName
- * Selector matching `address`, `mapping`, `register`, `percentage`,
- * `frequency`, or `validation`.
- *
- * @return
- * Zero when the selector is recognized and assertions pass; otherwise
- * one for an unknown selector.
- */
-int32 runSelectedTest(stringview testName) {
-  if (testName == "address") {
-    testAddressAndTimerSelection();
-  } else if (testName == "mapping") {
-    testAllTimerMappings();
-  } else if (testName == "register") {
-    testBigEndianRegisterData();
-  } else if (testName == "percentage") {
-    testSharedPeriodAndPercentage();
-  } else if (testName == "frequency") {
-    testDefaultFrequency();
-  } else if (testName == "validation") {
-    testValidation();
-  } else if (testName == "trace") {
-    testTraceSelection();
-  } else {
-    return 1;
-  }
-  return 0;
-}
+        /**
+         * @brief Dispatches one host-test scenario by its command-line name.
+         *
+         * @param[in] testName
+         * Selector matching `address`, `mapping`, `register`, `percentage`,
+         * `frequency`, or `validation`.
+         *
+         * @return
+         * Zero when the selector is recognized and assertions pass; otherwise
+         * one for an unknown selector.
+         */
+        int32 runSelectedTest(stringview testName)
+        {
+            if (testName == "address")
+            {
+                testAddressAndTimerSelection();
+            }
+            else if (testName == "mapping")
+            {
+                testAllTimerMappings();
+            }
+            else if (testName == "register")
+            {
+                testBigEndianRegisterData();
+            }
+            else if (testName == "percentage")
+            {
+                testSharedPeriodAndPercentage();
+            }
+            else if (testName == "frequency")
+            {
+                testDefaultFrequency();
+            }
+            else if (testName == "validation")
+            {
+                testValidation();
+            }
+            else if (testName == "trace")
+            {
+                testTraceSelection();
+            }
+            else
+            {
+                return 1;
+            }
+            return 0;
+        }
 
-} /* namespace */
+    } /* namespace */
 } /* namespace xwalk::hal::test */
 
 /******************************************************************************
@@ -118,36 +137,44 @@ int32 runSelectedTest(stringview testName) {
  * Zero when the requested assertions pass; otherwise one for invalid command
  * usage or an unknown selector.
  */
-XWalkHal::int32 main(XWalkHal::int32 argumentCount,
-                     XWalkHal::charpointer argumentValues[]) {
-  xwalk::hal::XWalkTrace::configureGlobal(
-      XWALK_PWM_SIMULATION_TRACE_CONFIG_PATH,
-      XWALK_PWM_SIMULATION_TRACE_LOG_PATH);
-  XWALK_HAL_TRACE_UID0(RPI .172, "xWalkPwm host tests started");
-  XWalkHal::int32 result = 0;
-  if (argumentCount == 1) {
-    xwalk::hal::test::runAllTests();
-  } else if (argumentCount == 2) {
-    const XWalkHal::stringview option(argumentValues[1]);
-    if ((option == "--help") || (option == "-h")) {
-      XWALK_HAL_WARNING(XWALK_INVAL, "Usage: %s [test | --trace <selector>]",
-                        argumentValues[0]);
-    } else {
-      result = xwalk::hal::test::runSelectedTest(option);
+XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer argumentValues[])
+{
+    xwalk::hal::XWalkTrace::configureGlobal(XWALK_PWM_SIMULATION_TRACE_CONFIG_PATH,
+                                            XWALK_PWM_SIMULATION_TRACE_LOG_PATH);
+    XWALK_HAL_TRACE_UID0(RPI .172, "xWalkPwm host tests started");
+    XWalkHal::int32 result = 0;
+    if (argumentCount == 1)
+    {
+        xwalk::hal::test::runAllTests();
     }
-  } else if (argumentCount == 3) {
-    const xwalk::hal::sim::XWalkPwmSimulationArguments arguments(
-        argumentCount, argumentValues);
-    if ((arguments.valid() == false) ||
-        (arguments.applyTraceUpdate() == false)) {
-      result = 1;
-    } else {
-      xwalk::hal::test::runAllTests();
+    else if (argumentCount == 2)
+    {
+        const XWalkHal::stringview option(argumentValues[1]);
+        if ((option == "--help") || (option == "-h"))
+        {
+            XWALK_HAL_WARNING(XWALK_INVAL, "Usage: %s [test | --trace <selector>]", argumentValues[0]);
+        }
+        else
+        {
+            result = xwalk::hal::test::runSelectedTest(option);
+        }
     }
-  } else {
-    result = 1;
-  }
-  XWALK_HAL_TRACE_UID1(RPI .173, "xWalkPwm host tests completed with status %d",
-                       result);
-  return result;
+    else if (argumentCount == 3)
+    {
+        const xwalk::hal::sim::XWalkPwmSimulationArguments arguments(argumentCount, argumentValues);
+        if ((arguments.valid() == false) || (arguments.applyTraceUpdate() == false))
+        {
+            result = 1;
+        }
+        else
+        {
+            xwalk::hal::test::runAllTests();
+        }
+    }
+    else
+    {
+        result = 1;
+    }
+    XWALK_HAL_TRACE_UID1(RPI .173, "xWalkPwm host tests completed with status %d", result);
+    return result;
 }

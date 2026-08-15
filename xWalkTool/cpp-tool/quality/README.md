@@ -10,7 +10,7 @@ reviewed tool set manually on an Ubuntu 24.04 host or VM:
 
 ```bash
 sudo apt update
-sudo apt install -y ansible-core clang clang-tools llvm gcovr lcov python3-yaml valgrind shellcheck
+sudo apt install -y ansible-core clang clang-format clang-tools llvm gcovr lcov python3-yaml valgrind shellcheck
 ```
 
 Inspect paths, versions, and availability without changing the machine:

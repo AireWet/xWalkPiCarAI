@@ -38,38 +38,37 @@
 namespace xwalk::agent
 {
 
-/******************************************************************************
- * Constructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Constructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Binds one caller-owned SPI interface.
- * @param[in] spi SPI interface that must outlive this Agent.
- */
-XWalkSpiTransfer::XWalkSpiTransfer(hal::XWalkSpi& spi) noexcept:
-    spiObject(&spi)
-{
-}
+    /**
+     * @brief Binds one caller-owned SPI interface.
+     * @param[in] spi SPI interface that must outlive this Agent.
+     */
+    XWalkSpiTransfer::XWalkSpiTransfer(hal::XWalkSpi& spi) noexcept : spiObject(&spi)
+    {
+    }
 
-/******************************************************************************
- * Destructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Destructor definitions
+     ******************************************************************************/
 
-/** @brief Releases no caller-owned SPI resource. */
-XWalkSpiTransfer::~XWalkSpiTransfer() = default;
+    /** @brief Releases no caller-owned SPI resource. */
+    XWalkSpiTransfer::~XWalkSpiTransfer() = default;
 
-/******************************************************************************
- * Public member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Public member function definitions
+     ******************************************************************************/
 
-/**
- * @brief Executes one bounded full-duplex transaction.
- * @param[in] transmitData Non-empty payload containing at most 256 bytes.
- * @return Received bytes with exactly the transmitted length.
- */
-agent::bytevector XWalkSpiTransfer::transfer(const agent::bytevector& transmitData)
-{
-    return spiObject->transfer(transmitData);
-}
+    /**
+     * @brief Executes one bounded full-duplex transaction.
+     * @param[in] transmitData Non-empty payload containing at most 256 bytes.
+     * @return Received bytes with exactly the transmitted length.
+     */
+    agent::bytevector XWalkSpiTransfer::transfer(const agent::bytevector& transmitData)
+    {
+        return spiObject->transfer(transmitData);
+    }
 
 } /* namespace xwalk::agent */

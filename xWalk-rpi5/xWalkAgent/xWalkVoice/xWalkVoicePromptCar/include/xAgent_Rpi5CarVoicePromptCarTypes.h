@@ -16,26 +16,25 @@
 namespace xwalk::agent
 {
 
-using voicepromptcaroutputcallback = void (*)(agent::contextpointer,
-    agent::stringview);
-using voicepromptcarcontinuecallback = agent::boolean (*)(agent::contextpointer);
-using voicepromptcardelaycallback = void (*)(agent::contextpointer, agent::uint32);
+    using voicepromptcaroutputcallback = void (*)(agent::contextpointer, agent::stringview);
+    using voicepromptcarcontinuecallback = agent::boolean (*)(agent::contextpointer);
+    using voicepromptcardelaycallback = void (*)(agent::contextpointer, agent::uint32);
 
-/** @brief Stores the complete synchronous application callback boundary. */
-struct XWalkVoicePromptCarCallbacks
-{
-    voicepromptcaroutputcallback output{nullptr};
-    voicepromptcarcontinuecallback shouldContinue{nullptr};
-    voicepromptcardelaycallback delay{nullptr};
-};
+    /** @brief Stores the complete synchronous application callback boundary. */
+    struct XWalkVoicePromptCarCallbacks
+    {
+            voicepromptcaroutputcallback output{nullptr};
+            voicepromptcarcontinuecallback shouldContinue{nullptr};
+            voicepromptcardelaycallback delay{nullptr};
+    };
 
-/** @brief Stores source-compatible movement values for example 14. */
-struct XWalkVoicePromptCarConfiguration
-{
-    agent::float64 speedPercent{30.0};
-    agent::float64 steeringAngle{20.0};
-    agent::uint32 driveDurationMs{2'000U};
-};
+    /** @brief Stores source-compatible movement values for example 14. */
+    struct XWalkVoicePromptCarConfiguration
+    {
+            agent::float64 speedPercent{30.0};
+            agent::float64 steeringAngle{20.0};
+            agent::uint32 driveDurationMs{2'000U};
+    };
 
 } /* namespace xwalk::agent */
 

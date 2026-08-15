@@ -44,7 +44,10 @@ def check(identifier: str, name: str, *arguments: str) -> XWalkCheckPlan:
 
 PREPARATION = XWalkModulePlan(
     "preparation", "xWalk Preparation", (),
-    (check("metadata", "Shell scripts and CI metadata", "preparation"),),
+    (
+        check("metadata", "Shell scripts and CI metadata", "preparation"),
+        check("styler", "C++ formatting", "styler"),
+    ),
 )
 
 MODULES = (
@@ -124,6 +127,8 @@ GATE = XWalkModulePlan(
 class XWalkGerritQuality:
     """Execute the shared CI dispatcher and persist live module state."""
 
+    NONTERMINAL_STATUSES = frozenset({"WAITING", "PENDING", "QUEUED", "RUNNING"})
+
     SECRET_ASSIGNMENT = re.compile(
         r"(?i)\b([A-Z0-9_]*(?:PASSWORD|TOKEN|SECRET|PRIVATE_KEY|AUTHORIZATION|COOKIE)[A-Z0-9_]*)=([^\s]+)"
     )
@@ -188,6 +193,46 @@ class XWalkGerritQuality:
         temporary.write_text(json.dumps(self.state, indent=2) + "\n", encoding="utf-8")
         temporary.replace(self.state_path)
 
+    @classmethod
+    def reconcile_interrupted_states(cls, log_directory: Path) -> int:
+        """Cancel unfinished retained runs left behind by a stopped CI service."""
+
+        recovered_files = 0
+        for state_path in log_directory.glob("change-*.json"):
+            try:
+                state = json.loads(state_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
+            if not isinstance(state, dict) or not isinstance(state.get("jobs"), list):
+                continue
+            completed_at = cls.timestamp()
+            changed = False
+            for raw_job in state["jobs"]:
+                if not isinstance(raw_job, dict):
+                    continue
+                targets = [raw_job]
+                raw_checks = raw_job.get("checks", [])
+                if isinstance(raw_checks, list):
+                    targets.extend(item for item in raw_checks if isinstance(item, dict))
+                for target in targets:
+                    if target.get("status") not in cls.NONTERMINAL_STATUSES:
+                        continue
+                    target["status"] = "CANCELLED"
+                    target["completed_at"] = completed_at
+                    target["duration_seconds"] = None
+                    changed = True
+            if not changed:
+                continue
+            state["updated_at"] = completed_at
+            temporary = state_path.with_suffix(".json.tmp")
+            try:
+                temporary.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+                temporary.replace(state_path)
+            except OSError:
+                continue
+            recovered_files += 1
+        return recovered_files
+
     def job_state(self, identifier: str) -> dict[str, object]:
         """Return one known job state by stable identifier."""
 
@@ -229,10 +274,25 @@ class XWalkGerritQuality:
             self.update_status(state, "RUNNING")
         command = [str(self.dispatcher), *plan.arguments]
         with tempfile.TemporaryFile(mode="w+", encoding="utf-8") as output:
-            result = subprocess.run(
-                command, cwd=self.workspace, stdout=output, stderr=subprocess.STDOUT,
-                check=False, text=True, env=self.environment.copy(),
-            )
+            try:
+                result = subprocess.run(
+                    command, cwd=self.workspace, stdout=output, stderr=subprocess.STDOUT,
+                    check=False, text=True, env=self.environment.copy(),
+                )
+            except BaseException as error:
+                output.seek(0)
+                retained = self.redact(output.read())
+                status = "CANCELLED" if isinstance(error, (KeyboardInterrupt, SystemExit)) else "FAILED"
+                diagnostic = self.redact(f"{type(error).__name__}: {error}")
+                with self.lock:
+                    self.log.write(
+                        f"\n{'-' * 24} CHECK {module.identifier}/{plan.identifier} {'-' * 24}\n"
+                        f"$ {' '.join(command)}\n{retained}\n{diagnostic}\n"
+                        f"[{status}] {module.identifier}/{plan.identifier}\n"
+                    )
+                    self.log.flush()
+                    self.update_status(state, status, started)
+                raise
             output.seek(0)
             retained = self.redact(output.read())
         status = "PASSED" if result.returncode == 0 else "FAILED"

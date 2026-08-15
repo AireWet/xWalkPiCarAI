@@ -44,9 +44,10 @@
 XWalkHal::int32 main()
 {
     xwalk::hal::XWalkI2cLinux backend;
-    xwalk::hal::XWalkI2c i2c(&backend, XHAL_I2C_PROBE_CALLBACK(xwalk::hal::XWalkI2cLinux),
-        XHAL_I2C_WRITE_REGISTER_CALLBACK(xwalk::hal::XWalkI2cLinux),
-        XHAL_I2C_READ_CALLBACK(xwalk::hal::XWalkI2cLinux));
+    xwalk::hal::XWalkI2c i2c(&backend,
+                             XHAL_I2C_PROBE_CALLBACK(xwalk::hal::XWalkI2cLinux),
+                             XHAL_I2C_WRITE_REGISTER_CALLBACK(xwalk::hal::XWalkI2cLinux),
+                             XHAL_I2C_READ_CALLBACK(xwalk::hal::XWalkI2cLinux));
     xwalk::hal::XWalkPwmTimerState timerState;
     xwalk::hal::XWalkPwm pwm(i2c, 0U, {}, timerState);
     xwalk::hal::XWalkServo servo(pwm);

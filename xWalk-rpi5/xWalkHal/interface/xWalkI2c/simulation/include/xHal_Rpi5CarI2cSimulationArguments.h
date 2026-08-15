@@ -41,94 +41,94 @@
 namespace xwalk::hal::sim
 {
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/**
- * @class XWalkI2cSimulationArguments
- * @brief Validates and applies one optional simulation trace selector.
- *
- * @details
- * Accepts no option, `--help`, `-h`, or `--trace` followed by one
- * `RPI.<digits>` or `all` selector ending in `.enable` or `.disable`. The
- * object owns parsed text and does not retain the caller's argument pointers.
- */
-class XWalkI2cSimulationArguments final
-{
-    public:
-        /**************************************************************************
-         * Public constructors and destructor
-         **************************************************************************/
+    /**
+     * @class XWalkI2cSimulationArguments
+     * @brief Validates and applies one optional simulation trace selector.
+     *
+     * @details
+     * Accepts no option, `--help`, `-h`, or `--trace` followed by one
+     * `RPI.<digits>` or `all` selector ending in `.enable` or `.disable`. The
+     * object owns parsed text and does not retain the caller's argument pointers.
+     */
+    class XWalkI2cSimulationArguments final
+    {
+        public:
+            /**************************************************************************
+             * Public constructors and destructor
+             **************************************************************************/
 
-        /**
-         * @brief Parses the complete simulation process argument list.
-         * @param[in] argumentCount Number of process arguments, including the binary name.
-         * @param[in] argumentValues Non-null process argument array with `argumentCount` entries.
-         */
-        XWalkI2cSimulationArguments(int32 argumentCount, charpointer argumentValues[]);
+            /**
+             * @brief Parses the complete simulation process argument list.
+             * @param[in] argumentCount Number of process arguments, including the binary name.
+             * @param[in] argumentValues Non-null process argument array with `argumentCount` entries.
+             */
+            XWalkI2cSimulationArguments(int32 argumentCount, charpointer argumentValues[]);
 
-        /** @brief Destroys owned selector text without external side effects. */
-        ~XWalkI2cSimulationArguments();
+            /** @brief Destroys owned selector text without external side effects. */
+            ~XWalkI2cSimulationArguments();
 
-        XWalkI2cSimulationArguments(const XWalkI2cSimulationArguments&) = delete;
-        XWalkI2cSimulationArguments& operator=(const XWalkI2cSimulationArguments&) = delete;
-        XWalkI2cSimulationArguments(XWalkI2cSimulationArguments&&) = delete;
-        XWalkI2cSimulationArguments& operator=(XWalkI2cSimulationArguments&&) = delete;
+            XWalkI2cSimulationArguments(const XWalkI2cSimulationArguments&) = delete;
+            XWalkI2cSimulationArguments& operator=(const XWalkI2cSimulationArguments&) = delete;
+            XWalkI2cSimulationArguments(XWalkI2cSimulationArguments&&) = delete;
+            XWalkI2cSimulationArguments& operator=(XWalkI2cSimulationArguments&&) = delete;
 
-        /**************************************************************************
-         * Public member functions
-         **************************************************************************/
+            /**************************************************************************
+             * Public member functions
+             **************************************************************************/
 
-        /**
-         * @brief Reports whether the complete process argument list is valid.
-         * @return `true` for no option, help, or one supported `--trace` selector.
-         */
-        boolean valid() const noexcept;
+            /**
+             * @brief Reports whether the complete process argument list is valid.
+             * @return `true` for no option, help, or one supported `--trace` selector.
+             */
+            boolean valid() const noexcept;
 
-        /**
-         * @brief Reports whether the caller requested command help.
-         * @return `true` for `--help` or `-h`; otherwise `false`.
-         */
-        boolean helpRequested() const noexcept;
+            /**
+             * @brief Reports whether the caller requested command help.
+             * @return `true` for `--help` or `-h`; otherwise `false`.
+             */
+            boolean helpRequested() const noexcept;
 
-        /**
-         * @brief Applies the parsed trace update to the configured global trace runtime.
-         * @return `true` when no update is needed or registry application succeeds.
-         */
-        boolean applyTraceUpdate() const;
+            /**
+             * @brief Applies the parsed trace update to the configured global trace runtime.
+             * @return `true` when no update is needed or registry application succeeds.
+             */
+            boolean applyTraceUpdate() const;
 
-    protected:
-        /**************************************************************************
-         * Protected member functions
-         **************************************************************************/
+        protected:
+            /**************************************************************************
+             * Protected member functions
+             **************************************************************************/
 
-        /** @brief Reports whether one selector target is `all` or `RPI.<digits>`. */
-        static boolean targetIsValid(stringview target) noexcept;
+            /** @brief Reports whether one selector target is `all` or `RPI.<digits>`. */
+            static boolean targetIsValid(stringview target) noexcept;
 
-        /** @brief Parses one selector and commits it only when completely valid. */
-        void parseSelector(stringview selector);
+            /** @brief Parses one selector and commits it only when completely valid. */
+            void parseSelector(stringview selector);
 
-    private:
-        /**************************************************************************
-         * Private data members
-         **************************************************************************/
+        private:
+            /**************************************************************************
+             * Private data members
+             **************************************************************************/
 
-        /** @brief Parsed UID, or `all` when every scanner-known UID is selected. */
-        string traceTargetValue;
+            /** @brief Parsed UID, or `all` when every scanner-known UID is selected. */
+            string traceTargetValue;
 
-        /** @brief Requested trace state when a selector is present. */
-        boolean traceEnabledValue;
+            /** @brief Requested trace state when a selector is present. */
+            boolean traceEnabledValue;
 
-        /** @brief Indicates that the caller supplied one trace selector. */
-        boolean traceUpdateRequestedValue;
+            /** @brief Indicates that the caller supplied one trace selector. */
+            boolean traceUpdateRequestedValue;
 
-        /** @brief Indicates that the complete process argument list is valid. */
-        boolean validValue;
+            /** @brief Indicates that the complete process argument list is valid. */
+            boolean validValue;
 
-        /** @brief Indicates that `--help` or `-h` was supplied. */
-        boolean helpRequestedValue;
-};
+            /** @brief Indicates that `--help` or `-h` was supplied. */
+            boolean helpRequestedValue;
+    };
 
 } /* namespace xwalk::hal::sim */
 

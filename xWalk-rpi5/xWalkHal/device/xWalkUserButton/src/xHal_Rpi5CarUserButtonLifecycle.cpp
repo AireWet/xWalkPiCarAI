@@ -36,35 +36,39 @@
  * @namespace xwalk::hal
  * @brief Contains hardware abstraction components for the xWalk firmware.
  */
-namespace xwalk::hal {
+namespace xwalk::hal
+{
 
-/******************************************************************************
- * Constructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Constructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Constructs a stopped user-button monitor.
- *
- * @param[in] gpio
- * Non-owning GPIO configured as the active-low pull-up button input.
- *
- * @pre
- * `gpio` outlives this object and its monitoring worker.
- */
-XWalkUserButton::XWalkUserButton(XWalkGpio &gpio)
-    : gpioObject(&gpio),
-      pressedAtMicrosecondsValue(common::monotonicMicroseconds()) {
-  XWALK_HAL_TRACE_UID0(RPI .224, "User-button monitor constructed");
-}
+    /**
+     * @brief Constructs a stopped user-button monitor.
+     *
+     * @param[in] gpio
+     * Non-owning GPIO configured as the active-low pull-up button input.
+     *
+     * @pre
+     * `gpio` outlives this object and its monitoring worker.
+     */
+    XWalkUserButton::XWalkUserButton(XWalkGpio& gpio)
+        : gpioObject(&gpio), pressedAtMicrosecondsValue(common::monotonicMicroseconds())
+    {
+        XWALK_HAL_TRACE_UID0(RPI .224, "User-button monitor constructed");
+    }
 
-/******************************************************************************
- * Destructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Destructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Stops the monitoring worker without releasing the caller-owned GPIO.
- *
- */
-XWalkUserButton::~XWalkUserButton() { stopWorker(); }
+    /**
+     * @brief Stops the monitoring worker without releasing the caller-owned GPIO.
+     *
+     */
+    XWalkUserButton::~XWalkUserButton()
+    {
+        stopWorker();
+    }
 
 } /* namespace xwalk::hal */

@@ -48,87 +48,87 @@
 namespace xwalk::hal::example
 {
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
-
-/**
- * @brief Reads one prompted console line.
- * @param[in,out] context Non-owning console context.
- * @param[out] inputText Owned user input replaced by the callback.
- * @return `true` when input was read, or `false` at end of input.
- */
-using geminiexamplereadcallback = boolean (*)(contextpointer context,
-    string& inputText);
-
-/**
- * @brief Writes one welcome or response fragment.
- * @param[in,out] context Non-owning console context.
- * @param[in] text Text valid only for the callback duration.
- * @param[in] appendNewline Whether to append one newline.
- * @param[in] flushOutput Whether to flush output before returning.
- */
-using geminiexamplewritecallback = void (*)(contextpointer context,
-    stringview text, boolean appendNewline, boolean flushOutput);
-
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
-
-/** @brief Complete injected console table required by the Gemini example. */
-struct XWalkGeminiExampleCallbacks
-{
-    /** @brief Prints the prompt and reads one input line. */
-    geminiexamplereadcallback readPrompt{nullptr};
-    /** @brief Writes welcome text and model responses. */
-    geminiexamplewritecallback write{nullptr};
-};
-
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
-
-/** @brief Runs a bounded provider-neutral version of the Gemini chat example. */
-class XWalkGeminiExample final
-{
-private:
-
-    /** @brief Caller-owned language model that must outlive this example. */
-    XWalkLanguageModel* languageModelObject;
-    /** @brief Non-owning context forwarded to console callbacks. */
-    contextpointer consoleContext;
-    /** @brief Complete validated console callback table. */
-    XWalkGeminiExampleCallbacks callbacks;
-
-public:
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
     /**
-     * @brief Binds one language model and complete console table.
-     * @param[in,out] languageModel Caller-owned model that must outlive this object.
-     * @param[in,out] context Non-owning console callback context.
-     * @param[in] consoleCallbacks Table containing two non-null callbacks.
-     * @throws std::invalid_argument If either callback is null.
+     * @brief Reads one prompted console line.
+     * @param[in,out] context Non-owning console context.
+     * @param[out] inputText Owned user input replaced by the callback.
+     * @return `true` when input was read, or `false` at end of input.
      */
-    XWalkGeminiExample(XWalkLanguageModel& languageModel,
-        contextpointer context, const XWalkGeminiExampleCallbacks& consoleCallbacks);
-
-    /** @brief Prevents copying of non-owning dependency bindings. */
-    XWalkGeminiExample(const XWalkGeminiExample&) = delete;
-    /** @brief Prevents moving of non-owning dependency bindings. */
-    XWalkGeminiExample(XWalkGeminiExample&&) = delete;
-    /** @brief Prevents copy assignment of non-owning dependency bindings. */
-    XWalkGeminiExample& operator=(const XWalkGeminiExample&) = delete;
-    /** @brief Prevents move assignment of non-owning dependency bindings. */
-    XWalkGeminiExample& operator=(XWalkGeminiExample&&) = delete;
+    using geminiexamplereadcallback = boolean (*)(contextpointer context, string& inputText);
 
     /**
-     * @brief Runs up to the requested number of interactive prompts.
-     * @param[in] maximumPrompts Prompt limit in the inclusive range one through 100.
-     * @throws std::out_of_range If `maximumPrompts` is outside its range.
-     * @warning Prompt callbacks may perform remote network requests.
+     * @brief Writes one welcome or response fragment.
+     * @param[in,out] context Non-owning console context.
+     * @param[in] text Text valid only for the callback duration.
+     * @param[in] appendNewline Whether to append one newline.
+     * @param[in] flushOutput Whether to flush output before returning.
      */
-    void run(uint32 maximumPrompts);
-};
+    using geminiexamplewritecallback = void (*)(contextpointer context,
+                                                stringview text,
+                                                boolean appendNewline,
+                                                boolean flushOutput);
+
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
+
+    /** @brief Complete injected console table required by the Gemini example. */
+    struct XWalkGeminiExampleCallbacks
+    {
+            /** @brief Prints the prompt and reads one input line. */
+            geminiexamplereadcallback readPrompt{nullptr};
+            /** @brief Writes welcome text and model responses. */
+            geminiexamplewritecallback write{nullptr};
+    };
+
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
+
+    /** @brief Runs a bounded provider-neutral version of the Gemini chat example. */
+    class XWalkGeminiExample final
+    {
+        private:
+            /** @brief Caller-owned language model that must outlive this example. */
+            XWalkLanguageModel* languageModelObject;
+            /** @brief Non-owning context forwarded to console callbacks. */
+            contextpointer consoleContext;
+            /** @brief Complete validated console callback table. */
+            XWalkGeminiExampleCallbacks callbacks;
+
+        public:
+            /**
+             * @brief Binds one language model and complete console table.
+             * @param[in,out] languageModel Caller-owned model that must outlive this object.
+             * @param[in,out] context Non-owning console callback context.
+             * @param[in] consoleCallbacks Table containing two non-null callbacks.
+             * @throws std::invalid_argument If either callback is null.
+             */
+            XWalkGeminiExample(XWalkLanguageModel& languageModel,
+                               contextpointer context,
+                               const XWalkGeminiExampleCallbacks& consoleCallbacks);
+
+            /** @brief Prevents copying of non-owning dependency bindings. */
+            XWalkGeminiExample(const XWalkGeminiExample&) = delete;
+            /** @brief Prevents moving of non-owning dependency bindings. */
+            XWalkGeminiExample(XWalkGeminiExample&&) = delete;
+            /** @brief Prevents copy assignment of non-owning dependency bindings. */
+            XWalkGeminiExample& operator=(const XWalkGeminiExample&) = delete;
+            /** @brief Prevents move assignment of non-owning dependency bindings. */
+            XWalkGeminiExample& operator=(XWalkGeminiExample&&) = delete;
+
+            /**
+             * @brief Runs up to the requested number of interactive prompts.
+             * @param[in] maximumPrompts Prompt limit in the inclusive range one through 100.
+             * @throws std::out_of_range If `maximumPrompts` is outside its range.
+             * @warning Prompt callbacks may perform remote network requests.
+             */
+            void run(uint32 maximumPrompts);
+    };
 
 } /* namespace xwalk::hal::example */
 

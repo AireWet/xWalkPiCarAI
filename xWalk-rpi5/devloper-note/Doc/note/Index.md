@@ -50,6 +50,8 @@ current C++ implementation.
 ### Tooling and deployment
 
 - [xWalkTool overview](xWalkTool%20Overview.md)
+- [Add a user to a Gerrit repository](Add%20a%20User%20to%20a%20Gerrit%20Repository.md)
+- [Create Gerrit and configure xWalk CI](Create%20Gerrit%20and%20Configure%20xWalk%20CI.md)
 - [Licence-key workflow](License%20Key%20Workflow.md)
 - [xWalk licence tool](xWalk%20Licence%20Tool%20Guide.md)
 - [xWalk environment loader](xWalk%20Environment%20Loader%20Guide.md)

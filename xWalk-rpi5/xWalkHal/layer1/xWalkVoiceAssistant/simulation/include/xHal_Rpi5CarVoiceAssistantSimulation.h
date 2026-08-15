@@ -3,7 +3,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Exercises one complete assistant round without devices or network access. */
-int32 runVoiceAssistantSimulation();
+    /** @brief Exercises one complete assistant round without devices or network access. */
+    int32 runVoiceAssistantSimulation();
 } /* namespace xwalk::hal::sim */
 #endif

@@ -13,44 +13,40 @@
 #include "xHal_Rpi5CarTrace.h"
 #include <cmath>
 
-namespace xwalk::agent {
+namespace xwalk::agent
+{
 
-XWalkVoicePromptCar::XWalkVoicePromptCar(
-    XWalkPicarx &picarx, hal::XWalkTextToSpeech &textToSpeech,
-    agent::contextpointer context,
-    const XWalkVoicePromptCarCallbacks &backendCallbacks,
-    const XWalkVoicePromptCarConfiguration &carConfiguration)
-    : picarxObject(&picarx), textToSpeechObject(&textToSpeech),
-      callbackContext(context), callbacks(backendCallbacks),
-      configuration(carConfiguration) {
-  validate(callbacks, configuration);
-}
+    XWalkVoicePromptCar::XWalkVoicePromptCar(XWalkPicarx& picarx,
+                                             hal::XWalkTextToSpeech& textToSpeech,
+                                             agent::contextpointer context,
+                                             const XWalkVoicePromptCarCallbacks& backendCallbacks,
+                                             const XWalkVoicePromptCarConfiguration& carConfiguration)
+        : picarxObject(&picarx), textToSpeechObject(&textToSpeech), callbackContext(context),
+          callbacks(backendCallbacks), configuration(carConfiguration)
+    {
+        validate(callbacks, configuration);
+    }
 
-void XWalkVoicePromptCar::validate(
-    const XWalkVoicePromptCarCallbacks &backendCallbacks,
-    const XWalkVoicePromptCarConfiguration &carConfiguration) {
-  if ((backendCallbacks.output == nullptr) ||
-      (backendCallbacks.shouldContinue == nullptr) ||
-      (backendCallbacks.delay == nullptr)) {
-    XWALK_RPIAGENT_ERROR(XWALK_INVAL,
-                         "Voice-prompt-car callbacks must be complete");
-  }
-  const agent::boolean vehicleConfigurationInvalid =
-      static_cast<agent::boolean>(
-          !std::isfinite(carConfiguration.speedPercent) ||
-          !std::isfinite(carConfiguration.steeringAngle));
-  if (vehicleConfigurationInvalid) {
-    XWALK_RPIAGENT_ERROR(XWALK_INVAL,
-                         "Voice-prompt-car configuration must be finite");
-  }
-  if ((carConfiguration.speedPercent < 0.0) ||
-      (carConfiguration.speedPercent > 100.0) ||
-      (carConfiguration.steeringAngle <= 0.0) ||
-      (carConfiguration.steeringAngle > 40.0) ||
-      (carConfiguration.driveDurationMs == 0U)) {
-    XWALK_RPIAGENT_ERROR(XWALK_RANGE,
-                         "Voice-prompt-car configuration is outside its range");
-  }
-}
+    void XWalkVoicePromptCar::validate(const XWalkVoicePromptCarCallbacks& backendCallbacks,
+                                       const XWalkVoicePromptCarConfiguration& carConfiguration)
+    {
+        if ((backendCallbacks.output == nullptr) || (backendCallbacks.shouldContinue == nullptr) ||
+            (backendCallbacks.delay == nullptr))
+        {
+            XWALK_RPIAGENT_ERROR(XWALK_INVAL, "Voice-prompt-car callbacks must be complete");
+        }
+        const agent::boolean vehicleConfigurationInvalid = static_cast<agent::boolean>(
+            !std::isfinite(carConfiguration.speedPercent) || !std::isfinite(carConfiguration.steeringAngle));
+        if (vehicleConfigurationInvalid)
+        {
+            XWALK_RPIAGENT_ERROR(XWALK_INVAL, "Voice-prompt-car configuration must be finite");
+        }
+        if ((carConfiguration.speedPercent < 0.0) || (carConfiguration.speedPercent > 100.0) ||
+            (carConfiguration.steeringAngle <= 0.0) || (carConfiguration.steeringAngle > 40.0) ||
+            (carConfiguration.driveDurationMs == 0U))
+        {
+            XWALK_RPIAGENT_ERROR(XWALK_RANGE, "Voice-prompt-car configuration is outside its range");
+        }
+    }
 
 } /* namespace xwalk::agent */

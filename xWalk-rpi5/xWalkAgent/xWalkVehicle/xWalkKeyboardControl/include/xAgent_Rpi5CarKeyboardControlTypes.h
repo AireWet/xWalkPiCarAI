@@ -41,39 +41,38 @@
 namespace xwalk::agent
 {
 
-/******************************************************************************
- * Enumeration declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Enumeration declarations
+     ******************************************************************************/
 
-/** @brief Reports the outcome of processing one keyboard-control key. */
-enum class XWalkKeyboardControlResult : agent::uint8
-{
-    /** @brief The key completed its source-compatible actuator pulse. */
-    Handled,
-    /** @brief The key is outside the supported `wsadikjl` set. */
-    Ignored,
-    /** @brief Cancellation interrupted the key before completion. */
-    Cancelled
-};
+    /** @brief Reports the outcome of processing one keyboard-control key. */
+    enum class XWalkKeyboardControlResult : agent::uint8
+    {
+        /** @brief The key completed its source-compatible actuator pulse. */
+        Handled,
+        /** @brief The key is outside the supported `wsadikjl` set. */
+        Ignored,
+        /** @brief Cancellation interrupted the key before completion. */
+        Cancelled
+    };
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/**
- * @brief Suspends keyboard-control execution for one bounded interval.
- * @param[in,out] context Non-owning context that outlives the Agent.
- * @param[in] durationMs Requested delay in milliseconds.
- */
-using keyboardcontroldelaycallback = void (*)(agent::contextpointer context,
-    agent::uint32 durationMs);
+    /**
+     * @brief Suspends keyboard-control execution for one bounded interval.
+     * @param[in,out] context Non-owning context that outlives the Agent.
+     * @param[in] durationMs Requested delay in milliseconds.
+     */
+    using keyboardcontroldelaycallback = void (*)(agent::contextpointer context, agent::uint32 durationMs);
 
-/**
- * @brief Reports whether keyboard-control execution may continue.
- * @param[in,out] context Non-owning context that outlives the Agent.
- * @return `true` to continue or `false` to request cleanup.
- */
-using keyboardcontrolcontinuecallback = agent::boolean (*)(agent::contextpointer context);
+    /**
+     * @brief Reports whether keyboard-control execution may continue.
+     * @param[in,out] context Non-owning context that outlives the Agent.
+     * @return `true` to continue or `false` to request cleanup.
+     */
+    using keyboardcontrolcontinuecallback = agent::boolean (*)(agent::contextpointer context);
 
 } /* namespace xwalk::agent */
 

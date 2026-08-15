@@ -37,7 +37,7 @@
  * it with the configured absolute `XWALK_PICARX_CONFIG_FILE` cache value.
  */
 #ifndef XWALK_PICARX_CONFIG_FILE
-#define XWALK_PICARX_CONFIG_FILE "xWalk-rpi5/xWalkController/xWalkConfig/picar-x.conf"
+    #define XWALK_PICARX_CONFIG_FILE "xWalk-rpi5/xWalkController/xWalkConfig/picar-x.conf"
 #endif
 
 #endif /* XAGENT_RPI5CAR_PICARX_CONFIGURATION_H */

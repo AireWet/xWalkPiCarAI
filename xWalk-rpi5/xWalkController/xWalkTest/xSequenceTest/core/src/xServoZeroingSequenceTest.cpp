@@ -18,32 +18,28 @@
 namespace
 {
 
-/** @brief Verifies every source servo command and its order. */
-void testServoZeroing(
-    xwalk::agent::test::ControllerCommandTestContext& context)
-{
-    context.state->operationQueryLimit = 120U;
-    xwalk::agent::test::XWalkControllerSequence sequence(
-        *context.servoZeroingController);
-    assert(sequence.run({{"servo-zeroing"}}) == 0);
-
-
-    assert(context.state->servoZeroingIds.size() == 24U);
-    assert(context.state->servoZeroingAngles.size() == 24U);
-    for (ctrl::uint32 servoId = 0U; servoId < 12U; ++servoId)
+    /** @brief Verifies every source servo command and its order. */
+    void testServoZeroing(xwalk::agent::test::ControllerCommandTestContext& context)
     {
-        const ctrl::size index =
-            static_cast<ctrl::size>(servoId) * 2U;
-        assert(context.state->servoZeroingIds[index] == servoId);
-        assert(context.state->servoZeroingIds[index + 1U] == servoId);
-        assert(context.state->servoZeroingAngles[index] == 10.0);
-        assert(context.state->servoZeroingAngles[index + 1U] == 0.0);
+        context.state->operationQueryLimit = 120U;
+        xwalk::agent::test::XWalkControllerSequence sequence(*context.servoZeroingController);
+        assert(sequence.run({{"servo-zeroing"}}) == 0);
+
+        assert(context.state->servoZeroingIds.size() == 24U);
+        assert(context.state->servoZeroingAngles.size() == 24U);
+        for (ctrl::uint32 servoId = 0U; servoId < 12U; ++servoId)
+        {
+            const ctrl::size index = static_cast<ctrl::size>(servoId) * 2U;
+            assert(context.state->servoZeroingIds[index] == servoId);
+            assert(context.state->servoZeroingIds[index + 1U] == servoId);
+            assert(context.state->servoZeroingAngles[index] == 10.0);
+            assert(context.state->servoZeroingAngles[index + 1U] == 0.0);
+        }
+        assert(context.state->delays.size() == 120U);
+        assert(xwalk::agent::test::containsOrderedEvents(
+            context.state->eventLog,
+            {"servo-zeroing.angle", "controller.continue", "controller.delay", "servo-zeroing.angle"}));
     }
-    assert(context.state->delays.size() == 120U);
-    assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"servo-zeroing.angle", "controller.continue",
-            "controller.delay", "servo-zeroing.angle"}));
-}
 
 } /* namespace */
 
@@ -55,6 +51,5 @@ void testServoZeroing(
  */
 int xWalkServoZeroingCommandSequenceHostTest(int argc, char* argv[])
 {
-    return xwalk::agent::test::runControllerCommandHostTest(
-        argc, argv, &testServoZeroing);
+    return xwalk::agent::test::runControllerCommandHostTest(argc, argv, &testServoZeroing);
 }

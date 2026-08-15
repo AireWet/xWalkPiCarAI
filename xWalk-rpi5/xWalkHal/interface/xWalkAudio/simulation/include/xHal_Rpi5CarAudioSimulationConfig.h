@@ -25,11 +25,11 @@
  ******************************************************************************/
 
 #ifndef XWALK_AUDIO_SIMULATION_TRACE_CONFIG_PATH
-#define XWALK_AUDIO_SIMULATION_TRACE_CONFIG_PATH "xwalk-traces.xml"
+    #define XWALK_AUDIO_SIMULATION_TRACE_CONFIG_PATH "xwalk-traces.xml"
 #endif
 
 #ifndef XWALK_AUDIO_SIMULATION_TRACE_LOG_PATH
-#define XWALK_AUDIO_SIMULATION_TRACE_LOG_PATH "log/xWalkAudioTrace.log"
+    #define XWALK_AUDIO_SIMULATION_TRACE_LOG_PATH "log/xWalkAudioTrace.log"
 #endif
 
 #endif /* XHAL_RPI5CAR_AUDIO_SIMULATION_CONFIG_H */

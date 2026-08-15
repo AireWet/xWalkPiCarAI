@@ -25,20 +25,18 @@
 namespace xwalk::agent
 {
 
-/**
- * @brief Runs the passive Doctor mode.
- * @param[in,out] context Nullable caller-owned application context.
- * @param[in] callback Non-null synchronous application callback.
- * @return Status returned by `callback`.
- */
-agent::int32 XWalkBootRpi::runDoctor(agent::contextpointer context,
-    bootapplicationcallback callback)
-{
-    const agent::stringvector doctorLines =
-        XWalkDoctorLinux::inspect(configurationFilePath);
-    XWalkBootServices services{};
-    services.doctorLines = &doctorLines;
-    return callback(context, services);
-}
+    /**
+     * @brief Runs the passive Doctor mode.
+     * @param[in,out] context Nullable caller-owned application context.
+     * @param[in] callback Non-null synchronous application callback.
+     * @return Status returned by `callback`.
+     */
+    agent::int32 XWalkBootRpi::runDoctor(agent::contextpointer context, bootapplicationcallback callback)
+    {
+        const agent::stringvector doctorLines = XWalkDoctorLinux::inspect(configurationFilePath);
+        XWalkBootServices services{};
+        services.doctorLines = &doctorLines;
+        return callback(context, services);
+    }
 
 } /* namespace xwalk::agent */

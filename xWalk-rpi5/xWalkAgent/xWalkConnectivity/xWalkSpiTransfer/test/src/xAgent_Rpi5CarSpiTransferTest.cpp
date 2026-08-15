@@ -26,6 +26,13 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarSpiTransfer.h"
+#include "xAgent_Rpi5CarSpiTransferTestTypes.h"
+
+/******************************************************************************
+ * Translation-unit type aliases
+ ******************************************************************************/
+
+using TestBackend = ::xwalk::source_types::xagent_rpi5carspitransfertest::TestBackend;
 
 /******************************************************************************
  * Anonymous namespace
@@ -35,26 +42,19 @@
 namespace
 {
 
-/** @brief Records one transmitted payload. */
-struct TestBackend
-{
-    agent::bytevector request;
-};
-
-/** @brief Returns each transmitted byte with every bit inverted. */
-agent::bytevector transfer(agent::contextpointer context,
-    const agent::bytevector& transmitData)
-{
-    TestBackend& backend = *static_cast<TestBackend*>(context);
-    backend.request = transmitData;
-    agent::bytevector response;
-    response.reserve(transmitData.size());
-    for (const agent::uint8 value : transmitData)
+    /** @brief Returns each transmitted byte with every bit inverted. */
+    agent::bytevector transfer(agent::contextpointer context, const agent::bytevector& transmitData)
     {
-        response.push_back(static_cast<agent::uint8>(value ^ 0xFFU));
+        TestBackend& backend = *static_cast<TestBackend*>(context);
+        backend.request = transmitData;
+        agent::bytevector response;
+        response.reserve(transmitData.size());
+        for (const agent::uint8 value : transmitData)
+        {
+            response.push_back(static_cast<agent::uint8>(value ^ 0xFFU));
+        }
+        return response;
     }
-    return response;
-}
 
 } /* namespace */
 

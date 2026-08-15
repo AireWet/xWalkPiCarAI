@@ -30,12 +30,12 @@
 
 /** @brief Default generated trace inventory used outside a configured target. */
 #ifndef XWALK_VOICE_ASSISTANT_SIMULATION_TRACE_CONFIG_PATH
-#define XWALK_VOICE_ASSISTANT_SIMULATION_TRACE_CONFIG_PATH "xwalk-traces.xml"
+    #define XWALK_VOICE_ASSISTANT_SIMULATION_TRACE_CONFIG_PATH "xwalk-traces.xml"
 #endif
 
 /** @brief Default trace log path used outside a configured target. */
 #ifndef XWALK_VOICE_ASSISTANT_SIMULATION_TRACE_LOG_PATH
-#define XWALK_VOICE_ASSISTANT_SIMULATION_TRACE_LOG_PATH "log/xWalkVoiceAssistantTrace.log"
+    #define XWALK_VOICE_ASSISTANT_SIMULATION_TRACE_LOG_PATH "log/xWalkVoiceAssistantTrace.log"
 #endif
 
 #endif /* XHAL_RPI5CAR_VOICE_ASSISTANT_SIMULATION_CONFIG_H */

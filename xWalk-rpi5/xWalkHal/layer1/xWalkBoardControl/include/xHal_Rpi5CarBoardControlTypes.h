@@ -41,25 +41,25 @@
 namespace xwalk::hal
 {
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/**
- * @brief Callback that primes speaker output after speaker power is enabled.
- *
- * @param[in,out] context
- * Nullable non-owning application context supplied during construction. Null
- * is permitted only when the callback implementation supports it.
- *
- * @param[in] durationMs
- * Required priming duration in milliseconds.
- *
- * @pre
- * The context satisfies the callback and remains valid for the controller's
- * complete lifetime.
- */
-using boardspeakerprimecallback = void (*)(contextpointer context, uint32 durationMs);
+    /**
+     * @brief Callback that primes speaker output after speaker power is enabled.
+     *
+     * @param[in,out] context
+     * Nullable non-owning application context supplied during construction. Null
+     * is permitted only when the callback implementation supports it.
+     *
+     * @param[in] durationMs
+     * Required priming duration in milliseconds.
+     *
+     * @pre
+     * The context satisfies the callback and remains valid for the controller's
+     * complete lifetime.
+     */
+    using boardspeakerprimecallback = void (*)(contextpointer context, uint32 durationMs);
 
 } /* namespace xwalk::hal */
 

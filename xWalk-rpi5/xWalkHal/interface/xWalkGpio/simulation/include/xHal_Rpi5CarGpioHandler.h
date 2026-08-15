@@ -33,28 +33,28 @@
 namespace xwalk::hal::sim
 {
 
-/** @brief Executes representative operations through the public GPIO API. */
-class XWalkGpioHandler final
-{
-    public:
-        /** @brief Constructs the stateless simulation handler. */
-        XWalkGpioHandler();
+    /** @brief Executes representative operations through the public GPIO API. */
+    class XWalkGpioHandler final
+    {
+        public:
+            /** @brief Constructs the stateless simulation handler. */
+            XWalkGpioHandler();
 
-        /** @brief Destroys the stateless simulation handler. */
-        ~XWalkGpioHandler();
+            /** @brief Destroys the stateless simulation handler. */
+            ~XWalkGpioHandler();
 
-        XWalkGpioHandler(XWalkGpioHandler&&) = delete;
-        XWalkGpioHandler(const XWalkGpioHandler&) = delete;
-        XWalkGpioHandler& operator=(XWalkGpioHandler&&) = delete;
-        XWalkGpioHandler& operator=(const XWalkGpioHandler&) = delete;
+            XWalkGpioHandler(XWalkGpioHandler&&) = delete;
+            XWalkGpioHandler(const XWalkGpioHandler&) = delete;
+            XWalkGpioHandler& operator=(XWalkGpioHandler&&) = delete;
+            XWalkGpioHandler& operator=(const XWalkGpioHandler&) = delete;
 
-        /**
-         * @brief Drives the selected line low and then samples its level.
-         * @param[in,out] gpio Configured GPIO object bound to the selected backend.
-         * @return Zero after the operations complete.
-         */
-        int32 run(XWalkGpio& gpio) const;
-};
+            /**
+             * @brief Drives the selected line low and then samples its level.
+             * @param[in,out] gpio Configured GPIO object bound to the selected backend.
+             * @return Zero after the operations complete.
+             */
+            int32 run(XWalkGpio& gpio) const;
+    };
 
 } /* namespace xwalk::hal::sim */
 

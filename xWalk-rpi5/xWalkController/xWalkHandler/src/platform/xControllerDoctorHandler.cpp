@@ -37,34 +37,38 @@
  * @namespace xwalk::ctrl
  * @brief Contains Controller command interfaces for the xWalk firmware.
  */
-namespace xwalk::ctrl {
+namespace xwalk::ctrl
+{
 
-/******************************************************************************
- * Member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Member function definitions
+     ******************************************************************************/
 
-/**
- * @brief Traces one passive hardware preflight report.
- * @param[in] request Validated empty request.
- * @return Zero when every reported check passes; otherwise two.
- */
-::ctrl::int32
-XWalkController::XWALK_handlerDoctor(const XWalkNoArgumentRequest &request) {
-  static_cast<void>(request);
-  if (doctorLinesObject == nullptr) {
-    XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Doctor backend unavailable");
-    return 3;
-  }
-  ::ctrl::boolean passed = true;
-  for (const ::ctrl::string &line : *doctorLinesObject) {
-    XWALK_CTRL_TRACE_UID1(CTRL .024, "%s", line.c_str());
-    const ::ctrl::boolean lineDifferent = static_cast<::ctrl::boolean>(
-        line.find("[FAIL]") != ::ctrl::string::npos);
-    if (lineDifferent) {
-      passed = false;
+    /**
+     * @brief Traces one passive hardware preflight report.
+     * @param[in] request Validated empty request.
+     * @return Zero when every reported check passes; otherwise two.
+     */
+    ::ctrl::int32 XWalkController::XWALK_handlerDoctor(const XWalkNoArgumentRequest& request)
+    {
+        static_cast<void>(request);
+        if (doctorLinesObject == nullptr)
+        {
+            XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Doctor backend unavailable");
+            return 3;
+        }
+        ::ctrl::boolean passed = true;
+        for (const ::ctrl::string& line : *doctorLinesObject)
+        {
+            XWALK_CTRL_TRACE_UID1(CTRL .024, "%s", line.c_str());
+            const ::ctrl::boolean lineDifferent =
+                static_cast<::ctrl::boolean>(line.find("[FAIL]") != ::ctrl::string::npos);
+            if (lineDifferent)
+            {
+                passed = false;
+            }
+        }
+        return passed ? 0 : 2;
     }
-  }
-  return passed ? 0 : 2;
-}
 
 } /* namespace xwalk::ctrl */

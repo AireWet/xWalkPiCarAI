@@ -18,22 +18,26 @@
 
 namespace
 {
-void testTurn(xwalk::agent::test::ControllerCommandTestContext& context)
-{
-    xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
-    assert(sequence.run({{"turn", "left", "--angle", "20"},
-        {"turn", "right", "--angle", "15"}}) == 0);
-    assert(std::find(context.state->steeringAngles.begin(),
-        context.state->steeringAngles.end(), -20.0) != context.state->steeringAngles.end());
-    assert(std::find(context.state->steeringAngles.begin(),
-        context.state->steeringAngles.end(), 15.0) != context.state->steeringAngles.end());
-    assert(context.picarx->directionAngleDegrees() == 0.0);
-    assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"controller.continue", "hal.i2c.write", "controller.delay",
-            "hal.i2c.write", "controller.delay", "hal.i2c.write",
-            "controller.delay", "hal.i2c.write"}));
-}
-}
+    void testTurn(xwalk::agent::test::ControllerCommandTestContext& context)
+    {
+        xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
+        assert(sequence.run({{"turn", "left", "--angle", "20"}, {"turn", "right", "--angle", "15"}}) == 0);
+        assert(std::find(context.state->steeringAngles.begin(), context.state->steeringAngles.end(), -20.0) !=
+               context.state->steeringAngles.end());
+        assert(std::find(context.state->steeringAngles.begin(), context.state->steeringAngles.end(), 15.0) !=
+               context.state->steeringAngles.end());
+        assert(context.picarx->directionAngleDegrees() == 0.0);
+        assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
+                                                         {"controller.continue",
+                                                          "hal.i2c.write",
+                                                          "controller.delay",
+                                                          "hal.i2c.write",
+                                                          "controller.delay",
+                                                          "hal.i2c.write",
+                                                          "controller.delay",
+                                                          "hal.i2c.write"}));
+    }
+} // namespace
 
 /** @brief Runs the turn controller-to-HAL host sequence. @return Zero on success. */
 int xWalkTurnCommandSequenceHostTest(int argc, char* argv[])

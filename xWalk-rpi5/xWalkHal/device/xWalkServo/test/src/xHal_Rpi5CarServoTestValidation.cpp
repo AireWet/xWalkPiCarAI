@@ -42,39 +42,44 @@
 namespace xwalk::hal::test
 {
 
-/******************************************************************************
- * Test function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Test function definitions
+     ******************************************************************************/
 
-/**
- * @brief Verifies non-finite angle and pulse-duration validation.
- *
- * @post
- * The assertions confirm both commands throw `std::invalid_argument`.
- */
-void testServoValidation()
-{
-    XWalkServoTestI2c bus;
-    XWalkI2c i2c(&bus, &XWalkServoTestI2c::probeCallback, &XWalkServoTestI2c::writeRegisterCallback,
-        &XWalkServoTestI2c::readCallback);
-    XWalkPwmTimerState timerState;
-    XWalkPwm pwm(i2c, 0U, 0x14U, timerState);
-    XWalkServo servo(pwm);
+    /**
+     * @brief Verifies non-finite angle and pulse-duration validation.
+     *
+     * @post
+     * The assertions confirm both commands throw `std::invalid_argument`.
+     */
+    void testServoValidation()
+    {
+        XWalkServoTestI2c bus;
+        XWalkI2c i2c(&bus,
+                     &XWalkServoTestI2c::probeCallback,
+                     &XWalkServoTestI2c::writeRegisterCallback,
+                     &XWalkServoTestI2c::readCallback);
+        XWalkPwmTimerState timerState;
+        XWalkPwm pwm(i2c, 0U, 0x14U, timerState);
+        XWalkServo servo(pwm);
 
-    expectFailure([&servo]()
-    {
-        servo.setAngle(0.0);
-    });
-    static_cast<void>(servo.initialize());
+        expectFailure(
+            [&servo]()
+            {
+                servo.setAngle(0.0);
+            });
+        static_cast<void>(servo.initialize());
 
-    expectFailure([&servo]()
-    {
-        servo.setAngle(XHAL_POSITIVE_INFINITY(float64));
-    });
-    expectFailure([&servo]()
-    {
-        servo.setPulseWidthTime(XHAL_POSITIVE_INFINITY(float64));
-    });
-}
+        expectFailure(
+            [&servo]()
+            {
+                servo.setAngle(XHAL_POSITIVE_INFINITY(float64));
+            });
+        expectFailure(
+            [&servo]()
+            {
+                servo.setPulseWidthTime(XHAL_POSITIVE_INFINITY(float64));
+            });
+    }
 
 } /* namespace xwalk::hal::test */

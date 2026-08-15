@@ -334,10 +334,19 @@ retaining normal compiler warnings and compilation checks.
   `xHal_Rpi5Car<Component>.cpp`. Name Controller-owned files
   `xController<Component>.h` and `xController<Component>.cpp`; omit the
   redundant `Agent`, `Rpi5Car`, and repeated `Controller` words.
-- Keep at most one class definition in each physical header or source file.
-  Give each additional class its own consistently named file and include that
-  file explicitly wherever the class is used. Supporting enums and structures
-  may remain with the single class that owns their contract.
+- Define every project class and structure in a header; never define a type in
+  a `.cpp`, `.cc`, or `.cxx` source file. Source files contain member-function
+  implementations and may declare objects of existing types, including C-style
+  declarations such as `struct stat pathStatus`.
+- Keep at most one class definition in each physical header. Give each
+  additional class its own consistently named file and include that file
+  explicitly wherever the class is used. Supporting enums and structures may
+  remain with the single class that owns their contract.
+- Put public and reusable types in the owning component's `include` directory.
+  Put an implementation-private type in a narrowly scoped companion type header
+  with a named namespace. Never use an anonymous namespace in a header. For
+  test fixtures, fake state, mappings, callbacks, and factories, follow the
+  repository-wide `<Component>TestSupport.h` layout instead.
 - Use include guards derived from the file name:
 
   ```cpp
@@ -414,25 +423,63 @@ retaining normal compiler warnings and compilation checks.
 
 ## Formatting
 
-- Indent with four spaces; do not use tabs.
-- Limit every line in C++ sources, headers, CMake files, and repository
-  documentation to 115 characters, except complete shell commands inside
-  fenced Markdown code blocks. Wrap any other line that would exceed this
-  limit.
-  Count leading indentation and all other characters when measuring the line.
-  Do not wrap a C++ statement, declaration, condition, call, or expression when
-  the complete construct fits within 115 characters. When wrapping is required,
-  keep as much of the construct as practical on each line without exceeding the
-  limit.
+- Indent with four spaces for each indentation level; never use tabs. Indent
+  every nested namespace, class, structure, function, method, condition, loop,
+  switch, and other block.
+- Indent `public:`, `protected:`, and `private:` inside their class. Indent class
+  members four additional spaces beneath their access specifier.
+- Limit every line in `.cpp`, `.cc`, `.cxx`, `.h`, `.hpp`, and `.hxx` files to
+  120 characters. Wrap longer declarations, function calls, conditions,
+  expressions, strings, and comments with continued indentation.
+- Limit every line in CMake files and repository documentation to 115
+  characters, except complete shell commands inside fenced Markdown code
+  blocks. Wrap any other line that would exceed this limit.
+- Count leading indentation and all other characters when measuring a line. Do
+  not wrap a C++ statement, declaration, condition, call, or expression when
+  the complete construct fits within 120 characters. When wrapping is required,
+  keep as much of the construct as practical on each line without exceeding its
+  applicable limit.
   In `.md` files only, keep each fenced shell-command example on one physical
   line without a continuation backslash. A complete command in such a block may
   exceed 115 characters when required to preserve its one-line form.
-- Use Allman braces for namespaces, classes, functions, and control statements:
+- Use Allman braces for namespaces, classes, structures, functions, methods,
+  conditions, loops, switches, and every other block. Place each opening brace
+  on the next line aligned with its block declaration. Align each closing brace
+  with the corresponding opening brace, and indent the enclosed content by four
+  additional spaces.
+- Always use braces, including when a control-flow body contains only one
+  statement. Never use a single-line block.
+- Use the repository-root `.clang-format` for mechanical formatting. Exclude
+  generated sources below `auto-gen` or `generated` directories and any
+  vendored or third-party code from repository-wide formatting operations.
+  This exclusion includes dependency-prefix headers below
+  `xWalkLibrary/x86_64` and `xWalkLibrary/aarch64`.
+- Before completing any C++ change, run the repository-owned formatter:
+
+  ```bash
+  xWalkTool/py-agent/dev-tool/styler-tool/xWalkStyler format
+  ```
+
+- Before submitting or merging any C++ change, run its non-mutating CI check:
+
+  ```bash
+  xWalkTool/py-agent/dev-tool/styler-tool/xWalkStyler check
+  ```
 
   ```cpp
-  if (value > maximum)
+  namespace xwalk::hal
   {
-      XWALK_HAL_ERROR(XWALK_RANGE, "Value is outside its range");
+      class XWalkExample
+      {
+          public:
+              void update(const boolean enabled)
+              {
+                  if (enabled)
+                  {
+                      performUpdate();
+                  }
+              }
+      };
   }
   ```
 

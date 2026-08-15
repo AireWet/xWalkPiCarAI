@@ -28,12 +28,14 @@
  * @namespace xwalk::hal::sim
  * @brief Contains device-free and executable-level xWalkSpi simulation support.
  */
-namespace xwalk::hal::sim {
+namespace xwalk::hal::sim
+{
 
-/** @copydoc createSpiDevice */
-owningpointer<XWalkSpiDevice> createSpiDevice() {
-  XWALK_HAL_TRACE_UID0(RPI .057, "Creating host-mirror SPI device");
-  return std::make_unique<XWalkSpiHostStub>();
-}
+    /** @copydoc createSpiDevice */
+    owningpointer<XWalkSpiDevice> createSpiDevice()
+    {
+        XWALK_HAL_TRACE_UID0(RPI .057, "Creating host-mirror SPI device");
+        return std::make_unique<XWalkSpiHostStub>();
+    }
 
 } /* namespace xwalk::hal::sim */

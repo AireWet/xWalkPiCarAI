@@ -37,29 +37,28 @@
 namespace xwalk::agent::test
 {
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-/** @brief Counts host-stub application invocations. */
-struct XWalkBootTestState
-{
-    /** @brief Number of application callback invocations. */
-    agent::uint32 runCount{};
-};
+    /** @brief Counts host-stub application invocations. */
+    struct XWalkBootTestState
+    {
+            /** @brief Number of application callback invocations. */
+            agent::uint32 runCount{};
+    };
 
-/******************************************************************************
- * Function declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Function declarations
+     ******************************************************************************/
 
-/**
- * @brief Verifies that the exact simulated service table is forwarded.
- * @param[in,out] context Non-null pointer to an `XWalkBootTestState` object.
- * @param[in] services Simulated services supplied by the host boot stub.
- * @return Deterministic test status value seven.
- */
-agent::int32 runBootTestApplication(agent::contextpointer context,
-    XWalkBootServices& services);
+    /**
+     * @brief Verifies that the exact simulated service table is forwarded.
+     * @param[in,out] context Non-null pointer to an `XWalkBootTestState` object.
+     * @param[in] services Simulated services supplied by the host boot stub.
+     * @return Deterministic test status value seven.
+     */
+    agent::int32 runBootTestApplication(agent::contextpointer context, XWalkBootServices& services);
 
 } /* namespace xwalk::agent::test */
 

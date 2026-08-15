@@ -24,20 +24,19 @@
 /** @brief Contains reusable xWalkCamera host-test support. */
 namespace xwalk::hal::test::camera
 {
-/**
- * @brief Records one camera request without accessing a physical device.
- * @param[in,out] context Non-null, non-owning pointer to `CameraTestState`.
- * @param[in] outputPath Non-empty destination supplied by the camera.
- * @param[in] configuration Validated capture settings copied into the state.
- * @return The configured in-memory result.
- */
-boolean captureImage(contextpointer context, stringview outputPath,
-    const XWalkCameraConfiguration& configuration)
-{
-    CameraTestState& state = *static_cast<CameraTestState*>(context);
-    ++state.captureCount;
-    state.outputPath = outputPath;
-    state.configuration = configuration;
-    return state.result;
-}
+    /**
+     * @brief Records one camera request without accessing a physical device.
+     * @param[in,out] context Non-null, non-owning pointer to `CameraTestState`.
+     * @param[in] outputPath Non-empty destination supplied by the camera.
+     * @param[in] configuration Validated capture settings copied into the state.
+     * @return The configured in-memory result.
+     */
+    boolean captureImage(contextpointer context, stringview outputPath, const XWalkCameraConfiguration& configuration)
+    {
+        CameraTestState& state = *static_cast<CameraTestState*>(context);
+        ++state.captureCount;
+        state.outputPath = outputPath;
+        state.configuration = configuration;
+        return state.result;
+    }
 } /* namespace xwalk::hal::test::camera */

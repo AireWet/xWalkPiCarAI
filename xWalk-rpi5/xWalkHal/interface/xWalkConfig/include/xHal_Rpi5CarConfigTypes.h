@@ -41,20 +41,20 @@
 namespace xwalk::hal
 {
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/** @brief Ordered option names and owned string values belonging to one section. */
-using configsection = orderedmap<string, string>;
+    /** @brief Ordered option names and owned string values belonging to one section. */
+    using configsection = orderedmap<string, string>;
 
-/**
- * @brief Ordered named configuration sections.
- *
- * @note
- * The empty section name represents options that appear before a named section.
- */
-using configsections = orderedmap<string, configsection>;
+    /**
+     * @brief Ordered named configuration sections.
+     *
+     * @note
+     * The empty section name represents options that appear before a named section.
+     */
+    using configsections = orderedmap<string, configsection>;
 
 } /* namespace xwalk::hal */
 

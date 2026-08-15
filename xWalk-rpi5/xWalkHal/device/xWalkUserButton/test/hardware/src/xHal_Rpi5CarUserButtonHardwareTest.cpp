@@ -44,10 +44,8 @@
 XWalkHal::int32 main()
 {
     XWalkHal::XWalkGpioLinux backend;
-    const XWalkHal::XWalkGpioCallbacks callbacks =
-        XHAL_GPIO_CALLBACKS(XWalkHal::XWalkGpioLinux);
-    XWalkHal::XWalkGpio gpio(&backend, callbacks, "USER", XWalkHal::XWalkGpioMode::Input,
-        XWalkHal::XWalkGpioPull::Up);
+    const XWalkHal::XWalkGpioCallbacks callbacks = XHAL_GPIO_CALLBACKS(XWalkHal::XWalkGpioLinux);
+    XWalkHal::XWalkGpio gpio(&backend, callbacks, "USER", XWalkHal::XWalkGpioMode::Input, XWalkHal::XWalkGpioPull::Up);
     XWalkHal::XWalkUserButton button(gpio);
     button.start();
     XWalkHal::common::sleepMilliseconds(XHAL_RPI5CAR_USER_BUTTON_POLL_INTERVAL_MS);

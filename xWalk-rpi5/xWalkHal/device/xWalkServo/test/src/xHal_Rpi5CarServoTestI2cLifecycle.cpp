@@ -37,23 +37,23 @@
 namespace xwalk::hal::test
 {
 
-/******************************************************************************
- * Constructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Constructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Constructs an empty in-memory I2C recorder.
- *
- * @post
- * The write count is zero.
- */
-XWalkServoTestI2c::XWalkServoTestI2c() = default;
+    /**
+     * @brief Constructs an empty in-memory I2C recorder.
+     *
+     * @post
+     * The write count is zero.
+     */
+    XWalkServoTestI2c::XWalkServoTestI2c() = default;
 
-/******************************************************************************
- * Destructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Destructor definitions
+     ******************************************************************************/
 
-/** @brief Destroys the recorder and its stored payloads. */
-XWalkServoTestI2c::~XWalkServoTestI2c() = default;
+    /** @brief Destroys the recorder and its stored payloads. */
+    XWalkServoTestI2c::~XWalkServoTestI2c() = default;
 
 } /* namespace xwalk::hal::test */

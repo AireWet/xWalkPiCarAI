@@ -43,75 +43,89 @@
 namespace xwalk::hal::test
 {
 
-/******************************************************************************
- * Test function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Test function definitions
+     ******************************************************************************/
 
-/**
- * @brief Verifies exception behavior for invalid PWM inputs.
- *
- * @post
- * The assertions confirm rejection of invalid channel, frequency, pulse,
- * and percentage inputs.
- */
-void testValidation()
-{
-    XWalkPwmTestI2c bus;
-    XWalkI2c i2c(&bus, &XWalkPwmTestI2c::probeCallback, &XWalkPwmTestI2c::writeRegisterCallback,
-        &XWalkPwmTestI2c::readCallback);
-    XWalkPwmTimerState timerState;
-    expectFailure([&i2c, &timerState]()
+    /**
+     * @brief Verifies exception behavior for invalid PWM inputs.
+     *
+     * @post
+     * The assertions confirm rejection of invalid channel, frequency, pulse,
+     * and percentage inputs.
+     */
+    void testValidation()
     {
-        XWalkPwm invalid(i2c, 20U, 0x14U, timerState);
-    });
-    expectFailure([&i2c, &timerState]()
-    {
-        XWalkPwm invalid(i2c, 0U, 0x80U, timerState);
-    });
-    expectFailure([&i2c, &timerState]()
-    {
-        XWalkPwm invalid(i2c, "PWM0", 0x14U, timerState);
-    });
+        XWalkPwmTestI2c bus;
+        XWalkI2c i2c(&bus,
+                     &XWalkPwmTestI2c::probeCallback,
+                     &XWalkPwmTestI2c::writeRegisterCallback,
+                     &XWalkPwmTestI2c::readCallback);
+        XWalkPwmTimerState timerState;
+        expectFailure(
+            [&i2c, &timerState]()
+            {
+                XWalkPwm invalid(i2c, 20U, 0x14U, timerState);
+            });
+        expectFailure(
+            [&i2c, &timerState]()
+            {
+                XWalkPwm invalid(i2c, 0U, 0x80U, timerState);
+            });
+        expectFailure(
+            [&i2c, &timerState]()
+            {
+                XWalkPwm invalid(i2c, "PWM0", 0x14U, timerState);
+            });
 
-    XWalkPwm pwm(i2c, 0U, 0x14U, timerState);
-    expectFailure([&pwm]()
-    {
-        pwm.setFrequency(0.0);
-    });
-    expectFailure([&pwm]()
-    {
-        pwm.setPulseWidth(-1.0);
-    });
-    expectFailure([&pwm]()
-    {
-        pwm.setPulseWidthPercent(101.0);
-    });
-    expectFailure([&pwm]()
-    {
-        pwm.setFrequency(XHAL_POSITIVE_INFINITY(float64));
-    });
-    expectFailure([&pwm]()
-    {
-        const float64 maximumFrequencyHz = static_cast<float64>(XHAL_RPI5CAR_UINT32_MAX);
-        const float64 excessiveFrequencyHz = maximumFrequencyHz + 1.0;
-        pwm.setFrequency(excessiveFrequencyHz);
-    });
-    expectFailure([&pwm]()
-    {
-        pwm.setPeriod(XHAL_POSITIVE_INFINITY(float64));
-    });
-    expectFailure([&pwm]()
-    {
-        pwm.setPrescaler(XHAL_POSITIVE_INFINITY(float64));
-    });
-    expectFailure([&pwm]()
-    {
-        pwm.setPulseWidth(XHAL_POSITIVE_INFINITY(float64));
-    });
-    expectFailure([&pwm]()
-    {
-        pwm.setPulseWidthPercent(XHAL_POSITIVE_INFINITY(float64));
-    });
-}
+        XWalkPwm pwm(i2c, 0U, 0x14U, timerState);
+        expectFailure(
+            [&pwm]()
+            {
+                pwm.setFrequency(0.0);
+            });
+        expectFailure(
+            [&pwm]()
+            {
+                pwm.setPulseWidth(-1.0);
+            });
+        expectFailure(
+            [&pwm]()
+            {
+                pwm.setPulseWidthPercent(101.0);
+            });
+        expectFailure(
+            [&pwm]()
+            {
+                pwm.setFrequency(XHAL_POSITIVE_INFINITY(float64));
+            });
+        expectFailure(
+            [&pwm]()
+            {
+                const float64 maximumFrequencyHz = static_cast<float64>(XHAL_RPI5CAR_UINT32_MAX);
+                const float64 excessiveFrequencyHz = maximumFrequencyHz + 1.0;
+                pwm.setFrequency(excessiveFrequencyHz);
+            });
+        expectFailure(
+            [&pwm]()
+            {
+                pwm.setPeriod(XHAL_POSITIVE_INFINITY(float64));
+            });
+        expectFailure(
+            [&pwm]()
+            {
+                pwm.setPrescaler(XHAL_POSITIVE_INFINITY(float64));
+            });
+        expectFailure(
+            [&pwm]()
+            {
+                pwm.setPulseWidth(XHAL_POSITIVE_INFINITY(float64));
+            });
+        expectFailure(
+            [&pwm]()
+            {
+                pwm.setPulseWidthPercent(XHAL_POSITIVE_INFINITY(float64));
+            });
+    }
 
 } /* namespace xwalk::hal::test */

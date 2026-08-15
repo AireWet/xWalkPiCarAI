@@ -41,38 +41,36 @@
 namespace xwalk::agent
 {
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/**
- * @brief Suspends calibration for one bounded interval.
- * @param[in,out] context Non-owning application context valid for the call duration.
- * @param[in] durationMs Requested delay in milliseconds.
- */
-using grayscalecalibrationdelaycallback = void (*)(
-    agent::contextpointer context, agent::uint32 durationMs);
+    /**
+     * @brief Suspends calibration for one bounded interval.
+     * @param[in,out] context Non-owning application context valid for the call duration.
+     * @param[in] durationMs Requested delay in milliseconds.
+     */
+    using grayscalecalibrationdelaycallback = void (*)(agent::contextpointer context, agent::uint32 durationMs);
 
-/**
- * @brief Reports whether the active calibration may continue.
- * @param[in,out] context Non-owning application context valid for the call duration.
- * @return `true` to continue or `false` to stop and leave pending values unsaved.
- */
-using grayscalecalibrationcontinuecallback = agent::boolean (*)(
-    agent::contextpointer context);
+    /**
+     * @brief Reports whether the active calibration may continue.
+     * @param[in,out] context Non-owning application context valid for the call duration.
+     * @return `true` to continue or `false` to stop and leave pending values unsaved.
+     */
+    using grayscalecalibrationcontinuecallback = agent::boolean (*)(agent::contextpointer context);
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-/** @brief Pending line and cliff references produced by calibration. */
-struct XWalkGrayscaleCalibrationResult
-{
-    /** @brief Three pending line-reference ADC values. */
-    hal::linetrackervalues lineReference{1'000, 1'000, 1'000};
-    /** @brief Three pending cliff-reference ADC values. */
-    hal::linetrackervalues cliffReference{500, 500, 500};
-};
+    /** @brief Pending line and cliff references produced by calibration. */
+    struct XWalkGrayscaleCalibrationResult
+    {
+            /** @brief Three pending line-reference ADC values. */
+            hal::linetrackervalues lineReference{1'000, 1'000, 1'000};
+            /** @brief Three pending cliff-reference ADC values. */
+            hal::linetrackervalues cliffReference{500, 500, 500};
+    };
 
 } /* namespace xwalk::agent */
 

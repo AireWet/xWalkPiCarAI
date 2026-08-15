@@ -29,15 +29,19 @@ xWalkTool/py-agent/gerrit-tool/local-linux/gerrit-local.sh install
 ```
 
 The script prompts for the password, installs below `$HOME`, starts Gerrit and
-Caddy, and validates the installation. After a reboot, use:
+Caddy, starts CI when `$HOME/.xwalk-ci.env` exists, and validates the
+installation. After a reboot, use:
 
 ```bash
 xWalkTool/py-agent/gerrit-tool/local-linux/gerrit-local.sh start
 ```
 
-Caddy runs as a transient user-level systemd service. This keeps the HTTPS
-proxy alive after the setup command returns without installing a system
-service or requiring root access.
+This command recovers Gerrit, Caddy, and the configured CI worker as one
+lifecycle. The matching status, stop, and restart controls also include CI.
+
+Caddy and the configured CI worker run as transient user-level systemd
+services. This keeps both processes alive after the setup command returns
+without installing a system service or requiring root access.
 
 ## Browser access
 

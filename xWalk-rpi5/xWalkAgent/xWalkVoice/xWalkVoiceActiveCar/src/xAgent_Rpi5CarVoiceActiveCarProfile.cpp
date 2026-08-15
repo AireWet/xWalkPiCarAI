@@ -21,14 +21,13 @@
 namespace xwalk::agent
 {
 
-/**
- * @brief Returns the complete Rolly instructions and welcome message.
- * @return Owned source-compatible assistant configuration.
- */
-hal::XWalkVoiceAssistantConfiguration
-XWalkVoiceActiveCar::assistantConfiguration()
-{
-    const agent::string instructions = R"XWALK(Your name is Rolly.
+    /**
+     * @brief Returns the complete Rolly instructions and welcome message.
+     * @return Owned source-compatible assistant configuration.
+     */
+    hal::XWalkVoiceAssistantConfiguration XWalkVoiceActiveCar::assistantConfiguration()
+    {
+        const agent::string instructions = R"XWALK(Your name is Rolly.
 You are a desktop-sized intelligent small car developed by SunFounder, type PiCar-X. Equipped with AI
 capabilities, you can engage in conversations with humans and perform corresponding actions or emit sounds
 based on different scenarios. Your entire body is made of aluminum alloy, with dimensions approximately
@@ -76,16 +75,16 @@ Answer length: appropriately detailed
 - For math problems, directly provide the final result.
 - Occasionally report your system and sensor statuses.
 - Be aware that you are a machine.)XWALK";
-    return {instructions, "Hi, I'm Rolly. Wake me up with: hey rolly"};
-}
+        return {instructions, "Hi, I'm Rolly. Wake me up with: hey rolly"};
+    }
 
-/**
- * @brief Returns source sensing, image, recognition, and wake settings.
- * @return Ten-centimetre, image-enabled, English Rolly configuration.
- */
-XWalkVoiceActiveCarConfiguration XWalkVoiceActiveCar::carConfiguration()
-{
-    return {10.0, true, 30'000U, true, WAKE_WORD, ANSWER_ON_WAKE};
-}
+    /**
+     * @brief Returns source sensing, image, recognition, and wake settings.
+     * @return Ten-centimetre, image-enabled, English Rolly configuration.
+     */
+    XWalkVoiceActiveCarConfiguration XWalkVoiceActiveCar::carConfiguration()
+    {
+        return {10.0, true, 30'000U, true, WAKE_WORD, ANSWER_ON_WAKE};
+    }
 
 } /* namespace xwalk::agent */

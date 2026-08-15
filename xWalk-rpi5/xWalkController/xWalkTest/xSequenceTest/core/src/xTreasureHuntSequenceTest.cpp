@@ -34,35 +34,32 @@
 namespace
 {
 
-/**
- * @brief Verifies target selection, success, movement, repeat, quit, and cleanup.
- * @param[in,out] context Complete in-memory Controller-to-HAL composition.
- */
-void testTreasureHunt(xwalk::agent::test::ControllerCommandTestContext& context)
-{
-    context.state->inputLines = {"w", "space", "quit"};
-    context.state->visionColorWidths = {120U, 40U, 40U};
-    context.state->treasureColorNames = {"red", "blue"};
-    xwalk::agent::test::XWalkControllerSequence sequence(
-        *context.treasureHuntController);
-    assert(sequence.run({{"treasure-hunt"}}) == 0);
-    assert(context.state->visionStarted == false);
-    assert(context.state->treasureColorIndex == 2U);
-    assert(context.state->visionObservationCount == 3U);
-    assert(context.state->inputIndex == 3U);
-    assert(context.state->spokenText == ctrl::stringvector({
-        "Game start!", "Look for red!", "Well done!", "Look for blue!",
-        "Look for blue!", "Goodbye!"}));
+    /**
+     * @brief Verifies target selection, success, movement, repeat, quit, and cleanup.
+     * @param[in,out] context Complete in-memory Controller-to-HAL composition.
+     */
+    void testTreasureHunt(xwalk::agent::test::ControllerCommandTestContext& context)
+    {
+        context.state->inputLines = {"w", "space", "quit"};
+        context.state->visionColorWidths = {120U, 40U, 40U};
+        context.state->treasureColorNames = {"red", "blue"};
+        xwalk::agent::test::XWalkControllerSequence sequence(*context.treasureHuntController);
+        assert(sequence.run({{"treasure-hunt"}}) == 0);
+        assert(context.state->visionStarted == false);
+        assert(context.state->treasureColorIndex == 2U);
+        assert(context.state->visionObservationCount == 3U);
+        assert(context.state->inputIndex == 3U);
+        assert(context.state->spokenText ==
+               ctrl::stringvector(
+                   {"Game start!", "Look for red!", "Well done!", "Look for blue!", "Look for blue!", "Goodbye!"}));
 
-    assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"vision.start", "controller.delay", "hal.speech.speak", "vision.color",
-            "hal.speech.speak", "controller.input", "vision.observe",
-            "hal.speech.speak", "vision.color", "hal.speech.speak",
-            "hal.i2c.write", "controller.delay", "hal.i2c.write",
-            "controller.input", "vision.observe", "hal.speech.speak",
-            "controller.input", "vision.observe", "vision.stop",
-            "hal.speech.speak"}));
-}
+        assert(xwalk::agent::test::containsOrderedEvents(
+            context.state->eventLog,
+            {"vision.start",     "controller.delay", "hal.speech.speak", "vision.color",     "hal.speech.speak",
+             "controller.input", "vision.observe",   "hal.speech.speak", "vision.color",     "hal.speech.speak",
+             "hal.i2c.write",    "controller.delay", "hal.i2c.write",    "controller.input", "vision.observe",
+             "hal.speech.speak", "controller.input", "vision.observe",   "vision.stop",      "hal.speech.speak"}));
+    }
 
 } /* namespace */
 
@@ -78,6 +75,5 @@ void testTreasureHunt(xwalk::agent::test::ControllerCommandTestContext& context)
  */
 int xWalkTreasureHuntCommandSequenceHostTest(int argc, char* argv[])
 {
-    return xwalk::agent::test::runControllerCommandHostTest(
-        argc, argv, &testTreasureHunt);
+    return xwalk::agent::test::runControllerCommandHostTest(argc, argv, &testTreasureHunt);
 }

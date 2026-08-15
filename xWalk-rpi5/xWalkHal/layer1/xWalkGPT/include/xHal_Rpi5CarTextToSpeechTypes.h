@@ -41,28 +41,28 @@
 namespace xwalk::hal
 {
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/**
- * @brief Callback that synthesizes and outputs one text value.
- *
- * @param[in,out] context
- * Nullable non-owning backend context supplied during construction. Null is
- * permitted only when the callback implementation supports it.
- *
- * @param[in] text
- * Non-owning text view valid only for the duration of the synchronous callback.
- * The backend determines its supported encoding, language, and maximum length.
- *
- * @pre
- * Any non-null context remains valid for the text-to-speech object's lifetime.
- *
- * @warning
- * The callback must not retain `text` beyond the invocation.
- */
-using texttospeechspeakcallback = void (*)(contextpointer context, stringview text);
+    /**
+     * @brief Callback that synthesizes and outputs one text value.
+     *
+     * @param[in,out] context
+     * Nullable non-owning backend context supplied during construction. Null is
+     * permitted only when the callback implementation supports it.
+     *
+     * @param[in] text
+     * Non-owning text view valid only for the duration of the synchronous callback.
+     * The backend determines its supported encoding, language, and maximum length.
+     *
+     * @pre
+     * Any non-null context remains valid for the text-to-speech object's lifetime.
+     *
+     * @warning
+     * The callback must not retain `text` beyond the invocation.
+     */
+    using texttospeechspeakcallback = void (*)(contextpointer context, stringview text);
 
 } /* namespace xwalk::hal */
 

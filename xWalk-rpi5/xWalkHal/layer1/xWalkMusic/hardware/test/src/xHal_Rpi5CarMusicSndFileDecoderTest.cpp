@@ -42,17 +42,14 @@
 int main(int argumentCount, char* arguments[])
 {
     assert(argumentCount == 2);
-    const XWalkHal::XWalkMusicAlsaOperations operations =
-        XWalkHal::XWalkMusicSndFileDecoder::operations();
+    const XWalkHal::XWalkMusicAlsaOperations operations = XWalkHal::XWalkMusicSndFileDecoder::operations();
     assert(operations.decodeAudio != nullptr);
-    const XWalkHal::XWalkMusicAlsaAudioData audioData =
-        operations.decodeAudio(nullptr, arguments[1]);
+    const XWalkHal::XWalkMusicAlsaAudioData audioData = operations.decodeAudio(nullptr, arguments[1]);
     assert(audioData.sampleRateHz > 0U);
     assert(audioData.channelCount > 0U);
     assert(audioData.channelCount <= XHAL_RPI5CAR_AUDIO_MAXIMUM_CHANNEL_COUNT);
     assert(!audioData.pcmData.empty());
-    const XWalkHal::size bytesPerFrame =
-        static_cast<XWalkHal::size>(audioData.channelCount) * 2U;
+    const XWalkHal::size bytesPerFrame = static_cast<XWalkHal::size>(audioData.channelCount) * 2U;
     assert((audioData.pcmData.size() % bytesPerFrame) == 0U);
     return 0;
 }

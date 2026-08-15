@@ -41,41 +41,40 @@
 namespace xwalk::hal
 {
 
-/******************************************************************************
- * Forward declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Forward declarations
+     ******************************************************************************/
 
-/** @brief Declares the ADC dependency referenced by module-owned non-owning pointers. */
-class XWalkAdc;
+    /** @brief Declares the ADC dependency referenced by module-owned non-owning pointers. */
+    class XWalkAdc;
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/** @brief Fixed left, middle, and right calibrated sensor values in ADC counts. */
-using linetrackervalues = fixedarray<int32, XHAL_RPI5CAR_LINE_TRACKER_CHANNEL_COUNT>;
-/** @brief Fixed left, middle, and right floating-point calibration values. */
-using linetrackercalibrationvalues =
-    fixedarray<float64, XHAL_RPI5CAR_LINE_TRACKER_CHANNEL_COUNT>;
-/** @brief Fixed status values where zero is white and one is black. */
-using linetrackerstatus = fixedarray<uint8, XHAL_RPI5CAR_LINE_TRACKER_CHANNEL_COUNT>;
-/** @brief Fixed non-owning ADC pointers ordered left, middle, and right. */
-using linetrackeradcpointers = fixedarray<XWalkAdc*, XHAL_RPI5CAR_LINE_TRACKER_CHANNEL_COUNT>;
+    /** @brief Fixed left, middle, and right calibrated sensor values in ADC counts. */
+    using linetrackervalues = fixedarray<int32, XHAL_RPI5CAR_LINE_TRACKER_CHANNEL_COUNT>;
+    /** @brief Fixed left, middle, and right floating-point calibration values. */
+    using linetrackercalibrationvalues = fixedarray<float64, XHAL_RPI5CAR_LINE_TRACKER_CHANNEL_COUNT>;
+    /** @brief Fixed status values where zero is white and one is black. */
+    using linetrackerstatus = fixedarray<uint8, XHAL_RPI5CAR_LINE_TRACKER_CHANNEL_COUNT>;
+    /** @brief Fixed non-owning ADC pointers ordered left, middle, and right. */
+    using linetrackeradcpointers = fixedarray<XWalkAdc*, XHAL_RPI5CAR_LINE_TRACKER_CHANNEL_COUNT>;
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-/**
- * @brief Contains per-channel linear calibration coefficients.
- */
-struct XWalkLineCalibration
-{
-    /** @brief Finite multiplicative coefficient for each sensor channel. */
-    linetrackercalibrationvalues slopes{1.0, 1.0, 1.0};
-    /** @brief Finite additive coefficient for each sensor channel, in ADC counts. */
-    linetrackercalibrationvalues offsets{0.0, 0.0, 0.0};
-};
+    /**
+     * @brief Contains per-channel linear calibration coefficients.
+     */
+    struct XWalkLineCalibration
+    {
+            /** @brief Finite multiplicative coefficient for each sensor channel. */
+            linetrackercalibrationvalues slopes{1.0, 1.0, 1.0};
+            /** @brief Finite additive coefficient for each sensor channel, in ADC counts. */
+            linetrackercalibrationvalues offsets{0.0, 0.0, 0.0};
+    };
 
 } /* namespace xwalk::hal */
 

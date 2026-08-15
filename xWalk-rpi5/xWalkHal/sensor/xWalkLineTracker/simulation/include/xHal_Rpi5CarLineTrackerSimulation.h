@@ -13,7 +13,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Exercises grayscale and line position through an in-memory I2C bus. */
-int32 runLineTrackerSimulation();
+    /** @brief Exercises grayscale and line position through an in-memory I2C bus. */
+    int32 runLineTrackerSimulation();
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_LINE_TRACKER_SIMULATION_H */

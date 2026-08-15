@@ -13,7 +13,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Exercises one short active-low press through in-memory GPIO. */
-int32 runUserButtonSimulation();
+    /** @brief Exercises one short active-low press through in-memory GPIO. */
+    int32 runUserButtonSimulation();
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_USER_BUTTON_SIMULATION_H */

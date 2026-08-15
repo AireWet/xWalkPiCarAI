@@ -39,6 +39,5 @@
  */
 ctrl::int32 main(ctrl::int32 argumentCount, ctrl::charpointer arguments[])
 {
-    return xwalk::ctrl::XWALK_runHostControllerApplication(
-        argumentCount, arguments);
+    return xwalk::ctrl::XWALK_runHostControllerApplication(argumentCount, arguments);
 }

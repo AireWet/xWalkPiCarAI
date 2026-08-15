@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import shlex
 import shutil
+import signal
 import subprocess
 import tempfile
 import time
@@ -27,6 +28,13 @@ class XWalkGerritCi:
         "xWalkHal", "xWalkIW", "xWalkLibrary", "xWalkTrace", "xWalk-rpi5-sim",
         "xWalk-rpi5",
     }
+
+    @staticmethod
+    def terminate_on_signal(signal_number: int, unused_frame: object) -> None:
+        """Convert an orderly service signal into a catchable process exit."""
+
+        del unused_frame
+        raise SystemExit(128 + signal_number)
 
     def __init__(self) -> None:
         """Load the fixed service configuration from the server-user environment."""
@@ -121,6 +129,14 @@ class XWalkGerritCi:
         ).expanduser()
         self.state_directory.mkdir(parents=True, exist_ok=True)
         self.log_directory.mkdir(parents=True, exist_ok=True)
+        recovered_files = XWalkGerritQuality.reconcile_interrupted_states(
+            self.log_directory
+        )
+        if recovered_files:
+            print(
+                f"Cancelled interrupted checks in {recovered_files} retained CI run(s)",
+                flush=True,
+            )
         self.log_server = XWalkGerritLogServer(
             self.log_directory,
             os.environ.get("XWALK_CI_LOG_HTTP_HOST", "127.0.0.1"),
@@ -662,6 +678,100 @@ class XWalkGerritCi:
             )
         return False
 
+    def remote_branch_revision(
+        self, remote: str, branch: str, environment: dict[str, str],
+    ) -> str:
+        """Return one remote branch revision, or an empty string when it is unavailable."""
+
+        result = subprocess.run(
+            ["git", "ls-remote", remote, f"refs/heads/{branch}"],
+            check=False, text=True, env=environment,
+            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+        )
+        if result.returncode != 0:
+            return ""
+        fields = result.stdout.split()
+        if len(fields) != 2 or fields[1] != f"refs/heads/{branch}":
+            return ""
+        revision = fields[0]
+        valid_revision = len(revision) == 40 and all(
+            character in "0123456789abcdefABCDEF" for character in revision
+        )
+        return revision if valid_revision else ""
+
+    def submitted_change_event(self, revision: str) -> dict[str, Any] | None:
+        """Recover the merged-change event fields for one submitted branch revision."""
+
+        command = (
+            "gerrit query --current-patch-set --format=JSON "
+            f"commit:{revision}"
+        )
+        result = subprocess.run(
+            [*self.ssh_arguments(), command], check=False, text=True,
+            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+        )
+        if result.returncode != 0:
+            return None
+        for line in result.stdout.splitlines():
+            try:
+                change = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            patch_set = change.get("currentPatchSet", {})
+            matches_revision = patch_set.get("revision") == revision
+            matches_source = (
+                change.get("project") == self.github_source_project
+                and change.get("branch") == self.github_source_branch
+            )
+            if (
+                change.get("status") == "MERGED"
+                and matches_revision
+                and matches_source
+                and isinstance(patch_set.get("number"), int)
+            ):
+                return {
+                    "type": "change-merged",
+                    "change": change,
+                    "patchSet": {"number": patch_set["number"]},
+                    "newRev": revision,
+                }
+        return None
+
+    def reconcile_github_uplift(self) -> None:
+        """Recover a guarded GitHub uplift when its live Gerrit merge event was missed."""
+
+        if not self.github_push_enabled or not self.validate_github_destination():
+            return
+        gerrit_remote = (
+            f"ssh://{self.user}@{self.host}:{self.port}/"
+            f"{self.github_source_project}"
+        )
+        gerrit_revision = self.remote_branch_revision(
+            gerrit_remote, self.github_source_branch, self.git_environment()
+        )
+        github_revision = self.remote_branch_revision(
+            self.github_remote, self.github_branch, self.github_git_environment()
+        )
+        if (
+            not gerrit_revision
+            or not github_revision
+            or gerrit_revision == github_revision
+        ):
+            return
+        event = self.submitted_change_event(gerrit_revision)
+        if event is None or not self.matching_merge_event(event):
+            print(
+                "GitHub uplift recovery skipped: submitted Gerrit tip did not "
+                "match the guarded merge policy",
+                flush=True,
+            )
+            return
+        print(
+            f"Recovering missed GitHub uplift for Gerrit tip {gerrit_revision}",
+            flush=True,
+        )
+        self.mirror(event)
+
     def mirror(self, event: dict[str, Any]) -> None:
         """Publish a verified submitted xWalk integration change to GitHub."""
 
@@ -807,6 +917,8 @@ class XWalkGerritCi:
     def run(self) -> None:
         """Reconnect indefinitely so temporary Gerrit outages do not stop CI."""
 
+        signal.signal(signal.SIGTERM, self.terminate_on_signal)
+
         self.validate_private_key(self.private_key)
         supported_targets = {(project, "main") for project in self.repositories}
         supported_targets.add(("xWalkPiCarAI", "master"))
@@ -830,6 +942,7 @@ class XWalkGerritCi:
             flush=True,
         )
         while True:
+            self.reconcile_github_uplift()
             self.consume_stream()
             print("Gerrit event stream closed; reconnecting in five seconds", flush=True)
             time.sleep(5)

@@ -33,38 +33,37 @@
 namespace xwalk::hal::test
 {
 
-/** @brief Composes P13/D4 and P12/D5 motors over Linux I2C and GPIO. */
-class XWalkMotorSequenceLinux
-{
-public:
+    /** @brief Composes P13/D4 and P12/D5 motors over Linux I2C and GPIO. */
+    class XWalkMotorSequenceLinux
+    {
+        public:
+            /**
+             * @brief Runs a bounded physical two-motor sequence.
+             *
+             * @param[in] i2cDevice
+             * Linux I2C character-device path.
+             *
+             * @param[in] gpioDevice
+             * Linux GPIO character-device path.
+             *
+             * @param[in] chipName
+             * Optional expected GPIO chip name.
+             *
+             * @param[in] chipLabel
+             * Optional expected GPIO chip label.
+             *
+             * @param[in] cycleCount
+             * Inclusive reverse/forward cycle count from one through 100.
+             *
+             * @warning
+             * This operation physically drives two connected motors in both directions.
+             */
+            void
+            run(cstring i2cDevice, cstring gpioDevice, stringview chipName, stringview chipLabel, uint32 cycleCount);
 
-    /**
-     * @brief Runs a bounded physical two-motor sequence.
-     *
-     * @param[in] i2cDevice
-     * Linux I2C character-device path.
-     *
-     * @param[in] gpioDevice
-     * Linux GPIO character-device path.
-     *
-     * @param[in] chipName
-     * Optional expected GPIO chip name.
-     *
-     * @param[in] chipLabel
-     * Optional expected GPIO chip label.
-     *
-     * @param[in] cycleCount
-     * Inclusive reverse/forward cycle count from one through 100.
-     *
-     * @warning
-     * This operation physically drives two connected motors in both directions.
-     */
-    void run(cstring i2cDevice, cstring gpioDevice, stringview chipName,
-        stringview chipLabel, uint32 cycleCount);
-
-    /** @brief Waits for the requested number of milliseconds. */
-    static void wait(contextpointer context, uint32 durationMilliseconds);
-};
+            /** @brief Waits for the requested number of milliseconds. */
+            static void wait(contextpointer context, uint32 durationMilliseconds);
+    };
 
 } /* namespace xwalk::hal::test */
 

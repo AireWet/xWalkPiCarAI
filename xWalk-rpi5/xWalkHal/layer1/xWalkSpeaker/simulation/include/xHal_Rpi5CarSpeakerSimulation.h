@@ -13,7 +13,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Exercises Speaker without decoding files or opening audio devices. */
-int32 runSpeakerSimulation();
+    /** @brief Exercises Speaker without decoding files or opening audio devices. */
+    int32 runSpeakerSimulation();
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_SPEAKER_SIMULATION_H */

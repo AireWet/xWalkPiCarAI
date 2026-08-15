@@ -13,7 +13,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Exercises BoardControl without opening physical devices. */
-int32 runBoardControlSimulation();
+    /** @brief Exercises BoardControl without opening physical devices. */
+    int32 runBoardControlSimulation();
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_BOARD_CONTROL_SIMULATION_H */

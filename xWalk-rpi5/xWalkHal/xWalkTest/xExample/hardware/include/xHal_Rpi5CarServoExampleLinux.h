@@ -38,34 +38,31 @@
 namespace xwalk::hal::example
 {
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/** @brief Composes channel-one sweeps with Linux I2C and console output. */
-class XWalkServoExampleLinux final
-{
-private:
+    /** @brief Composes channel-one sweeps with Linux I2C and console output. */
+    class XWalkServoExampleLinux final
+    {
+        private:
+            XWalkServo* servoObject{nullptr};
 
-    XWalkServo* servoObject{nullptr};
+        protected:
+            static XWalkServoExampleLinux& adapter(contextpointer context);
+            static void setAngle(contextpointer context, float64 angleDegrees);
+            static void wait(contextpointer context, uint32 durationMilliseconds);
+            static void report(contextpointer context, int32 angleDegrees);
 
-protected:
-
-    static XWalkServoExampleLinux& adapter(contextpointer context);
-    static void setAngle(contextpointer context, float64 angleDegrees);
-    static void wait(contextpointer context, uint32 durationMilliseconds);
-    static void report(contextpointer context, int32 angleDegrees);
-
-public:
-
-    /**
-     * @brief Runs bounded physical sweeps on Robot HAT servo channel one.
-     * @param[in] i2cDevice Linux I2C character-device path.
-     * @param[in] cycleCount Complete cycles from one through 100.
-     * @warning Physically moves the servo through its full supported range.
-     */
-    void run(cstring i2cDevice, uint32 cycleCount);
-};
+        public:
+            /**
+             * @brief Runs bounded physical sweeps on Robot HAT servo channel one.
+             * @param[in] i2cDevice Linux I2C character-device path.
+             * @param[in] cycleCount Complete cycles from one through 100.
+             * @warning Physically moves the servo through its full supported range.
+             */
+            void run(cstring i2cDevice, uint32 cycleCount);
+    };
 
 } /* namespace xwalk::hal::example */
 

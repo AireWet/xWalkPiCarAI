@@ -18,34 +18,33 @@
 #include <chrono>
 #include <filesystem>
 
-namespace xwalk::agent::test::video_recording_opencv {
+namespace xwalk::agent::test::video_recording_opencv
+{
 
-/** @brief Generates a small local AVI without using a camera device. */
-RecordedVideoFixture::RecordedVideoFixture() {
-  const auto stamp =
-      std::chrono::steady_clock::now().time_since_epoch().count();
-  directory = agent::filesystempath("/tmp") /
-              (agent::string("xwalk-video-recording-") + std::to_string(stamp));
-  std::filesystem::create_directories(directory);
-  video = directory / "finite-source.avi";
-  cv::VideoWriter writer(video.string(),
-                         cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 10.0,
-                         cv::Size(32, 24));
-  if (!writer.isOpened()) {
-    XWALK_RPIAGENT_ERROR(XWALK_RUNTIME,
-                         "Video-recording fixture could not open its writer");
-  }
-  for (agent::uint32 index = 0U; index < 8U; ++index) {
-    writer.write(cv::Mat(24, 32, CV_8UC3,
-                         cv::Scalar(static_cast<double>(index), 20.0, 30.0)));
-  }
-  writer.release();
-}
+    /** @brief Generates a small local AVI without using a camera device. */
+    RecordedVideoFixture::RecordedVideoFixture()
+    {
+        const auto stamp = std::chrono::steady_clock::now().time_since_epoch().count();
+        directory = agent::filesystempath("/tmp") / (agent::string("xwalk-video-recording-") + std::to_string(stamp));
+        std::filesystem::create_directories(directory);
+        video = directory / "finite-source.avi";
+        cv::VideoWriter writer(video.string(), cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 10.0, cv::Size(32, 24));
+        if (!writer.isOpened())
+        {
+            XWALK_RPIAGENT_ERROR(XWALK_RUNTIME, "Video-recording fixture could not open its writer");
+        }
+        for (agent::uint32 index = 0U; index < 8U; ++index)
+        {
+            writer.write(cv::Mat(24, 32, CV_8UC3, cv::Scalar(static_cast<double>(index), 20.0, 30.0)));
+        }
+        writer.release();
+    }
 
-/** @brief Removes the isolated fixture directory without throwing. */
-RecordedVideoFixture::~RecordedVideoFixture() noexcept {
-  std::error_code error;
-  std::filesystem::remove_all(directory, error);
-}
+    /** @brief Removes the isolated fixture directory without throwing. */
+    RecordedVideoFixture::~RecordedVideoFixture() noexcept
+    {
+        std::error_code error;
+        std::filesystem::remove_all(directory, error);
+    }
 
 } /* namespace xwalk::agent::test::video_recording_opencv */

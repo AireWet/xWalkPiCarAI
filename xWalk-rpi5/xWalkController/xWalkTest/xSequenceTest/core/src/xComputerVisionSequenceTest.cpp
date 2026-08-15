@@ -29,47 +29,40 @@
 namespace
 {
 
-/** @brief Verifies every source-compatible computer-vision key in order. */
-void testComputerVision(
-    xwalk::agent::test::ControllerCommandTestContext& context)
-{
-    context.state->inputLines = {"1", "f", "r", "s", "q", "0", "r", "x"};
-    xwalk::agent::test::XWalkControllerSequence sequence(
-        *context.computerVisionController);
-    const ctrl::int32 status = sequence.run({{"computer-vision"}});
-    assert(status == 0);
-    assert(context.state->operationQueries == 190U);
-    assert(context.state->delays.size() == 175U);
-    assert(context.state->visionCaptureCount == 1U);
-    assert(context.state->visionObservationCount == 4U);
-    assert(!context.state->visionStarted);
-    assert(context.state->visionColor ==
-        xwalk::agent::XWalkComputerVisionColor::Close);
-    assert(!context.state->visionFaceEnabled);
-    assert(!context.state->visionQrEnabled);
+    /** @brief Verifies every source-compatible computer-vision key in order. */
+    void testComputerVision(xwalk::agent::test::ControllerCommandTestContext& context)
+    {
+        context.state->inputLines = {"1", "f", "r", "s", "q", "0", "r", "x"};
+        xwalk::agent::test::XWalkControllerSequence sequence(*context.computerVisionController);
+        const ctrl::int32 status = sequence.run({{"computer-vision"}});
+        assert(status == 0);
+        assert(context.state->operationQueries == 190U);
+        assert(context.state->delays.size() == 175U);
+        assert(context.state->visionCaptureCount == 1U);
+        assert(context.state->visionObservationCount == 4U);
+        assert(!context.state->visionStarted);
+        assert(context.state->visionColor == xwalk::agent::XWalkComputerVisionColor::Close);
+        assert(!context.state->visionFaceEnabled);
+        assert(!context.state->visionQrEnabled);
 
-
-
-
-
-
-
-
-
-
-
-    assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"vision.start", "controller.input", "vision.color",
-            "vision.face", "vision.qr", "vision.observe",
-            "vision.observe", "vision.capture", "vision.color",
-            "vision.qr", "vision.stop"}));
-}
+        assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
+                                                         {"vision.start",
+                                                          "controller.input",
+                                                          "vision.color",
+                                                          "vision.face",
+                                                          "vision.qr",
+                                                          "vision.observe",
+                                                          "vision.observe",
+                                                          "vision.capture",
+                                                          "vision.color",
+                                                          "vision.qr",
+                                                          "vision.stop"}));
+    }
 
 } /* namespace */
 
 /** @brief Runs the computer-vision controller-to-provider host sequence. @return Zero on success. */
 int xWalkComputerVisionCommandSequenceHostTest(int argc, char* argv[])
 {
-    return xwalk::agent::test::runControllerCommandHostTest(
-        argc, argv, &testComputerVision);
+    return xwalk::agent::test::runControllerCommandHostTest(argc, argv, &testComputerVision);
 }

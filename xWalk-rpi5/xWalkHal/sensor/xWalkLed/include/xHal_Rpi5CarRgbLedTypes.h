@@ -41,25 +41,25 @@
 namespace xwalk::hal
 {
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/** @brief Fixed red, green, and blue components in the inclusive range 0 to 255. */
-using rgbcolor = fixedarray<uint8, XHAL_RPI5CAR_RGB_LED_CHANNEL_COUNT>;
+    /** @brief Fixed red, green, and blue components in the inclusive range 0 to 255. */
+    using rgbcolor = fixedarray<uint8, XHAL_RPI5CAR_RGB_LED_CHANNEL_COUNT>;
 
-/******************************************************************************
- * Enumeration declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Enumeration declarations
+     ******************************************************************************/
 
-/**
- * @brief Identifies the shared electrical terminal of an RGB LED.
- */
-enum class XWalkRgbLedCommon : uint8
-{
-    Cathode = XHAL_RPI5CAR_RGB_LED_COMMON_CATHODE, /**< Components drive active-high outputs. */
-    Anode = XHAL_RPI5CAR_RGB_LED_COMMON_ANODE      /**< Components drive inverted outputs. */
-};
+    /**
+     * @brief Identifies the shared electrical terminal of an RGB LED.
+     */
+    enum class XWalkRgbLedCommon : uint8
+    {
+        Cathode = XHAL_RPI5CAR_RGB_LED_COMMON_CATHODE, /**< Components drive active-high outputs. */
+        Anode = XHAL_RPI5CAR_RGB_LED_COMMON_ANODE      /**< Components drive inverted outputs. */
+    };
 
 } /* namespace xwalk::hal */
 

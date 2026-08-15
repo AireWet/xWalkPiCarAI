@@ -41,28 +41,28 @@
 namespace xwalk::hal::sim
 {
 
-/** @brief Executes one representative transaction through the public SPI API. */
-class XWalkSpiHandler final
-{
-    public:
-        /** @brief Constructs the stateless simulation handler. */
-        XWalkSpiHandler();
+    /** @brief Executes one representative transaction through the public SPI API. */
+    class XWalkSpiHandler final
+    {
+        public:
+            /** @brief Constructs the stateless simulation handler. */
+            XWalkSpiHandler();
 
-        /** @brief Destroys the stateless simulation handler. */
-        ~XWalkSpiHandler();
+            /** @brief Destroys the stateless simulation handler. */
+            ~XWalkSpiHandler();
 
-        XWalkSpiHandler(XWalkSpiHandler&&) = delete;
-        XWalkSpiHandler(const XWalkSpiHandler&) = delete;
-        XWalkSpiHandler& operator=(XWalkSpiHandler&&) = delete;
-        XWalkSpiHandler& operator=(const XWalkSpiHandler&) = delete;
+            XWalkSpiHandler(XWalkSpiHandler&&) = delete;
+            XWalkSpiHandler(const XWalkSpiHandler&) = delete;
+            XWalkSpiHandler& operator=(XWalkSpiHandler&&) = delete;
+            XWalkSpiHandler& operator=(const XWalkSpiHandler&) = delete;
 
-        /**
-         * @brief Runs one JEDEC-identification-style full-duplex transaction.
-         * @param[in,out] spi Configured SPI object bound to the selected backend.
-         * @return Zero when the response length matches the request.
-         */
-        int32 run(XWalkSpi& spi) const;
-};
+            /**
+             * @brief Runs one JEDEC-identification-style full-duplex transaction.
+             * @param[in,out] spi Configured SPI object bound to the selected backend.
+             * @return Zero when the response length matches the request.
+             */
+            int32 run(XWalkSpi& spi) const;
+    };
 
 } /* namespace xwalk::hal::sim */
 

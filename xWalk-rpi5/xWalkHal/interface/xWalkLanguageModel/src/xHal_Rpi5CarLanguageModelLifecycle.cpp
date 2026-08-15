@@ -36,79 +36,79 @@
  * @namespace xwalk::hal
  * @brief Contains hardware abstraction components for the xWalk firmware.
  */
-namespace xwalk::hal {
+namespace xwalk::hal
+{
 
-/******************************************************************************
- * Protected member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Protected member function definitions
+     ******************************************************************************/
 
-/**
- * @brief Validates that every required backend callback is non-null.
- *
- * @param[in] backendCallbacks
- * Callback table to validate before storing or invoking it.
- *
- * @throws std::invalid_argument
- * If any callback is null.
- */
-void XWalkLanguageModel::validateCallbacks(
-    const XWalkLanguageModelCallbacks &backendCallbacks) {
-  if ((backendCallbacks.setInstructions == nullptr) ||
-      (backendCallbacks.setWelcome == nullptr) ||
-      (backendCallbacks.setMaximumMessages == nullptr) ||
-      (backendCallbacks.addMessage == nullptr) ||
-      (backendCallbacks.prompt == nullptr)) {
-    XWALK_HAL_ERROR(XWALK_INVAL,
-                    "Language-model backend requires every callback");
-  }
-}
+    /**
+     * @brief Validates that every required backend callback is non-null.
+     *
+     * @param[in] backendCallbacks
+     * Callback table to validate before storing or invoking it.
+     *
+     * @throws std::invalid_argument
+     * If any callback is null.
+     */
+    void XWalkLanguageModel::validateCallbacks(const XWalkLanguageModelCallbacks& backendCallbacks)
+    {
+        if ((backendCallbacks.setInstructions == nullptr) || (backendCallbacks.setWelcome == nullptr) ||
+            (backendCallbacks.setMaximumMessages == nullptr) || (backendCallbacks.addMessage == nullptr) ||
+            (backendCallbacks.prompt == nullptr))
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "Language-model backend requires every callback");
+        }
+    }
 
-/**
- * @brief Validates a retained conversation-message limit.
- *
- * @param[in] maximumMessages
- * Requested number of retained messages.
- *
- * @throws std::out_of_range
- * If `maximumMessages` is zero.
- */
-void XWalkLanguageModel::validateMaximumMessages(uint32 maximumMessages) {
-  if (maximumMessages == 0U) {
-    XWALK_HAL_ERROR(XWALK_RANGE,
-                    "Language-model message limit must be non-zero");
-  }
-}
+    /**
+     * @brief Validates a retained conversation-message limit.
+     *
+     * @param[in] maximumMessages
+     * Requested number of retained messages.
+     *
+     * @throws std::out_of_range
+     * If `maximumMessages` is zero.
+     */
+    void XWalkLanguageModel::validateMaximumMessages(uint32 maximumMessages)
+    {
+        if (maximumMessages == 0U)
+        {
+            XWALK_HAL_ERROR(XWALK_RANGE, "Language-model message limit must be non-zero");
+        }
+    }
 
-/******************************************************************************
- * Constructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Constructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Constructs a language-model coordinator from a complete backend table.
- *
- * @param[in,out] context
- * Nullable non-owning backend context. A non-null object must outlive this
- * coordinator, and null requires explicit support from all callbacks.
- *
- * @param[in] backendCallbacks
- * Complete callback table copied into this coordinator.
- *
- * @throws std::invalid_argument
- * If any required callback is null.
- */
-XWalkLanguageModel::XWalkLanguageModel(
-    contextpointer context, const XWalkLanguageModelCallbacks &backendCallbacks)
-    : backendContextPointer(context), callbacks(backendCallbacks) {
-  validateCallbacks(callbacks);
-  XWALK_HAL_TRACE_UID0(RPI .143, "Language-model coordinator constructed");
-}
+    /**
+     * @brief Constructs a language-model coordinator from a complete backend table.
+     *
+     * @param[in,out] context
+     * Nullable non-owning backend context. A non-null object must outlive this
+     * coordinator, and null requires explicit support from all callbacks.
+     *
+     * @param[in] backendCallbacks
+     * Complete callback table copied into this coordinator.
+     *
+     * @throws std::invalid_argument
+     * If any required callback is null.
+     */
+    XWalkLanguageModel::XWalkLanguageModel(contextpointer context, const XWalkLanguageModelCallbacks& backendCallbacks)
+        : backendContextPointer(context), callbacks(backendCallbacks)
+    {
+        validateCallbacks(callbacks);
+        XWALK_HAL_TRACE_UID0(RPI .143, "Language-model coordinator constructed");
+    }
 
-/******************************************************************************
- * Destructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Destructor definitions
+     ******************************************************************************/
 
-/** @brief Destroys the coordinator without releasing caller-owned backend
- * resources. */
-XWalkLanguageModel::~XWalkLanguageModel() = default;
+    /** @brief Destroys the coordinator without releasing caller-owned backend
+     * resources. */
+    XWalkLanguageModel::~XWalkLanguageModel() = default;
 
 } /* namespace xwalk::hal */

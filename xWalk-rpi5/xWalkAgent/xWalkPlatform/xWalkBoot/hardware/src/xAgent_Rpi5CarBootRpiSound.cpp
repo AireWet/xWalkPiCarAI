@@ -22,29 +22,28 @@
 namespace xwalk::agent
 {
 
-/**
- * @brief Runs configured standalone sound control.
- * @param[in,out] context Nullable caller-owned application context.
- * @param[in] callback Non-null synchronous application callback.
- * @param[in,out] config Loaded deployment configuration.
- * @param[in,out] picarx Caller-owned PiCar-X coordinator.
- * @return Status returned by `callback`.
- */
-agent::int32 XWalkBootRpi::runSound(agent::contextpointer context,
-    bootapplicationcallback callback, hal::XWalkConfigStore& config,
-    XWalkPicarx& picarx)
-{
-    hal::XWalkAudioAlsa audioBackend(
-        config.get("voice_playback_device", "default"),
-        config.get("voice_mixer_device", "default"),
-        config.get("voice_mixer_element", "PCM"));
-    hal::XWalkMusicAlsa musicBackend(audioBackend, nullptr,
-        hal::XWalkMusicSndFileDecoder::operations());
-    hal::XWalkMusic music(&musicBackend, musicBackend.callbacks());
-    XWalkBootServices services{};
-    services.picarx = &picarx;
-    services.music = &music;
-    return callback(context, services);
-}
+    /**
+     * @brief Runs configured standalone sound control.
+     * @param[in,out] context Nullable caller-owned application context.
+     * @param[in] callback Non-null synchronous application callback.
+     * @param[in,out] config Loaded deployment configuration.
+     * @param[in,out] picarx Caller-owned PiCar-X coordinator.
+     * @return Status returned by `callback`.
+     */
+    agent::int32 XWalkBootRpi::runSound(agent::contextpointer context,
+                                        bootapplicationcallback callback,
+                                        hal::XWalkConfigStore& config,
+                                        XWalkPicarx& picarx)
+    {
+        hal::XWalkAudioAlsa audioBackend(config.get("voice_playback_device", "default"),
+                                         config.get("voice_mixer_device", "default"),
+                                         config.get("voice_mixer_element", "PCM"));
+        hal::XWalkMusicAlsa musicBackend(audioBackend, nullptr, hal::XWalkMusicSndFileDecoder::operations());
+        hal::XWalkMusic music(&musicBackend, musicBackend.callbacks());
+        XWalkBootServices services{};
+        services.picarx = &picarx;
+        services.music = &music;
+        return callback(context, services);
+    }
 
 } /* namespace xwalk::agent */

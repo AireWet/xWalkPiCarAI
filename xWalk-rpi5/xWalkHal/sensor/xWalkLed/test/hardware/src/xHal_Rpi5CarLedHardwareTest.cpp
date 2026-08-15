@@ -44,8 +44,7 @@
 XWalkHal::int32 main()
 {
     XWalkHal::XWalkGpioLinux backend;
-    const XWalkHal::XWalkGpioCallbacks callbacks =
-        XHAL_GPIO_CALLBACKS(XWalkHal::XWalkGpioLinux);
+    const XWalkHal::XWalkGpioCallbacks callbacks = XHAL_GPIO_CALLBACKS(XWalkHal::XWalkGpioLinux);
     XWalkHal::XWalkGpio gpio(&backend, callbacks, "LED");
     XWalkHal::XWalkLed led(gpio);
     led.close();

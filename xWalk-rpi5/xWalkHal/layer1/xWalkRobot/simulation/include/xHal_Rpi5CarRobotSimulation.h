@@ -13,7 +13,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Exercises Robot with one simulated servo and a build-local store. */
-int32 runRobotSimulation();
+    /** @brief Exercises Robot with one simulated servo and a build-local store. */
+    int32 runRobotSimulation();
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_ROBOT_SIMULATION_H */

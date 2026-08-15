@@ -13,7 +13,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Exercises speech coordination without microphone or speaker devices. */
-int32 runGptSimulation();
+    /** @brief Exercises speech coordination without microphone or speaker devices. */
+    int32 runGptSimulation();
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_GPT_SIMULATION_H */

@@ -41,20 +41,20 @@
 namespace xwalk::hal
 {
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-/** @brief Contains the three unsigned components of a Robot HAT firmware version. */
-struct XWalkFirmwareVersion
-{
-    /** @brief Major version reported by the first register byte. */
-    uint8 major{};
-    /** @brief Minor version reported by the second register byte. */
-    uint8 minor{};
-    /** @brief Patch version reported by the third register byte. */
-    uint8 patch{};
-};
+    /** @brief Contains the three unsigned components of a Robot HAT firmware version. */
+    struct XWalkFirmwareVersion
+    {
+            /** @brief Major version reported by the first register byte. */
+            uint8 major{};
+            /** @brief Minor version reported by the second register byte. */
+            uint8 minor{};
+            /** @brief Patch version reported by the third register byte. */
+            uint8 patch{};
+    };
 
 } /* namespace xwalk::hal */
 

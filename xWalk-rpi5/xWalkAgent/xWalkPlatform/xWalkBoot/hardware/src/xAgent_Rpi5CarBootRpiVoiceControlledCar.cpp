@@ -22,31 +22,29 @@
 namespace xwalk::agent
 {
 
-/**
- * @brief Runs configured wake-word vehicle control.
- * @param[in,out] context Nullable caller-owned application context.
- * @param[in] callback Non-null synchronous application callback.
- * @param[in,out] config Loaded deployment configuration.
- * @param[in,out] picarx Caller-owned PiCar-X coordinator.
- * @return Status returned by `callback`.
- */
-agent::int32 XWalkBootRpi::runVoiceControlledCar(
-    agent::contextpointer context, bootapplicationcallback callback,
-    hal::XWalkConfigStore& config, XWalkPicarx& picarx)
-{
-    hal::XWalkSpeechRecognizerVosk recognizer(
-        config.get("voice_vosk_library", "/usr/lib/xwalk/libvosk.so"),
-        config.get("voice_vosk_model",
-            "/usr/share/xwalk/models/vosk/vosk-model-small-en-us-0.15"));
-    hal::XWalkSpeechToTextAlsa speechBackend(
-        config.get("voice_capture_device", "default"),
-        &recognizer, recognizer.operations());
-    hal::XWalkSpeechToText speechToText(
-        &speechBackend, speechBackend.callbacks());
-    XWalkBootServices services{};
-    services.picarx = &picarx;
-    services.speechToText = &speechToText;
-    return callback(context, services);
-}
+    /**
+     * @brief Runs configured wake-word vehicle control.
+     * @param[in,out] context Nullable caller-owned application context.
+     * @param[in] callback Non-null synchronous application callback.
+     * @param[in,out] config Loaded deployment configuration.
+     * @param[in,out] picarx Caller-owned PiCar-X coordinator.
+     * @return Status returned by `callback`.
+     */
+    agent::int32 XWalkBootRpi::runVoiceControlledCar(agent::contextpointer context,
+                                                     bootapplicationcallback callback,
+                                                     hal::XWalkConfigStore& config,
+                                                     XWalkPicarx& picarx)
+    {
+        hal::XWalkSpeechRecognizerVosk recognizer(
+            config.get("voice_vosk_library", "/usr/lib/xwalk/libvosk.so"),
+            config.get("voice_vosk_model", "/usr/share/xwalk/models/vosk/vosk-model-small-en-us-0.15"));
+        hal::XWalkSpeechToTextAlsa speechBackend(
+            config.get("voice_capture_device", "default"), &recognizer, recognizer.operations());
+        hal::XWalkSpeechToText speechToText(&speechBackend, speechBackend.callbacks());
+        XWalkBootServices services{};
+        services.picarx = &picarx;
+        services.speechToText = &speechToText;
+        return callback(context, services);
+    }
 
 } /* namespace xwalk::agent */

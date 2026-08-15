@@ -42,7 +42,7 @@
  * @class TEST_SUITE_XWALK_I2C
  * @brief Owns one isolated Linux-backend mirror for each I2C operation test.
  */
-class TEST_SUITE_XWALK_I2C: public ::testing::Test
+class TEST_SUITE_XWALK_I2C : public ::testing::Test
 {
     protected:
         /**************************************************************************

@@ -42,30 +42,32 @@
 namespace xwalk::hal::test
 {
 
-/******************************************************************************
- * Test function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Test function definitions
+     ******************************************************************************/
 
-/**
- * @brief Verifies the calculated and written default 50 Hertz settings.
- *
- * @post
- * The assertions confirm non-zero timer values, frequency accuracy, and
- * prescaler/period register selection.
- */
-void testDefaultFrequency()
-{
-    XWalkPwmTestI2c bus;
-    XWalkI2c i2c(&bus, &XWalkPwmTestI2c::probeCallback, &XWalkPwmTestI2c::writeRegisterCallback,
-        &XWalkPwmTestI2c::readCallback);
-    XWalkPwmTimerState timerState;
-    XWalkPwm pwm(i2c, 0U, 0x14U, timerState);
+    /**
+     * @brief Verifies the calculated and written default 50 Hertz settings.
+     *
+     * @post
+     * The assertions confirm non-zero timer values, frequency accuracy, and
+     * prescaler/period register selection.
+     */
+    void testDefaultFrequency()
+    {
+        XWalkPwmTestI2c bus;
+        XWalkI2c i2c(&bus,
+                     &XWalkPwmTestI2c::probeCallback,
+                     &XWalkPwmTestI2c::writeRegisterCallback,
+                     &XWalkPwmTestI2c::readCallback);
+        XWalkPwmTimerState timerState;
+        XWalkPwm pwm(i2c, 0U, 0x14U, timerState);
 
-    assert(pwm.prescaler() > 0U);
-    assert(pwm.period() > 0U);
-    assert(XHAL_ABSOLUTE_VALUE(pwm.frequency() - XHAL_RPI5CAR_PWM_DEFAULT_FREQUENCY_HZ) < 0.01);
-    assert(bus.writeRegister(0U) == 0x40U);
-    assert(bus.writeRegister(1U) == 0x44U);
-}
+        assert(pwm.prescaler() > 0U);
+        assert(pwm.period() > 0U);
+        assert(XHAL_ABSOLUTE_VALUE(pwm.frequency() - XHAL_RPI5CAR_PWM_DEFAULT_FREQUENCY_HZ) < 0.01);
+        assert(bus.writeRegister(0U) == 0x40U);
+        assert(bus.writeRegister(1U) == 0x44U);
+    }
 
 } /* namespace xwalk::hal::test */

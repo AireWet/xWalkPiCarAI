@@ -19,21 +19,19 @@
 namespace
 {
 
-/** @brief Verifies explicit stop and failed-sensor foreground cleanup. */
-void testObstacleAvoidance(
-    xwalk::agent::test::ControllerCommandTestContext& context)
-{
-    xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
-    assert(sequence.run({{"avoid-obstacles", "stop"}}) == 0);
+    /** @brief Verifies explicit stop and failed-sensor foreground cleanup. */
+    void testObstacleAvoidance(xwalk::agent::test::ControllerCommandTestContext& context)
+    {
+        xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
+        assert(sequence.run({{"avoid-obstacles", "stop"}}) == 0);
 
-    assert(xwalk::ctrl::XWALK_runControllerCommand(*context.controller, {"avoid-obstacles", "start"}) == 2);
+        assert(xwalk::ctrl::XWALK_runControllerCommand(*context.controller, {"avoid-obstacles", "start"}) == 2);
 
-    assert(context.motors->left().speed() == 0.0);
-    assert(context.motors->right().speed() == 0.0);
-    assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"hal.i2c.write", "hal.i2c.write",
-            "hal.i2c.write"}));
-}
+        assert(context.motors->left().speed() == 0.0);
+        assert(context.motors->right().speed() == 0.0);
+        assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
+                                                         {"hal.i2c.write", "hal.i2c.write", "hal.i2c.write"}));
+    }
 
 } /* namespace */
 
@@ -45,6 +43,5 @@ void testObstacleAvoidance(
  */
 int xWalkObstacleAvoidanceCommandSequenceHostTest(int argc, char* argv[])
 {
-    return xwalk::agent::test::runControllerCommandHostTest(
-        argc, argv, &testObstacleAvoidance);
+    return xwalk::agent::test::runControllerCommandHostTest(argc, argv, &testObstacleAvoidance);
 }

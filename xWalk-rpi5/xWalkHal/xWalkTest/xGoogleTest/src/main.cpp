@@ -49,27 +49,20 @@
 int main(int argumentCount, char* argumentValues[])
 {
     std::error_code pathError;
-    const xwalk::hal::filesystempath executablePath =
-        std::filesystem::read_symlink("/proc/self/exe", pathError);
-    const hal::boolean pathErrorExecutablePathInvalid =
-        static_cast<hal::boolean>(
-            pathError || executablePath.empty());
+    const xwalk::hal::filesystempath executablePath = std::filesystem::read_symlink("/proc/self/exe", pathError);
+    const hal::boolean pathErrorExecutablePathInvalid = static_cast<hal::boolean>(pathError || executablePath.empty());
     if (pathErrorExecutablePathInvalid)
     {
-        std::cerr << "xGoogleTest path error: cannot resolve /proc/self/exe: "
-                  << pathError.message() << '\n';
+        std::cerr << "xGoogleTest path error: cannot resolve /proc/self/exe: " << pathError.message() << '\n';
         return EXIT_FAILURE;
     }
-    const xwalk::hal::filesystempath executableDirectory =
-        executablePath.parent_path();
+    const xwalk::hal::filesystempath executableDirectory = executablePath.parent_path();
 
     xwalk::hal::test::TestProfile profile = xwalk::hal::test::TestProfile::Host;
-    xwalk::hal::filesystempath runtimeConfigurationPath =
-        executableDirectory / "xHal_Rpi5CarGoogleTestConfig.yml";
+    xwalk::hal::filesystempath runtimeConfigurationPath = executableDirectory / "xHal_Rpi5CarGoogleTestConfig.yml";
     xwalk::hal::string error;
-    const xwalk::hal::boolean profileProcessed =
-        xwalk::hal::test::TestRunner::processProfile(argumentCount,
-            argumentValues, profile, runtimeConfigurationPath, error);
+    const xwalk::hal::boolean profileProcessed = xwalk::hal::test::TestRunner::processProfile(
+        argumentCount, argumentValues, profile, runtimeConfigurationPath, error);
     if (profileProcessed == false)
     {
         std::cerr << "xGoogleTest profile error: " << error << '\n';
@@ -84,38 +77,33 @@ int main(int argumentCount, char* argumentValues[])
     }
 #endif
 
-    xwalk::hal::test::TestRunner runner(
-        profile, executableDirectory / "xWalkHal",
-        runtimeConfigurationPath);
-        runner.registerTests();
-        const xwalk::hal::boolean standardFilterSelected =
-            runner.hasStandardFilter(argumentCount, argumentValues);
+    xwalk::hal::test::TestRunner runner(profile, executableDirectory / "xWalkHal", runtimeConfigurationPath);
+    runner.registerTests();
+    const xwalk::hal::boolean standardFilterSelected = runner.hasStandardFilter(argumentCount, argumentValues);
 
-        ::testing::InitGoogleTest(&argumentCount, argumentValues);
-        GTEST_FLAG_SET(catch_exceptions, false);
+    ::testing::InitGoogleTest(&argumentCount, argumentValues);
+    GTEST_FLAG_SET(catch_exceptions, false);
 
-        xwalk::hal::test::TestConfig configuration;
-        const xwalk::hal::filesystempath configurationPath(
-            executableDirectory /
-            (profile == xwalk::hal::test::TestProfile::Hardware
-                    ? "hardware_test_config.xml" : "test_config.xml"));
-        const xwalk::hal::boolean configurationLoaded = configuration.load(
-            configurationPath, runner.availableTests(), error);
-        if (configurationLoaded == false)
-        {
-            std::cerr << "xGoogleTest configuration error: " << error << '\n';
-            std::cerr << runner.validTestsText();
-            return EXIT_FAILURE;
-        }
-        const xwalk::hal::boolean selectionsProcessed =
-            runner.processSelections(argumentCount, argumentValues, error);
-        if (selectionsProcessed == false)
-        {
-            std::cerr << "xGoogleTest selection error: " << error << '\n';
-            std::cerr << runner.validTestsText();
-            return EXIT_FAILURE;
-        }
+    xwalk::hal::test::TestConfig configuration;
+    const xwalk::hal::filesystempath configurationPath(
+        executableDirectory /
+        (profile == xwalk::hal::test::TestProfile::Hardware ? "hardware_test_config.xml" : "test_config.xml"));
+    const xwalk::hal::boolean configurationLoaded =
+        configuration.load(configurationPath, runner.availableTests(), error);
+    if (configurationLoaded == false)
+    {
+        std::cerr << "xGoogleTest configuration error: " << error << '\n';
+        std::cerr << runner.validTestsText();
+        return EXIT_FAILURE;
+    }
+    const xwalk::hal::boolean selectionsProcessed = runner.processSelections(argumentCount, argumentValues, error);
+    if (selectionsProcessed == false)
+    {
+        std::cerr << "xGoogleTest selection error: " << error << '\n';
+        std::cerr << runner.validTestsText();
+        return EXIT_FAILURE;
+    }
 
-        runner.applyFilter(configuration, standardFilterSelected);
+    runner.applyFilter(configuration, standardFilterSelected);
     return RUN_ALL_TESTS();
 }

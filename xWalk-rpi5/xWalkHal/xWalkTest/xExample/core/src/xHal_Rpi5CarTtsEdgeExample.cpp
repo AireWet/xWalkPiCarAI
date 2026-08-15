@@ -20,21 +20,23 @@
 #include "xHal_Rpi5CarTtsEdgeExample.h"
 
 #include "xHal_Rpi5CarTrace.h"
-namespace xwalk::hal::example {
+namespace xwalk::hal::example
+{
 
-/** @brief Binds and validates one synchronous speech operation. */
-XWalkTtsEdgeExample::XWalkTtsEdgeExample(contextpointer context,
-                                         ttsedgespeakcallback speak)
-    : callbackContext(context), speakCallback(speak) {
-  if (speakCallback == nullptr) {
-    XWALK_HAL_ERROR(XWALK_INVAL, "Edge TTS example requires a speech callback");
-  }
-}
+    /** @brief Binds and validates one synchronous speech operation. */
+    XWalkTtsEdgeExample::XWalkTtsEdgeExample(contextpointer context, ttsedgespeakcallback speak)
+        : callbackContext(context), speakCallback(speak)
+    {
+        if (speakCallback == nullptr)
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "Edge TTS example requires a speech callback");
+        }
+    }
 
-/** @brief Delivers the exact source voice and message once. */
-void XWalkTtsEdgeExample::run() {
-  speakCallback(callbackContext, XWALK_TTS_EDGE_EXAMPLE_VOICE,
-                XWALK_TTS_EDGE_EXAMPLE_MESSAGE);
-}
+    /** @brief Delivers the exact source voice and message once. */
+    void XWalkTtsEdgeExample::run()
+    {
+        speakCallback(callbackContext, XWALK_TTS_EDGE_EXAMPLE_VOICE, XWALK_TTS_EDGE_EXAMPLE_MESSAGE);
+    }
 
 } /* namespace xwalk::hal::example */

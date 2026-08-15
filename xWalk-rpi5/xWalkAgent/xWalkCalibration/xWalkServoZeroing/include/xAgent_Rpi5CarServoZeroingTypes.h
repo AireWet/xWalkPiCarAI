@@ -41,68 +41,68 @@
 namespace xwalk::agent
 {
 
-/******************************************************************************
- * Constants
- ******************************************************************************/
+    /******************************************************************************
+     * Constants
+     ******************************************************************************/
 
-/** @brief Number of source Robot HAT servo channels. */
-constexpr agent::uint8 XAGENT_RPI5CAR_SERVO_ZEROING_CHANNEL_COUNT = 12U;
+    /** @brief Number of source Robot HAT servo channels. */
+    constexpr agent::uint8 XAGENT_RPI5CAR_SERVO_ZEROING_CHANNEL_COUNT = 12U;
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/**
- * @brief Commands one logical Robot HAT servo angle.
- * @param[in,out] context Nullable non-owning context that outlives callback use.
- * @param[in] servoId Servo channel from zero through eleven.
- * @param[in] angleDegrees Logical angle in degrees.
- */
-using servozeroingsetanglecallback = void (*)(agent::contextpointer context,
-    agent::uint8 servoId, agent::float64 angleDegrees);
+    /**
+     * @brief Commands one logical Robot HAT servo angle.
+     * @param[in,out] context Nullable non-owning context that outlives callback use.
+     * @param[in] servoId Servo channel from zero through eleven.
+     * @param[in] angleDegrees Logical angle in degrees.
+     */
+    using servozeroingsetanglecallback = void (*)(agent::contextpointer context,
+                                                  agent::uint8 servoId,
+                                                  agent::float64 angleDegrees);
 
-/**
- * @brief Suspends one source-compatible timing interval.
- * @param[in,out] context Nullable non-owning context that outlives callback use.
- * @param[in] durationMs Requested delay in milliseconds.
- */
-using servozeroingdelaycallback = void (*)(agent::contextpointer context,
-    agent::uint32 durationMs);
+    /**
+     * @brief Suspends one source-compatible timing interval.
+     * @param[in,out] context Nullable non-owning context that outlives callback use.
+     * @param[in] durationMs Requested delay in milliseconds.
+     */
+    using servozeroingdelaycallback = void (*)(agent::contextpointer context, agent::uint32 durationMs);
 
-/**
- * @brief Reports whether the foreground example may continue.
- * @param[in,out] context Nullable non-owning context that outlives callback use.
- * @return `true` to continue; otherwise `false` to stop.
- */
-using servozeroingcontinuecallback = agent::boolean (*)(agent::contextpointer context);
+    /**
+     * @brief Reports whether the foreground example may continue.
+     * @param[in,out] context Nullable non-owning context that outlives callback use.
+     * @return `true` to continue; otherwise `false` to stop.
+     */
+    using servozeroingcontinuecallback = agent::boolean (*)(agent::contextpointer context);
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-/** @brief Groups complete synchronous servo and scheduling operations. */
-struct XWalkServoZeroingCallbacks
-{
-    /** @brief Non-null logical servo-angle operation. */
-    servozeroingsetanglecallback setAngle{nullptr};
-    /** @brief Non-null delay operation. */
-    servozeroingdelaycallback delay{nullptr};
-    /** @brief Non-null cancellation query. */
-    servozeroingcontinuecallback continueOperation{nullptr};
-};
+    /** @brief Groups complete synchronous servo and scheduling operations. */
+    struct XWalkServoZeroingCallbacks
+    {
+            /** @brief Non-null logical servo-angle operation. */
+            servozeroingsetanglecallback setAngle{nullptr};
+            /** @brief Non-null delay operation. */
+            servozeroingdelaycallback delay{nullptr};
+            /** @brief Non-null cancellation query. */
+            servozeroingcontinuecallback continueOperation{nullptr};
+    };
 
-/** @brief Stores source-compatible angles and timing intervals. */
-struct XWalkServoZeroingConfiguration
-{
-    /** @brief Initial pulse angle in degrees. */
-    agent::float64 pulseAngleDegrees{10.0};
-    /** @brief Final zero angle in degrees. */
-    agent::float64 zeroAngleDegrees{0.0};
-    /** @brief Delay following every angle command in milliseconds. */
-    agent::uint32 commandDelayMs{100U};
-    /** @brief Source idle-loop interval in milliseconds. */
-    agent::uint32 idleDelayMs{1'000U};
-};
+    /** @brief Stores source-compatible angles and timing intervals. */
+    struct XWalkServoZeroingConfiguration
+    {
+            /** @brief Initial pulse angle in degrees. */
+            agent::float64 pulseAngleDegrees{10.0};
+            /** @brief Final zero angle in degrees. */
+            agent::float64 zeroAngleDegrees{0.0};
+            /** @brief Delay following every angle command in milliseconds. */
+            agent::uint32 commandDelayMs{100U};
+            /** @brief Source idle-loop interval in milliseconds. */
+            agent::uint32 idleDelayMs{1'000U};
+    };
 
 } /* namespace xwalk::agent */
 

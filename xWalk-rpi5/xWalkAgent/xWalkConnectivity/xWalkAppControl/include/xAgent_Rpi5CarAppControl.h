@@ -17,45 +17,45 @@
 namespace xwalk::agent
 {
 
-/** @brief Ports `12.app_control.py` through injected transport and vision. */
-class XWalkAppControl final
-{
-private:
-    XWalkPicarx* picarxObject{nullptr};
-    XWalkAppControlCallbacks callbacks{};
-    XWalkAppControlConfiguration configurationValue{};
-    agent::float64 speedPercentValue{};
-    agent::boolean lastColorEnabled{};
-    agent::boolean lastFaceEnabled{};
-    agent::boolean lastObjectEnabled{};
-    agent::uint8 lastLineState{};
-    agent::boolean startedValue{};
+    /** @brief Ports `12.app_control.py` through injected transport and vision. */
+    class XWalkAppControl final
+    {
+        private:
+            XWalkPicarx* picarxObject{nullptr};
+            XWalkAppControlCallbacks callbacks{};
+            XWalkAppControlConfiguration configurationValue{};
+            agent::float64 speedPercentValue{};
+            agent::boolean lastColorEnabled{};
+            agent::boolean lastFaceEnabled{};
+            agent::boolean lastObjectEnabled{};
+            agent::uint8 lastLineState{};
+            agent::boolean startedValue{};
 
-protected:
-    static void validate(const XWalkAppControlCallbacks& providerCallbacks,
-        const XWalkAppControlConfiguration& configuration);
-    agent::boolean wait(agent::uint32 durationMs) const;
-    agent::boolean applyVoice(const agent::string& command);
-    agent::boolean applyLineTracking();
-    agent::boolean applyObstacleAvoidance();
-    void applyJoystick(const XWalkAppControlInput& input);
+        protected:
+            static void validate(const XWalkAppControlCallbacks& providerCallbacks,
+                                 const XWalkAppControlConfiguration& configuration);
+            agent::boolean wait(agent::uint32 durationMs) const;
+            agent::boolean applyVoice(const agent::string& command);
+            agent::boolean applyLineTracking();
+            agent::boolean applyObstacleAvoidance();
+            void applyJoystick(const XWalkAppControlInput& input);
 
-public:
-    XWalkAppControl(XWalkPicarx& picarx,
-        const XWalkAppControlCallbacks& providerCallbacks,
-        const XWalkAppControlConfiguration& configuration = {});
-    ~XWalkAppControl() noexcept;
+        public:
+            XWalkAppControl(XWalkPicarx& picarx,
+                            const XWalkAppControlCallbacks& providerCallbacks,
+                            const XWalkAppControlConfiguration& configuration = {});
+            ~XWalkAppControl() noexcept;
 
-    XWalkAppControl(const XWalkAppControl&) = delete;
-    XWalkAppControl(XWalkAppControl&&) = delete;
-    XWalkAppControl& operator=(const XWalkAppControl&) = delete;
-    XWalkAppControl& operator=(XWalkAppControl&&) = delete;
+            XWalkAppControl(const XWalkAppControl&) = delete;
+            XWalkAppControl(XWalkAppControl&&) = delete;
+            XWalkAppControl& operator=(const XWalkAppControl&) = delete;
+            XWalkAppControl& operator=(XWalkAppControl&&) = delete;
 
-    agent::boolean start();
-    XWalkAppControlResult step();
-    void finish();
-    agent::boolean started() const noexcept;
-};
+            agent::boolean start();
+            XWalkAppControlResult step();
+            void finish();
+            agent::boolean started() const noexcept;
+    };
 
 } /* namespace xwalk::agent */
 

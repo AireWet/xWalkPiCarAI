@@ -17,19 +17,17 @@
 
 namespace
 {
-void testDoctor(xwalk::agent::test::ControllerCommandTestContext& context)
-{
-    xwalk::agent::test::XWalkControllerSequence passing(*context.doctorController);
-    xwalk::agent::test::XWalkControllerSequence failing(*context.failingDoctorController);
-    assert(passing.run({{"doctor"}}) == 0);
+    void testDoctor(xwalk::agent::test::ControllerCommandTestContext& context)
+    {
+        xwalk::agent::test::XWalkControllerSequence passing(*context.doctorController);
+        xwalk::agent::test::XWalkControllerSequence failing(*context.failingDoctorController);
+        assert(passing.run({{"doctor"}}) == 0);
 
-    assert(failing.run({{"doctor"}, {"help"}}) == 2);
+        assert(failing.run({{"doctor"}, {"help"}}) == 2);
 
-
-    assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {}));
-}
-}
+        assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog, {}));
+    }
+} // namespace
 
 /** @brief Runs the doctor controller-to-HAL host sequence. @return Zero on success. */
 int xWalkDoctorCommandSequenceHostTest(int argc, char* argv[])

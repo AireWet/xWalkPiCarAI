@@ -32,64 +32,64 @@
 namespace xwalk::agent
 {
 
-/******************************************************************************
- * Public member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Public member function definitions
+     ******************************************************************************/
 
-/**
- * @brief Acquires grayscale data and applies one source-compatible response.
- * @return Safe, danger, or cancelled step result.
- * @warning Danger commands physical reverse movement at 80-percent requested speed.
- */
-XWalkCliffDetectionResult XWalkCliffDetection::step()
-{
-    const agent::boolean operationRequested = continueCallback(callbackContext);
-    if (operationRequested == false)
+    /**
+     * @brief Acquires grayscale data and applies one source-compatible response.
+     * @return Safe, danger, or cancelled step result.
+     * @warning Danger commands physical reverse movement at 80-percent requested speed.
+     */
+    XWalkCliffDetectionResult XWalkCliffDetection::step()
     {
-        picarxObject->stop();
-        return XWalkCliffDetectionResult::Cancelled;
-    }
-
-    const hal::linetrackervalues grayscaleValues = picarxObject->grayscaleData();
-    const agent::boolean cliffDetected = picarxObject->cliffStatus(grayscaleValues);
-    if (cliffDetected == false)
-    {
-        picarxObject->stop();
-        lastDangerValue = false;
-        return XWalkCliffDetectionResult::Safe;
-    }
-
-    picarxObject->backward(80.0);
-    if (lastDangerValue == false)
-    {
-        const agent::boolean delayCompleted = wait(100U);
-        if (delayCompleted == false)
+        const agent::boolean operationRequested = continueCallback(callbackContext);
+        if (operationRequested == false)
         {
             picarxObject->stop();
             return XWalkCliffDetectionResult::Cancelled;
         }
+
+        const hal::linetrackervalues grayscaleValues = picarxObject->grayscaleData();
+        const agent::boolean cliffDetected = picarxObject->cliffStatus(grayscaleValues);
+        if (cliffDetected == false)
+        {
+            picarxObject->stop();
+            lastDangerValue = false;
+            return XWalkCliffDetectionResult::Safe;
+        }
+
+        picarxObject->backward(80.0);
+        if (lastDangerValue == false)
+        {
+            const agent::boolean delayCompleted = wait(100U);
+            if (delayCompleted == false)
+            {
+                picarxObject->stop();
+                return XWalkCliffDetectionResult::Cancelled;
+            }
+        }
+        lastDangerValue = true;
+        return XWalkCliffDetectionResult::Danger;
     }
-    lastDangerValue = true;
-    return XWalkCliffDetectionResult::Danger;
-}
 
-/**
- * @brief Stops both motors and resets the retained state to safe.
- * @post Both motor commands are zero and `lastDanger()` returns false.
- */
-void XWalkCliffDetection::stop()
-{
-    picarxObject->stop();
-    lastDangerValue = false;
-}
+    /**
+     * @brief Stops both motors and resets the retained state to safe.
+     * @post Both motor commands are zero and `lastDanger()` returns false.
+     */
+    void XWalkCliffDetection::stop()
+    {
+        picarxObject->stop();
+        lastDangerValue = false;
+    }
 
-/**
- * @brief Reports whether the preceding completed sample selected danger.
- * @return `true` for danger or `false` for safe/reset state.
- */
-agent::boolean XWalkCliffDetection::lastDanger() const noexcept
-{
-    return lastDangerValue;
-}
+    /**
+     * @brief Reports whether the preceding completed sample selected danger.
+     * @return `true` for danger or `false` for safe/reset state.
+     */
+    agent::boolean XWalkCliffDetection::lastDanger() const noexcept
+    {
+        return lastDangerValue;
+    }
 
 } /* namespace xwalk::agent */

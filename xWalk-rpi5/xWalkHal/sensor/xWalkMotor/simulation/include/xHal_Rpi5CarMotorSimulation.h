@@ -13,7 +13,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Exercises one motor without opening I2C or GPIO hardware. */
-int32 runMotorSimulation();
+    /** @brief Exercises one motor without opening I2C or GPIO hardware. */
+    int32 runMotorSimulation();
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_MOTOR_SIMULATION_H */

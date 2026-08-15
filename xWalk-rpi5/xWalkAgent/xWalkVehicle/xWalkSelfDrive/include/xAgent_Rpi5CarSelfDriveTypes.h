@@ -41,59 +41,58 @@
 namespace xwalk::agent
 {
 
-/******************************************************************************
- * Enumeration declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Enumeration declarations
+     ******************************************************************************/
 
-/**
- * @enum XWalkSelfDriveStatus
- * @brief Selects the current preset-action worker state.
- */
-enum class XWalkSelfDriveStatus : agent::uint8
-{
     /**
-     * @brief Leaves the worker idle while retaining its thread.
+     * @enum XWalkSelfDriveStatus
+     * @brief Selects the current preset-action worker state.
      */
-    Standby,
+    enum class XWalkSelfDriveStatus : agent::uint8
+    {
+        /**
+         * @brief Leaves the worker idle while retaining its thread.
+         */
+        Standby,
+        /**
+         * @brief Runs the continuous thinking pose once after entering the state.
+         */
+        Think,
+        /**
+         * @brief Consumes queued action names in first-in, first-out order.
+         */
+        Actions
+    };
+
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
+
     /**
-     * @brief Runs the continuous thinking pose once after entering the state.
+     * @brief Suspends preset-action execution for a bounded interval.
+     *
+     * @param[in,out] context
+     * Non-owning application context that must outlive the self-drive coordinator.
+     *
+     * @param[in] durationMs
+     * Requested delay in milliseconds.
+     *
+     * @return
+     * `true` when the delay completed; otherwise `false` to report a worker failure.
      */
-    Think,
+    using selfdrivedelaycallback = agent::boolean (*)(agent::contextpointer context, agent::uint32 durationMs) noexcept;
+
     /**
-     * @brief Consumes queued action names in first-in, first-out order.
+     * @brief Reports whether one preset action may perform another bounded step.
+     *
+     * @param[in,out] context
+     * Non-owning application context that must outlive the self-drive coordinator.
+     *
+     * @return
+     * `true` to continue; otherwise `false` to latch emergency actuator shutdown.
      */
-    Actions
-};
-
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
-
-/**
- * @brief Suspends preset-action execution for a bounded interval.
- *
- * @param[in,out] context
- * Non-owning application context that must outlive the self-drive coordinator.
- *
- * @param[in] durationMs
- * Requested delay in milliseconds.
- *
- * @return
- * `true` when the delay completed; otherwise `false` to report a worker failure.
- */
-using selfdrivedelaycallback = agent::boolean (*)(agent::contextpointer context,
-    agent::uint32 durationMs) noexcept;
-
-/**
- * @brief Reports whether one preset action may perform another bounded step.
- *
- * @param[in,out] context
- * Non-owning application context that must outlive the self-drive coordinator.
- *
- * @return
- * `true` to continue; otherwise `false` to latch emergency actuator shutdown.
- */
-using selfdrivecontinuecallback = agent::boolean (*)(agent::contextpointer context);
+    using selfdrivecontinuecallback = agent::boolean (*)(agent::contextpointer context);
 
 } /* namespace xwalk::agent */
 

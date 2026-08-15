@@ -21,60 +21,59 @@
 #include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
+#include "xHal_Rpi5CarTtsEspeakExampleTestTypes.h"
+
+/******************************************************************************
+ * Translation-unit type aliases
+ ******************************************************************************/
+
+using TtsEspeakExampleState = ::xwalk::source_types::xhal_rpi5carttsespeakexampletest::TtsEspeakExampleState;
 
 namespace
 {
 
-/** @brief Records one deterministic configured speech request. */
-struct TtsEspeakExampleState
-{
-    XWalkHal::uint8 amplitude{};
-    XWalkHal::uint16 speed{};
-    XWalkHal::uint16 gap{};
-    XWalkHal::uint8 pitch{};
-    XWalkHal::string text;
-    XWalkHal::uint32 callCount{};
-};
-
-/** @brief Records one injected Espeak request. */
-void speak(XWalkHal::contextpointer context, XWalkHal::uint8 amplitude,
-    XWalkHal::uint16 speed, XWalkHal::uint16 gap, XWalkHal::uint8 pitch,
-    XWalkHal::stringview text)
-{
-    TtsEspeakExampleState& state =
-        *static_cast<TtsEspeakExampleState*>(context);
-    state.amplitude = amplitude;
-    state.speed = speed;
-    state.gap = gap;
-    state.pitch = pitch;
-    state.text = text;
-    ++state.callCount;
-}
-
-/** @brief Verifies every exact setting, message, and single invocation. */
-void testRequest()
-{
-    TtsEspeakExampleState state;
-    xwalk::hal::example::XWalkTtsEspeakExample example(&state, &speak);
-
-    example.run();
-
-    assert(state.callCount == 1U);
-    assert(state.amplitude == 100U);
-    assert(state.speed == 150U);
-    assert(state.gap == 1U);
-    assert(state.pitch == 80U);
-    assert(state.text == "Hello world!");
-}
-
-/** @brief Verifies rejection of a missing speech operation. */
-void testValidation()
-{
-    xwalk::hal::test::expectFailure([&]()
+    /** @brief Records one injected Espeak request. */
+    void speak(XWalkHal::contextpointer context,
+               XWalkHal::uint8 amplitude,
+               XWalkHal::uint16 speed,
+               XWalkHal::uint16 gap,
+               XWalkHal::uint8 pitch,
+               XWalkHal::stringview text)
     {
-        xwalk::hal::example::XWalkTtsEspeakExample invalid(nullptr, nullptr);
-    });
-}
+        TtsEspeakExampleState& state = *static_cast<TtsEspeakExampleState*>(context);
+        state.amplitude = amplitude;
+        state.speed = speed;
+        state.gap = gap;
+        state.pitch = pitch;
+        state.text = text;
+        ++state.callCount;
+    }
+
+    /** @brief Verifies every exact setting, message, and single invocation. */
+    void testRequest()
+    {
+        TtsEspeakExampleState state;
+        xwalk::hal::example::XWalkTtsEspeakExample example(&state, &speak);
+
+        example.run();
+
+        assert(state.callCount == 1U);
+        assert(state.amplitude == 100U);
+        assert(state.speed == 150U);
+        assert(state.gap == 1U);
+        assert(state.pitch == 80U);
+        assert(state.text == "Hello world!");
+    }
+
+    /** @brief Verifies rejection of a missing speech operation. */
+    void testValidation()
+    {
+        xwalk::hal::test::expectFailure(
+            [&]()
+            {
+                xwalk::hal::example::XWalkTtsEspeakExample invalid(nullptr, nullptr);
+            });
+    }
 
 } /* namespace */
 

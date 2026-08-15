@@ -33,66 +33,83 @@
  * Namespace definitions
  ******************************************************************************/
 
-namespace xwalk::hal::test {
+namespace xwalk::hal::test
+{
 
-XWalkMotorSequence::XWalkMotorSequence(XWalkMotor &firstMotor,
-                                       XWalkMotor &secondMotor,
-                                       contextpointer context,
-                                       motortestwaitcallback wait)
-    : motorObjects{{&firstMotor, &secondMotor}}, waitContext(context),
-      waitCallback(wait) {
-  if (waitCallback == nullptr) {
-    XWALK_HAL_ERROR(XWALK_INVAL,
-                    "Motor-sequence wait callback must not be null");
-  }
-}
-
-void XWalkMotorSequence::setBoth(float64 speedPercent) {
-  for (XWalkMotor *const motor : motorObjects) {
-    motor->setSpeed(speedPercent);
-  }
-}
-
-void XWalkMotorSequence::stopBothSafely() noexcept {
-  for (XWalkMotor *const motor : motorObjects) {
-    try {
-      motor->setSpeed(0.0);
-    } catch (...) {
-      static_cast<void>(motor->stopSafely());
+    XWalkMotorSequence::XWalkMotorSequence(XWalkMotor& firstMotor,
+                                           XWalkMotor& secondMotor,
+                                           contextpointer context,
+                                           motortestwaitcallback wait)
+        : motorObjects{{&firstMotor, &secondMotor}}, waitContext(context), waitCallback(wait)
+    {
+        if (waitCallback == nullptr)
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "Motor-sequence wait callback must not be null");
+        }
     }
-  }
-}
 
-void XWalkMotorSequence::run(uint32 cycleCount) {
-  if ((cycleCount == 0U) ||
-      (cycleCount > XHAL_RPI5CAR_MOTOR_SEQUENCE_MAX_CYCLES)) {
-    XWALK_HAL_ERROR(XWALK_RANGE, "Motor-sequence cycles must be from 1 to 100");
-  }
+    void XWalkMotorSequence::setBoth(float64 speedPercent)
+    {
+        for (XWalkMotor* const motor : motorObjects)
+        {
+            motor->setSpeed(speedPercent);
+        }
+    }
 
-  try {
-    for (XWalkMotor *const motor : motorObjects) {
-      static_cast<void>(motor->initialize());
+    void XWalkMotorSequence::stopBothSafely() noexcept
+    {
+        for (XWalkMotor* const motor : motorObjects)
+        {
+            try
+            {
+                motor->setSpeed(0.0);
+            }
+            catch (...)
+            {
+                static_cast<void>(motor->stopSafely());
+            }
+        }
     }
-    for (uint32 cycle = 0U; cycle < cycleCount; ++cycle) {
-      setBoth(-50.0);
-      waitCallback(waitContext, 1'000U);
-      setBoth(50.0);
-      waitCallback(waitContext, 1'000U);
-      setBoth(0.0);
-    }
-  } catch (...) {
-    stopBothSafely();
-    try {
-      waitCallback(waitContext, 100U);
-    } catch (...) {
-      stopBothSafely();
-      XWALK_HAL_ERROR(XWALK_EXCEPTION, "Motor-sequence cleanup delay failed");
-    }
-    throw;
-  }
 
-  stopBothSafely();
-  waitCallback(waitContext, 100U);
-}
+    void XWalkMotorSequence::run(uint32 cycleCount)
+    {
+        if ((cycleCount == 0U) || (cycleCount > XHAL_RPI5CAR_MOTOR_SEQUENCE_MAX_CYCLES))
+        {
+            XWALK_HAL_ERROR(XWALK_RANGE, "Motor-sequence cycles must be from 1 to 100");
+        }
+
+        try
+        {
+            for (XWalkMotor* const motor : motorObjects)
+            {
+                static_cast<void>(motor->initialize());
+            }
+            for (uint32 cycle = 0U; cycle < cycleCount; ++cycle)
+            {
+                setBoth(-50.0);
+                waitCallback(waitContext, 1'000U);
+                setBoth(50.0);
+                waitCallback(waitContext, 1'000U);
+                setBoth(0.0);
+            }
+        }
+        catch (...)
+        {
+            stopBothSafely();
+            try
+            {
+                waitCallback(waitContext, 100U);
+            }
+            catch (...)
+            {
+                stopBothSafely();
+                XWALK_HAL_ERROR(XWALK_EXCEPTION, "Motor-sequence cleanup delay failed");
+            }
+            throw;
+        }
+
+        stopBothSafely();
+        waitCallback(waitContext, 100U);
+    }
 
 } /* namespace xwalk::hal::test */

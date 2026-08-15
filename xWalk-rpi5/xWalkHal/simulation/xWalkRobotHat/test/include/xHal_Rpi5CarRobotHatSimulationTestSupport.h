@@ -15,15 +15,15 @@
 namespace xwalk::hal::test::robothat
 {
 
-/** @brief Counts recorded events having the selected operation. */
-size countEvents(const simulation::XWalkRobotHatSimulation& simulation,
-    simulation::XWalkRobotHatOperation operation);
+    /** @brief Counts recorded events having the selected operation. */
+    size countEvents(const simulation::XWalkRobotHatSimulation& simulation,
+                     simulation::XWalkRobotHatOperation operation);
 
-/** @brief Returns true only when logical event timestamps are contiguous and ordered. */
-boolean hasDeterministicOrdering(const simulation::XWalkRobotHatSimulation& simulation);
+    /** @brief Returns true only when logical event timestamps are contiguous and ordered. */
+    boolean hasDeterministicOrdering(const simulation::XWalkRobotHatSimulation& simulation);
 
-/** @brief Runs deterministic logical-model boundary and scenario assertions. */
-void runLogicalModelTests();
+    /** @brief Runs deterministic logical-model boundary and scenario assertions. */
+    void runLogicalModelTests();
 
 } /* namespace xwalk::hal::test::robothat */
 

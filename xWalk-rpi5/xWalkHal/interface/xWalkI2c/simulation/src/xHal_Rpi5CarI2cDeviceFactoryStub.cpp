@@ -32,16 +32,18 @@
  * Namespace definitions
  ******************************************************************************/
 
-namespace xwalk::hal::sim {
+namespace xwalk::hal::sim
+{
 
-/******************************************************************************
- * Function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Function definitions
+     ******************************************************************************/
 
-/** @copydoc createI2cDevice */
-owningpointer<XWalkI2cDevice> createI2cDevice() {
-  XWALK_HAL_TRACE_UID0(RPI .041, "Creating host-mirror I2C device");
-  return std::make_unique<XWalkI2cHostStub>();
-}
+    /** @copydoc createI2cDevice */
+    owningpointer<XWalkI2cDevice> createI2cDevice()
+    {
+        XWALK_HAL_TRACE_UID0(RPI .041, "Creating host-mirror I2C device");
+        return std::make_unique<XWalkI2cHostStub>();
+    }
 
 } /* namespace xwalk::hal::sim */

@@ -37,33 +37,33 @@
 namespace xwalk::hal::sim
 {
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/** @brief Executes one representative sequence through the public I2C API. */
-class XWalkI2cHandler final
-{
-    public:
-        /** @brief Constructs the stateless simulation handler. */
-        XWalkI2cHandler();
+    /** @brief Executes one representative sequence through the public I2C API. */
+    class XWalkI2cHandler final
+    {
+        public:
+            /** @brief Constructs the stateless simulation handler. */
+            XWalkI2cHandler();
 
-        /** @brief Destroys the stateless simulation handler. */
-        ~XWalkI2cHandler();
+            /** @brief Destroys the stateless simulation handler. */
+            ~XWalkI2cHandler();
 
-        XWalkI2cHandler(XWalkI2cHandler&&) = delete;
-        XWalkI2cHandler(const XWalkI2cHandler&) = delete;
-        XWalkI2cHandler& operator=(XWalkI2cHandler&&) = delete;
-        XWalkI2cHandler& operator=(const XWalkI2cHandler&) = delete;
+            XWalkI2cHandler(XWalkI2cHandler&&) = delete;
+            XWalkI2cHandler(const XWalkI2cHandler&) = delete;
+            XWalkI2cHandler& operator=(XWalkI2cHandler&&) = delete;
+            XWalkI2cHandler& operator=(const XWalkI2cHandler&) = delete;
 
-        /**
-         * @brief Runs probe, write, safe-write, read, and register-read operations.
-         * @param[in,out] i2c Configured I2C object bound to the selected backend.
-         * @return Zero when the address responds and every operation completes;
-         * otherwise a non-zero status.
-         */
-        int32 run(XWalkI2c& i2c) const;
-};
+            /**
+             * @brief Runs probe, write, safe-write, read, and register-read operations.
+             * @param[in,out] i2c Configured I2C object bound to the selected backend.
+             * @return Zero when the address responds and every operation completes;
+             * otherwise a non-zero status.
+             */
+            int32 run(XWalkI2c& i2c) const;
+    };
 
 } /* namespace xwalk::hal::sim */
 

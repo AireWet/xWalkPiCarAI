@@ -21,41 +21,38 @@
 namespace xwalk::agent
 {
 
-/**
- * @brief Runs configured standalone video recording.
- * @param[in,out] context Nullable caller-owned application context.
- * @param[in] callback Non-null synchronous application callback.
- * @param[in,out] config Loaded deployment configuration.
- * @return Status returned by `callback`.
- */
-agent::int32 XWalkBootRpi::runVideoRecording(agent::contextpointer context,
-    bootapplicationcallback callback, hal::XWalkConfigStore& config)
-{
-    XWalkVideoRecordingOpenCvConfiguration videoConfiguration;
-    videoConfiguration.cameraBackend = XWalkVideoRecordingOpenCv::backendFromString(
-        config.get("video_recording_camera_backend", "v4l2"));
-    videoConfiguration.cameraDevice = config.get(
-        "video_recording_camera_device", "");
-    videoConfiguration.videoDirectory = config.get(
-        "video_recording_directory", "/tmp/xwalk-videos");
-    videoConfiguration.widthPixels = parseUnsigned(config.get(
-        "computer_vision_width", "640"), "computer_vision_width", 7'680U);
-    videoConfiguration.heightPixels = parseUnsigned(config.get(
-        "computer_vision_height", "480"), "computer_vision_height", 4'320U);
-    videoConfiguration.framesPerSecond = static_cast<agent::float64>(
-        parseUnsigned(config.get("video_recording_fps", "20"),
-            "video_recording_fps", 120U));
-    videoConfiguration.readTimeoutMilliseconds = parseUnsigned(config.get(
-        "video_recording_read_timeout_ms", "1000"),
-        "video_recording_read_timeout_ms", 60'000U);
-    XWalkVideoRecordingOpenCv videoBackend(videoConfiguration);
-    XWalkVideoRecordingCallbacks videoCallbacks = videoBackend.callbacks();
-    videoCallbacks.delay = &delayMilliseconds;
-    videoCallbacks.continueOperation = &continueComputerVision;
-    XWalkVideoRecording videoRecording(&videoBackend, videoCallbacks);
-    XWalkBootServices services{};
-    services.videoRecording = &videoRecording;
-    return callback(context, services);
-}
+    /**
+     * @brief Runs configured standalone video recording.
+     * @param[in,out] context Nullable caller-owned application context.
+     * @param[in] callback Non-null synchronous application callback.
+     * @param[in,out] config Loaded deployment configuration.
+     * @return Status returned by `callback`.
+     */
+    agent::int32 XWalkBootRpi::runVideoRecording(agent::contextpointer context,
+                                                 bootapplicationcallback callback,
+                                                 hal::XWalkConfigStore& config)
+    {
+        XWalkVideoRecordingOpenCvConfiguration videoConfiguration;
+        videoConfiguration.cameraBackend =
+            XWalkVideoRecordingOpenCv::backendFromString(config.get("video_recording_camera_backend", "v4l2"));
+        videoConfiguration.cameraDevice = config.get("video_recording_camera_device", "");
+        videoConfiguration.videoDirectory = config.get("video_recording_directory", "/tmp/xwalk-videos");
+        videoConfiguration.widthPixels =
+            parseUnsigned(config.get("computer_vision_width", "640"), "computer_vision_width", 7'680U);
+        videoConfiguration.heightPixels =
+            parseUnsigned(config.get("computer_vision_height", "480"), "computer_vision_height", 4'320U);
+        videoConfiguration.framesPerSecond = static_cast<agent::float64>(
+            parseUnsigned(config.get("video_recording_fps", "20"), "video_recording_fps", 120U));
+        videoConfiguration.readTimeoutMilliseconds = parseUnsigned(
+            config.get("video_recording_read_timeout_ms", "1000"), "video_recording_read_timeout_ms", 60'000U);
+        XWalkVideoRecordingOpenCv videoBackend(videoConfiguration);
+        XWalkVideoRecordingCallbacks videoCallbacks = videoBackend.callbacks();
+        videoCallbacks.delay = &delayMilliseconds;
+        videoCallbacks.continueOperation = &continueComputerVision;
+        XWalkVideoRecording videoRecording(&videoBackend, videoCallbacks);
+        XWalkBootServices services{};
+        services.videoRecording = &videoRecording;
+        return callback(context, services);
+    }
 
 } /* namespace xwalk::agent */

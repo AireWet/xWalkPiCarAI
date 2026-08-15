@@ -25,42 +25,39 @@
 namespace xwalk::hal::example
 {
 
-/** @brief Executes one configured Espeak playback request without a shell. */
-class XWalkTtsEspeakExampleLinux final
-{
-private:
+    /** @brief Executes one configured Espeak playback request without a shell. */
+    class XWalkTtsEspeakExampleLinux final
+    {
+        private:
+            /** @brief Owned non-empty executable name or path. */
+            string executableName;
 
-    /** @brief Owned non-empty executable name or path. */
-    string executableName;
+        protected:
+            /** @brief Resolves a callback context into its required Linux adapter. */
+            static XWalkTtsEspeakExampleLinux& adapter(contextpointer context);
+            /** @brief Executes one synchronous configured Espeak request. */
+            static void
+            speak(contextpointer context, uint8 amplitude, uint16 speed, uint16 gap, uint8 pitch, stringview text);
 
-protected:
+        public:
+            /**
+             * @brief Stores one deployment-selected Espeak executable.
+             * @param[in] executable Non-empty executable name or path.
+             * @throws std::invalid_argument If `executable` is empty.
+             */
+            explicit XWalkTtsEspeakExampleLinux(stringview executable);
 
-    /** @brief Resolves a callback context into its required Linux adapter. */
-    static XWalkTtsEspeakExampleLinux& adapter(contextpointer context);
-    /** @brief Executes one synchronous configured Espeak request. */
-    static void speak(contextpointer context, uint8 amplitude, uint16 speed,
-        uint16 gap, uint8 pitch, stringview text);
+            XWalkTtsEspeakExampleLinux(const XWalkTtsEspeakExampleLinux&) = delete;
+            XWalkTtsEspeakExampleLinux(XWalkTtsEspeakExampleLinux&&) = delete;
+            XWalkTtsEspeakExampleLinux& operator=(const XWalkTtsEspeakExampleLinux&) = delete;
+            XWalkTtsEspeakExampleLinux& operator=(XWalkTtsEspeakExampleLinux&&) = delete;
 
-public:
-
-    /**
-     * @brief Stores one deployment-selected Espeak executable.
-     * @param[in] executable Non-empty executable name or path.
-     * @throws std::invalid_argument If `executable` is empty.
-     */
-    explicit XWalkTtsEspeakExampleLinux(stringview executable);
-
-    XWalkTtsEspeakExampleLinux(const XWalkTtsEspeakExampleLinux&) = delete;
-    XWalkTtsEspeakExampleLinux(XWalkTtsEspeakExampleLinux&&) = delete;
-    XWalkTtsEspeakExampleLinux& operator=(const XWalkTtsEspeakExampleLinux&) = delete;
-    XWalkTtsEspeakExampleLinux& operator=(XWalkTtsEspeakExampleLinux&&) = delete;
-
-    /**
-     * @brief Synthesizes and plays the configured `Hello world!` request once.
-     * @warning Produces audible output through the executable's selected device.
-     */
-    void run();
-};
+            /**
+             * @brief Synthesizes and plays the configured `Hello world!` request once.
+             * @warning Produces audible output through the executable's selected device.
+             */
+            void run();
+    };
 
 } /* namespace xwalk::hal::example */
 

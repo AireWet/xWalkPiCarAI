@@ -15,17 +15,17 @@
 namespace
 {
 
-void delay(agent::contextpointer context, agent::uint32 durationMs)
-{
-    static_cast<void>(context);
-    xwalk::hal::common::sleepMilliseconds(durationMs);
-}
+    void delay(agent::contextpointer context, agent::uint32 durationMs)
+    {
+        static_cast<void>(context);
+        xwalk::hal::common::sleepMilliseconds(durationMs);
+    }
 
-agent::boolean continueOperation(agent::contextpointer context)
-{
-    static_cast<void>(context);
-    return true;
-}
+    agent::boolean continueOperation(agent::contextpointer context)
+    {
+        static_cast<void>(context);
+        return true;
+    }
 
 } /* namespace */
 

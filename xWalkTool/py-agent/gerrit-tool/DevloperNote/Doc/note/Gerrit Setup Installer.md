@@ -71,7 +71,9 @@ xWalkTool/py-agent/gerrit-tool/shell-script/gerrit-setup.sh start
 Use `$HOME/bin/gerrit-start`, `$HOME/bin/gerrit-stop`,
 `$HOME/bin/gerrit-restart`, `$HOME/bin/gerrit-status`,
 `$HOME/bin/gerrit-logs`, and `$HOME/bin/gerrit-check`. Manual startup after a
-server reboot is supported. Do not create a system-level service.
+server reboot is supported. When `$HOME/.xwalk-ci.env` exists, these lifecycle
+and validation controls include the CI worker. Do not create a system-level
+service.
 
 Print the installed web address with:
 

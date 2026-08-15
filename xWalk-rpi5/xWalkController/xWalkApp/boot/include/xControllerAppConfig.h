@@ -37,7 +37,7 @@
  * valid without overriding a build-supplied deployment path.
  */
 #ifndef XWALK_RUNTIME_DATA_DIRECTORY
-#define XWALK_RUNTIME_DATA_DIRECTORY "/usr/local/share/xwalk"
+    #define XWALK_RUNTIME_DATA_DIRECTORY "/usr/local/share/xwalk"
 #endif
 
 #endif /* XCONTROLLER_APP_CONFIG_H */

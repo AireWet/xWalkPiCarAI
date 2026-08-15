@@ -17,17 +17,15 @@
 
 namespace
 {
-void testCamera(xwalk::agent::test::ControllerCommandTestContext& context)
-{
-    const ctrl::uint32 writes = context.state->i2cWriteCount;
-    xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
-    assert(sequence.run({{"cam", "pan", "--angle", "60"},
-        {"cam", "tilt", "--angle", "-20"}}) == 0);
-    assert(context.state->i2cWriteCount >= (writes + 2U));
-    assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"hal.i2c.write", "hal.i2c.write"}));
-}
-}
+    void testCamera(xwalk::agent::test::ControllerCommandTestContext& context)
+    {
+        const ctrl::uint32 writes = context.state->i2cWriteCount;
+        xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
+        assert(sequence.run({{"cam", "pan", "--angle", "60"}, {"cam", "tilt", "--angle", "-20"}}) == 0);
+        assert(context.state->i2cWriteCount >= (writes + 2U));
+        assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog, {"hal.i2c.write", "hal.i2c.write"}));
+    }
+} // namespace
 
 /** @brief Runs the camera controller-to-HAL host sequence. @return Zero on success. */
 int xWalkCameraCommandSequenceHostTest(int argc, char* argv[])

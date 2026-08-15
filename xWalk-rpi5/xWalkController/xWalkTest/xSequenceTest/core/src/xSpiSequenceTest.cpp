@@ -17,15 +17,14 @@
 
 namespace
 {
-void testSpi(xwalk::agent::test::ControllerCommandTestContext& context)
-{
-    xwalk::agent::test::XWalkControllerSequence sequence(*context.spiController);
-    assert(sequence.run({{"spi", "transfer", "0x9f00a5"}}) == 0);
+    void testSpi(xwalk::agent::test::ControllerCommandTestContext& context)
+    {
+        xwalk::agent::test::XWalkControllerSequence sequence(*context.spiController);
+        assert(sequence.run({{"spi", "transfer", "0x9f00a5"}}) == 0);
 
-    assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"hal.spi.transfer"}));
-}
-}
+        assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog, {"hal.spi.transfer"}));
+    }
+} // namespace
 
 /** @brief Runs the SPI controller-to-HAL host sequence. @return Zero on success. */
 int xWalkSpiCommandSequenceHostTest(int argc, char* argv[])

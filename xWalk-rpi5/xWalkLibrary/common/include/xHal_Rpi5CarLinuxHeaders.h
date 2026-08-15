@@ -29,28 +29,28 @@
  ******************************************************************************/
 
 #ifdef __linux__
-#include <arpa/inet.h>
-#include <cerrno>
-#include <dirent.h>
-#include <dlfcn.h>
-#include <fcntl.h>
-#include <grp.h>
-#include <ifaddrs.h>
-#include <linux/gpio.h>
-#include <linux/i2c-dev.h>
-#include <linux/i2c.h>
-#include <linux/spi/spidev.h>
-#include <netinet/in.h>
-#include <poll.h>
-#include <pwd.h>
-#include <signal.h>
-#include <spawn.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
+    #include <arpa/inet.h>
+    #include <cerrno>
+    #include <dirent.h>
+    #include <dlfcn.h>
+    #include <fcntl.h>
+    #include <grp.h>
+    #include <ifaddrs.h>
+    #include <linux/gpio.h>
+    #include <linux/i2c-dev.h>
+    #include <linux/i2c.h>
+    #include <linux/spi/spidev.h>
+    #include <netinet/in.h>
+    #include <poll.h>
+    #include <pwd.h>
+    #include <signal.h>
+    #include <spawn.h>
+    #include <sys/ioctl.h>
+    #include <sys/socket.h>
+    #include <sys/stat.h>
+    #include <sys/types.h>
+    #include <sys/wait.h>
+    #include <unistd.h>
 #endif
 
 #endif /* XHAL_RPI5CAR_LINUX_HEADERS_H */

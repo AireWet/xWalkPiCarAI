@@ -39,48 +39,47 @@
 
 namespace xwalk
 {
-namespace agent
-{
-namespace test
-{
+    namespace agent
+    {
+        namespace test
+        {
 
-/**
- * @brief Resolves the directory containing the running group test executable.
- * @return Canonical parent directory of the Linux process executable.
- * @throws std::filesystem::filesystem_error When `/proc/self/exe` cannot be resolved.
- */
-inline xwalk::agent::filesystempath groupExecutableDirectory()
-{
-    return std::filesystem::canonical("/proc/self/exe").parent_path();
-}
+            /**
+             * @brief Resolves the directory containing the running group test executable.
+             * @return Canonical parent directory of the Linux process executable.
+             * @throws std::filesystem::filesystem_error When `/proc/self/exe` cannot be resolved.
+             */
+            inline xwalk::agent::filesystempath groupExecutableDirectory()
+            {
+                return std::filesystem::canonical("/proc/self/exe").parent_path();
+            }
 
-/**
- * @brief Resolves one child module test beside its owning group executable.
- * @param[in] moduleDirectory Child module build-directory name.
- * @param[in] executableName Child test executable name.
- * @return Absolute child test executable path.
- * @throws std::filesystem::filesystem_error When the process executable cannot be resolved.
- */
-inline xwalk::agent::filesystempath childTestExecutable(
-    const char* moduleDirectory,
-    const char* executableName)
-{
-    return groupExecutableDirectory() / moduleDirectory / executableName;
-}
+            /**
+             * @brief Resolves one child module test beside its owning group executable.
+             * @param[in] moduleDirectory Child module build-directory name.
+             * @param[in] executableName Child test executable name.
+             * @return Absolute child test executable path.
+             * @throws std::filesystem::filesystem_error When the process executable cannot be resolved.
+             */
+            inline xwalk::agent::filesystempath childTestExecutable(const char* moduleDirectory,
+                                                                    const char* executableName)
+            {
+                return groupExecutableDirectory() / moduleDirectory / executableName;
+            }
 
-/**
- * @brief Resolves a writable directory for one child module test.
- * @param[in] moduleName Stable child module test-data name.
- * @return Absolute group-local test-data directory.
- * @throws std::filesystem::filesystem_error When the process executable cannot be resolved.
- */
-inline xwalk::agent::filesystempath groupTestDataDirectory(const char* moduleName)
-{
-    return groupExecutableDirectory() / "test-data" / moduleName;
-}
+            /**
+             * @brief Resolves a writable directory for one child module test.
+             * @param[in] moduleName Stable child module test-data name.
+             * @return Absolute group-local test-data directory.
+             * @throws std::filesystem::filesystem_error When the process executable cannot be resolved.
+             */
+            inline xwalk::agent::filesystempath groupTestDataDirectory(const char* moduleName)
+            {
+                return groupExecutableDirectory() / "test-data" / moduleName;
+            }
 
-} /* namespace test */
-} /* namespace agent */
+        } /* namespace test */
+    } /* namespace agent */
 } /* namespace xwalk */
 
 #endif /* XAGENT_RPI5CAR_GROUP_TEST_SUPPORT_H */

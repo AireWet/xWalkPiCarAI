@@ -16,6 +16,6 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-int32 runLanguageModelSimulation();
+    int32 runLanguageModelSimulation();
 }
 #endif

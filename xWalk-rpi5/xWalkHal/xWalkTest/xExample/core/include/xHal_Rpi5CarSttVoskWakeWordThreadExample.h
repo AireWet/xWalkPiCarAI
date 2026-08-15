@@ -48,81 +48,77 @@
 namespace xwalk::hal::example
 {
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/** @brief Starts one platform wake-word listener. */
-using wakewordstartcallback = void (*)(contextpointer context);
-/** @brief Reports whether the active listener detected the configured phrase. */
-using wakeworddetectedcallback = boolean (*)(contextpointer context);
-/** @brief Stops and joins the active wake-word listener. */
-using wakewordstopcallback = void (*)(contextpointer context);
-/** @brief Waits between source-compatible wake-state polls. */
-using wakewordwaitcallback = void (*)(contextpointer context, uint32 durationMilliseconds);
-/** @brief Reports one literal source-compatible status message. */
-using wakewordreportcallback = void (*)(contextpointer context, stringview message);
+    /** @brief Starts one platform wake-word listener. */
+    using wakewordstartcallback = void (*)(contextpointer context);
+    /** @brief Reports whether the active listener detected the configured phrase. */
+    using wakeworddetectedcallback = boolean (*)(contextpointer context);
+    /** @brief Stops and joins the active wake-word listener. */
+    using wakewordstopcallback = void (*)(contextpointer context);
+    /** @brief Waits between source-compatible wake-state polls. */
+    using wakewordwaitcallback = void (*)(contextpointer context, uint32 durationMilliseconds);
+    /** @brief Reports one literal source-compatible status message. */
+    using wakewordreportcallback = void (*)(contextpointer context, stringview message);
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-/** @brief Complete injected operation table required by the wake-word example. */
-struct XWalkSttVoskWakeWordThreadExampleCallbacks
-{
-    /** @brief Starts one listener worker. */
-    wakewordstartcallback startListening{nullptr};
-    /** @brief Reads the current wake state. */
-    wakeworddetectedcallback isWaked{nullptr};
-    /** @brief Stops and joins the current listener worker. */
-    wakewordstopcallback stopListening{nullptr};
-    /** @brief Waits three seconds between unsuccessful polls. */
-    wakewordwaitcallback wait{nullptr};
-    /** @brief Reports waiting and detected messages. */
-    wakewordreportcallback report{nullptr};
-};
+    /** @brief Complete injected operation table required by the wake-word example. */
+    struct XWalkSttVoskWakeWordThreadExampleCallbacks
+    {
+            /** @brief Starts one listener worker. */
+            wakewordstartcallback startListening{nullptr};
+            /** @brief Reads the current wake state. */
+            wakeworddetectedcallback isWaked{nullptr};
+            /** @brief Stops and joins the current listener worker. */
+            wakewordstopcallback stopListening{nullptr};
+            /** @brief Waits three seconds between unsuccessful polls. */
+            wakewordwaitcallback wait{nullptr};
+            /** @brief Reports waiting and detected messages. */
+            wakewordreportcallback report{nullptr};
+    };
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/** @brief Coordinates bounded threaded wake-word detection attempts. */
-class XWalkSttVoskWakeWordThreadExample final
-{
-private:
+    /** @brief Coordinates bounded threaded wake-word detection attempts. */
+    class XWalkSttVoskWakeWordThreadExample final
+    {
+        private:
+            /** @brief Non-owning context forwarded to every injected operation. */
+            contextpointer callbackContext;
+            /** @brief Complete validated callback table copied at construction. */
+            XWalkSttVoskWakeWordThreadExampleCallbacks callbacks;
 
-    /** @brief Non-owning context forwarded to every injected operation. */
-    contextpointer callbackContext;
-    /** @brief Complete validated callback table copied at construction. */
-    XWalkSttVoskWakeWordThreadExampleCallbacks callbacks;
+        public:
+            /**
+             * @brief Binds the complete wake-word worker operation table.
+             * @param[in,out] context Non-owning context forwarded to every callback.
+             * @param[in] exampleCallbacks Table containing five non-null callbacks.
+             * @throws std::invalid_argument If any callback is null.
+             */
+            XWalkSttVoskWakeWordThreadExample(contextpointer context,
+                                              const XWalkSttVoskWakeWordThreadExampleCallbacks& exampleCallbacks);
 
-public:
+            XWalkSttVoskWakeWordThreadExample(const XWalkSttVoskWakeWordThreadExample&) = delete;
+            XWalkSttVoskWakeWordThreadExample(XWalkSttVoskWakeWordThreadExample&&) = delete;
+            XWalkSttVoskWakeWordThreadExample& operator=(const XWalkSttVoskWakeWordThreadExample&) = delete;
+            XWalkSttVoskWakeWordThreadExample& operator=(XWalkSttVoskWakeWordThreadExample&&) = delete;
 
-    /**
-     * @brief Binds the complete wake-word worker operation table.
-     * @param[in,out] context Non-owning context forwarded to every callback.
-     * @param[in] exampleCallbacks Table containing five non-null callbacks.
-     * @throws std::invalid_argument If any callback is null.
-     */
-    XWalkSttVoskWakeWordThreadExample(contextpointer context,
-        const XWalkSttVoskWakeWordThreadExampleCallbacks& exampleCallbacks);
-
-    XWalkSttVoskWakeWordThreadExample(const XWalkSttVoskWakeWordThreadExample&) = delete;
-    XWalkSttVoskWakeWordThreadExample(XWalkSttVoskWakeWordThreadExample&&) = delete;
-    XWalkSttVoskWakeWordThreadExample& operator=(
-        const XWalkSttVoskWakeWordThreadExample&) = delete;
-    XWalkSttVoskWakeWordThreadExample& operator=(
-        XWalkSttVoskWakeWordThreadExample&&) = delete;
-
-    /**
-     * @brief Starts, polls, and stops each requested wake-word attempt.
-     * @param[in] detectionCount Required successful detection count from one through 100.
-     * @param[in] maximumPolls Maximum polls per detection from one through 1,200.
-     * @throws std::out_of_range If either bounded count is invalid.
-     * @throws std::runtime_error If one attempt reaches its poll limit.
-     */
-    void run(uint32 detectionCount, uint32 maximumPolls);
-};
+            /**
+             * @brief Starts, polls, and stops each requested wake-word attempt.
+             * @param[in] detectionCount Required successful detection count from one through 100.
+             * @param[in] maximumPolls Maximum polls per detection from one through 1,200.
+             * @throws std::out_of_range If either bounded count is invalid.
+             * @throws std::runtime_error If one attempt reaches its poll limit.
+             */
+            void run(uint32 detectionCount, uint32 maximumPolls);
+    };
 
 } /* namespace xwalk::hal::example */
 

@@ -13,7 +13,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Exercises active and passive buzzers without physical output. */
-int32 runBuzzerSimulation();
+    /** @brief Exercises active and passive buzzers without physical output. */
+    int32 runBuzzerSimulation();
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_BUZZER_SIMULATION_H */

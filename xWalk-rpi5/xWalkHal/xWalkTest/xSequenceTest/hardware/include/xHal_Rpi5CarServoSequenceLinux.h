@@ -41,40 +41,39 @@
 namespace xwalk::hal::test
 {
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/** @brief Composes the physical Robot HAT 12-channel servo sequence. */
-class XWalkServoSequenceLinux
-{
-public:
+    /** @brief Composes the physical Robot HAT 12-channel servo sequence. */
+    class XWalkServoSequenceLinux
+    {
+        public:
+            /**
+             * @brief Runs bounded physical negative and positive servo sweeps.
+             *
+             * @param[in] i2cDevice
+             * Linux I2C character-device path.
+             *
+             * @param[in] cycleCount
+             * Complete sweep count in the inclusive range one through 100.
+             *
+             * @warning
+             * This operation physically moves servo channels zero through 11.
+             */
+            void run(cstring i2cDevice, uint32 cycleCount);
 
-    /**
-     * @brief Runs bounded physical negative and positive servo sweeps.
-     *
-     * @param[in] i2cDevice
-     * Linux I2C character-device path.
-     *
-     * @param[in] cycleCount
-     * Complete sweep count in the inclusive range one through 100.
-     *
-     * @warning
-     * This operation physically moves servo channels zero through 11.
-     */
-    void run(cstring i2cDevice, uint32 cycleCount);
-
-    /**
-     * @brief Waits for the requested duration.
-     *
-     * @param[in,out] context
-     * Unused callback context.
-     *
-     * @param[in] durationMilliseconds
-     * Requested wait duration in milliseconds.
-     */
-    static void wait(contextpointer context, uint32 durationMilliseconds);
-};
+            /**
+             * @brief Waits for the requested duration.
+             *
+             * @param[in,out] context
+             * Unused callback context.
+             *
+             * @param[in] durationMilliseconds
+             * Requested wait duration in milliseconds.
+             */
+            static void wait(contextpointer context, uint32 durationMilliseconds);
+    };
 
 } /* namespace xwalk::hal::test */
 

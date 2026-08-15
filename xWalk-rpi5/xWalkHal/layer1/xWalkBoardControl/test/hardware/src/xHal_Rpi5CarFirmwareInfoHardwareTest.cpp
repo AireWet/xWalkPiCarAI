@@ -45,10 +45,10 @@ XWalkHal::int32 main()
 {
     XWalkHal::XWalkI2cLinux backend;
     XWalkHal::XWalkI2c i2c(&backend,
-        XHAL_I2C_PROBE_CALLBACK(XWalkHal::XWalkI2cLinux),
-        XHAL_I2C_WRITE_REGISTER_CALLBACK(XWalkHal::XWalkI2cLinux),
-        XHAL_I2C_READ_CALLBACK(XWalkHal::XWalkI2cLinux),
-        XHAL_I2C_READ_REGISTER_CALLBACK(XWalkHal::XWalkI2cLinux));
+                           XHAL_I2C_PROBE_CALLBACK(XWalkHal::XWalkI2cLinux),
+                           XHAL_I2C_WRITE_REGISTER_CALLBACK(XWalkHal::XWalkI2cLinux),
+                           XHAL_I2C_READ_CALLBACK(XWalkHal::XWalkI2cLinux),
+                           XHAL_I2C_READ_REGISTER_CALLBACK(XWalkHal::XWalkI2cLinux));
     XWalkHal::XWalkFirmwareInfo information(i2c);
     static_cast<void>(information.read());
     return 0;

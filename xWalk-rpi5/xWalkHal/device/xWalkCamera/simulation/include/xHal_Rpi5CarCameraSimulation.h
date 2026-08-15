@@ -13,7 +13,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Exercises one camera capture through an in-memory callback backend. */
-int32 runCameraSimulation();
+    /** @brief Exercises one camera capture through an in-memory callback backend. */
+    int32 runCameraSimulation();
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_CAMERA_SIMULATION_H */

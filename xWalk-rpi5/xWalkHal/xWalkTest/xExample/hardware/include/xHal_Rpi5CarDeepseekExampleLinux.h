@@ -33,32 +33,29 @@
 namespace xwalk::hal::example
 {
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/** @brief Composes the DeepSeek example with libcurl and terminal input/output. */
-class XWalkDeepseekExampleLinux
-{
-protected:
+    /** @brief Composes the DeepSeek example with libcurl and terminal input/output. */
+    class XWalkDeepseekExampleLinux
+    {
+        protected:
+            /** @brief Prints `>>> ` and reads one terminal input line. */
+            static boolean readPrompt(contextpointer context, string& inputText);
+            /** @brief Writes one welcome or response fragment to standard output. */
+            static void write(contextpointer context, stringview text, boolean appendNewline, boolean flushOutput);
 
-    /** @brief Prints `>>> ` and reads one terminal input line. */
-    static boolean readPrompt(contextpointer context, string& inputText);
-    /** @brief Writes one welcome or response fragment to standard output. */
-    static void write(contextpointer context, stringview text,
-        boolean appendNewline, boolean flushOutput);
-
-public:
-
-    /**
-     * @brief Runs bounded interactive chat through the DeepSeek API.
-     *
-     * @param[in] apiKey Non-empty credential sourced outside process arguments.
-     * @param[in] maximumPrompts Prompt limit from one through 100.
-     * @warning Sends user prompts to a remote service over HTTPS.
-     */
-    void run(stringview apiKey, uint32 maximumPrompts);
-};
+        public:
+            /**
+             * @brief Runs bounded interactive chat through the DeepSeek API.
+             *
+             * @param[in] apiKey Non-empty credential sourced outside process arguments.
+             * @param[in] maximumPrompts Prompt limit from one through 100.
+             * @warning Sends user prompts to a remote service over HTTPS.
+             */
+            void run(stringview apiKey, uint32 maximumPrompts);
+    };
 
 } /* namespace xwalk::hal::example */
 

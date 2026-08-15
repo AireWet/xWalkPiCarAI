@@ -160,6 +160,10 @@ case "$job" in
         xWalkTool/shell-agent/quality-tool/run-host-shellcheck.sh
         validate_ci_metadata
         ;;
+    styler)
+        require_no_arguments "$@"
+        xWalkTool/py-agent/dev-tool/styler-tool/xWalkStyler check
+        ;;
     xwalk-agent-build) require_no_arguments "$@"; configure_module xwalk-agent ;;
     xwalk-agent-aggregate)
         require_no_arguments "$@"

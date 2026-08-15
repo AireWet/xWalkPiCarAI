@@ -13,21 +13,20 @@
 #include "xHal_Rpi5CarI2c.h"
 namespace xwalk::hal::sim
 {
-/** @brief Supplies deterministic three-axis samples entirely in memory. */
-class XWalkAdxl345HostStub final
-{
-    private:
-        size writeCountValue{};
-        size registerReadCountValue{};
-    public:
-        static boolean probe(contextpointer context, uint8 address);
-        static void writeRegister(contextpointer context, uint8 address, uint8 reg,
-            const bytevector& data);
-        static bytevector read(contextpointer context, uint8 address, size length);
-        static bytevector readRegister(contextpointer context, uint8 address, uint8 reg,
-            size length);
-        size writeCount() const noexcept;
-        size registerReadCount() const noexcept;
-};
+    /** @brief Supplies deterministic three-axis samples entirely in memory. */
+    class XWalkAdxl345HostStub final
+    {
+        private:
+            size writeCountValue{};
+            size registerReadCountValue{};
+
+        public:
+            static boolean probe(contextpointer context, uint8 address);
+            static void writeRegister(contextpointer context, uint8 address, uint8 reg, const bytevector& data);
+            static bytevector read(contextpointer context, uint8 address, size length);
+            static bytevector readRegister(contextpointer context, uint8 address, uint8 reg, size length);
+            size writeCount() const noexcept;
+            size registerReadCount() const noexcept;
+    };
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_ADXL345_HOST_STUB_H */

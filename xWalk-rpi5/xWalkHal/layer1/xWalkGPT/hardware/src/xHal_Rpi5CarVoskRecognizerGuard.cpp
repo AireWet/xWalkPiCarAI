@@ -37,33 +37,33 @@
 namespace xwalk::hal
 {
 
-/**
- * @brief Binds one recognizer handle and its release operation.
- *
- * @param[in] recognizer
- * Non-null Vosk recognizer handle to release.
- *
- * @param[in] release
- * Non-null Vosk release operation valid through destruction.
- *
- * @pre
- * Both arguments are non-null and refer to the same loaded Vosk API.
- */
-XWalkVoskRecognizerGuard::XWalkVoskRecognizerGuard(voskrecognizerhandle recognizer,
-    voskrecognizerfreefunction release) noexcept:
-    recognizerHandle(recognizer), freeFunction(release)
-{
-}
+    /**
+     * @brief Binds one recognizer handle and its release operation.
+     *
+     * @param[in] recognizer
+     * Non-null Vosk recognizer handle to release.
+     *
+     * @param[in] release
+     * Non-null Vosk release operation valid through destruction.
+     *
+     * @pre
+     * Both arguments are non-null and refer to the same loaded Vosk API.
+     */
+    XWalkVoskRecognizerGuard::XWalkVoskRecognizerGuard(voskrecognizerhandle recognizer,
+                                                       voskrecognizerfreefunction release) noexcept
+        : recognizerHandle(recognizer), freeFunction(release)
+    {
+    }
 
-/**
- * @brief Releases the bound recognizer.
- *
- * @post
- * The recognizer has been passed exactly once to the release operation.
- */
-XWalkVoskRecognizerGuard::~XWalkVoskRecognizerGuard() noexcept
-{
-    freeFunction(recognizerHandle);
-}
+    /**
+     * @brief Releases the bound recognizer.
+     *
+     * @post
+     * The recognizer has been passed exactly once to the release operation.
+     */
+    XWalkVoskRecognizerGuard::~XWalkVoskRecognizerGuard() noexcept
+    {
+        freeFunction(recognizerHandle);
+    }
 
 } /* namespace xwalk::hal */

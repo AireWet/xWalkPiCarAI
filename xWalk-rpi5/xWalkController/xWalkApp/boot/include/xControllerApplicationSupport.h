@@ -40,7 +40,7 @@
  */
 namespace xwalk::hal
 {
-class XWalkMusic;
+    class XWalkMusic;
 } /* namespace xwalk::hal */
 
 /******************************************************************************
@@ -54,104 +54,100 @@ class XWalkMusic;
 namespace xwalk::ctrl
 {
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
-
-/**
- * @struct XWalkControllerBootContext
- * @brief Carries validated process arguments into one backend boot attempt.
- */
-struct XWalkControllerBootContext
-{
-    /**
-     * @brief Non-owning command-argument pointer that remains valid until boot returns.
-     */
-    const ::ctrl::stringvector* commandArguments{nullptr};
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
     /**
-     * @brief Absolute packaged-data directory selected before boot.
+     * @struct XWalkControllerBootContext
+     * @brief Carries validated process arguments into one backend boot attempt.
      */
-    ::ctrl::string resourceDirectory{};
-};
+    struct XWalkControllerBootContext
+    {
+            /**
+             * @brief Non-owning command-argument pointer that remains valid until boot returns.
+             */
+            const ::ctrl::stringvector* commandArguments{nullptr};
 
-/**
- * @struct XWalkControllerApplicationContext
- * @brief Carries audio and resource-path state through Controller callbacks.
- */
-struct XWalkControllerApplicationContext
-{
+            /**
+             * @brief Absolute packaged-data directory selected before boot.
+             */
+            ::ctrl::string resourceDirectory{};
+    };
+
     /**
-     * @brief Nullable non-owning Music pointer supplied by the selected boot graph.
+     * @struct XWalkControllerApplicationContext
+     * @brief Carries audio and resource-path state through Controller callbacks.
      */
-    hal::XWalkMusic* music{nullptr};
+    struct XWalkControllerApplicationContext
+    {
+            /**
+             * @brief Nullable non-owning Music pointer supplied by the selected boot graph.
+             */
+            hal::XWalkMusic* music{nullptr};
+
+            /**
+             * @brief Absolute packaged-data directory valid throughout command execution.
+             */
+            ::ctrl::string resourceDirectory{};
+    };
+
+    /******************************************************************************
+     * Function declarations
+     ******************************************************************************/
+
+    /** @brief Restores the application operation request before signal handlers are installed. */
+    void XWALK_resetOperationRequest() noexcept;
 
     /**
-     * @brief Absolute packaged-data directory valid throughout command execution.
+     * @brief Applies ordered persistent trace requests before boot.
+     * @param[in] applicationArguments Validated process-global trace requests.
+     * @return `true` when every requested XML and memory update succeeds.
      */
-    ::ctrl::string resourceDirectory{};
-};
+    ::ctrl::boolean xWalkApplyTraceConfiguration(const XWalkControllerApplicationArguments& applicationArguments);
 
-/******************************************************************************
- * Function declarations
- ******************************************************************************/
+    /**
+     * @brief Writes one CLI line to standard output.
+     * @param[in] context Optional context; unused.
+     * @param[in] line Text written synchronously followed by a newline.
+     */
+    void XWALK_outputLine(::ctrl::contextpointer context, ::ctrl::stringview line);
 
-/** @brief Restores the application operation request before signal handlers are installed. */
-void XWALK_resetOperationRequest() noexcept;
+    /**
+     * @brief Writes one prompt and reads one line from standard input.
+     * @param[in] context Optional context; unused.
+     * @param[in] prompt Prompt text written without a newline.
+     * @return Owned response line, or `skip` when input reaches end-of-file.
+     */
+    ::ctrl::string XWALK_inputLine(::ctrl::contextpointer context, ::ctrl::stringview prompt);
 
-/**
- * @brief Applies ordered persistent trace requests before boot.
- * @param[in] applicationArguments Validated process-global trace requests.
- * @return `true` when every requested XML and memory update succeeds.
- */
-::ctrl::boolean xWalkApplyTraceConfiguration(
-    const XWalkControllerApplicationArguments& applicationArguments);
+    /**
+     * @brief Suspends the CLI on the calling thread.
+     * @param[in] context Optional context; unused.
+     * @param[in] durationMs Requested duration in milliseconds.
+     */
+    void XWALK_delayMilliseconds(::ctrl::contextpointer context, ::ctrl::uint32 durationMs);
 
-/**
- * @brief Writes one CLI line to standard output.
- * @param[in] context Optional context; unused.
- * @param[in] line Text written synchronously followed by a newline.
- */
-void XWALK_outputLine(::ctrl::contextpointer context, ::ctrl::stringview line);
+    /**
+     * @brief Requests graceful shutdown of the active operation from a process signal.
+     * @param[in] signalNumber Delivered signal number; ignored after dispatch.
+     */
+    void XWALK_requestOperationStop(int signalNumber) noexcept;
 
-/**
- * @brief Writes one prompt and reads one line from standard input.
- * @param[in] context Optional context; unused.
- * @param[in] prompt Prompt text written without a newline.
- * @return Owned response line, or `skip` when input reaches end-of-file.
- */
-::ctrl::string XWALK_inputLine(::ctrl::contextpointer context,
-    ::ctrl::stringview prompt);
+    /**
+     * @brief Reports whether the active operation may perform another bounded step.
+     * @param[in] context Optional context; unused.
+     * @return `true` until SIGINT or SIGTERM requests shutdown.
+     */
+    ::ctrl::boolean XWALK_continueOperation(::ctrl::contextpointer context) noexcept;
 
-/**
- * @brief Suspends the CLI on the calling thread.
- * @param[in] context Optional context; unused.
- * @param[in] durationMs Requested duration in milliseconds.
- */
-void XWALK_delayMilliseconds(::ctrl::contextpointer context,
-    ::ctrl::uint32 durationMs);
-
-/**
- * @brief Requests graceful shutdown of the active operation from a process signal.
- * @param[in] signalNumber Delivered signal number; ignored after dispatch.
- */
-void XWALK_requestOperationStop(int signalNumber) noexcept;
-
-/**
- * @brief Reports whether the active operation may perform another bounded step.
- * @param[in] context Optional context; unused.
- * @return `true` until SIGINT or SIGTERM requests shutdown.
- */
-::ctrl::boolean XWALK_continueOperation(::ctrl::contextpointer context) noexcept;
-
-/**
- * @brief Executes one CLI audio operation through a caller-owned Music object.
- * @param[in,out] context Non-null application context that remains valid during the call.
- * @param[in] request Validated sound action, file path, and optional volume.
- * @return `true` after the Music backend accepts and completes the operation.
- */
-::ctrl::boolean XWALK_performSound(::ctrl::contextpointer context,
-    const XWalkSoundRequest& request);
+    /**
+     * @brief Executes one CLI audio operation through a caller-owned Music object.
+     * @param[in,out] context Non-null application context that remains valid during the call.
+     * @param[in] request Validated sound action, file path, and optional volume.
+     * @return `true` after the Music backend accepts and completes the operation.
+     */
+    ::ctrl::boolean XWALK_performSound(::ctrl::contextpointer context, const XWalkSoundRequest& request);
 
 } /* namespace xwalk::ctrl */
 

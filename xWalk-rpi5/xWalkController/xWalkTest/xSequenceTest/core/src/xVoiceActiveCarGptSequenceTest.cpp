@@ -40,33 +40,26 @@
 namespace
 {
 
-/**
- * @brief Verifies wake, prompt, action, speech, and cleanup ordering.
- * @param[in,out] context Complete in-memory Controller-to-HAL composition.
- */
-void testVoiceActiveCarGpt(
-    xwalk::agent::test::ControllerCommandTestContext& context)
-{
-    context.state->operationQueries = 0U;
-    context.state->operationQueryLimit = 2U;
-    context.state->recognitionTranscripts = {"HEY BUDDY", "Wave hello"};
-    context.state->modelResponses = {
-        "Hello, captain!\nACTIONS: stop"};
-    xwalk::agent::test::XWalkControllerSequence sequence(
-        *context.voiceActiveGptController);
-    const ctrl::int32 result = sequence.run(
-        {{"voice-active-car-gpt", "start"},
-            {"voice-active-car-gpt", "stop"}});
-    assert(result == 0);
-    assert(context.state->recognitionTranscriptIndex == 2U);
-    assert(context.state->modelPrompts ==
-        ctrl::stringvector({"Wave hello"}));
-    assert(context.state->spokenText == ctrl::stringvector({
-        "Hi, I'm Buddy. Wake me up with: hey buddy",
-        "Hi there", "Hello, captain!"}));
-    assert(context.state->recognitionStopCount > 0U);
-    assert(context.motors->left().speed() == 0.0);
-}
+    /**
+     * @brief Verifies wake, prompt, action, speech, and cleanup ordering.
+     * @param[in,out] context Complete in-memory Controller-to-HAL composition.
+     */
+    void testVoiceActiveCarGpt(xwalk::agent::test::ControllerCommandTestContext& context)
+    {
+        context.state->operationQueries = 0U;
+        context.state->operationQueryLimit = 2U;
+        context.state->recognitionTranscripts = {"HEY BUDDY", "Wave hello"};
+        context.state->modelResponses = {"Hello, captain!\nACTIONS: stop"};
+        xwalk::agent::test::XWalkControllerSequence sequence(*context.voiceActiveGptController);
+        const ctrl::int32 result = sequence.run({{"voice-active-car-gpt", "start"}, {"voice-active-car-gpt", "stop"}});
+        assert(result == 0);
+        assert(context.state->recognitionTranscriptIndex == 2U);
+        assert(context.state->modelPrompts == ctrl::stringvector({"Wave hello"}));
+        assert(context.state->spokenText ==
+               ctrl::stringvector({"Hi, I'm Buddy. Wake me up with: hey buddy", "Hi there", "Hello, captain!"}));
+        assert(context.state->recognitionStopCount > 0U);
+        assert(context.motors->left().speed() == 0.0);
+    }
 
 } /* namespace */
 
@@ -82,6 +75,5 @@ void testVoiceActiveCarGpt(
  */
 int xWalkVoiceActiveCarGptCommandSequenceHostTest(int argc, char* argv[])
 {
-    return xwalk::agent::test::runControllerCommandHostTest(
-        argc, argv, &testVoiceActiveCarGpt);
+    return xwalk::agent::test::runControllerCommandHostTest(argc, argv, &testVoiceActiveCarGpt);
 }

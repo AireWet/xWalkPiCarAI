@@ -13,7 +13,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Exercises Servo angle and pulse output through an in-memory bus. */
-int32 runServoSimulation();
+    /** @brief Exercises Servo angle and pulse output through an in-memory bus. */
+    int32 runServoSimulation();
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_SERVO_SIMULATION_H */

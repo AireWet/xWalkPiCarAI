@@ -17,18 +17,19 @@
 
 namespace
 {
-void testSound(xwalk::agent::test::ControllerCommandTestContext& context)
-{
-    xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
-    assert(sequence.run({{"sound", "play", "horn.wav", "--volume", "80"},
-        {"sound", "volume", "25"}, {"sound", "music", "trail.mp3"},
-        {"sound", "stop"}}) == 0);
-    assert(context.state->soundOperation == xwalk::ctrl::XWalkSoundOperation::Stop);
-    assert(context.state->soundFile.empty());
-    assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"hal.sound", "hal.sound", "hal.sound", "hal.sound"}));
-}
-}
+    void testSound(xwalk::agent::test::ControllerCommandTestContext& context)
+    {
+        xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
+        assert(sequence.run({{"sound", "play", "horn.wav", "--volume", "80"},
+                             {"sound", "volume", "25"},
+                             {"sound", "music", "trail.mp3"},
+                             {"sound", "stop"}}) == 0);
+        assert(context.state->soundOperation == xwalk::ctrl::XWalkSoundOperation::Stop);
+        assert(context.state->soundFile.empty());
+        assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
+                                                         {"hal.sound", "hal.sound", "hal.sound", "hal.sound"}));
+    }
+} // namespace
 
 /** @brief Runs the sound controller-to-HAL host sequence. @return Zero on success. */
 int xWalkSoundCommandSequenceHostTest(int argc, char* argv[])

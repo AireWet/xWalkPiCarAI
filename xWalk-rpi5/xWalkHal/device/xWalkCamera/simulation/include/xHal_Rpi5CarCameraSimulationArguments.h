@@ -13,28 +13,30 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Validates and applies one optional xWalkCamera trace selector. */
-class XWalkCameraSimulationArguments final
-{
-    private:
-        string traceTargetValue;
-        boolean traceEnabledValue;
-        boolean traceUpdateRequestedValue;
-        boolean validValue;
-        boolean helpRequestedValue;
-    protected:
-        static boolean targetIsValid(stringview target) noexcept;
-        void parseSelector(stringview selector);
-    public:
-        XWalkCameraSimulationArguments(int32 argumentCount, charpointer argumentValues[]);
-        ~XWalkCameraSimulationArguments();
-        XWalkCameraSimulationArguments(const XWalkCameraSimulationArguments&) = delete;
-        XWalkCameraSimulationArguments& operator=(const XWalkCameraSimulationArguments&) = delete;
-        XWalkCameraSimulationArguments(XWalkCameraSimulationArguments&&) = delete;
-        XWalkCameraSimulationArguments& operator=(XWalkCameraSimulationArguments&&) = delete;
-        boolean valid() const noexcept;
-        boolean helpRequested() const noexcept;
-        boolean applyTraceUpdate() const;
-};
+    /** @brief Validates and applies one optional xWalkCamera trace selector. */
+    class XWalkCameraSimulationArguments final
+    {
+        private:
+            string traceTargetValue;
+            boolean traceEnabledValue;
+            boolean traceUpdateRequestedValue;
+            boolean validValue;
+            boolean helpRequestedValue;
+
+        protected:
+            static boolean targetIsValid(stringview target) noexcept;
+            void parseSelector(stringview selector);
+
+        public:
+            XWalkCameraSimulationArguments(int32 argumentCount, charpointer argumentValues[]);
+            ~XWalkCameraSimulationArguments();
+            XWalkCameraSimulationArguments(const XWalkCameraSimulationArguments&) = delete;
+            XWalkCameraSimulationArguments& operator=(const XWalkCameraSimulationArguments&) = delete;
+            XWalkCameraSimulationArguments(XWalkCameraSimulationArguments&&) = delete;
+            XWalkCameraSimulationArguments& operator=(XWalkCameraSimulationArguments&&) = delete;
+            boolean valid() const noexcept;
+            boolean helpRequested() const noexcept;
+            boolean applyTraceUpdate() const;
+    };
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_CAMERA_SIMULATION_ARGUMENTS_H */

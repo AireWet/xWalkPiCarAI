@@ -30,26 +30,29 @@
  * @brief Contains device-free and executable-level xWalkGpio simulation
  * support.
  */
-namespace xwalk::hal::sim {
+namespace xwalk::hal::sim
+{
 
-/** @brief Constructs the stateless simulation handler. */
-XWalkGpioHandler::XWalkGpioHandler() = default;
+    /** @brief Constructs the stateless simulation handler. */
+    XWalkGpioHandler::XWalkGpioHandler() = default;
 
-/** @brief Destroys the stateless simulation handler. */
-XWalkGpioHandler::~XWalkGpioHandler() = default;
+    /** @brief Destroys the stateless simulation handler. */
+    XWalkGpioHandler::~XWalkGpioHandler() = default;
 
-/**
- * @brief Drives the selected line low and then samples its level.
- * @param[in,out] gpio Configured GPIO object bound to the selected backend.
- * @return Zero after the operations complete.
- */
-int32 XWalkGpioHandler::run(XWalkGpio &gpio) const {
-  const boolean outputValue = gpio.off();
-  const boolean inputValue = gpio.read();
-  XWALK_HAL_TRACE_UID2(
-      RPI .081, "xWalkGpio simulation completed with output %d and input %d",
-      static_cast<int32>(outputValue), static_cast<int32>(inputValue));
-  return 0;
-}
+    /**
+     * @brief Drives the selected line low and then samples its level.
+     * @param[in,out] gpio Configured GPIO object bound to the selected backend.
+     * @return Zero after the operations complete.
+     */
+    int32 XWalkGpioHandler::run(XWalkGpio& gpio) const
+    {
+        const boolean outputValue = gpio.off();
+        const boolean inputValue = gpio.read();
+        XWALK_HAL_TRACE_UID2(RPI .081,
+                             "xWalkGpio simulation completed with output %d and input %d",
+                             static_cast<int32>(outputValue),
+                             static_cast<int32>(inputValue));
+        return 0;
+    }
 
 } /* namespace xwalk::hal::sim */

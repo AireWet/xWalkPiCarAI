@@ -48,26 +48,23 @@
  * @warning
  * Run only with the correct Robot HAT and speaker connected at a safe volume.
  */
-XWalkHal::int32 main(XWalkHal::int32 argumentCount, char *argumentValues[]) {
-  if ((argumentCount != 1) && (argumentCount != 4)) {
-    XWALK_HAL_ERROR(
-        XWALK_INVAL,
-        "Music hardware test accepts PCM, mixer, and element names");
-  }
-  const XWalkHal::stringview pcmDevice =
-      (argumentCount == 4) ? XWalkHal::stringview(argumentValues[1])
-                           : XWalkHal::stringview("default");
-  const XWalkHal::stringview mixerDevice =
-      (argumentCount == 4) ? XWalkHal::stringview(argumentValues[2])
-                           : XWalkHal::stringview("default");
-  const XWalkHal::stringview mixerElement =
-      (argumentCount == 4) ? XWalkHal::stringview(argumentValues[3])
-                           : XWalkHal::stringview("PCM");
+XWalkHal::int32 main(XWalkHal::int32 argumentCount, char* argumentValues[])
+{
+    if ((argumentCount != 1) && (argumentCount != 4))
+    {
+        XWALK_HAL_ERROR(XWALK_INVAL, "Music hardware test accepts PCM, mixer, and element names");
+    }
+    const XWalkHal::stringview pcmDevice =
+        (argumentCount == 4) ? XWalkHal::stringview(argumentValues[1]) : XWalkHal::stringview("default");
+    const XWalkHal::stringview mixerDevice =
+        (argumentCount == 4) ? XWalkHal::stringview(argumentValues[2]) : XWalkHal::stringview("default");
+    const XWalkHal::stringview mixerElement =
+        (argumentCount == 4) ? XWalkHal::stringview(argumentValues[3]) : XWalkHal::stringview("PCM");
 
-  XWalkHal::XWalkAudioAlsa audio(pcmDevice, mixerDevice, mixerElement);
-  XWalkHal::XWalkMusicAlsa adapter(audio);
-  XWalkHal::XWalkMusic music(&adapter, adapter.callbacks());
-  music.musicSetVolume(5.0);
-  music.playToneFor(220.0, 0.05);
-  return 0;
+    XWalkHal::XWalkAudioAlsa audio(pcmDevice, mixerDevice, mixerElement);
+    XWalkHal::XWalkMusicAlsa adapter(audio);
+    XWalkHal::XWalkMusic music(&adapter, adapter.callbacks());
+    music.musicSetVolume(5.0);
+    music.playToneFor(220.0, 0.05);
+    return 0;
 }

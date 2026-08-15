@@ -13,7 +13,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Exercises ADC selection, acquisition, and voltage conversion in memory. */
-int32 runAdcSimulation();
+    /** @brief Exercises ADC selection, acquisition, and voltage conversion in memory. */
+    int32 runAdcSimulation();
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_ADC_SIMULATION_H */

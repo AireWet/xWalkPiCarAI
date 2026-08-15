@@ -25,64 +25,59 @@
 namespace xwalk::hal::example
 {
 
-/** @brief Executes bounded OpenAI synthesis and local MP3 playback. */
-class XWalkTtsOpenAiExampleLinux final
-{
-private:
+    /** @brief Executes bounded OpenAI synthesis and local MP3 playback. */
+    class XWalkTtsOpenAiExampleLinux final
+    {
+        private:
+            /** @brief Owned non-empty OpenAI credential. */
+            string apiKeyValue;
+            /** @brief Owned non-empty speech endpoint. */
+            string endpointValue;
+            /** @brief Owned non-empty playback executable name or path. */
+            string executableName;
+            /** @brief Bounded binary response used by the current request. */
+            string responseData;
 
-    /** @brief Owned non-empty OpenAI credential. */
-    string apiKeyValue;
-    /** @brief Owned non-empty speech endpoint. */
-    string endpointValue;
-    /** @brief Owned non-empty playback executable name or path. */
-    string executableName;
-    /** @brief Bounded binary response used by the current request. */
-    string responseData;
+        protected:
+            /** @brief Resolves a callback context into its required Linux adapter. */
+            static XWalkTtsOpenAiExampleLinux& adapter(contextpointer context);
+            /** @brief Escapes one bounded value for a JSON string literal. */
+            static string escapeJson(stringview value);
+            /** @brief Appends one bounded libcurl audio response block. */
+            static size writeResponse(charpointer data, size itemSize, size itemCount, contextpointer context);
+            /** @brief Synthesizes and plays one OpenAI speech request. */
+            static void
+            speak(contextpointer context, stringview model, stringview voice, stringview text, stringview instructions);
+            /** @brief Prints one source-compatible report line. */
+            static void report(contextpointer context, stringview message);
+            /** @brief Posts one request and replaces the bounded audio buffer. */
+            void requestSpeech(stringview model, stringview voice, stringview text, stringview instructions);
+            /** @brief Plays the current MP3 response through a temporary file. */
+            void playResponse();
 
-protected:
+        public:
+            /**
+             * @brief Stores deployment-selected OpenAI and playback configuration.
+             * @param[in] apiKey Non-empty OpenAI API credential.
+             * @param[in] executable Non-empty MP3 playback executable name or path.
+             * @param[in] endpoint Non-empty OpenAI-compatible speech endpoint.
+             * @throws std::invalid_argument If any required value is empty.
+             */
+            XWalkTtsOpenAiExampleLinux(stringview apiKey,
+                                       stringview executable,
+                                       stringview endpoint = "https://api.openai.com/v1/audio/speech");
 
-    /** @brief Resolves a callback context into its required Linux adapter. */
-    static XWalkTtsOpenAiExampleLinux& adapter(contextpointer context);
-    /** @brief Escapes one bounded value for a JSON string literal. */
-    static string escapeJson(stringview value);
-    /** @brief Appends one bounded libcurl audio response block. */
-    static size writeResponse(charpointer data, size itemSize,
-        size itemCount, contextpointer context);
-    /** @brief Synthesizes and plays one OpenAI speech request. */
-    static void speak(contextpointer context, stringview model,
-        stringview voice, stringview text, stringview instructions);
-    /** @brief Prints one source-compatible report line. */
-    static void report(contextpointer context, stringview message);
-    /** @brief Posts one request and replaces the bounded audio buffer. */
-    void requestSpeech(stringview model, stringview voice,
-        stringview text, stringview instructions);
-    /** @brief Plays the current MP3 response through a temporary file. */
-    void playResponse();
+            XWalkTtsOpenAiExampleLinux(const XWalkTtsOpenAiExampleLinux&) = delete;
+            XWalkTtsOpenAiExampleLinux(XWalkTtsOpenAiExampleLinux&&) = delete;
+            XWalkTtsOpenAiExampleLinux& operator=(const XWalkTtsOpenAiExampleLinux&) = delete;
+            XWalkTtsOpenAiExampleLinux& operator=(XWalkTtsOpenAiExampleLinux&&) = delete;
 
-public:
-
-    /**
-     * @brief Stores deployment-selected OpenAI and playback configuration.
-     * @param[in] apiKey Non-empty OpenAI API credential.
-     * @param[in] executable Non-empty MP3 playback executable name or path.
-     * @param[in] endpoint Non-empty OpenAI-compatible speech endpoint.
-     * @throws std::invalid_argument If any required value is empty.
-     */
-    XWalkTtsOpenAiExampleLinux(stringview apiKey, stringview executable,
-        stringview endpoint = "https://api.openai.com/v1/audio/speech");
-
-    XWalkTtsOpenAiExampleLinux(const XWalkTtsOpenAiExampleLinux&) = delete;
-    XWalkTtsOpenAiExampleLinux(XWalkTtsOpenAiExampleLinux&&) = delete;
-    XWalkTtsOpenAiExampleLinux& operator=(
-        const XWalkTtsOpenAiExampleLinux&) = delete;
-    XWalkTtsOpenAiExampleLinux& operator=(XWalkTtsOpenAiExampleLinux&&) = delete;
-
-    /**
-     * @brief Runs the three exact source speech requests in order.
-     * @warning Uses a billable remote service and produces audible output.
-     */
-    void run();
-};
+            /**
+             * @brief Runs the three exact source speech requests in order.
+             * @warning Uses a billable remote service and produces audible output.
+             */
+            void run();
+    };
 
 } /* namespace xwalk::hal::example */
 

@@ -41,7 +41,6 @@
 #define XHAL_RPI5CAR_EXAMPLE_OLLAMA_TEXT_ENDPOINT "http://localhost:11434/api/chat"
 
 /** @brief Source-visible Qwen endpoint used outside a configured target. */
-#define XHAL_RPI5CAR_EXAMPLE_QWEN_ENDPOINT \
-    "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions"
+#define XHAL_RPI5CAR_EXAMPLE_QWEN_ENDPOINT "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions"
 
 #endif /* XHAL_RPI5CAR_EXAMPLE_CONFIG_H */

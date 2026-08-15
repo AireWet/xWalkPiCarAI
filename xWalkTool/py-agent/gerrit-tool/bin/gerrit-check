@@ -26,5 +26,12 @@ if [ "$GERRIT_PROXY_MODE" = "local-http" ]; then
 else
     curl --fail --silent --show-error --cacert "$trust_certificate" "${web_url}config/server/version" >/dev/null
 fi
+if [ -r "$HOME/.xwalk-ci.env" ]; then
+    [ -x "$HOME/bin/gerrit-ci-control" ] || {
+        echo "Missing installed Gerrit CI control command" >&2
+        exit 2
+    }
+    "$HOME/bin/gerrit-ci-control" status
+fi
 "$JAVA_HOME/bin/java" -jar "$GERRIT_SITE/bin/gerrit.war" version
 printf 'Authentication: %s\nCanonical URL: %s\nRepository root: %s\n' "$auth_type" "$web_url" "$GERRIT_SITE/git"

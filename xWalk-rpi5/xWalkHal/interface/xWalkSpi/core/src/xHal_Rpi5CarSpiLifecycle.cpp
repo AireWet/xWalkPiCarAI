@@ -37,32 +37,34 @@
  * @namespace xwalk::hal
  * @brief Contains hardware abstraction components for the xWalk firmware.
  */
-namespace xwalk::hal {
+namespace xwalk::hal
+{
 
-/******************************************************************************
- * Constructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Constructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Binds the interface to one caller-owned SPI backend.
- * @param[in,out] context Nullable context that outlives this object.
- * @param[in] transferOperation Non-null synchronous transfer callback.
- * @throws std::invalid_argument If `transferOperation` is null.
- */
-XWalkSpi::XWalkSpi(contextpointer context,
-                   spitransfercallback transferOperation)
-    : contextValue(context), transferCallback(transferOperation) {
-  if (transferCallback == nullptr) {
-    XWALK_HAL_ERROR(XWALK_INVAL, "SPI transfer callback must not be null");
-  }
-  XWALK_HAL_TRACE_UID0(RPI .047, "SPI callback interface constructed");
-}
+    /**
+     * @brief Binds the interface to one caller-owned SPI backend.
+     * @param[in,out] context Nullable context that outlives this object.
+     * @param[in] transferOperation Non-null synchronous transfer callback.
+     * @throws std::invalid_argument If `transferOperation` is null.
+     */
+    XWalkSpi::XWalkSpi(contextpointer context, spitransfercallback transferOperation)
+        : contextValue(context), transferCallback(transferOperation)
+    {
+        if (transferCallback == nullptr)
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "SPI transfer callback must not be null");
+        }
+        XWALK_HAL_TRACE_UID0(RPI .047, "SPI callback interface constructed");
+    }
 
-/******************************************************************************
- * Destructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Destructor definitions
+     ******************************************************************************/
 
-/** @brief Releases no caller-owned backend resource. */
-XWalkSpi::~XWalkSpi() = default;
+    /** @brief Releases no caller-owned backend resource. */
+    XWalkSpi::~XWalkSpi() = default;
 
 } /* namespace xwalk::hal */

@@ -41,43 +41,42 @@
 namespace xwalk::agent
 {
 
-/******************************************************************************
- * Enumeration declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Enumeration declarations
+     ******************************************************************************/
 
-/** @brief Identifies the decision made for one ultrasonic distance sample. */
-enum class XWalkObstacleAvoidanceResult : agent::uint8
-{
-    /** @brief The path is at least 40 centimeters and straight motion was commanded. */
-    Forward,
-    /** @brief The path is 20 through less than 40 centimeters and a right turn was commanded. */
-    TurnRight,
-    /** @brief The path is positive and less than 20 centimeters and reverse-left was commanded. */
-    ReverseLeft,
-    /** @brief The supplied ultrasonic sample is non-finite, zero, or negative. */
-    SensorInvalid,
-    /** @brief Cancellation prevented or interrupted the requested movement step. */
-    Cancelled
-};
+    /** @brief Identifies the decision made for one ultrasonic distance sample. */
+    enum class XWalkObstacleAvoidanceResult : agent::uint8
+    {
+        /** @brief The path is at least 40 centimeters and straight motion was commanded. */
+        Forward,
+        /** @brief The path is 20 through less than 40 centimeters and a right turn was commanded. */
+        TurnRight,
+        /** @brief The path is positive and less than 20 centimeters and reverse-left was commanded. */
+        ReverseLeft,
+        /** @brief The supplied ultrasonic sample is non-finite, zero, or negative. */
+        SensorInvalid,
+        /** @brief Cancellation prevented or interrupted the requested movement step. */
+        Cancelled
+    };
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/**
- * @brief Suspends obstacle-avoidance execution for one bounded interval.
- * @param[in,out] context Non-owning context that outlives the Agent.
- * @param[in] durationMs Requested delay in milliseconds.
- */
-using obstacleavoidancedelaycallback = void (*)(agent::contextpointer context,
-    agent::uint32 durationMs);
+    /**
+     * @brief Suspends obstacle-avoidance execution for one bounded interval.
+     * @param[in,out] context Non-owning context that outlives the Agent.
+     * @param[in] durationMs Requested delay in milliseconds.
+     */
+    using obstacleavoidancedelaycallback = void (*)(agent::contextpointer context, agent::uint32 durationMs);
 
-/**
- * @brief Reports whether obstacle-avoidance execution may continue.
- * @param[in,out] context Non-owning context that outlives the Agent.
- * @return `true` to continue or `false` to request motor cleanup.
- */
-using obstacleavoidancecontinuecallback = agent::boolean (*)(agent::contextpointer context);
+    /**
+     * @brief Reports whether obstacle-avoidance execution may continue.
+     * @param[in,out] context Non-owning context that outlives the Agent.
+     * @return `true` to continue or `false` to request motor cleanup.
+     */
+    using obstacleavoidancecontinuecallback = agent::boolean (*)(agent::contextpointer context);
 
 } /* namespace xwalk::agent */
 

@@ -41,24 +41,24 @@
 namespace xwalk::hal
 {
 
-/******************************************************************************
- * Enumeration declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Enumeration declarations
+     ******************************************************************************/
 
-/** @brief Selects one orthogonal ADXL345 acceleration axis. */
-enum class XWalkAdxl345Axis : uint8
-{
-    X = XHAL_RPI5CAR_ADXL345_X_AXIS, /**< X-axis acceleration. */
-    Y = XHAL_RPI5CAR_ADXL345_Y_AXIS, /**< Y-axis acceleration. */
-    Z = XHAL_RPI5CAR_ADXL345_Z_AXIS  /**< Z-axis acceleration. */
-};
+    /** @brief Selects one orthogonal ADXL345 acceleration axis. */
+    enum class XWalkAdxl345Axis : uint8
+    {
+        X = XHAL_RPI5CAR_ADXL345_X_AXIS, /**< X-axis acceleration. */
+        Y = XHAL_RPI5CAR_ADXL345_Y_AXIS, /**< Y-axis acceleration. */
+        Z = XHAL_RPI5CAR_ADXL345_Z_AXIS  /**< Z-axis acceleration. */
+    };
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/** @brief Fixed X-, Y-, and Z-axis acceleration values in standard gravity. */
-using adxl345values = fixedarray<float64, XHAL_RPI5CAR_ADXL345_AXIS_COUNT>;
+    /** @brief Fixed X-, Y-, and Z-axis acceleration values in standard gravity. */
+    using adxl345values = fixedarray<float64, XHAL_RPI5CAR_ADXL345_AXIS_COUNT>;
 
 } /* namespace xwalk::hal */
 

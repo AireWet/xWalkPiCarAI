@@ -35,14 +35,15 @@
  * Namespace definitions
  ******************************************************************************/
 
-namespace xwalk::hal::sim {
+namespace xwalk::hal::sim
+{
 
-int32 runAudioSimulation() {
-  XWALK_HAL_TRACE_UID0(RPI .095,
-                       "Creating physical ALSA Audio simulation backend");
-  XWalkAudioAlsa audio;
-  XWalkAudioHandler handler;
-  return handler.run(audio);
-}
+    int32 runAudioSimulation()
+    {
+        XWALK_HAL_TRACE_UID0(RPI .095, "Creating physical ALSA Audio simulation backend");
+        XWalkAudioAlsa audio;
+        XWalkAudioHandler handler;
+        return handler.run(audio);
+    }
 
 } /* namespace xwalk::hal::sim */

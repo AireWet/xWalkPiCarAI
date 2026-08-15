@@ -29,26 +29,26 @@
  * @namespace xwalk::hal::sim
  * @brief Contains device-free and executable-level xWalkSpi simulation support.
  */
-namespace xwalk::hal::sim {
+namespace xwalk::hal::sim
+{
 
-/** @brief Constructs the stateless simulation handler. */
-XWalkSpiHandler::XWalkSpiHandler() = default;
+    /** @brief Constructs the stateless simulation handler. */
+    XWalkSpiHandler::XWalkSpiHandler() = default;
 
-/** @brief Destroys the stateless simulation handler. */
-XWalkSpiHandler::~XWalkSpiHandler() = default;
+    /** @brief Destroys the stateless simulation handler. */
+    XWalkSpiHandler::~XWalkSpiHandler() = default;
 
-/**
- * @brief Runs one JEDEC-identification-style full-duplex transaction.
- * @param[in,out] spi Configured SPI object bound to the selected backend.
- * @return Zero when the response length matches the request; otherwise one.
- */
-int32 XWalkSpiHandler::run(XWalkSpi &spi) const {
-  const bytevector transmitData{0x9FU, 0x00U, 0x00U, 0x00U};
-  const bytevector receivedData = spi.transfer(transmitData);
-  XWALK_HAL_TRACE_UID1(RPI .060,
-                       "xWalkSpi simulation completed with %zu received bytes",
-                       receivedData.size());
-  return receivedData.size() == transmitData.size() ? 0 : 1;
-}
+    /**
+     * @brief Runs one JEDEC-identification-style full-duplex transaction.
+     * @param[in,out] spi Configured SPI object bound to the selected backend.
+     * @return Zero when the response length matches the request; otherwise one.
+     */
+    int32 XWalkSpiHandler::run(XWalkSpi& spi) const
+    {
+        const bytevector transmitData{0x9FU, 0x00U, 0x00U, 0x00U};
+        const bytevector receivedData = spi.transfer(transmitData);
+        XWALK_HAL_TRACE_UID1(RPI .060, "xWalkSpi simulation completed with %zu received bytes", receivedData.size());
+        return receivedData.size() == transmitData.size() ? 0 : 1;
+    }
 
 } /* namespace xwalk::hal::sim */

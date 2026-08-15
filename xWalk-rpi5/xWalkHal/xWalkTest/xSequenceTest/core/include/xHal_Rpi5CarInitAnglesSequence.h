@@ -38,51 +38,51 @@
 namespace xwalk::hal::test
 {
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/** @brief Resets the Robot HAT and initializes three positional servos. */
-class XWalkInitAnglesSequence
-{
-private:
+    /** @brief Resets the Robot HAT and initializes three positional servos. */
+    class XWalkInitAnglesSequence
+    {
+        private:
+            /** @brief Caller-owned board controller used for the MCU reset pulse. */
+            XWalkBoardControl* boardControlObject;
+            /** @brief Caller-owned robot receiving the three servo registrations. */
+            XWalkRobot* robotObject;
+            /** @brief Caller-owned PWM channel 10 servo. */
+            XWalkServo* firstServoObject;
+            /** @brief Caller-owned PWM channel 11 servo. */
+            XWalkServo* secondServoObject;
+            /** @brief Caller-owned PWM channel 12 servo. */
+            XWalkServo* thirdServoObject;
 
-    /** @brief Caller-owned board controller used for the MCU reset pulse. */
-    XWalkBoardControl* boardControlObject;
-    /** @brief Caller-owned robot receiving the three servo registrations. */
-    XWalkRobot* robotObject;
-    /** @brief Caller-owned PWM channel 10 servo. */
-    XWalkServo* firstServoObject;
-    /** @brief Caller-owned PWM channel 11 servo. */
-    XWalkServo* secondServoObject;
-    /** @brief Caller-owned PWM channel 12 servo. */
-    XWalkServo* thirdServoObject;
+        public:
+            /**
+             * @brief Binds the board, robot, and three caller-owned servo objects.
+             *
+             * @pre
+             * Every referenced object outlives this sequence.
+             */
+            XWalkInitAnglesSequence(XWalkBoardControl& boardControl,
+                                    XWalkRobot& robot,
+                                    XWalkServo& firstServo,
+                                    XWalkServo& secondServo,
+                                    XWalkServo& thirdServo) noexcept;
 
-public:
+            XWalkInitAnglesSequence(const XWalkInitAnglesSequence&) = delete;
+            XWalkInitAnglesSequence(XWalkInitAnglesSequence&&) = delete;
+            XWalkInitAnglesSequence& operator=(const XWalkInitAnglesSequence&) = delete;
+            XWalkInitAnglesSequence& operator=(XWalkInitAnglesSequence&&) = delete;
 
-    /**
-     * @brief Binds the board, robot, and three caller-owned servo objects.
-     *
-     * @pre
-     * Every referenced object outlives this sequence.
-     */
-    XWalkInitAnglesSequence(XWalkBoardControl& boardControl, XWalkRobot& robot,
-        XWalkServo& firstServo, XWalkServo& secondServo,
-        XWalkServo& thirdServo) noexcept;
-
-    XWalkInitAnglesSequence(const XWalkInitAnglesSequence&) = delete;
-    XWalkInitAnglesSequence(XWalkInitAnglesSequence&&) = delete;
-    XWalkInitAnglesSequence& operator=(const XWalkInitAnglesSequence&) = delete;
-    XWalkInitAnglesSequence& operator=(XWalkInitAnglesSequence&&) = delete;
-
-    /**
-     * @brief Resets the MCU and initializes channels 10, 11, and 12.
-     *
-     * @post
-     * The robot reports logical positions `{10.0, 45.0, -45.0}`.
-     */
-    void run();
-};
+            /**
+             * @brief Resets the MCU and initializes channels 10, 11, and 12.
+             *
+             * @post
+             * The robot reports logical positions `{10.0, 45.0, -45.0}`.
+             */
+            void run();
+    };
 
 } /* namespace xwalk::hal::test */
 

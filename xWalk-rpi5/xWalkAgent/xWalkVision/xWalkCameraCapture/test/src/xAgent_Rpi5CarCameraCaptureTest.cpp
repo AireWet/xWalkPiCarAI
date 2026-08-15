@@ -18,14 +18,14 @@
 namespace
 {
 
-agent::boolean capture(agent::contextpointer context,
-    agent::stringview outputPath,
-    const xwalk::hal::XWalkCameraConfiguration& configuration)
-{
-    static_cast<void>(context);
-    static_cast<void>(configuration);
-    return outputPath == "voice-image.jpg";
-}
+    agent::boolean capture(agent::contextpointer context,
+                           agent::stringview outputPath,
+                           const xwalk::hal::XWalkCameraConfiguration& configuration)
+    {
+        static_cast<void>(context);
+        static_cast<void>(configuration);
+        return outputPath == "voice-image.jpg";
+    }
 
 } /* namespace */
 
@@ -34,7 +34,6 @@ int main()
     xwalk::hal::XWalkCamera camera(nullptr, &capture);
     xwalk::agent::XWalkCameraCapture cameraCapture(camera, "voice-image.jpg");
     assert(cameraCapture.capture() == "voice-image.jpg");
-    assert(xwalk::agent::XWalkCameraCapture::captureImage(&cameraCapture) ==
-        "voice-image.jpg");
+    assert(xwalk::agent::XWalkCameraCapture::captureImage(&cameraCapture) == "voice-image.jpg");
     return 0;
 }

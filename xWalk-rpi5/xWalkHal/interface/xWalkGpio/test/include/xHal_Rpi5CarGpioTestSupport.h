@@ -41,107 +41,111 @@
 namespace xwalk::hal::test::gpio
 {
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-/** @brief Records interrupt callback operations without starting a worker thread. */
-struct InterruptBackend
-{
-    /** @brief Number of interrupt registrations observed by the test backend. */
-    XWalkHal::size registrationCount{};
+    /** @brief Records interrupt callback operations without starting a worker thread. */
+    struct InterruptBackend
+    {
+            /** @brief Number of interrupt registrations observed by the test backend. */
+            XWalkHal::size registrationCount{};
 
-    /** @brief Number of interrupt cancellations observed by the test backend. */
-    XWalkHal::size cancellationCount{};
+            /** @brief Number of interrupt cancellations observed by the test backend. */
+            XWalkHal::size cancellationCount{};
 
-    /** @brief Nullable non-owning context retained until cancellation. */
-    XWalkHal::contextpointer handlerContext{nullptr};
+            /** @brief Nullable non-owning context retained until cancellation. */
+            XWalkHal::contextpointer handlerContext{nullptr};
 
-    /** @brief Nullable application handler retained until cancellation. */
-    XWalkHal::gpiointerrupthandler handler{nullptr};
-};
+            /** @brief Nullable application handler retained until cancellation. */
+            XWalkHal::gpiointerrupthandler handler{nullptr};
+    };
 
-/** @brief Counts application interrupt-handler invocations. */
-struct HandlerData
-{
-    /** @brief Number of application handler invocations observed by the test. */
-    XWalkHal::size count{};
-};
+    /** @brief Counts application interrupt-handler invocations. */
+    struct HandlerData
+    {
+            /** @brief Number of application handler invocations observed by the test. */
+            XWalkHal::size count{};
+    };
 
-/** @brief Associates one Robot HAT pin name with its Linux line offset. */
-struct PinMapping
-{
-    /** @brief Non-owning null-terminated Robot HAT pin name. */
-    XWalkHal::cstring name;
+    /** @brief Associates one Robot HAT pin name with its Linux line offset. */
+    struct PinMapping
+    {
+            /** @brief Non-owning null-terminated Robot HAT pin name. */
+            XWalkHal::cstring name;
 
-    /** @brief Expected Linux GPIO line offset. */
-    XWalkHal::uint8 pin;
-};
+            /** @brief Expected Linux GPIO line offset. */
+            XWalkHal::uint8 pin;
+    };
 
-/******************************************************************************
- * Function declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Function declarations
+     ******************************************************************************/
 
-/**
- * @brief Accepts one test GPIO configuration without changing backend state.
- * @param[in] context Optional non-owning backend context; unused.
- * @param[in] pin GPIO line offset; unused.
- * @param[in] mode Requested GPIO mode; unused.
- * @param[in] pull Requested GPIO pull configuration; unused.
- * @param[in] initialValue Requested initial logical output; unused.
- */
-void configure(XWalkHal::contextpointer context, XWalkHal::uint8 pin,
-    XWalkHal::XWalkGpioMode mode, XWalkHal::XWalkGpioPull pull,
-    XWalkHal::boolean initialValue);
+    /**
+     * @brief Accepts one test GPIO configuration without changing backend state.
+     * @param[in] context Optional non-owning backend context; unused.
+     * @param[in] pin GPIO line offset; unused.
+     * @param[in] mode Requested GPIO mode; unused.
+     * @param[in] pull Requested GPIO pull configuration; unused.
+     * @param[in] initialValue Requested initial logical output; unused.
+     */
+    void configure(XWalkHal::contextpointer context,
+                   XWalkHal::uint8 pin,
+                   XWalkHal::XWalkGpioMode mode,
+                   XWalkHal::XWalkGpioPull pull,
+                   XWalkHal::boolean initialValue);
 
-/**
- * @brief Returns the fixed inactive input used by callback-only GPIO tests.
- * @param[in] context Optional non-owning backend context; unused.
- * @param[in] pin GPIO line offset; unused.
- * @return Always `false`.
- */
-XWalkHal::boolean read(XWalkHal::contextpointer context, XWalkHal::uint8 pin);
+    /**
+     * @brief Returns the fixed inactive input used by callback-only GPIO tests.
+     * @param[in] context Optional non-owning backend context; unused.
+     * @param[in] pin GPIO line offset; unused.
+     * @return Always `false`.
+     */
+    XWalkHal::boolean read(XWalkHal::contextpointer context, XWalkHal::uint8 pin);
 
-/**
- * @brief Accepts one test GPIO output without changing backend state.
- * @param[in] context Optional non-owning backend context; unused.
- * @param[in] pin GPIO line offset; unused.
- * @param[in] value Requested logical output; unused.
- */
-void write(XWalkHal::contextpointer context, XWalkHal::uint8 pin,
-    XWalkHal::boolean value);
+    /**
+     * @brief Accepts one test GPIO output without changing backend state.
+     * @param[in] context Optional non-owning backend context; unused.
+     * @param[in] pin GPIO line offset; unused.
+     * @param[in] value Requested logical output; unused.
+     */
+    void write(XWalkHal::contextpointer context, XWalkHal::uint8 pin, XWalkHal::boolean value);
 
-/**
- * @brief Records one application interrupt registration.
- * @param[in,out] context Non-null `InterruptBackend` test context.
- * @param[in] pin GPIO line offset; unused by the test backend.
- * @param[in] edge Requested interrupt edge; unused by the test backend.
- * @param[in] debounceMs Requested debounce interval in milliseconds; unused.
- * @param[in] handlerContext Nullable non-owning application handler context.
- * @param[in] handler Nullable application interrupt handler retained for the test.
- */
-void interrupt(XWalkHal::contextpointer context, XWalkHal::uint8 pin,
-    XWalkHal::XWalkGpioEdge edge, XWalkHal::uint32 debounceMs,
-    XWalkHal::contextpointer handlerContext, XWalkHal::gpiointerrupthandler handler);
+    /**
+     * @brief Records one application interrupt registration.
+     * @param[in,out] context Non-null `InterruptBackend` test context.
+     * @param[in] pin GPIO line offset; unused by the test backend.
+     * @param[in] edge Requested interrupt edge; unused by the test backend.
+     * @param[in] debounceMs Requested debounce interval in milliseconds; unused.
+     * @param[in] handlerContext Nullable non-owning application handler context.
+     * @param[in] handler Nullable application interrupt handler retained for the test.
+     */
+    void interrupt(XWalkHal::contextpointer context,
+                   XWalkHal::uint8 pin,
+                   XWalkHal::XWalkGpioEdge edge,
+                   XWalkHal::uint32 debounceMs,
+                   XWalkHal::contextpointer handlerContext,
+                   XWalkHal::gpiointerrupthandler handler);
 
-/**
- * @brief Records cancellation and clears the retained application handler.
- * @param[in,out] context Non-null `InterruptBackend` test context.
- * @param[in] pin GPIO line offset; unused by the test backend.
- */
-void cancelInterrupt(XWalkHal::contextpointer context, XWalkHal::uint8 pin);
+    /**
+     * @brief Records cancellation and clears the retained application handler.
+     * @param[in,out] context Non-null `InterruptBackend` test context.
+     * @param[in] pin GPIO line offset; unused by the test backend.
+     */
+    void cancelInterrupt(XWalkHal::contextpointer context, XWalkHal::uint8 pin);
 
-/**
- * @brief Records one application interrupt-handler invocation.
- * @param[in,out] context Non-null `HandlerData` application context.
- */
-void handleInterrupt(XWalkHal::contextpointer context);
+    /**
+     * @brief Records one application interrupt-handler invocation.
+     * @param[in,out] context Non-null `HandlerData` application context.
+     */
+    void handleInterrupt(XWalkHal::contextpointer context);
 
-/**
- * @brief Creates the complete callback table for callback-only GPIO tests.
- * @return Callback table bound to this test-support implementation.
- */
-XWalkHal::XWalkGpioCallbacks interruptCallbacks();
+    /**
+     * @brief Creates the complete callback table for callback-only GPIO tests.
+     * @return Callback table bound to this test-support implementation.
+     */
+    XWalkHal::XWalkGpioCallbacks interruptCallbacks();
 
 } /* namespace xwalk::hal::test::gpio */
 

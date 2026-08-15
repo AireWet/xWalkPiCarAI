@@ -37,27 +37,28 @@
  * @namespace xwalk::ctrl
  * @brief Contains Controller command interfaces for the xWalk firmware.
  */
-namespace xwalk::ctrl {
+namespace xwalk::ctrl
+{
 
-/******************************************************************************
- * Member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Member function definitions
+     ******************************************************************************/
 
-/**
- * @brief Executes the sound command.
- * @param[in] request Validated sound action, file path, and optional volume.
- * @return Zero when accepted or three when the platform audio backend is
- * unavailable.
- */
-::ctrl::int32
-XWalkController::XWALK_handlerSound(const XWalkSoundRequest &request) {
-  const ::ctrl::boolean soundPerformed =
-      callbacks.sound(callbackContext, request);
-  if (soundPerformed == false) {
-    XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Sound backend unavailable");
-    return 3;
-  }
-  return 0;
-}
+    /**
+     * @brief Executes the sound command.
+     * @param[in] request Validated sound action, file path, and optional volume.
+     * @return Zero when accepted or three when the platform audio backend is
+     * unavailable.
+     */
+    ::ctrl::int32 XWalkController::XWALK_handlerSound(const XWalkSoundRequest& request)
+    {
+        const ::ctrl::boolean soundPerformed = callbacks.sound(callbackContext, request);
+        if (soundPerformed == false)
+        {
+            XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Sound backend unavailable");
+            return 3;
+        }
+        return 0;
+    }
 
 } /* namespace xwalk::ctrl */

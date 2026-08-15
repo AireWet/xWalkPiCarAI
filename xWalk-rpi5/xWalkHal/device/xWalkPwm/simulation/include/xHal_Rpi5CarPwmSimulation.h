@@ -13,7 +13,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Exercises PWM timer and output operations through an in-memory bus. */
-int32 runPwmSimulation();
+    /** @brief Exercises PWM timer and output operations through an in-memory bus. */
+    int32 runPwmSimulation();
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_PWM_SIMULATION_H */

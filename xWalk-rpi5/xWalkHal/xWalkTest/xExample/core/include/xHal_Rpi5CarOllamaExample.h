@@ -48,87 +48,87 @@
 namespace xwalk::hal::example
 {
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
-
-/**
- * @brief Reads one prompted console line.
- * @param[in,out] context Non-owning console context.
- * @param[out] inputText Owned user input replaced by the callback.
- * @return `true` when input was read, or `false` at end of input.
- */
-using ollamaexamplereadcallback = boolean (*)(contextpointer context,
-    string& inputText);
-
-/**
- * @brief Writes one welcome or response fragment.
- * @param[in,out] context Non-owning console context.
- * @param[in] text Text valid only for the callback duration.
- * @param[in] appendNewline Whether to append one newline.
- * @param[in] flushOutput Whether to flush output before returning.
- */
-using ollamaexamplewritecallback = void (*)(contextpointer context,
-    stringview text, boolean appendNewline, boolean flushOutput);
-
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
-
-/** @brief Complete injected console table required by the Ollama example. */
-struct XWalkOllamaExampleCallbacks
-{
-    /** @brief Prints the prompt and reads one input line. */
-    ollamaexamplereadcallback readPrompt{nullptr};
-    /** @brief Writes welcome text and model responses. */
-    ollamaexamplewritecallback write{nullptr};
-};
-
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
-
-/** @brief Runs a bounded provider-neutral version of the Ollama chat example. */
-class XWalkOllamaExample final
-{
-private:
-
-    /** @brief Caller-owned language model that must outlive this example. */
-    XWalkLanguageModel* languageModelObject;
-    /** @brief Non-owning context forwarded to console callbacks. */
-    contextpointer consoleContext;
-    /** @brief Complete validated console callback table. */
-    XWalkOllamaExampleCallbacks callbacks;
-
-public:
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
     /**
-     * @brief Binds one language model and complete console table.
-     * @param[in,out] languageModel Caller-owned model that must outlive this object.
-     * @param[in,out] context Non-owning console callback context.
-     * @param[in] consoleCallbacks Table containing two non-null callbacks.
-     * @throws std::invalid_argument If either callback is null.
+     * @brief Reads one prompted console line.
+     * @param[in,out] context Non-owning console context.
+     * @param[out] inputText Owned user input replaced by the callback.
+     * @return `true` when input was read, or `false` at end of input.
      */
-    XWalkOllamaExample(XWalkLanguageModel& languageModel,
-        contextpointer context, const XWalkOllamaExampleCallbacks& consoleCallbacks);
-
-    /** @brief Prevents copying of non-owning dependency bindings. */
-    XWalkOllamaExample(const XWalkOllamaExample&) = delete;
-    /** @brief Prevents moving of non-owning dependency bindings. */
-    XWalkOllamaExample(XWalkOllamaExample&&) = delete;
-    /** @brief Prevents copy assignment of non-owning dependency bindings. */
-    XWalkOllamaExample& operator=(const XWalkOllamaExample&) = delete;
-    /** @brief Prevents move assignment of non-owning dependency bindings. */
-    XWalkOllamaExample& operator=(XWalkOllamaExample&&) = delete;
+    using ollamaexamplereadcallback = boolean (*)(contextpointer context, string& inputText);
 
     /**
-     * @brief Runs up to the requested number of interactive prompts.
-     * @param[in] maximumPrompts Prompt limit in the inclusive range one through 100.
-     * @throws std::out_of_range If `maximumPrompts` is outside its range.
-     * @warning Prompt callbacks may perform local or remote network requests.
+     * @brief Writes one welcome or response fragment.
+     * @param[in,out] context Non-owning console context.
+     * @param[in] text Text valid only for the callback duration.
+     * @param[in] appendNewline Whether to append one newline.
+     * @param[in] flushOutput Whether to flush output before returning.
      */
-    void run(uint32 maximumPrompts);
-};
+    using ollamaexamplewritecallback = void (*)(contextpointer context,
+                                                stringview text,
+                                                boolean appendNewline,
+                                                boolean flushOutput);
+
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
+
+    /** @brief Complete injected console table required by the Ollama example. */
+    struct XWalkOllamaExampleCallbacks
+    {
+            /** @brief Prints the prompt and reads one input line. */
+            ollamaexamplereadcallback readPrompt{nullptr};
+            /** @brief Writes welcome text and model responses. */
+            ollamaexamplewritecallback write{nullptr};
+    };
+
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
+
+    /** @brief Runs a bounded provider-neutral version of the Ollama chat example. */
+    class XWalkOllamaExample final
+    {
+        private:
+            /** @brief Caller-owned language model that must outlive this example. */
+            XWalkLanguageModel* languageModelObject;
+            /** @brief Non-owning context forwarded to console callbacks. */
+            contextpointer consoleContext;
+            /** @brief Complete validated console callback table. */
+            XWalkOllamaExampleCallbacks callbacks;
+
+        public:
+            /**
+             * @brief Binds one language model and complete console table.
+             * @param[in,out] languageModel Caller-owned model that must outlive this object.
+             * @param[in,out] context Non-owning console callback context.
+             * @param[in] consoleCallbacks Table containing two non-null callbacks.
+             * @throws std::invalid_argument If either callback is null.
+             */
+            XWalkOllamaExample(XWalkLanguageModel& languageModel,
+                               contextpointer context,
+                               const XWalkOllamaExampleCallbacks& consoleCallbacks);
+
+            /** @brief Prevents copying of non-owning dependency bindings. */
+            XWalkOllamaExample(const XWalkOllamaExample&) = delete;
+            /** @brief Prevents moving of non-owning dependency bindings. */
+            XWalkOllamaExample(XWalkOllamaExample&&) = delete;
+            /** @brief Prevents copy assignment of non-owning dependency bindings. */
+            XWalkOllamaExample& operator=(const XWalkOllamaExample&) = delete;
+            /** @brief Prevents move assignment of non-owning dependency bindings. */
+            XWalkOllamaExample& operator=(XWalkOllamaExample&&) = delete;
+
+            /**
+             * @brief Runs up to the requested number of interactive prompts.
+             * @param[in] maximumPrompts Prompt limit in the inclusive range one through 100.
+             * @throws std::out_of_range If `maximumPrompts` is outside its range.
+             * @warning Prompt callbacks may perform local or remote network requests.
+             */
+            void run(uint32 maximumPrompts);
+    };
 
 } /* namespace xwalk::hal::example */
 

@@ -13,21 +13,21 @@
 #include "xHal_Rpi5CarI2c.h"
 namespace xwalk::hal::sim
 {
-/** @brief Records Servo PWM register traffic entirely in memory. */
-class XWalkServoHostStub final
-{
-    private:
-        size writeCountValue{};
-        uint8 lastRegisterValue{};
-        size lastPayloadSizeValue{};
-    public:
-        static boolean probe(contextpointer context, uint8 address);
-        static void writeRegister(contextpointer context, uint8 address, uint8 reg,
-            const bytevector& data);
-        static bytevector read(contextpointer context, uint8 address, size length);
-        size writeCount() const noexcept;
-        uint8 lastRegister() const noexcept;
-        size lastPayloadSize() const noexcept;
-};
+    /** @brief Records Servo PWM register traffic entirely in memory. */
+    class XWalkServoHostStub final
+    {
+        private:
+            size writeCountValue{};
+            uint8 lastRegisterValue{};
+            size lastPayloadSizeValue{};
+
+        public:
+            static boolean probe(contextpointer context, uint8 address);
+            static void writeRegister(contextpointer context, uint8 address, uint8 reg, const bytevector& data);
+            static bytevector read(contextpointer context, uint8 address, size length);
+            size writeCount() const noexcept;
+            uint8 lastRegister() const noexcept;
+            size lastPayloadSize() const noexcept;
+    };
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_SERVO_HOST_STUB_H */

@@ -11,32 +11,32 @@
 namespace xwalk::hal::test::robothat
 {
 
-size countEvents(const simulation::XWalkRobotHatSimulation& simulation,
-    simulation::XWalkRobotHatOperation operation)
-{
-    size count{};
-    for (const simulation::XWalkRobotHatEvent& event : simulation.events())
+    size countEvents(const simulation::XWalkRobotHatSimulation& simulation,
+                     simulation::XWalkRobotHatOperation operation)
     {
-        if (event.operation == operation)
+        size count{};
+        for (const simulation::XWalkRobotHatEvent& event : simulation.events())
         {
-            ++count;
+            if (event.operation == operation)
+            {
+                ++count;
+            }
         }
+        return count;
     }
-    return count;
-}
 
-boolean hasDeterministicOrdering(const simulation::XWalkRobotHatSimulation& simulation)
-{
-    uint64 expected{1U};
-    for (const simulation::XWalkRobotHatEvent& event : simulation.events())
+    boolean hasDeterministicOrdering(const simulation::XWalkRobotHatSimulation& simulation)
     {
-        if (event.sequence != expected)
+        uint64 expected{1U};
+        for (const simulation::XWalkRobotHatEvent& event : simulation.events())
         {
-            return false;
+            if (event.sequence != expected)
+            {
+                return false;
+            }
+            ++expected;
         }
-        ++expected;
+        return true;
     }
-    return true;
-}
 
 } /* namespace xwalk::hal::test::robothat */

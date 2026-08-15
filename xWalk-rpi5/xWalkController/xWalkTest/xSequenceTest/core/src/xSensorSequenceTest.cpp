@@ -17,17 +17,16 @@
 
 namespace
 {
-void testSensor(xwalk::agent::test::ControllerCommandTestContext& context)
-{
-    xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
-    assert(sequence.run({{"sensor", "distance"}, {"sensor", "grayscale"}}) == 0);
+    void testSensor(xwalk::agent::test::ControllerCommandTestContext& context)
+    {
+        xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
+        assert(sequence.run({{"sensor", "distance"}, {"sensor", "grayscale"}}) == 0);
 
-    assert(context.configuration->get("line_reference") == "[1000,1000,1000]");
-    assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"hal.i2c.read", "hal.i2c.read",
-            "hal.i2c.read"}));
-}
-}
+        assert(context.configuration->get("line_reference") == "[1000,1000,1000]");
+        assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
+                                                         {"hal.i2c.read", "hal.i2c.read", "hal.i2c.read"}));
+    }
+} // namespace
 
 /** @brief Runs the sensor controller-to-HAL host sequence. @return Zero on success. */
 int xWalkSensorCommandSequenceHostTest(int argc, char* argv[])

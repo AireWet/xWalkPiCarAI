@@ -19,8 +19,7 @@ int main(int argumentCount, char* arguments[])
     {
         return 2;
     }
-    const xwalk::hal::XWalkCameraConnection connection =
-        xwalk::hal::XWalkCamera::connectionFromString(arguments[1]);
+    const xwalk::hal::XWalkCameraConnection connection = xwalk::hal::XWalkCamera::connectionFromString(arguments[1]);
     xwalk::hal::XWalkCameraLinux backend(connection, arguments[2], arguments[3]);
     xwalk::hal::XWalkCamera camera(&backend, backend.callback());
     static_cast<void>(camera.capture(arguments[4]));

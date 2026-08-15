@@ -46,75 +46,69 @@
 namespace xwalk::hal::example
 {
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/** @brief Performs one bounded synchronous recognition attempt. */
-using wakewordexamplelistencallback = string (*)(contextpointer context,
-    uint32 timeoutMs);
-/** @brief Reports one literal source-compatible status line. */
-using wakewordexamplereportcallback = void (*)(contextpointer context,
-    stringview message);
+    /** @brief Performs one bounded synchronous recognition attempt. */
+    using wakewordexamplelistencallback = string (*)(contextpointer context, uint32 timeoutMs);
+    /** @brief Reports one literal source-compatible status line. */
+    using wakewordexamplereportcallback = void (*)(contextpointer context, stringview message);
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-/** @brief Complete injected operation table required by the wake-word example. */
-struct XWalkSttVoskWakeWordExampleCallbacks
-{
-    /** @brief Returns one final bounded recognition result. */
-    wakewordexamplelistencallback listen{nullptr};
-    /** @brief Reports the prompt and successful detection message. */
-    wakewordexamplereportcallback report{nullptr};
-};
+    /** @brief Complete injected operation table required by the wake-word example. */
+    struct XWalkSttVoskWakeWordExampleCallbacks
+    {
+            /** @brief Returns one final bounded recognition result. */
+            wakewordexamplelistencallback listen{nullptr};
+            /** @brief Reports the prompt and successful detection message. */
+            wakewordexamplereportcallback report{nullptr};
+    };
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/** @brief Waits synchronously for the configured wake phrase through callbacks. */
-class XWalkSttVoskWakeWordExample final
-{
-private:
+    /** @brief Waits synchronously for the configured wake phrase through callbacks. */
+    class XWalkSttVoskWakeWordExample final
+    {
+        private:
+            /** @brief Non-owning context forwarded to every injected operation. */
+            contextpointer callbackContext;
+            /** @brief Complete validated operation table copied at construction. */
+            XWalkSttVoskWakeWordExampleCallbacks callbacks;
 
-    /** @brief Non-owning context forwarded to every injected operation. */
-    contextpointer callbackContext;
-    /** @brief Complete validated operation table copied at construction. */
-    XWalkSttVoskWakeWordExampleCallbacks callbacks;
+        protected:
+            /** @brief Tests one transcript for the case-insensitive wake phrase. */
+            static boolean containsWakeWord(stringview transcript);
 
-protected:
+        public:
+            /**
+             * @brief Binds the complete synchronous wake-word operation table.
+             * @param[in,out] context Non-owning context forwarded to every callback.
+             * @param[in] exampleCallbacks Table containing two non-null callbacks.
+             * @throws std::invalid_argument If either callback is null.
+             */
+            XWalkSttVoskWakeWordExample(contextpointer context,
+                                        const XWalkSttVoskWakeWordExampleCallbacks& exampleCallbacks);
 
-    /** @brief Tests one transcript for the case-insensitive wake phrase. */
-    static boolean containsWakeWord(stringview transcript);
+            XWalkSttVoskWakeWordExample(const XWalkSttVoskWakeWordExample&) = delete;
+            XWalkSttVoskWakeWordExample(XWalkSttVoskWakeWordExample&&) = delete;
+            XWalkSttVoskWakeWordExample& operator=(const XWalkSttVoskWakeWordExample&) = delete;
+            XWalkSttVoskWakeWordExample& operator=(XWalkSttVoskWakeWordExample&&) = delete;
 
-public:
-
-    /**
-     * @brief Binds the complete synchronous wake-word operation table.
-     * @param[in,out] context Non-owning context forwarded to every callback.
-     * @param[in] exampleCallbacks Table containing two non-null callbacks.
-     * @throws std::invalid_argument If either callback is null.
-     */
-    XWalkSttVoskWakeWordExample(contextpointer context,
-        const XWalkSttVoskWakeWordExampleCallbacks& exampleCallbacks);
-
-    XWalkSttVoskWakeWordExample(const XWalkSttVoskWakeWordExample&) = delete;
-    XWalkSttVoskWakeWordExample(XWalkSttVoskWakeWordExample&&) = delete;
-    XWalkSttVoskWakeWordExample& operator=(
-        const XWalkSttVoskWakeWordExample&) = delete;
-    XWalkSttVoskWakeWordExample& operator=(XWalkSttVoskWakeWordExample&&) = delete;
-
-    /**
-     * @brief Waits synchronously until recognition finds `hey robot`.
-     * @param[in] maximumAttempts Attempt limit from one through 1,200.
-     * @param[in] timeoutMs Per-attempt limit from one through 300,000 milliseconds.
-     * @throws std::out_of_range If either bound is invalid.
-     * @throws std::runtime_error If no attempt contains the wake phrase.
-     */
-    void run(uint32 maximumAttempts, uint32 timeoutMs);
-};
+            /**
+             * @brief Waits synchronously until recognition finds `hey robot`.
+             * @param[in] maximumAttempts Attempt limit from one through 1,200.
+             * @param[in] timeoutMs Per-attempt limit from one through 300,000 milliseconds.
+             * @throws std::out_of_range If either bound is invalid.
+             * @throws std::runtime_error If no attempt contains the wake phrase.
+             */
+            void run(uint32 maximumAttempts, uint32 timeoutMs);
+    };
 
 } /* namespace xwalk::hal::example */
 

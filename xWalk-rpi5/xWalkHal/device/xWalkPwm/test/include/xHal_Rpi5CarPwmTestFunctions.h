@@ -35,30 +35,30 @@
 namespace xwalk::hal::test
 {
 
-/******************************************************************************
- * Function declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Function declarations
+     ******************************************************************************/
 
-/** @brief Verifies address probing and timer selection for channel `P19`. */
-void testAddressAndTimerSelection();
+    /** @brief Verifies address probing and timer selection for channel `P19`. */
+    void testAddressAndTimerSelection();
 
-/** @brief Verifies the timer mapping for all twenty PWM channels. */
-void testAllTimerMappings();
+    /** @brief Verifies the timer mapping for all twenty PWM channels. */
+    void testAllTimerMappings();
 
-/** @brief Verifies high-byte-first encoding of 16-bit register data. */
-void testBigEndianRegisterData();
+    /** @brief Verifies high-byte-first encoding of 16-bit register data. */
+    void testBigEndianRegisterData();
 
-/** @brief Verifies shared timer periods and percentage conversion. */
-void testSharedPeriodAndPercentage();
+    /** @brief Verifies shared timer periods and percentage conversion. */
+    void testSharedPeriodAndPercentage();
 
-/** @brief Verifies that construction configures a frequency near 50 Hertz. */
-void testDefaultFrequency();
+    /** @brief Verifies that construction configures a frequency near 50 Hertz. */
+    void testDefaultFrequency();
 
-/** @brief Verifies rejection of invalid channels and numeric settings. */
-void testValidation();
+    /** @brief Verifies rejection of invalid channels and numeric settings. */
+    void testValidation();
 
-/** @brief Verifies persistent PWM trace-selector parsing and application. */
-void testTraceSelection();
+    /** @brief Verifies persistent PWM trace-selector parsing and application. */
+    void testTraceSelection();
 
 } /* namespace xwalk::hal::test */
 

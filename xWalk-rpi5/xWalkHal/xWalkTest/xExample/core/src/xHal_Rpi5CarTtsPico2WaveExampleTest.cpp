@@ -29,6 +29,13 @@
 #include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
+#include "xHal_Rpi5CarTtsPico2WaveExampleTestTypes.h"
+
+/******************************************************************************
+ * Translation-unit type aliases
+ ******************************************************************************/
+
+using TtsPico2WaveExampleState = ::xwalk::source_types::xhal_rpi5carttspico2waveexampletest::TtsPico2WaveExampleState;
 
 /******************************************************************************
  * Anonymous namespace
@@ -38,56 +45,42 @@
 namespace
 {
 
-/** @brief Records one deterministic language and speech message. */
-struct TtsPico2WaveExampleState
-{
-    /** @brief Owned language supplied to the speech callback. */
-    XWalkHal::string language;
-
-    /** @brief Owned message supplied to the speech callback. */
-    XWalkHal::string text;
-
-    /** @brief Number of observed synchronous speech requests. */
-    XWalkHal::uint32 callCount{};
-};
-
-/**
- * @brief Records one injected Pico2Wave speech request.
- * @param[in,out] context Non-null pointer to a live test state.
- * @param[in] language Language copied into the test state.
- * @param[in] text Speech text copied into the test state.
- */
-void speak(XWalkHal::contextpointer context, XWalkHal::stringview language,
-    XWalkHal::stringview text)
-{
-    TtsPico2WaveExampleState& state =
-        *static_cast<TtsPico2WaveExampleState*>(context);
-    state.language = language;
-    state.text = text;
-    ++state.callCount;
-}
-
-/** @brief Verifies the exact language, message, and single invocation. */
-void testRequest()
-{
-    TtsPico2WaveExampleState state;
-    xwalk::hal::example::XWalkTtsPico2WaveExample example(&state, &speak);
-
-    example.run();
-
-    assert(state.callCount == 1U);
-    assert(state.language == "en-US");
-    assert(state.text == "Hello world!");
-}
-
-/** @brief Verifies rejection of a missing speech operation. */
-void testValidation()
-{
-    xwalk::hal::test::expectFailure([&]()
+    /**
+     * @brief Records one injected Pico2Wave speech request.
+     * @param[in,out] context Non-null pointer to a live test state.
+     * @param[in] language Language copied into the test state.
+     * @param[in] text Speech text copied into the test state.
+     */
+    void speak(XWalkHal::contextpointer context, XWalkHal::stringview language, XWalkHal::stringview text)
     {
-        xwalk::hal::example::XWalkTtsPico2WaveExample invalid(nullptr, nullptr);
-    });
-}
+        TtsPico2WaveExampleState& state = *static_cast<TtsPico2WaveExampleState*>(context);
+        state.language = language;
+        state.text = text;
+        ++state.callCount;
+    }
+
+    /** @brief Verifies the exact language, message, and single invocation. */
+    void testRequest()
+    {
+        TtsPico2WaveExampleState state;
+        xwalk::hal::example::XWalkTtsPico2WaveExample example(&state, &speak);
+
+        example.run();
+
+        assert(state.callCount == 1U);
+        assert(state.language == "en-US");
+        assert(state.text == "Hello world!");
+    }
+
+    /** @brief Verifies rejection of a missing speech operation. */
+    void testValidation()
+    {
+        xwalk::hal::test::expectFailure(
+            [&]()
+            {
+                xwalk::hal::example::XWalkTtsPico2WaveExample invalid(nullptr, nullptr);
+            });
+    }
 
 } /* namespace */
 

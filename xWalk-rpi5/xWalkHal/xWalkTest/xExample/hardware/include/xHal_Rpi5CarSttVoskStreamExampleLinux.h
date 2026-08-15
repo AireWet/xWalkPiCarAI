@@ -37,44 +37,43 @@
 namespace xwalk::hal::example
 {
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/** @brief Composes bounded ALSA capture, offline Vosk, and console reporting. */
-class XWalkSttVoskStreamExampleLinux final
-{
-private:
+    /** @brief Composes bounded ALSA capture, offline Vosk, and console reporting. */
+    class XWalkSttVoskStreamExampleLinux final
+    {
+        private:
+            /** @brief Temporarily bound speech coordinator valid only during `run()`. */
+            XWalkSpeechToText* speechToTextObject{nullptr};
 
-    /** @brief Temporarily bound speech coordinator valid only during `run()`. */
-    XWalkSpeechToText* speechToTextObject{nullptr};
+        protected:
+            /** @brief Resolves a callback context with a bound speech coordinator. */
+            static XWalkSttVoskStreamExampleLinux& adapter(contextpointer context);
+            /** @brief Captures one bounded utterance and reports its final Vosk result. */
+            static void listen(contextpointer context, uint32 timeoutMs, sttvoskstreamresultcallback reportResult);
+            /** @brief Prints the source-compatible speech prompt. */
+            static void reportPrompt(contextpointer context);
+            /** @brief Prints one partial or final speech result. */
+            static void reportResult(contextpointer context, boolean done, stringview text);
 
-protected:
-
-    /** @brief Resolves a callback context with a bound speech coordinator. */
-    static XWalkSttVoskStreamExampleLinux& adapter(contextpointer context);
-    /** @brief Captures one bounded utterance and reports its final Vosk result. */
-    static void listen(contextpointer context, uint32 timeoutMs,
-        sttvoskstreamresultcallback reportResult);
-    /** @brief Prints the source-compatible speech prompt. */
-    static void reportPrompt(contextpointer context);
-    /** @brief Prints one partial or final speech result. */
-    static void reportResult(contextpointer context, boolean done, stringview text);
-
-public:
-
-    /**
-     * @brief Runs bounded offline speech-recognition sessions.
-     * @param[in] sessionCount Session count from one through 100.
-     * @param[in] timeoutMs Capture timeout per session in milliseconds.
-     * @param[in] microphoneDevice Non-empty ALSA capture device name.
-     * @param[in] libraryName Non-empty Vosk shared-library name or path.
-     * @param[in] modelPath Non-empty English Vosk model directory.
-     * @warning Captures live microphone audio for the requested intervals.
-     */
-    void run(uint32 sessionCount, uint32 timeoutMs, stringview microphoneDevice,
-        stringview libraryName, stringview modelPath);
-};
+        public:
+            /**
+             * @brief Runs bounded offline speech-recognition sessions.
+             * @param[in] sessionCount Session count from one through 100.
+             * @param[in] timeoutMs Capture timeout per session in milliseconds.
+             * @param[in] microphoneDevice Non-empty ALSA capture device name.
+             * @param[in] libraryName Non-empty Vosk shared-library name or path.
+             * @param[in] modelPath Non-empty English Vosk model directory.
+             * @warning Captures live microphone audio for the requested intervals.
+             */
+            void run(uint32 sessionCount,
+                     uint32 timeoutMs,
+                     stringview microphoneDevice,
+                     stringview libraryName,
+                     stringview modelPath);
+    };
 
 } /* namespace xwalk::hal::example */
 

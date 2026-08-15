@@ -13,7 +13,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Exercises Music without files, ALSA, or physical playback. */
-int32 runMusicSimulation();
+    /** @brief Exercises Music without files, ALSA, or physical playback. */
+    int32 runMusicSimulation();
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_MUSIC_SIMULATION_H */

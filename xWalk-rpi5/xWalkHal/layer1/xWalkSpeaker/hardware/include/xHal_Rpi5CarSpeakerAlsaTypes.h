@@ -41,25 +41,25 @@
 namespace xwalk::hal
 {
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-/**
- * @struct XWalkSpeakerAlsaOperations
- * @brief Contains the complete injectable audio-file decoder seam.
- */
-struct XWalkSpeakerAlsaOperations
-{
     /**
-     * @brief Decodes one bounded audio file before a Speaker task starts.
-     *
-     * @details
-     * Optional implementations may support FLAC, OGG, MP3, M4A, AAC, or WMA,
-     * but must enforce the shared maximum decoded sample count.
+     * @struct XWalkSpeakerAlsaOperations
+     * @brief Contains the complete injectable audio-file decoder seam.
      */
-    speakeraudiodecodecallback decodeAudio{nullptr};
-};
+    struct XWalkSpeakerAlsaOperations
+    {
+            /**
+             * @brief Decodes one bounded audio file before a Speaker task starts.
+             *
+             * @details
+             * Optional implementations may support FLAC, OGG, MP3, M4A, AAC, or WMA,
+             * but must enforce the shared maximum decoded sample count.
+             */
+            speakeraudiodecodecallback decodeAudio{nullptr};
+    };
 
 } /* namespace xwalk::hal */
 

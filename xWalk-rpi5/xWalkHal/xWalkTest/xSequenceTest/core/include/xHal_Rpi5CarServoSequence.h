@@ -48,91 +48,89 @@
 namespace xwalk::hal::test
 {
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/** @brief Non-owning ordered servo pointers for PWM channels zero through 11. */
-using servosequencearray = fixedarray<XWalkServo*, 12U>;
-
-/**
- * @brief Wait operation injected for host and hardware execution.
- *
- * @param[in,out] context
- * Non-owning callback context whose nullability is implementation-defined.
- *
- * @param[in] durationMilliseconds
- * Requested wait duration in milliseconds.
- */
-using servosequencewaitcallback = void (*)(contextpointer context,
-    uint32 durationMilliseconds);
-
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
-
-/**
- * @brief Alternates 12 servos through bounded negative and positive sweeps.
- *
- * @details
- * Stores only non-owning pointers and callback context. Every servo and the
- * callback implementation must outlive the sequence.
- */
-class XWalkServoSequence
-{
-private:
-
-    /** @brief Caller-owned servos ordered by PWM channel zero through 11. */
-    servosequencearray servoObjects;
-    /** @brief Non-owning context forwarded to the wait callback. */
-    contextpointer waitContext;
-    /** @brief Non-null wait operation used after every angle command. */
-    servosequencewaitcallback waitCallback;
-
-public:
+    /** @brief Non-owning ordered servo pointers for PWM channels zero through 11. */
+    using servosequencearray = fixedarray<XWalkServo*, 12U>;
 
     /**
-     * @brief Binds the ordered servo set and wait operation.
-     *
-     * @param[in] servos
-     * Non-null servo pointers ordered by PWM channel zero through 11. Every
-     * servo must outlive the sequence.
+     * @brief Wait operation injected for host and hardware execution.
      *
      * @param[in,out] context
-     * Non-owning context forwarded to `wait`; nullability is callback-defined.
+     * Non-owning callback context whose nullability is implementation-defined.
      *
-     * @param[in] wait
-     * Non-null wait callback receiving durations in milliseconds.
-     *
-     * @throws std::invalid_argument
-     * If `wait` or a servo pointer is null.
+     * @param[in] durationMilliseconds
+     * Requested wait duration in milliseconds.
      */
-    XWalkServoSequence(const servosequencearray& servos,
-        contextpointer context, servosequencewaitcallback wait);
+    using servosequencewaitcallback = void (*)(contextpointer context, uint32 durationMilliseconds);
 
-    /** @brief Prevents copying of non-owning dependency bindings. */
-    XWalkServoSequence(const XWalkServoSequence&) = delete;
-    /** @brief Prevents moving of non-owning dependency bindings. */
-    XWalkServoSequence(XWalkServoSequence&&) = delete;
-    /** @brief Prevents copy assignment of non-owning dependency bindings. */
-    XWalkServoSequence& operator=(const XWalkServoSequence&) = delete;
-    /** @brief Prevents move assignment of non-owning dependency bindings. */
-    XWalkServoSequence& operator=(XWalkServoSequence&&) = delete;
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
     /**
-     * @brief Runs bounded negative and positive sweeps across all servos.
+     * @brief Alternates 12 servos through bounded negative and positive sweeps.
      *
-     * @param[in] cycleCount
-     * Complete sweep count in the inclusive range one through 100.
-     *
-     * @post
-     * On normal completion, every servo's last requested angle is 20 degrees.
-     *
-     * @throws std::out_of_range
-     * If `cycleCount` is outside its supported range.
+     * @details
+     * Stores only non-owning pointers and callback context. Every servo and the
+     * callback implementation must outlive the sequence.
      */
-    void run(uint32 cycleCount);
-};
+    class XWalkServoSequence
+    {
+        private:
+            /** @brief Caller-owned servos ordered by PWM channel zero through 11. */
+            servosequencearray servoObjects;
+            /** @brief Non-owning context forwarded to the wait callback. */
+            contextpointer waitContext;
+            /** @brief Non-null wait operation used after every angle command. */
+            servosequencewaitcallback waitCallback;
+
+        public:
+            /**
+             * @brief Binds the ordered servo set and wait operation.
+             *
+             * @param[in] servos
+             * Non-null servo pointers ordered by PWM channel zero through 11. Every
+             * servo must outlive the sequence.
+             *
+             * @param[in,out] context
+             * Non-owning context forwarded to `wait`; nullability is callback-defined.
+             *
+             * @param[in] wait
+             * Non-null wait callback receiving durations in milliseconds.
+             *
+             * @throws std::invalid_argument
+             * If `wait` or a servo pointer is null.
+             */
+            XWalkServoSequence(const servosequencearray& servos,
+                               contextpointer context,
+                               servosequencewaitcallback wait);
+
+            /** @brief Prevents copying of non-owning dependency bindings. */
+            XWalkServoSequence(const XWalkServoSequence&) = delete;
+            /** @brief Prevents moving of non-owning dependency bindings. */
+            XWalkServoSequence(XWalkServoSequence&&) = delete;
+            /** @brief Prevents copy assignment of non-owning dependency bindings. */
+            XWalkServoSequence& operator=(const XWalkServoSequence&) = delete;
+            /** @brief Prevents move assignment of non-owning dependency bindings. */
+            XWalkServoSequence& operator=(XWalkServoSequence&&) = delete;
+
+            /**
+             * @brief Runs bounded negative and positive sweeps across all servos.
+             *
+             * @param[in] cycleCount
+             * Complete sweep count in the inclusive range one through 100.
+             *
+             * @post
+             * On normal completion, every servo's last requested angle is 20 degrees.
+             *
+             * @throws std::out_of_range
+             * If `cycleCount` is outside its supported range.
+             */
+            void run(uint32 cycleCount);
+    };
 
 } /* namespace xwalk::hal::test */
 

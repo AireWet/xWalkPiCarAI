@@ -33,40 +33,40 @@
 namespace xwalk::hal
 {
 
-/** @brief Abstracts operating-system calls used by the Linux GPIO backend. */
-class XWalkGpioDevice
-{
-    public:
-        /** @brief Allows destruction through the interface. */
-        virtual ~XWalkGpioDevice() = default;
+    /** @brief Abstracts operating-system calls used by the Linux GPIO backend. */
+    class XWalkGpioDevice
+    {
+        public:
+            /** @brief Allows destruction through the interface. */
+            virtual ~XWalkGpioDevice() = default;
 
-        /** @brief Opens and returns an owned GPIO chip descriptor. */
-        virtual int32 openDevice(cstring devicePath) = 0;
+            /** @brief Opens and returns an owned GPIO chip descriptor. */
+            virtual int32 openDevice(cstring devicePath) = 0;
 
-        /** @brief Reads Linux GPIO chip information into an opaque request structure. */
-        virtual boolean readChipInformation(int32 chipDescriptor, contextpointer information) = 0;
+            /** @brief Reads Linux GPIO chip information into an opaque request structure. */
+            virtual boolean readChipInformation(int32 chipDescriptor, contextpointer information) = 0;
 
-        /** @brief Claims one GPIO line through an opaque handle request. */
-        virtual boolean requestLine(int32 chipDescriptor, contextpointer request) = 0;
+            /** @brief Claims one GPIO line through an opaque handle request. */
+            virtual boolean requestLine(int32 chipDescriptor, contextpointer request) = 0;
 
-        /** @brief Samples one claimed GPIO line into an opaque data structure. */
-        virtual boolean readLine(int32 lineDescriptor, contextpointer data) = 0;
+            /** @brief Samples one claimed GPIO line into an opaque data structure. */
+            virtual boolean readLine(int32 lineDescriptor, contextpointer data) = 0;
 
-        /** @brief Drives one claimed GPIO line from an opaque data structure. */
-        virtual boolean writeLine(int32 lineDescriptor, contextpointer data) = 0;
+            /** @brief Drives one claimed GPIO line from an opaque data structure. */
+            virtual boolean writeLine(int32 lineDescriptor, contextpointer data) = 0;
 
-        /** @brief Claims one GPIO event line through an opaque event request. */
-        virtual boolean requestEvent(int32 chipDescriptor, contextpointer request) = 0;
+            /** @brief Claims one GPIO event line through an opaque event request. */
+            virtual boolean requestEvent(int32 chipDescriptor, contextpointer request) = 0;
 
-        /** @brief Polls one event descriptor for the supplied timeout in milliseconds. */
-        virtual int32 pollEvent(int32 lineDescriptor, int32 timeoutMs) = 0;
+            /** @brief Polls one event descriptor for the supplied timeout in milliseconds. */
+            virtual int32 pollEvent(int32 lineDescriptor, int32 timeoutMs) = 0;
 
-        /** @brief Reads one event record into an opaque buffer. */
-        virtual int32 readEvent(int32 lineDescriptor, contextpointer eventData, size length) = 0;
+            /** @brief Reads one event record into an opaque buffer. */
+            virtual int32 readEvent(int32 lineDescriptor, contextpointer eventData, size length) = 0;
 
-        /** @brief Closes an owned descriptor without throwing. */
-        virtual void closeDevice(int32 fileDescriptor) noexcept = 0;
-};
+            /** @brief Closes an owned descriptor without throwing. */
+            virtual void closeDevice(int32 fileDescriptor) noexcept = 0;
+    };
 
 } /* namespace xwalk::hal */
 

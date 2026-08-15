@@ -49,91 +49,92 @@
 namespace xwalk::hal::example
 {
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
-
-/**
- * @brief Reads one prompted console line.
- * @param[in,out] context Non-owning console context.
- * @param[out] inputText Owned user input replaced by the callback.
- * @return `true` when input was read, or `false` at end of input.
- */
-using ollamaimagereadcallback = boolean (*)(contextpointer context,
-    string& inputText);
-
-/**
- * @brief Writes one welcome or response fragment.
- * @param[in,out] context Non-owning console context.
- * @param[in] text Text valid only for the callback duration.
- * @param[in] appendNewline Whether to append one newline.
- * @param[in] flushOutput Whether to flush output before returning.
- */
-using ollamaimagewritecallback = void (*)(contextpointer context,
-    stringview text, boolean appendNewline, boolean flushOutput);
-
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
-
-/** @brief Complete injected console table required by the Ollama example. */
-struct XWalkOllamaImageExampleCallbacks
-{
-    /** @brief Prints the prompt and reads one input line. */
-    ollamaimagereadcallback readPrompt{nullptr};
-    /** @brief Writes welcome text and model responses. */
-    ollamaimagewritecallback write{nullptr};
-};
-
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
-
-/** @brief Runs bounded image chat through caller-owned camera and model objects. */
-class XWalkOllamaImageExample final
-{
-private:
-
-    /** @brief Caller-owned camera that must outlive this example. */
-    XWalkCamera* cameraObject;
-    /** @brief Caller-owned language model that must outlive this example. */
-    XWalkLanguageModel* languageModelObject;
-    /** @brief Non-owning context forwarded to console callbacks. */
-    contextpointer consoleContext;
-    /** @brief Complete validated console callback table. */
-    XWalkOllamaImageExampleCallbacks callbacks;
-
-public:
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
     /**
-     * @brief Binds the camera, language model, and console table.
-     * @param[in,out] camera Caller-owned camera that must outlive this object.
-     * @param[in,out] languageModel Caller-owned model that must outlive this object.
-     * @param[in,out] context Non-owning console callback context.
-     * @param[in] consoleCallbacks Table containing two non-null callbacks.
-     * @throws std::invalid_argument If either console callback is null.
+     * @brief Reads one prompted console line.
+     * @param[in,out] context Non-owning console context.
+     * @param[out] inputText Owned user input replaced by the callback.
+     * @return `true` when input was read, or `false` at end of input.
      */
-    XWalkOllamaImageExample(XWalkCamera& camera, XWalkLanguageModel& languageModel,
-        contextpointer context, const XWalkOllamaImageExampleCallbacks& consoleCallbacks);
-
-    /** @brief Prevents copying of non-owning dependency bindings. */
-    XWalkOllamaImageExample(const XWalkOllamaImageExample&) = delete;
-    /** @brief Prevents moving of non-owning dependency bindings. */
-    XWalkOllamaImageExample(XWalkOllamaImageExample&&) = delete;
-    /** @brief Prevents copy assignment of non-owning dependency bindings. */
-    XWalkOllamaImageExample& operator=(const XWalkOllamaImageExample&) = delete;
-    /** @brief Prevents move assignment of non-owning dependency bindings. */
-    XWalkOllamaImageExample& operator=(XWalkOllamaImageExample&&) = delete;
+    using ollamaimagereadcallback = boolean (*)(contextpointer context, string& inputText);
 
     /**
-     * @brief Captures and submits an image for each bounded user prompt.
-     * @param[in] maximumPrompts Prompt limit in the inclusive range one through 100.
-     * @param[in] imagePath Non-empty destination reused for every captured JPEG.
-     * @throws std::out_of_range If `maximumPrompts` is outside its range.
-     * @warning Prompt operations may upload captured images to a remote provider.
+     * @brief Writes one welcome or response fragment.
+     * @param[in,out] context Non-owning console context.
+     * @param[in] text Text valid only for the callback duration.
+     * @param[in] appendNewline Whether to append one newline.
+     * @param[in] flushOutput Whether to flush output before returning.
      */
-    void run(uint32 maximumPrompts, stringview imagePath);
-};
+    using ollamaimagewritecallback = void (*)(contextpointer context,
+                                              stringview text,
+                                              boolean appendNewline,
+                                              boolean flushOutput);
+
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
+
+    /** @brief Complete injected console table required by the Ollama example. */
+    struct XWalkOllamaImageExampleCallbacks
+    {
+            /** @brief Prints the prompt and reads one input line. */
+            ollamaimagereadcallback readPrompt{nullptr};
+            /** @brief Writes welcome text and model responses. */
+            ollamaimagewritecallback write{nullptr};
+    };
+
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
+
+    /** @brief Runs bounded image chat through caller-owned camera and model objects. */
+    class XWalkOllamaImageExample final
+    {
+        private:
+            /** @brief Caller-owned camera that must outlive this example. */
+            XWalkCamera* cameraObject;
+            /** @brief Caller-owned language model that must outlive this example. */
+            XWalkLanguageModel* languageModelObject;
+            /** @brief Non-owning context forwarded to console callbacks. */
+            contextpointer consoleContext;
+            /** @brief Complete validated console callback table. */
+            XWalkOllamaImageExampleCallbacks callbacks;
+
+        public:
+            /**
+             * @brief Binds the camera, language model, and console table.
+             * @param[in,out] camera Caller-owned camera that must outlive this object.
+             * @param[in,out] languageModel Caller-owned model that must outlive this object.
+             * @param[in,out] context Non-owning console callback context.
+             * @param[in] consoleCallbacks Table containing two non-null callbacks.
+             * @throws std::invalid_argument If either console callback is null.
+             */
+            XWalkOllamaImageExample(XWalkCamera& camera,
+                                    XWalkLanguageModel& languageModel,
+                                    contextpointer context,
+                                    const XWalkOllamaImageExampleCallbacks& consoleCallbacks);
+
+            /** @brief Prevents copying of non-owning dependency bindings. */
+            XWalkOllamaImageExample(const XWalkOllamaImageExample&) = delete;
+            /** @brief Prevents moving of non-owning dependency bindings. */
+            XWalkOllamaImageExample(XWalkOllamaImageExample&&) = delete;
+            /** @brief Prevents copy assignment of non-owning dependency bindings. */
+            XWalkOllamaImageExample& operator=(const XWalkOllamaImageExample&) = delete;
+            /** @brief Prevents move assignment of non-owning dependency bindings. */
+            XWalkOllamaImageExample& operator=(XWalkOllamaImageExample&&) = delete;
+
+            /**
+             * @brief Captures and submits an image for each bounded user prompt.
+             * @param[in] maximumPrompts Prompt limit in the inclusive range one through 100.
+             * @param[in] imagePath Non-empty destination reused for every captured JPEG.
+             * @throws std::out_of_range If `maximumPrompts` is outside its range.
+             * @warning Prompt operations may upload captured images to a remote provider.
+             */
+            void run(uint32 maximumPrompts, stringview imagePath);
+    };
 
 } /* namespace xwalk::hal::example */
 

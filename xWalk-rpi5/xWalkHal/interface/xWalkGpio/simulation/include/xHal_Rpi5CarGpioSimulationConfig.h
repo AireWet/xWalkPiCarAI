@@ -26,17 +26,17 @@
 
 /** @brief Default generated trace inventory used outside a configured CMake target. */
 #ifndef XWALK_GPIO_SIMULATION_TRACE_CONFIG_PATH
-#define XWALK_GPIO_SIMULATION_TRACE_CONFIG_PATH "xwalk-traces.xml"
+    #define XWALK_GPIO_SIMULATION_TRACE_CONFIG_PATH "xwalk-traces.xml"
 #endif
 
 /** @brief Default GPIO trace log used outside a configured CMake target. */
 #ifndef XWALK_GPIO_SIMULATION_TRACE_LOG_PATH
-#define XWALK_GPIO_SIMULATION_TRACE_LOG_PATH "log/xWalkGpioTrace.log"
+    #define XWALK_GPIO_SIMULATION_TRACE_LOG_PATH "log/xWalkGpioTrace.log"
 #endif
 
 /** @brief Default physical Linux device used by the hardware selection. */
 #ifndef XWALK_GPIO_SIMULATION_DEVICE_PATH
-#define XWALK_GPIO_SIMULATION_DEVICE_PATH "/dev/gpiochip0"
+    #define XWALK_GPIO_SIMULATION_DEVICE_PATH "/dev/gpiochip0"
 #endif
 
 #endif /* XHAL_RPI5CAR_GPIO_SIMULATION_CONFIG_H */

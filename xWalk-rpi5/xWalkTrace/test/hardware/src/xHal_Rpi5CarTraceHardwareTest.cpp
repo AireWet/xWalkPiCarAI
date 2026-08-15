@@ -37,25 +37,24 @@
 namespace
 {
 
-/**
- * @brief Accepts one target trace record without performing physical I/O.
- *
- * @param[in,out] context
- * Unused nullable callback context.
- *
- * @param[in] level
- * Accepted trace severity.
- *
- * @param[in] message
- * Accepted trace message.
- */
-void acceptOutput(XWalkHal::contextpointer context, XWalkHal::XWalkTraceLevel level,
-    XWalkHal::stringview message)
-{
-    static_cast<void>(context);
-    static_cast<void>(level);
-    static_cast<void>(message);
-}
+    /**
+     * @brief Accepts one target trace record without performing physical I/O.
+     *
+     * @param[in,out] context
+     * Unused nullable callback context.
+     *
+     * @param[in] level
+     * Accepted trace severity.
+     *
+     * @param[in] message
+     * Accepted trace message.
+     */
+    void acceptOutput(XWalkHal::contextpointer context, XWalkHal::XWalkTraceLevel level, XWalkHal::stringview message)
+    {
+        static_cast<void>(context);
+        static_cast<void>(level);
+        static_cast<void>(message);
+    }
 
 } /* namespace */
 

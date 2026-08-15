@@ -26,17 +26,17 @@
 
 /** @brief Default generated trace inventory used outside a configured CMake target. */
 #ifndef XWALK_SPI_SIMULATION_TRACE_CONFIG_PATH
-#define XWALK_SPI_SIMULATION_TRACE_CONFIG_PATH "xwalk-traces.xml"
+    #define XWALK_SPI_SIMULATION_TRACE_CONFIG_PATH "xwalk-traces.xml"
 #endif
 
 /** @brief Default SPI trace log used outside a configured CMake target. */
 #ifndef XWALK_SPI_SIMULATION_TRACE_LOG_PATH
-#define XWALK_SPI_SIMULATION_TRACE_LOG_PATH "log/xWalkSpiTrace.log"
+    #define XWALK_SPI_SIMULATION_TRACE_LOG_PATH "log/xWalkSpiTrace.log"
 #endif
 
 /** @brief Default physical Linux device used by the hardware selection. */
 #ifndef XWALK_SPI_SIMULATION_DEVICE_PATH
-#define XWALK_SPI_SIMULATION_DEVICE_PATH "/dev/spidev0.0"
+    #define XWALK_SPI_SIMULATION_DEVICE_PATH "/dev/spidev0.0"
 #endif
 
 #endif /* XHAL_RPI5CAR_SPI_SIMULATION_CONFIG_H */

@@ -41,83 +41,78 @@
 namespace xwalk::hal::example
 {
 
-/******************************************************************************
- * Constants
- ******************************************************************************/
+    /******************************************************************************
+     * Constants
+     ******************************************************************************/
 
-/** @brief Exact Pico2Wave language selected by the source example. */
-inline constexpr stringview XWALK_TTS_PICO2WAVE_EXAMPLE_LANGUAGE{"en-US"};
+    /** @brief Exact Pico2Wave language selected by the source example. */
+    inline constexpr stringview XWALK_TTS_PICO2WAVE_EXAMPLE_LANGUAGE{"en-US"};
 
-/** @brief Exact speech message supplied by the source example. */
-inline constexpr stringview XWALK_TTS_PICO2WAVE_EXAMPLE_MESSAGE{"Hello world!"};
+    /** @brief Exact speech message supplied by the source example. */
+    inline constexpr stringview XWALK_TTS_PICO2WAVE_EXAMPLE_MESSAGE{"Hello world!"};
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
-
-/**
- * @brief Synthesizes and plays one Pico2Wave message synchronously.
- * @param[in,out] context Non-owning context that must remain valid during the call.
- * @param[in] language Non-empty language identifier selected by the example.
- * @param[in] text Non-empty speech text selected by the example.
- */
-using ttspico2wavespeakcallback = void (*)(contextpointer context,
-    stringview language, stringview text);
-
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
-
-/**
- * @class XWalkTtsPico2WaveExample
- * @brief Delivers the exact upstream Pico2Wave request through one callback.
- */
-class XWalkTtsPico2WaveExample final
-{
-private:
-
-    /**************************************************************************
-     * Private data members
-     **************************************************************************/
-
-    /** @brief Non-owning context forwarded synchronously to the speech operation. */
-    contextpointer callbackContext;
-
-    /** @brief Non-null synchronous speech operation copied during construction. */
-    ttspico2wavespeakcallback speakCallback;
-
-public:
-
-    /**************************************************************************
-     * Public constructors and destructor
-     **************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
     /**
-     * @brief Binds one Pico2Wave-compatible synchronous speech operation.
-     * @param[in,out] context Non-owning context forwarded to `speak`.
-     * @param[in] speak Non-null operation accepting language and text views.
-     * @throws std::invalid_argument If `speak` is null.
+     * @brief Synthesizes and plays one Pico2Wave message synchronously.
+     * @param[in,out] context Non-owning context that must remain valid during the call.
+     * @param[in] language Non-empty language identifier selected by the example.
+     * @param[in] text Non-empty speech text selected by the example.
      */
-    XWalkTtsPico2WaveExample(
-        contextpointer context, ttspico2wavespeakcallback speak);
+    using ttspico2wavespeakcallback = void (*)(contextpointer context, stringview language, stringview text);
 
-    /**************************************************************************
-     * Public special member functions
-     **************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-    XWalkTtsPico2WaveExample(const XWalkTtsPico2WaveExample&) = delete;
-    XWalkTtsPico2WaveExample(XWalkTtsPico2WaveExample&&) = delete;
-    XWalkTtsPico2WaveExample& operator=(
-        const XWalkTtsPico2WaveExample&) = delete;
-    XWalkTtsPico2WaveExample& operator=(XWalkTtsPico2WaveExample&&) = delete;
+    /**
+     * @class XWalkTtsPico2WaveExample
+     * @brief Delivers the exact upstream Pico2Wave request through one callback.
+     */
+    class XWalkTtsPico2WaveExample final
+    {
+        private:
+            /**************************************************************************
+             * Private data members
+             **************************************************************************/
 
-    /**************************************************************************
-     * Public member functions
-     **************************************************************************/
+            /** @brief Non-owning context forwarded synchronously to the speech operation. */
+            contextpointer callbackContext;
 
-    /** @brief Synthesizes and plays the exact upstream request once. */
-    void run();
-};
+            /** @brief Non-null synchronous speech operation copied during construction. */
+            ttspico2wavespeakcallback speakCallback;
+
+        public:
+            /**************************************************************************
+             * Public constructors and destructor
+             **************************************************************************/
+
+            /**
+             * @brief Binds one Pico2Wave-compatible synchronous speech operation.
+             * @param[in,out] context Non-owning context forwarded to `speak`.
+             * @param[in] speak Non-null operation accepting language and text views.
+             * @throws std::invalid_argument If `speak` is null.
+             */
+            XWalkTtsPico2WaveExample(contextpointer context, ttspico2wavespeakcallback speak);
+
+            /**************************************************************************
+             * Public special member functions
+             **************************************************************************/
+
+            XWalkTtsPico2WaveExample(const XWalkTtsPico2WaveExample&) = delete;
+            XWalkTtsPico2WaveExample(XWalkTtsPico2WaveExample&&) = delete;
+            XWalkTtsPico2WaveExample& operator=(const XWalkTtsPico2WaveExample&) = delete;
+            XWalkTtsPico2WaveExample& operator=(XWalkTtsPico2WaveExample&&) = delete;
+
+            /**************************************************************************
+             * Public member functions
+             **************************************************************************/
+
+            /** @brief Synthesizes and plays the exact upstream request once. */
+            void run();
+    };
 
 } /* namespace xwalk::hal::example */
 

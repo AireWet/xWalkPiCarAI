@@ -37,30 +37,27 @@
 namespace xwalk::hal::example
 {
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/** @brief Composes Ollama chat with the native provider and terminal I/O. */
-class XWalkOllamaExampleLinux final
-{
-protected:
+    /** @brief Composes Ollama chat with the native provider and terminal I/O. */
+    class XWalkOllamaExampleLinux final
+    {
+        protected:
+            /** @brief Prints `>>> ` and reads one terminal input line. */
+            static boolean readPrompt(contextpointer context, string& inputText);
+            /** @brief Writes one welcome or response fragment to standard output. */
+            static void write(contextpointer context, stringview text, boolean appendNewline, boolean flushOutput);
 
-    /** @brief Prints `>>> ` and reads one terminal input line. */
-    static boolean readPrompt(contextpointer context, string& inputText);
-    /** @brief Writes one welcome or response fragment to standard output. */
-    static void write(contextpointer context, stringview text,
-        boolean appendNewline, boolean flushOutput);
-
-public:
-
-    /**
-     * @brief Runs bounded interactive chat through the configured Ollama API.
-     * @param[in] maximumPrompts Prompt limit from one through 100.
-     * @warning Sends user prompts to the configured Ollama service.
-     */
-    void run(uint32 maximumPrompts);
-};
+        public:
+            /**
+             * @brief Runs bounded interactive chat through the configured Ollama API.
+             * @param[in] maximumPrompts Prompt limit from one through 100.
+             * @warning Sends user prompts to the configured Ollama service.
+             */
+            void run(uint32 maximumPrompts);
+    };
 
 } /* namespace xwalk::hal::example */
 

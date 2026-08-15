@@ -18,37 +18,38 @@
 namespace xwalk::agent
 {
 
-/** @brief Ports the spoken movement sequence from `14.voice_promt_car.py`. */
-class XWalkVoicePromptCar final
-{
-private:
-    XWalkPicarx* picarxObject{nullptr};
-    hal::XWalkTextToSpeech* textToSpeechObject{nullptr};
-    agent::contextpointer callbackContext{nullptr};
-    XWalkVoicePromptCarCallbacks callbacks{};
-    XWalkVoicePromptCarConfiguration configuration{};
+    /** @brief Ports the spoken movement sequence from `14.voice_promt_car.py`. */
+    class XWalkVoicePromptCar final
+    {
+        private:
+            XWalkPicarx* picarxObject{nullptr};
+            hal::XWalkTextToSpeech* textToSpeechObject{nullptr};
+            agent::contextpointer callbackContext{nullptr};
+            XWalkVoicePromptCarCallbacks callbacks{};
+            XWalkVoicePromptCarConfiguration configuration{};
 
-protected:
-    void drive(agent::stringview prompt, agent::boolean forward);
-    void turn(agent::stringview prompt, agent::float64 angle);
-    static void validate(const XWalkVoicePromptCarCallbacks& backendCallbacks,
-        const XWalkVoicePromptCarConfiguration& carConfiguration);
+        protected:
+            void drive(agent::stringview prompt, agent::boolean forward);
+            void turn(agent::stringview prompt, agent::float64 angle);
+            static void validate(const XWalkVoicePromptCarCallbacks& backendCallbacks,
+                                 const XWalkVoicePromptCarConfiguration& carConfiguration);
 
-public:
-    XWalkVoicePromptCar(XWalkPicarx& picarx,
-        hal::XWalkTextToSpeech& textToSpeech, agent::contextpointer context,
-        const XWalkVoicePromptCarCallbacks& backendCallbacks,
-        const XWalkVoicePromptCarConfiguration& carConfiguration = {});
-    ~XWalkVoicePromptCar() = default;
+        public:
+            XWalkVoicePromptCar(XWalkPicarx& picarx,
+                                hal::XWalkTextToSpeech& textToSpeech,
+                                agent::contextpointer context,
+                                const XWalkVoicePromptCarCallbacks& backendCallbacks,
+                                const XWalkVoicePromptCarConfiguration& carConfiguration = {});
+            ~XWalkVoicePromptCar() = default;
 
-    XWalkVoicePromptCar(XWalkVoicePromptCar&&) = delete;
-    XWalkVoicePromptCar(const XWalkVoicePromptCar&) = delete;
-    XWalkVoicePromptCar& operator=(XWalkVoicePromptCar&&) = delete;
-    XWalkVoicePromptCar& operator=(const XWalkVoicePromptCar&) = delete;
+            XWalkVoicePromptCar(XWalkVoicePromptCar&&) = delete;
+            XWalkVoicePromptCar(const XWalkVoicePromptCar&) = delete;
+            XWalkVoicePromptCar& operator=(XWalkVoicePromptCar&&) = delete;
+            XWalkVoicePromptCar& operator=(const XWalkVoicePromptCar&) = delete;
 
-    agent::int32 run();
-    void stop();
-};
+            agent::int32 run();
+            void stop();
+    };
 
 } /* namespace xwalk::agent */
 

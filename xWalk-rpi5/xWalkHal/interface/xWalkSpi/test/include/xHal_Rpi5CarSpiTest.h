@@ -31,7 +31,7 @@
 #include <gtest/gtest.h>
 
 /** @brief Owns one isolated Linux-backend mirror for each SPI operation test. */
-class TEST_SUITE_XWALK_SPI: public ::testing::Test
+class TEST_SUITE_XWALK_SPI : public ::testing::Test
 {
     protected:
         /** @brief Constructs the Linux backend and public SPI test object. */

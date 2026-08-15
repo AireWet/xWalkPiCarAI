@@ -41,15 +41,13 @@
  * @warning
  * Running this function accesses `/dev/gpiochip0` and changes a physical output.
  */
-XWalkHal::int32 main(XWalkHal::int32 argumentCount,
-    XWalkHal::charpointer arguments[])
+XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer arguments[])
 {
     if (argumentCount != 4)
     {
         return 2;
     }
-    xwalk::hal::XWalkGpioLinux backend(
-        arguments[1U], arguments[2U], arguments[3U], 28U);
+    xwalk::hal::XWalkGpioLinux backend(arguments[1U], arguments[2U], arguments[3U], 28U);
     const xwalk::hal::XWalkGpioCallbacks callbacks = XHAL_GPIO_CALLBACKS(xwalk::hal::XWalkGpioLinux);
     xwalk::hal::XWalkGpio gpio(&backend, callbacks, "LED");
     static_cast<void>(gpio.off());

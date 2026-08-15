@@ -37,27 +37,30 @@
  * @namespace xwalk::ctrl
  * @brief Contains Controller command interfaces for the xWalk firmware.
  */
-namespace xwalk::ctrl {
+namespace xwalk::ctrl
+{
 
-/******************************************************************************
- * Member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Member function definitions
+     ******************************************************************************/
 
-/** @brief Executes one Piper storytelling movement demonstration. */
-::ctrl::int32 XWalkController::XWALK_handlerStorytellingRobot(
-    const XWalkLifecycleRequest &request) {
-  if (storytellingRobotObject == nullptr) {
-    XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Storytelling-robot backend unavailable");
-    return 3;
-  }
-  if (request.action == XWalkLifecycleAction::Stop) {
-    storytellingRobotObject->stop();
-    XWALK_CTRL_TRACE_UID0(CTRL .079, "Storytelling robot stopped");
-    return 0;
-  }
-  const ::ctrl::int32 status = storytellingRobotObject->run();
-  XWALK_CTRL_TRACE_UID0(CTRL .080, "Storytelling robot demonstration stopped");
-  return status;
-}
+    /** @brief Executes one Piper storytelling movement demonstration. */
+    ::ctrl::int32 XWalkController::XWALK_handlerStorytellingRobot(const XWalkLifecycleRequest& request)
+    {
+        if (storytellingRobotObject == nullptr)
+        {
+            XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Storytelling-robot backend unavailable");
+            return 3;
+        }
+        if (request.action == XWalkLifecycleAction::Stop)
+        {
+            storytellingRobotObject->stop();
+            XWALK_CTRL_TRACE_UID0(CTRL .079, "Storytelling robot stopped");
+            return 0;
+        }
+        const ::ctrl::int32 status = storytellingRobotObject->run();
+        XWALK_CTRL_TRACE_UID0(CTRL .080, "Storytelling robot demonstration stopped");
+        return status;
+    }
 
 } /* namespace xwalk::ctrl */

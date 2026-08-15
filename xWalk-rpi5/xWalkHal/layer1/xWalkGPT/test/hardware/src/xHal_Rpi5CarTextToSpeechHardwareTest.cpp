@@ -30,6 +30,13 @@
 #include "xHal_Rpi5CarFileFunctions.h"
 
 #include "xHal_Rpi5CarTrace.h"
+#include "xHal_Rpi5CarTextToSpeechHardwareTestTypes.h"
+
+/******************************************************************************
+ * Translation-unit type aliases
+ ******************************************************************************/
+
+using FixtureProvider = ::xwalk::source_types::xhal_rpi5cartexttospeechhardwaretest::FixtureProvider;
 /******************************************************************************
  * Anonymous namespace
  ******************************************************************************/
@@ -37,54 +44,49 @@
 /**
  * @brief Contains the explicitly selected prerecorded synthesis fixture.
  */
-namespace {
+namespace
+{
 
-/******************************************************************************
- * Constants
- ******************************************************************************/
+    /******************************************************************************
+     * Constants
+     ******************************************************************************/
 
-/** @brief Fixed bounded phrase represented by the supplied raw PCM fixture. */
-constexpr XWalkHal::stringview TEST_PHRASE{"xWalk text to speech test"};
+    /** @brief Fixed bounded phrase represented by the supplied raw PCM fixture. */
+    constexpr XWalkHal::stringview TEST_PHRASE{"xWalk text to speech test"};
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-/** @brief Retains the deployment-owned raw PCM fixture path. */
-struct FixtureProvider {
-  /** @brief Existing raw signed sixteen-bit little-endian PCM file path. */
-  XWalkHal::filesystempath filePath{};
-};
+    /******************************************************************************
+     * Private function definitions
+     ******************************************************************************/
 
-/******************************************************************************
- * Private function definitions
- ******************************************************************************/
-
-/**
- * @brief Loads the deployment-supplied PCM fixture for the fixed test phrase.
- *
- * @param[in,out] context Non-null fixture-provider context.
- * @param[in] text Exact fixed phrase represented by the fixture.
- * @return Owned 16 kHz mono signed sixteen-bit PCM.
- * @throws std::invalid_argument If `text` does not match the fixed phrase.
- * @throws std::runtime_error If the fixture cannot be read.
- */
-XWalkHal::XWalkTextToSpeechPcmData
-synthesizeFixture(XWalkHal::contextpointer context, XWalkHal::stringview text) {
-  if (text != TEST_PHRASE) {
-    XWALK_HAL_ERROR(XWALK_INVAL, "Text-to-speech hardware phrase is fixed");
-  }
-  const FixtureProvider &provider = *static_cast<FixtureProvider *>(context);
-  const XWalkHal::string contents =
-      XWalkHal::readFileContents(provider.filePath);
-  XWalkHal::bytevector pcmData{};
-  pcmData.reserve(contents.size());
-  for (const char character : contents) {
-    pcmData.push_back(
-        static_cast<XWalkHal::uint8>(static_cast<unsigned char>(character)));
-  }
-  return {pcmData, 16'000U, 1U};
-}
+    /**
+     * @brief Loads the deployment-supplied PCM fixture for the fixed test phrase.
+     *
+     * @param[in,out] context Non-null fixture-provider context.
+     * @param[in] text Exact fixed phrase represented by the fixture.
+     * @return Owned 16 kHz mono signed sixteen-bit PCM.
+     * @throws std::invalid_argument If `text` does not match the fixed phrase.
+     * @throws std::runtime_error If the fixture cannot be read.
+     */
+    XWalkHal::XWalkTextToSpeechPcmData synthesizeFixture(XWalkHal::contextpointer context, XWalkHal::stringview text)
+    {
+        if (text != TEST_PHRASE)
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "Text-to-speech hardware phrase is fixed");
+        }
+        const FixtureProvider& provider = *static_cast<FixtureProvider*>(context);
+        const XWalkHal::string contents = XWalkHal::readFileContents(provider.filePath);
+        XWalkHal::bytevector pcmData{};
+        pcmData.reserve(contents.size());
+        for (const char character : contents)
+        {
+            pcmData.push_back(static_cast<XWalkHal::uint8>(static_cast<unsigned char>(character)));
+        }
+        return {pcmData, 16'000U, 1U};
+    }
 
 } /* namespace */
 
@@ -102,19 +104,16 @@ synthesizeFixture(XWalkHal::contextpointer context, XWalkHal::stringview text) {
  * @warning Run only after confirming the intended speaker, mixer, fixture, and
  * privacy context.
  */
-XWalkHal::int32 main(XWalkHal::int32 argumentCount,
-                     XWalkHal::charpointer argumentValues[]) {
-  if (argumentCount != 5) {
-    XWALK_HAL_ERROR(
-        XWALK_INVAL,
-        "Text-to-speech hardware test requires explicit devices and fixture");
-  }
-  XWalkHal::XWalkAudioAlsa audio(argumentValues[1], argumentValues[2],
-                                 argumentValues[3]);
-  FixtureProvider provider{argumentValues[4]};
-  const XWalkHal::XWalkTextToSpeechAlsaOperations operations{
-      &synthesizeFixture};
-  XWalkHal::XWalkTextToSpeechAlsa adapter(audio, &provider, operations, 15U);
-  adapter.callback()(&adapter, TEST_PHRASE);
-  return 0;
+XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer argumentValues[])
+{
+    if (argumentCount != 5)
+    {
+        XWALK_HAL_ERROR(XWALK_INVAL, "Text-to-speech hardware test requires explicit devices and fixture");
+    }
+    XWalkHal::XWalkAudioAlsa audio(argumentValues[1], argumentValues[2], argumentValues[3]);
+    FixtureProvider provider{argumentValues[4]};
+    const XWalkHal::XWalkTextToSpeechAlsaOperations operations{&synthesizeFixture};
+    XWalkHal::XWalkTextToSpeechAlsa adapter(audio, &provider, operations, 15U);
+    adapter.callback()(&adapter, TEST_PHRASE);
+    return 0;
 }

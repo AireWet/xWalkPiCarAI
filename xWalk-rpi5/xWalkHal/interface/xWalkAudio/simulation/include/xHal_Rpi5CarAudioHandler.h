@@ -37,31 +37,31 @@
 namespace xwalk::hal::sim
 {
 
-/**
- * @class XWalkAudioHandler
- * @brief Executes representative silent playback operations.
- */
-class XWalkAudioHandler final
-{
-    public:
-        /** @brief Constructs the stateless Audio simulation handler. */
-        XWalkAudioHandler();
+    /**
+     * @class XWalkAudioHandler
+     * @brief Executes representative silent playback operations.
+     */
+    class XWalkAudioHandler final
+    {
+        public:
+            /** @brief Constructs the stateless Audio simulation handler. */
+            XWalkAudioHandler();
 
-        /** @brief Destroys the stateless Audio simulation handler. */
-        ~XWalkAudioHandler();
+            /** @brief Destroys the stateless Audio simulation handler. */
+            ~XWalkAudioHandler();
 
-        XWalkAudioHandler(const XWalkAudioHandler&) = delete;
-        XWalkAudioHandler& operator=(const XWalkAudioHandler&) = delete;
-        XWalkAudioHandler(XWalkAudioHandler&&) = delete;
-        XWalkAudioHandler& operator=(XWalkAudioHandler&&) = delete;
+            XWalkAudioHandler(const XWalkAudioHandler&) = delete;
+            XWalkAudioHandler& operator=(const XWalkAudioHandler&) = delete;
+            XWalkAudioHandler(XWalkAudioHandler&&) = delete;
+            XWalkAudioHandler& operator=(XWalkAudioHandler&&) = delete;
 
-        /**
-         * @brief Writes one silent period and applies a representative volume.
-         * @param[in,out] audio Configured Audio backend that owns the stream.
-         * @return Zero after every bounded operation completes.
-         */
-        int32 run(XWalkAudioAlsa& audio) const;
-};
+            /**
+             * @brief Writes one silent period and applies a representative volume.
+             * @param[in,out] audio Configured Audio backend that owns the stream.
+             * @return Zero after every bounded operation completes.
+             */
+            int32 run(XWalkAudioAlsa& audio) const;
+    };
 
 } /* namespace xwalk::hal::sim */
 

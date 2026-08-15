@@ -8,3 +8,10 @@ set -eu
 if [ "$GERRIT_PROXY_MODE" = "local-http" ]; then
     "$HOME/bin/gerrit-caddy-control" status
 fi
+if [ -r "$HOME/.xwalk-ci.env" ]; then
+    [ -x "$HOME/bin/gerrit-ci-control" ] || {
+        echo "Missing installed Gerrit CI control command" >&2
+        exit 2
+    }
+    "$HOME/bin/gerrit-ci-control" status
+fi

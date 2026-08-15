@@ -41,93 +41,85 @@
 namespace xwalk::hal::example
 {
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
-
-/**
- * @class XWalkTtsPico2WaveExampleLinux
- * @brief Executes one live Pico2Wave synthesis and WAV playback request.
- *
- * @details Owns executable names but no persistent descriptor or audio file.
- * Each synchronous request creates a private temporary WAV and removes it
- * after synthesis or playback completes.
- */
-class XWalkTtsPico2WaveExampleLinux final
-{
-private:
-
-    /**************************************************************************
-     * Private data members
-     **************************************************************************/
-
-    /** @brief Owned non-empty Pico2Wave executable name or path. */
-    string synthesisExecutableName;
-
-    /** @brief Owned non-empty WAV playback executable name or path. */
-    string playbackExecutableName;
-
-protected:
-
-    /**************************************************************************
-     * Protected member functions
-     **************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
     /**
-     * @brief Resolves a callback context into its required Linux adapter.
-     * @param[in,out] context Non-null pointer to a live adapter.
-     * @return Referenced live adapter.
-     * @throws std::invalid_argument If `context` is null.
+     * @class XWalkTtsPico2WaveExampleLinux
+     * @brief Executes one live Pico2Wave synthesis and WAV playback request.
+     *
+     * @details Owns executable names but no persistent descriptor or audio file.
+     * Each synchronous request creates a private temporary WAV and removes it
+     * after synthesis or playback completes.
      */
-    static XWalkTtsPico2WaveExampleLinux& adapter(contextpointer context);
+    class XWalkTtsPico2WaveExampleLinux final
+    {
+        private:
+            /**************************************************************************
+             * Private data members
+             **************************************************************************/
 
-    /**
-     * @brief Synthesizes and plays one request through shell-free child processes.
-     * @param[in,out] context Non-null pointer to a live adapter.
-     * @param[in] language Non-empty Pico2Wave language identifier.
-     * @param[in] text Non-empty speech text.
-     * @throws std::runtime_error If temporary-file or child-process work fails.
-     */
-    static void speak(contextpointer context,
-        stringview language, stringview text);
+            /** @brief Owned non-empty Pico2Wave executable name or path. */
+            string synthesisExecutableName;
 
-public:
+            /** @brief Owned non-empty WAV playback executable name or path. */
+            string playbackExecutableName;
 
-    /**************************************************************************
-     * Public constructors and destructor
-     **************************************************************************/
+        protected:
+            /**************************************************************************
+             * Protected member functions
+             **************************************************************************/
 
-    /**
-     * @brief Stores deployment-selected synthesis and playback executables.
-     * @param[in] synthesisExecutable Non-empty Pico2Wave executable name or path.
-     * @param[in] playbackExecutable Non-empty WAV player executable name or path.
-     * @throws std::invalid_argument If either executable is empty.
-     */
-    XWalkTtsPico2WaveExampleLinux(stringview synthesisExecutable,
-        stringview playbackExecutable);
+            /**
+             * @brief Resolves a callback context into its required Linux adapter.
+             * @param[in,out] context Non-null pointer to a live adapter.
+             * @return Referenced live adapter.
+             * @throws std::invalid_argument If `context` is null.
+             */
+            static XWalkTtsPico2WaveExampleLinux& adapter(contextpointer context);
 
-    /**************************************************************************
-     * Public special member functions
-     **************************************************************************/
+            /**
+             * @brief Synthesizes and plays one request through shell-free child processes.
+             * @param[in,out] context Non-null pointer to a live adapter.
+             * @param[in] language Non-empty Pico2Wave language identifier.
+             * @param[in] text Non-empty speech text.
+             * @throws std::runtime_error If temporary-file or child-process work fails.
+             */
+            static void speak(contextpointer context, stringview language, stringview text);
 
-    XWalkTtsPico2WaveExampleLinux(
-        const XWalkTtsPico2WaveExampleLinux&) = delete;
-    XWalkTtsPico2WaveExampleLinux(XWalkTtsPico2WaveExampleLinux&&) = delete;
-    XWalkTtsPico2WaveExampleLinux& operator=(
-        const XWalkTtsPico2WaveExampleLinux&) = delete;
-    XWalkTtsPico2WaveExampleLinux& operator=(
-        XWalkTtsPico2WaveExampleLinux&&) = delete;
+        public:
+            /**************************************************************************
+             * Public constructors and destructor
+             **************************************************************************/
 
-    /**************************************************************************
-     * Public member functions
-     **************************************************************************/
+            /**
+             * @brief Stores deployment-selected synthesis and playback executables.
+             * @param[in] synthesisExecutable Non-empty Pico2Wave executable name or path.
+             * @param[in] playbackExecutable Non-empty WAV player executable name or path.
+             * @throws std::invalid_argument If either executable is empty.
+             */
+            XWalkTtsPico2WaveExampleLinux(stringview synthesisExecutable, stringview playbackExecutable);
 
-    /**
-     * @brief Synthesizes and plays the fixed Pico2Wave message once.
-     * @warning Creates a temporary file and produces audible output.
-     */
-    void run();
-};
+            /**************************************************************************
+             * Public special member functions
+             **************************************************************************/
+
+            XWalkTtsPico2WaveExampleLinux(const XWalkTtsPico2WaveExampleLinux&) = delete;
+            XWalkTtsPico2WaveExampleLinux(XWalkTtsPico2WaveExampleLinux&&) = delete;
+            XWalkTtsPico2WaveExampleLinux& operator=(const XWalkTtsPico2WaveExampleLinux&) = delete;
+            XWalkTtsPico2WaveExampleLinux& operator=(XWalkTtsPico2WaveExampleLinux&&) = delete;
+
+            /**************************************************************************
+             * Public member functions
+             **************************************************************************/
+
+            /**
+             * @brief Synthesizes and plays the fixed Pico2Wave message once.
+             * @warning Creates a temporary file and produces audible output.
+             */
+            void run();
+    };
 
 } /* namespace xwalk::hal::example */
 

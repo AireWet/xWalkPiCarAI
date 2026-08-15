@@ -29,6 +29,13 @@
 #include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
+#include "xHal_Rpi5CarOthersExampleTestTypes.h"
+
+/******************************************************************************
+ * Translation-unit type aliases
+ ******************************************************************************/
+
+using OthersExampleState = ::xwalk::source_types::xhal_rpi5carothersexampletest::OthersExampleState;
 
 /******************************************************************************
  * Anonymous namespace
@@ -38,162 +45,126 @@
 namespace
 {
 
-/** @brief Records generic model and console operations from one example run. */
-struct OthersExampleState
-{
-    /** @brief Configured system instructions. */
-    XWalkHal::string instructions;
-    /** @brief Configured assistant welcome text. */
-    XWalkHal::string welcome;
-    /** @brief Configured retained-message limit. */
-    XWalkHal::uint32 maximumMessages{};
-    /** @brief Input lines returned in order. */
-    XWalkHal::stringvector inputs{"Hello", "How are you?"};
-    /** @brief Model responses returned in order. */
-    XWalkHal::stringvector responses{"Hello from provider", "I am ready"};
-    /** @brief Prompt text received by the model. */
-    XWalkHal::stringvector prompts;
-    /** @brief Image paths received by the text-only model flow. */
-    XWalkHal::stringvector imagePaths;
-    /** @brief Output fragments written by the example. */
-    XWalkHal::stringvector outputs;
-    /** @brief Newline flags corresponding to output fragments. */
-    XWalkHal::uint32vector newlineFlags;
-    /** @brief Flush flags corresponding to output fragments. */
-    XWalkHal::uint32vector flushFlags;
-    /** @brief Index of the next console input. */
-    XWalkHal::size inputIndex{};
-};
-
-/** @brief Records system instructions. */
-void setInstructions(XWalkHal::contextpointer context,
-    XWalkHal::stringview instructions)
-{
-    static_cast<OthersExampleState*>(context)->instructions =
-        XWalkHal::string(instructions);
-}
-
-/** @brief Records assistant welcome text. */
-void setWelcome(XWalkHal::contextpointer context, XWalkHal::stringview welcome)
-{
-    static_cast<OthersExampleState*>(context)->welcome = XWalkHal::string(welcome);
-}
-
-/** @brief Records the retained-message limit. */
-void setMaximumMessages(
-    XWalkHal::contextpointer context, XWalkHal::uint32 maximumMessages)
-{
-    static_cast<OthersExampleState*>(context)->maximumMessages = maximumMessages;
-}
-
-/** @brief Accepts an unused explicit history message. */
-void addMessage(XWalkHal::contextpointer context,
-    XWalkHal::XWalkLanguageModelRole role, XWalkHal::stringview content,
-    XWalkHal::stringview imagePath)
-{
-    static_cast<void>(context);
-    static_cast<void>(role);
-    static_cast<void>(content);
-    static_cast<void>(imagePath);
-}
-
-/** @brief Records one prompt and returns its configured response. */
-XWalkHal::string prompt(XWalkHal::contextpointer context,
-    XWalkHal::stringview promptText, XWalkHal::stringview imagePath)
-{
-    OthersExampleState& state = *static_cast<OthersExampleState*>(context);
-    state.prompts.emplace_back(promptText);
-    state.imagePaths.emplace_back(imagePath);
-    return state.responses[state.prompts.size() - 1U];
-}
-
-/** @brief Returns the complete in-memory language-model table. */
-XWalkHal::XWalkLanguageModelCallbacks modelCallbacks()
-{
-    return {&setInstructions, &setWelcome, &setMaximumMessages,
-        &addMessage, &prompt};
-}
-
-/** @brief Returns one configured input line and then reports end of input. */
-XWalkHal::boolean readPrompt(
-    XWalkHal::contextpointer context, XWalkHal::string& inputText)
-{
-    OthersExampleState& state = *static_cast<OthersExampleState*>(context);
-    const hal::boolean inputUnavailable =
-        static_cast<hal::boolean>(
-            state.inputIndex >= state.inputs.size());
-    if (inputUnavailable)
+    /** @brief Records system instructions. */
+    void setInstructions(XWalkHal::contextpointer context, XWalkHal::stringview instructions)
     {
-        return false;
+        static_cast<OthersExampleState*>(context)->instructions = XWalkHal::string(instructions);
     }
-    inputText = state.inputs[state.inputIndex];
-    ++state.inputIndex;
-    return true;
-}
 
-/** @brief Records one output fragment and its formatting flags. */
-void write(XWalkHal::contextpointer context, XWalkHal::stringview text,
-    XWalkHal::boolean appendNewline, XWalkHal::boolean flushOutput)
-{
-    OthersExampleState& state = *static_cast<OthersExampleState*>(context);
-    state.outputs.emplace_back(text);
-    state.newlineFlags.push_back(appendNewline ? 1U : 0U);
-    state.flushFlags.push_back(flushOutput ? 1U : 0U);
-}
-
-/** @brief Returns the complete in-memory console table. */
-xwalk::hal::example::XWalkOthersExampleCallbacks consoleCallbacks()
-{
-    return {&readPrompt, &write};
-}
-
-/** @brief Verifies configuration, text-only prompting, and output behavior. */
-void testConversation()
-{
-    OthersExampleState state;
-    XWalkHal::XWalkLanguageModel model(&state, modelCallbacks());
-    xwalk::hal::example::XWalkOthersExample example(
-        model, &state, consoleCallbacks());
-
-    example.run(3U);
-
-    assert(state.maximumMessages == 20U);
-    assert(state.instructions == "You are a helpful assistant.");
-    assert(state.welcome ==
-        "Hello, I am a helpful assistant. How can I help you?");
-    assert(state.prompts ==
-        XWalkHal::stringvector({"Hello", "How are you?"}));
-    assert(state.imagePaths == XWalkHal::stringvector({"", ""}));
-    assert(state.outputs == XWalkHal::stringvector({
-        "Hello, I am a helpful assistant. How can I help you?",
-        "Hello from provider", "", "I am ready", ""}));
-    assert(state.newlineFlags ==
-        XWalkHal::uint32vector({1U, 0U, 1U, 0U, 1U}));
-    assert(state.flushFlags ==
-        XWalkHal::uint32vector({0U, 1U, 0U, 1U, 0U}));
-}
-
-/** @brief Verifies constructor and bounded-count validation. */
-void testValidation()
-{
-    OthersExampleState state;
-    XWalkHal::XWalkLanguageModel model(&state, modelCallbacks());
-    xwalk::hal::example::XWalkOthersExampleCallbacks incompleteCallbacks =
-        consoleCallbacks();
-    incompleteCallbacks.write = nullptr;
-    xwalk::hal::test::expectFailure([&]()
+    /** @brief Records assistant welcome text. */
+    void setWelcome(XWalkHal::contextpointer context, XWalkHal::stringview welcome)
     {
-        xwalk::hal::example::XWalkOthersExample invalidExample(
-            model, &state, incompleteCallbacks);
-    });
+        static_cast<OthersExampleState*>(context)->welcome = XWalkHal::string(welcome);
+    }
 
-    xwalk::hal::example::XWalkOthersExample example(
-        model, &state, consoleCallbacks());
-    xwalk::hal::test::expectFailure([&]()
+    /** @brief Records the retained-message limit. */
+    void setMaximumMessages(XWalkHal::contextpointer context, XWalkHal::uint32 maximumMessages)
     {
-        example.run(0U);
-    });
-}
+        static_cast<OthersExampleState*>(context)->maximumMessages = maximumMessages;
+    }
+
+    /** @brief Accepts an unused explicit history message. */
+    void addMessage(XWalkHal::contextpointer context,
+                    XWalkHal::XWalkLanguageModelRole role,
+                    XWalkHal::stringview content,
+                    XWalkHal::stringview imagePath)
+    {
+        static_cast<void>(context);
+        static_cast<void>(role);
+        static_cast<void>(content);
+        static_cast<void>(imagePath);
+    }
+
+    /** @brief Records one prompt and returns its configured response. */
+    XWalkHal::string
+    prompt(XWalkHal::contextpointer context, XWalkHal::stringview promptText, XWalkHal::stringview imagePath)
+    {
+        OthersExampleState& state = *static_cast<OthersExampleState*>(context);
+        state.prompts.emplace_back(promptText);
+        state.imagePaths.emplace_back(imagePath);
+        return state.responses[state.prompts.size() - 1U];
+    }
+
+    /** @brief Returns the complete in-memory language-model table. */
+    XWalkHal::XWalkLanguageModelCallbacks modelCallbacks()
+    {
+        return {&setInstructions, &setWelcome, &setMaximumMessages, &addMessage, &prompt};
+    }
+
+    /** @brief Returns one configured input line and then reports end of input. */
+    XWalkHal::boolean readPrompt(XWalkHal::contextpointer context, XWalkHal::string& inputText)
+    {
+        OthersExampleState& state = *static_cast<OthersExampleState*>(context);
+        const hal::boolean inputUnavailable = static_cast<hal::boolean>(state.inputIndex >= state.inputs.size());
+        if (inputUnavailable)
+        {
+            return false;
+        }
+        inputText = state.inputs[state.inputIndex];
+        ++state.inputIndex;
+        return true;
+    }
+
+    /** @brief Records one output fragment and its formatting flags. */
+    void write(XWalkHal::contextpointer context,
+               XWalkHal::stringview text,
+               XWalkHal::boolean appendNewline,
+               XWalkHal::boolean flushOutput)
+    {
+        OthersExampleState& state = *static_cast<OthersExampleState*>(context);
+        state.outputs.emplace_back(text);
+        state.newlineFlags.push_back(appendNewline ? 1U : 0U);
+        state.flushFlags.push_back(flushOutput ? 1U : 0U);
+    }
+
+    /** @brief Returns the complete in-memory console table. */
+    xwalk::hal::example::XWalkOthersExampleCallbacks consoleCallbacks()
+    {
+        return {&readPrompt, &write};
+    }
+
+    /** @brief Verifies configuration, text-only prompting, and output behavior. */
+    void testConversation()
+    {
+        OthersExampleState state;
+        XWalkHal::XWalkLanguageModel model(&state, modelCallbacks());
+        xwalk::hal::example::XWalkOthersExample example(model, &state, consoleCallbacks());
+
+        example.run(3U);
+
+        assert(state.maximumMessages == 20U);
+        assert(state.instructions == "You are a helpful assistant.");
+        assert(state.welcome == "Hello, I am a helpful assistant. How can I help you?");
+        assert(state.prompts == XWalkHal::stringvector({"Hello", "How are you?"}));
+        assert(state.imagePaths == XWalkHal::stringvector({"", ""}));
+        assert(
+            state.outputs ==
+            XWalkHal::stringvector(
+                {"Hello, I am a helpful assistant. How can I help you?", "Hello from provider", "", "I am ready", ""}));
+        assert(state.newlineFlags == XWalkHal::uint32vector({1U, 0U, 1U, 0U, 1U}));
+        assert(state.flushFlags == XWalkHal::uint32vector({0U, 1U, 0U, 1U, 0U}));
+    }
+
+    /** @brief Verifies constructor and bounded-count validation. */
+    void testValidation()
+    {
+        OthersExampleState state;
+        XWalkHal::XWalkLanguageModel model(&state, modelCallbacks());
+        xwalk::hal::example::XWalkOthersExampleCallbacks incompleteCallbacks = consoleCallbacks();
+        incompleteCallbacks.write = nullptr;
+        xwalk::hal::test::expectFailure(
+            [&]()
+            {
+                xwalk::hal::example::XWalkOthersExample invalidExample(model, &state, incompleteCallbacks);
+            });
+
+        xwalk::hal::example::XWalkOthersExample example(model, &state, consoleCallbacks());
+        xwalk::hal::test::expectFailure(
+            [&]()
+            {
+                example.run(0U);
+            });
+    }
 
 } /* namespace */
 

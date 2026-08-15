@@ -11,47 +11,47 @@
 #include "xHal_Rpi5CarAdcTestSupport.h"
 namespace xwalk::hal::test::adc
 {
-boolean probe(contextpointer context, uint8 address)
-{
-    TestBus& bus = *static_cast<TestBus*>(context);
-    bus.probes.push_back(address);
-    return bus.presentAddresses.count(address) != 0U;
-}
-
-void writeRegister(contextpointer context, uint8 address, uint8 reg, const bytevector& data)
-{
-    TestBus& bus = *static_cast<TestBus*>(context);
-    uniquemutexlock lock(bus.mutexValue);
-    bus.writeAddress = address;
-    bus.writeRegister = reg;
-    bus.writeData = data;
-    bus.selectedCommand = reg;
-    bus.operationOrder.push_back(reg);
-    if (bus.pauseFirstWrite && !bus.firstWriteObserved)
+    boolean probe(contextpointer context, uint8 address)
     {
-        bus.firstWriteObserved = true;
-        bus.conditionValue.notify_all();
-        bus.conditionValue.wait(lock, [&bus]()
+        TestBus& bus = *static_cast<TestBus*>(context);
+        bus.probes.push_back(address);
+        return bus.presentAddresses.count(address) != 0U;
+    }
+
+    void writeRegister(contextpointer context, uint8 address, uint8 reg, const bytevector& data)
+    {
+        TestBus& bus = *static_cast<TestBus*>(context);
+        uniquemutexlock lock(bus.mutexValue);
+        bus.writeAddress = address;
+        bus.writeRegister = reg;
+        bus.writeData = data;
+        bus.selectedCommand = reg;
+        bus.operationOrder.push_back(reg);
+        if (bus.pauseFirstWrite && !bus.firstWriteObserved)
         {
-            return bus.releaseFirstWrite;
-        });
+            bus.firstWriteObserved = true;
+            bus.conditionValue.notify_all();
+            bus.conditionValue.wait(lock,
+                                    [&bus]()
+                                    {
+                                        return bus.releaseFirstWrite;
+                                    });
+        }
     }
-}
 
-bytevector read(contextpointer context, uint8 address, size length)
-{
-    TestBus& bus = *static_cast<TestBus*>(context);
-    const mutexlock lock(bus.mutexValue);
-    bus.readAddress = address;
-    bus.readLength = length;
-    bus.operationOrder.push_back(0U);
-    if (bus.returnSelectedChannelValue)
+    bytevector read(contextpointer context, uint8 address, size length)
     {
-        const uint8 channel = static_cast<uint8>(7U - (bus.selectedCommand & 0x07U));
-        const uint16 value = bus.channelValues[channel];
-        return {static_cast<uint8>((value >> 8U) & 0xFFU),
-            static_cast<uint8>(value & 0xFFU)};
+        TestBus& bus = *static_cast<TestBus*>(context);
+        const mutexlock lock(bus.mutexValue);
+        bus.readAddress = address;
+        bus.readLength = length;
+        bus.operationOrder.push_back(0U);
+        if (bus.returnSelectedChannelValue)
+        {
+            const uint8 channel = static_cast<uint8>(7U - (bus.selectedCommand & 0x07U));
+            const uint16 value = bus.channelValues[channel];
+            return {static_cast<uint8>((value >> 8U) & 0xFFU), static_cast<uint8>(value & 0xFFU)};
+        }
+        return bus.readBytes;
     }
-    return bus.readBytes;
-}
 } /* namespace xwalk::hal::test::adc */

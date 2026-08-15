@@ -14,6 +14,9 @@ case "$state_directory" in "$HOME"/*) ;; *) echo "Unsafe CI state directory: $st
 case "$log_directory" in "$HOME"/*) ;; *) echo "Unsafe CI log directory: $log_directory" >&2; exit 2 ;; esac
 pid_file="$state_directory/xWalkGerritCi.pid"
 program="$XWALK_GERRIT_TOOL_HOME/xWalkGerritCi.py"
+health_host="${XWALK_CI_LOG_HTTP_HOST:-127.0.0.1}"
+health_port="${XWALK_CI_LOG_HTTP_PORT:-8091}"
+unit="xwalk-gerrit-ci.service"
 
 validate_process()
 {
@@ -26,25 +29,99 @@ validate_process()
     case "$command_line" in *"$program"*) return 0 ;; *) return 2 ;; esac
 }
 
+validate_health()
+{
+    curl --fail --silent --show-error "http://$health_host:$health_port/health" >/dev/null 2>&1
+}
+
+validate_service()
+{
+    validate_process && validate_health
+}
+
+record_systemd_pid()
+{
+    attempts=0
+    while [ "$attempts" -lt 10 ]; do
+        pid="$(systemctl --user show --property=MainPID --value "$unit")"
+        case "$pid" in
+            ""|0|*[!0-9]*) ;;
+            *) printf '%s\n' "$pid" > "$pid_file"; return 0 ;;
+        esac
+        sleep 1
+        attempts=$((attempts + 1))
+    done
+    return 1
+}
+
+launch_ci()
+{
+    if [ "${GERRIT_PROCESS_MANAGER:-nohup}" = "systemd" ]; then
+        # shellcheck disable=SC2016  # The transient service expands its own path arguments.
+        systemd-run --user --unit "$unit" --collect --no-block \
+            --property=Restart=on-failure --property=RestartSec=5s \
+            /bin/sh -c '. "$1"; set -a; . "$2"; set +a; exec python3 "$3"' \
+            xwalk-gerrit-ci "$HOME/gerrit-env.sh" "$environment_file" "$program"
+        record_systemd_pid
+    else
+        nohup python3 "$program" >> "$log_directory/service.log" 2>&1 &
+        pid=$!
+        printf '%s\n' "$pid" > "$pid_file"
+    fi
+}
+
+wait_for_start()
+{
+    attempts=0
+    while ! validate_service && [ "$attempts" -lt 10 ]; do
+        sleep 1
+        attempts=$((attempts + 1))
+    done
+    validate_service
+}
+
 start_ci()
 {
-    if validate_process; then echo "Gerrit CI already running (PID $pid)"; return 0; else status=$?; fi
+    if validate_service; then echo "Gerrit CI already running (PID $pid)"; return 0; fi
+    if validate_process; then
+        echo "Gerrit CI process is running without a healthy dashboard" >&2
+        return 1
+    else
+        status=$?
+    fi
     [ "$status" -ne 2 ] || { echo "Refusing unexpected CI process" >&2; return 2; }
     [ -x "$program" ] || { echo "Missing CI program: $program" >&2; return 2; }
     mkdir -p "$state_directory" "$log_directory"
     rm -f "$pid_file"
-    nohup python3 "$program" >> "$log_directory/service.log" 2>&1 &
-    pid=$!
-    printf '%s\n' "$pid" > "$pid_file"
-    sleep 1
-    validate_process || { echo "Gerrit CI failed to start; inspect $log_directory/service.log" >&2; return 1; }
+    launch_ci
+    wait_for_start || {
+        echo "Gerrit CI failed to become healthy; inspect $log_directory/service.log" >&2
+        if [ "${GERRIT_PROCESS_MANAGER:-nohup}" = "systemd" ]; then
+            systemctl --user stop "$unit" || true
+        elif validate_process; then
+            kill -TERM "$pid" || true
+        fi
+        rm -f "$pid_file"
+        return 1
+    }
     echo "Gerrit CI started (PID $pid)"
 }
 
 stop_ci()
 {
-    if validate_process; then status=0; else status=$?; [ "$status" -ne 2 ] || return 2; echo "Gerrit CI is not running"; return 0; fi
-    kill -TERM "$pid"
+    if validate_process; then
+        status=0
+    else
+        status=$?
+        [ "$status" -ne 2 ] || return 2
+        echo "Gerrit CI is not running"
+        return 0
+    fi
+    if [ "${GERRIT_PROCESS_MANAGER:-nohup}" = "systemd" ]; then
+        systemctl --user stop "$unit"
+    else
+        kill -TERM "$pid"
+    fi
     attempts=0
     while kill -0 "$pid" 2>/dev/null && [ "$attempts" -lt 10 ]; do sleep 1; attempts=$((attempts + 1)); done
     kill -0 "$pid" 2>/dev/null && { echo "Gerrit CI did not stop" >&2; return 1; }
@@ -54,7 +131,7 @@ stop_ci()
 
 status_ci()
 {
-    validate_process
+    validate_service
     echo "Gerrit CI: RUNNING (PID $pid)"
 }
 

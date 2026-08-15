@@ -37,25 +37,28 @@
  * @namespace xwalk::ctrl
  * @brief Contains Controller command interfaces for the xWalk firmware.
  */
-namespace xwalk::ctrl {
+namespace xwalk::ctrl
+{
 
-/******************************************************************************
- * Member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Member function definitions
+     ******************************************************************************/
 
-/** @brief Executes one spoken movement-demonstration command. */
-::ctrl::int32 XWalkController::XWALK_handlerVoicePromptCar(
-    const XWalkLifecycleRequest &request) {
-  if (voicePromptCarObject == nullptr) {
-    XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Voice-prompt-car backend unavailable");
-    return 3;
-  }
-  if (request.action == XWalkLifecycleAction::Stop) {
-    voicePromptCarObject->stop();
-    XWALK_CTRL_TRACE_UID0(CTRL .085, "Voice-prompt car stopped");
-    return 0;
-  }
-  return voicePromptCarObject->run();
-}
+    /** @brief Executes one spoken movement-demonstration command. */
+    ::ctrl::int32 XWalkController::XWALK_handlerVoicePromptCar(const XWalkLifecycleRequest& request)
+    {
+        if (voicePromptCarObject == nullptr)
+        {
+            XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Voice-prompt-car backend unavailable");
+            return 3;
+        }
+        if (request.action == XWalkLifecycleAction::Stop)
+        {
+            voicePromptCarObject->stop();
+            XWALK_CTRL_TRACE_UID0(CTRL .085, "Voice-prompt car stopped");
+            return 0;
+        }
+        return voicePromptCarObject->run();
+    }
 
 } /* namespace xwalk::ctrl */

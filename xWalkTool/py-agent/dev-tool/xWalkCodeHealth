@@ -235,7 +235,21 @@ def configured_cli() -> str | None:
     if "/" in configured:
         path = Path(configured).expanduser()
         return str(path.resolve()) if path.is_file() and os.access(path, os.X_OK) else None
-    return shutil.which(configured)
+    executable = shutil.which(configured)
+    if executable is not None:
+        return executable
+    official_path = Path.home() / ".local" / "bin" / configured
+    return (
+        str(official_path.resolve())
+        if official_path.is_file() and os.access(official_path, os.X_OK)
+        else None
+    )
+
+
+def activation_available() -> bool:
+    """Return whether the licensed CodeScene CLI access token is configured."""
+
+    return bool(os.environ.get("CS_ACCESS_TOKEN", "").strip())
 
 
 def correlation() -> dict[str, str]:
@@ -322,8 +336,16 @@ def analyze(root: Path, configuration: dict[str, Any]) -> int:
     cli = configured_cli()
     if cli is None:
         summary["reason"] = (
-            "Licensed CodeScene CLI is unavailable; build, test, sanitizer, and static-analysis "
-            "checks remain active."
+            "CodeScene CLI executable is unavailable. Install the licensed CLI at its official "
+            "~/.local/bin/cs location or set XWALK_CODESCENE_CLI to its executable."
+        )
+        write_summary(output_directory / "summary.json", summary)
+        print(f"CodeScene Code Health: UNAVAILABLE - {summary['reason']}")
+        return 1 if strict else 0
+    if not activation_available():
+        summary["reason"] = (
+            "CodeScene CLI activation is unavailable. Configure CS_ACCESS_TOKEN in the "
+            "mode-0600 CI environment and CS_ONPREM_URL when using CodeScene Enterprise."
         )
         write_summary(output_directory / "summary.json", summary)
         print(f"CodeScene Code Health: UNAVAILABLE - {summary['reason']}")

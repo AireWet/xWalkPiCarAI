@@ -8,6 +8,7 @@ string(CONCAT XWALK_LAYER1_GROUP_LANGUAGE_MODEL_TEST_SUPPORT
 
 add_executable(xWalkLayer1GroupTest
     src/xHal_Rpi5CarLayer1GroupTest.cpp
+    src/xHal_Rpi5CarLayer1GroupTestSupport.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkMusic/test/src/xHal_Rpi5CarMusicTestSupport.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkSpeaker/test/src/xHal_Rpi5CarSpeakerTestSupport.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkBoardControl/test/src/xHal_Rpi5CarBoardControlTestSupport.cpp
@@ -19,6 +20,7 @@ target_link_libraries(xWalkLayer1GroupTest PRIVATE xWalkTrace)
 target_include_directories(xWalkLayer1GroupTest SYSTEM PRIVATE
     ${XWALK_LAYER1_GROUP_GMOCK_INCLUDE_DIRECTORY})
 target_include_directories(xWalkLayer1GroupTest PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkMusic/test/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkSpeaker/test/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkBoardControl/test/include

@@ -37,11 +37,11 @@
 namespace xwalk::hal::sim
 {
 
-/**
- * @brief Runs Audio operations through the backend selected by CMake.
- * @return Zero after the selected backend completes the bounded simulation.
- */
-int32 runAudioSimulation();
+    /**
+     * @brief Runs Audio operations through the backend selected by CMake.
+     * @return Zero after the selected backend completes the bounded simulation.
+     */
+    int32 runAudioSimulation();
 
 } /* namespace xwalk::hal::sim */
 

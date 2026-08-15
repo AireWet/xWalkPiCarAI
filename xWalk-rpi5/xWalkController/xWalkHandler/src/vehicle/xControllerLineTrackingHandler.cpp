@@ -39,50 +39,53 @@
  * @namespace xwalk::ctrl
  * @brief Contains Controller command interfaces for the xWalk firmware.
  */
-namespace xwalk::ctrl {
+namespace xwalk::ctrl
+{
 
-/******************************************************************************
- * Member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Member function definitions
+     ******************************************************************************/
 
-/**
- * @brief Executes foreground line-tracking start or immediate stop.
- * @param[in] request Validated lifecycle action.
- * @return Zero after tracking or stopping completes; three when the coordinator
- * is unavailable.
- */
-::ctrl::int32 XWalkController::XWALK_handlerLineTracking(
-    const XWalkLifecycleRequest &request) {
-  if (lineTrackingObject == nullptr) {
-    XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Line-tracking backend unavailable");
-    return 3;
-  }
-  if (request.action == XWalkLifecycleAction::Stop) {
-    lineTrackingObject->finish();
-    XWALK_CTRL_TRACE_UID0(CTRL .029, "Line tracking stopped");
-    return 0;
-  }
+    /**
+     * @brief Executes foreground line-tracking start or immediate stop.
+     * @param[in] request Validated lifecycle action.
+     * @return Zero after tracking or stopping completes; three when the coordinator
+     * is unavailable.
+     */
+    ::ctrl::int32 XWalkController::XWALK_handlerLineTracking(const XWalkLifecycleRequest& request)
+    {
+        if (lineTrackingObject == nullptr)
+        {
+            XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Line-tracking backend unavailable");
+            return 3;
+        }
+        if (request.action == XWalkLifecycleAction::Stop)
+        {
+            lineTrackingObject->finish();
+            XWALK_CTRL_TRACE_UID0(CTRL .029, "Line tracking stopped");
+            return 0;
+        }
 
-  XWALK_CTRL_TRACE_UID0(CTRL .030,
-                        "Line tracking started; press Ctrl+C to stop");
-  const ::ctrl::boolean processingLoopRequested{true};
-  while (processingLoopRequested) {
-    const ::ctrl::boolean operationAllowed =
-        static_cast<::ctrl::boolean>(operationMayContinue());
-    if (operationAllowed == false) {
-      break;
+        XWALK_CTRL_TRACE_UID0(CTRL .030, "Line tracking started; press Ctrl+C to stop");
+        const ::ctrl::boolean processingLoopRequested{true};
+        while (processingLoopRequested)
+        {
+            const ::ctrl::boolean operationAllowed = static_cast<::ctrl::boolean>(operationMayContinue());
+            if (operationAllowed == false)
+            {
+                break;
+            }
+            const agent::XWalkLineTrackingResult result = lineTrackingObject->step();
+            const ::ctrl::string prefix = result.recoveryAttempted ? "outHandle gm_val_list: " : "gm_val_list: ";
+            XWALK_CTRL_TRACE_UID3(CTRL .031,
+                                  "%s%s, %s",
+                                  prefix.c_str(),
+                                  XWALK_FORMAT_VALUES(result.readings).c_str(),
+                                  XWALK_FORMAT_LINE_TRACKING_STATE(result.state).c_str());
+        }
+        lineTrackingObject->finish();
+        XWALK_CTRL_TRACE_UID0(CTRL .032, "Line tracking stopped");
+        return 0;
     }
-    const agent::XWalkLineTrackingResult result = lineTrackingObject->step();
-    const ::ctrl::string prefix =
-        result.recoveryAttempted ? "outHandle gm_val_list: " : "gm_val_list: ";
-    XWALK_CTRL_TRACE_UID3(
-        CTRL .031, "%s%s, %s", prefix.c_str(),
-        XWALK_FORMAT_VALUES(result.readings).c_str(),
-        XWALK_FORMAT_LINE_TRACKING_STATE(result.state).c_str());
-  }
-  lineTrackingObject->finish();
-  XWALK_CTRL_TRACE_UID0(CTRL .032, "Line tracking stopped");
-  return 0;
-}
 
 } /* namespace xwalk::ctrl */

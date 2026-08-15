@@ -37,20 +37,18 @@
 namespace xwalk::ctrl
 {
 
-/**
- * @brief Reports whether one parsed command requests generated help.
- *
- * @param[in] arguments Command arguments after global-option parsing.
- *
- * @return
- * `true` only for one `help`, `-h`, or `--help` argument.
- */
-::ctrl::boolean XWALK_isControllerHelpRequest(
-    const ::ctrl::stringvector& arguments) noexcept
-{
-    return (arguments.size() == 1U) &&
-        ((arguments[0U] == "-h") || (arguments[0U] == "--help") ||
-         (arguments[0U] == "help"));
-}
+    /**
+     * @brief Reports whether one parsed command requests generated help.
+     *
+     * @param[in] arguments Command arguments after global-option parsing.
+     *
+     * @return
+     * `true` only for one `help`, `-h`, or `--help` argument.
+     */
+    ::ctrl::boolean XWALK_isControllerHelpRequest(const ::ctrl::stringvector& arguments) noexcept
+    {
+        return (arguments.size() == 1U) &&
+               ((arguments[0U] == "-h") || (arguments[0U] == "--help") || (arguments[0U] == "help"));
+    }
 
 } /* namespace xwalk::ctrl */

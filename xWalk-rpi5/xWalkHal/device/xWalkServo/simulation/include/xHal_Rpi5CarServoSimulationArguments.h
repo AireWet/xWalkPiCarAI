@@ -13,28 +13,30 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Validates and applies one optional Servo trace selector. */
-class XWalkServoSimulationArguments final
-{
-    private:
-        string traceTargetValue;
-        boolean traceEnabledValue;
-        boolean traceUpdateRequestedValue;
-        boolean validValue;
-        boolean helpRequestedValue;
-    protected:
-        static boolean targetIsValid(stringview target) noexcept;
-        void parseSelector(stringview selector);
-    public:
-        XWalkServoSimulationArguments(int32 argumentCount, charpointer argumentValues[]);
-        ~XWalkServoSimulationArguments();
-        XWalkServoSimulationArguments(const XWalkServoSimulationArguments&) = delete;
-        XWalkServoSimulationArguments& operator=(const XWalkServoSimulationArguments&) = delete;
-        XWalkServoSimulationArguments(XWalkServoSimulationArguments&&) = delete;
-        XWalkServoSimulationArguments& operator=(XWalkServoSimulationArguments&&) = delete;
-        boolean valid() const noexcept;
-        boolean helpRequested() const noexcept;
-        boolean applyTraceUpdate() const;
-};
+    /** @brief Validates and applies one optional Servo trace selector. */
+    class XWalkServoSimulationArguments final
+    {
+        private:
+            string traceTargetValue;
+            boolean traceEnabledValue;
+            boolean traceUpdateRequestedValue;
+            boolean validValue;
+            boolean helpRequestedValue;
+
+        protected:
+            static boolean targetIsValid(stringview target) noexcept;
+            void parseSelector(stringview selector);
+
+        public:
+            XWalkServoSimulationArguments(int32 argumentCount, charpointer argumentValues[]);
+            ~XWalkServoSimulationArguments();
+            XWalkServoSimulationArguments(const XWalkServoSimulationArguments&) = delete;
+            XWalkServoSimulationArguments& operator=(const XWalkServoSimulationArguments&) = delete;
+            XWalkServoSimulationArguments(XWalkServoSimulationArguments&&) = delete;
+            XWalkServoSimulationArguments& operator=(XWalkServoSimulationArguments&&) = delete;
+            boolean valid() const noexcept;
+            boolean helpRequested() const noexcept;
+            boolean applyTraceUpdate() const;
+    };
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_SERVO_SIMULATION_ARGUMENTS_H */

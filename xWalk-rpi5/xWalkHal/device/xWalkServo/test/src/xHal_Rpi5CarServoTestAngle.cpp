@@ -41,60 +41,62 @@
 namespace xwalk::hal::test
 {
 
-/******************************************************************************
- * Test function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Test function definitions
+     ******************************************************************************/
 
-/**
- * @brief Verifies angle clamping, mapping, truncation, and output byte order.
- *
- * @post
- * The assertions cover below-minimum, centered, and above-maximum commands.
- */
-void testServoAngles()
-{
-    XWalkServoTestI2c bus;
-    XWalkI2c i2c(&bus, &XWalkServoTestI2c::probeCallback, &XWalkServoTestI2c::writeRegisterCallback,
-        &XWalkServoTestI2c::readCallback);
-    XWalkPwmTimerState timerState;
-    XWalkPwm pwm(i2c, 0U, 0x14U, timerState);
-    XWalkServo servo(pwm);
-    static_cast<void>(servo.initialize());
+    /**
+     * @brief Verifies angle clamping, mapping, truncation, and output byte order.
+     *
+     * @post
+     * The assertions cover below-minimum, centered, and above-maximum commands.
+     */
+    void testServoAngles()
+    {
+        XWalkServoTestI2c bus;
+        XWalkI2c i2c(&bus,
+                     &XWalkServoTestI2c::probeCallback,
+                     &XWalkServoTestI2c::writeRegisterCallback,
+                     &XWalkServoTestI2c::readCallback);
+        XWalkPwmTimerState timerState;
+        XWalkPwm pwm(i2c, 0U, 0x14U, timerState);
+        XWalkServo servo(pwm);
+        static_cast<void>(servo.initialize());
 
-    bus.clearWrites();
-    servo.setAngle(-120.0);
-    const bytevector expectedMinimumBytes{0x00U, 0x66U};
-    assert(bus.writeCount() == 1U);
-    assert(bus.writeRegister(0U) == 0x20U);
-    assert(bus.writeData(0U) == expectedMinimumBytes);
-    assert(pwm.pulseWidth() == 102U);
+        bus.clearWrites();
+        servo.setAngle(-120.0);
+        const bytevector expectedMinimumBytes{0x00U, 0x66U};
+        assert(bus.writeCount() == 1U);
+        assert(bus.writeRegister(0U) == 0x20U);
+        assert(bus.writeData(0U) == expectedMinimumBytes);
+        assert(pwm.pulseWidth() == 102U);
 
-    bus.clearWrites();
-    servo.setAngle(0.0);
-    const bytevector expectedCenterBytes{0x01U, 0x33U};
-    assert(bus.writeCount() == 1U);
-    assert(bus.writeRegister(0U) == 0x20U);
-    assert(bus.writeData(0U) == expectedCenterBytes);
-    assert(pwm.pulseWidth() == 307U);
+        bus.clearWrites();
+        servo.setAngle(0.0);
+        const bytevector expectedCenterBytes{0x01U, 0x33U};
+        assert(bus.writeCount() == 1U);
+        assert(bus.writeRegister(0U) == 0x20U);
+        assert(bus.writeData(0U) == expectedCenterBytes);
+        assert(pwm.pulseWidth() == 307U);
 
-    bus.clearWrites();
-    servo.setAngle(120.0);
-    const bytevector expectedMaximumBytes{0x01U, 0xFFU};
-    assert(bus.writeCount() == 1U);
-    assert(bus.writeRegister(0U) == 0x20U);
-    assert(bus.writeData(0U) == expectedMaximumBytes);
-    assert(pwm.pulseWidth() == 511U);
+        bus.clearWrites();
+        servo.setAngle(120.0);
+        const bytevector expectedMaximumBytes{0x01U, 0xFFU};
+        assert(bus.writeCount() == 1U);
+        assert(bus.writeRegister(0U) == 0x20U);
+        assert(bus.writeData(0U) == expectedMaximumBytes);
+        assert(pwm.pulseWidth() == 511U);
 
-    XWalkPwm invertedPwm(i2c, 1U, 0x14U, timerState);
-    XWalkServoConfiguration invertedConfiguration;
-    invertedConfiguration.inverted = true;
-    XWalkServo invertedServo(invertedPwm, invertedConfiguration);
-    static_cast<void>(invertedServo.initialize());
-    bus.clearWrites();
-    invertedServo.setAngle(-90.0);
-    assert(invertedPwm.pulseWidth() == 511U);
-    invertedServo.setAngle(90.0);
-    assert(invertedPwm.pulseWidth() == 102U);
-}
+        XWalkPwm invertedPwm(i2c, 1U, 0x14U, timerState);
+        XWalkServoConfiguration invertedConfiguration;
+        invertedConfiguration.inverted = true;
+        XWalkServo invertedServo(invertedPwm, invertedConfiguration);
+        static_cast<void>(invertedServo.initialize());
+        bus.clearWrites();
+        invertedServo.setAngle(-90.0);
+        assert(invertedPwm.pulseWidth() == 511U);
+        invertedServo.setAngle(90.0);
+        assert(invertedPwm.pulseWidth() == 102U);
+    }
 
 } /* namespace xwalk::hal::test */

@@ -17,23 +17,23 @@
 namespace xwalk::agent::test::video_recording_opencv
 {
 
-/** @brief Owns one isolated, programmatically generated video fixture. */
-struct RecordedVideoFixture
-{
-    /** @brief Isolated temporary directory. */
-    agent::filesystempath directory{};
-    /** @brief Generated finite AVI source. */
-    agent::filesystempath video{};
+    /** @brief Owns one isolated, programmatically generated video fixture. */
+    struct RecordedVideoFixture
+    {
+            /** @brief Isolated temporary directory. */
+            agent::filesystempath directory{};
+            /** @brief Generated finite AVI source. */
+            agent::filesystempath video{};
 
-    /** @brief Generates a small local AVI without using a camera device. */
-    RecordedVideoFixture();
-    /** @brief Removes the isolated fixture directory without throwing. */
-    ~RecordedVideoFixture() noexcept;
-    /** @brief Disables copying of fixture ownership. */
-    RecordedVideoFixture(const RecordedVideoFixture&) = delete;
-    /** @brief Disables assignment of fixture ownership. */
-    RecordedVideoFixture& operator=(const RecordedVideoFixture&) = delete;
-};
+            /** @brief Generates a small local AVI without using a camera device. */
+            RecordedVideoFixture();
+            /** @brief Removes the isolated fixture directory without throwing. */
+            ~RecordedVideoFixture() noexcept;
+            /** @brief Disables copying of fixture ownership. */
+            RecordedVideoFixture(const RecordedVideoFixture&) = delete;
+            /** @brief Disables assignment of fixture ownership. */
+            RecordedVideoFixture& operator=(const RecordedVideoFixture&) = delete;
+    };
 
 } /* namespace xwalk::agent::test::video_recording_opencv */
 

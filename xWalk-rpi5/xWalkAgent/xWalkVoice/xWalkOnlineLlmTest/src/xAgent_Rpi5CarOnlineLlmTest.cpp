@@ -16,33 +16,31 @@
 namespace xwalk::agent
 {
 
-/** @brief Runs the configured text-only conversation. @return Zero after cancellation. */
-agent::int32 XWalkOnlineLlmTest::run()
-{
-    languageModelObject->setMaximumMessages(configuration.maximumMessages);
-    languageModelObject->setInstructions(configuration.instructions);
-    languageModelObject->setWelcome(configuration.welcome);
-    callbacks.output(callbackContext, configuration.welcome);
-    const agent::boolean processingLoopRequested{true};
-    while (processingLoopRequested)
+    /** @brief Runs the configured text-only conversation. @return Zero after cancellation. */
+    agent::int32 XWalkOnlineLlmTest::run()
     {
-        const agent::boolean operationMayContinue =
-            static_cast<agent::boolean>(
-                callbacks.shouldContinue(callbackContext));
-        if (operationMayContinue == false)
+        languageModelObject->setMaximumMessages(configuration.maximumMessages);
+        languageModelObject->setInstructions(configuration.instructions);
+        languageModelObject->setWelcome(configuration.welcome);
+        callbacks.output(callbackContext, configuration.welcome);
+        const agent::boolean processingLoopRequested{true};
+        while (processingLoopRequested)
         {
-            break;
+            const agent::boolean operationMayContinue =
+                static_cast<agent::boolean>(callbacks.shouldContinue(callbackContext));
+            if (operationMayContinue == false)
+            {
+                break;
+            }
+            const agent::string inputText = callbacks.input(callbackContext, configuration.promptText);
+            callbacks.output(callbackContext, languageModelObject->prompt(inputText));
         }
-        const agent::string inputText = callbacks.input(
-            callbackContext, configuration.promptText);
-        callbacks.output(callbackContext, languageModelObject->prompt(inputText));
+        return 0;
     }
-    return 0;
-}
 
-/** @brief Requires no persistent provider shutdown because each request is synchronous. */
-void XWalkOnlineLlmTest::stop() noexcept
-{
-}
+    /** @brief Requires no persistent provider shutdown because each request is synchronous. */
+    void XWalkOnlineLlmTest::stop() noexcept
+    {
+    }
 
 } /* namespace xwalk::agent */

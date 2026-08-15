@@ -18,177 +18,180 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include "xHal_Rpi5CarRobotHatSoakTypes.h"
+
+/******************************************************************************
+ * Translation-unit type aliases
+ ******************************************************************************/
+
+using Options = ::xwalk::source_types::xhal_rpi5carrobothatsoak::Options;
+using ProcessSnapshot = ::xwalk::source_types::xhal_rpi5carrobothatsoak::ProcessSnapshot;
 
 namespace
 {
-using namespace xwalk::hal;
-using namespace xwalk::hal::simulation;
+    using namespace xwalk::hal;
+    using namespace xwalk::hal::simulation;
 
-constexpr size FAULT_TYPE_COUNT{13U};
+    constexpr size FAULT_TYPE_COUNT{13U};
 
-struct Options
-{
-    uint64 seed{42U};
-    uint64 iterations{10'000U};
-    uint64 logicalDuration{20'000U};
-    float64 faultRate{0.05};
-    string report{"xwalk-robot-hat-soak-report.json"};
-};
-
-struct ProcessSnapshot
-{
-    uint64 residentBytes{};
-    uint64 descriptors{};
-    uint64 threads{};
-};
-
-boolean parseUnsigned(const char* text, uint64& value) noexcept
-{
-    if ((text == nullptr) || (*text == '\0') || (*text == '-'))
+    boolean parseUnsigned(const char* text, uint64& value) noexcept
     {
-        return false;
-    }
-    errno = 0;
-    char* end{};
-    const unsigned long long parsed = std::strtoull(text, &end, 10);
-    if ((errno != 0) || (end == text) || (*end != '\0'))
-    {
-        return false;
-    }
-    value = static_cast<uint64>(parsed);
-    return true;
-}
-
-boolean parseRate(const char* text, float64& value) noexcept
-{
-    errno = 0;
-    char* end{};
-    const float64 parsed = std::strtod(text, &end);
-    if ((errno != 0) || (end == text) || (*end != '\0') ||
-        (parsed < 0.0) || (parsed > 1.0))
-    {
-        return false;
-    }
-    value = parsed;
-    return true;
-}
-
-boolean parseOptions(int argumentCount, char** arguments, Options& options) noexcept
-{
-    for (int index = 1; index < argumentCount; index += 2)
-    {
-        if (index + 1 >= argumentCount)
+        if ((text == nullptr) || (*text == '\0') || (*text == '-'))
         {
             return false;
         }
-        const stringview option(arguments[index]);
-        if (option == "--seed")
-        {
-            if (!parseUnsigned(arguments[index + 1], options.seed)) { return false; }
-        }
-        else if (option == "--iterations")
-        {
-            if (!parseUnsigned(arguments[index + 1], options.iterations)) { return false; }
-        }
-        else if (option == "--logical-duration")
-        {
-            if (!parseUnsigned(arguments[index + 1], options.logicalDuration)) { return false; }
-        }
-        else if (option == "--fault-rate")
-        {
-            if (!parseRate(arguments[index + 1], options.faultRate)) { return false; }
-        }
-        else if (option == "--report")
-        {
-            options.report = arguments[index + 1];
-        }
-        else
+        errno = 0;
+        char* end{};
+        const unsigned long long parsed = std::strtoull(text, &end, 10);
+        if ((errno != 0) || (end == text) || (*end != '\0'))
         {
             return false;
         }
+        value = static_cast<uint64>(parsed);
+        return true;
     }
-    return (options.iterations > 0U) && (options.logicalDuration > 0U) &&
-        !options.report.empty() && (options.report.size() <= 4'096U);
-}
 
-uint64 directoryEntries(const char* path) noexcept
-{
-    DIR* directory = ::opendir(path);
-    if (directory == nullptr)
+    boolean parseRate(const char* text, float64& value) noexcept
     {
-        return 0U;
-    }
-    uint64 count{};
-    while (::readdir(directory) != nullptr)
-    {
-        ++count;
-    }
-    static_cast<void>(::closedir(directory));
-    return count >= 2U ? count - 2U : 0U;
-}
-
-ProcessSnapshot processSnapshot()
-{
-    ProcessSnapshot snapshot;
-    std::ifstream status("/proc/self/statm");
-    uint64 totalPages{};
-    uint64 residentPages{};
-    if (status >> totalPages >> residentPages)
-    {
-        const long pageSize = ::sysconf(_SC_PAGESIZE);
-        if (pageSize > 0)
+        errno = 0;
+        char* end{};
+        const float64 parsed = std::strtod(text, &end);
+        if ((errno != 0) || (end == text) || (*end != '\0') || (parsed < 0.0) || (parsed > 1.0))
         {
-            snapshot.residentBytes = residentPages * static_cast<uint64>(pageSize);
+            return false;
         }
+        value = parsed;
+        return true;
     }
-    snapshot.descriptors = directoryEntries("/proc/self/fd");
-    snapshot.threads = directoryEntries("/proc/self/task");
-    return snapshot;
-}
 
-uint64 nextRandom(uint64& state) noexcept
-{
-    state ^= state << 13U;
-    state ^= state >> 7U;
-    state ^= state << 17U;
-    return state;
-}
-
-float64 randomUnit(uint64& state) noexcept
-{
-    return static_cast<float64>(nextRandom(state) & 0xFFFFFFU) /
-        static_cast<float64>(0x1000000U);
-}
-
-boolean writeReport(const Options& options, const ProcessSnapshot& baseline,
-    const ProcessSnapshot& final, const std::array<uint64, FAULT_TYPE_COUNT>& faults,
-    uint64 safeStops, uint64 maximumEvents, boolean passed)
-{
-    std::ofstream output(options.report, std::ios::trunc);
-    if (!output)
+    boolean parseOptions(int argumentCount, char** arguments, Options& options) noexcept
     {
-        return false;
+        for (int index = 1; index < argumentCount; index += 2)
+        {
+            if (index + 1 >= argumentCount)
+            {
+                return false;
+            }
+            const stringview option(arguments[index]);
+            if (option == "--seed")
+            {
+                if (!parseUnsigned(arguments[index + 1], options.seed))
+                {
+                    return false;
+                }
+            }
+            else if (option == "--iterations")
+            {
+                if (!parseUnsigned(arguments[index + 1], options.iterations))
+                {
+                    return false;
+                }
+            }
+            else if (option == "--logical-duration")
+            {
+                if (!parseUnsigned(arguments[index + 1], options.logicalDuration))
+                {
+                    return false;
+                }
+            }
+            else if (option == "--fault-rate")
+            {
+                if (!parseRate(arguments[index + 1], options.faultRate))
+                {
+                    return false;
+                }
+            }
+            else if (option == "--report")
+            {
+                options.report = arguments[index + 1];
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return (options.iterations > 0U) && (options.logicalDuration > 0U) && !options.report.empty() &&
+               (options.report.size() <= 4'096U);
     }
-    output << "{\n  \"seed\": " << options.seed
-        << ",\n  \"iterations\": " << options.iterations
-        << ",\n  \"logical_duration\": " << options.logicalDuration
-        << ",\n  \"fault_rate\": " << options.faultRate
-        << ",\n  \"safe_stop_transitions\": " << safeStops
-        << ",\n  \"maximum_event_count\": " << maximumEvents
-        << ",\n  \"resident_bytes_baseline\": " << baseline.residentBytes
-        << ",\n  \"resident_bytes_final\": " << final.residentBytes
-        << ",\n  \"file_descriptors_baseline\": " << baseline.descriptors
-        << ",\n  \"file_descriptors_final\": " << final.descriptors
-        << ",\n  \"threads_baseline\": " << baseline.threads
-        << ",\n  \"threads_final\": " << final.threads
-        << ",\n  \"fault_counts\": [";
-    for (size index = 0U; index < faults.size(); ++index)
+
+    uint64 directoryEntries(const char* path) noexcept
     {
-        output << (index == 0U ? "" : ",") << faults[index];
+        DIR* directory = ::opendir(path);
+        if (directory == nullptr)
+        {
+            return 0U;
+        }
+        uint64 count{};
+        while (::readdir(directory) != nullptr)
+        {
+            ++count;
+        }
+        static_cast<void>(::closedir(directory));
+        return count >= 2U ? count - 2U : 0U;
     }
-    output << "],\n  \"passed\": " << (passed ? "true" : "false") << "\n}\n";
-    return static_cast<boolean>(output);
-}
+
+    ProcessSnapshot processSnapshot()
+    {
+        ProcessSnapshot snapshot;
+        std::ifstream status("/proc/self/statm");
+        uint64 totalPages{};
+        uint64 residentPages{};
+        if (status >> totalPages >> residentPages)
+        {
+            const long pageSize = ::sysconf(_SC_PAGESIZE);
+            if (pageSize > 0)
+            {
+                snapshot.residentBytes = residentPages * static_cast<uint64>(pageSize);
+            }
+        }
+        snapshot.descriptors = directoryEntries("/proc/self/fd");
+        snapshot.threads = directoryEntries("/proc/self/task");
+        return snapshot;
+    }
+
+    uint64 nextRandom(uint64& state) noexcept
+    {
+        state ^= state << 13U;
+        state ^= state >> 7U;
+        state ^= state << 17U;
+        return state;
+    }
+
+    float64 randomUnit(uint64& state) noexcept
+    {
+        return static_cast<float64>(nextRandom(state) & 0xFFFFFFU) / static_cast<float64>(0x1000000U);
+    }
+
+    boolean writeReport(const Options& options,
+                        const ProcessSnapshot& baseline,
+                        const ProcessSnapshot& final,
+                        const std::array<uint64, FAULT_TYPE_COUNT>& faults,
+                        uint64 safeStops,
+                        uint64 maximumEvents,
+                        boolean passed)
+    {
+        std::ofstream output(options.report, std::ios::trunc);
+        if (!output)
+        {
+            return false;
+        }
+        output << "{\n  \"seed\": " << options.seed << ",\n  \"iterations\": " << options.iterations
+               << ",\n  \"logical_duration\": " << options.logicalDuration
+               << ",\n  \"fault_rate\": " << options.faultRate << ",\n  \"safe_stop_transitions\": " << safeStops
+               << ",\n  \"maximum_event_count\": " << maximumEvents
+               << ",\n  \"resident_bytes_baseline\": " << baseline.residentBytes
+               << ",\n  \"resident_bytes_final\": " << final.residentBytes
+               << ",\n  \"file_descriptors_baseline\": " << baseline.descriptors
+               << ",\n  \"file_descriptors_final\": " << final.descriptors
+               << ",\n  \"threads_baseline\": " << baseline.threads << ",\n  \"threads_final\": " << final.threads
+               << ",\n  \"fault_counts\": [";
+        for (size index = 0U; index < faults.size(); ++index)
+        {
+            output << (index == 0U ? "" : ",") << faults[index];
+        }
+        output << "],\n  \"passed\": " << (passed ? "true" : "false") << "\n}\n";
+        return static_cast<boolean>(output);
+    }
 } /* namespace */
 
 int main(int argumentCount, char** arguments)
@@ -197,7 +200,7 @@ int main(int argumentCount, char** arguments)
     if (!parseOptions(argumentCount, arguments, options))
     {
         std::cerr << "usage: xWalkRobotHatSoakTest --seed N --iterations N "
-            "--logical-duration N --fault-rate 0..1 --report PATH\n";
+                     "--logical-duration N --fault-rate 0..1 --report PATH\n";
         return 2;
     }
     XWalkLogicalModelConfiguration configuration;
@@ -217,8 +220,7 @@ int main(int argumentCount, char** arguments)
     uint64 safeStops{};
     uint64 maximumEvents{};
     boolean passed = true;
-    const uint64 ticksPerIteration = std::max<uint64>(1U,
-        options.logicalDuration / options.iterations);
+    const uint64 ticksPerIteration = std::max<uint64>(1U, options.logicalDuration / options.iterations);
     for (uint64 iteration = 0U; iteration < options.iterations; ++iteration)
     {
         if (!model.armed)
@@ -239,28 +241,23 @@ int main(int argumentCount, char** arguments)
         const boolean fault = randomUnit(randomState) < options.faultRate;
         if (fault)
         {
-            const size faultType = static_cast<size>(nextRandom(randomState) %
-                FAULT_TYPE_COUNT);
+            const size faultType = static_cast<size>(nextRandom(randomState) % FAULT_TYPE_COUNT);
             ++faults[faultType];
             enterLogicalSafeState(model);
             ++safeStops;
-            if (model.armed || (model.commandedLeftSpeed != 0.0) ||
-                (model.commandedRightSpeed != 0.0) ||
-                (model.simulatedLeftSpeed != 0.0) ||
-                (model.simulatedRightSpeed != 0.0))
+            if (model.armed || (model.commandedLeftSpeed != 0.0) || (model.commandedRightSpeed != 0.0) ||
+                (model.simulatedLeftSpeed != 0.0) || (model.simulatedRightSpeed != 0.0))
             {
                 passed = false;
                 break;
             }
         }
-        else if (advanceLogicalModel(model, ticksPerIteration) !=
-            XWalkLogicalModelStatus::Ok)
+        else if (advanceLogicalModel(model, ticksPerIteration) != XWalkLogicalModelStatus::Ok)
         {
             passed = false;
             break;
         }
-        maximumEvents = std::max<uint64>(maximumEvents,
-            static_cast<uint64>(model.eventCount));
+        maximumEvents = std::max<uint64>(maximumEvents, static_cast<uint64>(model.eventCount));
         if ((model.eventCount > XWALK_LOGICAL_MODEL_MAXIMUM_EVENTS) ||
             (model.logicalTime > options.logicalDuration + ticksPerIteration))
         {
@@ -271,16 +268,14 @@ int main(int argumentCount, char** arguments)
     enterLogicalSafeState(model);
     const ProcessSnapshot final = processSnapshot();
     constexpr uint64 MEMORY_TOLERANCE_BYTES{8U * 1'024U * 1'024U};
-    passed = passed && !model.armed && (model.commandedLeftSpeed == 0.0) &&
-        (model.commandedRightSpeed == 0.0) &&
-        (final.residentBytes <= baseline.residentBytes + MEMORY_TOLERANCE_BYTES) &&
-        (final.descriptors <= baseline.descriptors) &&
-        (final.threads <= baseline.threads);
+    passed = passed && !model.armed && (model.commandedLeftSpeed == 0.0) && (model.commandedRightSpeed == 0.0) &&
+             (final.residentBytes <= baseline.residentBytes + MEMORY_TOLERANCE_BYTES) &&
+             (final.descriptors <= baseline.descriptors) && (final.threads <= baseline.threads);
     if (!writeReport(options, baseline, final, faults, safeStops, maximumEvents, passed))
     {
         return 4;
     }
     std::cout << "soak iterations=" << options.iterations << " faults=" << safeStops
-        << " result=" << (passed ? "passed" : "failed") << '\n';
+              << " result=" << (passed ? "passed" : "failed") << '\n';
     return passed ? 0 : 1;
 }

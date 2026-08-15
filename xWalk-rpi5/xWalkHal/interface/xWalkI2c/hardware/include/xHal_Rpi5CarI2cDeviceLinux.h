@@ -37,40 +37,40 @@
 namespace xwalk::hal
 {
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/**
- * @class XWalkI2cDeviceLinux
- * @brief Provides the production Linux system-call implementation.
- */
-class XWalkI2cDeviceLinux final: public XWalkI2cDevice
-{
-    public:
-        /** @brief Constructs the stateless Linux system-call adapter. */
-        XWalkI2cDeviceLinux();
+    /**
+     * @class XWalkI2cDeviceLinux
+     * @brief Provides the production Linux system-call implementation.
+     */
+    class XWalkI2cDeviceLinux final : public XWalkI2cDevice
+    {
+        public:
+            /** @brief Constructs the stateless Linux system-call adapter. */
+            XWalkI2cDeviceLinux();
 
-        /** @brief Destroys the stateless Linux system-call adapter. */
-        ~XWalkI2cDeviceLinux() override;
+            /** @brief Destroys the stateless Linux system-call adapter. */
+            ~XWalkI2cDeviceLinux() override;
 
-        XWalkI2cDeviceLinux(XWalkI2cDeviceLinux&&) = delete;
-        XWalkI2cDeviceLinux(const XWalkI2cDeviceLinux&) = delete;
-        XWalkI2cDeviceLinux& operator=(XWalkI2cDeviceLinux&&) = delete;
-        XWalkI2cDeviceLinux& operator=(const XWalkI2cDeviceLinux&) = delete;
+            XWalkI2cDeviceLinux(XWalkI2cDeviceLinux&&) = delete;
+            XWalkI2cDeviceLinux(const XWalkI2cDeviceLinux&) = delete;
+            XWalkI2cDeviceLinux& operator=(XWalkI2cDeviceLinux&&) = delete;
+            XWalkI2cDeviceLinux& operator=(const XWalkI2cDeviceLinux&) = delete;
 
-        /** @copydoc XWalkI2cDevice::openDevice */
-        int32 openDevice(cstring devicePath) override;
+            /** @copydoc XWalkI2cDevice::openDevice */
+            int32 openDevice(cstring devicePath) override;
 
-        /** @copydoc XWalkI2cDevice::selectAddress */
-        boolean selectAddress(int32 fileDescriptor, uint8 address) override;
+            /** @copydoc XWalkI2cDevice::selectAddress */
+            boolean selectAddress(int32 fileDescriptor, uint8 address) override;
 
-        /** @copydoc XWalkI2cDevice::transfer */
-        boolean transfer(int32 fileDescriptor, contextpointer request) override;
+            /** @copydoc XWalkI2cDevice::transfer */
+            boolean transfer(int32 fileDescriptor, contextpointer request) override;
 
-        /** @copydoc XWalkI2cDevice::closeDevice */
-        void closeDevice(int32 fileDescriptor) noexcept override;
-};
+            /** @copydoc XWalkI2cDevice::closeDevice */
+            void closeDevice(int32 fileDescriptor) noexcept override;
+    };
 
 } /* namespace xwalk::hal */
 

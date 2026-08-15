@@ -14,39 +14,67 @@
 #include "xHal_Rpi5CarTextToSpeech.h"
 namespace xwalk::hal::test::gpt
 {
-/** @brief Supplies deterministic speech-recognition callback behavior. */
-struct TestRecognitionBackend
-{
-    boolean readyValue{true}; string listenResult{"microphone result"};
-    string fileResult{"file result"}; string filePath{}; uint32 timeoutMs{};
-    uint32 readyCount{}; uint32 listenCount{}; uint32 fileCount{}; uint32 stopCount{};
-    boolean failReady{}; boolean failListen{}; boolean failFile{}; boolean failStop{};
-};
-/** @brief Retains the current simulated GPIO state. */
-struct TestGpioBackend { boolean physicalValue{}; uint32 writeCount{}; };
-/** @brief Provides context for the injected I2C interface. */
-struct TestI2cBackend { uint32 readCount{}; };
-/** @brief Records speaker priming. */
-struct TestSpeakerPrime { uint32 callCount{}; uint32 durationMs{}; };
-/** @brief Records speech requests and optional failure. */
-struct TestSpeechBackend { string text{}; uint32 callCount{}; boolean fail{}; };
-boolean ready(contextpointer context);
-string listen(contextpointer context, uint32 timeoutMs);
-string transcribeFile(contextpointer context, stringview filePath);
-void stop(contextpointer context);
-XWalkSpeechToTextCallbacks recognitionCallbacks();
-void configureGpio(contextpointer context, uint8 pin, XWalkGpioMode mode,
-    XWalkGpioPull pull, boolean initialValue);
-boolean readGpio(contextpointer context, uint8 pin);
-void writeGpio(contextpointer context, uint8 pin, boolean value);
-void registerInterrupt(contextpointer context, uint8 pin, XWalkGpioEdge edge,
-    uint32 debounceMs, contextpointer handlerContext, gpiointerrupthandler handler);
-void cancelInterrupt(contextpointer context, uint8 pin);
-XWalkGpioCallbacks gpioCallbacks();
-boolean probeI2c(contextpointer context, uint8 address);
-void writeI2c(contextpointer context, uint8 address, uint8 reg, const bytevector& data);
-bytevector readI2c(contextpointer context, uint8 address, size length);
-void primeSpeaker(contextpointer context, uint32 durationMs);
-void speakText(contextpointer context, stringview text);
+    /** @brief Supplies deterministic speech-recognition callback behavior. */
+    struct TestRecognitionBackend
+    {
+            boolean readyValue{true};
+            string listenResult{"microphone result"};
+            string fileResult{"file result"};
+            string filePath{};
+            uint32 timeoutMs{};
+            uint32 readyCount{};
+            uint32 listenCount{};
+            uint32 fileCount{};
+            uint32 stopCount{};
+            boolean failReady{};
+            boolean failListen{};
+            boolean failFile{};
+            boolean failStop{};
+    };
+    /** @brief Retains the current simulated GPIO state. */
+    struct TestGpioBackend
+    {
+            boolean physicalValue{};
+            uint32 writeCount{};
+    };
+    /** @brief Provides context for the injected I2C interface. */
+    struct TestI2cBackend
+    {
+            uint32 readCount{};
+    };
+    /** @brief Records speaker priming. */
+    struct TestSpeakerPrime
+    {
+            uint32 callCount{};
+            uint32 durationMs{};
+    };
+    /** @brief Records speech requests and optional failure. */
+    struct TestSpeechBackend
+    {
+            string text{};
+            uint32 callCount{};
+            boolean fail{};
+    };
+    boolean ready(contextpointer context);
+    string listen(contextpointer context, uint32 timeoutMs);
+    string transcribeFile(contextpointer context, stringview filePath);
+    void stop(contextpointer context);
+    XWalkSpeechToTextCallbacks recognitionCallbacks();
+    void configureGpio(contextpointer context, uint8 pin, XWalkGpioMode mode, XWalkGpioPull pull, boolean initialValue);
+    boolean readGpio(contextpointer context, uint8 pin);
+    void writeGpio(contextpointer context, uint8 pin, boolean value);
+    void registerInterrupt(contextpointer context,
+                           uint8 pin,
+                           XWalkGpioEdge edge,
+                           uint32 debounceMs,
+                           contextpointer handlerContext,
+                           gpiointerrupthandler handler);
+    void cancelInterrupt(contextpointer context, uint8 pin);
+    XWalkGpioCallbacks gpioCallbacks();
+    boolean probeI2c(contextpointer context, uint8 address);
+    void writeI2c(contextpointer context, uint8 address, uint8 reg, const bytevector& data);
+    bytevector readI2c(contextpointer context, uint8 address, size length);
+    void primeSpeaker(contextpointer context, uint32 durationMs);
+    void speakText(contextpointer context, stringview text);
 } /* namespace xwalk::hal::test::gpt */
 #endif /* XHAL_RPI5CAR_GPT_TEST_SUPPORT_H */

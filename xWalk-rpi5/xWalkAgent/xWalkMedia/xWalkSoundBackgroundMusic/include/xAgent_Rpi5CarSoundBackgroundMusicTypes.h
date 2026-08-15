@@ -16,38 +16,35 @@
 namespace xwalk::agent
 {
 
-using soundbackgroundmusicdelaycallback = void (*)(agent::contextpointer,
-    agent::uint32);
-using soundbackgroundmusiccontinuecallback = agent::boolean (*)(
-    agent::contextpointer);
+    using soundbackgroundmusicdelaycallback = void (*)(agent::contextpointer, agent::uint32);
+    using soundbackgroundmusiccontinuecallback = agent::boolean (*)(agent::contextpointer);
 
-/** @brief Identifies the result of one interactive key. */
-enum class XWalkSoundBackgroundMusicEvent : agent::uint8
-{
-    Ignored = 0U,
-    MusicStarted,
-    MusicStopped,
-    SoundPlayed,
-    BackgroundSoundStarted,
-    Cancelled
-};
+    /** @brief Identifies the result of one interactive key. */
+    enum class XWalkSoundBackgroundMusicEvent : agent::uint8
+    {
+        Ignored = 0U,
+        MusicStarted,
+        MusicStopped,
+        SoundPlayed,
+        BackgroundSoundStarted,
+        Cancelled
+    };
 
-/** @brief Stores source-compatible resource, volume, and timing settings. */
-struct XWalkSoundBackgroundMusicConfiguration
-{
-    agent::string hornFilename{"car-double-horn.wav"};
-    agent::string musicFilename{"slow-trail-Ahjay_Stelino.mp3"};
-    agent::float64 musicVolumePercent{20.0};
-    agent::uint32 postSoundDelayMs{50U};
-};
+    /** @brief Stores source-compatible resource, volume, and timing settings. */
+    struct XWalkSoundBackgroundMusicConfiguration
+    {
+            agent::string hornFilename{"car-double-horn.wav"};
+            agent::string musicFilename{"slow-trail-Ahjay_Stelino.mp3"};
+            agent::float64 musicVolumePercent{20.0};
+            agent::uint32 postSoundDelayMs{50U};
+    };
 
-/** @brief Reports one key outcome and retained background-music state. */
-struct XWalkSoundBackgroundMusicResult
-{
-    XWalkSoundBackgroundMusicEvent event{
-        XWalkSoundBackgroundMusicEvent::Ignored};
-    agent::boolean musicPlaying{};
-};
+    /** @brief Reports one key outcome and retained background-music state. */
+    struct XWalkSoundBackgroundMusicResult
+    {
+            XWalkSoundBackgroundMusicEvent event{XWalkSoundBackgroundMusicEvent::Ignored};
+            agent::boolean musicPlaying{};
+    };
 
 } /* namespace xwalk::agent */
 

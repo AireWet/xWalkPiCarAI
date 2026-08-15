@@ -41,42 +41,41 @@
 namespace xwalk::hal
 {
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-/**
- * @struct XWalkSpiConfiguration
- * @brief Stores Linux-compatible SPI clock and word settings.
- */
-struct XWalkSpiConfiguration
-{
-    /** @brief Clock frequency in Hertz; zero is invalid. */
-    uint32 speedHz{XHAL_RPI5CAR_SPI_DEFAULT_SPEED_HZ};
-    /** @brief Standard SPI mode in the inclusive range zero through three. */
-    uint8 mode{XHAL_RPI5CAR_SPI_DEFAULT_MODE};
-    /** @brief Bits per word in the inclusive range one through thirty-two. */
-    uint8 bitsPerWord{XHAL_RPI5CAR_SPI_DEFAULT_BITS_PER_WORD};
-};
+    /**
+     * @struct XWalkSpiConfiguration
+     * @brief Stores Linux-compatible SPI clock and word settings.
+     */
+    struct XWalkSpiConfiguration
+    {
+            /** @brief Clock frequency in Hertz; zero is invalid. */
+            uint32 speedHz{XHAL_RPI5CAR_SPI_DEFAULT_SPEED_HZ};
+            /** @brief Standard SPI mode in the inclusive range zero through three. */
+            uint8 mode{XHAL_RPI5CAR_SPI_DEFAULT_MODE};
+            /** @brief Bits per word in the inclusive range one through thirty-two. */
+            uint8 bitsPerWord{XHAL_RPI5CAR_SPI_DEFAULT_BITS_PER_WORD};
+    };
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/**
- * @brief Performs one bounded full-duplex SPI transaction.
- *
- * @param[in,out] context
- * Nullable non-owning backend context that remains valid for the callback.
- *
- * @param[in] transmitData
- * Non-empty payload containing at most 256 bytes in wire order.
- *
- * @return
- * Received bytes with exactly the same length and wire order as the request.
- */
-using spitransfercallback = bytevector (*)(contextpointer context,
-    const bytevector& transmitData);
+    /**
+     * @brief Performs one bounded full-duplex SPI transaction.
+     *
+     * @param[in,out] context
+     * Nullable non-owning backend context that remains valid for the callback.
+     *
+     * @param[in] transmitData
+     * Non-empty payload containing at most 256 bytes in wire order.
+     *
+     * @return
+     * Received bytes with exactly the same length and wire order as the request.
+     */
+    using spitransfercallback = bytevector (*)(contextpointer context, const bytevector& transmitData);
 
 } /* namespace xwalk::hal */
 

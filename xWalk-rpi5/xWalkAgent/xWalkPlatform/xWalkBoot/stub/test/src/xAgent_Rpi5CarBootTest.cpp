@@ -31,36 +31,35 @@
 namespace xwalk::agent::test
 {
 
-/**
- * @brief Verifies that the exact simulated service table is forwarded.
- * @param[in,out] context Non-null pointer to an `XWalkBootTestState` object.
- * @param[in] services Simulated services supplied by the host boot stub.
- * @return Deterministic test status value seven.
- */
-agent::int32 runBootTestApplication(agent::contextpointer context,
-    XWalkBootServices& services)
-{
-    XWalkBootTestState& state = *static_cast<XWalkBootTestState*>(context);
-    ++state.runCount;
-    assert(services.doctorLines == nullptr);
-    assert(services.picarx == nullptr);
-    assert(services.spiTransfer == nullptr);
-    assert(services.servoZeroing == nullptr);
-    assert(services.lineTracking == nullptr);
-    assert(services.selfDrive == nullptr);
-    assert(services.music == nullptr);
-    assert(services.localVoiceChatbot == nullptr);
-    assert(services.treasureHunt == nullptr);
-    assert(services.voiceActiveCar == nullptr);
-    assert(services.voiceAssistant == nullptr);
-    assert(services.voiceStatusLed == nullptr);
-    assert(services.cameraCapture == nullptr);
-    assert(services.computerVision == nullptr);
-    assert(services.faceTracking == nullptr);
-    assert(services.bullFight == nullptr);
-    assert(services.videoRecording == nullptr);
-    return 7;
-}
+    /**
+     * @brief Verifies that the exact simulated service table is forwarded.
+     * @param[in,out] context Non-null pointer to an `XWalkBootTestState` object.
+     * @param[in] services Simulated services supplied by the host boot stub.
+     * @return Deterministic test status value seven.
+     */
+    agent::int32 runBootTestApplication(agent::contextpointer context, XWalkBootServices& services)
+    {
+        XWalkBootTestState& state = *static_cast<XWalkBootTestState*>(context);
+        ++state.runCount;
+        assert(services.doctorLines == nullptr);
+        assert(services.picarx == nullptr);
+        assert(services.spiTransfer == nullptr);
+        assert(services.servoZeroing == nullptr);
+        assert(services.lineTracking == nullptr);
+        assert(services.selfDrive == nullptr);
+        assert(services.music == nullptr);
+        assert(services.localVoiceChatbot == nullptr);
+        assert(services.treasureHunt == nullptr);
+        assert(services.voiceActiveCar == nullptr);
+        assert(services.voiceAssistant == nullptr);
+        assert(services.voiceStatusLed == nullptr);
+        assert(services.cameraCapture == nullptr);
+        assert(services.computerVision == nullptr);
+        assert(services.faceTracking == nullptr);
+        assert(services.bullFight == nullptr);
+        assert(services.videoRecording == nullptr);
+        return 7;
+    }
 
 } /* namespace xwalk::agent::test */
 
@@ -78,18 +77,19 @@ int main()
     xwalk::agent::XWalkBootHostStub boot(services);
     xwalk::agent::test::XWalkBootTestState state{};
 
-    xwalk::hal::test::expectFailure([&]()
-    {
-        static_cast<void>(boot.run(&state, nullptr));
-    });
+    xwalk::hal::test::expectFailure(
+        [&]()
+        {
+            static_cast<void>(boot.run(&state, nullptr));
+        });
     assert(boot.run(&state, &xwalk::agent::test::runBootTestApplication) == 7);
     assert(state.runCount == 1U);
 
-    xwalk::hal::test::expectFailure([&]()
-    {
-        static_cast<void>(boot.run(
-            &state, &xwalk::agent::test::runBootTestApplication));
-    });
+    xwalk::hal::test::expectFailure(
+        [&]()
+        {
+            static_cast<void>(boot.run(&state, &xwalk::agent::test::runBootTestApplication));
+        });
     assert(state.runCount == 1U);
     return 0;
 }

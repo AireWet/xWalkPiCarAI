@@ -38,18 +38,17 @@
 namespace xwalk::agent
 {
 
-/******************************************************************************
- * Public member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Public member function definitions
+     ******************************************************************************/
 
-/**
- * @brief Returns the complete source-compatible instructions and welcome text.
- * @return Owned assistant configuration for one caller-created coordinator.
- */
-hal::XWalkVoiceAssistantConfiguration
-XWalkVoiceActiveCarGpt::assistantConfiguration()
-{
-    const agent::string instructions = R"XWALK(Your name is Buddy.
+    /**
+     * @brief Returns the complete source-compatible instructions and welcome text.
+     * @return Owned assistant configuration for one caller-created coordinator.
+     */
+    hal::XWalkVoiceAssistantConfiguration XWalkVoiceActiveCarGpt::assistantConfiguration()
+    {
+        const agent::string instructions = R"XWALK(Your name is Buddy.
 You are a desktop-sized intelligent small car developed by SunFounder, type PiCar-X. Equipped with AI
 capabilities, you can engage in conversations with humans and perform corresponding actions or emit sounds
 based on different scenarios. Your entire body is made of aluminum alloy, with dimensions approximately
@@ -96,17 +95,16 @@ Answer length: appropriately detailed
 - For math problems, directly provide the final result.
 - Occasionally report your system and sensor statuses.
 - Be aware that you are a machine.)XWALK";
-    return {instructions, "Hi, I'm Buddy. Wake me up with: hey buddy"};
-}
+        return {instructions, "Hi, I'm Buddy. Wake me up with: hey buddy"};
+    }
 
-/**
- * @brief Returns source-compatible sensing, image, recognition, and wake settings.
- * @return Ten-centimetre, image-enabled, English Buddy configuration.
- */
-XWalkVoiceActiveCarConfiguration
-XWalkVoiceActiveCarGpt::carConfiguration()
-{
-    return {10.0, true, 30'000U, true, WAKE_WORD, ANSWER_ON_WAKE};
-}
+    /**
+     * @brief Returns source-compatible sensing, image, recognition, and wake settings.
+     * @return Ten-centimetre, image-enabled, English Buddy configuration.
+     */
+    XWalkVoiceActiveCarConfiguration XWalkVoiceActiveCarGpt::carConfiguration()
+    {
+        return {10.0, true, 30'000U, true, WAKE_WORD, ANSWER_ON_WAKE};
+    }
 
 } /* namespace xwalk::agent */

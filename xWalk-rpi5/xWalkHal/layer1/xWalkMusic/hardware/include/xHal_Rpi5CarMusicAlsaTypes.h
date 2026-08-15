@@ -41,52 +41,51 @@
 namespace xwalk::hal
 {
 
-/******************************************************************************
- * Structure declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Structure declarations
+     ******************************************************************************/
 
-/**
- * @struct XWalkMusicAlsaAudioData
- * @brief Contains decoded signed sixteen-bit little-endian PCM frames.
- */
-struct XWalkMusicAlsaAudioData
-{
-    /** @brief Complete interleaved signed sixteen-bit little-endian PCM bytes. */
-    bytevector pcmData{};
-    /** @brief Positive playback sample rate in Hertz. */
-    uint32 sampleRateHz{};
-    /** @brief Interleaved channel count from one through eight. */
-    uint8 channelCount{};
-};
+    /**
+     * @struct XWalkMusicAlsaAudioData
+     * @brief Contains decoded signed sixteen-bit little-endian PCM frames.
+     */
+    struct XWalkMusicAlsaAudioData
+    {
+            /** @brief Complete interleaved signed sixteen-bit little-endian PCM bytes. */
+            bytevector pcmData{};
+            /** @brief Positive playback sample rate in Hertz. */
+            uint32 sampleRateHz{};
+            /** @brief Interleaved channel count from one through eight. */
+            uint8 channelCount{};
+    };
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/**
- * @brief Decodes one audio file into signed sixteen-bit PCM.
- *
- * @param[in,out] context
- * Nullable non-owning decoder context that outlives the adapter.
- *
- * @param[in] filename
- * Non-empty path view valid only for the callback duration.
- *
- * @return
- * Owned decoded PCM data with positive rate and channel metadata.
- */
-using musicalsaudiodecodecallback = XWalkMusicAlsaAudioData (*)(contextpointer context,
-    stringview filename);
+    /**
+     * @brief Decodes one audio file into signed sixteen-bit PCM.
+     *
+     * @param[in,out] context
+     * Nullable non-owning decoder context that outlives the adapter.
+     *
+     * @param[in] filename
+     * Non-empty path view valid only for the callback duration.
+     *
+     * @return
+     * Owned decoded PCM data with positive rate and channel metadata.
+     */
+    using musicalsaudiodecodecallback = XWalkMusicAlsaAudioData (*)(contextpointer context, stringview filename);
 
-/**
- * @struct XWalkMusicAlsaOperations
- * @brief Contains the complete injectable file-decoding operation table.
- */
-struct XWalkMusicAlsaOperations
-{
-    /** @brief Decodes one file before synchronous or worker playback begins. */
-    musicalsaudiodecodecallback decodeAudio{nullptr};
-};
+    /**
+     * @struct XWalkMusicAlsaOperations
+     * @brief Contains the complete injectable file-decoding operation table.
+     */
+    struct XWalkMusicAlsaOperations
+    {
+            /** @brief Decodes one file before synchronous or worker playback begins. */
+            musicalsaudiodecodecallback decodeAudio{nullptr};
+    };
 
 } /* namespace xwalk::hal */
 

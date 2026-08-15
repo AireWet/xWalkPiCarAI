@@ -267,6 +267,99 @@ class XWalkGerritCiTest(unittest.TestCase):
         )
         self.assertIn("xWalk GitHub Uplift\nStatus: PASSED", message)
 
+    def test_missed_github_uplift_is_recovered_from_branch_tips(self) -> None:
+        """Run the guarded uplift when Gerrit is ahead after a missed merge event."""
+
+        self.ci.user = "ci"
+        self.ci.host = "gerrit.example"
+        self.ci.port = "29418"
+        self.ci.private_key = pathlib.Path("/gerrit-key")
+        self.ci.github_private_key = pathlib.Path("/github-key")
+        self.ci.state_directory = pathlib.Path("/state")
+        revision = "a" * 40
+        event = {
+            "type": "change-merged",
+            "change": {
+                "project": "xWalk-rpi5", "branch": "main", "number": 153,
+                "owner": {"email": "owner@example.test"},
+            },
+            "patchSet": {"number": 2},
+            "newRev": revision,
+        }
+        with mock.patch.object(
+            self.ci, "remote_branch_revision", side_effect=[revision, "b" * 40]
+        ), mock.patch.object(
+            self.ci, "submitted_change_event", return_value=event
+        ), mock.patch.object(self.ci, "mirror") as mirror:
+            self.ci.reconcile_github_uplift()
+
+        mirror.assert_called_once_with(event)
+
+    def test_current_github_tip_does_not_duplicate_uplift_row(self) -> None:
+        """Avoid another publication row when Gerrit and GitHub already match."""
+
+        self.ci.user = "ci"
+        self.ci.host = "gerrit.example"
+        self.ci.port = "29418"
+        self.ci.private_key = pathlib.Path("/gerrit-key")
+        self.ci.github_private_key = pathlib.Path("/github-key")
+        self.ci.state_directory = pathlib.Path("/state")
+        revision = "a" * 40
+        with mock.patch.object(
+            self.ci, "remote_branch_revision", side_effect=[revision, revision]
+        ), mock.patch.object(self.ci, "submitted_change_event") as query, mock.patch.object(
+            self.ci, "mirror"
+        ) as mirror:
+            self.ci.reconcile_github_uplift()
+
+        query.assert_not_called()
+        mirror.assert_not_called()
+
+    def test_unavailable_github_tip_does_not_attempt_uplift(self) -> None:
+        """Wait for both remote tips instead of treating an outage as branch drift."""
+
+        self.ci.user = "ci"
+        self.ci.host = "gerrit.example"
+        self.ci.port = "29418"
+        self.ci.private_key = pathlib.Path("/gerrit-key")
+        self.ci.github_private_key = pathlib.Path("/github-key")
+        self.ci.state_directory = pathlib.Path("/state")
+        with mock.patch.object(
+            self.ci, "remote_branch_revision", side_effect=["a" * 40, ""]
+        ), mock.patch.object(self.ci, "submitted_change_event") as query, mock.patch.object(
+            self.ci, "mirror"
+        ) as mirror:
+            self.ci.reconcile_github_uplift()
+
+        query.assert_not_called()
+        mirror.assert_not_called()
+
+    def test_submitted_tip_query_builds_recovery_event(self) -> None:
+        """Convert exact merged Gerrit metadata into the normal uplift event shape."""
+
+        self.ci.user = "ci"
+        self.ci.host = "gerrit.example"
+        self.ci.port = "29418"
+        self.ci.private_key = pathlib.Path("/gerrit-key")
+        self.ci.state_directory = pathlib.Path("/state")
+        revision = "a" * 40
+        change = {
+            "project": "xWalk-rpi5",
+            "branch": "main",
+            "number": 153,
+            "status": "MERGED",
+            "owner": {"email": "owner@example.test"},
+            "currentPatchSet": {"number": 2, "revision": revision},
+        }
+        result = mock.Mock(returncode=0, stdout=json.dumps(change))
+        with mock.patch("xWalkGerritCi.subprocess.run", return_value=result):
+            event = self.ci.submitted_change_event(revision)
+
+        self.assertIsNotNone(event)
+        assert event is not None
+        self.assertEqual(event["newRev"], revision)
+        self.assertEqual(event["patchSet"], {"number": 2})
+
     def test_module_checkout_uses_private_integration_baseline(self) -> None:
         """Overlay a module patch set onto exact xWalk-rpi5 submodules."""
 
@@ -419,6 +512,14 @@ class XWalkGerritQualityTest(unittest.TestCase):
         self.assertTrue(all(module.needs == ("preparation",) for module in MODULES))
         self.assertEqual(GATE.needs, tuple(module.identifier for module in MODULES))
 
+    def test_preparation_runs_metadata_and_cpp_style_as_separate_checks(self) -> None:
+        """Expose formatting failures independently from other preparation policy."""
+
+        self.assertEqual(
+            {item.identifier: item.arguments for item in PREPARATION.checks},
+            {"metadata": ("preparation",), "styler": ("styler",)},
+        )
+
     def test_quality_preserves_every_compiler_variant_and_specialist_check(self) -> None:
         """Keep compiler, sanitizer, analysis, coverage, fuzz, stress, and Valgrind checks."""
 
@@ -449,6 +550,61 @@ class XWalkGerritQualityTest(unittest.TestCase):
         self.assertNotIn("secret-value", redacted)
         self.assertNotIn("user:password", redacted)
         self.assertNotIn("OPENSSH PRIVATE KEY-----\nsecret", redacted)
+
+    def test_startup_reconciliation_cancels_every_unfinished_retained_state(self) -> None:
+        """Replace stale running, queued, pending, and waiting states after restart."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            log_directory = pathlib.Path(directory)
+            state_path = log_directory / "change-81-2-20260815T064755Z.json"
+            state = {
+                "schema_version": 1,
+                "updated_at": "2026-08-15T07:07:52Z",
+                "jobs": [
+                    {
+                        "id": "xwalk-quality",
+                        "status": "RUNNING",
+                        "completed_at": None,
+                        "duration_seconds": None,
+                        "checks": [
+                            {"id": "passed", "status": "PASSED"},
+                            {"id": "valgrind", "status": "RUNNING"},
+                            {"id": "coverage", "status": "WAITING"},
+                        ],
+                    },
+                    {"id": "gate", "status": "QUEUED", "checks": []},
+                ],
+            }
+            state_path.write_text(json.dumps(state), encoding="utf-8")
+
+            recovered = XWalkGerritQuality.reconcile_interrupted_states(log_directory)
+            retained = json.loads(state_path.read_text(encoding="utf-8"))
+
+        self.assertEqual(recovered, 1)
+        quality = retained["jobs"][0]
+        self.assertEqual(quality["status"], "CANCELLED")
+        self.assertEqual(quality["checks"][0]["status"], "PASSED")
+        self.assertEqual(quality["checks"][1]["status"], "CANCELLED")
+        self.assertEqual(quality["checks"][2]["status"], "CANCELLED")
+        self.assertEqual(retained["jobs"][1]["status"], "CANCELLED")
+        self.assertIsNotNone(quality["completed_at"])
+
+    def test_interrupted_check_is_recorded_as_cancelled_before_propagation(self) -> None:
+        """Persist cancellation when an orderly service stop interrupts a check."""
+
+        quality = XWalkGerritQuality(pathlib.Path("/workspace"), io.StringIO())
+        module = next(item for item in MODULES if item.identifier == "xwalk-quality")
+        check = next(item for item in module.checks if item.identifier == "valgrind")
+        with mock.patch(
+            "xWalkGerritQuality.subprocess.run", side_effect=SystemExit(143)
+        ), self.assertRaises(SystemExit):
+            quality.run_check(module, check)
+
+        self.assertEqual(
+            quality.check_state(module.identifier, check.identifier)["status"],
+            "CANCELLED",
+        )
+        self.assertIn("[CANCELLED] xwalk-quality/valgrind", quality.log.getvalue())
 
     def test_unavailable_code_health_is_visible_but_non_blocking_in_rollout(self) -> None:
         """Retain an unavailable state while allowing the boolean dependency policy."""

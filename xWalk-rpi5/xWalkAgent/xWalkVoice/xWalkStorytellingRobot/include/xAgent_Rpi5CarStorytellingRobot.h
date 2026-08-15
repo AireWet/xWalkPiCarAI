@@ -18,37 +18,38 @@
 namespace xwalk::agent
 {
 
-/** @brief Ports the narrative movement sequence from example 15. */
-class XWalkStorytellingRobot final
-{
-private:
-    XWalkPicarx* picarxObject{nullptr};
-    hal::XWalkTextToSpeech* textToSpeechObject{nullptr};
-    agent::contextpointer callbackContext{nullptr};
-    XWalkStorytellingRobotCallbacks callbacks{};
-    XWalkStorytellingRobotConfiguration configuration{};
+    /** @brief Ports the narrative movement sequence from example 15. */
+    class XWalkStorytellingRobot final
+    {
+        private:
+            XWalkPicarx* picarxObject{nullptr};
+            hal::XWalkTextToSpeech* textToSpeechObject{nullptr};
+            agent::contextpointer callbackContext{nullptr};
+            XWalkStorytellingRobotCallbacks callbacks{};
+            XWalkStorytellingRobotConfiguration configuration{};
 
-protected:
-    static void validate(const XWalkStorytellingRobotCallbacks& backendCallbacks,
-        const XWalkStorytellingRobotConfiguration& robotConfiguration);
-    agent::boolean wait(agent::uint32 durationMs) const;
-    agent::boolean driveForwardAndNarrate(agent::stringview narration);
+        protected:
+            static void validate(const XWalkStorytellingRobotCallbacks& backendCallbacks,
+                                 const XWalkStorytellingRobotConfiguration& robotConfiguration);
+            agent::boolean wait(agent::uint32 durationMs) const;
+            agent::boolean driveForwardAndNarrate(agent::stringview narration);
 
-public:
-    XWalkStorytellingRobot(XWalkPicarx& picarx,
-        hal::XWalkTextToSpeech& textToSpeech, agent::contextpointer context,
-        const XWalkStorytellingRobotCallbacks& backendCallbacks,
-        const XWalkStorytellingRobotConfiguration& robotConfiguration = {});
-    ~XWalkStorytellingRobot() = default;
+        public:
+            XWalkStorytellingRobot(XWalkPicarx& picarx,
+                                   hal::XWalkTextToSpeech& textToSpeech,
+                                   agent::contextpointer context,
+                                   const XWalkStorytellingRobotCallbacks& backendCallbacks,
+                                   const XWalkStorytellingRobotConfiguration& robotConfiguration = {});
+            ~XWalkStorytellingRobot() = default;
 
-    XWalkStorytellingRobot(const XWalkStorytellingRobot&) = delete;
-    XWalkStorytellingRobot(XWalkStorytellingRobot&&) = delete;
-    XWalkStorytellingRobot& operator=(const XWalkStorytellingRobot&) = delete;
-    XWalkStorytellingRobot& operator=(XWalkStorytellingRobot&&) = delete;
+            XWalkStorytellingRobot(const XWalkStorytellingRobot&) = delete;
+            XWalkStorytellingRobot(XWalkStorytellingRobot&&) = delete;
+            XWalkStorytellingRobot& operator=(const XWalkStorytellingRobot&) = delete;
+            XWalkStorytellingRobot& operator=(XWalkStorytellingRobot&&) = delete;
 
-    agent::int32 run();
-    void stop();
-};
+            agent::int32 run();
+            void stop();
+    };
 
 } /* namespace xwalk::agent */
 

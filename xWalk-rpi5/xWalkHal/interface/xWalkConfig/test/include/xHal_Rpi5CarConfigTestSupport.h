@@ -37,19 +37,19 @@
 namespace xwalk::hal::test::config
 {
 
-/**
- * @brief Reports a failed expectation through the trace service.
- * @param[in] condition Result that must be true for success.
- * @param[in] message Diagnostic retained only for synchronous trace output.
- * @return The unchanged `condition` value.
- */
-boolean expect(boolean condition, stringview message);
+    /**
+     * @brief Reports a failed expectation through the trace service.
+     * @param[in] condition Result that must be true for success.
+     * @param[in] message Diagnostic retained only for synchronous trace output.
+     * @return The unchanged `condition` value.
+     */
+    boolean expect(boolean condition, stringview message);
 
-/**
- * @brief Writes deterministic initial section-aware configuration content.
- * @param[in] path Test-owned file path whose parent directory exists.
- */
-void writeFixture(const filesystempath& path);
+    /**
+     * @brief Writes deterministic initial section-aware configuration content.
+     * @param[in] path Test-owned file path whose parent directory exists.
+     */
+    void writeFixture(const filesystempath& path);
 
 } /* namespace xwalk::hal::test::config */
 

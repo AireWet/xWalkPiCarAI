@@ -38,19 +38,19 @@
 namespace
 {
 
-/** @brief Applies the Agent's bounded post-key delay. */
-void delay(agent::contextpointer context, agent::uint32 durationMs)
-{
-    static_cast<void>(context);
-    xwalk::hal::common::sleepMilliseconds(durationMs);
-}
+    /** @brief Applies the Agent's bounded post-key delay. */
+    void delay(agent::contextpointer context, agent::uint32 durationMs)
+    {
+        static_cast<void>(context);
+        xwalk::hal::common::sleepMilliseconds(durationMs);
+    }
 
-/** @brief Allows the bounded physical scenario to finish. */
-agent::boolean continueOperation(agent::contextpointer context)
-{
-    static_cast<void>(context);
-    return true;
-}
+    /** @brief Allows the bounded physical scenario to finish. */
+    agent::boolean continueOperation(agent::contextpointer context)
+    {
+        static_cast<void>(context);
+        return true;
+    }
 
 } /* namespace */
 

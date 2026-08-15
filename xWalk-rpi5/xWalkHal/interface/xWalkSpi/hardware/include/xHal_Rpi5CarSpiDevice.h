@@ -41,50 +41,50 @@
 namespace xwalk::hal
 {
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
-/**
- * @class XWalkSpiDevice
- * @brief Abstracts the operating-system calls used by the Linux SPI backend.
- *
- * @details
- * Production uses the Linux implementation. Host simulation supplies a mirror
- * that implements the same boundary without opening a physical SPI device.
- */
-class XWalkSpiDevice
-{
-    public:
-        /**************************************************************************
-         * Public destructor
-         **************************************************************************/
+    /**
+     * @class XWalkSpiDevice
+     * @brief Abstracts the operating-system calls used by the Linux SPI backend.
+     *
+     * @details
+     * Production uses the Linux implementation. Host simulation supplies a mirror
+     * that implements the same boundary without opening a physical SPI device.
+     */
+    class XWalkSpiDevice
+    {
+        public:
+            /**************************************************************************
+             * Public destructor
+             **************************************************************************/
 
-        /** @brief Allows destruction through the interface. */
-        virtual ~XWalkSpiDevice() = default;
+            /** @brief Allows destruction through the interface. */
+            virtual ~XWalkSpiDevice() = default;
 
-        /**************************************************************************
-         * Public member functions
-         **************************************************************************/
+            /**************************************************************************
+             * Public member functions
+             **************************************************************************/
 
-        /** @brief Opens and returns an owned SPI device descriptor. */
-        virtual int32 openDevice(cstring devicePath) = 0;
+            /** @brief Opens and returns an owned SPI device descriptor. */
+            virtual int32 openDevice(cstring devicePath) = 0;
 
-        /** @brief Applies one standard SPI mode value. */
-        virtual boolean configureMode(int32 fileDescriptor, uint8& mode) = 0;
+            /** @brief Applies one standard SPI mode value. */
+            virtual boolean configureMode(int32 fileDescriptor, uint8& mode) = 0;
 
-        /** @brief Applies one bits-per-word value. */
-        virtual boolean configureBitsPerWord(int32 fileDescriptor, uint8& bitsPerWord) = 0;
+            /** @brief Applies one bits-per-word value. */
+            virtual boolean configureBitsPerWord(int32 fileDescriptor, uint8& bitsPerWord) = 0;
 
-        /** @brief Applies one SPI clock frequency in Hertz. */
-        virtual boolean configureSpeed(int32 fileDescriptor, uint32& speedHz) = 0;
+            /** @brief Applies one SPI clock frequency in Hertz. */
+            virtual boolean configureSpeed(int32 fileDescriptor, uint32& speedHz) = 0;
 
-        /** @brief Executes one Linux SPI request supplied as opaque context. */
-        virtual int32 transfer(int32 fileDescriptor, contextpointer request) = 0;
+            /** @brief Executes one Linux SPI request supplied as opaque context. */
+            virtual int32 transfer(int32 fileDescriptor, contextpointer request) = 0;
 
-        /** @brief Closes an owned descriptor without throwing. */
-        virtual void closeDevice(int32 fileDescriptor) noexcept = 0;
-};
+            /** @brief Closes an owned descriptor without throwing. */
+            virtual void closeDevice(int32 fileDescriptor) noexcept = 0;
+    };
 
 } /* namespace xwalk::hal */
 

@@ -43,6 +43,7 @@ check_tool() {
 printf '%-16s %-24s %-30s %s\n' "TOOL" "PATH" "VERSION" "STATUS"
 check_tool clang
 check_tool clang++
+check_tool clang-format
 check_tool scan-build
 check_tool llvm-cov
 check_tool llvm-profdata
@@ -56,7 +57,7 @@ cat <<'EOF'
 
 Ubuntu 24.04 installation command for missing host-quality tools:
 sudo apt update
-sudo apt install -y ansible-core clang clang-tools llvm gcovr lcov python3-yaml valgrind shellcheck
+sudo apt install -y ansible-core clang clang-format clang-tools llvm gcovr lcov python3-yaml valgrind shellcheck
 EOF
 
 exit "$status"

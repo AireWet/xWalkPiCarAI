@@ -41,17 +41,16 @@
 namespace xwalk::ctrl
 {
 
-/******************************************************************************
- * Function declarations
- ******************************************************************************/
+    /******************************************************************************
+     * Function declarations
+     ******************************************************************************/
 
-/**
- * @brief Selects the minimum boot graph required by one parsed command group.
- * @param[in] commandArguments Complete command arguments excluding the executable name.
- * @return Command-specific Agent boot mode, or Base when no specialized service is required.
- */
-agent::uint8 XWALK_selectBootMode(
-    const ::ctrl::stringvector& commandArguments) noexcept;
+    /**
+     * @brief Selects the minimum boot graph required by one parsed command group.
+     * @param[in] commandArguments Complete command arguments excluding the executable name.
+     * @return Command-specific Agent boot mode, or Base when no specialized service is required.
+     */
+    agent::uint8 XWALK_selectBootMode(const ::ctrl::stringvector& commandArguments) noexcept;
 
 } /* namespace xwalk::ctrl */
 

@@ -37,86 +37,81 @@
  * @namespace xwalk::hal
  * @brief Contains hardware abstraction components for the xWalk firmware.
  */
-namespace xwalk::hal {
+namespace xwalk::hal
+{
 
-/******************************************************************************
- * Constructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Constructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Constructs a music controller and enables its audio output.
- *
- * @param[in,out] context
- * Non-owning backend context; nullability is backend-specific.
- *
- * @param[in] backendCallbacks
- * Complete callback table copied into the controller.
- *
- * @pre
- * Any non-null context object outlives this controller.
- *
- * @post
- * The backend enable callback has completed, and default state is 4/4, 120
- * quarter-note beats per minute, with no key displacement.
- *
- * @throws std::invalid_argument
- * If any required callback is null.
- */
-XWalkMusic::XWalkMusic(contextpointer context,
-                       const XWalkMusicCallbacks &backendCallbacks)
-    : backendContext(context), callbacks(backendCallbacks) {
-  validateCallbacks(callbacks);
-  callbacks.enableOutput(backendContext);
-  XWALK_HAL_TRACE_UID0(RPI .288,
-                       "Music controller constructed and output enabled");
-}
+    /**
+     * @brief Constructs a music controller and enables its audio output.
+     *
+     * @param[in,out] context
+     * Non-owning backend context; nullability is backend-specific.
+     *
+     * @param[in] backendCallbacks
+     * Complete callback table copied into the controller.
+     *
+     * @pre
+     * Any non-null context object outlives this controller.
+     *
+     * @post
+     * The backend enable callback has completed, and default state is 4/4, 120
+     * quarter-note beats per minute, with no key displacement.
+     *
+     * @throws std::invalid_argument
+     * If any required callback is null.
+     */
+    XWalkMusic::XWalkMusic(contextpointer context, const XWalkMusicCallbacks& backendCallbacks)
+        : backendContext(context), callbacks(backendCallbacks)
+    {
+        validateCallbacks(callbacks);
+        callbacks.enableOutput(backendContext);
+        XWALK_HAL_TRACE_UID0(RPI .288, "Music controller constructed and output enabled");
+    }
 
-/******************************************************************************
- * Destructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Destructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Destroys the controller without releasing its caller-owned backend.
- *
- * @note
- * The Python implementation does not disable the speaker at destruction, so
- * this port intentionally leaves platform output state unchanged.
- */
-XWalkMusic::~XWalkMusic() = default;
+    /**
+     * @brief Destroys the controller without releasing its caller-owned backend.
+     *
+     * @note
+     * The Python implementation does not disable the speaker at destruction, so
+     * this port intentionally leaves platform output state unchanged.
+     */
+    XWalkMusic::~XWalkMusic() = default;
 
-/******************************************************************************
- * Protected member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Protected member function definitions
+     ******************************************************************************/
 
-/**
- * @brief Validates the complete injected callback table.
- *
- * @param[in] backendCallbacks
- * Callback table whose entries must all be non-null.
- *
- * @throws std::invalid_argument
- * If any required callback is null.
- */
-void XWalkMusic::validateCallbacks(
-    const XWalkMusicCallbacks &backendCallbacks) {
-  const boolean missingPlaybackCallback =
-      (backendCallbacks.enableOutput == nullptr) ||
-      (backendCallbacks.playSound == nullptr) ||
-      (backendCallbacks.playSoundBackground == nullptr) ||
-      (backendCallbacks.playMusic == nullptr) ||
-      (backendCallbacks.setMusicVolume == nullptr);
-  const boolean missingControlCallback =
-      (backendCallbacks.stopMusic == nullptr) ||
-      (backendCallbacks.pauseMusic == nullptr) ||
-      (backendCallbacks.resumeMusic == nullptr);
-  const boolean missingDataCallback =
-      (backendCallbacks.getSoundLength == nullptr) ||
-      (backendCallbacks.playTone == nullptr);
-  if (missingPlaybackCallback || missingControlCallback ||
-      missingDataCallback) {
-    XWALK_HAL_ERROR(XWALK_INVAL,
-                    "Music backend requires a complete callback table");
-  }
-}
+    /**
+     * @brief Validates the complete injected callback table.
+     *
+     * @param[in] backendCallbacks
+     * Callback table whose entries must all be non-null.
+     *
+     * @throws std::invalid_argument
+     * If any required callback is null.
+     */
+    void XWalkMusic::validateCallbacks(const XWalkMusicCallbacks& backendCallbacks)
+    {
+        const boolean missingPlaybackCallback =
+            (backendCallbacks.enableOutput == nullptr) || (backendCallbacks.playSound == nullptr) ||
+            (backendCallbacks.playSoundBackground == nullptr) || (backendCallbacks.playMusic == nullptr) ||
+            (backendCallbacks.setMusicVolume == nullptr);
+        const boolean missingControlCallback = (backendCallbacks.stopMusic == nullptr) ||
+                                               (backendCallbacks.pauseMusic == nullptr) ||
+                                               (backendCallbacks.resumeMusic == nullptr);
+        const boolean missingDataCallback =
+            (backendCallbacks.getSoundLength == nullptr) || (backendCallbacks.playTone == nullptr);
+        if (missingPlaybackCallback || missingControlCallback || missingDataCallback)
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "Music backend requires a complete callback table");
+        }
+    }
 
 } /* namespace xwalk::hal */

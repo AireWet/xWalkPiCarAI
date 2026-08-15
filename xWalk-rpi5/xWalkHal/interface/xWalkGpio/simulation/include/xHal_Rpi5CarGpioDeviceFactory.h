@@ -29,8 +29,8 @@
 namespace xwalk::hal::sim
 {
 
-/** @brief Creates the GPIO device implementation selected by the build. */
-owningpointer<XWalkGpioDevice> createGpioDevice();
+    /** @brief Creates the GPIO device implementation selected by the build. */
+    owningpointer<XWalkGpioDevice> createGpioDevice();
 
 } /* namespace xwalk::hal::sim */
 

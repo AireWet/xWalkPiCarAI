@@ -18,26 +18,27 @@
 namespace
 {
 
-/** @brief Verifies every upstream key, invalid-key handling, and centered cleanup. */
-void testKeyboardControl(
-    xwalk::agent::test::ControllerCommandTestContext& context)
-{
-    context.state->inputLines = {
-        "w", "a", "s", "d", "i", "k", "j", "l", "invalid", "q"};
-    const ctrl::uint32 writes = context.state->i2cWriteCount;
-    xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
-    assert(sequence.run({{"keyboard-control"}}) == 0);
-    assert(context.state->i2cWriteCount > writes);
-    assert(context.state->delays.size() == 201U);
+    /** @brief Verifies every upstream key, invalid-key handling, and centered cleanup. */
+    void testKeyboardControl(xwalk::agent::test::ControllerCommandTestContext& context)
+    {
+        context.state->inputLines = {"w", "a", "s", "d", "i", "k", "j", "l", "invalid", "q"};
+        const ctrl::uint32 writes = context.state->i2cWriteCount;
+        xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
+        assert(sequence.run({{"keyboard-control"}}) == 0);
+        assert(context.state->i2cWriteCount > writes);
+        assert(context.state->delays.size() == 201U);
 
-    assert(context.picarx->directionAngleDegrees() == 0.0);
-    assert(context.motors->left().speed() == 0.0);
-    assert(context.motors->right().speed() == 0.0);
-    assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"controller.input", "hal.i2c.write",
-            "controller.continue", "controller.delay", "hal.i2c.write",
-            "controller.input"}));
-}
+        assert(context.picarx->directionAngleDegrees() == 0.0);
+        assert(context.motors->left().speed() == 0.0);
+        assert(context.motors->right().speed() == 0.0);
+        assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
+                                                         {"controller.input",
+                                                          "hal.i2c.write",
+                                                          "controller.continue",
+                                                          "controller.delay",
+                                                          "hal.i2c.write",
+                                                          "controller.input"}));
+    }
 
 } /* namespace */
 
@@ -49,6 +50,5 @@ void testKeyboardControl(
  */
 int xWalkKeyboardControlCommandSequenceHostTest(int argc, char* argv[])
 {
-    return xwalk::agent::test::runControllerCommandHostTest(
-        argc, argv, &testKeyboardControl);
+    return xwalk::agent::test::runControllerCommandHostTest(argc, argv, &testKeyboardControl);
 }

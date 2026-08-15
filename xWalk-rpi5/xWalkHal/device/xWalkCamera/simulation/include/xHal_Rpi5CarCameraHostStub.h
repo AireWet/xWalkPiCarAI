@@ -13,19 +13,20 @@
 #include "xHal_Rpi5CarCamera.h"
 namespace xwalk::hal::sim
 {
-/** @brief Records one successful camera capture entirely in memory. */
-class XWalkCameraHostStub final
-{
-    private:
-        uint32 captureCountValue{};
-        string outputPathValue{};
-        XWalkCameraConfiguration configurationValue{};
-    public:
-        static boolean capture(contextpointer context, stringview outputPath,
-            const XWalkCameraConfiguration& configuration);
-        uint32 captureCount() const noexcept;
-        stringview outputPath() const noexcept;
-        const XWalkCameraConfiguration& configuration() const noexcept;
-};
+    /** @brief Records one successful camera capture entirely in memory. */
+    class XWalkCameraHostStub final
+    {
+        private:
+            uint32 captureCountValue{};
+            string outputPathValue{};
+            XWalkCameraConfiguration configurationValue{};
+
+        public:
+            static boolean
+            capture(contextpointer context, stringview outputPath, const XWalkCameraConfiguration& configuration);
+            uint32 captureCount() const noexcept;
+            stringview outputPath() const noexcept;
+            const XWalkCameraConfiguration& configuration() const noexcept;
+    };
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_CAMERA_HOST_STUB_H */

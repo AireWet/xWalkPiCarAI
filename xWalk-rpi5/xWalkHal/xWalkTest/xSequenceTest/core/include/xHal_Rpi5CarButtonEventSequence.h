@@ -41,124 +41,123 @@
 namespace xwalk::hal::test
 {
 
-/******************************************************************************
- * Type definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Type definitions
+     ******************************************************************************/
 
-/** @brief Waits for the requested duration in milliseconds. */
-using sequencewaitcallback = void (*)(contextpointer context, uint32 durationMilliseconds);
+    /** @brief Waits for the requested duration in milliseconds. */
+    using sequencewaitcallback = void (*)(contextpointer context, uint32 durationMilliseconds);
 
-/** @brief Returns an event timestamp in seconds. */
-using sequencetimecallback = float64 (*)(contextpointer context);
+    /** @brief Returns an event timestamp in seconds. */
+    using sequencetimecallback = float64 (*)(contextpointer context);
 
-/** @brief Reports one button press or release event. */
-using sequenceeventcallback = void (*)(contextpointer context, boolean pressed,
-    float64 timestampSeconds);
+    /** @brief Reports one button press or release event. */
+    using sequenceeventcallback = void (*)(contextpointer context, boolean pressed, float64 timestampSeconds);
 
-/******************************************************************************
- * Class declarations
- ******************************************************************************/
-
-/**
- * @class XWalkButtonEventSequence
- * @brief Prints physical D0 press and release events for a bounded interval.
- *
- * @details
- * Registers one combined rising/falling interrupt with ten-millisecond
- * debounce. The D0 input starts released through its pull-up, so each accepted
- * edge alternates between pressed and released state.
- */
-class XWalkButtonEventSequence
-{
-private:
-
-/**************************************************************************
- * Private data members
- **************************************************************************/
-
-    /** @brief Caller-owned D0 GPIO that outlives this sequence. */
-    XWalkGpio* gpioObject;
-    /** @brief Non-owning context forwarded to injected sequence callbacks. */
-    contextpointer callbackContext;
-    /** @brief Non-null bounded-wait operation. */
-    sequencewaitcallback waitCallback;
-    /** @brief Non-null timestamp operation. */
-    sequencetimecallback timeCallback;
-    /** @brief Non-null event-output operation. */
-    sequenceeventcallback eventCallback;
-    /** @brief State reported by the most recently accepted edge. */
-    atomicboolean pressedValue{false};
-
-/**************************************************************************
- * Private member functions
- **************************************************************************/
-
-    /** @brief Handles one accepted rising or falling D0 edge. */
-    void handleEvent() noexcept;
+    /******************************************************************************
+     * Class declarations
+     ******************************************************************************/
 
     /**
-     * @brief Adapts the GPIO callback to the owning sequence instance.
+     * @class XWalkButtonEventSequence
+     * @brief Prints physical D0 press and release events for a bounded interval.
      *
-     * @param[in,out] context
-     * Non-null `XWalkButtonEventSequence` context.
+     * @details
+     * Registers one combined rising/falling interrupt with ten-millisecond
+     * debounce. The D0 input starts released through its pull-up, so each accepted
+     * edge alternates between pressed and released state.
      */
-    static void eventHandler(contextpointer context) noexcept;
+    class XWalkButtonEventSequence
+    {
+        private:
+            /**************************************************************************
+             * Private data members
+             **************************************************************************/
 
-public:
+            /** @brief Caller-owned D0 GPIO that outlives this sequence. */
+            XWalkGpio* gpioObject;
+            /** @brief Non-owning context forwarded to injected sequence callbacks. */
+            contextpointer callbackContext;
+            /** @brief Non-null bounded-wait operation. */
+            sequencewaitcallback waitCallback;
+            /** @brief Non-null timestamp operation. */
+            sequencetimecallback timeCallback;
+            /** @brief Non-null event-output operation. */
+            sequenceeventcallback eventCallback;
+            /** @brief State reported by the most recently accepted edge. */
+            atomicboolean pressedValue{false};
 
-/**************************************************************************
- * Public constructors and destructor
- **************************************************************************/
+            /**************************************************************************
+             * Private member functions
+             **************************************************************************/
 
-    /**
-     * @brief Binds one caller-owned D0 GPIO.
-     *
-     * @param[in] gpio
-     * D0 input configured through a Linux GPIO backend.
-     *
-     * @param[in,out] context
-     * Non-owning context forwarded to every callback.
-     *
-     * @param[in] wait
-     * Non-null bounded wait operation.
-     *
-     * @param[in] time
-     * Non-null event timestamp operation.
-     *
-     * @param[in] event
-     * Non-null event reporting operation.
-     *
-     * @throws std::invalid_argument
-     * If any callback is null.
-     */
-    XWalkButtonEventSequence(XWalkGpio& gpio, contextpointer context,
-        sequencewaitcallback wait, sequencetimecallback time,
-        sequenceeventcallback event);
+            /** @brief Handles one accepted rising or falling D0 edge. */
+            void handleEvent() noexcept;
 
-/**************************************************************************
- * Public special member functions
- **************************************************************************/
+            /**
+             * @brief Adapts the GPIO callback to the owning sequence instance.
+             *
+             * @param[in,out] context
+             * Non-null `XWalkButtonEventSequence` context.
+             */
+            static void eventHandler(contextpointer context) noexcept;
 
-    XWalkButtonEventSequence(const XWalkButtonEventSequence&) = delete;
-    XWalkButtonEventSequence(XWalkButtonEventSequence&&) = delete;
-    XWalkButtonEventSequence& operator=(const XWalkButtonEventSequence&) = delete;
-    XWalkButtonEventSequence& operator=(XWalkButtonEventSequence&&) = delete;
+        public:
+            /**************************************************************************
+             * Public constructors and destructor
+             **************************************************************************/
 
-/**************************************************************************
- * Public member functions
- **************************************************************************/
+            /**
+             * @brief Binds one caller-owned D0 GPIO.
+             *
+             * @param[in] gpio
+             * D0 input configured through a Linux GPIO backend.
+             *
+             * @param[in,out] context
+             * Non-owning context forwarded to every callback.
+             *
+             * @param[in] wait
+             * Non-null bounded wait operation.
+             *
+             * @param[in] time
+             * Non-null event timestamp operation.
+             *
+             * @param[in] event
+             * Non-null event reporting operation.
+             *
+             * @throws std::invalid_argument
+             * If any callback is null.
+             */
+            XWalkButtonEventSequence(XWalkGpio& gpio,
+                                     contextpointer context,
+                                     sequencewaitcallback wait,
+                                     sequencetimecallback time,
+                                     sequenceeventcallback event);
 
-    /**
-     * @brief Monitors D0 for the requested bounded duration.
-     *
-     * @param[in] durationSeconds
-     * Inclusive duration range of one through 3600 seconds.
-     *
-     * @throws std::out_of_range
-     * If the duration is outside its supported range.
-     */
-    void run(uint32 durationSeconds);
-};
+            /**************************************************************************
+             * Public special member functions
+             **************************************************************************/
+
+            XWalkButtonEventSequence(const XWalkButtonEventSequence&) = delete;
+            XWalkButtonEventSequence(XWalkButtonEventSequence&&) = delete;
+            XWalkButtonEventSequence& operator=(const XWalkButtonEventSequence&) = delete;
+            XWalkButtonEventSequence& operator=(XWalkButtonEventSequence&&) = delete;
+
+            /**************************************************************************
+             * Public member functions
+             **************************************************************************/
+
+            /**
+             * @brief Monitors D0 for the requested bounded duration.
+             *
+             * @param[in] durationSeconds
+             * Inclusive duration range of one through 3600 seconds.
+             *
+             * @throws std::out_of_range
+             * If the duration is outside its supported range.
+             */
+            void run(uint32 durationSeconds);
+    };
 
 } /* namespace xwalk::hal::test */
 

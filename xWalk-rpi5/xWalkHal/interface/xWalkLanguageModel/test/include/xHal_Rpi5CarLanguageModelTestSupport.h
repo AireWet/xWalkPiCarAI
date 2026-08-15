@@ -16,30 +16,29 @@
 #include "xHal_Rpi5CarLanguageModel.h"
 namespace xwalk::hal::test::language_model
 {
-struct TestLanguageModelBackend
-{
-    string instructions{};
-    string welcome{};
-    string messageContent{};
-    string messageImagePath{};
-    string promptText{};
-    string promptImagePath{};
-    string promptResult{"model response"};
-    XWalkLanguageModelRole role{XWalkLanguageModelRole::System};
-    uint32 maximumMessages{};
-    uint32 instructionCount{};
-    uint32 welcomeCount{};
-    uint32 limitCount{};
-    uint32 messageCount{};
-    uint32 promptCount{};
-    boolean failPrompt{};
-};
-void setInstructions(contextpointer context, stringview instructions);
-void setWelcome(contextpointer context, stringview welcome);
-void setMaximumMessages(contextpointer context, uint32 maximumMessages);
-void addMessage(contextpointer context, XWalkLanguageModelRole role,
-    stringview content, stringview imagePath);
-string prompt(contextpointer context, stringview promptText, stringview imagePath);
-XWalkLanguageModelCallbacks backendCallbacks();
-}
+    struct TestLanguageModelBackend
+    {
+            string instructions{};
+            string welcome{};
+            string messageContent{};
+            string messageImagePath{};
+            string promptText{};
+            string promptImagePath{};
+            string promptResult{"model response"};
+            XWalkLanguageModelRole role{XWalkLanguageModelRole::System};
+            uint32 maximumMessages{};
+            uint32 instructionCount{};
+            uint32 welcomeCount{};
+            uint32 limitCount{};
+            uint32 messageCount{};
+            uint32 promptCount{};
+            boolean failPrompt{};
+    };
+    void setInstructions(contextpointer context, stringview instructions);
+    void setWelcome(contextpointer context, stringview welcome);
+    void setMaximumMessages(contextpointer context, uint32 maximumMessages);
+    void addMessage(contextpointer context, XWalkLanguageModelRole role, stringview content, stringview imagePath);
+    string prompt(contextpointer context, stringview promptText, stringview imagePath);
+    XWalkLanguageModelCallbacks backendCallbacks();
+} // namespace xwalk::hal::test::language_model
 #endif

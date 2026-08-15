@@ -33,33 +33,33 @@
 namespace xwalk::hal::sim
 {
 
-/** @brief Validates and applies one optional simulation trace selector. */
-class XWalkGpioSimulationArguments final
-{
-    public:
-        XWalkGpioSimulationArguments(int32 argumentCount, charpointer argumentValues[]);
-        ~XWalkGpioSimulationArguments();
+    /** @brief Validates and applies one optional simulation trace selector. */
+    class XWalkGpioSimulationArguments final
+    {
+        public:
+            XWalkGpioSimulationArguments(int32 argumentCount, charpointer argumentValues[]);
+            ~XWalkGpioSimulationArguments();
 
-        XWalkGpioSimulationArguments(const XWalkGpioSimulationArguments&) = delete;
-        XWalkGpioSimulationArguments& operator=(const XWalkGpioSimulationArguments&) = delete;
-        XWalkGpioSimulationArguments(XWalkGpioSimulationArguments&&) = delete;
-        XWalkGpioSimulationArguments& operator=(XWalkGpioSimulationArguments&&) = delete;
+            XWalkGpioSimulationArguments(const XWalkGpioSimulationArguments&) = delete;
+            XWalkGpioSimulationArguments& operator=(const XWalkGpioSimulationArguments&) = delete;
+            XWalkGpioSimulationArguments(XWalkGpioSimulationArguments&&) = delete;
+            XWalkGpioSimulationArguments& operator=(XWalkGpioSimulationArguments&&) = delete;
 
-        boolean valid() const noexcept;
-        boolean helpRequested() const noexcept;
-        boolean applyTraceUpdate() const;
+            boolean valid() const noexcept;
+            boolean helpRequested() const noexcept;
+            boolean applyTraceUpdate() const;
 
-    protected:
-        static boolean targetIsValid(stringview target) noexcept;
-        void parseSelector(stringview selector);
+        protected:
+            static boolean targetIsValid(stringview target) noexcept;
+            void parseSelector(stringview selector);
 
-    private:
-        string traceTargetValue;
-        boolean traceEnabledValue;
-        boolean traceUpdateRequestedValue;
-        boolean validValue;
-        boolean helpRequestedValue;
-};
+        private:
+            string traceTargetValue;
+            boolean traceEnabledValue;
+            boolean traceUpdateRequestedValue;
+            boolean validValue;
+            boolean helpRequestedValue;
+    };
 
 } /* namespace xwalk::hal::sim */
 

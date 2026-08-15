@@ -20,114 +20,110 @@
 #include "xHal_Rpi5CarSttVoskWakeWordExample.h"
 
 #include <cassert>
+#include "xHal_Rpi5CarSttVoskWakeWordExampleTestTypes.h"
+
+/******************************************************************************
+ * Translation-unit type aliases
+ ******************************************************************************/
+
+using WakeWordExampleState = ::xwalk::source_types::xhal_rpi5carsttvoskwakewordexampletest::WakeWordExampleState;
 
 namespace
 {
 
-/** @brief Records deterministic transcripts, timeouts, and status messages. */
-struct WakeWordExampleState
-{
-    XWalkHal::stringvector transcripts{"background noise", "HEY ROBOT please wake"};
-    XWalkHal::stringvector messages;
-    XWalkHal::uint32vector timeouts;
-    XWalkHal::size transcriptIndex{};
-};
-
-/** @brief Returns one configured transcript and records its timeout. */
-XWalkHal::string listen(
-    XWalkHal::contextpointer context, XWalkHal::uint32 timeoutMs)
-{
-    WakeWordExampleState& state = *static_cast<WakeWordExampleState*>(context);
-    state.timeouts.push_back(timeoutMs);
-    const XWalkHal::string transcript = state.transcripts[state.transcriptIndex];
-    ++state.transcriptIndex;
-    return transcript;
-}
-
-/** @brief Records one literal status message. */
-void report(XWalkHal::contextpointer context, XWalkHal::stringview message)
-{
-    static_cast<WakeWordExampleState*>(context)->messages.emplace_back(message);
-}
-
-/** @brief Returns the complete deterministic callback table. */
-xwalk::hal::example::XWalkSttVoskWakeWordExampleCallbacks callbacks()
-{
-    return {&listen, &report};
-}
-
-/** @brief Verifies prompt, repeated listen, case folding, and detection output. */
-void testWakeDetection()
-{
-    WakeWordExampleState state;
-    xwalk::hal::example::XWalkSttVoskWakeWordExample example(&state, callbacks());
-
-    example.run(2U, 4'000U);
-
-    assert(state.transcriptIndex == 2U);
-    assert(state.timeouts == XWalkHal::uint32vector({4'000U, 4'000U}));
-    assert(state.messages == XWalkHal::stringvector({
-        "Wake me with :\"Hey robot\"", "Wake word detected"}));
-}
-
-/** @brief Verifies callback, attempt, and timeout validation. */
-void testValidation()
-{
-    WakeWordExampleState state;
-    auto incomplete = callbacks();
-    incomplete.listen = nullptr;
-    XWalkHal::boolean rejectedCallbacks = false;
-    try
+    /** @brief Returns one configured transcript and records its timeout. */
+    XWalkHal::string listen(XWalkHal::contextpointer context, XWalkHal::uint32 timeoutMs)
     {
-        xwalk::hal::example::XWalkSttVoskWakeWordExample invalid(&state, incomplete);
+        WakeWordExampleState& state = *static_cast<WakeWordExampleState*>(context);
+        state.timeouts.push_back(timeoutMs);
+        const XWalkHal::string transcript = state.transcripts[state.transcriptIndex];
+        ++state.transcriptIndex;
+        return transcript;
     }
-    catch (const XWalkHal::invalidargument&)
-    {
-        rejectedCallbacks = true;
-    }
-    assert(rejectedCallbacks);
 
-    xwalk::hal::example::XWalkSttVoskWakeWordExample example(&state, callbacks());
-    XWalkHal::boolean rejectedAttempts = false;
-    XWalkHal::boolean rejectedTimeout = false;
-    try
+    /** @brief Records one literal status message. */
+    void report(XWalkHal::contextpointer context, XWalkHal::stringview message)
     {
-        example.run(0U, 1U);
+        static_cast<WakeWordExampleState*>(context)->messages.emplace_back(message);
     }
-    catch (const XWalkHal::outofrange&)
-    {
-        rejectedAttempts = true;
-    }
-    try
-    {
-        example.run(1U, XHAL_RPI5CAR_SPEECH_TO_TEXT_MAXIMUM_TIMEOUT_MS + 1U);
-    }
-    catch (const XWalkHal::outofrange&)
-    {
-        rejectedTimeout = true;
-    }
-    assert(rejectedAttempts);
-    assert(rejectedTimeout);
-}
 
-/** @brief Verifies the bounded failure when no transcript contains the phrase. */
-void testAttemptLimit()
-{
-    WakeWordExampleState state;
-    state.transcripts = {"noise", "silence"};
-    xwalk::hal::example::XWalkSttVoskWakeWordExample example(&state, callbacks());
-    XWalkHal::boolean rejected = false;
-    try
+    /** @brief Returns the complete deterministic callback table. */
+    xwalk::hal::example::XWalkSttVoskWakeWordExampleCallbacks callbacks()
     {
-        example.run(2U, 1U);
+        return {&listen, &report};
     }
-    catch (const XWalkHal::runtimeerror&)
+
+    /** @brief Verifies prompt, repeated listen, case folding, and detection output. */
+    void testWakeDetection()
     {
-        rejected = true;
+        WakeWordExampleState state;
+        xwalk::hal::example::XWalkSttVoskWakeWordExample example(&state, callbacks());
+
+        example.run(2U, 4'000U);
+
+        assert(state.transcriptIndex == 2U);
+        assert(state.timeouts == XWalkHal::uint32vector({4'000U, 4'000U}));
+        assert(state.messages == XWalkHal::stringvector({"Wake me with :\"Hey robot\"", "Wake word detected"}));
     }
-    assert(rejected);
-    assert(state.transcriptIndex == 2U);
-}
+
+    /** @brief Verifies callback, attempt, and timeout validation. */
+    void testValidation()
+    {
+        WakeWordExampleState state;
+        auto incomplete = callbacks();
+        incomplete.listen = nullptr;
+        XWalkHal::boolean rejectedCallbacks = false;
+        try
+        {
+            xwalk::hal::example::XWalkSttVoskWakeWordExample invalid(&state, incomplete);
+        }
+        catch (const XWalkHal::invalidargument&)
+        {
+            rejectedCallbacks = true;
+        }
+        assert(rejectedCallbacks);
+
+        xwalk::hal::example::XWalkSttVoskWakeWordExample example(&state, callbacks());
+        XWalkHal::boolean rejectedAttempts = false;
+        XWalkHal::boolean rejectedTimeout = false;
+        try
+        {
+            example.run(0U, 1U);
+        }
+        catch (const XWalkHal::outofrange&)
+        {
+            rejectedAttempts = true;
+        }
+        try
+        {
+            example.run(1U, XHAL_RPI5CAR_SPEECH_TO_TEXT_MAXIMUM_TIMEOUT_MS + 1U);
+        }
+        catch (const XWalkHal::outofrange&)
+        {
+            rejectedTimeout = true;
+        }
+        assert(rejectedAttempts);
+        assert(rejectedTimeout);
+    }
+
+    /** @brief Verifies the bounded failure when no transcript contains the phrase. */
+    void testAttemptLimit()
+    {
+        WakeWordExampleState state;
+        state.transcripts = {"noise", "silence"};
+        xwalk::hal::example::XWalkSttVoskWakeWordExample example(&state, callbacks());
+        XWalkHal::boolean rejected = false;
+        try
+        {
+            example.run(2U, 1U);
+        }
+        catch (const XWalkHal::runtimeerror&)
+        {
+            rejected = true;
+        }
+        assert(rejected);
+        assert(state.transcriptIndex == 2U);
+    }
 
 } /* namespace */
 

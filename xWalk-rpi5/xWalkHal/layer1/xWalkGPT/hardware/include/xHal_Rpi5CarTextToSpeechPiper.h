@@ -16,31 +16,30 @@
 namespace xwalk::hal
 {
 
-/** @brief Synthesizes with Piper and plays one private temporary WAV. */
-class XWalkTextToSpeechPiper final
-{
-private:
-    string executableName{};
-    string playbackExecutableName{};
-    string modelName{};
+    /** @brief Synthesizes with Piper and plays one private temporary WAV. */
+    class XWalkTextToSpeechPiper final
+    {
+        private:
+            string executableName{};
+            string playbackExecutableName{};
+            string modelName{};
 
-protected:
-    static XWalkTextToSpeechPiper& provider(contextpointer context);
-    static void speak(contextpointer context, stringview text);
-    void execute(stringview text) const;
+        protected:
+            static XWalkTextToSpeechPiper& provider(contextpointer context);
+            static void speak(contextpointer context, stringview text);
+            void execute(stringview text) const;
 
-public:
-    XWalkTextToSpeechPiper(stringview executable,
-        stringview playbackExecutable, stringview model);
-    ~XWalkTextToSpeechPiper() = default;
+        public:
+            XWalkTextToSpeechPiper(stringview executable, stringview playbackExecutable, stringview model);
+            ~XWalkTextToSpeechPiper() = default;
 
-    XWalkTextToSpeechPiper(const XWalkTextToSpeechPiper&) = delete;
-    XWalkTextToSpeechPiper(XWalkTextToSpeechPiper&&) = delete;
-    XWalkTextToSpeechPiper& operator=(const XWalkTextToSpeechPiper&) = delete;
-    XWalkTextToSpeechPiper& operator=(XWalkTextToSpeechPiper&&) = delete;
+            XWalkTextToSpeechPiper(const XWalkTextToSpeechPiper&) = delete;
+            XWalkTextToSpeechPiper(XWalkTextToSpeechPiper&&) = delete;
+            XWalkTextToSpeechPiper& operator=(const XWalkTextToSpeechPiper&) = delete;
+            XWalkTextToSpeechPiper& operator=(XWalkTextToSpeechPiper&&) = delete;
 
-    texttospeechspeakcallback callback() const noexcept;
-};
+            texttospeechspeakcallback callback() const noexcept;
+    };
 
 } /* namespace xwalk::hal */
 

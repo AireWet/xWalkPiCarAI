@@ -39,15 +39,15 @@
 namespace xwalk::ctrl
 {
 
-/**
- * @brief Returns the generated Linux-style command help.
- *
- * @return
- * Owned multi-line help text describing commands, options, and examples.
- */
-::ctrl::string XWALK_controllerUsage()
-{
-    return XCONTROLLER_HELP;
-}
+    /**
+     * @brief Returns the generated Linux-style command help.
+     *
+     * @return
+     * Owned multi-line help text describing commands, options, and examples.
+     */
+    ::ctrl::string XWALK_controllerUsage()
+    {
+        return XCONTROLLER_HELP;
+    }
 
 } /* namespace xwalk::ctrl */

@@ -40,6 +40,15 @@
 #include "xHal_Rpi5CarUltrasonic.h"
 
 #include <cassert>
+#include "xAgent_Rpi5CarGrayscaleCalibrationTestTypes.h"
+
+/******************************************************************************
+ * Translation-unit type aliases
+ ******************************************************************************/
+
+using TestBus = ::xwalk::source_types::xagent_rpi5cargrayscalecalibrationtest::TestBus;
+using TestGpio = ::xwalk::source_types::xagent_rpi5cargrayscalecalibrationtest::TestGpio;
+using TestSchedule = ::xwalk::source_types::xagent_rpi5cargrayscalecalibrationtest::TestSchedule;
 
 /******************************************************************************
  * Anonymous namespace
@@ -49,197 +58,176 @@
 namespace
 {
 
-/** @brief Provides one constant 1000-count ADC sample. */
-struct TestBus
-{
-    agent::bytevector sample{0x03U, 0xE8U};
-};
+    /** @brief Accepts every simulated I2C probe. */
+    agent::boolean probe(agent::contextpointer context, agent::uint8 address)
+    {
+        static_cast<void>(context);
+        static_cast<void>(address);
+        return true;
+    }
 
-/** @brief Stores one simulated GPIO level. */
-struct TestGpio
-{
-    agent::boolean value{};
-};
+    /** @brief Accepts one simulated I2C register write. */
+    void
+    writeRegister(agent::contextpointer context, agent::uint8 address, agent::uint8 reg, const agent::bytevector& data)
+    {
+        static_cast<void>(context);
+        static_cast<void>(address);
+        static_cast<void>(reg);
+        static_cast<void>(data);
+    }
 
-/** @brief Records injected delays and bounds continuation queries. */
-struct TestSchedule
-{
-    agent::uint32vector delays{};
-    agent::uint32 queryCount{};
-    agent::uint32 queryLimit{1'000U};
-};
+    /** @brief Accepts one simulated non-throwing I2C register write. */
+    agent::boolean tryWriteRegister(agent::contextpointer context,
+                                    agent::uint8 address,
+                                    agent::uint8 reg,
+                                    const agent::bytevector& data) noexcept
+    {
+        writeRegister(context, address, reg, data);
+        return true;
+    }
 
-/** @brief Accepts every simulated I2C probe. */
-agent::boolean probe(agent::contextpointer context, agent::uint8 address)
-{
-    static_cast<void>(context);
-    static_cast<void>(address);
-    return true;
-}
+    /** @brief Returns one constant ADC sample. */
+    agent::bytevector readBus(agent::contextpointer context, agent::uint8 address, agent::size length)
+    {
+        static_cast<void>(address);
+        static_cast<void>(length);
+        return static_cast<TestBus*>(context)->sample;
+    }
 
-/** @brief Accepts one simulated I2C register write. */
-void writeRegister(agent::contextpointer context, agent::uint8 address,
-    agent::uint8 reg, const agent::bytevector& data)
-{
-    static_cast<void>(context);
-    static_cast<void>(address);
-    static_cast<void>(reg);
-    static_cast<void>(data);
-}
+    /** @brief Configures one simulated GPIO level. */
+    void configureGpio(agent::contextpointer context,
+                       agent::uint8 pin,
+                       XWalkHal::XWalkGpioMode mode,
+                       XWalkHal::XWalkGpioPull pull,
+                       agent::boolean initialValue)
+    {
+        static_cast<void>(pin);
+        static_cast<void>(mode);
+        static_cast<void>(pull);
+        static_cast<TestGpio*>(context)->value = initialValue;
+    }
 
-/** @brief Accepts one simulated non-throwing I2C register write. */
-agent::boolean tryWriteRegister(agent::contextpointer context,
-    agent::uint8 address, agent::uint8 reg,
-    const agent::bytevector& data) noexcept
-{
-    writeRegister(context, address, reg, data);
-    return true;
-}
+    /** @brief Returns one simulated GPIO level. */
+    agent::boolean readGpio(agent::contextpointer context, agent::uint8 pin)
+    {
+        static_cast<void>(pin);
+        return static_cast<TestGpio*>(context)->value;
+    }
 
-/** @brief Returns one constant ADC sample. */
-agent::bytevector readBus(agent::contextpointer context,
-    agent::uint8 address, agent::size length)
-{
-    static_cast<void>(address);
-    static_cast<void>(length);
-    return static_cast<TestBus*>(context)->sample;
-}
+    /** @brief Writes one simulated GPIO level. */
+    void writeGpio(agent::contextpointer context, agent::uint8 pin, agent::boolean value)
+    {
+        static_cast<void>(pin);
+        static_cast<TestGpio*>(context)->value = value;
+    }
 
-/** @brief Configures one simulated GPIO level. */
-void configureGpio(agent::contextpointer context, agent::uint8 pin,
-    XWalkHal::XWalkGpioMode mode, XWalkHal::XWalkGpioPull pull,
-    agent::boolean initialValue)
-{
-    static_cast<void>(pin);
-    static_cast<void>(mode);
-    static_cast<void>(pull);
-    static_cast<TestGpio*>(context)->value = initialValue;
-}
+    /** @brief Accepts one unused simulated GPIO interrupt registration. */
+    void interruptGpio(agent::contextpointer context,
+                       agent::uint8 pin,
+                       XWalkHal::XWalkGpioEdge edge,
+                       agent::uint32 debounceMs,
+                       agent::contextpointer handlerContext,
+                       XWalkHal::gpiointerrupthandler handler)
+    {
+        static_cast<void>(context);
+        static_cast<void>(pin);
+        static_cast<void>(edge);
+        static_cast<void>(debounceMs);
+        static_cast<void>(handlerContext);
+        static_cast<void>(handler);
+    }
 
-/** @brief Returns one simulated GPIO level. */
-agent::boolean readGpio(agent::contextpointer context, agent::uint8 pin)
-{
-    static_cast<void>(pin);
-    return static_cast<TestGpio*>(context)->value;
-}
+    /** @brief Accepts one unused simulated GPIO interrupt cancellation. */
+    void cancelInterrupt(agent::contextpointer context, agent::uint8 pin)
+    {
+        static_cast<void>(context);
+        static_cast<void>(pin);
+    }
 
-/** @brief Writes one simulated GPIO level. */
-void writeGpio(agent::contextpointer context, agent::uint8 pin,
-    agent::boolean value)
-{
-    static_cast<void>(pin);
-    static_cast<TestGpio*>(context)->value = value;
-}
+    /** @brief Returns the complete simulated GPIO operation table. */
+    XWalkHal::XWalkGpioCallbacks gpioCallbacks()
+    {
+        return {&configureGpio, &readGpio, &writeGpio, &interruptGpio, &cancelInterrupt};
+    }
 
-/** @brief Accepts one unused simulated GPIO interrupt registration. */
-void interruptGpio(agent::contextpointer context, agent::uint8 pin,
-    XWalkHal::XWalkGpioEdge edge, agent::uint32 debounceMs,
-    agent::contextpointer handlerContext, XWalkHal::gpiointerrupthandler handler)
-{
-    static_cast<void>(context);
-    static_cast<void>(pin);
-    static_cast<void>(edge);
-    static_cast<void>(debounceMs);
-    static_cast<void>(handlerContext);
-    static_cast<void>(handler);
-}
+    /** @brief Records one requested calibration delay. */
+    void delay(agent::contextpointer context, agent::uint32 durationMs)
+    {
+        static_cast<TestSchedule*>(context)->delays.push_back(durationMs);
+    }
 
-/** @brief Accepts one unused simulated GPIO interrupt cancellation. */
-void cancelInterrupt(agent::contextpointer context, agent::uint8 pin)
-{
-    static_cast<void>(context);
-    static_cast<void>(pin);
-}
+    /** @brief Allows operation until the configured query bound is exceeded. */
+    agent::boolean continueOperation(agent::contextpointer context)
+    {
+        TestSchedule& schedule = *static_cast<TestSchedule*>(context);
+        ++schedule.queryCount;
+        return schedule.queryCount <= schedule.queryLimit;
+    }
 
-/** @brief Returns the complete simulated GPIO operation table. */
-XWalkHal::XWalkGpioCallbacks gpioCallbacks()
-{
-    return {&configureGpio, &readGpio, &writeGpio, &interruptGpio, &cancelInterrupt};
-}
+    /** @brief Exercises the complete calibration port through simulated HAL objects. */
+    void testCalibration(agent::stringview configurationPath)
+    {
+        TestBus bus;
+        xwalk::hal::XWalkI2c i2c(&bus, &probe, &writeRegister, &readBus, nullptr, &tryWriteRegister);
+        xwalk::hal::XWalkPwmTimerState timerState;
+        xwalk::hal::XWalkPwm leftPwm(i2c, "P13", 0x14U, timerState);
+        xwalk::hal::XWalkPwm rightPwm(i2c, "P12", 0x14U, timerState);
+        xwalk::hal::XWalkPwm directionPwm(i2c, "P2", 0x14U, timerState);
+        xwalk::hal::XWalkPwm panPwm(i2c, "P0", 0x14U, timerState);
+        xwalk::hal::XWalkPwm tiltPwm(i2c, "P1", 0x14U, timerState);
+        TestGpio leftBackend;
+        TestGpio rightBackend;
+        TestGpio triggerBackend;
+        TestGpio echoBackend;
+        const XWalkHal::XWalkGpioCallbacks callbacks = gpioCallbacks();
+        xwalk::hal::XWalkGpio leftDirection(&leftBackend, callbacks, "D4");
+        xwalk::hal::XWalkGpio rightDirection(&rightBackend, callbacks, "D5");
+        xwalk::hal::XWalkGpio trigger(&triggerBackend, callbacks, "D2");
+        xwalk::hal::XWalkGpio echo(&echoBackend, callbacks, "D3");
+        xwalk::hal::XWalkMotor leftMotor(leftPwm, leftDirection);
+        xwalk::hal::XWalkMotor rightMotor(rightPwm, rightDirection);
+        xwalk::hal::XWalkMotors motors(leftMotor, rightMotor);
+        xwalk::hal::XWalkServo directionServo(directionPwm);
+        xwalk::hal::XWalkServo panServo(panPwm);
+        xwalk::hal::XWalkServo tiltServo(tiltPwm);
+        xwalk::hal::XWalkAdc adc0(i2c, "A0", 0x14U);
+        xwalk::hal::XWalkAdc adc1(i2c, "A1", 0x14U);
+        xwalk::hal::XWalkAdc adc2(i2c, "A2", 0x14U);
+        xwalk::hal::XWalkGrayscaleModule grayscale(adc0, adc1, adc2);
+        xwalk::hal::XWalkUltrasonic ultrasonic(trigger, echo, 0U);
+        xwalk::hal::XWalkConfigStore configuration(configurationPath);
+        configuration.set("picarx_max_motor_output_percent", "100");
+        configuration.set("picarx_calibration_verified", "true");
+        configuration.set("line_reference", "[900,900,900]");
+        configuration.set("cliff_reference", "[400,401,402]");
+        xwalk::agent::XWalkPicarx picarx(
+            motors, directionServo, panServo, tiltServo, grayscale, ultrasonic, configuration);
+        static_cast<void>(picarx.initialize());
+        TestSchedule schedule;
+        xwalk::agent::XWalkGrayscaleCalibration calibration(picarx, &schedule, &delay, &continueOperation);
 
-/** @brief Records one requested calibration delay. */
-void delay(agent::contextpointer context, agent::uint32 durationMs)
-{
-    static_cast<TestSchedule*>(context)->delays.push_back(durationMs);
-}
+        assert(calibration.runSteeringCheck());
+        assert(schedule.delays.size() == 75U);
+        assert(picarx.directionAngleDegrees() == 0.0);
+        assert(calibration.calibrateLine());
+        assert(schedule.delays.size() == 255U);
+        assert(calibration.result().lineReference == XWalkHal::linetrackervalues({1'000, 1'000, 1'000}));
+        assert(calibration.result().cliffReference == XWalkHal::linetrackervalues({700, 700, 701}));
+        assert(calibration.calibrateCliff());
+        assert(schedule.delays.size() == 355U);
+        assert(calibration.result().cliffReference == XWalkHal::linetrackervalues({1'000, 1'000, 1'000}));
+        assert(configuration.get("line_reference") == "[900,900,900]");
+        calibration.save();
+        assert(configuration.get("line_reference") == "[1000,1000,1000]");
+        assert(configuration.get("cliff_reference") == "[1000,1000,1000]");
+        assert(motors.left().speed() == 0.0);
+        assert(motors.right().speed() == 0.0);
 
-/** @brief Allows operation until the configured query bound is exceeded. */
-agent::boolean continueOperation(agent::contextpointer context)
-{
-    TestSchedule& schedule = *static_cast<TestSchedule*>(context);
-    ++schedule.queryCount;
-    return schedule.queryCount <= schedule.queryLimit;
-}
-
-/** @brief Exercises the complete calibration port through simulated HAL objects. */
-void testCalibration(agent::stringview configurationPath)
-{
-    TestBus bus;
-    xwalk::hal::XWalkI2c i2c(&bus, &probe, &writeRegister, &readBus, nullptr,
-        &tryWriteRegister);
-    xwalk::hal::XWalkPwmTimerState timerState;
-    xwalk::hal::XWalkPwm leftPwm(i2c, "P13", 0x14U, timerState);
-    xwalk::hal::XWalkPwm rightPwm(i2c, "P12", 0x14U, timerState);
-    xwalk::hal::XWalkPwm directionPwm(i2c, "P2", 0x14U, timerState);
-    xwalk::hal::XWalkPwm panPwm(i2c, "P0", 0x14U, timerState);
-    xwalk::hal::XWalkPwm tiltPwm(i2c, "P1", 0x14U, timerState);
-    TestGpio leftBackend;
-    TestGpio rightBackend;
-    TestGpio triggerBackend;
-    TestGpio echoBackend;
-    const XWalkHal::XWalkGpioCallbacks callbacks = gpioCallbacks();
-    xwalk::hal::XWalkGpio leftDirection(&leftBackend, callbacks, "D4");
-    xwalk::hal::XWalkGpio rightDirection(&rightBackend, callbacks, "D5");
-    xwalk::hal::XWalkGpio trigger(&triggerBackend, callbacks, "D2");
-    xwalk::hal::XWalkGpio echo(&echoBackend, callbacks, "D3");
-    xwalk::hal::XWalkMotor leftMotor(leftPwm, leftDirection);
-    xwalk::hal::XWalkMotor rightMotor(rightPwm, rightDirection);
-    xwalk::hal::XWalkMotors motors(leftMotor, rightMotor);
-    xwalk::hal::XWalkServo directionServo(directionPwm);
-    xwalk::hal::XWalkServo panServo(panPwm);
-    xwalk::hal::XWalkServo tiltServo(tiltPwm);
-    xwalk::hal::XWalkAdc adc0(i2c, "A0", 0x14U);
-    xwalk::hal::XWalkAdc adc1(i2c, "A1", 0x14U);
-    xwalk::hal::XWalkAdc adc2(i2c, "A2", 0x14U);
-    xwalk::hal::XWalkGrayscaleModule grayscale(adc0, adc1, adc2);
-    xwalk::hal::XWalkUltrasonic ultrasonic(trigger, echo, 0U);
-    xwalk::hal::XWalkConfigStore configuration(configurationPath);
-    configuration.set("picarx_max_motor_output_percent", "100");
-    configuration.set("picarx_calibration_verified", "true");
-    configuration.set("line_reference", "[900,900,900]");
-    configuration.set("cliff_reference", "[400,401,402]");
-    xwalk::agent::XWalkPicarx picarx(motors, directionServo, panServo, tiltServo,
-        grayscale, ultrasonic, configuration);
-    static_cast<void>(picarx.initialize());
-    TestSchedule schedule;
-    xwalk::agent::XWalkGrayscaleCalibration calibration(
-        picarx, &schedule, &delay, &continueOperation);
-
-    assert(calibration.runSteeringCheck());
-    assert(schedule.delays.size() == 75U);
-    assert(picarx.directionAngleDegrees() == 0.0);
-    assert(calibration.calibrateLine());
-    assert(schedule.delays.size() == 255U);
-    assert(calibration.result().lineReference ==
-        XWalkHal::linetrackervalues({1'000, 1'000, 1'000}));
-    assert(calibration.result().cliffReference ==
-        XWalkHal::linetrackervalues({700, 700, 701}));
-    assert(calibration.calibrateCliff());
-    assert(schedule.delays.size() == 355U);
-    assert(calibration.result().cliffReference ==
-        XWalkHal::linetrackervalues({1'000, 1'000, 1'000}));
-    assert(configuration.get("line_reference") == "[900,900,900]");
-    calibration.save();
-    assert(configuration.get("line_reference") == "[1000,1000,1000]");
-    assert(configuration.get("cliff_reference") == "[1000,1000,1000]");
-    assert(motors.left().speed() == 0.0);
-    assert(motors.right().speed() == 0.0);
-
-    schedule.queryLimit = schedule.queryCount;
-    assert(!calibration.calibrateLine());
-    assert(motors.left().speed() == 0.0);
-    assert(motors.right().speed() == 0.0);
-}
+        schedule.queryLimit = schedule.queryCount;
+        assert(!calibration.calibrateLine());
+        assert(motors.left().speed() == 0.0);
+        assert(motors.right().speed() == 0.0);
+    }
 
 } /* namespace */
 

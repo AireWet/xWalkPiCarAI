@@ -20,6 +20,10 @@ options, backend ownership, safety constraints, and verification commands remain
 - [xWalkTool overview](Doc/note/xWalkTool%20Overview.md): tool inventory, safety classes, and detailed links.
 - [Gerrit account setup guide](Doc/note/Gerrit%20Account%20Setup%20Guide.md): account provisioning, dedicated
   SSH keys, repository setup, review upload, voting, and remote-network access.
+- [Add a user to a Gerrit repository](Doc/note/Add%20a%20User%20to%20a%20Gerrit%20Repository.md): individual
+  account creation, group-based project access, SSH onboarding, verification, and revocation.
+- [Create Gerrit and configure xWalk CI](Doc/note/Create%20Gerrit%20and%20Configure%20xWalk%20CI.md): new server
+  installation, project permissions, CI service identity, worker configuration, and first-run verification.
 - [Device Tree overlay guide](Doc/note/Device%20Tree%20Overlay%20Assets%20Guide.md): asset roles and inspection.
 - [Release acceptance checklist](Doc/note/Release%20Acceptance%20Checklist.md): independent host, ARM package,
   plug-and-run, and physical-safety evidence gates.

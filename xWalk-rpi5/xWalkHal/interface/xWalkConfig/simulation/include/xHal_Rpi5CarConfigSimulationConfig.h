@@ -28,15 +28,15 @@
  ******************************************************************************/
 
 #ifndef XWALK_CONFIG_SIMULATION_TRACE_CONFIG_PATH
-#define XWALK_CONFIG_SIMULATION_TRACE_CONFIG_PATH "xwalk-traces.xml"
+    #define XWALK_CONFIG_SIMULATION_TRACE_CONFIG_PATH "xwalk-traces.xml"
 #endif
 
 #ifndef XWALK_CONFIG_SIMULATION_TRACE_LOG_PATH
-#define XWALK_CONFIG_SIMULATION_TRACE_LOG_PATH "log/xWalkConfigTrace.log"
+    #define XWALK_CONFIG_SIMULATION_TRACE_LOG_PATH "log/xWalkConfigTrace.log"
 #endif
 
 #ifndef XWALK_CONFIG_SIMULATION_DATA_PATH
-#define XWALK_CONFIG_SIMULATION_DATA_PATH "simulation-data"
+    #define XWALK_CONFIG_SIMULATION_DATA_PATH "simulation-data"
 #endif
 
 #endif /* XHAL_RPI5CAR_CONFIG_SIMULATION_CONFIG_H */

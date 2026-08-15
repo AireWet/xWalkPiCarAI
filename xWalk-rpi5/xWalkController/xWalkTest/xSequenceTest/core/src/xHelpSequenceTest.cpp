@@ -17,16 +17,16 @@
 
 namespace
 {
-void testHelp(xwalk::agent::test::ControllerCommandTestContext& context)
-{
-    xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
-    assert(sequence.run({{"help"}, {"--help"}, {"-h"}}) == 0);
-    assert(context.state->outputLines.size() == 3U);
-    assert(context.state->outputLines.back().find("Commands:\n") != ctrl::string::npos);
-    assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
-        {"controller.output", "controller.output", "controller.output"}));
-}
-}
+    void testHelp(xwalk::agent::test::ControllerCommandTestContext& context)
+    {
+        xwalk::agent::test::XWalkControllerSequence sequence(*context.controller);
+        assert(sequence.run({{"help"}, {"--help"}, {"-h"}}) == 0);
+        assert(context.state->outputLines.size() == 3U);
+        assert(context.state->outputLines.back().find("Commands:\n") != ctrl::string::npos);
+        assert(xwalk::agent::test::containsOrderedEvents(
+            context.state->eventLog, {"controller.output", "controller.output", "controller.output"}));
+    }
+} // namespace
 
 /** @brief Runs the help controller-to-HAL host sequence. @return Zero on success. */
 int xWalkHelpCommandSequenceHostTest(int argc, char* argv[])

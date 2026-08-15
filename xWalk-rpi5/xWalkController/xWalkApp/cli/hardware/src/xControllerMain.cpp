@@ -54,18 +54,10 @@
 ctrl::int32 main(ctrl::int32 argumentCount, ctrl::charpointer arguments[])
 {
     xwalk::ctrl::XWalkControllerApplicationArguments applicationArguments;
-    const xwalk::ctrl::XWalkAppConfig defaultConfig{
-                                    XWALK_PICARX_CONFIG_FILE,
-                                    XWALK_RUNTIME_DATA_DIRECTORY
-                                    };
+    const xwalk::ctrl::XWalkAppConfig defaultConfig{XWALK_PICARX_CONFIG_FILE, XWALK_RUNTIME_DATA_DIRECTORY};
 
-    const ctrl::boolean argumentsParsed =
-            xwalk::ctrl::xWalkParseControllerApplicationArguments(
-                                                            argumentCount,
-                                                            arguments,
-                                                            defaultConfig,
-                                                            applicationArguments
-                                                            );
+    const ctrl::boolean argumentsParsed = xwalk::ctrl::xWalkParseControllerApplicationArguments(
+        argumentCount, arguments, defaultConfig, applicationArguments);
     if (argumentsParsed == false)
     {
         std::cerr << "Global options contain a missing or invalid value" << std::endl;
@@ -73,26 +65,22 @@ ctrl::int32 main(ctrl::int32 argumentCount, ctrl::charpointer arguments[])
     }
 
     const ::ctrl::boolean configurationActionRequested =
-        applicationArguments.validateConfiguration ||
-        applicationArguments.printEffectiveConfiguration ||
+        applicationArguments.validateConfiguration || applicationArguments.printEffectiveConfiguration ||
         applicationArguments.diagnose || applicationArguments.noHardware;
     if (configurationActionRequested)
     {
         const ::ctrl::boolean actionValid =
             applicationArguments.commandArguments.empty() &&
             (!applicationArguments.diagnose || applicationArguments.noHardware) &&
-            (applicationArguments.validateConfiguration ||
-                applicationArguments.printEffectiveConfiguration ||
-                applicationArguments.diagnose);
+            (applicationArguments.validateConfiguration || applicationArguments.printEffectiveConfiguration ||
+             applicationArguments.diagnose);
         if (actionValid == false)
         {
-            std::cerr << "No-hardware configuration action is incomplete or conflicts with a command"
-                      << std::endl;
+            std::cerr << "No-hardware configuration action is incomplete or conflicts with a command" << std::endl;
             return 2;
         }
         const xwalk::ctrl::XWalkDeploymentConfigReport report =
-            xwalk::ctrl::XWALK_validateDeploymentConfig(
-                applicationArguments.appConfig.configurationFilePath);
+            xwalk::ctrl::XWALK_validateDeploymentConfig(applicationArguments.appConfig.configurationFilePath);
         for (const ctrl::string& line : report.lines)
         {
             std::cout << line << std::endl;
@@ -100,8 +88,7 @@ ctrl::int32 main(ctrl::int32 argumentCount, ctrl::charpointer arguments[])
         if (report.valid && applicationArguments.printEffectiveConfiguration)
         {
             for (const ctrl::string& line :
-                xwalk::ctrl::XWALK_effectiveDeploymentConfig(
-                    applicationArguments.appConfig.configurationFilePath))
+                 xwalk::ctrl::XWALK_effectiveDeploymentConfig(applicationArguments.appConfig.configurationFilePath))
             {
                 std::cout << line << std::endl;
             }
@@ -109,20 +96,17 @@ ctrl::int32 main(ctrl::int32 argumentCount, ctrl::charpointer arguments[])
         return report.valid ? 0 : 2;
     }
 
-    const ::ctrl::boolean traceConfigurationApplied =
-        xwalk::ctrl::xWalkApplyTraceConfiguration(applicationArguments);
+    const ::ctrl::boolean traceConfigurationApplied = xwalk::ctrl::xWalkApplyTraceConfiguration(applicationArguments);
     if (traceConfigurationApplied == false)
     {
-        std::cerr << "Trace configuration failed: "
-                  << xwalk::hal::XWalkTrace::globalTraceConfigurationError()
+        std::cerr << "Trace configuration failed: " << xwalk::hal::XWalkTrace::globalTraceConfigurationError()
                   << std::endl;
         return 2;
     }
 
     const ctrl::stringvector& commandArguments = applicationArguments.commandArguments;
     const ::ctrl::boolean traceConfigurationOnly =
-        commandArguments.empty() &&
-        !applicationArguments.traceArguments.empty();
+        commandArguments.empty() && !applicationArguments.traceArguments.empty();
     if (traceConfigurationOnly)
     {
         return 0;
@@ -136,15 +120,12 @@ ctrl::int32 main(ctrl::int32 argumentCount, ctrl::charpointer arguments[])
         return 0;
     }
 
-    const ::ctrl::boolean readableRegularFileNotMatched =
-        static_cast<::ctrl::boolean>( !xwalk::hal::isReadableRegularFile(
-        applicationArguments.appConfig.configurationFilePath
-        ));
+    const ::ctrl::boolean readableRegularFileNotMatched = static_cast<::ctrl::boolean>(
+        !xwalk::hal::isReadableRegularFile(applicationArguments.appConfig.configurationFilePath));
 
     if (readableRegularFileNotMatched)
     {
-        std::cerr << "Unreadable deployment configuration: "
-                  << applicationArguments.appConfig.configurationFilePath
+        std::cerr << "Unreadable deployment configuration: " << applicationArguments.appConfig.configurationFilePath
                   << std::endl;
         return 2;
     }
@@ -153,15 +134,11 @@ ctrl::int32 main(ctrl::int32 argumentCount, ctrl::charpointer arguments[])
     static_cast<void>(::signal(SIGINT, &xwalk::ctrl::XWALK_requestOperationStop));
     static_cast<void>(::signal(SIGTERM, &xwalk::ctrl::XWALK_requestOperationStop));
 
-    xwalk::ctrl::XWalkControllerBootContext bootContext{
-        &commandArguments,
-        applicationArguments.appConfig.resourceDirectory
-        };
+    xwalk::ctrl::XWalkControllerBootContext bootContext{&commandArguments,
+                                                        applicationArguments.appConfig.resourceDirectory};
 
-    xwalk::agent::XWalkBootRpi boot(
-        xwalk::ctrl::XWALK_selectBootMode(commandArguments),
-        applicationArguments.appConfig.configurationFilePath
-        );
+    xwalk::agent::XWalkBootRpi boot(xwalk::ctrl::XWALK_selectBootMode(commandArguments),
+                                    applicationArguments.appConfig.configurationFilePath);
 
     return boot.run(&bootContext, &xwalk::ctrl::XWALK_runController);
 }

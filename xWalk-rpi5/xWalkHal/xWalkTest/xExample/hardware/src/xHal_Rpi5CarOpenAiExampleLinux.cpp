@@ -38,60 +38,57 @@
 namespace xwalk::hal::example
 {
 
-/**
- * @brief Runs bounded interactive chat through the OpenAI-compatible provider.
- * @param[in] apiKey Non-empty OpenAI API credential.
- * @param[in] maximumPrompts Prompt limit from one through 100.
- * @warning Sends entered prompt text to the configured remote endpoint.
- */
-void XWalkOpenAiExampleLinux::run(stringview apiKey, uint32 maximumPrompts)
-{
-    constexpr stringview endpoint{
-        "https://api.openai.com/v1/chat/completions"};
-    constexpr stringview modelName{"gpt-4o"};
-    XWalkLanguageModelHttp backend(
-        XWalkLanguageModelHttpDialect::OpenAiChatCompletions,
-        endpoint, modelName, apiKey);
-    XWalkLanguageModel languageModel(&backend, backend.callbacks());
-    const XWalkOpenAiExampleCallbacks callbacks{&readPrompt, &write};
-    XWalkOpenAiExample example(languageModel, this, callbacks);
-    example.run(maximumPrompts);
-}
-
-/**
- * @brief Prints the source prompt and reads one terminal line.
- * @param[in,out] context Unused callback context.
- * @param[out] inputText Entered line without its delimiter.
- * @return `true` after a line is read, or `false` at end of input.
- */
-boolean XWalkOpenAiExampleLinux::readPrompt(
-    contextpointer context, string& inputText)
-{
-    static_cast<void>(context);
-    std::cout << ">>> " << std::flush;
-    return static_cast<boolean>(std::getline(std::cin, inputText));
-}
-
-/**
- * @brief Writes one source-compatible output fragment.
- * @param[in,out] context Unused callback context.
- * @param[in] text Text to write without modification.
- * @param[in] appendNewline Whether to append one newline.
- * @param[in] flushOutput Whether to flush after writing.
- */
-void XWalkOpenAiExampleLinux::write(contextpointer context, stringview text,
-    boolean appendNewline, boolean flushOutput)
-{
-    static_cast<void>(context);
-    std::cout << text;
-    if (appendNewline)
+    /**
+     * @brief Runs bounded interactive chat through the OpenAI-compatible provider.
+     * @param[in] apiKey Non-empty OpenAI API credential.
+     * @param[in] maximumPrompts Prompt limit from one through 100.
+     * @warning Sends entered prompt text to the configured remote endpoint.
+     */
+    void XWalkOpenAiExampleLinux::run(stringview apiKey, uint32 maximumPrompts)
     {
-        std::cout << '\n';
+        constexpr stringview endpoint{"https://api.openai.com/v1/chat/completions"};
+        constexpr stringview modelName{"gpt-4o"};
+        XWalkLanguageModelHttp backend(
+            XWalkLanguageModelHttpDialect::OpenAiChatCompletions, endpoint, modelName, apiKey);
+        XWalkLanguageModel languageModel(&backend, backend.callbacks());
+        const XWalkOpenAiExampleCallbacks callbacks{&readPrompt, &write};
+        XWalkOpenAiExample example(languageModel, this, callbacks);
+        example.run(maximumPrompts);
     }
-    if (flushOutput)
+
+    /**
+     * @brief Prints the source prompt and reads one terminal line.
+     * @param[in,out] context Unused callback context.
+     * @param[out] inputText Entered line without its delimiter.
+     * @return `true` after a line is read, or `false` at end of input.
+     */
+    boolean XWalkOpenAiExampleLinux::readPrompt(contextpointer context, string& inputText)
     {
-        std::cout << std::flush;
+        static_cast<void>(context);
+        std::cout << ">>> " << std::flush;
+        return static_cast<boolean>(std::getline(std::cin, inputText));
     }
-}
+
+    /**
+     * @brief Writes one source-compatible output fragment.
+     * @param[in,out] context Unused callback context.
+     * @param[in] text Text to write without modification.
+     * @param[in] appendNewline Whether to append one newline.
+     * @param[in] flushOutput Whether to flush after writing.
+     */
+    void
+    XWalkOpenAiExampleLinux::write(contextpointer context, stringview text, boolean appendNewline, boolean flushOutput)
+    {
+        static_cast<void>(context);
+        std::cout << text;
+        if (appendNewline)
+        {
+            std::cout << '\n';
+        }
+        if (flushOutput)
+        {
+            std::cout << std::flush;
+        }
+    }
 
 } /* namespace xwalk::hal::example */

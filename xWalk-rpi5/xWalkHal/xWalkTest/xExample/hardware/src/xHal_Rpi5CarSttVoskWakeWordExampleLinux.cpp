@@ -26,56 +26,60 @@
 #include "xHal_Rpi5CarTrace.h"
 #include <iostream>
 
-namespace xwalk::hal::example {
+namespace xwalk::hal::example
+{
 
-/** @brief Composes live dependencies and waits for bounded wake detection. */
-void XWalkSttVoskWakeWordExampleLinux::run(uint32 maximumAttempts,
-                                           uint32 timeoutMs,
-                                           stringview microphoneDevice,
-                                           stringview libraryName,
-                                           stringview modelPath) {
-  XWalkSpeechRecognizerVosk recognizer(libraryName, modelPath);
-  XWalkSpeechToTextAlsa alsa(microphoneDevice, &recognizer,
-                             recognizer.operations());
-  XWalkSpeechToText speechToText(&alsa, alsa.callbacks());
-  speechToTextObject = &speechToText;
-  const XWalkSttVoskWakeWordExampleCallbacks exampleCallbacks{&listen, &report};
-  XWalkSttVoskWakeWordExample example(this, exampleCallbacks);
-  try {
-    example.run(maximumAttempts, timeoutMs);
-    speechToTextObject = nullptr;
-  } catch (...) {
-    speechToTextObject = nullptr;
-    throw;
-  }
-}
+    /** @brief Composes live dependencies and waits for bounded wake detection. */
+    void XWalkSttVoskWakeWordExampleLinux::run(uint32 maximumAttempts,
+                                               uint32 timeoutMs,
+                                               stringview microphoneDevice,
+                                               stringview libraryName,
+                                               stringview modelPath)
+    {
+        XWalkSpeechRecognizerVosk recognizer(libraryName, modelPath);
+        XWalkSpeechToTextAlsa alsa(microphoneDevice, &recognizer, recognizer.operations());
+        XWalkSpeechToText speechToText(&alsa, alsa.callbacks());
+        speechToTextObject = &speechToText;
+        const XWalkSttVoskWakeWordExampleCallbacks exampleCallbacks{&listen, &report};
+        XWalkSttVoskWakeWordExample example(this, exampleCallbacks);
+        try
+        {
+            example.run(maximumAttempts, timeoutMs);
+            speechToTextObject = nullptr;
+        }
+        catch (...)
+        {
+            speechToTextObject = nullptr;
+            throw;
+        }
+    }
 
-/** @brief Resolves one live Linux adapter and speech binding. */
-XWalkSttVoskWakeWordExampleLinux &
-XWalkSttVoskWakeWordExampleLinux::adapter(contextpointer context) {
-  if (context == nullptr) {
-    XWALK_HAL_ERROR(XWALK_INVAL, "Wake-word Linux context must not be null");
-  }
-  XWalkSttVoskWakeWordExampleLinux &self =
-      *static_cast<XWalkSttVoskWakeWordExampleLinux *>(context);
-  if (self.speechToTextObject == nullptr) {
-    XWALK_HAL_ERROR(XWALK_INVAL,
-                    "Wake-word Linux adapter has no speech binding");
-  }
-  return self;
-}
+    /** @brief Resolves one live Linux adapter and speech binding. */
+    XWalkSttVoskWakeWordExampleLinux& XWalkSttVoskWakeWordExampleLinux::adapter(contextpointer context)
+    {
+        if (context == nullptr)
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "Wake-word Linux context must not be null");
+        }
+        XWalkSttVoskWakeWordExampleLinux& self = *static_cast<XWalkSttVoskWakeWordExampleLinux*>(context);
+        if (self.speechToTextObject == nullptr)
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "Wake-word Linux adapter has no speech binding");
+        }
+        return self;
+    }
 
-/** @brief Captures and recognizes one bounded utterance synchronously. */
-string XWalkSttVoskWakeWordExampleLinux::listen(contextpointer context,
-                                                uint32 timeoutMs) {
-  return adapter(context).speechToTextObject->listen(timeoutMs);
-}
+    /** @brief Captures and recognizes one bounded utterance synchronously. */
+    string XWalkSttVoskWakeWordExampleLinux::listen(contextpointer context, uint32 timeoutMs)
+    {
+        return adapter(context).speechToTextObject->listen(timeoutMs);
+    }
 
-/** @brief Prints one source-compatible status line. */
-void XWalkSttVoskWakeWordExampleLinux::report(contextpointer context,
-                                              stringview message) {
-  static_cast<void>(adapter(context));
-  std::cout << message << '\n';
-}
+    /** @brief Prints one source-compatible status line. */
+    void XWalkSttVoskWakeWordExampleLinux::report(contextpointer context, stringview message)
+    {
+        static_cast<void>(adapter(context));
+        std::cout << message << '\n';
+    }
 
 } /* namespace xwalk::hal::example */

@@ -33,28 +33,27 @@
 namespace xwalk::hal::test
 {
 
-/** @brief Composes Robot HAT v5 dual-PWM motors over Linux I2C. */
-class XWalkRobotHat5MotorSequenceLinux
-{
-public:
+    /** @brief Composes Robot HAT v5 dual-PWM motors over Linux I2C. */
+    class XWalkRobotHat5MotorSequenceLinux
+    {
+        public:
+            /**
+             * @brief Runs a bounded physical four-motor sequence.
+             *
+             * @param[in] i2cDevice
+             * Linux I2C character-device path.
+             *
+             * @param[in] cycleCount
+             * Inclusive reverse/forward cycle count from one through 100.
+             *
+             * @warning
+             * This operation physically drives four connected motors in both directions.
+             */
+            void run(cstring i2cDevice, uint32 cycleCount);
 
-    /**
-     * @brief Runs a bounded physical four-motor sequence.
-     *
-     * @param[in] i2cDevice
-     * Linux I2C character-device path.
-     *
-     * @param[in] cycleCount
-     * Inclusive reverse/forward cycle count from one through 100.
-     *
-     * @warning
-     * This operation physically drives four connected motors in both directions.
-     */
-    void run(cstring i2cDevice, uint32 cycleCount);
-
-    /** @brief Waits for the requested number of milliseconds. */
-    static void wait(contextpointer context, uint32 durationMilliseconds);
-};
+            /** @brief Waits for the requested number of milliseconds. */
+            static void wait(contextpointer context, uint32 durationMilliseconds);
+    };
 
 } /* namespace xwalk::hal::test */
 

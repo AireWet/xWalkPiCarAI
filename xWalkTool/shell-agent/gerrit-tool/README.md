@@ -82,6 +82,10 @@ Start an existing installation after a reboot:
 xWalkTool/py-agent/gerrit-tool/local-linux/gerrit-local.sh start
 ```
 
+When the protected `$HOME/.xwalk-ci.env` file exists, this command starts the
+CI worker after Gerrit and the HTTPS proxy. The matching status, stop, and
+restart controls include the configured worker.
+
 The installer keeps applications, the Gerrit site, generated controls, and
 certificates under the administrator's home directory. It does not require an
 interactive `sudo` command or install a system-wide Gerrit service.
@@ -112,8 +116,9 @@ ssh -p 29419 joxy@192.168.1.158 gerrit version
 Select exactly one verification backend for a Gerrit project.
 
 For the current repository-owned worker, prepare the protected CI environment
-and least-privilege service identity as described by the administrator guide,
-then start the worker:
+and least-privilege service identity as described by the administrator guide.
+The normal Gerrit start command then includes the worker. Use its direct
+control for recovery when required:
 
 ```bash
 "$HOME/bin/gerrit-ci-control" start

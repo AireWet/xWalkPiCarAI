@@ -36,60 +36,64 @@
  * @namespace xwalk::hal
  * @brief Contains hardware abstraction components for the xWalk firmware.
  */
-namespace xwalk::hal {
+namespace xwalk::hal
+{
 
-/******************************************************************************
- * Constructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Constructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Constructs a device detector and immediately scans its root.
- *
- * @param[in] deviceTreeRoot
- * Non-empty device-tree root path; defaults to `/proc/device-tree`.
- *
- * @post
- * `information()` contains detected metadata or default board values.
- *
- * @throws std::invalid_argument
- * If the root path is empty.
- *
- * @throws filesystemerror
- * If the root cannot be enumerated or inspected.
- *
- * @throws std::runtime_error
- * If a selected HAT property cannot be read or parsed.
- */
-XWalkDevice::XWalkDevice(stringview deviceTreeRoot)
-    : deviceTreeRootValue(string(deviceTreeRoot)) {
-  const hal::boolean deviceTreeRootEmpty =
-      static_cast<hal::boolean>(deviceTreeRoot.empty());
-  if (deviceTreeRootEmpty) {
-    XWALK_HAL_ERROR(XWALK_INVAL, "Device-tree root must not be empty");
-  }
-  refresh();
-}
+    /**
+     * @brief Constructs a device detector and immediately scans its root.
+     *
+     * @param[in] deviceTreeRoot
+     * Non-empty device-tree root path; defaults to `/proc/device-tree`.
+     *
+     * @post
+     * `information()` contains detected metadata or default board values.
+     *
+     * @throws std::invalid_argument
+     * If the root path is empty.
+     *
+     * @throws filesystemerror
+     * If the root cannot be enumerated or inspected.
+     *
+     * @throws std::runtime_error
+     * If a selected HAT property cannot be read or parsed.
+     */
+    XWalkDevice::XWalkDevice(stringview deviceTreeRoot) : deviceTreeRootValue(string(deviceTreeRoot))
+    {
+        const hal::boolean deviceTreeRootEmpty = static_cast<hal::boolean>(deviceTreeRoot.empty());
+        if (deviceTreeRootEmpty)
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "Device-tree root must not be empty");
+        }
+        refresh();
+    }
 
-/******************************************************************************
- * Destructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Destructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Destroys the detector without modifying its device-tree source.
- */
-XWalkDevice::~XWalkDevice() = default;
+    /**
+     * @brief Destroys the detector without modifying its device-tree source.
+     */
+    XWalkDevice::~XWalkDevice() = default;
 
-/******************************************************************************
- * Protected member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Protected member function definitions
+     ******************************************************************************/
 
-/**
- * @brief Resets metadata and board configuration to Python-compatible defaults.
- *
- * @post
- * Metadata is empty, detection is false, and Robot HAT v4 pin and motor values
- * apply.
- */
-void XWalkDevice::resetInformation() noexcept { informationValue = {}; }
+    /**
+     * @brief Resets metadata and board configuration to Python-compatible defaults.
+     *
+     * @post
+     * Metadata is empty, detection is false, and Robot HAT v4 pin and motor values
+     * apply.
+     */
+    void XWalkDevice::resetInformation() noexcept
+    {
+        informationValue = {};
+    }
 
 } /* namespace xwalk::hal */

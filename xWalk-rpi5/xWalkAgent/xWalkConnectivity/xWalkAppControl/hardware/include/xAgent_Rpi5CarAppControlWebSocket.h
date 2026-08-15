@@ -18,38 +18,37 @@
 namespace xwalk::agent
 {
 
-class XWalkAppControlWebSocketState;
+    class XWalkAppControlWebSocketState;
 
-/** @brief Owns one explicitly configured SunFounder WebSocket listener. */
-class XWalkAppControlWebSocket final
-{
-private:
-    std::unique_ptr<XWalkAppControlWebSocketState> state;
+    /** @brief Owns one explicitly configured SunFounder WebSocket listener. */
+    class XWalkAppControlWebSocket final
+    {
+        private:
+            std::unique_ptr<XWalkAppControlWebSocketState> state;
 
-    static agent::boolean startCallback(agent::contextpointer context,
-        agent::stringview name, agent::stringview type, agent::uint16 port);
-    static void stopCallback(agent::contextpointer context) noexcept;
-    static XWalkAppControlInput pollCallback(agent::contextpointer context);
-    static void publishCallback(agent::contextpointer context,
-        const XWalkAppControlTelemetry& telemetry);
+            static agent::boolean startCallback(agent::contextpointer context,
+                                                agent::stringview name,
+                                                agent::stringview type,
+                                                agent::uint16 port);
+            static void stopCallback(agent::contextpointer context) noexcept;
+            static XWalkAppControlInput pollCallback(agent::contextpointer context);
+            static void publishCallback(agent::contextpointer context, const XWalkAppControlTelemetry& telemetry);
 
-public:
-    explicit XWalkAppControlWebSocket(agent::string bindAddress);
-    ~XWalkAppControlWebSocket() noexcept;
+        public:
+            explicit XWalkAppControlWebSocket(agent::string bindAddress);
+            ~XWalkAppControlWebSocket() noexcept;
 
-    XWalkAppControlWebSocket(const XWalkAppControlWebSocket&) = delete;
-    XWalkAppControlWebSocket(XWalkAppControlWebSocket&&) = delete;
-    XWalkAppControlWebSocket& operator=(const XWalkAppControlWebSocket&) = delete;
-    XWalkAppControlWebSocket& operator=(XWalkAppControlWebSocket&&) = delete;
+            XWalkAppControlWebSocket(const XWalkAppControlWebSocket&) = delete;
+            XWalkAppControlWebSocket(XWalkAppControlWebSocket&&) = delete;
+            XWalkAppControlWebSocket& operator=(const XWalkAppControlWebSocket&) = delete;
+            XWalkAppControlWebSocket& operator=(XWalkAppControlWebSocket&&) = delete;
 
-    XWalkAppControlCallbacks callbacks(
-        const XWalkComputerVisionCallbacks& visionCallbacks) noexcept;
-    agent::boolean start(agent::stringview name, agent::stringview type,
-        agent::uint16 port);
-    void stop() noexcept;
-    XWalkAppControlInput poll() const;
-    void publish(const XWalkAppControlTelemetry& telemetry);
-};
+            XWalkAppControlCallbacks callbacks(const XWalkComputerVisionCallbacks& visionCallbacks) noexcept;
+            agent::boolean start(agent::stringview name, agent::stringview type, agent::uint16 port);
+            void stop() noexcept;
+            XWalkAppControlInput poll() const;
+            void publish(const XWalkAppControlTelemetry& telemetry);
+    };
 
 } /* namespace xwalk::agent */
 

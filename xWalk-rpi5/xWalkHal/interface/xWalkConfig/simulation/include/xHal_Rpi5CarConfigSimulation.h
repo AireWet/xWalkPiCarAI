@@ -36,12 +36,12 @@
 namespace xwalk::hal::sim
 {
 
-/**
- * @brief Runs representative section and flat-store persistence operations.
- * @param[in] dataDirectory Writable simulation-owned directory.
- * @return Zero when values persist and reload successfully; otherwise one.
- */
-int32 runConfigSimulation(const filesystempath& dataDirectory);
+    /**
+     * @brief Runs representative section and flat-store persistence operations.
+     * @param[in] dataDirectory Writable simulation-owned directory.
+     * @return Zero when values persist and reload successfully; otherwise one.
+     */
+    int32 runConfigSimulation(const filesystempath& dataDirectory);
 
 } /* namespace xwalk::hal::sim */
 

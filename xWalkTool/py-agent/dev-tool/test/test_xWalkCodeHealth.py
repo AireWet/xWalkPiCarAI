@@ -87,16 +87,26 @@ class XWalkCodeHealthTest(unittest.TestCase):
     def test_missing_cli_is_non_blocking_by_default(self) -> None:
         """Mark analysis unavailable without hiding other CI during rollout."""
 
+        baseline = "a" * 40
+        revision = "b" * 40
         with tempfile.TemporaryDirectory() as directory:
             report = Path(directory)
             environment = {
                 "XWALK_CODESCENE_CLI": "missing-codescene-cli",
                 "XWALK_CODESCENE_REPORT_DIRECTORY": str(report),
-                "XWALK_CODESCENE_BASE_REVISION": "HEAD^",
-                "XWALK_CODESCENE_REVISION": "HEAD",
+                "XWALK_CODESCENE_BASE_REVISION": baseline,
+                "XWALK_CODESCENE_REVISION": revision,
                 "XWALK_CODESCENE_STRICT": "false",
             }
-            with mock.patch.dict(os.environ, environment, clear=False):
+            with mock.patch.dict(os.environ, environment, clear=False), \
+                    mock.patch.object(
+                        MODULE, "resolve_revision", side_effect=[revision, baseline]
+                    ), \
+                    mock.patch.object(
+                        MODULE,
+                        "changed_files",
+                        return_value=["xWalk-rpi5/xWalkHal/example.cpp"],
+                    ):
                 result = MODULE.analyze(self.root, self.configuration)
             summary = json.loads((report / "summary.json").read_text(encoding="utf-8"))
         self.assertEqual(result, 0)
@@ -106,17 +116,77 @@ class XWalkCodeHealthTest(unittest.TestCase):
     def test_missing_cli_fails_when_strict_enforcement_is_enabled(self) -> None:
         """Make an unavailable mandatory CodeScene gate fail the CI stage."""
 
+        baseline = "a" * 40
+        revision = "b" * 40
         with tempfile.TemporaryDirectory() as directory:
             environment = {
                 "XWALK_CODESCENE_CLI": "missing-codescene-cli",
                 "XWALK_CODESCENE_REPORT_DIRECTORY": directory,
-                "XWALK_CODESCENE_BASE_REVISION": "HEAD^",
-                "XWALK_CODESCENE_REVISION": "HEAD",
+                "XWALK_CODESCENE_BASE_REVISION": baseline,
+                "XWALK_CODESCENE_REVISION": revision,
                 "XWALK_CODESCENE_STRICT": "true",
             }
-            with mock.patch.dict(os.environ, environment, clear=False):
+            with mock.patch.dict(os.environ, environment, clear=False), \
+                    mock.patch.object(
+                        MODULE, "resolve_revision", side_effect=[revision, baseline]
+                    ), \
+                    mock.patch.object(
+                        MODULE,
+                        "changed_files",
+                        return_value=["xWalk-rpi5/xWalkHal/example.cpp"],
+                    ):
                 result = MODULE.analyze(self.root, self.configuration)
         self.assertEqual(result, 1)
+
+    def test_cli_uses_official_user_install_location_outside_service_path(self) -> None:
+        """Find the official CLI location used by a non-login CI service."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            home = Path(directory)
+            cli = home / ".local" / "bin" / "cs"
+            cli.parent.mkdir(parents=True)
+            cli.write_text("#!/bin/sh\n", encoding="utf-8")
+            cli.chmod(0o700)
+            with mock.patch.dict(
+                os.environ, {"XWALK_CODESCENE_CLI": "cs"}, clear=False
+            ), mock.patch.object(MODULE.shutil, "which", return_value=None), mock.patch.object(
+                MODULE.Path, "home", return_value=home
+            ):
+                resolved = MODULE.configured_cli()
+
+        self.assertEqual(resolved, str(cli.resolve()))
+
+    def test_missing_cli_activation_is_reported_before_delta_execution(self) -> None:
+        """Explain the missing licensed PAT without invoking an unauthenticated delta."""
+
+        baseline = "a" * 40
+        revision = "b" * 40
+        with tempfile.TemporaryDirectory() as directory:
+            environment = {
+                "CS_ACCESS_TOKEN": "",
+                "XWALK_CODESCENE_REPORT_DIRECTORY": directory,
+                "XWALK_CODESCENE_BASE_REVISION": baseline,
+                "XWALK_CODESCENE_REVISION": revision,
+                "XWALK_CODESCENE_STRICT": "false",
+            }
+            with mock.patch.dict(os.environ, environment, clear=False), mock.patch.object(
+                MODULE, "resolve_revision", side_effect=[revision, baseline]
+            ), mock.patch.object(
+                MODULE,
+                "changed_files",
+                return_value=["xWalk-rpi5/xWalkHal/example.cpp"],
+            ), mock.patch.object(
+                MODULE, "configured_cli", return_value="/opt/cs"
+            ), mock.patch.object(MODULE.subprocess, "run") as run:
+                result = MODULE.analyze(self.root, self.configuration)
+            summary = json.loads(
+                (Path(directory) / "summary.json").read_text(encoding="utf-8")
+            )
+
+        self.assertEqual(result, 0)
+        self.assertEqual(summary["status"], "UNAVAILABLE")
+        self.assertIn("CS_ACCESS_TOKEN", summary["reason"])
+        run.assert_not_called()
 
     def test_unsupported_component_history_is_reported_without_using_root_head(self) -> None:
         """Never substitute an unrelated integrated revision for a component patch set."""
@@ -138,8 +208,8 @@ class XWalkCodeHealthTest(unittest.TestCase):
     def test_cli_receives_exact_base_and_revision_and_reports_degradation(self) -> None:
         """Use supported cs delta arguments and honor a returned degradation gate."""
 
-        baseline = MODULE.resolve_revision(self.root, "HEAD^", "HEAD^")
-        revision = MODULE.resolve_revision(self.root, "HEAD", "HEAD")
+        baseline = "a" * 40
+        revision = "b" * 40
         response = {
             "view": "https://codescene.example.invalid/projects/1/delta/2",
             "result": {"quality-gates": {"degrades-in-code-health": True}},
@@ -147,25 +217,26 @@ class XWalkCodeHealthTest(unittest.TestCase):
         completed = subprocess.CompletedProcess(
             ["cs"], returncode=0, stdout=json.dumps(response), stderr=""
         )
-        original_run = subprocess.run
-
-        def run_command(command: list[str], **arguments: object) -> subprocess.CompletedProcess[str]:
-            """Run Git normally while returning a controlled CodeScene result."""
-
-            if command[0] == "git":
-                return original_run(command, **arguments)
-            return completed
 
         with tempfile.TemporaryDirectory() as directory:
             environment = {
+                "CS_ACCESS_TOKEN": "test-token",
                 "XWALK_CODESCENE_REPORT_DIRECTORY": directory,
                 "XWALK_CODESCENE_BASE_REVISION": baseline,
                 "XWALK_CODESCENE_REVISION": revision,
                 "XWALK_CODESCENE_STRICT": "true",
             }
             with mock.patch.dict(os.environ, environment, clear=False), \
+                    mock.patch.object(
+                        MODULE, "resolve_revision", side_effect=[revision, baseline]
+                    ), \
+                    mock.patch.object(
+                        MODULE,
+                        "changed_files",
+                        return_value=["xWalk-rpi5/xWalkHal/example.cpp"],
+                    ), \
                     mock.patch.object(MODULE, "configured_cli", return_value="/opt/cs"), \
-                    mock.patch.object(MODULE.subprocess, "run", side_effect=run_command) as run:
+                    mock.patch.object(MODULE.subprocess, "run", return_value=completed) as run:
                 result = MODULE.analyze(self.root, self.configuration)
             summary = json.loads(
                 (Path(directory) / "summary.json").read_text(encoding="utf-8")

@@ -19,40 +19,40 @@
 /** @brief Contains deterministic failure support for device-group tests. */
 namespace xwalk::hal::test::device_group
 {
-/** @brief Counts register writes before injecting a configured bus failure. */
-struct FailingI2cBackend
-{
-    /** @brief Number of register writes observed by the fake bus. */
-    uint32 writeCount{};
-    /** @brief Write index that fails; zero keeps all writes successful. */
-    uint32 failingWrite{};
-};
+    /** @brief Counts register writes before injecting a configured bus failure. */
+    struct FailingI2cBackend
+    {
+            /** @brief Number of register writes observed by the fake bus. */
+            uint32 writeCount{};
+            /** @brief Write index that fails; zero keeps all writes successful. */
+            uint32 failingWrite{};
+    };
 
-/**
- * @brief Reports that no automatically probed address is present.
- * @param[in] context Non-owning fake state; unused.
- * @param[in] address Seven-bit probe address; unused.
- * @return Always `false` so tests select an explicit address.
- */
-boolean probe(contextpointer context, uint8 address);
+    /**
+     * @brief Reports that no automatically probed address is present.
+     * @param[in] context Non-owning fake state; unused.
+     * @param[in] address Seven-bit probe address; unused.
+     * @return Always `false` so tests select an explicit address.
+     */
+    boolean probe(contextpointer context, uint8 address);
 
-/**
- * @brief Counts a register write and injects the configured failure.
- * @param[in,out] context Non-null `FailingI2cBackend` state.
- * @param[in] address Seven-bit destination address; unused.
- * @param[in] reg Eight-bit register address; unused.
- * @param[in] data Register payload; unused.
- */
-void writeRegister(contextpointer context, uint8 address, uint8 reg, const bytevector& data);
+    /**
+     * @brief Counts a register write and injects the configured failure.
+     * @param[in,out] context Non-null `FailingI2cBackend` state.
+     * @param[in] address Seven-bit destination address; unused.
+     * @param[in] reg Eight-bit register address; unused.
+     * @param[in] data Register payload; unused.
+     */
+    void writeRegister(contextpointer context, uint8 address, uint8 reg, const bytevector& data);
 
-/**
- * @brief Returns the requested number of zero bytes.
- * @param[in] context Non-owning fake state; unused.
- * @param[in] address Seven-bit source address; unused.
- * @param[in] length Number of bytes requested.
- * @return Zero-filled response of exactly `length` bytes.
- */
-bytevector read(contextpointer context, uint8 address, size length);
+    /**
+     * @brief Returns the requested number of zero bytes.
+     * @param[in] context Non-owning fake state; unused.
+     * @param[in] address Seven-bit source address; unused.
+     * @param[in] length Number of bytes requested.
+     * @return Zero-filled response of exactly `length` bytes.
+     */
+    bytevector read(contextpointer context, uint8 address, size length);
 } /* namespace xwalk::hal::test::device_group */
 
 #endif /* XHAL_RPI5CAR_DEVICE_GROUP_TEST_SUPPORT_H */

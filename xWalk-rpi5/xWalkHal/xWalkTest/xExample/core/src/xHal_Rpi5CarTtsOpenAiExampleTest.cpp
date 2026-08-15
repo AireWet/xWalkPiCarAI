@@ -17,88 +17,76 @@
 #include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
+#include "xHal_Rpi5CarTtsOpenAiExampleTestTypes.h"
+
+/******************************************************************************
+ * Translation-unit type aliases
+ ******************************************************************************/
+
+using TtsOpenAiRequest = ::xwalk::source_types::xhal_rpi5carttsopenaiexampletest::TtsOpenAiRequest;
+using TtsOpenAiExampleState = ::xwalk::source_types::xhal_rpi5carttsopenaiexampletest::TtsOpenAiExampleState;
 
 namespace
 {
 
-/** @brief Records one request for exact-value verification. */
-struct TtsOpenAiRequest
-{
-    XWalkHal::string model;
-    XWalkHal::string voice;
-    XWalkHal::string text;
-    XWalkHal::string instructions;
-};
-
-/** @brief Records all deterministic requests and report messages. */
-struct TtsOpenAiExampleState
-{
-    std::vector<TtsOpenAiRequest> requests;
-    XWalkHal::stringvector reports;
-};
-
-/** @brief Records one injected OpenAI TTS request. */
-void speak(XWalkHal::contextpointer context, XWalkHal::stringview model,
-    XWalkHal::stringview voice, XWalkHal::stringview text,
-    XWalkHal::stringview instructions)
-{
-    TtsOpenAiExampleState& state =
-        *static_cast<TtsOpenAiExampleState*>(context);
-    state.requests.push_back({XWalkHal::string(model), XWalkHal::string(voice),
-        XWalkHal::string(text), XWalkHal::string(instructions)});
-}
-
-/** @brief Records one injected console report. */
-void report(XWalkHal::contextpointer context, XWalkHal::stringview message)
-{
-    TtsOpenAiExampleState& state =
-        *static_cast<TtsOpenAiExampleState*>(context);
-    state.reports.emplace_back(message);
-}
-
-/** @brief Verifies exact request order, values, and source console text. */
-void testRequests()
-{
-    TtsOpenAiExampleState state;
-    xwalk::hal::example::XWalkTtsOpenAiExample example(
-        &state, &speak, &report);
-
-    example.run();
-
-    assert(state.requests.size() == 3U);
-    assert(state.reports.size() == 3U);
-    assert(state.requests[0U].model == "gpt-4o-mini-tts");
-    assert(state.requests[0U].voice == "alloy");
-    assert(state.requests[0U].text == "Hello! I'm OpenAI TTS.");
-    assert(state.requests[0U].instructions.empty());
-    assert(state.requests[1U].text ==
-        "with instructions, I can say word sadly");
-    assert(state.requests[1U].instructions == "say it sadly");
-    assert(state.requests[2U].text == "or say something dramaticly.");
-    assert(state.requests[2U].instructions == "say it dramaticly");
-    assert(state.reports[0U] == "Say: Hello! I'm OpenAI TTS.");
-    assert(state.reports[1U] ==
-        "Say: with instructions, I can say word sadly, with instructions: "
-        "'say it sadly'");
-    assert(state.reports[2U] ==
-        "Say: or say something dramaticly., with instructions: "
-        "'say it dramaticly'");
-}
-
-/** @brief Verifies rejection of either missing operation. */
-void testValidation()
-{
-    xwalk::hal::test::expectFailure([]()
+    /** @brief Records one injected OpenAI TTS request. */
+    void speak(XWalkHal::contextpointer context,
+               XWalkHal::stringview model,
+               XWalkHal::stringview voice,
+               XWalkHal::stringview text,
+               XWalkHal::stringview instructions)
     {
-        xwalk::hal::example::XWalkTtsOpenAiExample invalid(
-            nullptr, nullptr, &report);
-    });
-    xwalk::hal::test::expectFailure([]()
+        TtsOpenAiExampleState& state = *static_cast<TtsOpenAiExampleState*>(context);
+        state.requests.push_back(
+            {XWalkHal::string(model), XWalkHal::string(voice), XWalkHal::string(text), XWalkHal::string(instructions)});
+    }
+
+    /** @brief Records one injected console report. */
+    void report(XWalkHal::contextpointer context, XWalkHal::stringview message)
     {
-        xwalk::hal::example::XWalkTtsOpenAiExample invalid(
-            nullptr, &speak, nullptr);
-    });
-}
+        TtsOpenAiExampleState& state = *static_cast<TtsOpenAiExampleState*>(context);
+        state.reports.emplace_back(message);
+    }
+
+    /** @brief Verifies exact request order, values, and source console text. */
+    void testRequests()
+    {
+        TtsOpenAiExampleState state;
+        xwalk::hal::example::XWalkTtsOpenAiExample example(&state, &speak, &report);
+
+        example.run();
+
+        assert(state.requests.size() == 3U);
+        assert(state.reports.size() == 3U);
+        assert(state.requests[0U].model == "gpt-4o-mini-tts");
+        assert(state.requests[0U].voice == "alloy");
+        assert(state.requests[0U].text == "Hello! I'm OpenAI TTS.");
+        assert(state.requests[0U].instructions.empty());
+        assert(state.requests[1U].text == "with instructions, I can say word sadly");
+        assert(state.requests[1U].instructions == "say it sadly");
+        assert(state.requests[2U].text == "or say something dramaticly.");
+        assert(state.requests[2U].instructions == "say it dramaticly");
+        assert(state.reports[0U] == "Say: Hello! I'm OpenAI TTS.");
+        assert(state.reports[1U] == "Say: with instructions, I can say word sadly, with instructions: "
+                                    "'say it sadly'");
+        assert(state.reports[2U] == "Say: or say something dramaticly., with instructions: "
+                                    "'say it dramaticly'");
+    }
+
+    /** @brief Verifies rejection of either missing operation. */
+    void testValidation()
+    {
+        xwalk::hal::test::expectFailure(
+            []()
+            {
+                xwalk::hal::example::XWalkTtsOpenAiExample invalid(nullptr, nullptr, &report);
+            });
+        xwalk::hal::test::expectFailure(
+            []()
+            {
+                xwalk::hal::example::XWalkTtsOpenAiExample invalid(nullptr, &speak, nullptr);
+            });
+    }
 
 } /* namespace */
 

@@ -21,50 +21,48 @@
 #include "xHal_Rpi5CarTestFunctions.h"
 
 #include <cassert>
+#include "xHal_Rpi5CarTtsEdgeExampleTestTypes.h"
+
+/******************************************************************************
+ * Translation-unit type aliases
+ ******************************************************************************/
+
+using TtsEdgeExampleState = ::xwalk::source_types::xhal_rpi5carttsedgeexampletest::TtsEdgeExampleState;
 
 namespace
 {
 
-/** @brief Records one deterministic voice and speech message. */
-struct TtsEdgeExampleState
-{
-    XWalkHal::string voice;
-    XWalkHal::string text;
-    XWalkHal::uint32 callCount{};
-};
-
-/** @brief Records one injected Edge TTS request. */
-void speak(XWalkHal::contextpointer context, XWalkHal::stringview voice,
-    XWalkHal::stringview text)
-{
-    TtsEdgeExampleState& state = *static_cast<TtsEdgeExampleState*>(context);
-    state.voice = voice;
-    state.text = text;
-    ++state.callCount;
-}
-
-/** @brief Verifies the exact voice, message, and single invocation. */
-void testRequest()
-{
-    TtsEdgeExampleState state;
-    xwalk::hal::example::XWalkTtsEdgeExample example(&state, &speak);
-
-    example.run();
-
-    assert(state.callCount == 1U);
-    assert(state.voice == "en-US-AriaNeural");
-    assert(state.text ==
-        "Hi, I'm Edge TTS. A free cloud text-to-speech service powered by Microsoft Edge.");
-}
-
-/** @brief Verifies rejection of a missing speech operation. */
-void testValidation()
-{
-    xwalk::hal::test::expectFailure([&]()
+    /** @brief Records one injected Edge TTS request. */
+    void speak(XWalkHal::contextpointer context, XWalkHal::stringview voice, XWalkHal::stringview text)
     {
-        xwalk::hal::example::XWalkTtsEdgeExample invalid(nullptr, nullptr);
-    });
-}
+        TtsEdgeExampleState& state = *static_cast<TtsEdgeExampleState*>(context);
+        state.voice = voice;
+        state.text = text;
+        ++state.callCount;
+    }
+
+    /** @brief Verifies the exact voice, message, and single invocation. */
+    void testRequest()
+    {
+        TtsEdgeExampleState state;
+        xwalk::hal::example::XWalkTtsEdgeExample example(&state, &speak);
+
+        example.run();
+
+        assert(state.callCount == 1U);
+        assert(state.voice == "en-US-AriaNeural");
+        assert(state.text == "Hi, I'm Edge TTS. A free cloud text-to-speech service powered by Microsoft Edge.");
+    }
+
+    /** @brief Verifies rejection of a missing speech operation. */
+    void testValidation()
+    {
+        xwalk::hal::test::expectFailure(
+            [&]()
+            {
+                xwalk::hal::example::XWalkTtsEdgeExample invalid(nullptr, nullptr);
+            });
+    }
 
 } /* namespace */
 

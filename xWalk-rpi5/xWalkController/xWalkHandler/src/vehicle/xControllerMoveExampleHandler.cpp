@@ -37,29 +37,33 @@
  * @namespace xwalk::ctrl
  * @brief Contains Controller command interfaces for the xWalk firmware.
  */
-namespace xwalk::ctrl {
+namespace xwalk::ctrl
+{
 
-/******************************************************************************
- * Member function definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Member function definitions
+     ******************************************************************************/
 
-/**
- * @brief Runs the bounded movement sequence ported from `2.move.py`.
- * @return Zero after completion or cancellation with the motors stopped.
- * @warning Moves both drive motors, steering, and camera servos.
- */
-::ctrl::int32 XWalkController::XWALK_handlerMoveExample() {
-  if (moveExampleObject == nullptr) {
-    XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Move example backend unavailable.");
-    return 3;
-  }
-  const ::ctrl::boolean completed = moveExampleObject->run();
-  if (completed == false) {
-    XWALK_CTRL_WARNING(XWALK_LOGIC, "Move example incomplete.");
-    return 2;
-  }
-  XWALK_CTRL_TRACE_UID0(CTRL .033, "Move example complete!");
-  return 0;
-}
+    /**
+     * @brief Runs the bounded movement sequence ported from `2.move.py`.
+     * @return Zero after completion or cancellation with the motors stopped.
+     * @warning Moves both drive motors, steering, and camera servos.
+     */
+    ::ctrl::int32 XWalkController::XWALK_handlerMoveExample()
+    {
+        if (moveExampleObject == nullptr)
+        {
+            XWALK_CTRL_ERROR(XWALK_EXCEPTION, "Move example backend unavailable.");
+            return 3;
+        }
+        const ::ctrl::boolean completed = moveExampleObject->run();
+        if (completed == false)
+        {
+            XWALK_CTRL_WARNING(XWALK_LOGIC, "Move example incomplete.");
+            return 2;
+        }
+        XWALK_CTRL_TRACE_UID0(CTRL .033, "Move example complete!");
+        return 0;
+    }
 
 } /* namespace xwalk::ctrl */

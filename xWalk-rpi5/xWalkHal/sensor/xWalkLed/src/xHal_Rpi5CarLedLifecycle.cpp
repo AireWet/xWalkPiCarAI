@@ -37,41 +37,45 @@
  * @namespace xwalk::hal
  * @brief Contains hardware abstraction components for the xWalk firmware.
  */
-namespace xwalk::hal {
+namespace xwalk::hal
+{
 
-/******************************************************************************
- * Constructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Constructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Constructs an inactive LED controller.
- *
- * @param[in] gpio
- * Non-owning GPIO output whose logical polarity represents LED state.
- *
- * @pre
- * `gpio` outlives this object and any blink operation.
- *
- * @post
- * The GPIO output is logically inactive.
- */
-XWalkLed::XWalkLed(XWalkGpio &gpio) : gpioObject(&gpio) {
-  static_cast<void>(gpioObject->off());
-  outputValue.store(false);
-  XWALK_HAL_TRACE_UID0(RPI .258,
-                       "GPIO-backed LED constructed in the inactive state");
-}
+    /**
+     * @brief Constructs an inactive LED controller.
+     *
+     * @param[in] gpio
+     * Non-owning GPIO output whose logical polarity represents LED state.
+     *
+     * @pre
+     * `gpio` outlives this object and any blink operation.
+     *
+     * @post
+     * The GPIO output is logically inactive.
+     */
+    XWalkLed::XWalkLed(XWalkGpio& gpio) : gpioObject(&gpio)
+    {
+        static_cast<void>(gpioObject->off());
+        outputValue.store(false);
+        XWALK_HAL_TRACE_UID0(RPI .258, "GPIO-backed LED constructed in the inactive state");
+    }
 
-/******************************************************************************
- * Destructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Destructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Stops the blink worker before destroying the LED controller.
- *
- * @note
- * The non-owning GPIO is not released.
- */
-XWalkLed::~XWalkLed() { stopWorker(); }
+    /**
+     * @brief Stops the blink worker before destroying the LED controller.
+     *
+     * @note
+     * The non-owning GPIO is not released.
+     */
+    XWalkLed::~XWalkLed()
+    {
+        stopWorker();
+    }
 
 } /* namespace xwalk::hal */

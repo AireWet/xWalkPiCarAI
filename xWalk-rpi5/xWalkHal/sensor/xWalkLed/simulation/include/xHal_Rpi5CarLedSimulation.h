@@ -13,7 +13,7 @@
 #include "xHal_Rpi5CarCommon.h"
 namespace xwalk::hal::sim
 {
-/** @brief Exercises single-color and RGB LEDs without opening hardware. */
-int32 runLedSimulation();
+    /** @brief Exercises single-color and RGB LEDs without opening hardware. */
+    int32 runLedSimulation();
 } /* namespace xwalk::hal::sim */
 #endif /* XHAL_RPI5CAR_LED_SIMULATION_H */

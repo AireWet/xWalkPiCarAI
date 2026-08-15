@@ -37,34 +37,36 @@
  * @namespace xwalk::hal
  * @brief Contains hardware abstraction components for the xWalk firmware.
  */
-namespace xwalk::hal {
+namespace xwalk::hal
+{
 
-/******************************************************************************
- * Constructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Constructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Constructs shared timer state with non-zero initial periods.
- *
- * @post
- * All seven timer periods contain one timer-count unit.
- */
-XWalkPwmTimerState::XWalkPwmTimerState() {
-  periods.fill(1U);
-  XWALK_HAL_TRACE_UID0(RPI .166, "PWM shared timer state constructed");
-}
+    /**
+     * @brief Constructs shared timer state with non-zero initial periods.
+     *
+     * @post
+     * All seven timer periods contain one timer-count unit.
+     */
+    XWalkPwmTimerState::XWalkPwmTimerState()
+    {
+        periods.fill(1U);
+        XWALK_HAL_TRACE_UID0(RPI .166, "PWM shared timer state constructed");
+    }
 
-/******************************************************************************
- * Destructor definitions
- ******************************************************************************/
+    /******************************************************************************
+     * Destructor definitions
+     ******************************************************************************/
 
-/**
- * @brief Destroys the shared timer state.
- *
- * @pre
- * All non-owning `pwmtimerstatepointer` observers have stopped using this
- * object.
- */
-XWalkPwmTimerState::~XWalkPwmTimerState() = default;
+    /**
+     * @brief Destroys the shared timer state.
+     *
+     * @pre
+     * All non-owning `pwmtimerstatepointer` observers have stopped using this
+     * object.
+     */
+    XWalkPwmTimerState::~XWalkPwmTimerState() = default;
 
 } /* namespace xwalk::hal */
