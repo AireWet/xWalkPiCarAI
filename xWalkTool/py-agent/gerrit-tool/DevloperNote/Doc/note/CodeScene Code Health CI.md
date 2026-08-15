@@ -165,6 +165,7 @@ ctest --test-dir build-host/codescene-validation --output-on-failure --no-tests=
 | Incorrect GitHub commit | Compare `GITHUB_HEAD_SHA`, `GITHUB_SHA`, and the submitted Gerrit revision; reject any non-fast-forward synchronization. |
 | CLI executable unavailable | Install it for the CI OS account; the adapter also checks `~/.local/bin/cs`. |
 | CLI activation unavailable | Put `CS_ACCESS_TOKEN` and optional `CS_ONPREM_URL` only in the CI environment. |
+| Metadata-only change returns no JSON | The adapter passes when no changed file belongs to a configured architectural component; it does not invoke the CLI for `.gitmodules`-only changes. |
 | No analysis link | Local/offline CLI output may not supply a link; use the retained JSON and commit correlation instead of inventing a URL. |
 
 ## Rollback

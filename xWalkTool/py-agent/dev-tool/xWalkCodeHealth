@@ -302,7 +302,11 @@ def analyze(root: Path, configuration: dict[str, Any]) -> int:
         f"{revision}^",
     )
     files = changed_files(root, baseline, revision)
-    analysed = [path for path in files if not is_excluded(path, configuration)]
+    analysed = [
+        path for path in files
+        if matching_component(path, configuration) is not None
+        and not is_excluded(path, configuration)
+    ]
     components = sorted({
         component for path in analysed
         if (component := matching_component(path, configuration)) is not None
@@ -326,7 +330,10 @@ def analyze(root: Path, configuration: dict[str, Any]) -> int:
         summary.update({
             "code_health_degradation": "NO",
             "quality_gate": "PASSED",
-            "reason": "No changed files remain after approved output/generated exclusions.",
+            "reason": (
+                "No changed files belong to a configured architectural component after "
+                "approved output/generated exclusions."
+            ),
             "status": "PASSED",
         })
         write_summary(output_directory / "summary.json", summary)

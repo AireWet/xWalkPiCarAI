@@ -205,6 +205,39 @@ class XWalkCodeHealthTest(unittest.TestCase):
         self.assertEqual(summary["status"], "UNAVAILABLE")
         self.assertEqual(summary["revision"], "b" * 40)
 
+    def test_metadata_only_change_passes_without_invoking_cli(self) -> None:
+        """Ignore repository metadata outside the configured architectural components."""
+
+        baseline = "a" * 40
+        revision = "b" * 40
+        with tempfile.TemporaryDirectory() as directory:
+            environment = {
+                "XWALK_CODESCENE_REPORT_DIRECTORY": directory,
+                "XWALK_CODESCENE_BASE_REVISION": baseline,
+                "XWALK_CODESCENE_REVISION": revision,
+                "XWALK_CODESCENE_STRICT": "true",
+            }
+            with mock.patch.dict(os.environ, environment, clear=False), \
+                    mock.patch.object(
+                        MODULE, "resolve_revision", side_effect=[revision, baseline]
+                    ), \
+                    mock.patch.object(
+                        MODULE,
+                        "changed_files",
+                        return_value=[".gitmodules", "xWalk-rpi5/.gitmodules"],
+                    ), \
+                    mock.patch.object(MODULE, "configured_cli") as configured_cli:
+                result = MODULE.analyze(self.root, self.configuration)
+            summary = json.loads(
+                (Path(directory) / "summary.json").read_text(encoding="utf-8")
+            )
+
+        self.assertEqual(result, 0)
+        self.assertEqual(summary["status"], "PASSED")
+        self.assertEqual(summary["changed_files_analysed"], 0)
+        self.assertEqual(summary["components"], [])
+        configured_cli.assert_not_called()
+
     def test_cli_receives_exact_base_and_revision_and_reports_degradation(self) -> None:
         """Use supported cs delta arguments and honor a returned degradation gate."""
 
