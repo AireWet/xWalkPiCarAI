@@ -1,4 +1,12 @@
+[submodule "xWalkTool"]
+	path = xWalkTool
+	url = ../xWalkTool
+	branch = master
+[submodule "xWalk-rpi5"]
+	path = xWalk-rpi5
+	url = ../xWalk-rpi5
+	branch = master
 [submodule "xWalk-rpi5-sim"]
 	path = xWalk-rpi5-sim
-	url = ssh://192.168.1.158:29419/xWalk-rpi5-sim
-	branch = main
+	url = ../xWalk-rpi5-sim
+	branch = master
