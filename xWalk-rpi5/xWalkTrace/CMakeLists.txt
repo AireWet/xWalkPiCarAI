@@ -88,6 +88,8 @@ endif()
 
 if(XWALK_TRACE_BUILD_HOST_TESTS)
     add_executable(xWalkTraceTest test/src/xHal_Rpi5CarTraceTest.cpp)
+    target_include_directories(xWalkTraceTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_link_libraries(xWalkTraceTest PRIVATE xWalkTrace)
     add_test(NAME xWalkTraceHostTest COMMAND xWalkTraceTest)
     set_tests_properties(xWalkTraceHostTest PROPERTIES LABELS "host")

@@ -34,6 +34,8 @@ if(XWALK_OBSTACLE_AVOIDANCE_BUILD_HOST_TESTS)
     include(CTest)
     add_executable(xWalkObstacleAvoidanceTest
         test/src/xAgent_Rpi5CarObstacleAvoidanceTest.cpp)
+    target_include_directories(xWalkObstacleAvoidanceTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_link_libraries(xWalkObstacleAvoidanceTest PRIVATE xWalkObstacleAvoidance)
     add_test(NAME xWalkObstacleAvoidanceHostTest COMMAND xWalkObstacleAvoidanceTest
         ${CMAKE_CURRENT_BINARY_DIR}/test-data/obstacle-avoidance-test.conf)

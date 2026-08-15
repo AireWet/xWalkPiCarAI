@@ -25,6 +25,8 @@ if(XWALK_SPI_TRANSFER_BUILD_HOST_TESTS)
     include(CTest)
     add_executable(xWalkSpiTransferTest
         test/src/xAgent_Rpi5CarSpiTransferTest.cpp)
+    target_include_directories(xWalkSpiTransferTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_link_libraries(xWalkSpiTransferTest PRIVATE xWalkSpiTransfer)
     add_test(NAME xWalkSpiTransferHostTest COMMAND xWalkSpiTransferTest)
     set_tests_properties(xWalkSpiTransferHostTest PROPERTIES LABELS "host")

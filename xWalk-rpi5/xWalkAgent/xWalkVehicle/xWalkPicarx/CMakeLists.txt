@@ -94,6 +94,8 @@ endif()
 
 if(XWALK_PICARX_BUILD_HOST_TESTS)
     add_executable(xWalkPicarxTest test/src/xAgent_Rpi5CarPicarxTest.cpp)
+    target_include_directories(xWalkPicarxTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_link_libraries(xWalkPicarxTest PRIVATE xWalkPicarx)
     add_test(NAME xWalkPicarxHostTest COMMAND xWalkPicarxTest
         ${CMAKE_CURRENT_BINARY_DIR}/test-data/picarx-test.conf)

@@ -18,6 +18,8 @@ configure_file(config/test_config.xml
 
 add_library(xCliGoogleControllerTest OBJECT
     ${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkHandler/test/src/xControllerTest.cpp)
+target_include_directories(xCliGoogleControllerTest PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkHandler/test/include)
 target_compile_features(xCliGoogleControllerTest PRIVATE cxx_std_17)
 target_compile_definitions(xCliGoogleControllerTest PRIVATE
     main=xWalkControllerLegacyMain

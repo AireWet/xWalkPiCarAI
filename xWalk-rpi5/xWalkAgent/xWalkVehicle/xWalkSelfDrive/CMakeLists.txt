@@ -45,6 +45,8 @@ endif()
 if(XWALK_SELF_DRIVE_BUILD_HOST_TESTS)
     include(CTest)
     add_executable(xWalkSelfDriveTest test/src/xAgent_Rpi5CarSelfDriveTest.cpp)
+    target_include_directories(xWalkSelfDriveTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_compile_definitions(xWalkSelfDriveTest PRIVATE
         XWALK_TEST_SOUND_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkAudioResources/sounds")
     target_link_libraries(xWalkSelfDriveTest PRIVATE xWalkSelfDrive)

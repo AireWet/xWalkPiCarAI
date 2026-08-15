@@ -116,6 +116,8 @@ target_link_libraries(xWalkSpeakerAlsa PRIVATE xWalkTrace)
     if(XWALK_SPEAKER_BUILD_HOST_TESTS)
         add_executable(xWalkSpeakerAlsaTest
             hardware/test/src/xHal_Rpi5CarSpeakerAlsaTest.cpp)
+        target_include_directories(xWalkSpeakerAlsaTest PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/hardware/test/include)
         target_link_libraries(xWalkSpeakerAlsaTest PRIVATE xWalkSpeakerAlsa)
         add_test(NAME xWalkSpeakerAlsaHostTest COMMAND xWalkSpeakerAlsaTest
             ${CMAKE_CURRENT_BINARY_DIR}/speaker-alsa-test.wav

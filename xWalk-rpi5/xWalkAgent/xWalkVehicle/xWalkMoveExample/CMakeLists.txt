@@ -29,6 +29,8 @@ endif()
 if(XWALK_MOVE_EXAMPLE_BUILD_HOST_TESTS)
     include(CTest)
     add_executable(xWalkMoveExampleTest test/src/xAgent_Rpi5CarMoveExampleTest.cpp)
+    target_include_directories(xWalkMoveExampleTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_link_libraries(xWalkMoveExampleTest PRIVATE xWalkMoveExample)
     add_test(NAME xWalkMoveExampleHostTest COMMAND xWalkMoveExampleTest
         ${CMAKE_CURRENT_BINARY_DIR}/test-data/move-example-test.conf)

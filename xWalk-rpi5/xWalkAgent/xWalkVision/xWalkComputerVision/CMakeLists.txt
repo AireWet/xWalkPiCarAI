@@ -75,6 +75,8 @@ if(XWALK_COMPUTER_VISION_BUILD_HOST_TESTS)
     include(CTest)
     add_executable(xWalkComputerVisionTest
         test/src/xAgent_Rpi5CarComputerVisionTest.cpp)
+    target_include_directories(xWalkComputerVisionTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_link_libraries(xWalkComputerVisionTest PRIVATE xWalkComputerVision)
     add_test(NAME xWalkComputerVisionHostTest COMMAND xWalkComputerVisionTest)
     set_tests_properties(xWalkComputerVisionHostTest PROPERTIES LABELS "host")

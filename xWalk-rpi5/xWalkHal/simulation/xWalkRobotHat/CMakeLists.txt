@@ -27,6 +27,8 @@ if(BUILD_TESTING)
     set_tests_properties(xWalkRobotHatSimulationHostTest PROPERTIES LABELS "host;simulation;fault-injection")
 
     add_executable(xWalkRobotHatSoakTest test/src/xHal_Rpi5CarRobotHatSoak.cpp)
+    target_include_directories(xWalkRobotHatSoakTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_link_libraries(xWalkRobotHatSoakTest PRIVATE xWalkRobotHatSimulation)
     add_test(NAME xWalkRobotHatSoakHostTest COMMAND xWalkRobotHatSoakTest
         --seed 42 --iterations 5000 --logical-duration 10000 --fault-rate 0.05

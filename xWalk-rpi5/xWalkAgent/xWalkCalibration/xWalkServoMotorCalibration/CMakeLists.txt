@@ -34,6 +34,8 @@ if(XWALK_SERVO_MOTOR_CALIBRATION_BUILD_HOST_TESTS)
     include(CTest)
     add_executable(xWalkServoMotorCalibrationTest
         test/src/xAgent_Rpi5CarServoMotorCalibrationTest.cpp)
+    target_include_directories(xWalkServoMotorCalibrationTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_link_libraries(xWalkServoMotorCalibrationTest PRIVATE
         xWalkServoMotorCalibration)
     add_test(NAME xWalkServoMotorCalibrationHostTest

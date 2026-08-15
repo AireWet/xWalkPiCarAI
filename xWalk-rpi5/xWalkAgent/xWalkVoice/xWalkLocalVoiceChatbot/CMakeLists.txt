@@ -33,6 +33,8 @@ if(XWALK_LOCAL_VOICE_CHATBOT_BUILD_HOST_TESTS)
     include(CTest)
     add_executable(xWalkLocalVoiceChatbotTest
         test/src/xAgent_Rpi5CarLocalVoiceChatbotTest.cpp)
+    target_include_directories(xWalkLocalVoiceChatbotTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_link_libraries(xWalkLocalVoiceChatbotTest PRIVATE xWalkLocalVoiceChatbot)
     add_test(NAME xWalkLocalVoiceChatbotHostTest COMMAND xWalkLocalVoiceChatbotTest)
     set_tests_properties(xWalkLocalVoiceChatbotHostTest PROPERTIES LABELS "host")

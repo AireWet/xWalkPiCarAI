@@ -28,6 +28,8 @@ if(XWALK_SERVO_ZEROING_BUILD_HOST_TESTS)
     include(CTest)
     add_executable(xWalkServoZeroingTest
         test/src/xAgent_Rpi5CarServoZeroingTest.cpp)
+    target_include_directories(xWalkServoZeroingTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_link_libraries(xWalkServoZeroingTest PRIVATE xWalkServoZeroing)
     add_test(NAME xWalkServoZeroingHostTest COMMAND xWalkServoZeroingTest)
     set_tests_properties(xWalkServoZeroingHostTest PROPERTIES LABELS "host")

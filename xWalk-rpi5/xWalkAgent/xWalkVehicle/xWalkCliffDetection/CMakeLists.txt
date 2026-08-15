@@ -34,6 +34,8 @@ if(XWALK_CLIFF_DETECTION_BUILD_HOST_TESTS)
     include(CTest)
     add_executable(xWalkCliffDetectionTest
         test/src/xAgent_Rpi5CarCliffDetectionTest.cpp)
+    target_include_directories(xWalkCliffDetectionTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_link_libraries(xWalkCliffDetectionTest PRIVATE xWalkCliffDetection)
     add_test(NAME xWalkCliffDetectionHostTest COMMAND xWalkCliffDetectionTest
         ${CMAKE_CURRENT_BINARY_DIR}/test-data/cliff-detection-test.conf)

@@ -144,6 +144,8 @@ target_link_libraries(xWalkMusicSndFileDecoder PRIVATE xWalkTrace)
     if(XWALK_MUSIC_BUILD_HOST_TESTS)
         add_executable(xWalkMusicAlsaTest
             hardware/test/src/xHal_Rpi5CarMusicAlsaTest.cpp)
+        target_include_directories(xWalkMusicAlsaTest PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/hardware/test/include)
         target_link_libraries(xWalkMusicAlsaTest PRIVATE xWalkMusicAlsa)
         add_test(NAME xWalkMusicAlsaHostTest COMMAND xWalkMusicAlsaTest
             ${CMAKE_CURRENT_BINARY_DIR}/music-alsa-test.wav)

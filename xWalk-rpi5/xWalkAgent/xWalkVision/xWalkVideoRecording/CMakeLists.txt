@@ -87,6 +87,8 @@ if(XWALK_VIDEO_RECORDING_BUILD_HOST_TESTS)
     include(CTest)
     add_executable(xWalkVideoRecordingTest
         test/src/xAgent_Rpi5CarVideoRecordingTest.cpp)
+    target_include_directories(xWalkVideoRecordingTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_link_libraries(xWalkVideoRecordingTest PRIVATE xWalkVideoRecording)
     add_test(NAME xWalkVideoRecordingHostTest COMMAND xWalkVideoRecordingTest)
     set_tests_properties(xWalkVideoRecordingHostTest PROPERTIES LABELS "host")

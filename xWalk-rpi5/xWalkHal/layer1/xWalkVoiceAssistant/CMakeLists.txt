@@ -77,6 +77,8 @@ if(XWALK_VOICE_ASSISTANT_BUILD_HOST_TESTS)
 
     add_executable(xWalkVoiceAssistantBackendsTest
         hardware/test/src/xHal_Rpi5CarVoiceAssistantBackendsTest.cpp)
+    target_include_directories(xWalkVoiceAssistantBackendsTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/hardware/test/include)
     target_link_libraries(xWalkVoiceAssistantBackendsTest PRIVATE
         xWalkVoiceAssistant xWalkSpeechToTextAlsa xWalkTextToSpeechAlsa
         xWalkLanguageModelOllama)
@@ -88,6 +90,8 @@ endif()
 if(XWALK_VOICE_ASSISTANT_BUILD_HARDWARE_TESTS)
     add_executable(xWalkVoiceAssistantHardwareTest
         test/hardware/src/xHal_Rpi5CarVoiceAssistantHardwareTest.cpp)
+    target_include_directories(xWalkVoiceAssistantHardwareTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/hardware/include)
 target_link_libraries(xWalkVoiceAssistantHardwareTest PRIVATE xWalkTrace)
     target_link_libraries(xWalkVoiceAssistantHardwareTest PRIVATE
         xWalkVoiceAssistant xWalkSpeechToTextAlsa xWalkTextToSpeechAlsa

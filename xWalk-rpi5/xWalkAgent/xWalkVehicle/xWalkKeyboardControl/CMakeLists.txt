@@ -34,6 +34,8 @@ if(XWALK_KEYBOARD_CONTROL_BUILD_HOST_TESTS)
     include(CTest)
     add_executable(xWalkKeyboardControlTest
         test/src/xAgent_Rpi5CarKeyboardControlTest.cpp)
+    target_include_directories(xWalkKeyboardControlTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_link_libraries(xWalkKeyboardControlTest PRIVATE xWalkKeyboardControl)
     add_test(NAME xWalkKeyboardControlHostTest COMMAND xWalkKeyboardControlTest
         ${CMAKE_CURRENT_BINARY_DIR}/test-data/keyboard-control-test.conf)

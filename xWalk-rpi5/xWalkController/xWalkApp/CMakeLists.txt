@@ -354,6 +354,8 @@ if(XWALK_CONTROLLER_BUILD_HOST_TESTS)
         xWalkTrace)
     add_executable(xWalkControllerTest
         ../xWalkHandler/test/src/xControllerTest.cpp)
+    target_include_directories(xWalkControllerTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkHandler/test/include)
     target_compile_definitions(xWalkControllerTest PRIVATE
         XWALK_TEST_SOUND_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkAudioResources/sounds")
     target_link_libraries(xWalkControllerTest PRIVATE xWalkController)
@@ -366,6 +368,8 @@ if(XWALK_CONTROLLER_BUILD_HOST_TESTS)
         boot/src/xControllerRunner.cpp
         test/src/xControllerParsingTest.cpp
         test/src/xControllerAppTest.cpp)
+    target_include_directories(xWalkAppTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_compile_features(xWalkAppTest PRIVATE cxx_std_17)
     target_compile_definitions(xWalkAppTest PRIVATE
         XWALK_CONTROLLER_TRACE_EXAMPLE_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../xWalkConfig")

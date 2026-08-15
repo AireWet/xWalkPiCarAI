@@ -95,6 +95,7 @@ if(XWALK_LANGUAGE_MODEL_BUILD_HOST_TESTS)
     add_executable(xWalkLanguageModelOllamaTest
         hardware/test/src/xHal_Rpi5CarLanguageModelOllamaTest.cpp)
     target_include_directories(xWalkLanguageModelOllamaTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/hardware/test/include
         ${CMAKE_CURRENT_SOURCE_DIR}/simulation/include)
     set(LANGUAGE_MODEL_OLLAMA_TEST_TRACE_LOG
         "${CMAKE_CURRENT_BINARY_DIR}/log/xWalkLanguageModelOllamaTest.log")

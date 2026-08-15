@@ -34,6 +34,8 @@ if(XWALK_GRAYSCALE_CALIBRATION_BUILD_HOST_TESTS)
     include(CTest)
     add_executable(xWalkGrayscaleCalibrationTest
         test/src/xAgent_Rpi5CarGrayscaleCalibrationTest.cpp)
+    target_include_directories(xWalkGrayscaleCalibrationTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_link_libraries(xWalkGrayscaleCalibrationTest PRIVATE
         xWalkGrayscaleCalibration)
     add_test(NAME xWalkGrayscaleCalibrationHostTest

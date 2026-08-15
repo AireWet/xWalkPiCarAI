@@ -342,11 +342,14 @@ retaining normal compiler warnings and compilation checks.
   additional class its own consistently named file and include that file
   explicitly wherever the class is used. Supporting enums and structures may
   remain with the single class that owns their contract.
-- Put public and reusable types in the owning component's `include` directory.
-  Put an implementation-private type in a narrowly scoped companion type header
-  with a named namespace. Never use an anonymous namespace in a header. For
-  test fixtures, fake state, mappings, callbacks, and factories, follow the
-  repository-wide `<Component>TestSupport.h` layout instead.
+- Put every project-owned header under the owning scope's `include` directory;
+  never place a `.h`, `.hpp`, or `.hxx` file under `src`. This applies to public,
+  private, test, hardware, simulation, and example headers. Put an
+  implementation-private type in a narrowly scoped companion type header with
+  a named namespace and expose that directory only to the targets that require
+  it. Never use an anonymous namespace in a header. For test fixtures, fake
+  state, mappings, callbacks, and factories, follow the repository-wide
+  `<Component>TestSupport.h` layout instead.
 - Use include guards derived from the file name:
 
   ```cpp

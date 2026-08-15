@@ -13,6 +13,7 @@ target_link_libraries(xWalkSensorGroupTest PRIVATE xWalkTrace)
 target_include_directories(xWalkSensorGroupTest SYSTEM PRIVATE
     ${XWALK_SENSOR_GROUP_GMOCK_INCLUDE_DIRECTORY})
 target_include_directories(xWalkSensorGroupTest PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkLineTracker/test/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkMotor/test/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkLed/test/include

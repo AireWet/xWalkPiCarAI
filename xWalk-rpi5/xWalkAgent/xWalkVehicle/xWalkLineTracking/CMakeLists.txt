@@ -35,6 +35,8 @@ endif()
 if(XWALK_LINE_TRACKING_BUILD_HOST_TESTS)
     include(CTest)
     add_executable(xWalkLineTrackingTest test/src/xAgent_Rpi5CarLineTrackingTest.cpp)
+    target_include_directories(xWalkLineTrackingTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_link_libraries(xWalkLineTrackingTest PRIVATE xWalkLineTracking)
     add_test(NAME xWalkLineTrackingHostTest COMMAND xWalkLineTrackingTest
         ${CMAKE_CURRENT_BINARY_DIR}/test-data/line-tracking-test.conf)

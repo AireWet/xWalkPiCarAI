@@ -79,9 +79,17 @@ endif()
 
 function(xwalk_add_legacy_test_source object_target entry_point source_path)
     add_library(${object_target} OBJECT ${source_path})
+    get_filename_component(XWALK_LEGACY_TEST_SOURCE_DIRECTORY
+        "${source_path}" DIRECTORY)
+    get_filename_component(XWALK_LEGACY_TEST_SOURCE_DIRECTORY
+        "${XWALK_LEGACY_TEST_SOURCE_DIRECTORY}" ABSOLUTE)
+    string(REGEX REPLACE "/src$" "/include"
+        XWALK_LEGACY_TEST_INCLUDE_DIRECTORY
+        "${XWALK_LEGACY_TEST_SOURCE_DIRECTORY}")
     target_compile_features(${object_target} PRIVATE cxx_std_17)
     target_compile_definitions(${object_target} PRIVATE main=${entry_point})
     target_include_directories(${object_target} PRIVATE
+        ${XWALK_LEGACY_TEST_INCLUDE_DIRECTORY}
         ${XWALK_HAL_SOURCE_DIRECTORY}/device/xWalkPwm/test/include
         ${XWALK_HAL_SOURCE_DIRECTORY}/device/xWalkServo/test/include)
     target_link_libraries(${object_target} PRIVATE xWalkTrace ${ARGN})
