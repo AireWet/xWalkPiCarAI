@@ -4,6 +4,10 @@ xWalk is a C++17 control and automation workspace for the SunFounder PiCar-X on 
 contains the complete product integration, host-safe simulation and tests, deployment configuration, documentation,
 and development tooling.
 
+The project-local Python 3 simulator and Raspberry Pi hardware adapter are maintained in `xWalk-rpi5-py3`.
+During the repository-name migration, that local submodule path still resolves to the existing Gerrit repository
+named `xWalk-rpi5-sim`.
+
 Normal host builds use simulated or software backends and do not actuate physical hardware.
 
 ## Repository layout
@@ -22,6 +26,7 @@ MyPiCarX/
 │   ├── xWalkTrace/            Shared tracing implementation
 │   ├── devloper-note/         Architecture, build, and deployment documentation
 │   └── cmake/                 Shared CMake modules and toolchains
+├── xWalk-rpi5-py3/            Python 3 simulator and Raspberry Pi 5 PiCar-X hardware adapter
 └── xWalkTool/                 CI, Gerrit, deployment, quality, and maintenance tools
 ```
 

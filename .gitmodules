@@ -6,7 +6,7 @@
 	path = xWalk-rpi5
 	url = ../xWalk-rpi5
 	branch = master
-[submodule "xWalk-rpi5-sim"]
-	path = xWalk-rpi5-sim
+[submodule "xWalk-rpi5-py3"]
+	path = xWalk-rpi5-py3
 	url = ../xWalk-rpi5-sim
 	branch = master
