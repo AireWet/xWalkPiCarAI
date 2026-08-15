@@ -20,7 +20,7 @@ network tunnel.
 ## Required configuration
 
 The current integrated uplift and synchronization workflow is documented in
-[`Integrated Uplift Workflow.md`](DevloperNote/Doc/note/Integrated%20Uplift%20Workflow.md). It defines the eight
+[`Integrated Uplift Workflow.md`](DevloperNote/Doc/note/Integrated%20Uplift%20Workflow.md). It defines the ten
 component mappings, complete CI gate, current-patch-set submission checks, service-account boundaries, audit log,
 retries, recovery, and remaining administrator activation steps.
 
@@ -37,7 +37,7 @@ export GERRIT_ADMIN_ROLE="Student"
 export GERRIT_ADMIN_EMAIL="joxjoh24@student.hh.se"
 export GERRIT_PROJECT="xWalkPiCarAI"
 export GERRIT_BRANCH="master"
-export GERRIT_VERIFICATION_TARGETS="xWalkPiCarAI:master,DevloperNote:main,xWalkAgent:main,xWalkAudioResources:main,xWalkController:main,xWalkHal:main,xWalkIW:main,xWalkLibrary:main,xWalkTrace:main"
+export GERRIT_VERIFICATION_TARGETS="xWalkPiCarAI:master,DevloperNote:master,xWalkAgent:master,xWalkAudioResources:master,xWalkController:master,xWalkHal:master,xWalkIW:master,xWalkLibrary:master,xWalkTool:master,xWalkTrace:master,xWalk-rpi5-sim:master"
 export GERRIT_HTTPS_PORT="18443"
 export GERRIT_SSH_PORT="29418"
 export GERRIT_HTTP_PORT="8080"
@@ -58,12 +58,41 @@ unique administrator password of at least 12 characters.
 `GERRIT_PROJECT` and `GERRIT_BRANCH` identify the primary CI target.
 `GITHUB_SYNC_SOURCE_PROJECT` and `GITHUB_SYNC_SOURCE_BRANCH` select the exact
 integrated Gerrit branch whose merge event may be synchronized. The supported
-migration pairs are `xWalkPiCarAI/master` and `xWalk-rpi5/main`; the GitHub
+migration pairs are `xWalkPiCarAI/master` and `xWalk-rpi5/master`; the GitHub
 repository name and target branch must match the selected pair.
 `GERRIT_VERIFICATION_TARGETS` is a
 comma-separated allowlist of exact `project:branch` pairs whose active patch
 sets receive host verification. Retain `xWalkPiCarAI:master` while it remains
 the active integrated monorepository.
+
+Every Gerrit code repository uses `master` as its default and review branch.
+Each repository defines explicit Code-Review, Verified, and unresolved-comment
+submit requirements. The review-controls plugin shows Submit only when Gerrit
+reports the current patch set as submittable and both required votes pass.
+
+Every component target uses a separate component-only CI flow and runs only its standalone checks. A component
+that needs sibling build dependencies uses a dependency-aware integration checkout, but the worker does not run
+the other module test suites or the complete product graph. Integration targets retain the complete host-quality
+graph.
+
+Component reviews use the same structured dashboard lifecycle as integration reviews: Preparation runs first,
+the single reviewed component appears as the only module node, and the component quality gate depends on that
+node. Check status, duration, retained output, Gerrit result messages, and raw logs use the same presentation as
+the complete graph. Unrelated module nodes are not created or executed.
+
+The self-contained `xWalk-rpi5-sim:master` target checks out only the locally named `xWalk-rpi5-py3` Python
+repository. It runs device-free formatting, linting, typing, compilation, mocked tests, CLI validation,
+ShellCheck, and the simulator setup dry-run. It does not initialize SunFounder submodules, overlay the change
+into `xWalkPiCarAI`, or select physical hardware tests.
+
+The `xWalkTool:master` target checks out the independent tool repository directly. It runs the Gerrit Python
+tests, review-control tests, ShellCheck, and repository formatting validation without running hardware tests.
+
+After a component change passes its own CI and is submitted, the event worker automatically uploads the required
+`xWalkPiCarAI` integration review. For `xWalk-rpi5-sim`, that generated review changes only the
+`xWalk-rpi5-py3` gitlink. The integration review runs the complete graph. After that exact verified integration
+commit is submitted, the guarded synchronization service fast-forwards the configured GitHub branch. Developers
+do not create a second manual component implementation commit for this chain.
 
 Submitted component changes receive a separate `xWalk Integration Uplift`
 change-log entry showing whether the integration review was uploaded. Submitted
@@ -166,11 +195,21 @@ CHANGE_REF='refs/changes/NN/CHANGE_NUMBER/PATCH_SET'
 ```
 
 ```bash
-git fetch ssh://USERNAME@SERVER_IP:SSH_PORT/PROJECT "$CHANGE_REF" && git checkout FETCH_HEAD
+git fetch ssh://USERNAME@SERVER_IP:SSH_PORT/PROJECT "$CHANGE_REF"
 ```
 
 ```bash
-git fetch ssh://USERNAME@SERVER_IP:SSH_PORT/PROJECT "$CHANGE_REF" && git cherry-pick FETCH_HEAD
+git checkout FETCH_HEAD
+```
+
+For an SSH cherry pick, fetch the selected patch set again and apply it:
+
+```bash
+git fetch ssh://USERNAME@SERVER_IP:SSH_PORT/PROJECT "$CHANGE_REF"
+```
+
+```bash
+git cherry-pick FETCH_HEAD
 ```
 
 ```bash
@@ -182,11 +221,21 @@ git push ssh://USERNAME@SERVER_IP:SSH_PORT/PROJECT HEAD:refs/for/BRANCH
 ```
 
 ```bash
-git fetch https://USERNAME@SERVER_IP:HTTPS_PORT/PROJECT "$CHANGE_REF" && git checkout FETCH_HEAD
+git fetch https://USERNAME@SERVER_IP:HTTPS_PORT/PROJECT "$CHANGE_REF"
 ```
 
 ```bash
-git fetch https://USERNAME@SERVER_IP:HTTPS_PORT/PROJECT "$CHANGE_REF" && git cherry-pick FETCH_HEAD
+git checkout FETCH_HEAD
+```
+
+For an HTTPS cherry pick, fetch the selected patch set again and apply it:
+
+```bash
+git fetch https://USERNAME@SERVER_IP:HTTPS_PORT/PROJECT "$CHANGE_REF"
+```
+
+```bash
+git cherry-pick FETCH_HEAD
 ```
 
 ```bash
@@ -264,7 +313,7 @@ for the administrator workflow and deployment limitations.
 ## Multi-repository migration
 
 The guarded multi-repository tools use `config/multi-repo.conf`. They prepare
-nine component repositories and the private `xWalk-rpi5` integration repository.
+ten component repositories and the private `xWalk-rpi5` integration repository.
 They never create component repositories on GitHub, edit Gerrit's internal Git
 directories, force-push the source monorepo, or convert this working tree in
 place.
@@ -278,18 +327,34 @@ xWalkTool/py-agent/gerrit-tool/shell-script/gerrit-multi-repo-provision.sh --dry
 Prepare history-preserving component repositories in a new directory:
 
 ```bash
-export XWALK_SPLIT_OUTPUT_DIR="/safe/new/output"; export XWALK_CONFIRM_SPLIT="SPLIT_COMPONENT_HISTORY"; xWalkTool/py-agent/gerrit-tool/shell-script/gerrit-history-split.sh --apply
+export XWALK_SPLIT_OUTPUT_DIR="/safe/new/output"
+```
+
+```bash
+export XWALK_CONFIRM_SPLIT="SPLIT_COMPONENT_HISTORY"
+```
+
+```bash
+xWalkTool/py-agent/gerrit-tool/shell-script/gerrit-history-split.sh --apply
 ```
 
 The default `XWALK_IMPORT_MODE=none` performs no remote push. Select `review`
-for `refs/for/main` or `direct` only when the administrator has authorized the
-initial `refs/heads/main` import, then separately set
+for `refs/for/master` or `direct` only when the administrator has authorized the
+initial `refs/heads/master` import, then separately set
 `XWALK_CONFIRM_IMPORT=PUSH_COMPONENTS_TO_GERRIT`.
 
 Prepare a separate integration clone containing exact Gerrit gitlinks:
 
 ```bash
-export XWALK_INTEGRATION_OUTPUT_DIR="/safe/new/xWalk-rpi5"; export XWALK_CONFIRM_SUBMODULES="CREATE_INTEGRATION_CLONE"; xWalkTool/py-agent/gerrit-tool/shell-script/gerrit-submodule-migrate.sh --apply
+export XWALK_INTEGRATION_OUTPUT_DIR="/safe/new/xWalk-rpi5"
+```
+
+```bash
+export XWALK_CONFIRM_SUBMODULES="CREATE_INTEGRATION_CLONE"
+```
+
+```bash
+xWalkTool/py-agent/gerrit-tool/shell-script/gerrit-submodule-migrate.sh --apply
 ```
 
 Plan one coordinated uplift for submitted changes sharing a Gerrit topic:
@@ -301,13 +366,41 @@ xWalkTool/py-agent/gerrit-tool/shell-script/gerrit-topic-uplift.sh --dry-run TOP
 Normal module upload:
 
 ```bash
-cd xWalk-rpi5/xWalkHal && git switch main && git pull --ff-only origin main && git add . && git commit -s -m "Update HAL implementation" && git push origin HEAD:refs/for/main
+cd xWalk-rpi5/xWalkHal
+```
+
+```bash
+git switch master
+```
+
+```bash
+git pull --ff-only origin master
+```
+
+```bash
+git add .
+```
+
+```bash
+git commit -s -m "Update HAL implementation"
+```
+
+```bash
+git push origin HEAD:refs/for/master
 ```
 
 Existing integration clones synchronize exact recorded revisions with:
 
 ```bash
-git pull --ff-only && git submodule sync --recursive && git submodule update --init --recursive
+git pull --ff-only
+```
+
+```bash
+git submodule sync --recursive
+```
+
+```bash
+git submodule update --init --recursive
 ```
 
 Source changes are recorded in Gerrit commit messages and review history. CI

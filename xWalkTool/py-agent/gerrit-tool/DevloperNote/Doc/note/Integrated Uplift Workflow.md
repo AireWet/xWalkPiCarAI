@@ -15,36 +15,40 @@ Component Gerrit merge
     -> exact merged-commit GitHub synchronization
 ```
 
-The final gitlink superproject remains `xWalk-rpi5/main`. Repository and branch names are configuration values so
+The final gitlink superproject remains `xWalk-rpi5/master`. Repository and branch names are configuration values so
 the migration can complete without rewriting the safety policy.
 
 ## Repository mapping
 
 | Source Gerrit repository | Source branch | Integrated path |
 |---|---|---|
-| `xWalkAgent` | `main` | `xWalk-rpi5/xWalkAgent` |
-| `xWalkAudioResources` | `main` | `xWalk-rpi5/xWalkAudioResources` |
-| `xWalkController` | `main` | `xWalk-rpi5/xWalkController` |
-| `xWalkHal` | `main` | `xWalk-rpi5/xWalkHal` |
-| `xWalkIW` | `main` | `xWalk-rpi5/xWalkIW` |
-| `xWalkLibrary` | `main` | `xWalk-rpi5/xWalkLibrary` |
-| `DevloperNote` | `main` | `xWalk-rpi5/devloper-note` |
-| `xWalkTrace` | `main` | `xWalk-rpi5/xWalkTrace` |
+| `xWalkAgent` | `master` | `xWalk-rpi5/xWalkAgent` |
+| `xWalkAudioResources` | `master` | `xWalk-rpi5/xWalkAudioResources` |
+| `xWalkController` | `master` | `xWalk-rpi5/xWalkController` |
+| `xWalkHal` | `master` | `xWalk-rpi5/xWalkHal` |
+| `xWalkIW` | `master` | `xWalk-rpi5/xWalkIW` |
+| `xWalkLibrary` | `master` | `xWalk-rpi5/xWalkLibrary` |
+| `xWalkTool` | `master` | `xWalkTool` |
+| `DevloperNote` | `master` | `xWalk-rpi5/devloper-note` |
+| `xWalkTrace` | `master` | `xWalk-rpi5/xWalkTrace` |
+| `xWalk-rpi5-sim` | `master` | `xWalk-rpi5-py3` gitlink |
 
-`xWalk-rpi5-sim` is not part of this uplift list. It remains the one explicit Gerrit gitlink in the migration
-repository and is validated independently.
+The Python component changes only its explicit Gerrit gitlink. The other nine components replace only their
+mapped integrated source trees.
 
 ## Event and uplift processing
 
-The CI service listens for `change-merged` events from the eight allowlisted component repositories. The uplift
+The CI service listens for `change-merged` events from the ten allowlisted component repositories. The uplift
 worker validates the full source SHA and patch-set number. It proves that the SHA is reachable from the component
-`main` branch, and copies the exact Git archive into the mapped integrated directory. Files outside that directory
-cannot enter the uplift commit.
+`master` branch, and copies the exact Git archive into the mapped integrated directory, except for the Python
+component's exact gitlink update. Files outside the selected integration path cannot enter the uplift commit.
 
-The generated commit has this form:
+The generated commit preserves the source subject and body and appends provenance trailers in this form:
 
 ```text
-Uplift xWalkTrace to 0123456789abcdef0123456789abcdef01234567
+[xWalk-123][x86-HOST] Improve trace validation
+
+Original component commit body.
 
 Source-Repository: xWalkTrace
 Source-Commit: 0123456789abcdef0123456789abcdef01234567
@@ -154,6 +158,16 @@ Every fetch, uplift, CI, vote, merge, and GitHub-sync result appends one JSON ob
 commit, integrated change, integrated commit, result, explanation, and relevant link. The file is created with mode
 `0600`. Uplift jobs share an exclusive lock; JSON records are append-only and contain no credentials.
 
+The merged component change also receives an `xWalk Integration Uplift` change-log row. The row reports the
+uplift lifecycle status, linked integration review when one was created, and a safe rejection reason when Gerrit
+blocks the upload. Automated uplift commits use the registered `GERRIT_CI_EMAIL`; placeholder commit identities
+are not accepted by Gerrit.
+
+An automatic uplift preserves the submitted component commit subject and body. It replaces the component
+`Change-Id` with the deterministic integration `Change-Id`, adds source repository, commit, change, patch-set, and
+topic trailers, and adds the CI sign-off. This keeps the original intent visible without making the integration
+review update the already submitted component review.
+
 Typical successful output is:
 
 ```text
@@ -186,7 +200,7 @@ fast-forward only and can be retried after fixing credentials or connectivity.
 For manual recovery:
 
 1. Read the last JSON changelog entry and the linked Gerrit CI log.
-2. Confirm the component SHA is on its Gerrit `main` branch.
+2. Confirm the component SHA is on its Gerrit `master` branch.
 3. Confirm the integrated change's current patch set and submit requirements in Gerrit.
 4. Re-deliver the component merge event or rerun the uplift command with the same exact metadata.
 5. If Gerrit is merged but GitHub is behind, restart CI. Startup reconciliation checks both branch tips.

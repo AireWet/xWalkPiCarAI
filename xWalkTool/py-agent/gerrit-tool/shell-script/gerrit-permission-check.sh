@@ -3,7 +3,7 @@ set -Eeuo pipefail
 umask 077
 
 script_dir="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)"
-# shellcheck source=xWalkTool/py-agent/gerrit-tool/shell-script/xwalk-gerrit-common.sh
+# shellcheck source=xwalk-gerrit-common.sh
 source "$script_dir/xwalk-gerrit-common.sh"
 
 [[ "$#" -eq 1 ]] || { echo "Usage: gerrit-permission-check.sh --dry-run|--apply" >&2; exit 2; }

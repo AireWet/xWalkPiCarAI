@@ -42,4 +42,4 @@ git init --bare /shared/path/PROJECT_NAME.git
 ```
 
 This provides Git collaboration only. It does not provide Gerrit changes,
-reviews, approvals, comments, audit votes, or `refs/for/main`.
+reviews, approvals, comments, audit votes, or `refs/for/master`.

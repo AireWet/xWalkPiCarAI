@@ -28,16 +28,16 @@ validate_integrated_sources()
         }
     done
     [[ "$(git -C "$root" config -f .gitmodules --get-regexp '^submodule\..*\.path$' | wc -l)" -eq 1 ]]
-    [[ "$(git -C "$root" config -f .gitmodules --get submodule.xWalk-rpi5-sim.path)" == xWalk-rpi5-sim ]]
-    [[ "$(git -C "$root" config -f .gitmodules --get submodule.xWalk-rpi5-sim.branch)" == main ]]
+    [[ "$(git -C "$root" config -f .gitmodules --get submodule.xWalk-rpi5-py3.path)" == xWalk-rpi5-py3 ]]
+    [[ "$(git -C "$root" config -f .gitmodules --get submodule.xWalk-rpi5-py3.branch)" == master ]]
     local simulation_url
-    simulation_url="$(git -C "$root" config -f .gitmodules --get submodule.xWalk-rpi5-sim.url)"
+    simulation_url="$(git -C "$root" config -f .gitmodules --get submodule.xWalk-rpi5-py3.url)"
     [[ "$simulation_url" != *github.com* && "$simulation_url" == */xWalk-rpi5-sim ]] || {
         echo "Simulation submodule must point only to its Gerrit repository" >&2
         exit 1
     }
-    [[ "$(git -C "$root" ls-files --stage -- xWalk-rpi5-sim | awk '{print $1}')" == 160000 ]] || {
-        echo "Missing xWalk-rpi5-sim gitlink" >&2
+    [[ "$(git -C "$root" ls-files --stage -- xWalk-rpi5-py3 | awk '{print $1}')" == 160000 ]] || {
+        echo "Missing xWalk-rpi5-py3 gitlink" >&2
         exit 1
     }
     echo "Validated eight integrated module source trees and the Gerrit simulation gitlink"
@@ -45,24 +45,37 @@ validate_integrated_sources()
 
 validate_hierarchical_migration()
 {
-    local component config_name expected_path mode path url branch
+    local component config_name expected_path expected_url expected_branch mode path url branch
+    local simulation_config simulation_path
     local nested="$root/xWalk-rpi5/.gitmodules"
     local -A expected_top=(
         [xWalkTool]=1
         [xWalk-rpi5]=1
-        [xWalk-rpi5-sim]=1
     )
     [[ -f "$nested" ]] || {
         echo "Missing nested xWalk-rpi5/.gitmodules" >&2
         exit 1
     }
+    if git -C "$root" config -f .gitmodules --get submodule.xWalk-rpi5-py3.path >/dev/null; then
+        simulation_config=xWalk-rpi5-py3
+    elif git -C "$root" config -f .gitmodules --get submodule.xWalk-rpi5-sim.path >/dev/null; then
+        simulation_config=xWalk-rpi5-sim
+    else
+        echo "Missing hierarchical Gerrit simulation mapping" >&2
+        exit 1
+    fi
+    simulation_path="$simulation_config"
+    expected_top["$simulation_config"]=xWalk-rpi5-sim
     for component in "${!expected_top[@]}"; do
         path="$(git -C "$root" config -f .gitmodules --get "submodule.$component.path")"
         url="$(git -C "$root" config -f .gitmodules --get "submodule.$component.url")"
         branch="$(git -C "$root" config -f .gitmodules --get "submodule.$component.branch")"
         [[ "$path" == "$component" ]] || { echo "Invalid path for $component" >&2; exit 1; }
-        [[ "$url" == ../"$component" ]] || { echo "Invalid relative URL for $component" >&2; exit 1; }
-        [[ "$branch" == master ]] || { echo "Invalid branch for $component" >&2; exit 1; }
+        expected_url="${expected_top[$component]}"
+        [[ "$expected_url" != 1 ]] || expected_url="$component"
+        [[ "$url" == ../"$expected_url" ]] || { echo "Invalid relative URL for $component" >&2; exit 1; }
+        expected_branch=master
+        [[ "$branch" == "$expected_branch" ]] || { echo "Invalid branch for $component" >&2; exit 1; }
     done
     while IFS= read -r path; do
         [[ -n "${expected_top[$path]:-}" ]] || {
@@ -106,25 +119,28 @@ validate_hierarchical_migration()
         echo "Expected eight nested xWalk-rpi5 component mappings" >&2
         exit 1
     }
-    mode="$(git -C "$root" ls-files --stage -- xWalk-rpi5-sim | awk '$4 == "xWalk-rpi5-sim" {print $1}')"
-    [[ "$mode" == 160000 ]] || { echo "Missing xWalk-rpi5-sim gitlink" >&2; exit 1; }
+    mode="$(git -C "$root" ls-files --stage -- "$simulation_path" | awk -v path="$simulation_path" \
+        '$4 == path {print $1}')"
+    [[ "$mode" == 160000 ]] || { echo "Missing $simulation_path gitlink" >&2; exit 1; }
     echo "Validated hierarchical migration metadata and the Gerrit simulation gitlink"
 }
 
 validate_gitlink_superproject()
 {
-    local component expected_path path url branch mode
+    local component expected_path expected_url path url branch mode
     local -A expected=()
-    for component in "${components[@]}" xWalk-rpi5-sim; do
+    for component in "${components[@]}" xWalk-rpi5-py3; do
         expected_path="$component"
         [[ "$component" != DevloperNote ]] || expected_path="devloper-note"
+        expected_url="$component"
+        [[ "$component" != xWalk-rpi5-py3 ]] || expected_url=xWalk-rpi5-sim
         expected["$expected_path"]=1
         path="$(git -C "$root" config -f .gitmodules --get "submodule.$component.path")"
         url="$(git -C "$root" config -f .gitmodules --get "submodule.$component.url")"
         branch="$(git -C "$root" config -f .gitmodules --get "submodule.$component.branch")"
         [[ "$path" == "$expected_path" ]] || { echo "Invalid path for $component" >&2; exit 1; }
-        [[ "$branch" == main ]] || { echo "Invalid branch for $component" >&2; exit 1; }
-        [[ "$url" != *github.com* && "$url" == */"$component" ]] || {
+        [[ "$branch" == master ]] || { echo "Invalid branch for $component" >&2; exit 1; }
+        [[ "$url" != *github.com* && "$url" == */"$expected_url" ]] || {
             echo "Submodule $component must point only to its Gerrit repository" >&2
             exit 1
         }

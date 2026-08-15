@@ -99,7 +99,7 @@ git clone ssh://PARTNER_USERNAME@GERRIT_SERVER_HOST:GERRIT_SSH_PORT/PROJECT_NAME
 ```
 
 ```bash
-git push ssh://PARTNER_USERNAME@GERRIT_SERVER_HOST:GERRIT_SSH_PORT/PROJECT_NAME HEAD:refs/for/main
+git push ssh://PARTNER_USERNAME@GERRIT_SERVER_HOST:GERRIT_SSH_PORT/PROJECT_NAME HEAD:refs/for/master
 ```
 
 Replace every token with administrator-provided values. The partner generates

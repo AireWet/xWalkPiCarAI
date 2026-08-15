@@ -3,7 +3,7 @@ set -Eeuo pipefail
 umask 077
 
 script_dir="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)"
-# shellcheck source=xWalkTool/py-agent/gerrit-tool/shell-script/xwalk-gerrit-common.sh
+# shellcheck source=xwalk-gerrit-common.sh
 source "$script_dir/xwalk-gerrit-common.sh"
 mode="${1:---dry-run}"
 [[ "$#" -eq 1 ]] || { echo "Usage: gerrit-github-sync.sh --dry-run|--apply" >&2; exit 2; }
@@ -41,7 +41,7 @@ main()
         echo "[dry-run] git push github refs/heads/$GERRIT_INTEGRATION_BRANCH:refs/heads/$github_branch"
         xwalk_log "github-sync" "GitHub" "$GERRIT_INTEGRATION_PROJECT" \
             "refs/heads/$GERRIT_INTEGRATION_BRANCH" "unknown" \
-            "verified-gerrit-main" "Plan the sole permitted GitHub synchronization" \
+            "verified-gerrit-master" "Plan the sole permitted GitHub synchronization" \
             "Only a submitted and integration-verified commit may reach GitHub." "Planned" \
             "Destination name and exact refspec validated"
         return
@@ -66,7 +66,7 @@ main()
         "refs/heads/$GERRIT_INTEGRATION_BRANCH:refs/remotes/origin/$GERRIT_INTEGRATION_BRANCH"; then
         xwalk_log "github-sync" "GitHub" "$GERRIT_INTEGRATION_PROJECT" \
             "refs/heads/$GERRIT_INTEGRATION_BRANCH" "unknown" "unchanged" \
-            "Gerrit main fetch failed" "Synchronization requires the submitted Gerrit integration branch." \
+            "Gerrit master fetch failed" "Synchronization requires the submitted Gerrit integration branch." \
             "Failed" "" "Sanitized Gerrit fetch failure"
         return 1
     fi
@@ -76,9 +76,9 @@ main()
     [[ "$fetched" == "$revision" ]] || {
         xwalk_log "github-sync" "GitHub" "$GERRIT_INTEGRATION_PROJECT" \
             "refs/heads/$GERRIT_INTEGRATION_BRANCH" "$fetched" "unchanged" \
-            "Rejected unverified Gerrit main" \
+            "Rejected unverified Gerrit master" \
             "The submitted Gerrit tip does not match the integration-verified commit." "Failed" \
-            "Fetched exact Gerrit main" "Verified commit mismatch" "" "$fetched" "$revision"
+            "Fetched exact Gerrit master" "Verified commit mismatch" "" "$fetched" "$revision"
         return 1
     }
     [[ "$(git -C "$work" remote get-url origin)" == */"$GERRIT_INTEGRATION_PROJECT" ]] || {

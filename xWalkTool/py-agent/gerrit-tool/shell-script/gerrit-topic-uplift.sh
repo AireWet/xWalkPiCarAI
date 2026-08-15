@@ -3,7 +3,7 @@ set -Eeuo pipefail
 umask 077
 
 script_dir="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)"
-# shellcheck source=xWalkTool/py-agent/gerrit-tool/shell-script/xwalk-gerrit-common.sh
+# shellcheck source=xwalk-gerrit-common.sh
 source "$script_dir/xwalk-gerrit-common.sh"
 
 usage()
@@ -75,9 +75,9 @@ apply()
         commit="${commits[$index]}"
         change="${changes[$index]}"
         old_commit="$(git -C "$work/xWalk-rpi5/$component_path" rev-parse HEAD)"
-        git -C "$work/xWalk-rpi5/$component_path" fetch --quiet origin main
-        git -C "$work/xWalk-rpi5/$component_path" merge-base --is-ancestor "$commit" origin/main || {
-            echo "$repository commit is not reachable from origin/main" >&2
+        git -C "$work/xWalk-rpi5/$component_path" fetch --quiet origin master
+        git -C "$work/xWalk-rpi5/$component_path" merge-base --is-ancestor "$commit" origin/master || {
+            echo "$repository commit is not reachable from origin/master" >&2
             return 1
         }
         git -C "$work/xWalk-rpi5/$component_path" checkout --quiet --detach "$commit"
@@ -87,7 +87,7 @@ apply()
         xwalk_log "uplift-topic-submodule" "uplift" "$repository" "xWalk-rpi5/$component_path" \
             "$old_commit" "$commit" "Updated coordinated topic gitlink" \
             "Related change $change belongs to Gerrit topic $topic." "Applied" \
-            "Submitted commit is reachable from component main" "" "$change" "$old_commit" "$commit"
+            "Submitted commit is reachable from component master" "" "$change" "$old_commit" "$commit"
     done
     changed="$(git -C "$work/xWalk-rpi5" diff --cached --name-only | sort)"
     [[ "$(wc -l <<< "$changed")" -eq "${#repositories[@]}" ]] || {
@@ -107,9 +107,9 @@ apply()
         "not-run" "passed" "Validated coordinated topic uplift" \
         "All changes in Gerrit topic $topic were tested together." "Verified" \
         "Configure, build, CTest and host-safe diagnostic passed"
-    git -C "$work/xWalk-rpi5" push origin HEAD:refs/for/main%topic=component-uplift
+    git -C "$work/xWalk-rpi5" push origin HEAD:refs/for/master%topic=component-uplift
     xwalk_log "upload-topic-uplift-review" "uplift" "xWalk-rpi5" \
-        "refs/for/main%topic=component-uplift" "not-uploaded" "uploaded" \
+        "refs/for/master%topic=component-uplift" "not-uploaded" "uploaded" \
         "Uploaded coordinated topic uplift" \
         "One integration review records every related component gitlink." "Applied" \
         "Gerrit accepted the exact review refspec"

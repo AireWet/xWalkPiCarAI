@@ -23,6 +23,10 @@ class XWalkGerritHostQualityGraphTest(unittest.TestCase):
 
         cls.repository = Path(__file__).parents[4]
         workflow_path = cls.repository / ".github/workflows/host-quality.yml"
+        if not workflow_path.is_file():
+            raise unittest.SkipTest(
+                "GitHub integration workflow is not present in the standalone xWalkTool repository"
+            )
         cls.workflow = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))
         cls.jobs = cls.workflow["jobs"]
 

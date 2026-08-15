@@ -3,7 +3,7 @@ set -Eeuo pipefail
 umask 077
 
 script_dir="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)"
-# shellcheck source=xWalkTool/py-agent/gerrit-tool/shell-script/xwalk-gerrit-common.sh
+# shellcheck source=xwalk-gerrit-common.sh
 source "$script_dir/xwalk-gerrit-common.sh"
 
 mode="${1:---dry-run}"
@@ -28,8 +28,8 @@ plan_component()
         "Every integration component must resolve only through Gerrit." \
         "$XWALK_STATUS" "$verification"
     xwalk_log "set-submodule-branch" "submodule" "xWalk-rpi5" ".gitmodules:$component:branch" \
-        "none" "main" "Record the maintenance branch" \
-        "Uplift discovery uses main while builds remain pinned to the gitlink." "$XWALK_STATUS" \
+        "none" "master" "Record the maintenance branch" \
+        "Uplift discovery uses master while builds remain pinned to the gitlink." "$XWALK_STATUS" \
         "$verification"
 }
 
@@ -41,7 +41,7 @@ apply_component()
     url="${GERRIT_BASE_URL%/}/$component"
     clone_url="ssh://$GERRIT_ADMIN_USERNAME@$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT/$component"
     git -C "$output" rm -r --quiet -- "$product_path"
-    git -C "$output" submodule add --force --name "$component" -b main "$clone_url" "$product_path"
+    git -C "$output" submodule add --force --name "$component" -b master "$clone_url" "$product_path"
     git -C "$output" config -f .gitmodules "submodule.$component.url" "$url"
     commit="$(git -C "$output/$product_path" rev-parse HEAD)"
     git -C "$output" add .gitmodules "$product_path"
@@ -54,8 +54,8 @@ apply_component()
         "The exact component repository remains hosted only by Gerrit." \
         "Applied" "git config -f .gitmodules read-back succeeded"
     xwalk_log "set-submodule-branch" "submodule" "xWalk-rpi5" ".gitmodules:$component:branch" \
-        "unset" "main" "Configured submodule maintenance branch" \
-        "Automated uplift checks target the component main branch." "Applied" \
+        "unset" "master" "Configured submodule maintenance branch" \
+        "Automated uplift checks target the component master branch." "Applied" \
         "git config -f .gitmodules read-back succeeded"
 }
 
@@ -111,13 +111,13 @@ main()
         "Reproducible integration requires exact commits and no component GitHub remotes." "Verified" \
         "Recursive initialization and remote policy checks succeeded"
     if [[ "${XWALK_CONFIRM_INTEGRATION_UPLOAD:-}" == "PUSH_XWALK_RPI5_TO_GERRIT" ]]; then
-        git -C "$output" push origin HEAD:refs/for/main
-        xwalk_log "upload-initial-integration" "migration" "xWalk-rpi5" "refs/for/main" \
+        git -C "$output" push origin HEAD:refs/for/master
+        xwalk_log "upload-initial-integration" "migration" "xWalk-rpi5" "refs/for/master" \
             "not-uploaded" "uploaded" "Uploaded initial integration review" \
             "The new product baseline must pass Gerrit review before submission." "Applied" \
             "Gerrit accepted the explicit review refspec"
     else
-        xwalk_log "upload-initial-integration" "migration" "xWalk-rpi5" "refs/for/main" \
+        xwalk_log "upload-initial-integration" "migration" "xWalk-rpi5" "refs/for/master" \
             "not-uploaded" "not-uploaded" "Skipped initial integration upload" \
             "Explicit remote-write confirmation was unavailable." "Skipped" \
             "Set XWALK_CONFIRM_INTEGRATION_UPLOAD=PUSH_XWALK_RPI5_TO_GERRIT"

@@ -2,7 +2,11 @@
 
 set -u
 
-repository_root="$(CDPATH='' cd -- "$(dirname -- "$0")/../../.." && pwd)"
+case "${1-}" in
+    "") repository_root="$(CDPATH='' cd -- "$(dirname -- "$0")/../../.." && pwd)" ;;
+    --tool-root) repository_root="$(CDPATH='' cd -- "$(dirname -- "$0")/../.." && pwd)" ;;
+    *) printf 'Usage: %s [--tool-root]\n' "$0" >&2; exit 2 ;;
+esac
 if ! command -v shellcheck >/dev/null 2>&1; then
     echo "SHELLCHECK: SKIPPED_MISSING_TOOL - shellcheck was not found"
     exit 2
@@ -19,7 +23,7 @@ find . \
     -path '*/third_party/*' -prune -o \
     -path '*/auto-gen/*' -prune -o \
     -type f -name '*.sh' -print0 |
-    xargs -0 -r shellcheck
+    xargs -0 -r shellcheck -x -P SCRIPTDIR
 status=$?
 if [ "$status" -ne 0 ]; then
     echo "SHELLCHECK: FAILED"

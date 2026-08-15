@@ -28,7 +28,7 @@ class XWalkGerritAclTest(unittest.TestCase):
 
         permissions = self.permissions("xWalkHal")
         self.assertIn(("refs/*", "read", "Anonymous Users", "ALLOW"), permissions)
-        self.assertIn(("refs/for/refs/heads/main", "push", "partners", "ALLOW"), permissions)
+        self.assertIn(("refs/for/refs/heads/master", "push", "partners", "ALLOW"), permissions)
 
     def test_private_repository_blocks_inherited_read(self) -> None:
         """Stop inherited read without denying explicitly allowed identities."""
@@ -55,19 +55,19 @@ class XWalkGerritAclTest(unittest.TestCase):
 
         permissions = self.permissions("xWalkIW")
         self.assertIn(("refs/*", "read", "partners", "ALLOW"), permissions)
-        self.assertNotIn(("refs/for/refs/heads/main", "push", "partners", "ALLOW"), permissions)
+        self.assertNotIn(("refs/for/refs/heads/master", "push", "partners", "ALLOW"), permissions)
 
     def test_ci_can_upload_only_integration_reviews(self) -> None:
         """Grant uplift upload to CI only in the private superproject."""
 
         integration = self.permissions("xWalk-rpi5")
         component = self.permissions("xWalkAgent")
-        permission = ("refs/for/refs/heads/main", "push", "ci", "ALLOW")
+        permission = ("refs/for/refs/heads/master", "push", "ci", "ALLOW")
         self.assertIn(permission, integration)
         self.assertNotIn(permission, component)
 
-    def test_migration_integration_uses_master_and_current_submit_requirements(self) -> None:
-        """Protect xWalkPiCarAI master with review, verification, and comment requirements."""
+    def test_all_code_repositories_use_master_and_current_submit_requirements(self) -> None:
+        """Protect every code repository with the standard branch and submit policy."""
 
         permissions = self.permissions("xWalkPiCarAI")
         self.assertIn(("refs/for/refs/heads/master", "push", "ci", "ALLOW"), permissions)
@@ -75,9 +75,15 @@ class XWalkGerritAclTest(unittest.TestCase):
         self.assertNotIn(("refs/heads/master", "label-Code-Review", "ci", "-2..+2"), permissions)
         self.assertNotIn(("refs/heads/*", "push", "owners", "ALLOW"), permissions)
         configured = config_text("", "xWalkPiCarAI", "owners", "partners", "ci", False)
+        self.assertIn('[label "Verified"]', configured)
         self.assertIn('submit-requirement "Code-Review"', configured)
         self.assertIn("label:Verified=MAX", configured)
         self.assertIn("-has:unresolved", configured)
+        component = config_text("", "xWalkHal", "owners", "partners", "ci", False)
+        self.assertIn('[label "Verified"]', component)
+        self.assertIn('submit-requirement "Code-Review"', component)
+        self.assertIn("label:Verified=MAX", component)
+        self.assertIn("-has:unresolved", component)
 
     def test_only_owners_can_push_project_access_configuration(self) -> None:
         """Permit the owner group to maintain reviewed repository ACLs."""
@@ -87,11 +93,24 @@ class XWalkGerritAclTest(unittest.TestCase):
         self.assertNotIn(("refs/meta/config", "push", "partners", "ALLOW"), permissions)
         self.assertNotIn(("refs/meta/config", "push", "ci", "ALLOW"), permissions)
 
-    def test_xwalk_tool_is_not_a_product_repository(self) -> None:
-        """Keep administration and migration tooling outside the product repository set."""
+    def test_only_owners_can_delete_obsolete_branch_references(self) -> None:
+        """Permit reviewed branch cleanup without granting deletion to partners or CI."""
 
-        with self.assertRaises(ValueError):
-            rules("xWalkTool", "owners", "partners", "ci", False)
+        permissions = self.permissions("xWalkHal")
+        self.assertIn(("refs/heads/*", "delete", "owners", "ALLOW"), permissions)
+        self.assertNotIn(("refs/heads/*", "delete", "partners", "ALLOW"), permissions)
+        self.assertNotIn(("refs/heads/*", "delete", "ci", "ALLOW"), permissions)
+
+    def test_xwalk_tool_is_a_private_reviewed_component(self) -> None:
+        """Review administration and quality tooling without exposing it to partners."""
+
+        permissions = self.permissions("xWalkTool")
+        self.assertIn(("refs/*", "read", "owners", "ALLOW"), permissions)
+        self.assertIn(("refs/*", "read", "ci", "ALLOW"), permissions)
+        self.assertIn(("refs/*", "read", "partners", "DENY"), permissions)
+        self.assertIn(
+            ("refs/heads/master", "label-Verified", "ci", "-1..+1"), permissions,
+        )
 
     def test_direct_documentation_push_defaults_off(self) -> None:
         """Require an explicit option before partners can bypass review."""
@@ -101,7 +120,7 @@ class XWalkGerritAclTest(unittest.TestCase):
             (rule.ref, rule.permission, rule.group, rule.value)
             for rule in rules("DevloperNote", "owners", "partners", "ci", True)
         }
-        direct = ("refs/heads/main", "push", "partners", "ALLOW")
+        direct = ("refs/heads/master", "push", "partners", "ALLOW")
         self.assertNotIn(direct, default)
         self.assertIn(direct, enabled)
 

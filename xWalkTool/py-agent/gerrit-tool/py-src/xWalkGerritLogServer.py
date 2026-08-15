@@ -83,6 +83,7 @@ class XWalkGerritLogServer:
         r"(?P<timestamp>[0-9]{8}T[0-9]{6}Z)\.log$"
     )
     RESULT_LINE = re.compile(r"^\[(PASSED|FAILED)\] (.+)$", re.MULTILINE)
+    JOB_IDENTIFIER = re.compile(r"^[a-z0-9][a-z0-9-]*$")
     MODULES = (
         ("preparation", "xWalk Preparation"),
         ("xwalk-agent", "xWalkAgent"),
@@ -124,7 +125,7 @@ class XWalkGerritLogServer:
     def job_url(self, change: int, patch_set: int, job: str) -> str:
         """Return the stable module-log URL for one known identifier."""
 
-        identifier = job if job in self.MODULE_NAMES else self.identifier_for_name(job)
+        identifier = job if self.JOB_IDENTIFIER.fullmatch(job) else self.identifier_for_name(job)
         if identifier is None:
             return self.dashboard_url(change, patch_set)
         return f"{self.dashboard_url(change, patch_set)}/jobs/{identifier}"
@@ -178,18 +179,30 @@ class XWalkGerritLogServer:
             return None
         jobs = []
         for raw_job in state["jobs"]:
-            if not isinstance(raw_job, dict) or raw_job.get("id") not in self.MODULE_NAMES:
+            if not isinstance(raw_job, dict):
+                continue
+            identifier = raw_job.get("id")
+            if not isinstance(identifier, str) or self.JOB_IDENTIFIER.fullmatch(identifier) is None:
                 continue
             job = dict(raw_job)
-            job["name"] = self.MODULE_NAMES[str(job["id"])]
-            job["log_link"] = str(job.get("log_link", f"jobs/{job['id']}"))
+            default_name = self.MODULE_NAMES.get(identifier, identifier)
+            job["name"] = str(job.get("name", default_name))
+            job["log_link"] = f"jobs/{identifier}"
             job["status"] = self.normalize_status(job.get("status"))
             checks = []
             for raw_check in job.get("checks", []):
-                if isinstance(raw_check, dict):
-                    item = dict(raw_check)
-                    item["status"] = self.normalize_status(item.get("status"))
-                    checks.append(item)
+                if not isinstance(raw_check, dict):
+                    continue
+                check_identifier = raw_check.get("id")
+                if (
+                    not isinstance(check_identifier, str)
+                    or self.JOB_IDENTIFIER.fullmatch(check_identifier) is None
+                ):
+                    continue
+                item = dict(raw_check)
+                item["name"] = str(item.get("name", check_identifier))
+                item["status"] = self.normalize_status(item.get("status"))
+                checks.append(item)
             job["checks"] = checks
             jobs.append(job)
         return {**state, "jobs": jobs} if jobs else None
@@ -250,7 +263,10 @@ class XWalkGerritLogServer:
         jobs = {job["id"]: job for job in state["jobs"]}
         preparation = jobs.get("preparation")
         gate = jobs.get("host-quality-gate")
-        modules = [jobs[identifier] for identifier, unused in self.MODULES[1:-1] if identifier in jobs]
+        modules = [
+            job for job in state["jobs"]
+            if job["id"] not in {"preparation", "host-quality-gate"}
+        ]
         preparation_html = self.graph_node(change, patch_set, preparation) if preparation else ""
         gate_html = self.graph_node(change, patch_set, gate) if gate else ""
         module_html = "".join(self.graph_node(change, patch_set, job) for job in modules)

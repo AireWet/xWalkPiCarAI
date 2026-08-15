@@ -3,7 +3,7 @@ set -Eeuo pipefail
 umask 077
 
 script_dir="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)"
-# shellcheck source=xWalkTool/py-agent/gerrit-tool/shell-script/xwalk-gerrit-common.sh
+# shellcheck source=xwalk-gerrit-common.sh
 source "$script_dir/xwalk-gerrit-common.sh"
 
 mode="${1:---dry-run}"
@@ -41,14 +41,18 @@ split_component()
 {
     local component="$1" component_path source_path after remote ref component_root
     component_path="$(xwalk_component_path "$component")"
-    source_path="xWalk-rpi5/$component_path"
+    if [[ "$component" == xWalkTool ]]; then
+        source_path=xWalkTool
+    else
+        source_path="xWalk-rpi5/$component_path"
+    fi
     local destination_root="${output_root:-[XWALK_SPLIT_OUTPUT_DIR]}"
     local destination="$destination_root/$component"
     component_root="$(git -C "$source_root/$source_path" rev-parse --show-toplevel)"
     printf '[%s] split %s at %s\n' "$XWALK_MODE" "$component" "$source_commit"
     if [[ "$XWALK_MODE" == "dry-run" ]]; then
         xwalk_log "split-history" "migration" "$component" "$source_path/" "$source_commit" \
-            "filtered-main" "Plan history-preserving component split" \
+            "filtered-master" "Plan history-preserving component split" \
             "Independent Gerrit review requires component-scoped history." "Planned" \
             "Fixed component allowlist and source commit validated" "" "" "$source_commit"
         xwalk_log "add-gerrit-remote" "migration" "$component" "remote:gerrit" "none" \
@@ -56,20 +60,20 @@ split_component()
             "Component repositories must never receive GitHub remotes." "Planned"
         case "$import_mode" in
             none)
-                xwalk_log "initial-import" "migration" "$component" "main" "not-pushed" \
+                xwalk_log "initial-import" "migration" "$component" "master" "not-pushed" \
                     "not-pushed" "Skip initial Gerrit push" \
                     "XWALK_IMPORT_MODE=none requires later authorization." "Skipped" \
                     "No remote write planned"
                 ;;
             review)
-                echo "[dry-run] git -C '$destination' push gerrit HEAD:refs/for/main"
-                xwalk_log "initial-import" "migration" "$component" "refs/for/main" \
+                echo "[dry-run] git -C '$destination' push gerrit HEAD:refs/for/master"
+                xwalk_log "initial-import" "migration" "$component" "refs/for/master" \
                     "not-pushed" "planned" "Plan review-based initial import" \
                     "The destination does not authorize direct branch bootstrap." "Planned"
                 ;;
             direct)
-                echo "[dry-run] git -C '$destination' push gerrit HEAD:refs/heads/main"
-                xwalk_log "initial-import" "migration" "$component" "refs/heads/main" \
+                echo "[dry-run] git -C '$destination' push gerrit HEAD:refs/heads/master"
+                xwalk_log "initial-import" "migration" "$component" "refs/heads/master" \
                     "not-pushed" "planned" "Plan administrator-authorized initial import" \
                     "An empty repository requires an explicitly authorized baseline." "Planned"
                 ;;
@@ -87,7 +91,7 @@ split_component()
         git -C "$destination" filter-repo --force --path "$source_path/" \
             --path-rename "$source_path/:"
     fi
-    git -C "$destination" branch -M main
+    git -C "$destination" branch -M master
     after="$(git -C "$destination" rev-parse HEAD)"
     xwalk_log "split-history" "migration" "$component" "$source_path/" "$source_commit" "$after" \
         "Split component history" "Independent Gerrit review requires component-scoped history." \
@@ -101,12 +105,12 @@ split_component()
         "git remote get-url gerrit succeeded"
     case "$import_mode" in
         none)
-            xwalk_log "initial-import" "migration" "$component" "main" "not-pushed" "not-pushed" \
+            xwalk_log "initial-import" "migration" "$component" "master" "not-pushed" "not-pushed" \
                 "Skipped initial Gerrit push" "XWALK_IMPORT_MODE=none requires later authorization." \
                 "Skipped" "Split repository retained locally"
             ;;
-        review) ref="refs/for/main" ;;
-        direct) ref="refs/heads/main" ;;
+        review) ref="refs/for/master" ;;
+        direct) ref="refs/heads/master" ;;
     esac
     case "$import_mode" in
         review|direct)
@@ -144,6 +148,11 @@ main()
         }
         split_component "$component"
     done
+    [[ -d "$source_root/xWalkTool" ]] || {
+        echo "Missing allowlisted component: xWalkTool" >&2
+        return 2
+    }
+    split_component xWalkTool
     [[ "$(git -C "$source_root" rev-parse HEAD)" == "$source_commit" ]] || {
         echo "Source repository changed during split" >&2
         return 1

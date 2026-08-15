@@ -42,6 +42,12 @@ def check(identifier: str, name: str, *arguments: str) -> XWalkCheckPlan:
     return XWalkCheckPlan(identifier, name, arguments)
 
 
+def command_check(identifier: str, name: str, *arguments: str) -> XWalkCheckPlan:
+    """Create one check that executes an explicit argv without the shared dispatcher."""
+
+    return check(identifier, name, "__command__", *arguments)
+
+
 PREPARATION = XWalkModulePlan(
     "preparation", "xWalk Preparation", (),
     (
@@ -141,6 +147,10 @@ class XWalkGerritQuality:
 
     def __init__(
         self, workspace: Path, log: TextIO, environment: dict[str, str] | None = None,
+        preparation: XWalkModulePlan = PREPARATION,
+        modules: tuple[XWalkModulePlan, ...] = MODULES,
+        gate: XWalkModulePlan = GATE,
+        name: str = "xWalk Host Quality",
     ) -> None:
         """Store checkout paths and initialize the structured result model."""
 
@@ -148,13 +158,16 @@ class XWalkGerritQuality:
         self.log = log
         self.environment = os.environ.copy() if environment is None else environment.copy()
         self.dispatcher = workspace / "xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh"
+        self.preparation = preparation
+        self.modules = modules
+        self.gate = gate
         self.lock = threading.Lock()
         log_name = getattr(log, "name", "")
         self.state_path = Path(log_name).with_suffix(".json") if log_name else None
-        self.plans = (PREPARATION, *MODULES, GATE)
+        self.plans = (self.preparation, *self.modules, self.gate)
         self.state = {
             "schema_version": 1,
-            "name": "xWalk Host Quality",
+            "name": name,
             "updated_at": self.timestamp(),
             "jobs": [self.initial_job(plan) for plan in self.plans],
         }
@@ -273,7 +286,11 @@ class XWalkGerritQuality:
         started = time.monotonic()
         with self.lock:
             self.update_status(state, "RUNNING")
-        command = [str(self.dispatcher), *plan.arguments]
+        command = (
+            list(plan.arguments[1:])
+            if plan.arguments and plan.arguments[0] == "__command__"
+            else [str(self.dispatcher), *plan.arguments]
+        )
         with tempfile.TemporaryFile(mode="w+", encoding="utf-8") as output:
             try:
                 result = subprocess.run(
@@ -389,10 +406,10 @@ class XWalkGerritQuality:
     def finalize_gate(self, module_results: dict[str, bool]) -> bool:
         """Set the final gate from every required module result."""
 
-        gate = self.job_state(GATE.identifier)
+        gate = self.job_state(self.gate.identifier)
         started = time.monotonic()
         self.update_status(gate, "RUNNING")
-        passed = all(module_results.get(identifier, False) for identifier in GATE.needs)
+        passed = all(module_results.get(identifier, False) for identifier in self.gate.needs)
         self.update_status(gate, "PASSED" if passed else "FAILED", started)
         return passed
 
@@ -407,15 +424,15 @@ class XWalkGerritQuality:
     def run_all(self) -> dict[str, bool]:
         """Run Preparation, resource-safe modules, and the aggregate gate."""
 
-        self.update_status(self.job_state(PREPARATION.identifier), "QUEUED")
-        preparation_passed = self.run_module(PREPARATION)
-        results = {PREPARATION.identifier: preparation_passed}
+        self.update_status(self.job_state(self.preparation.identifier), "QUEUED")
+        preparation_passed = self.run_module(self.preparation)
+        results = {self.preparation.identifier: preparation_passed}
         if not preparation_passed:
-            self.skip_modules(MODULES)
-            module_results = {plan.identifier: False for plan in MODULES}
+            self.skip_modules(self.modules)
+            module_results = {plan.identifier: False for plan in self.modules}
         else:
-            module_results = self.execute_modules(MODULES)
+            module_results = self.execute_modules(self.modules)
         results.update(module_results)
-        results[GATE.identifier] = self.finalize_gate(module_results)
+        results[self.gate.identifier] = self.finalize_gate(module_results)
         self.write_summary(results)
         return results

@@ -41,7 +41,7 @@ installation. At minimum, confirm:
 - administrator name, username, and email identify the intended owner;
 - the Gerrit download URL and SHA-256 identify the reviewed Gerrit release.
 
-The integrated multi-repository architecture uses `xWalk-rpi5` with `main`.
+The integrated multi-repository architecture uses `xWalk-rpi5` with `master`.
 The current monorepo deployment uses `xWalkPiCarAI` with `master`. Do not mix a
 project name with the other project's review branch.
 
@@ -176,7 +176,7 @@ export GERRIT_REVIEW_BRANCH="master"
 ```
 
 For an independent component or the integrated `xWalk-rpi5` repository, use its
-exact Gerrit project name and normally set `GERRIT_REVIEW_BRANCH=main`.
+exact Gerrit project name and normally set `GERRIT_REVIEW_BRANCH=master`.
 
 Confirm the expected local checkout before changing Git configuration:
 

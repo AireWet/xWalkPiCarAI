@@ -105,7 +105,7 @@ git clone ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalk-rpi5
 SSH Push for Review:
 
 ```bash
-git push ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalk-rpi5 HEAD:refs/for/main
+git push ssh://joxy@${GERRIT_SERVER_HOST}:${GERRIT_SSH_PORT}/xWalk-rpi5 HEAD:refs/for/master
 ```
 
 HTTP Fetch & Checkout:
@@ -129,13 +129,13 @@ git clone https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalk-rpi5
 HTTP Push for Review:
 
 ```bash
-git push https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalk-rpi5 HEAD:refs/for/main
+git push https://joxy@${GERRIT_SERVER_HOST}:${GERRIT_HTTPS_PORT}/xWalk-rpi5 HEAD:refs/for/master
 ```
 
 HTTP Git prompts for the individual local Gerrit password. Keep the trusted
 self-signed certificate enabled and never place the password in the URL. Both
 push commands create or update a Gerrit review and cannot bypass protected
-`main`.
+`master`.
 
 ## Access boundary
 

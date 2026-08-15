@@ -3,7 +3,7 @@ set -Eeuo pipefail
 umask 077
 
 script_dir="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)"
-# shellcheck source=xWalkTool/py-agent/gerrit-tool/shell-script/xwalk-gerrit-common.sh
+# shellcheck source=xwalk-gerrit-common.sh
 source "$script_dir/xwalk-gerrit-common.sh"
 
 usage()
@@ -22,7 +22,6 @@ source_topic="$6"
 xwalk_load_config
 xwalk_repository "$module"
 component_path="$(xwalk_component_path "$module")"
-[[ "$module" != xWalk-rpi5-sim ]] || { echo "xWalk-rpi5-sim is not integrated into xWalkPiCarAI" >&2; exit 2; }
 [[ "$source_commit" =~ ^[0-9a-fA-F]{40}$ ]] || { echo "Source commit must be a full ID" >&2; exit 2; }
 [[ "$source_change" =~ ^[1-9][0-9]*$ ]] || { echo "Source change must be numeric" >&2; exit 2; }
 [[ "$source_patchset" =~ ^[1-9][0-9]*$ ]] || { echo "Source patchset must be numeric" >&2; exit 2; }
@@ -53,7 +52,9 @@ plan()
 
 apply()
 {
-    local state marker work integration source target changed baseline latest commit push_output review_number
+    local state marker work integration source target target_relative gitlink_entry changed baseline latest commit
+    local message
+    local push_output review_number
     local push_succeeded=false push_attempt
     state="${XWALK_UPLIFT_STATE_DIR:-$HOME/.local/state/xwalk-gerrit/uplift}"
     mkdir -p "$state/events"
@@ -67,11 +68,12 @@ apply()
             "$change_id" "already-uploaded" "skipped" \
             "Duplicate merged-change event was already processed" "$integration_link"
         echo "Uplift already processed for $module change $source_reference"
+        echo "Uplift status: ALREADY_PROCESSED"
         return 0
     fi
 
     work="$(mktemp -d -t xwalk-uplift-XXXXXXXX)"
-    trap 'rm -rf -- "$work"' EXIT
+    trap 'rm -rf -- "$work"' RETURN
     integration="$work/integration"
     source="$work/source"
 
@@ -83,56 +85,81 @@ apply()
         return 1
     fi
     if ! xwalk_retry git clone --quiet --no-checkout "$module_remote" "$source" || \
-        ! xwalk_retry git -C "$source" fetch --quiet origin main; then
+        ! xwalk_retry git -C "$source" fetch --quiet origin master; then
         xwalk_changelog "$module" "fetch" "$source_reference" "$source_commit" \
             "$change_id" "unavailable" "failed" \
             "Could not fetch the source module after retries" "$integration_link"
         return 1
     fi
-    if ! git -C "$source" merge-base --is-ancestor "$source_commit" origin/main; then
+    if ! git -C "$source" merge-base --is-ancestor "$source_commit" origin/master; then
         xwalk_changelog "$module" "fetch" "$source_reference" "$source_commit" \
             "$change_id" "unresolved" "failed" \
-            "Source commit is not reachable from the module main branch" "$integration_link"
+            "Source commit is not reachable from the module master branch" "$integration_link"
         return 1
     fi
     xwalk_changelog "$module" "fetch" "$source_reference" "$source_commit" \
         "$change_id" "$source_commit" "success" \
         "Fetched and resolved the exact merged source commit" "$integration_link"
 
-    target="$integration/$GERRIT_INTEGRATION_SOURCE_ROOT/$component_path"
-    [[ -d "$target" && ! -L "$target" ]] || {
-        xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
-            "$change_id" "missing-target" "failed" \
-            "Integrated module directory is missing or symbolic" "$integration_link"
-        return 1
-    }
-    git -C "$integration" rm --quiet -r -- "$GERRIT_INTEGRATION_SOURCE_ROOT/$component_path"
-    mkdir -p "$target"
-    git -C "$source" archive "$source_commit" | tar -x -C "$target"
-    git -C "$integration" add -- "$GERRIT_INTEGRATION_SOURCE_ROOT/$component_path"
+    if [[ "$module" == xWalk-rpi5-sim ]]; then
+        target_relative="xWalk-rpi5-py3"
+        if ! git -C "$integration" ls-files --error-unmatch "$target_relative" >/dev/null 2>&1; then
+            target_relative="xWalk-rpi5-sim"
+        fi
+        gitlink_entry="$(git -C "$integration" ls-files -s -- "$target_relative")"
+        [[ "${gitlink_entry%% *}" == 160000 ]] || {
+            xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
+                "$change_id" "missing-target" "failed" \
+                "Integrated Python component gitlink is missing" "$integration_link"
+            return 1
+        }
+        git -C "$integration" update-index --cacheinfo "160000,$source_commit,$target_relative"
+    else
+        if [[ "$module" == xWalkTool ]]; then
+            target_relative=xWalkTool
+        else
+            target_relative="$GERRIT_INTEGRATION_SOURCE_ROOT/$component_path"
+        fi
+        target="$integration/$target_relative"
+        [[ -d "$target" && ! -L "$target" ]] || {
+            xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
+                "$change_id" "missing-target" "failed" \
+                "Integrated module directory is missing or symbolic" "$integration_link"
+            return 1
+        }
+        git -C "$integration" rm --quiet -r -- "$target_relative"
+        mkdir -p "$target"
+        git -C "$source" archive "$source_commit" | tar -x -C "$target"
+        git -C "$integration" add -- "$target_relative"
+    fi
     changed="$(git -C "$integration" diff --cached --name-only)"
     if [[ -z "$changed" ]]; then
         : > "$marker"
         xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
             "$change_id" "already-integrated" "skipped" \
             "The exact source content is already present in the integrated branch" "$integration_link"
+        echo "Uplift status: ALREADY_INTEGRATED"
         return 0
     fi
-    if grep -Ev "^${GERRIT_INTEGRATION_SOURCE_ROOT}/${component_path}(/|$)" <<< "$changed" | grep -q .; then
+    if grep -Ev "^${target_relative}(/|$)" <<< "$changed" | grep -q .; then
         xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
             "$change_id" "invalid-diff" "failed" \
             "Uplift modified content outside the selected module" "$integration_link"
         return 1
     fi
 
-    git -C "$integration" -c user.name=xWalk-CI -c user.email=ci.invalid commit -s \
-        -m "Uplift $module to $source_commit" \
-        -m "Source-Repository: $module" \
-        -m "Source-Commit: $source_commit" \
-        -m "Source-Change: $source_change" \
-        -m "Source-Patchset: $source_patchset" \
-        -m "Source-Topic: ${source_topic:-none}" \
-        -m "Change-Id: $change_id"
+    message="$work/uplift-message.txt"
+    git -C "$source" show -s --format=%B "$source_commit" > "$message"
+    git interpret-trailers --in-place --if-exists replace --if-missing add \
+        --trailer "Source-Repository: $module" \
+        --trailer "Source-Commit: $source_commit" \
+        --trailer "Source-Change: $source_change" \
+        --trailer "Source-Patchset: $source_patchset" \
+        --trailer "Source-Topic: ${source_topic:-none}" \
+        --trailer "Change-Id: $change_id" \
+        "$message"
+    git -C "$integration" -c user.name=xWalk-CI -c user.email="$GERRIT_CI_EMAIL" \
+        commit -s -F "$message"
     commit="$(git -C "$integration" rev-parse HEAD)"
 
     git -C "$integration" diff --check HEAD^
@@ -169,6 +196,9 @@ apply()
     done
     if [[ "$push_succeeded" == true ]]; then
         review_number="$(grep -oE '/\+/[0-9]+' <<< "$push_output" | tail -1 | grep -oE '[0-9]+' || true)"
+        if [[ -n "$review_number" ]]; then
+            integration_link="${integration_web_url%/}/c/${GERRIT_INTEGRATION_PROJECT}/+/${review_number}"
+        fi
         : > "$marker"
         xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
             "${review_number:-$change_id}" "$commit" "success" \
@@ -176,6 +206,7 @@ apply()
             "$integration_link"
         printf 'Integrated Gerrit change: %s\n' "${review_number:-$change_id}"
         printf 'Integrated Gerrit URL: %s\n' "$integration_link"
+        printf 'Uplift status: REVIEW_CREATED\n'
         printf 'CI status: triggered by active patch-set upload\n'
         return 0
     fi
@@ -184,11 +215,19 @@ apply()
         xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
             "$change_id" "$commit" "skipped" \
             "Gerrit already contains the same uplift patch set" "$integration_link"
+        echo "Uplift status: REVIEW_EXISTS"
+        echo "Integrated Gerrit URL: $integration_link"
         return 0
     fi
+    push_reason="$(grep -Ei 'invalid (author|committer)|not registered|prohibited by Gerrit|permission denied|not permitted|missing Change-Id|change .* closed' \
+        <<< "$push_output" | tail -1 | sed -E 's/^[[:space:]]*(remote:[[:space:]]*)?//' || true)"
+    [[ -n "$push_reason" ]] || push_reason="Gerrit rejected the uplift review upload"
     xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
         "$change_id" "$commit" "failed" \
-        "Gerrit rejected the uplift review upload" "$integration_link"
+        "$push_reason" "$integration_link"
+    echo "Uplift status: FAILED"
+    echo "Uplift reason: $push_reason"
+    echo "Integrated Gerrit URL: $integration_link"
     return 1
 }
 

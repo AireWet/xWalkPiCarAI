@@ -120,7 +120,8 @@ uplift supplies the supported integrated-history analysis.
 
 ## Gerrit-to-GitHub correlation
 
-Only the submitted `xWalk-rpi5/main` integration commit is eligible for GitHub synchronization. Component repositories
+Only the submitted `xWalk-rpi5/master` integration commit is eligible for GitHub synchronization.
+Component repositories
 are never pushed independently. The worker first confirms that the submitted revision is the current patch set with
 the CI account's `Verified +1`, then performs a non-force fast-forward push to GitHub. Existing guards prevent a
 GitHub-to-Gerrit loop.

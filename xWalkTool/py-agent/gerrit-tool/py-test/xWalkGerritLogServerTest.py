@@ -84,6 +84,38 @@ class XWalkGerritLogServerTest(unittest.TestCase):
         self.assertIn('aria-label="Quality gate stage"', page)
         self.assertIn('href="/changes/9/2/jobs/xwalk-hal"', page)
 
+    def test_component_graph_renders_only_dynamic_selected_module(self) -> None:
+        """Render an arbitrary component node without adding unrelated product modules."""
+
+        state = self.state()
+        state["jobs"] = [
+            state["jobs"][0],
+            {
+                "id": "xwalk-rpi5-py3", "name": "xWalk PiCar-X Python",
+                "needs": ["preparation"], "log_link": "jobs/xwalk-rpi5-py3",
+                "status": "PASSED", "duration_seconds": 7.0,
+                "checks": [{
+                    "id": "tests", "name": "Mocked and simulator tests",
+                    "status": "PASSED", "duration_seconds": 0.2,
+                }],
+            },
+            {
+                **state["jobs"][-1],
+                "name": "xWalk Component Quality Gate",
+                "needs": ["xwalk-rpi5-py3"],
+            },
+        ]
+        page = self.render(state)
+
+        self.assertIn('href="/changes/9/2/jobs/xwalk-rpi5-py3"', page)
+        self.assertIn("xWalk PiCar-X Python", page)
+        self.assertIn("xWalk Component Quality Gate", page)
+        self.assertNotIn("xWalkAgent", page)
+        self.assertEqual(
+            self.log_server.job_url(9, 2, "xwalk-rpi5-py3"),
+            "http://ci.example:8091/changes/9/2/jobs/xwalk-rpi5-py3",
+        )
+
     def test_failed_module_and_gate_are_distinguishable(self) -> None:
         """Show failed text and styling without relying on colour alone."""
 

@@ -41,11 +41,11 @@ xWalk Preparation -> xWalkAgent      -> xWalk Host Quality Gate
                   -> MyPiCarX / Code Health ->
 ```
 
-Preparation runs first. The eleven independent module nodes then run with bounded parallelism. The xWalk Quality node
-runs its compiler, sanitizer, static-analysis, runtime-analysis, and coverage checks sequentially so incompatible
-instrumentation never shares one build. The gate passes only when every required node passes. A failed Preparation
-marks dependent modules `SKIPPED`; failed, cancelled, skipped, missing, or malformed results cannot produce a
-passing gate.
+Preparation runs first. The eleven independent module nodes then run with bounded parallelism. The xWalk Quality
+node runs its compiler, sanitizer, static-analysis, runtime-analysis, and coverage checks sequentially so
+incompatible instrumentation never shares one build. The gate passes only when every required node passes. A
+failed Preparation marks dependent modules `SKIPPED`; failed, cancelled, skipped, missing, or malformed results
+cannot produce a passing gate.
 
 The dashboard supports `WAITING`, `PENDING`, `QUEUED`, `RUNNING`, `PASSED`, `FAILED`, `SKIPPED`, `CANCELLED`, and
 `UNAVAILABLE`.
@@ -67,7 +67,7 @@ the main page.
 | xWalk Streaming | Loopback HTTP, MJPEG, limits, lifecycle, timeouts, slow clients, and backpressure |
 | xWalk Quality | Compiler builds, sanitizers, analysis, stress, fuzz, Valgrind, and coverage |
 | xWalk Deployment | Deployment/provisioning scripts, staged install, resources, linkage, permissions, checksums |
-| MyPiCarX / Code Health | Exact-revision CodeScene CLI delta when available, changed-file component mapping, and rollout policy |
+| MyPiCarX / Code Health | CodeScene delta, changed-file component mapping, and rollout policy |
 
 The xWalk Quality node keeps the graph module-oriented without reducing coverage. Every prior compiler, sanitizer,
 runtime-analysis, coverage, fuzz, stress, analyzer, and timeout selection remains in the shared dispatcher and is
@@ -91,13 +91,28 @@ reported as an individual test result on the node's detail page.
 
 ## Gerrit result calculation
 
-After checkout and any component standalone validation, the worker runs the complete module graph. It reports
-`Verified +1` only when Preparation, every product module, every quality group, Deployment, Code Health under its
-configured enforcement policy, and the final gate
-pass. Any checkout, standalone, module, or gate failure reports `Verified -1`. The worker posts the overall
-dashboard link when verification starts. After execution, it posts one uniquely tagged Gerrit change-log entry
-for Preparation and each module, then posts the Host Quality Gate as the single entry that carries the final
-`Verified` vote. By default it does not submit. When the guarded integrated
+Every component Gerrit repository has a separate component-only flow. The worker runs only the reviewed
+component's standalone checks. A component that needs sibling build dependencies retains a dependency-aware
+integration checkout, but the worker does not run the other module suites or the complete product graph.
+The retained state and dashboard use the same Preparation-to-module-to-gate model as the full integration flow,
+with exactly one component module node.
+
+The self-contained `xWalk-rpi5-sim` repository checks out only the locally named `xWalk-rpi5-py3` repository
+and runs device-free formatting, linting, typing, compilation, mocked tests, CLI checks, ShellCheck, and the
+simulator setup dry-run. It does not overlay the patch set onto `xWalkPiCarAI`, initialize SunFounder submodules,
+or run hardware tests.
+
+Submitting a verified component emits a merge event that invokes the automatic integration uplift. The Python
+component uplift changes only the `xWalk-rpi5-py3` gitlink in `xWalkPiCarAI`; it does not copy the Python source
+into the integration repository. The generated integration review runs the complete graph. Submission of that
+exact verified integration revision then invokes the guarded GitHub synchronization path.
+
+Integration reviews run the complete module graph. The worker reports `Verified +1` only when Preparation,
+every product module, every quality group, Deployment, Code Health under its configured enforcement policy,
+and the final gate pass. Any checkout, standalone, module, or gate failure reports `Verified -1`. The worker
+posts the overall dashboard link when verification starts. After execution, it posts one uniquely tagged Gerrit
+change-log entry for Preparation and each module, then posts the Host Quality Gate as the single entry that
+carries the final `Verified` vote. By default it does not submit. When the guarded integrated
 submit policy is enabled, it re-queries the current `xWalkPiCarAI` patch set and
 requests submission only after Gerrit's complete submit record is `OK`.
 

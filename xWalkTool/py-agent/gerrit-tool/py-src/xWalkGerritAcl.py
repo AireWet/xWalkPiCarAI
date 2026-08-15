@@ -13,11 +13,13 @@ import sys
 PUBLIC = {"DevloperNote", "xWalkHal", "xWalkLibrary", "xWalkTrace"}
 PARTNER_REVIEW = {"DevloperNote", "xWalkHal", "xWalkController", "xWalkLibrary", "xWalkTrace"}
 PARTNER_READ = PARTNER_REVIEW | {"xWalkIW", "xWalkAgent"}
-PRIVATE_PARTNER = {"xWalkAudioResources", "xWalk-rpi5-sim", "xWalk-rpi5", "xWalkPiCarAI"}
+PRIVATE_PARTNER = {
+    "xWalkAudioResources", "xWalkTool", "xWalk-rpi5-sim", "xWalk-rpi5", "xWalkPiCarAI",
+}
 REPOSITORIES = (
     "xWalk-Projects",
     "DevloperNote", "xWalkAgent", "xWalkAudioResources", "xWalkController", "xWalkHal",
-    "xWalkIW", "xWalkLibrary", "xWalkTrace", "xWalk-rpi5-sim", "xWalk-rpi5",
+    "xWalkIW", "xWalkLibrary", "xWalkTool", "xWalkTrace", "xWalk-rpi5-sim", "xWalk-rpi5",
     "xWalkPiCarAI",
 )
 
@@ -38,7 +40,7 @@ def rules(repository: str, owner: str, partner: str, ci: str, direct_devnote: bo
 
     if repository not in REPOSITORIES:
         raise ValueError(f"Repository is not allowlisted: {repository}")
-    branch = "master" if repository == "xWalkPiCarAI" else "main"
+    branch = "master"
     branch_ref = f"refs/heads/{branch}"
     review_ref = f"refs/for/{branch_ref}"
     result = [
@@ -66,6 +68,10 @@ def rules(repository: str, owner: str, partner: str, ci: str, direct_devnote: bo
         result.extend([
             Rule("refs/heads/*", "push", owner, "ALLOW", "Owners maintain protected branches."),
             Rule("refs/heads/*", "push", owner, "FORCE", "Only owners may perform authorized recovery."),
+            Rule(
+                "refs/heads/*", "delete", owner, "ALLOW",
+                "Only owners may delete a verified obsolete branch reference.",
+            ),
         ])
     if repository in PUBLIC:
         result.append(Rule(
@@ -88,7 +94,7 @@ def rules(repository: str, owner: str, partner: str, ci: str, direct_devnote: bo
         ])
         if direct_devnote:
             result.append(Rule(
-                "refs/heads/main", "push", partner, "ALLOW",
+                "refs/heads/master", "push", partner, "ALLOW",
                 "Explicit optional setting permits direct documentation push.",
             ))
     if repository in {"xWalk-rpi5", "xWalkPiCarAI"}:
@@ -109,7 +115,8 @@ def strip_managed_sections(content: str) -> str:
     """Remove managed ACL and submit sections while retaining unrelated settings."""
 
     sections = re.split(r"(?m)(?=^\[)", content)
-    managed_requirements = {
+    managed_sections = {
+        '[label "Verified"]',
         '[submit-requirement "Code-Review"]',
         '[submit-requirement "Verified"]',
         '[submit-requirement "No-Unresolved-Comments"]',
@@ -117,7 +124,7 @@ def strip_managed_sections(content: str) -> str:
     retained = [
         section for section in sections
         if not section.startswith('[access "')
-        and (not section.splitlines() or section.splitlines()[0] not in managed_requirements)
+        and (not section.splitlines() or section.splitlines()[0] not in managed_sections)
     ]
     return "".join(retained).rstrip() + "\n"
 
@@ -139,8 +146,15 @@ def config_text(existing: str, repository: str, owner: str, partner: str, ci: st
             action = "deny " if rule.value == "DENY" else "+force " if rule.value == "FORCE" else ""
             range_value = f"{rule.value} " if ".." in rule.value else ""
             output += f"\t{rule.permission} = {action}{range_value}group {rule.group}\n"
-    if repository == "xWalkPiCarAI":
+    if repository != "xWalk-Projects":
         output += (
+            '\n[label "Verified"]\n'
+            '\tfunction = NoBlock\n'
+            '\tdefaultValue = 0\n'
+            '\tvalue = -1 Fails\n'
+            '\tvalue = 0 No score\n'
+            '\tvalue = +1 Verified\n'
+            '\tcopyCondition = changekind:NO_CHANGE OR changekind:TRIVIAL_REBASE\n'
             '\n[submit-requirement "Code-Review"]\n'
             '\tdescription = Require an authorized reviewer on the current patch set\n'
             '\tsubmittableIf = label:Code-Review=MAX\n'

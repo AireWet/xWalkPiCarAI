@@ -3,7 +3,7 @@ set -Eeuo pipefail
 umask 077
 
 script_dir="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)"
-# shellcheck source=xWalkTool/py-agent/gerrit-tool/shell-script/xwalk-gerrit-common.sh
+# shellcheck source=xwalk-gerrit-common.sh
 source "$script_dir/xwalk-gerrit-common.sh"
 
 mode="${1:---dry-run}"
@@ -142,8 +142,8 @@ ensure_project()
             "Assign permission-only parent" "A common parent prevents unsafe All-Projects inheritance." "Planned"
         if [[ "$project" != "xWalk-Projects" ]]; then
             xwalk_log "set-default-branch" "Provisioning" "$project" "HEAD" "unknown" \
-                "refs/heads/main" "Configure main as default" \
-                "All module and integration workflows target main." "Planned"
+                "refs/heads/master" "Configure master as default" \
+                "All module and integration workflows target master." "Planned"
         fi
         if [[ -n "$description" ]]; then
             xwalk_log "set-description" "Provisioning" "$project" "description" "unknown" \
@@ -160,7 +160,7 @@ ensure_project()
         if [[ "$project" == "xWalk-Projects" ]]; then
             create_arguments+=(--permissions-only)
         else
-            create_arguments+=(--branch main --empty-commit)
+            create_arguments+=(--branch master --empty-commit)
         fi
         [[ -z "$description" ]] || create_arguments+=(--description "$description")
         create_arguments+=("$project")
@@ -204,17 +204,17 @@ ensure_project()
         return
     fi
     current_head="$(xwalk_ssh gerrit set-head "$project" 2>/dev/null || true)"
-    if [[ "$current_head" == *"refs/heads/main"* ]]; then
-        xwalk_log "set-default-branch" "Provisioning" "$project" "HEAD" "refs/heads/main" \
-            "refs/heads/main" "Preserved main as default" \
+    if [[ "$current_head" == *"refs/heads/master"* ]]; then
+        xwalk_log "set-default-branch" "Provisioning" "$project" "HEAD" "refs/heads/master" \
+            "refs/heads/master" "Preserved master as default" \
             "The repository already follows the integration branch standard." "Skipped" \
             "Gerrit HEAD lookup matched"
     else
-        xwalk_ssh gerrit set-head "$project" --new-head refs/heads/main || fail_log \
-            "set-default-branch" "Provisioning" "$project" "HEAD" "The architecture standardizes on main."
+        xwalk_ssh gerrit set-head "$project" --new-head refs/heads/master || fail_log \
+            "set-default-branch" "Provisioning" "$project" "HEAD" "The architecture standardizes on master."
         xwalk_log "set-default-branch" "Provisioning" "$project" "HEAD" "${current_head:-unknown}" \
-            "refs/heads/main" "Configured main as default" \
-            "The architecture standardizes module workflows on main." "Applied"
+            "refs/heads/master" "Configured master as default" \
+            "The architecture standardizes module workflows on master." "Applied"
     fi
 }
 

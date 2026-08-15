@@ -8,7 +8,7 @@ xwalk_config="${XWALK_GERRIT_MULTI_REPO_CONFIG:-$xwalk_root/config/multi-repo.co
 # shellcheck disable=SC2034 # These arrays are consumed by scripts that source this helper.
 xwalk_repositories=(
     DevloperNote xWalkAgent xWalkAudioResources xWalkController xWalkHal
-    xWalkIW xWalkLibrary xWalkTrace xWalk-rpi5-sim xWalk-rpi5
+    xWalkIW xWalkLibrary xWalkTool xWalkTrace xWalk-rpi5-sim xWalk-rpi5
     xWalkPiCarAI
 )
 # shellcheck disable=SC2034 # Consumed by scripts that source this helper.
@@ -26,6 +26,7 @@ xwalk_load_config()
     : "${GERRIT_SSH_PORT:=29418}"
     : "${GERRIT_ADMIN_USERNAME:?Set GERRIT_ADMIN_USERNAME}"
     : "${GERRIT_CI_USERNAME:=xwalk-ci}"
+    : "${GERRIT_CI_EMAIL:=${GERRIT_CI_USERNAME}@invalid}"
     : "${GERRIT_BASE_URL:=ssh://$GERRIT_SERVER_HOST:$GERRIT_SSH_PORT}"
     : "${GERRIT_OWNER_GROUP:=xWalk-Owners}"
     : "${GERRIT_PARTNER_GROUP:=xWalk-Partners}"
@@ -39,7 +40,7 @@ xwalk_load_config()
     : "${GERRIT_UPLIFT_RETRY_ATTEMPTS:=3}"
     : "${GERRIT_UPLIFT_RETRY_DELAY_SECONDS:=5}"
     : "${GITHUB_XWALK_RPI5_REMOTE:=}"
-    : "${GITHUB_XWALK_RPI5_BRANCH:=main}"
+    : "${GITHUB_XWALK_RPI5_BRANCH:=master}"
     : "${GITHUB_INTEGRATION_REMOTE:=$GITHUB_XWALK_RPI5_REMOTE}"
     : "${GITHUB_INTEGRATION_BRANCH:=$GERRIT_INTEGRATION_BRANCH}"
     : "${GITHUB_PUSH_ENABLED:=false}"
@@ -59,6 +60,10 @@ xwalk_load_config()
     }
     [[ "$GERRIT_CI_USERNAME" =~ ^[A-Za-z0-9._-]+$ ]] || {
         echo "GERRIT_CI_USERNAME contains unsupported characters" >&2
+        return 2
+    }
+    [[ "$GERRIT_CI_EMAIL" =~ ^[^[:space:]@]+@[^[:space:]@]+$ ]] || {
+        echo "GERRIT_CI_EMAIL is not a supported email address" >&2
         return 2
     }
     [[ "$GERRIT_BASE_URL" =~ ^(ssh|https?)://[^[:space:]]+$ ]] || {
@@ -130,7 +135,7 @@ xwalk_component_path()
 {
     case "$1" in
         DevloperNote) printf '%s\n' "devloper-note" ;;
-        xWalkAgent|xWalkAudioResources|xWalkController|xWalkHal|xWalkIW|xWalkLibrary|xWalkTrace|xWalk-rpi5-sim)
+        xWalkAgent|xWalkAudioResources|xWalkController|xWalkHal|xWalkIW|xWalkLibrary|xWalkTool|xWalkTrace|xWalk-rpi5-sim)
             printf '%s\n' "$1"
             ;;
         *)
@@ -232,10 +237,19 @@ xwalk_retry()
 xwalk_ssh()
 {
     local argument command=""
+    local -a identity_arguments=()
     for argument in "$@"; do
         printf -v argument '%q' "$argument"
         command+="${command:+ }$argument"
     done
+    if [[ -n "${GERRIT_OWNER_SSH_KEY:-}" ]]; then
+        [[ -f "$GERRIT_OWNER_SSH_KEY" ]] || {
+            echo "GERRIT_OWNER_SSH_KEY is not a regular file" >&2
+            return 2
+        }
+        identity_arguments=(-i "$GERRIT_OWNER_SSH_KEY")
+    fi
     ssh -o BatchMode=yes -o IdentitiesOnly=yes -p "$GERRIT_SSH_PORT" \
+        "${identity_arguments[@]}" \
         "$GERRIT_ADMIN_USERNAME@$GERRIT_SERVER_HOST" "$command"
 }

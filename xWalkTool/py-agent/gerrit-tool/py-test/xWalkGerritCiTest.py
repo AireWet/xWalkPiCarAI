@@ -15,7 +15,9 @@ sys.path.insert(0, str(pathlib.Path(__file__).parents[1] / "py-src"))
 
 from xWalkGerritCi import XWalkGerritCi
 from xWalkGerritLogServer import XWalkGerritLogServer
-from xWalkGerritQuality import GATE, MODULES, PREPARATION, XWalkGerritQuality
+from xWalkGerritQuality import (
+    GATE, MODULES, PREPARATION, XWalkGerritQuality, XWalkModulePlan, command_check,
+)
 
 
 class XWalkGerritCiTest(unittest.TestCase):
@@ -33,15 +35,16 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.ci.github_private_key = pathlib.Path("/github-key")
         self.ci.state_directory = pathlib.Path("/state")
         self.ci.project = "xWalk-rpi5"
-        self.ci.branch = "main"
+        self.ci.branch = "master"
         self.ci.verification_targets = {
-            ("xWalk-rpi5", "main"), ("xWalkPiCarAI", "master"),
+            ("xWalk-rpi5", "master"), ("xWalkPiCarAI", "master"),
+            ("xWalkTool", "master"), ("xWalk-rpi5-sim", "master"),
         }
         self.ci.github_remote = "git@github.com:example/xWalk-rpi5.git"
         self.ci.github_source_project = "xWalk-rpi5"
-        self.ci.github_source_branch = "main"
+        self.ci.github_source_branch = "master"
         self.ci.github_web_url = "https://github.com/example/xWalk-rpi5"
-        self.ci.github_branch = "main"
+        self.ci.github_branch = "master"
         self.ci.github_push_enabled = True
         self.ci.github_direct_push_owner_email = "owner@example.test"
         self.ci.uplift_enabled = False
@@ -61,7 +64,7 @@ class XWalkGerritCiTest(unittest.TestCase):
         change: dict[str, object] = {
             "number": 41,
             "project": "xWalk-rpi5",
-            "branch": "main",
+            "branch": "master",
         }
         if wip is not None:
             change["wip"] = wip
@@ -95,7 +98,7 @@ class XWalkGerritCiTest(unittest.TestCase):
 
         event = self.verification_event("patchset-created", False)
         event["change"] = {
-            "project": "xWalkPiCarAI", "branch": "main", "wip": False,
+            "project": "xWalkPiCarAI", "branch": "review", "wip": False,
         }
         self.assertFalse(self.ci.matching_verification_event(event))
 
@@ -103,17 +106,17 @@ class XWalkGerritCiTest(unittest.TestCase):
         """Always retain the primary project when extra targets are configured."""
 
         targets = self.ci.parse_verification_targets(
-            "xWalkPiCarAI:master", ("xWalk-rpi5", "main")
+            "xWalkPiCarAI:master", ("xWalk-rpi5", "master")
         )
         self.assertEqual(
-            targets, {("xWalk-rpi5", "main"), ("xWalkPiCarAI", "master")}
+            targets, {("xWalk-rpi5", "master"), ("xWalkPiCarAI", "master")}
         )
 
     def test_invalid_verification_target_is_rejected(self) -> None:
         """Reject ambiguous target entries before consuming Gerrit events."""
 
         with self.assertRaisesRegex(SystemExit, "project:branch"):
-            self.ci.parse_verification_targets("xWalkPiCarAI", ("xWalk-rpi5", "main"))
+            self.ci.parse_verification_targets("xWalkPiCarAI", ("xWalk-rpi5", "master"))
 
     def test_wip_patch_set_waits_for_activation(self) -> None:
         """Keep a WIP patch-set upload idle until its change becomes active."""
@@ -140,7 +143,7 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.assertFalse(self.ci.matching_verification_event(event))
 
     def test_exact_xwalk_rpi5_destination_is_allowed(self) -> None:
-        """Allow only the configured xWalk-rpi5 main synchronization."""
+        """Allow only the configured xWalk-rpi5 master synchronization."""
 
         self.assertTrue(self.ci.validate_github_destination())
 
@@ -159,15 +162,28 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.ci.github_remote = "git@github.com:example/xWalkHal.git"
         self.assertFalse(self.ci.validate_github_destination())
 
-    def test_xwalk_tool_is_not_a_ci_product_repository(self) -> None:
-        """Keep administration tooling out of component and integration CI selection."""
+    def test_xwalk_tool_is_a_verified_component_repository(self) -> None:
+        """Review tooling independently and uplift it into the integration repository."""
 
-        self.assertNotIn("xWalkTool", self.ci.repositories)
+        self.assertIn("xWalkTool", self.ci.repositories)
+        self.assertIn("xWalkTool", self.ci.component_repositories)
+        self.assertIn("xWalkTool", self.ci.direct_checkout_repositories)
 
     def test_simulation_component_is_a_verified_repository(self) -> None:
         """Accept Gerrit events for the Raspberry Pi 5 simulation component."""
 
         self.assertIn("xWalk-rpi5-sim", self.ci.repositories)
+        self.assertIn("xWalk-rpi5-sim", self.ci.component_repositories)
+        self.assertIn("xWalk-rpi5-sim", self.ci.direct_checkout_repositories)
+
+    def test_simulation_patch_set_triggers_isolated_verification(self) -> None:
+        """Select an active Python component patch set without the integration graph."""
+
+        event = self.verification_event("patchset-created", False)
+        event["change"] = {
+            "project": "xWalk-rpi5-sim", "branch": "master", "wip": False,
+        }
+        self.assertTrue(self.ci.matching_verification_event(event))
 
     def test_disabled_github_push_is_rejected(self) -> None:
         """Require the explicit GitHub synchronization enable switch."""
@@ -175,14 +191,14 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.ci.github_push_enabled = False
         self.assertFalse(self.ci.validate_github_destination())
 
-    def test_non_main_integration_branch_is_rejected(self) -> None:
-        """Reject any source branch other than xWalk-rpi5 main."""
+    def test_non_master_integration_branch_is_rejected(self) -> None:
+        """Reject any source branch other than xWalk-rpi5 master."""
 
         self.ci.github_source_branch = "review"
         self.assertFalse(self.ci.validate_github_destination())
 
-    def test_non_main_github_branch_is_rejected(self) -> None:
-        """Reject any GitHub target branch other than main."""
+    def test_non_master_github_branch_is_rejected(self) -> None:
+        """Reject any GitHub target branch other than master."""
 
         self.ci.github_branch = "review"
         self.assertFalse(self.ci.validate_github_destination())
@@ -232,9 +248,21 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.ci.uplift_enabled = True
         event = {
             "type": "change-merged",
-            "change": {"project": "xWalkHal", "branch": "main", "number": 152},
+            "change": {"project": "xWalkHal", "branch": "master", "number": 152},
             "patchSet": {"number": 4},
             "newRev": "0" * 40,
+        }
+        self.assertTrue(self.ci.matching_uplift_event(event))
+
+    def test_submitted_python_component_triggers_enabled_uplift(self) -> None:
+        """Turn a submitted Python component into an integration gitlink review."""
+
+        self.ci.uplift_enabled = True
+        event = {
+            "type": "change-merged",
+            "change": {"project": "xWalk-rpi5-sim", "branch": "master", "number": 86},
+            "patchSet": {"number": 1},
+            "newRev": "1" * 40,
         }
         self.assertTrue(self.ci.matching_uplift_event(event))
 
@@ -245,21 +273,57 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.ci.uplift_script = pathlib.Path("/tool/gerrit-auto-uplift.sh")
         event = {
             "type": "change-merged",
-            "change": {"project": "xWalkHal", "branch": "main", "number": 152},
+            "change": {"project": "xWalkHal", "branch": "master", "number": 152},
             "patchSet": {"number": 4},
             "newRev": "0" * 40,
         }
-        result = mock.Mock(returncode=0)
+        result = mock.Mock(
+            returncode=0,
+            stdout=(
+                "Integrated Gerrit change: 204\n"
+                "Integrated Gerrit URL: https://gerrit.example/c/xWalkPiCarAI/+/204\n"
+                "Uplift status: REVIEW_CREATED\n"
+            ),
+        )
         with mock.patch("xWalkGerritCi.subprocess.run", return_value=result), mock.patch.object(
             self.ci, "post_message", return_value=True
         ) as post:
             self.ci.uplift(event)
 
         self.assertIn("xWalk Integration Uplift\nStatus: PASSED", post.call_args.args[2])
+        self.assertIn("Uplift status: REVIEW_CREATED", post.call_args.args[2])
+        self.assertIn(
+            "Review: https://gerrit.example/c/xWalkPiCarAI/+/204",
+            post.call_args.args[2],
+        )
         self.assertEqual(
             post.call_args.args[3], "autogenerated:xwalk-ci:integration-uplift"
         )
         self.assertEqual(post.call_args.kwargs["notify"], "OWNER_REVIEWERS")
+
+    def test_failed_component_uplift_row_includes_rejection_reason(self) -> None:
+        """Expose a safe Gerrit rejection reason in the source change log."""
+
+        self.ci.uplift_script = pathlib.Path("/tool/gerrit-auto-uplift.sh")
+        event = {
+            "type": "change-merged",
+            "change": {"project": "xWalkHal", "branch": "master", "number": 152},
+            "patchSet": {"number": 4},
+            "newRev": "0" * 40,
+        }
+        result = mock.Mock(
+            returncode=1,
+            stdout="Uplift status: FAILED\nUplift reason: invalid committer\n",
+        )
+        with mock.patch("xWalkGerritCi.subprocess.run", return_value=result), mock.patch.object(
+            self.ci, "post_message", return_value=True
+        ) as post:
+            self.ci.uplift(event)
+
+        message = post.call_args.args[2]
+        self.assertIn("Status: FAILED", message)
+        self.assertIn("Uplift status: FAILED", message)
+        self.assertIn("Reason: invalid committer", message)
 
     def test_integration_project_never_uplifts_itself(self) -> None:
         """Keep xWalk-rpi5 submission on the guarded GitHub path."""
@@ -267,7 +331,7 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.ci.uplift_enabled = True
         event = {
             "type": "change-merged",
-            "change": {"project": "xWalk-rpi5", "branch": "main", "number": 153},
+            "change": {"project": "xWalk-rpi5", "branch": "master", "number": 153},
             "newRev": "1" * 40,
         }
         self.assertFalse(self.ci.matching_uplift_event(event))
@@ -320,7 +384,7 @@ class XWalkGerritCiTest(unittest.TestCase):
         event = {
             "type": "change-merged",
             "change": {
-                "project": "xWalk-rpi5", "branch": "main", "number": 153,
+                "project": "xWalk-rpi5", "branch": "master", "number": 153,
                 "owner": {"email": "owner@example.test"},
             },
             "patchSet": {"number": 2},
@@ -385,7 +449,7 @@ class XWalkGerritCiTest(unittest.TestCase):
         revision = "a" * 40
         change = {
             "project": "xWalk-rpi5",
-            "branch": "main",
+            "branch": "master",
             "number": 153,
             "status": "MERGED",
             "owner": {"email": "owner@example.test"},
@@ -417,6 +481,30 @@ class XWalkGerritCiTest(unittest.TestCase):
         )
         self.assertTrue(any("overlay-gerrit-component.sh" in command[0] for command in commands))
 
+    def test_xwalk_tool_checkout_fetches_only_its_patch_set(self) -> None:
+        """Fetch the independent tooling patch set without an integration overlay."""
+
+        commands = [
+            command for command, unused_environment in self.ci.checkout_commands(
+                "refs/changes/2", "xWalkTool"
+            )
+        ]
+        self.assertIn("/xWalkTool", commands[1][-1])
+        self.assertEqual(commands[2], ["git", "fetch", "origin", "refs/changes/2"])
+        self.assertFalse(any("overlay" in item for command in commands for item in command))
+
+    def test_python_component_checkout_fetches_only_its_patch_set(self) -> None:
+        """Fetch the Python component directly without integration source or overlays."""
+
+        self.ci.project = "xWalk-rpi5-sim"
+        commands = [
+            command for command, unused_environment in self.ci.checkout_commands("refs/changes/86")
+        ]
+        self.assertIn("/xWalk-rpi5-sim", commands[1][-1])
+        self.assertEqual(commands[2], ["git", "fetch", "origin", "refs/changes/86"])
+        self.assertFalse(any("xWalkPiCarAI" in item for command in commands for item in command))
+        self.assertFalse(any("overlay" in item for command in commands for item in command))
+
     def test_legacy_monorepository_checkout_fetches_its_patch_set_directly(self) -> None:
         """Run the full graph from the reviewed legacy monorepository revision."""
 
@@ -446,6 +534,85 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.assertEqual(commands[0][0:2], ["cmake", "--fresh"])
         self.assertIn("-DXWALK_STANDALONE_BUILD=ON", commands[0])
         self.assertEqual(commands[-1][0], "ctest")
+
+    def test_python_component_runs_only_device_free_standalone_checks(self) -> None:
+        """Select Python quality, mocked tests, and simulator checks without submodules."""
+
+        self.ci.project = "xWalk-rpi5-sim"
+        commands = self.ci.standalone_commands(pathlib.Path("/workspace"))
+        self.assertIn(
+            [".ci-venv/bin/python3", "-m", "pytest", "-m", "not hardware"], commands,
+        )
+        self.assertIn(
+            [
+                ".ci-venv/bin/python3", "-m", "xwalk_rpi5_py3.cli",
+                "run", "--backend", "sim",
+            ],
+            commands,
+        )
+        self.assertFalse(any(command[0] == "cmake" for command in commands))
+        self.assertFalse(any("submodule" in item for command in commands for item in command))
+
+    def test_xwalk_tool_component_runs_tool_owned_host_checks(self) -> None:
+        """Validate Python, review controls, shell, and formatting for tooling changes."""
+
+        commands = self.ci.standalone_commands(pathlib.Path("/workspace"), "xWalkTool")
+        self.assertEqual(commands[0][0:3], ["python3", "-m", "unittest"])
+        self.assertEqual(commands[1][0], "node")
+        self.assertIn("run-host-shellcheck.sh", commands[2][1])
+        self.assertEqual(commands[2][-1], "--tool-root")
+        self.assertEqual(commands[3][-2:], ["check", "."])
+
+    def test_isolated_component_runs_one_structured_quality_module(self) -> None:
+        """Publish the standard graph with only the selected Python component."""
+
+        self.ci.project = "xWalk-rpi5-sim"
+        with tempfile.TemporaryDirectory() as temporary:
+            root = pathlib.Path(temporary)
+            with (
+                mock.patch.object(self.ci, "run_command", return_value=True),
+                mock.patch("xWalkGerritCi.XWalkGerritQuality") as quality,
+            ):
+                quality.return_value.run_all.return_value = {
+                    "preparation": True,
+                    "xwalk-rpi5-py3": True,
+                    "host-quality-gate": True,
+                }
+                passed, results = self.ci.execute_verification(
+                    "refs/changes/86/86/2", root, root / "component.log",
+                )
+        self.assertTrue(passed)
+        self.assertEqual(
+            results,
+            {"preparation": True, "xwalk-rpi5-py3": True, "host-quality-gate": True},
+        )
+        selected_modules = quality.call_args.args[4]
+        self.assertEqual([module.identifier for module in selected_modules], ["xwalk-rpi5-py3"])
+
+    def test_dependency_aware_component_runs_one_structured_quality_module(self) -> None:
+        """Publish only one C++ component node after its dependency overlay."""
+
+        self.ci.project = "xWalkHal"
+        with tempfile.TemporaryDirectory() as temporary:
+            root = pathlib.Path(temporary)
+            with (
+                mock.patch.object(self.ci, "run_command", return_value=True),
+                mock.patch("xWalkGerritCi.XWalkGerritQuality") as quality,
+            ):
+                quality.return_value.run_all.return_value = {
+                    "preparation": True,
+                    "xwalk-hal": True,
+                    "host-quality-gate": True,
+                }
+                passed, results = self.ci.execute_verification(
+                    "refs/changes/85/85/2", root, root / "component.log",
+                )
+        self.assertTrue(passed)
+        self.assertEqual(
+            results, {"preparation": True, "xwalk-hal": True, "host-quality-gate": True},
+        )
+        selected_modules = quality.call_args.args[4]
+        self.assertEqual([module.identifier for module in selected_modules], ["xwalk-hal"])
 
     def test_github_sync_requires_ci_verified_revision(self) -> None:
         """Match the submitted commit and CI account's Verified +1 approval."""
@@ -572,6 +739,19 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.assertEqual(vote, -1)
         self.assertIn("clang-release", message)
 
+    def test_isolated_component_result_does_not_claim_complete_graph(self) -> None:
+        """Describe the component-only scope in its final Gerrit vote."""
+
+        vote, message = self.ci.verification_message(
+            86, 2, True, {"xWalk-rpi5-sim standalone": True},
+            "https://ci.example/86/2", pathlib.Path("component.log"),
+            "xWalk-rpi5-sim",
+        )
+        self.assertEqual(vote, 1)
+        self.assertIn("Component host verification passed", message)
+        self.assertIn("Only the reviewed component", message)
+        self.assertNotIn("Complete xWalk host quality gate", message)
+
     def test_missing_code_review_blocks_submission(self) -> None:
         """Never submit an uplift without an authorized Code-Review +2."""
 
@@ -662,7 +842,7 @@ class XWalkGerritCiTest(unittest.TestCase):
             with mock.patch.object(self.ci, "mirror_commands", return_value=[]), \
                     mock.patch.object(
                         self.ci, "command_output",
-                        side_effect=[revision, f"{'b' * 40}\trefs/heads/main"],
+                        side_effect=[revision, f"{'b' * 40}\trefs/heads/master"],
                     ), mock.patch.object(self.ci, "run_network_command", return_value=False):
                 mirrored, unused_branch = self.ci.execute_mirror(
                     revision, "", pathlib.Path(directory), log_path
@@ -676,12 +856,59 @@ class XWalkGerritCiTest(unittest.TestCase):
             pathlib.Path(__file__).parents[1] / "shell-script/gerrit-auto-uplift.sh"
         ).read_text(encoding="utf-8")
         self.assertIn("flock -x", script)
+        self.assertIn("trap 'rm -rf -- \"$work\"' RETURN", script)
         self.assertIn("Duplicate merged-change event was already processed", script)
         self.assertIn("uplift-${module}-${source_change}", script)
+        self.assertIn('git -C "$integration" update-index --cacheinfo', script)
+        self.assertIn("target_relative=xWalkTool", script)
+        self.assertNotIn("xWalk-rpi5-sim is not integrated", script)
+
+    def test_uplift_script_preserves_source_commit_message(self) -> None:
+        """Reuse source subject and body while replacing integration provenance."""
+
+        script = (
+            pathlib.Path(__file__).parents[1] / "shell-script/gerrit-auto-uplift.sh"
+        ).read_text(encoding="utf-8")
+        self.assertIn('show -s --format=%B "$source_commit"', script)
+        self.assertIn("git interpret-trailers --in-place", script)
+        self.assertIn('--trailer "Change-Id: $change_id"', script)
+        self.assertIn('commit -s -F "$message"', script)
+        self.assertNotIn('-m "Uplift $module to $source_commit"', script)
 
 
 class XWalkGerritQualityTest(unittest.TestCase):
     """Verify the structured, resource-safe Gerrit module graph."""
+
+    def test_custom_component_graph_runs_only_selected_explicit_commands(self) -> None:
+        """Reuse the dashboard lifecycle without dispatching unrelated product modules."""
+
+        preparation = XWalkModulePlan(
+            "preparation", "xWalk Preparation", (),
+            (command_check("prepare", "Prepare", sys.executable, "-c", "pass"),),
+        )
+        component = XWalkModulePlan(
+            "selected", "Selected Component", ("preparation",),
+            (command_check("tests", "Tests", sys.executable, "-c", "pass"),),
+        )
+        gate = XWalkModulePlan(
+            "host-quality-gate", "xWalk Component Quality Gate", ("selected",), (),
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            log_path = pathlib.Path(temporary) / "component.log"
+            with log_path.open("w", encoding="utf-8") as log:
+                results = XWalkGerritQuality(
+                    pathlib.Path(temporary), log, {}, preparation, (component,), gate,
+                    name="Component Quality",
+                ).run_all()
+            state = json.loads(log_path.with_suffix(".json").read_text(encoding="utf-8"))
+
+        self.assertEqual(
+            results, {"preparation": True, "selected": True, "host-quality-gate": True},
+        )
+        self.assertEqual(
+            [job["id"] for job in state["jobs"]],
+            ["preparation", "selected", "host-quality-gate"],
+        )
 
     def test_module_graph_has_stable_dependencies(self) -> None:
         """Use Preparation and every module as hard final-gate prerequisites."""
