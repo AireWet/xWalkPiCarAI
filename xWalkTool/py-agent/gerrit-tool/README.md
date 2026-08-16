@@ -107,13 +107,15 @@ changes and patch sets with an existing CI success or failure remain untouched.
 Existing per-change state markers and matching integration branch tips prevent
 duplicate work.
 
-The event-stream consumer never runs Host Quality inline. It immediately posts
-an `xWalk Host Quality verification queued` entry and dispatches the exact
-patch set to a bounded worker pool, so a complete integrated run cannot hide or
-block a newly uploaded component review. `GERRIT_CI_PATCHSET_WORKERS` controls
-the number of concurrent patch sets and defaults to `2`; accepted values are
-`1` through `4`. Duplicate events for the same repository, change, patch set,
-and revision are suppressed while that job is queued or running.
+The event-stream consumer never runs Host Quality inline. It dispatches the
+exact patch set to a bounded worker pool without adding a transient queue
+message to the Gerrit change log. Gerrit receives the start message only when
+the worker begins verification, followed by the module results and final vote.
+This keeps service recovery from duplicating queue messages. The service log
+records queue acceptance. `GERRIT_CI_PATCHSET_WORKERS` controls the number of
+concurrent patch sets and defaults to `2`; accepted values are `1` through `4`.
+Duplicate events for the same repository, change, patch set, and revision are
+suppressed while that job is queued or running.
 Complete integrated graphs additionally share one exclusive resource lock.
 Component checks can run beside an integrated graph, but a second integrated
 review remains queued until the first releases its build storage. Patch-set

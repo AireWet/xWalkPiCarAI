@@ -381,15 +381,15 @@ class XWalkGerritCiTest(unittest.TestCase):
 
         verify.assert_not_called()
 
-    def test_patch_set_dispatch_is_visible_and_non_blocking(self) -> None:
-        """Post queued state and submit work without running verification inline."""
+    def test_patch_set_dispatch_is_non_blocking_and_silent(self) -> None:
+        """Submit work without running inline or adding a queue comment."""
 
         event = self.verification_event("patchset-created", False)
         with mock.patch.object(self.ci, "post_message", return_value=True) as post:
             accepted = self.ci.dispatch_verification(event)
 
         self.assertTrue(accepted)
-        self.assertIn("verification queued", post.call_args.args[2])
+        post.assert_not_called()
         self.ci.verification_executor.submit.assert_called_once()
         self.assertEqual(len(self.ci.pending_verifications), 1)
 
