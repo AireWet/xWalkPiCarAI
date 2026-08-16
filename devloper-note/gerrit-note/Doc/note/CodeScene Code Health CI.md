@@ -100,6 +100,11 @@ CodeScene failed gate is also reported without blocking in rollout mode. Set `XW
 the CLI is licensed, available, and its baseline behavior is confirmed; then unavailable and failed gates return
 nonzero and block the existing Verified gate.
 
+The CLI's JSON output mode reports new findings only. A zero exit status with empty output therefore records a
+`PASSED` delta with no new findings. A nonzero empty response or nonempty malformed response remains `UNAVAILABLE`.
+Every completed CLI run retains a redacted `diagnostic.txt` containing its exit code and stdout/stderr byte counts,
+so operators can distinguish an empty successful delta from licensing, connectivity, and tool failures.
+
 Install the official CLI as the operating-system account that runs `gerrit-ci-control`; the official installer
 places the executable at `~/.local/bin/cs`. Store its personal access token only as `CS_ACCESS_TOKEN` in the
 mode-0600 `~/.xwalk-ci.env` file. For CodeScene Enterprise, also set `CS_ONPREM_URL` to the licensed server URL.
@@ -166,7 +171,7 @@ ctest --test-dir build-host/codescene-validation --output-on-failure --no-tests=
 | Incorrect GitHub commit | Compare `GITHUB_HEAD_SHA`, `GITHUB_SHA`, and the submitted Gerrit revision; reject any non-fast-forward synchronization. |
 | CLI executable unavailable | Install it for the CI OS account; the adapter also checks `~/.local/bin/cs`. |
 | CLI activation unavailable | Put `CS_ACCESS_TOKEN` and optional `CS_ONPREM_URL` only in the CI environment. |
-| Metadata-only change returns no JSON | The adapter passes when no changed file belongs to a configured architectural component; it does not invoke the CLI for `.gitmodules`-only changes. |
+| Empty result | Exit 0 passes as no findings; nonzero or malformed output remains unavailable. |
 | No analysis link | Local/offline CLI output may not supply a link; use the retained JSON and commit correlation instead of inventing a URL. |
 
 ## Rollback

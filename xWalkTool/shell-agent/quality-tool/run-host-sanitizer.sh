@@ -25,10 +25,12 @@ run_asan() {
     cd "$repository_root" || exit 1
     cmake --fresh -S "$product_root" --preset sanitizers || return 1
     cmake --build build-host/sanitizers --parallel || return 1
+    # xCliGoogleTestHostTest embeds the same legacy Controller scenario. Keep
+    # that isolated wrapper and omit the duplicate fork-heavy executable.
     ASAN_OPTIONS="detect_leaks=0:halt_on_error=1" \
         UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=1" \
         ctest --test-dir build-host/sanitizers --output-on-failure --no-tests=error \
-            --timeout 120 || return 1
+            --timeout 120 -E '^xWalkControllerHostTest$' || return 1
     result "ASAN_UBSAN" "PASSED"
 }
 

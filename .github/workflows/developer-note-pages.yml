@@ -24,22 +24,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-      - name: Configure the Gerrit component identity
+      - name: Validate the integrated repository metadata
         env:
-          GERRIT_KEY: ${{ secrets.GERRIT_SUBMODULE_SSH_KEY }}
-          GERRIT_KNOWN_HOSTS: ${{ secrets.GERRIT_SSH_KNOWN_HOSTS }}
-        run: |
-          umask 077
-          mkdir -p "$RUNNER_TEMP/xwalk-gerrit"
-          printf '%s' "$GERRIT_KEY" > "$RUNNER_TEMP/xwalk-gerrit/id_ed25519"
-          printf '%s\n' "$GERRIT_KNOWN_HOSTS" > "$RUNNER_TEMP/xwalk-gerrit/known_hosts"
-      - name: Check out the exact Gerrit documentation component
-        env:
-          GERRIT_SUBMODULE_SSH_KEY_FILE: ${{ runner.temp }}/xwalk-gerrit/id_ed25519
-          GERRIT_SSH_KNOWN_HOSTS_FILE: ${{ runner.temp }}/xwalk-gerrit/known_hosts
-          GERRIT_SUBMODULE_USERNAME: ${{ vars.GERRIT_SUBMODULE_USERNAME }}
-          GERRIT_SERVER_HOST: ${{ vars.GERRIT_SERVER_HOST }}
-          GERRIT_SSH_PORT: ${{ vars.GERRIT_SSH_PORT }}
+          XWALK_GITHUB_METADATA_ONLY: 'true'
         run: xWalkTool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
       - uses: actions/setup-python@v6
         with:
@@ -52,9 +39,6 @@ jobs:
       - uses: actions/upload-pages-artifact@v5
         with:
           path: build-devloper-note-wiki/github-site
-      - name: Remove temporary Gerrit credentials
-        if: always()
-        run: rm -f -- "$RUNNER_TEMP/xwalk-gerrit/id_ed25519" "$RUNNER_TEMP/xwalk-gerrit/known_hosts"
 
   deploy:
     needs: build
