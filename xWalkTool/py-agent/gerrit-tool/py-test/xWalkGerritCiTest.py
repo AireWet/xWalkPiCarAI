@@ -8,6 +8,7 @@ import json
 import pathlib
 import sys
 import tempfile
+import threading
 import unittest
 from unittest import mock
 
@@ -54,6 +55,11 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.ci.auto_review = False
         self.ci.retry_attempts = 1
         self.ci.retry_delay_seconds = 0
+        self.ci.patchset_workers = 2
+        self.ci.verification_executor = mock.Mock()
+        self.ci.verification_lock = threading.Lock()
+        self.ci.integration_verification_lock = threading.Lock()
+        self.ci.pending_verifications = set()
 
     @staticmethod
     def verification_event(
@@ -174,10 +180,9 @@ class XWalkGerritCiTest(unittest.TestCase):
 
         self.assertIn("xWalk-rpi5-sim", self.ci.repositories)
         self.assertIn("xWalk-rpi5-sim", self.ci.component_repositories)
-        self.assertIn("xWalk-rpi5-sim", self.ci.direct_checkout_repositories)
 
-    def test_simulation_patch_set_triggers_isolated_verification(self) -> None:
-        """Select an active Python component patch set without the integration graph."""
+    def test_simulation_patch_set_triggers_host_quality_verification(self) -> None:
+        """Select an active Python component patch set for the integration graph."""
 
         event = self.verification_event("patchset-created", False)
         event["change"] = {
@@ -265,6 +270,208 @@ class XWalkGerritCiTest(unittest.TestCase):
             "newRev": "1" * 40,
         }
         self.assertTrue(self.ci.matching_uplift_event(event))
+
+    def test_missed_component_uplifts_are_recovered_from_branch_tips(self) -> None:
+        """Replay every current component tip through the idempotent uplift worker."""
+
+        self.ci.user = "ci"
+        self.ci.host = "gerrit.example"
+        self.ci.port = "29418"
+        self.ci.private_key = pathlib.Path("/gerrit-key")
+        self.ci.state_directory = pathlib.Path("/state")
+        self.ci.uplift_enabled = True
+        self.ci.component_repositories = {"xWalkHal", "xWalk-rpi5-sim"}
+        revision = "1" * 40
+
+        def recovered_event(
+            recovered_revision: str, project: str, branch: str,
+        ) -> dict[str, object]:
+            return {
+                "type": "change-merged",
+                "change": {"project": project, "branch": branch, "number": 86},
+                "patchSet": {"number": 1},
+                "newRev": recovered_revision,
+            }
+
+        with mock.patch.object(
+            self.ci, "remote_branch_revision", return_value=revision
+        ) as remote, mock.patch.object(
+            self.ci, "submitted_change_event", side_effect=recovered_event
+        ) as query, mock.patch.object(self.ci, "uplift") as uplift:
+            self.ci.reconcile_component_uplifts()
+
+        self.assertEqual(remote.call_count, 2)
+        self.assertEqual(query.call_count, 2)
+        self.assertEqual(uplift.call_count, 2)
+
+    def test_disabled_component_uplift_skips_recovery_queries(self) -> None:
+        """Do not inspect component branches when automatic uplift is disabled."""
+
+        self.ci.uplift_enabled = False
+        with mock.patch.object(self.ci, "remote_branch_revision") as remote:
+            self.ci.reconcile_component_uplifts()
+
+        remote.assert_not_called()
+
+    def test_unavailable_component_tip_does_not_attempt_recovery(self) -> None:
+        """Continue safely when a component branch is temporarily unavailable."""
+
+        self.ci.component_repositories = {"xWalkHal"}
+        with mock.patch.object(
+            self.ci, "remote_branch_revision", return_value=""
+        ), mock.patch.object(self.ci, "submitted_change_event") as query, mock.patch.object(
+            self.ci, "uplift"
+        ) as uplift:
+            self.ci.reconcile_component_uplifts()
+
+        query.assert_not_called()
+        uplift.assert_not_called()
+
+    def test_missed_active_patch_set_is_recovered_on_startup(self) -> None:
+        """Verify an active current patch set that has no CI account vote."""
+
+        self.ci.verification_targets = {("xWalkPiCarAI", "master")}
+        change = {
+            "number": 121,
+            "project": "xWalkPiCarAI",
+            "branch": "master",
+            "status": "NEW",
+            "wip": False,
+            "currentPatchSet": {
+                "number": 7,
+                "revision": "2" * 40,
+                "ref": "refs/changes/21/121/7",
+                "approvals": [],
+            },
+        }
+        result = mock.Mock(returncode=0, stdout=f"{json.dumps(change)}\n")
+        with mock.patch.object(
+            self.ci, "run_ssh", return_value=result
+        ), mock.patch.object(self.ci, "dispatch_verification") as dispatch:
+            self.ci.reconcile_open_verifications()
+
+        dispatch.assert_called_once()
+        self.assertEqual(dispatch.call_args.args[0]["patchSet"]["number"], 7)
+
+    def test_ci_voted_patch_set_is_not_repeated_on_startup(self) -> None:
+        """Retain both successful and failed CI results without rerunning them."""
+
+        self.ci.verification_targets = {("xWalkPiCarAI", "master")}
+        change = {
+            "number": 121,
+            "project": "xWalkPiCarAI",
+            "branch": "master",
+            "status": "NEW",
+            "wip": False,
+            "currentPatchSet": {
+                "number": 7,
+                "revision": "2" * 40,
+                "ref": "refs/changes/21/121/7",
+                "approvals": [{
+                    "type": "Verified", "value": "-1",
+                    "by": {"username": "xwalk-ci"},
+                }],
+            },
+        }
+        result = mock.Mock(returncode=0, stdout=f"{json.dumps(change)}\n")
+        with mock.patch.object(
+            self.ci, "run_ssh", return_value=result
+        ), mock.patch.object(self.ci, "verify") as verify:
+            self.ci.reconcile_open_verifications()
+
+        verify.assert_not_called()
+
+    def test_patch_set_dispatch_is_visible_and_non_blocking(self) -> None:
+        """Post queued state and submit work without running verification inline."""
+
+        event = self.verification_event("patchset-created", False)
+        with mock.patch.object(self.ci, "post_message", return_value=True) as post:
+            accepted = self.ci.dispatch_verification(event)
+
+        self.assertTrue(accepted)
+        self.assertIn("verification queued", post.call_args.args[2])
+        self.ci.verification_executor.submit.assert_called_once()
+        self.assertEqual(len(self.ci.pending_verifications), 1)
+
+    def test_duplicate_patch_set_dispatch_is_suppressed(self) -> None:
+        """Keep a repeated Gerrit event from starting the same revision twice."""
+
+        event = self.verification_event("patchset-created", False)
+        with mock.patch.object(self.ci, "post_message", return_value=True):
+            first = self.ci.dispatch_verification(event)
+            second = self.ci.dispatch_verification(event)
+
+        self.assertTrue(first)
+        self.assertFalse(second)
+        self.ci.verification_executor.submit.assert_called_once()
+
+    def test_integrated_verification_uses_serial_resource_lock(self) -> None:
+        """Prevent two complete integrated graphs from exhausting host storage."""
+
+        event = self.verification_event("patchset-created", False)
+        key = self.ci.verification_key(event)
+        self.ci.pending_verifications.add(key)
+        lock = mock.MagicMock()
+        self.ci.integration_verification_lock = lock
+        with mock.patch.object(self.ci, "verify") as verify:
+            self.ci.execute_dispatched_verification(event, key)
+
+        lock.__enter__.assert_called_once()
+        verify.assert_called_once_with(event)
+        self.assertNotIn(key, self.ci.pending_verifications)
+
+    def test_component_verification_does_not_take_integration_lock(self) -> None:
+        """Allow module-scoped CI to run beside one complete integrated graph."""
+
+        event = self.verification_event("patchset-created", False)
+        event["change"]["project"] = "xWalk-rpi5-sim"
+        key = self.ci.verification_key(event)
+        lock = mock.MagicMock()
+        self.ci.integration_verification_lock = lock
+        with mock.patch.object(self.ci, "verify") as verify:
+            self.ci.execute_dispatched_verification(event, key)
+
+        lock.__enter__.assert_not_called()
+        verify.assert_called_once_with(event)
+
+    def test_interrupted_service_workspaces_are_removed(self) -> None:
+        """Delete only managed patch-set directories during service recovery."""
+
+        with tempfile.TemporaryDirectory() as temporary:
+            work_directory = pathlib.Path(temporary)
+            (work_directory / "change-121-8-old").mkdir()
+            retained = work_directory / "administrator-note"
+            retained.mkdir()
+            removed = self.ci.remove_interrupted_workspaces(work_directory)
+
+            self.assertEqual(removed, 1)
+            self.assertFalse((work_directory / "change-121-8-old").exists())
+            self.assertTrue(retained.is_dir())
+
+    def test_wip_patch_set_is_not_recovered_on_startup(self) -> None:
+        """Preserve the rule that WIP changes wait for Mark As Active."""
+
+        self.ci.verification_targets = {("xWalkPiCarAI", "master")}
+        change = {
+            "number": 121,
+            "project": "xWalkPiCarAI",
+            "branch": "master",
+            "status": "NEW",
+            "wip": True,
+            "currentPatchSet": {
+                "number": 7,
+                "revision": "2" * 40,
+                "ref": "refs/changes/21/121/7",
+                "approvals": [],
+            },
+        }
+        result = mock.Mock(returncode=0, stdout=f"{json.dumps(change)}\n")
+        with mock.patch.object(
+            self.ci, "run_ssh", return_value=result
+        ), mock.patch.object(self.ci, "verify") as verify:
+            self.ci.reconcile_open_verifications()
+
+        verify.assert_not_called()
 
     def test_component_uplift_posts_a_separate_change_log_row(self) -> None:
         """Report the integration upload independently from module verification."""
@@ -502,7 +709,6 @@ class XWalkGerritCiTest(unittest.TestCase):
         ]
         self.assertIn("/xWalk-rpi5-sim", commands[1][-1])
         self.assertEqual(commands[2], ["git", "fetch", "origin", "refs/changes/86"])
-        self.assertFalse(any("xWalkPiCarAI" in item for command in commands for item in command))
         self.assertFalse(any("overlay" in item for command in commands for item in command))
 
     def test_legacy_monorepository_checkout_fetches_its_patch_set_directly(self) -> None:
@@ -540,9 +746,9 @@ class XWalkGerritCiTest(unittest.TestCase):
 
         self.ci.project = "xWalk-rpi5-sim"
         commands = self.ci.standalone_commands(pathlib.Path("/workspace"))
-        self.assertIn(
-            [".ci-venv/bin/python3", "-m", "pytest", "-m", "not hardware"], commands,
-        )
+        self.assertTrue(any(command[0:3] == [
+            ".ci-venv/bin/python3", "-m", "pytest",
+        ] and "not hardware" in command for command in commands))
         self.assertIn(
             [
                 ".ci-venv/bin/python3", "-m", "xwalk_rpi5_py3.cli",
@@ -563,8 +769,27 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.assertEqual(commands[2][-1], "--tool-root")
         self.assertEqual(commands[3][-2:], ["check", "."])
 
-    def test_isolated_component_runs_one_structured_quality_module(self) -> None:
-        """Publish the standard graph with only the selected Python component."""
+    def test_developer_note_component_builds_and_verifies_the_wiki(self) -> None:
+        """Run shell validation and the strict, non-serving documentation build."""
+
+        commands = self.ci.standalone_commands(pathlib.Path("/workspace"), "DevloperNote")
+        self.assertEqual(commands[0][0:2], ["bash", "-n"])
+        self.assertEqual(commands[1][0], "shellcheck")
+        self.assertEqual(commands[2], ["/workspace/xWalkTool/doc-tool/wiki.sh", "verify"])
+
+    def test_developer_note_overlay_targets_the_integration_root(self) -> None:
+        """Overlay the documentation component at its configured top-level path."""
+
+        commands = [
+            command for command, unused_environment in self.ci.checkout_commands(
+                "refs/changes/3", "DevloperNote"
+            )
+        ]
+        overlay = next(command for command in commands if "overlay-gerrit-component.sh" in command[0])
+        self.assertEqual(overlay[-1], "devloper-note")
+
+    def test_python_component_runs_module_scoped_host_quality_graph(self) -> None:
+        """Run only the Python component node between preparation and its gate."""
 
         self.ci.project = "xWalk-rpi5-sim"
         with tempfile.TemporaryDirectory() as temporary:
@@ -584,13 +809,20 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.assertTrue(passed)
         self.assertEqual(
             results,
-            {"preparation": True, "xwalk-rpi5-py3": True, "host-quality-gate": True},
+            {
+                "preparation": True, "xwalk-rpi5-py3": True,
+                "host-quality-gate": True,
+            },
         )
         selected_modules = quality.call_args.args[4]
-        self.assertEqual([module.identifier for module in selected_modules], ["xwalk-rpi5-py3"])
+        self.assertEqual(
+            [module.identifier for module in selected_modules], ["xwalk-rpi5-py3"],
+        )
+        gate = quality.call_args.args[5]
+        self.assertEqual(gate.needs, ("xwalk-rpi5-py3",))
 
-    def test_dependency_aware_component_runs_one_structured_quality_module(self) -> None:
-        """Publish only one C++ component node after its dependency overlay."""
+    def test_cpp_component_runs_module_scoped_host_quality_graph(self) -> None:
+        """Run only the selected C++ node between preparation and its gate."""
 
         self.ci.project = "xWalkHal"
         with tempfile.TemporaryDirectory() as temporary:
@@ -609,7 +841,10 @@ class XWalkGerritCiTest(unittest.TestCase):
                 )
         self.assertTrue(passed)
         self.assertEqual(
-            results, {"preparation": True, "xwalk-hal": True, "host-quality-gate": True},
+            results, {
+                "preparation": True, "xwalk-hal": True,
+                "host-quality-gate": True,
+            },
         )
         selected_modules = quality.call_args.args[4]
         self.assertEqual([module.identifier for module in selected_modules], ["xwalk-hal"])
@@ -658,9 +893,14 @@ class XWalkGerritCiTest(unittest.TestCase):
         """Keep module results separate while reserving the gate for the Verified vote."""
 
         with tempfile.TemporaryDirectory() as directory:
-            log_path = pathlib.Path(directory) / "change-9-2-20260814T160000Z.log"
+            workspace = pathlib.Path(directory)
+            (workspace / "devloper-note").mkdir()
+            (workspace / "devloper-note/mkdocs.yml").touch()
+            (workspace / "xWalkTool/doc-tool").mkdir(parents=True)
+            (workspace / "xWalkTool/doc-tool/wiki.sh").touch()
+            log_path = workspace / "change-9-2-20260814T160000Z.log"
             with log_path.open("w", encoding="utf-8") as log:
-                XWalkGerritQuality(pathlib.Path(directory), log)
+                quality = XWalkGerritQuality(workspace, log)
             self.ci.log_server = XWalkGerritLogServer(
                 pathlib.Path(directory), "127.0.0.1", 0, "https://ci.example/ci",
             )
@@ -670,7 +910,7 @@ class XWalkGerritCiTest(unittest.TestCase):
                 )
 
         self.assertTrue(reported)
-        self.assertEqual(post.call_count, 1 + len(MODULES))
+        self.assertEqual(post.call_count, 1 + len(quality.modules))
         tags = [call.args[3] for call in post.call_args_list]
         self.assertEqual(len(tags), len(set(tags)))
         self.assertIn("autogenerated:xwalk-ci:xwalk-hal", tags)
@@ -707,7 +947,8 @@ class XWalkGerritCiTest(unittest.TestCase):
         event = self.verification_event("patchset-created", False)
         event["change"]["project"] = "xWalkHal"
         environment = self.ci.code_health_environment(event)
-        self.assertIn("integrated MyPiCarX", environment["XWALK_CODESCENE_UNAVAILABLE_REASON"])
+        self.assertIn("committed MyPiCarX", environment["XWALK_CODESCENE_UNAVAILABLE_REASON"])
+        self.assertIn("module-scoped Host Quality", environment["XWALK_CODESCENE_UNAVAILABLE_REASON"])
 
     def ready_change(self, revision: str = "a" * 40, patch_set: int = 2) -> dict[str, object]:
         """Return one current integrated change satisfying every submit requirement."""
@@ -739,8 +980,8 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.assertEqual(vote, -1)
         self.assertIn("clang-release", message)
 
-    def test_isolated_component_result_does_not_claim_complete_graph(self) -> None:
-        """Describe the component-only scope in its final Gerrit vote."""
+    def test_component_result_reports_module_scoped_graph(self) -> None:
+        """Describe the module-only Host Quality scope in the final Gerrit vote."""
 
         vote, message = self.ci.verification_message(
             86, 2, True, {"xWalk-rpi5-sim standalone": True},
@@ -748,8 +989,9 @@ class XWalkGerritCiTest(unittest.TestCase):
             "xWalk-rpi5-sim",
         )
         self.assertEqual(vote, 1)
-        self.assertIn("Component host verification passed", message)
-        self.assertIn("Only the reviewed component", message)
+        self.assertIn("Module-scoped xWalk Host Quality gate passed", message)
+        self.assertIn("Reviewed component: xWalk-rpi5-sim", message)
+        self.assertIn("Only module-owned checks", message)
         self.assertNotIn("Complete xWalk host quality gate", message)
 
     def test_missing_code_review_blocks_submission(self) -> None:
@@ -917,6 +1159,31 @@ class XWalkGerritQualityTest(unittest.TestCase):
         self.assertTrue(all(module.needs == ("preparation",) for module in MODULES))
         self.assertEqual(GATE.needs, tuple(module.identifier for module in MODULES))
 
+    def test_legacy_checkout_omits_unavailable_developer_note_job(self) -> None:
+        """Keep the installed graph compatible with a parent checkout that predates the wiki."""
+
+        with tempfile.TemporaryDirectory() as temporary:
+            quality = XWalkGerritQuality(pathlib.Path(temporary), io.StringIO())
+
+        identifiers = tuple(module.identifier for module in quality.modules)
+        self.assertNotIn("developer-note", identifiers)
+        self.assertEqual(quality.gate.needs, identifiers)
+
+    def test_wiki_checkout_requires_developer_note_job(self) -> None:
+        """Make documentation verification mandatory as soon as the reviewed checkout owns it."""
+
+        with tempfile.TemporaryDirectory() as temporary:
+            workspace = pathlib.Path(temporary)
+            (workspace / "devloper-note").mkdir()
+            (workspace / "devloper-note/mkdocs.yml").touch()
+            (workspace / "xWalkTool/doc-tool").mkdir(parents=True)
+            (workspace / "xWalkTool/doc-tool/wiki.sh").touch()
+            quality = XWalkGerritQuality(workspace, io.StringIO())
+
+        identifiers = tuple(module.identifier for module in quality.modules)
+        self.assertIn("developer-note", identifiers)
+        self.assertEqual(quality.gate.needs, identifiers)
+
     def test_preparation_runs_metadata_and_cpp_style_as_separate_checks(self) -> None:
         """Expose formatting failures independently from other preparation policy."""
 
@@ -1059,7 +1326,7 @@ class XWalkGerritQualityTest(unittest.TestCase):
             results = quality.run_all()
         self.assertFalse(results["preparation"])
         self.assertFalse(results["host-quality-gate"])
-        for module in MODULES:
+        for module in quality.modules:
             self.assertEqual(quality.job_state(module.identifier)["status"], "SKIPPED")
 
 if __name__ == "__main__":

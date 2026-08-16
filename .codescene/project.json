@@ -33,7 +33,7 @@
     },
     {
       "name": "Developer Documentation",
-      "patterns": ["xWalk-rpi5/devloper-note/**"]
+      "patterns": ["devloper-note/**"]
     }
   ],
   "exclusions": [

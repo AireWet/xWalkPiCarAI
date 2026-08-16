@@ -175,6 +175,10 @@ case "$job" in
         require_no_arguments "$@"
         xWalkTool/py-agent/dev-tool/styler-tool/xWalkStyler check
         ;;
+    developer-note-wiki)
+        require_no_arguments "$@"
+        xWalkTool/doc-tool/wiki.sh verify
+        ;;
     xwalk-agent-build) require_no_arguments "$@"; configure_module xwalk-agent ;;
     xwalk-agent-aggregate)
         require_no_arguments "$@"

@@ -138,12 +138,12 @@ if(XWALK_CLI_INSTALL_RUNTIME)
         "${CMAKE_CURRENT_SOURCE_DIR}/../xWalkAudioResources/README.md"
         DESTINATION "${CMAKE_INSTALL_DATADIR}/doc/xwalk/audio-resources")
     install(FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/../devloper-note/Doc/note/Deployment Guide.md"
-        "${CMAKE_CURRENT_SOURCE_DIR}/../devloper-note/Doc/note/Release Acceptance Checklist.md"
-        "${CMAKE_CURRENT_SOURCE_DIR}/../devloper-note/Doc/note/Host Production Readiness Work.md"
-        "${CMAKE_CURRENT_SOURCE_DIR}/../devloper-note/Doc/note/Language Model Provider Configuration.md"
-        "${CMAKE_CURRENT_SOURCE_DIR}/../devloper-note/Doc/note/License Key Workflow.md"
-        "${CMAKE_CURRENT_SOURCE_DIR}/../devloper-note/Doc/note/Installation.md"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../devloper-note/xwalk-rpi5-note/Doc/note/Deployment Guide.md"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../devloper-note/xwalk-rpi5-note/Doc/note/Release Acceptance Checklist.md"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../devloper-note/xwalk-rpi5-note/Doc/note/Host Production Readiness Work.md"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../devloper-note/xwalk-rpi5-note/Doc/note/Language Model Provider Configuration.md"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../devloper-note/xwalk-rpi5-note/Doc/note/License Key Workflow.md"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../devloper-note/xwalk-rpi5-note/Doc/note/Installation.md"
         DESTINATION "${CMAKE_INSTALL_DATADIR}/doc/xwalk")
     install(PROGRAMS
         "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/shell-agent/deploy-tool/setup-rpi.sh"

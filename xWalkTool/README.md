@@ -21,6 +21,11 @@ xWalkTool/
 │   └── quality/
 │       ├── README.md
 │       └── probes/
+├── doc-tool/
+│   ├── README.md
+│   ├── requirements-wiki.txt
+│   ├── verify_wiki.py
+│   └── wiki.sh
 ├── py-agent/
 │   ├── README.md
 │   ├── board-tool/
@@ -44,8 +49,7 @@ xWalkTool/
 │       ├── local-linux/
 │       ├── py-src/
 │       ├── py-test/
-│       ├── shell-script/
-│       └── DevloperNote/
+│       └── shell-script/
 └── shell-agent/
     ├── README.md
     ├── jira-tool/
@@ -92,21 +96,21 @@ workspace-root `LICENSE`; there is no separate `xWalkTool/LICENSE` file.
 
 ## Detailed guides
 
-- [xWalkTool overview](../xWalk-rpi5/devloper-note/Doc/note/xWalkTool%20Overview.md)
+- [xWalkTool overview](../devloper-note/xwalk-rpi5-note/Doc/note/xWalkTool%20Overview.md)
 - [C++ host quality](cpp-tool/quality/README.md)
 - [C++ fuzz testing](cpp-tool/fuzz/README.md)
 - [Jira history importer](py-agent/board-tool/README.md)
 - [Combined Gerrit server, CI, and review controls](py-agent/gerrit-tool/README.md)
-- [Clean build script](../xWalk-rpi5/devloper-note/Doc/note/Clean%20Build%20Script%20Guide.md)
-- [Host coverage script](../xWalk-rpi5/devloper-note/Doc/note/Host%20Coverage%20Script%20Guide.md)
-- [CMake dependencies](../xWalk-rpi5/devloper-note/Doc/note/Dependency%20Installer%20Guide.md)
-- [Dependency installer flags](../xWalk-rpi5/devloper-note/Doc/note/Dependency%20Installer%20Script%20Flags.md)
-- [Raspberry Pi setup script](../xWalk-rpi5/devloper-note/Doc/note/Raspberry%20Pi%20Setup%20Script%20Guide.md)
-- [Hardware provisioning script](../xWalk-rpi5/devloper-note/Doc/note/Hardware%20Provisioning%20Script%20Guide.md)
-- [Device Tree overlay assets](../xWalk-rpi5/devloper-note/Doc/note/Device%20Tree%20Overlay%20Assets%20Guide.md)
-- [Licence-key workflow](../xWalk-rpi5/devloper-note/Doc/note/License%20Key%20Workflow.md)
-- [xWalk licence tool](../xWalk-rpi5/devloper-note/Doc/note/xWalk%20Licence%20Tool%20Guide.md)
-- [xWalk environment loader](../xWalk-rpi5/devloper-note/Doc/note/xWalk%20Environment%20Loader%20Guide.md)
+- [Clean build script](../devloper-note/xwalk-rpi5-note/Doc/note/Clean%20Build%20Script%20Guide.md)
+- [Host coverage script](../devloper-note/xwalk-rpi5-note/Doc/note/Host%20Coverage%20Script%20Guide.md)
+- [CMake dependencies](../devloper-note/xwalk-rpi5-note/Doc/note/Dependency%20Installer%20Guide.md)
+- [Dependency flags](../devloper-note/xwalk-rpi5-note/Doc/note/Dependency%20Installer%20Script%20Flags.md)
+- [Raspberry Pi setup script](../devloper-note/xwalk-rpi5-note/Doc/note/Raspberry%20Pi%20Setup%20Script%20Guide.md)
+- [Hardware provisioner](../devloper-note/xwalk-rpi5-note/Doc/note/Hardware%20Provisioning%20Script%20Guide.md)
+- [Device Tree overlays](../devloper-note/xwalk-rpi5-note/Doc/note/Device%20Tree%20Overlay%20Assets%20Guide.md)
+- [Licence-key workflow](../devloper-note/xwalk-rpi5-note/Doc/note/License%20Key%20Workflow.md)
+- [xWalk licence tool](../devloper-note/xwalk-rpi5-note/Doc/note/xWalk%20Licence%20Tool%20Guide.md)
+- [xWalk environment loader](../devloper-note/xwalk-rpi5-note/Doc/note/xWalk%20Environment%20Loader%20Guide.md)
 - [Developer tools](py-agent/dev-tool/README.md)
 - [Python environment guidance](py-agent/README.md)
 - [Shell agent](shell-agent/README.md)
@@ -409,7 +413,7 @@ usable label and at least 28 lines, and replaces the configuration atomically. I
 claims GPIO, I2C, SPI, PWM, servo, or motor outputs.
 
 The Raspberry Pi deployment guide remains the authoritative end-to-end procedure:
-[Deployment Guide](../xWalk-rpi5/devloper-note/Doc/note/Deployment%20Guide.md).
+[Deployment Guide](../devloper-note/xwalk-rpi5-note/Doc/note/Deployment%20Guide.md).
 
 ## xWalkIW generator status
 

@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 import json
 import os
@@ -12,6 +13,7 @@ import shutil
 import signal
 import subprocess
 import tempfile
+import threading
 import time
 from typing import Any, TextIO
 
@@ -48,6 +50,10 @@ class XWalkGerritCi:
         self.configure_gerrit(home)
         self.configure_github(home)
         self.configure_storage(home)
+        self.verification_executor: ThreadPoolExecutor | None = None
+        self.verification_lock = threading.Lock()
+        self.integration_verification_lock = threading.Lock()
+        self.pending_verifications: set[tuple[str, int, int, str]] = set()
 
     def configure_gerrit(self, home: Path) -> None:
         """Load Gerrit endpoint, project, and identity settings."""
@@ -83,6 +89,7 @@ class XWalkGerritCi:
         ).expanduser()
         self.retry_attempts = int(os.environ.get("GERRIT_CI_RETRY_ATTEMPTS", "3"))
         self.retry_delay_seconds = int(os.environ.get("GERRIT_CI_RETRY_DELAY_SECONDS", "5"))
+        self.patchset_workers = int(os.environ.get("GERRIT_CI_PATCHSET_WORKERS", "2"))
         self.uplift_script = Path(
             os.environ.get(
                 "GERRIT_UPLIFT_SCRIPT",
@@ -150,8 +157,19 @@ class XWalkGerritCi:
         self.log_directory = Path(
             os.environ.get("XWALK_CI_LOG_DIRECTORY", str(home / "gerrit-ci" / "logs"))
         ).expanduser()
+        self.work_directory = Path(
+            os.environ.get("XWALK_CI_WORK_DIRECTORY", str(home / "gerrit-ci" / "work"))
+        ).expanduser()
         self.state_directory.mkdir(parents=True, exist_ok=True)
         self.log_directory.mkdir(parents=True, exist_ok=True)
+        self.work_directory.mkdir(parents=True, exist_ok=True)
+        self.work_directory.chmod(0o700)
+        recovered_workspaces = self.remove_interrupted_workspaces(self.work_directory)
+        if recovered_workspaces:
+            print(
+                f"Removed {recovered_workspaces} interrupted CI workspace(s)",
+                flush=True,
+            )
         self.changelog_path = Path(
             os.environ.get(
                 "XWALK_UPLIFT_CHANGELOG", str(self.state_directory / "uplift-changelog.jsonl")
@@ -171,6 +189,17 @@ class XWalkGerritCi:
             int(os.environ.get("XWALK_CI_LOG_HTTP_PORT", "8091")),
             os.environ.get("XWALK_CI_LOG_WEB_URL", "http://127.0.0.1:8091"),
         )
+
+    @staticmethod
+    def remove_interrupted_workspaces(work_directory: Path) -> int:
+        """Remove service-owned patch-set workspaces left by an interrupted process."""
+
+        removed = 0
+        for candidate in work_directory.iterdir():
+            if candidate.is_dir() and candidate.name.startswith("change-"):
+                shutil.rmtree(candidate)
+                removed += 1
+        return removed
 
     @staticmethod
     def validate_private_key(path: Path) -> None:
@@ -433,8 +462,8 @@ class XWalkGerritCi:
         results_url = self.log_server.dashboard_url(change, patch_set)
         if project not in self.integration_repositories:
             message = "\n".join([
-                "xWalk component verification started", f"Component: {project}",
-                "Only this component checkout and its standalone tests will run.",
+                "xWalk component Host Quality verification started", f"Component: {project}",
+                "Only the exact component patch set and its module-owned checks will run.",
                 f"Results and full log: {results_url}",
             ])
         else:
@@ -452,9 +481,11 @@ class XWalkGerritCi:
         """Build the isolated Gerrit patch-set checkout commands."""
 
         target_project = verification_project or self.project
-        project = target_project if target_project in (
-            self.integration_repositories | self.direct_checkout_repositories
-        ) else getattr(self, "integration_project", "xWalkPiCarAI")
+        direct_projects = self.integration_repositories | self.direct_checkout_repositories
+        project = (
+            target_project if target_project in direct_projects
+            else getattr(self, "integration_project", "xWalkPiCarAI")
+        )
         integration_branch = getattr(self, "integration_branch", "master")
         remote = f"ssh://{self.user}@{self.host}:{self.port}/{project}"
         commands: list[tuple[list[str], dict[str, str] | None]] = [
@@ -471,13 +502,13 @@ class XWalkGerritCi:
         ]
         if project != target_project:
             overlay = f".xwalk-overlay-{target_project}"
-            component_path = "devloper-note" if target_project == "DevloperNote" else target_project
             integration_path = (
-                "xWalkTool" if target_project == "xWalkTool"
-                else f"xWalk-rpi5/{component_path}"
+                "devloper-note" if target_project == "DevloperNote"
+                else f"xWalk-rpi5/{target_project}"
             )
             component_remote = f"ssh://{self.user}@{self.host}:{self.port}/{target_project}"
             commands.extend([
+                (["git", "submodule", "update", "--init", "--recursive"], self.git_environment()),
                 (["git", "init", "--quiet", overlay], None),
                 (["git", "-C", overlay, "remote", "add", "origin", component_remote], None),
                 (["git", "-C", overlay, "fetch", "origin", ref], self.git_environment()),
@@ -507,9 +538,9 @@ class XWalkGerritCi:
                 [python, "-m", "pip", "install", "-e", ".[dev]"],
                 [python, "-m", "ruff", "format", "--check", "."],
                 [python, "-m", "ruff", "check", "."],
-                [python, "-m", "mypy", "src"],
+                [python, "-m", "mypy", "--config-file", "pyproject.toml", "src"],
                 [python, "-m", "compileall", "src", "tests", "scripts"],
-                [python, "-m", "pytest", "-m", "not hardware"],
+                [python, "-m", "pytest", "-c", "pyproject.toml", "tests", "-m", "not hardware"],
                 [python, "-m", "xwalk_rpi5_py3.cli", "--help"],
                 [python, "-m", "xwalk_rpi5_py3.cli", "validate-config"],
                 [python, "-m", "xwalk_rpi5_py3.cli", "run", "--backend", "sim"],
@@ -521,6 +552,13 @@ class XWalkGerritCi:
                 ["shellcheck", "scripts/setup_robot_hat_audio.sh"],
                 ["scripts/setup_ubuntu_picarx.sh", "--dry-run"],
             ]
+        if target_project == "DevloperNote":
+            wiki = directory / "xWalkTool/doc-tool/wiki.sh"
+            return [
+                ["bash", "-n", str(wiki)],
+                ["shellcheck", str(wiki)],
+                [str(wiki), "verify"],
+            ]
         if target_project == "xWalkTool":
             return [
                 [
@@ -531,8 +569,7 @@ class XWalkGerritCi:
                 ["bash", "shell-agent/quality-tool/run-host-shellcheck.sh", "--tool-root"],
                 ["py-agent/dev-tool/styler-tool/xWalkStyler", "check", "."],
             ]
-        component_path = "devloper-note" if target_project == "DevloperNote" else target_project
-        module = directory / "xWalk-rpi5" / component_path
+        module = directory / "xWalk-rpi5" / target_project
         code_repositories = {
             "xWalkAgent", "xWalkController", "xWalkHal", "xWalkIW", "xWalkLibrary", "xWalkTrace",
         }
@@ -555,13 +592,13 @@ class XWalkGerritCi:
                 ["cmake", "--build", str(build), "--parallel"],
                 ["ctest", "--test-dir", str(build), "--output-on-failure", "--no-tests=error"],
             ]
-        return [["git", "-C", str(module), "diff", "--check", "HEAD^"]]
+        return [["git", "diff", "--check", "--", str(module.relative_to(directory))]]
 
     def component_quality(
         self, directory: Path, target_project: str, log: TextIO,
         environment: dict[str, str] | None,
     ) -> XWalkGerritQuality:
-        """Build the standard graph presentation for only one reviewed component."""
+        """Build one module-scoped Host Quality graph for a reviewed component."""
 
         commands = self.standalone_commands(directory, target_project)
         if target_project == "xWalk-rpi5-sim":
@@ -599,6 +636,12 @@ class XWalkGerritCi:
                     ("shellcheck", "Repository shell validation"),
                     ("format", "Repository formatting validation"),
                 )
+            elif target_project == "DevloperNote":
+                check_details = (
+                    ("syntax", "Wiki shell syntax"),
+                    ("shellcheck", "Wiki shell validation"),
+                    ("wiki", "Strict wiki build and artifact validation"),
+                )
             else:
                 check_details = (
                     (("validate", "Validate component changes"),)
@@ -619,13 +662,18 @@ class XWalkGerritCi:
         if len(check_details) != len(commands):
             raise RuntimeError(f"Missing structured check metadata for {target_project}")
 
-        preparation_command = ["git", "diff", "--check"]
         if target_project in self.direct_checkout_repositories:
-            preparation_command.append("HEAD^")
+            preparation_command = ["git", "diff", "--check", "HEAD^"]
+        else:
+            preparation_command = [
+                "git", "-C", f".xwalk-overlay-{target_project}",
+                "diff", "--check", "HEAD^",
+            ]
         preparation = XWalkModulePlan(
             "preparation", "xWalk Preparation", (),
             (command_check(
-                "patch", "Patch whitespace and checkout validation", *preparation_command,
+                "patch", "Reviewed patch whitespace validation",
+                *preparation_command,
             ),),
         )
         module = XWalkModulePlan(
@@ -636,11 +684,12 @@ class XWalkGerritCi:
             ),
         )
         gate = XWalkModulePlan(
-            "host-quality-gate", "xWalk Component Quality Gate", (module.identifier,), (),
+            "host-quality-gate", "xWalk Host Quality Gate",
+            (module.identifier,), (),
         )
         return XWalkGerritQuality(
             directory, log, environment, preparation, (module,), gate,
-            name=f"{target_project} Component Quality",
+            name=f"{target_project} Module Host Quality",
         )
 
     def execute_verification(
@@ -695,17 +744,10 @@ class XWalkGerritCi:
         }
         environment.pop("XWALK_CODESCENE_UNAVAILABLE_REASON", None)
         if project not in cls.integration_repositories:
-            if project in cls.direct_checkout_repositories:
-                reason = (
-                    "This component patch set uses isolated standalone verification; the installed "
-                    "CodeScene project analyses integrated MyPiCarX history after uplift."
-                )
-            else:
-                reason = (
-                    "This component patch set uses standalone verification from its dependency-aware "
-                    "integration checkout; the installed CodeScene project analyses integrated MyPiCarX "
-                    "history after uplift."
-                )
+            reason = (
+                "This component patch set uses module-scoped Host Quality; the installed CodeScene project "
+                "analyses committed MyPiCarX history after integration uplift."
+            )
             environment["XWALK_CODESCENE_UNAVAILABLE_REASON"] = reason
         return environment
 
@@ -769,20 +811,15 @@ class XWalkGerritCi:
     ) -> tuple[int, str]:
         """Build the final-gate Gerrit vote after separate module reports."""
 
-        if project is not None and project not in self.integration_repositories:
-            outcome = "passed" if passed else "failed"
-            vote = 1 if passed else -1
-            failed = ", ".join(name for name, value in results.items() if not value)
-            lines = [f"Component host verification {outcome}", f"Component: {project}"]
-            if failed:
-                lines.append(f"Failed checks: {failed}")
-            lines.extend([
-                "Only the reviewed component and its standalone checks were executed.",
-                f"Results and full log: {results_url}", f"Log: {log_path.name}",
-            ])
-            return vote, "\n".join(lines)
-
         if passed:
+            if project is not None and project not in self.integration_repositories:
+                return 1, "\n".join([
+                    "Module-scoped xWalk Host Quality gate passed",
+                    f"Reviewed component: {project}",
+                    f"Jobs: {len(results)}/{len(results)}",
+                    "Only module-owned checks were executed.",
+                    f"Results and full log: {results_url}", f"Log: {log_path.name}",
+                ])
             lines = [
                 "Complete xWalk host quality gate passed",
                 f"Jobs: {len(results)}/{len(results)}",
@@ -793,6 +830,12 @@ class XWalkGerritCi:
             ]
             return 1, "\n".join([*lines, *details])
         failed = ", ".join(name for name, value in results.items() if not value) or "checkout"
+        if project is not None and project not in self.integration_repositories:
+            return -1, "\n".join([
+                "Module-scoped xWalk Host Quality gate failed",
+                f"Reviewed component: {project}", f"Failed jobs: {failed}",
+                f"Results and full log: {results_url}", f"Log: {log_path.name}",
+            ])
         lines = ["Complete xWalk host quality gate failed", f"Failed jobs: {failed}"]
         details = [
             "Module results are listed separately in the change log.",
@@ -814,7 +857,9 @@ class XWalkGerritCi:
         results_url = self.announce_verification(change, patch_set, revision, project)
 
         temporary_directory = Path(
-            tempfile.mkdtemp(prefix=f"xwalk-gerrit-{change}-{patch_set}-")
+            tempfile.mkdtemp(
+                prefix=f"change-{change}-{patch_set}-", dir=self.work_directory
+            )
         )
         try:
             passed, quality_results = self.execute_verification(
@@ -849,6 +894,70 @@ class XWalkGerritCi:
         )
         if passed and reported and project == getattr(self, "integration_project", "xWalkPiCarAI"):
             self.submit_if_ready(event)
+
+    @staticmethod
+    def verification_key(event: dict[str, Any]) -> tuple[str, int, int, str]:
+        """Return the identity used to suppress duplicate patch-set jobs."""
+
+        return (
+            str(event["change"]["project"]),
+            int(event["change"]["number"]),
+            int(event["patchSet"]["number"]),
+            str(event["patchSet"]["revision"]),
+        )
+
+    def execute_dispatched_verification(
+        self, event: dict[str, Any], key: tuple[str, int, int, str],
+    ) -> None:
+        """Run one queued verification and always release its duplicate guard."""
+
+        try:
+            if key[0] in self.integration_repositories:
+                with self.integration_verification_lock:
+                    self.verify(event)
+            else:
+                self.verify(event)
+        except Exception as error:
+            print(
+                f"Verification worker failed for {key[0]} change {key[1]}, "
+                f"patch set {key[2]}: {error}",
+                flush=True,
+            )
+        finally:
+            with self.verification_lock:
+                self.pending_verifications.discard(key)
+
+    def dispatch_verification(self, event: dict[str, Any]) -> bool:
+        """Queue one patch set without blocking Gerrit's event-stream consumer."""
+
+        executor = self.verification_executor
+        if executor is None:
+            raise RuntimeError("Verification executor is not running")
+        key = self.verification_key(event)
+        with self.verification_lock:
+            if key in self.pending_verifications:
+                return False
+            self.pending_verifications.add(key)
+        message = "\n".join([
+            "xWalk Host Quality verification queued",
+            f"Repository: {key[0]}",
+            f"Patch set: {key[1]},{key[2]}",
+            "The bounded CI worker pool accepted this patch set.",
+        ])
+        self.post_message(
+            key[1], key[2], message, "autogenerated:xwalk-ci:queued"
+        )
+        try:
+            executor.submit(self.execute_dispatched_verification, event, key)
+        except RuntimeError:
+            with self.verification_lock:
+                self.pending_verifications.discard(key)
+            raise
+        print(
+            f"Queued verification for {key[0]} change {key[1]}, patch set {key[2]}",
+            flush=True,
+        )
+        return True
 
     def mirror_commands(
         self, revision: str,
@@ -1145,8 +1254,13 @@ class XWalkGerritCi:
         )
         return revision if valid_revision else ""
 
-    def submitted_change_event(self, revision: str) -> dict[str, Any] | None:
+    def submitted_change_event(
+        self, revision: str, project: str | None = None, branch: str | None = None,
+    ) -> dict[str, Any] | None:
         """Recover the merged-change event fields for one submitted branch revision."""
+
+        expected_project = project or self.github_source_project
+        expected_branch = branch or self.github_source_branch
 
         command = (
             "gerrit query --current-patch-set --format=JSON "
@@ -1163,8 +1277,8 @@ class XWalkGerritCi:
             patch_set = change.get("currentPatchSet", {})
             matches_revision = patch_set.get("revision") == revision
             matches_source = (
-                change.get("project") == self.github_source_project
-                and change.get("branch") == self.github_source_branch
+                change.get("project") == expected_project
+                and change.get("branch") == expected_branch
             )
             if (
                 change.get("status") == "MERGED"
@@ -1179,6 +1293,72 @@ class XWalkGerritCi:
                     "newRev": revision,
                 }
         return None
+
+    def reconcile_component_uplifts(self) -> None:
+        """Recover component uplifts when their live Gerrit merge events were missed."""
+
+        if not self.uplift_enabled:
+            return
+        environment = self.git_environment()
+        for project in sorted(self.component_repositories):
+            remote = f"ssh://{self.user}@{self.host}:{self.port}/{project}"
+            revision = self.remote_branch_revision(remote, "master", environment)
+            if not revision:
+                continue
+            event = self.submitted_change_event(revision, project, "master")
+            if event is None or not self.matching_uplift_event(event):
+                print(
+                    f"Component uplift recovery skipped for {project}: "
+                    "the Gerrit tip did not match the merged-component policy",
+                    flush=True,
+                )
+                continue
+            print(
+                f"Reconciling component uplift for {project} tip {revision}",
+                flush=True,
+            )
+            self.uplift(event)
+
+    def reconcile_open_verifications(self) -> None:
+        """Recover active current patch sets whose CI event was missed."""
+
+        for project, branch in sorted(self.verification_targets):
+            command = (
+                "gerrit query --current-patch-set --format=JSON "
+                f"status:open project:{project} branch:{branch}"
+            )
+            result = self.run_ssh(command, capture_output=True)
+            if result.returncode != 0:
+                continue
+            for line in (result.stdout or "").splitlines():
+                try:
+                    change = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                patch_set = change.get("currentPatchSet", {})
+                approvals = patch_set.get("approvals", [])
+                already_reported = any(
+                    approval.get("type") == "Verified"
+                    and approval.get("by", {}).get("username") == self.user
+                    for approval in approvals
+                )
+                event = {
+                    "type": "patchset-created",
+                    "change": change,
+                    "patchSet": patch_set,
+                }
+                if already_reported or not self.matching_verification_event(event):
+                    continue
+                if not all(
+                    key in patch_set for key in ("number", "revision", "ref")
+                ):
+                    continue
+                print(
+                    f"Recovering missed CI event for {project} change "
+                    f"{change.get('number')}, patch set {patch_set['number']}",
+                    flush=True,
+                )
+                self.dispatch_verification(event)
 
     def reconcile_github_uplift(self) -> None:
         """Recover a guarded GitHub uplift when its live Gerrit merge event was missed."""
@@ -1379,7 +1559,7 @@ class XWalkGerritCi:
                 continue
             event = json.loads(stripped)
             if self.matching_verification_event(event):
-                self.verify(event)
+                self.dispatch_verification(event)
             elif self.matching_uplift_event(event):
                 self.uplift(event)
             elif self.matching_submit_event(event):
@@ -1402,6 +1582,8 @@ class XWalkGerritCi:
             raise SystemExit(
                 "GERRIT_VERIFICATION_TARGETS contains an unsupported project or branch"
             )
+        if not 1 <= self.patchset_workers <= 4:
+            raise SystemExit("GERRIT_CI_PATCHSET_WORKERS must be between 1 and 4")
         if self.uplift_enabled and not self.uplift_script.is_file():
             raise SystemExit(f"Missing automatic uplift script: {self.uplift_script}")
         if self.auto_review and not self.auto_submit:
@@ -1416,13 +1598,19 @@ class XWalkGerritCi:
                     "GitHub synchronization requires an exact integrated-project destination"
                 )
             self.validate_private_key(self.github_private_key)
+        self.verification_executor = ThreadPoolExecutor(
+            max_workers=self.patchset_workers,
+            thread_name_prefix="xwalk-patchset",
+        )
         self.log_server.start()
         print(
             f"xWalk CI log dashboard listening at {self.log_server.public_url}",
             flush=True,
         )
         while True:
+            self.reconcile_component_uplifts()
             self.reconcile_github_uplift()
+            self.reconcile_open_verifications()
             self.consume_stream()
             print("Gerrit event stream closed; reconnecting in five seconds", flush=True)
             time.sleep(5)

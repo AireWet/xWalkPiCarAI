@@ -579,11 +579,14 @@ def copy_templates(
     docs_directory = selected_site / "docs"
     bin_directory.mkdir(parents=True, exist_ok=True)
     docs_directory.mkdir(parents=True, exist_ok=True)
-    note_directory = source_root / "DevloperNote" / "Doc" / "note"
+    note_directory = source_root.parents[2] / "devloper-note" / "gerrit-note" / "Doc" / "note"
     ci_config = source_root / "config" / "XWALK_CI_ENV.example"
     render_templates(source_root / "bin", bin_directory, replacements, 0o700)
     render_templates(note_directory, docs_directory, replacements, 0o600)
     render_file(ci_config, docs_directory / ci_config.name, replacements, 0o600)
+    systemd_directory = home / ".config" / "systemd" / "user"
+    systemd_directory.mkdir(parents=True, exist_ok=True)
+    render_templates(source_root / "systemd", systemd_directory, replacements, 0o600)
     copy_tool_assets(source_root, home, selected_site)
 
 

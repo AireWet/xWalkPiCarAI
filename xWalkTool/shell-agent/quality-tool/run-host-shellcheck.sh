@@ -21,6 +21,7 @@ find . \
     -path './xWalk-rpi5/xWalkLibrary/x86_64' -prune -o \
     -path './xWalk-rpi5/xWalkLibrary/aarch64' -prune -o \
     -path '*/third_party/*' -prune -o \
+    -path '*/vendor/*' -prune -o \
     -path '*/auto-gen/*' -prune -o \
     -type f -name '*.sh' -print0 |
     xargs -0 -r shellcheck -x -P SCRIPTDIR

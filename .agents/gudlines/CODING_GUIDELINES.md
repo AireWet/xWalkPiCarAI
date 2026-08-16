@@ -20,14 +20,14 @@ After implementation and host verification, commit the code locally and upload
 the commit only to Gerrit:
 
 ```bash
-git push origin HEAD:refs/for/main
+git push origin HEAD:refs/for/master
 ```
 
 Active patch-set uploads trigger Gerrit CI automatically. When verification
 must be deferred, upload the change as WIP:
 
 ```bash
-git push origin HEAD:refs/for/main%wip
+git push origin HEAD:refs/for/master%wip
 ```
 
 For a WIP change, use Gerrit's **Mark As Active** button as the Activate action.
@@ -36,11 +36,17 @@ active change into WIP does not trigger CI.
 
 Never push a component change to GitHub. GitHub contains only the configured
 integrated repository. During migration, `xWalkPiCarAI/master` is the active
-integration branch; the final target is `xWalk-rpi5/main`. A Gerrit change may
+integration branch; the final target is `xWalk-rpi5/master`. A Gerrit change may
 be submitted only after its current patch set satisfies the configured review
 and automatic verification requirements. The dedicated synchronization
 service may fast-forward only the exact submitted, approved, CI-verified
 integration revision to the matching GitHub branch.
+
+Every component Gerrit patch set must use a module-scoped Host Quality graph containing Preparation, only the
+reviewed component's checks, and the Host Quality Gate. Do not execute unrelated module suites in a component
+review. Dependency checkout may initialize exact pinned integration gitlinks needed by the selected component's
+standalone build, but that does not authorize their quality suites. Automatic CI must remain host-safe and must
+not select hardware-labelled tests.
 
 Every submitted component change must enter `xWalkPiCarAI/master` through a
 separate uplift review that replaces only the owning module source tree. The
@@ -115,13 +121,17 @@ xWalk-rpi5/.settings/                   Eclipse CDT project preferences
 xWalk-rpi5/eclipse-build.sh             Eclipse CDT host-build helper
 xWalk-rpi5/<component>/.project         independently importable Eclipse component loader
 xWalk-rpi5/<component>/.cproject        C/C++ component indexing configuration when applicable
-xWalk-rpi5/devloper-note/Doc/note/      C++ Markdown documentation mirroring upstream pages
-xWalk-rpi5/devloper-note/index.md       C++ architecture and module documentation index
+devloper-note/xwalk-rpi5-note/Doc/note/ C++ Markdown documentation mirroring upstream pages
+devloper-note/xwalk-rpi5-note/index.md  C++ architecture and module documentation index
+devloper-note/xwalk-rpi5-py3-note/      Python simulator and PiCar-X hardware documentation
+devloper-note/gerrit-note/              Gerrit administration and CI documentation
+devloper-note/mkdocs.yml                searchable developer-note wiki configuration
 Doc/image/                   hardware and project images referenced by documentation
-xWalkTool/                   external administration, migration, verification, and uplift tooling
+xWalkTool/                   independently reviewed Gerrit tooling component uplifted at the integration root
 xWalkTool/cpp-tool/          grouped C++ quality probes, fuzz harnesses, corpora, and documentation
 xWalkTool/cpp-tool/fuzz/     C++ fuzz harnesses and seed corpora
 xWalkTool/cpp-tool/quality/  host quality documentation and sanitizer availability probes
+xWalkTool/doc-tool/          developer-note wiki launch, verification, and dependency tooling
 xWalkTool/py-agent/          grouped Python development, board-integration, and Gerrit administration tooling
 xWalkTool/py-agent/board-tool/ host-only board tooling with the importer package under py-src/xWalkJiraImport
 xWalkTool/py-agent/dev-tool/ executable dependency, interface-generation, licence utilities, and host tests

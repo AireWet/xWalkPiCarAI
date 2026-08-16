@@ -32,9 +32,9 @@ provider credentials from the current user's protected `$HOME/.netrc`. The
 encrypted key and netrc file must have mode `0600`. The loader removes its
 temporary decrypted data and never prints credential values.
 
-See the [licence-key workflow](../../../xWalk-rpi5/devloper-note/Doc/note/License%20Key%20Workflow.md) and the
+See the [licence-key workflow](../../../devloper-note/xwalk-rpi5-note/Doc/note/License%20Key%20Workflow.md) and the
 environment-loader guide linked from the
-[documentation index](../../../xWalk-rpi5/devloper-note/index.md) before changing the template or loader.
+[documentation index](../../../devloper-note/xwalk-rpi5-note/index.md) before changing the template or loader.
 
 ## Quality configuration
 

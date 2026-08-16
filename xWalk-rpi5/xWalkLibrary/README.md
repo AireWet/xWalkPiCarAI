@@ -31,7 +31,7 @@ xWalk-rpi5/xWalkLibrary/
 `X_WALK_LICENSE.KEY` is the fixed versioned authenticated-encryption output for
 deployment environment values. It is data, never a compiler or linker input.
 The repository marker is not a usable licence until it is replaced through the
-[licence-key tool](../devloper-note/Doc/note/License%20Key%20Workflow.md).
+[licence-key tool](../../devloper-note/xwalk-rpi5-note/Doc/note/License%20Key%20Workflow.md).
 
 ## Trace ownership
 

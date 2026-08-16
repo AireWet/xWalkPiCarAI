@@ -1,7 +1,3 @@
-[submodule "devloper-note"]
-	path = devloper-note
-	url = ../DevloperNote
-	branch = master
 [submodule "xWalkAgent"]
 	path = xWalkAgent
 	url = ../xWalkAgent

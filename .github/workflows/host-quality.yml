@@ -218,6 +218,22 @@ jobs:
           name: staged-install-checksums
           path: build-host/deploy.sha256
 
+  developer-note:
+    name: Developer Documentation
+    needs: preparation
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Build and verify the searchable developer-note wiki
+        run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh developer-note-wiki
+      - uses: actions/upload-artifact@v6
+        with:
+          name: xwalk-developer-note-wiki
+          path: build-devloper-note-wiki/github-site
+
   codescene-code-health:
     name: MyPiCarX / Code Health
     needs: preparation
@@ -259,6 +275,7 @@ jobs:
       - xwalk-streaming
       - xwalk-quality
       - xwalk-deployment
+      - developer-note
       - codescene-code-health
     steps:
       - name: Verify all xWalk module results

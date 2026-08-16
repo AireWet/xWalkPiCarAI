@@ -51,6 +51,7 @@ validate_hierarchical_migration()
     local -A expected_top=(
         [xWalkTool]=1
         [xWalk-rpi5]=1
+        [devloper-note]=DevloperNote
     )
     [[ -f "$nested" ]] || {
         echo "Missing nested xWalk-rpi5/.gitmodules" >&2
@@ -85,12 +86,9 @@ validate_hierarchical_migration()
     done < <(git -C "$root" config -f .gitmodules --get-regexp '^submodule\..*\.path$' | awk '{print $2}')
 
     for component in "${components[@]}"; do
+        [[ "$component" != DevloperNote ]] || continue
         config_name="$component"
         expected_path="$component"
-        [[ "$component" != DevloperNote ]] || {
-            config_name=devloper-note
-            expected_path=devloper-note
-        }
         path="$(git config -f "$nested" --get "submodule.$config_name.path")"
         url="$(git config -f "$nested" --get "submodule.$config_name.url")"
         branch="$(git config -f "$nested" --get "submodule.$config_name.branch")"
@@ -115,14 +113,14 @@ validate_hierarchical_migration()
             exit 1
         }
     done
-    [[ "$(git config -f "$nested" --get-regexp '^submodule\..*\.path$' | wc -l)" -eq 8 ]] || {
-        echo "Expected eight nested xWalk-rpi5 component mappings" >&2
+    [[ "$(git config -f "$nested" --get-regexp '^submodule\..*\.path$' | wc -l)" -eq 7 ]] || {
+        echo "Expected seven nested xWalk-rpi5 component mappings" >&2
         exit 1
     }
     mode="$(git -C "$root" ls-files --stage -- "$simulation_path" | awk -v path="$simulation_path" \
         '$4 == path {print $1}')"
     [[ "$mode" == 160000 ]] || { echo "Missing $simulation_path gitlink" >&2; exit 1; }
-    echo "Validated hierarchical migration metadata and the Gerrit simulation gitlink"
+    echo "Validated root developer notes, hierarchical migration metadata, and the Gerrit simulation gitlink"
 }
 
 validate_gitlink_superproject()
@@ -156,7 +154,7 @@ validate_gitlink_superproject()
 submodule_count="$(git -C "$root" config -f .gitmodules --get-regexp '^submodule\..*\.path$' | wc -l)"
 case "$submodule_count" in
     1) validate_integrated_sources ;;
-    3) validate_hierarchical_migration ;;
+    4) validate_hierarchical_migration ;;
     9) validate_gitlink_superproject ;;
-    *) echo "Expected one legacy, three hierarchical, or nine direct submodule mappings" >&2; exit 1 ;;
+    *) echo "Expected one legacy, four hierarchical, or nine direct submodule mappings" >&2; exit 1 ;;
 esac

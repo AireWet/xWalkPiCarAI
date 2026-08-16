@@ -24,8 +24,11 @@ MyPiCarX/
 │   ├── xWalkIW/               Interface schemas and generated bindings
 │   ├── xWalkLibrary/          Shared libraries and external dependencies
 │   ├── xWalkTrace/            Shared tracing implementation
-│   ├── devloper-note/         Architecture, build, and deployment documentation
 │   └── cmake/                 Shared CMake modules and toolchains
+├── devloper-note/             Developer documentation components
+│   ├── gerrit-note/           Gerrit administration and CI documentation
+│   ├── xwalk-rpi5-note/       C++ architecture, build, and deployment documentation
+│   └── xwalk-rpi5-py3-note/   Python simulator and PiCar-X hardware documentation
 ├── xWalk-rpi5-py3/            Python 3 simulator and Raspberry Pi 5 PiCar-X hardware adapter
 └── xWalkTool/                 CI, Gerrit, deployment, quality, and maintenance tools
 ```
@@ -42,7 +45,7 @@ sudo apt-get update
 sudo apt-get install build-essential cmake ninja-build pkg-config python3 libasound2-dev libcurl4-openssl-dev libprotobuf-dev libgrpc++-dev libgtest-dev libjson-c-dev libtinyxml2-dev libyaml-cpp-dev
 ```
 
-See the [dependency guide](xWalk-rpi5/devloper-note/Doc/note/Dependency%20Installer%20Guide.md) for optional
+See the [dependency guide](devloper-note/xwalk-rpi5-note/Doc/note/Dependency%20Installer%20Guide.md) for optional
 quality tools, generators, Raspberry Pi packages, and dependency troubleshooting.
 
 ## Build the complete repository
@@ -96,7 +99,7 @@ sudo cmake --install build-host/release
 
 System installation does not authorize hardware tests or actuator operation. Raspberry Pi setup, permissions,
 services, configuration, and rollback are documented in the
-[deployment guide](xWalk-rpi5/devloper-note/Doc/note/Deployment%20Guide.md).
+[deployment guide](devloper-note/xwalk-rpi5-note/Doc/note/Deployment%20Guide.md).
 
 ## Raspberry Pi build
 
@@ -113,8 +116,11 @@ confirming the Raspberry Pi model, Robot HAT revision, wiring, power, clear move
 
 ## Additional documentation
 
-- [Documentation index](xWalk-rpi5/devloper-note/index.md)
-- [Build and installation guide](xWalk-rpi5/devloper-note/Doc/note/Installation.md)
+- [Open the published xWalk Developer Notes wiki](https://jochuuu.github.io/xWalkPiCarAI/)
+- [C++ documentation index](devloper-note/xwalk-rpi5-note/index.md)
+- [Python simulator and PiCar-X notes](devloper-note/xwalk-rpi5-py3-note/index.md)
+- [Build and open the developer-note wiki](devloper-note/README.md)
+- [Build and installation guide](devloper-note/xwalk-rpi5-note/Doc/note/Installation.md)
 - [Controller and CLI overview](xWalk-rpi5/xWalkController/README.md)
 - [Development and maintenance tools](xWalkTool/README.md)
 - [Repository instructions](AGENTS.md)
@@ -183,7 +189,7 @@ curl --fail --show-error --silent --cacert "$HOME/gerrit-site/etc/gerrit-self-si
 ```
 
 The worker configuration and least-privilege `xwalk-ci` SSH identity are administrator-owned. See the
-[Gerrit CI configuration guide](xWalkTool/py-agent/gerrit-tool/DevloperNote/Doc/note/Gerrit%20CI%20Configuration.md)
+[Gerrit CI configuration guide](devloper-note/gerrit-note/Doc/note/Gerrit%20CI%20Configuration.md)
 for installation, module mapping, dashboard routes, `Verified` calculation, and restart instructions. The retained
 `.zuul.yaml` is usable only if an administrator deliberately deploys Zuul; repository YAML does not install or
 activate Zuul, and two CI backends must never vote on the same project.
@@ -209,6 +215,7 @@ Run representative repository-owned checks locally before uploading:
 
 ```bash
 xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh preparation
+xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh developer-note-wiki
 xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh deployment-scripts
 xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh build-and-test gcc Debug
 ```

@@ -17,29 +17,44 @@ compliance unless a formal analysis has established it.
 
 ## Markdown documentation
 
-Keep cross-module documentation in `xWalk-rpi5/devloper-note` and module-specific behavior
+Keep cross-module documentation in `devloper-note/xwalk-rpi5-note` and module-specific behavior
 in the owning module README. Use this documentation layout:
 
 ```text
-xWalk-rpi5/devloper-note/
+devloper-note/xwalk-rpi5-note/
     Doc/
         note/                Markdown documentation pages
         image/               Referenced hardware and project images
 ```
 
+Keep Gerrit administration and CI documentation in `devloper-note/gerrit-note`.
+Keep Python simulator, PiCar-X hardware-adapter, setup, command, calibration,
+diagnostic, commissioning, and SunFounder compatibility documentation in
+`devloper-note/xwalk-rpi5-py3-note`. Use `Doc/note` for its Markdown pages and
+maintain its root `index.md` as the collection index.
+
+The complete developer-note wiki is configured by `devloper-note/mkdocs.yml` and operated through
+`xWalkTool/doc-tool/wiki.sh`. Keep generated Python environments and rendered HTML under the ignored
+`build-devloper-note-wiki` directory. Do not commit generated site output. The local profile must bind to
+loopback. The college-server profile may bind publicly only on an authorized host. The GitHub profile may build
+a Pages artifact but must not push; publication follows the approved Gerrit integration synchronization flow.
+Gerrit and GitHub CI must run `xWalkTool/doc-tool/wiki.sh verify` to validate wiki-owned links and strictly build
+and
+inspect the generated Pages artifact before publication.
+
 Documentation must:
 
-- keep mirrored Markdown in `xWalk-rpi5/devloper-note/Doc/note` and copied images in
-  `xWalk-rpi5/devloper-note/Doc/image`;
+- keep mirrored Markdown in `devloper-note/xwalk-rpi5-note/Doc/note` and copied images in
+  `devloper-note/xwalk-rpi5-note/Doc/image`;
 - omit CMake files, make files, generated build directories, binaries, and
-  rendered output from `xWalk-rpi5/devloper-note/Doc`;
-- maintain `xWalk-rpi5/devloper-note/index.md` as the C++ architecture and module reference index;
-- name Markdown files under `xWalk-rpi5/devloper-note/Doc/note` with readable title-case words
+  rendered output from `devloper-note/xwalk-rpi5-note/Doc`;
+- maintain `devloper-note/xwalk-rpi5-note/index.md` as the C++ architecture and module reference index;
+- name Markdown files under `devloper-note/xwalk-rpi5-note/Doc/note` with readable title-case words
   separated by spaces;
   preserve established uppercase acronyms such as `API`, `GPIO`, `I2C`, `MCU`, `PWM`, and `TTS`;
 - provide one `.md` page for every upstream documentation-source `.rst` page;
 - discard language-specific installation, imports, scripts, and API examples;
-- copy reusable hardware and project images into `xWalk-rpi5/devloper-note/Doc/image` and
+- copy reusable hardware and project images into `devloper-note/xwalk-rpi5-note/Doc/image` and
   reference them from the corresponding Markdown page;
 - omit installation, application, and language-specific screenshots, replacing
   each one with a descriptive heading and a `TODO:` placeholder;
@@ -57,7 +72,7 @@ Documentation must:
 - preserve upstream source and license attribution for adapted documentation.
 
 Do not copy generated HTML, Sphinx templates, translation catalogs, community
-advertising blocks, or unresolved substitution tokens into `xWalk-rpi5/devloper-note/Doc`.
+advertising blocks, or unresolved substitution tokens into `devloper-note/xwalk-rpi5-note/Doc`.
 
 ## File headers
 

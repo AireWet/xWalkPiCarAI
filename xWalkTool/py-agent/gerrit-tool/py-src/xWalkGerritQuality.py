@@ -120,6 +120,9 @@ MODULES = (
         check("staged-install", "Staged installation and artifact validation", "staged-install"),
         check("arm64", "ARM64 dependency audit and configured cross-build", "arm64"),
     )),
+    XWalkModulePlan("developer-note", "Developer Documentation", ("preparation",), (
+        check("wiki", "Build and verify the searchable wiki", "developer-note-wiki"),
+    )),
     XWalkModulePlan("codescene-code-health", "MyPiCarX / Code Health", ("preparation",), (
         check("delta", "CodeScene changed-code delta analysis", "codescene"),
     )),
@@ -159,8 +162,17 @@ class XWalkGerritQuality:
         self.environment = os.environ.copy() if environment is None else environment.copy()
         self.dispatcher = workspace / "xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh"
         self.preparation = preparation
-        self.modules = modules
-        self.gate = gate
+        if modules is MODULES and gate is GATE and not self.wiki_available(workspace):
+            self.modules = tuple(
+                module for module in modules if module.identifier != "developer-note"
+            )
+            self.gate = XWalkModulePlan(
+                gate.identifier, gate.name,
+                tuple(module.identifier for module in self.modules), gate.checks,
+            )
+        else:
+            self.modules = modules
+            self.gate = gate
         self.lock = threading.Lock()
         log_name = getattr(log, "name", "")
         self.state_path = Path(log_name).with_suffix(".json") if log_name else None
@@ -172,6 +184,15 @@ class XWalkGerritQuality:
             "jobs": [self.initial_job(plan) for plan in self.plans],
         }
         self.write_state()
+
+    @staticmethod
+    def wiki_available(workspace: Path) -> bool:
+        """Return whether this reviewed checkout owns the developer-note CI job."""
+
+        return (
+            (workspace / "devloper-note/mkdocs.yml").is_file()
+            and (workspace / "xWalkTool/doc-tool/wiki.sh").is_file()
+        )
 
     @staticmethod
     def timestamp() -> str:

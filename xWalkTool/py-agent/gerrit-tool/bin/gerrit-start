@@ -19,6 +19,21 @@ rollback_started_services()
         "$GERRIT_SITE/bin/gerrit.sh" stop || true
     fi
 }
+enable_ci_autostart()
+{
+    [ "${GERRIT_PROCESS_MANAGER:-nohup}" = systemd ] || return 0
+    unit_directory="$HOME/.config/systemd/user"
+    [ -r "$unit_directory/xwalk-gerrit-ci-autostart.path" ] || {
+        echo "Missing Gerrit CI autostart path unit" >&2
+        return 2
+    }
+    [ -r "$unit_directory/xwalk-gerrit-ci-autostart.service" ] || {
+        echo "Missing Gerrit CI autostart service unit" >&2
+        return 2
+    }
+    systemctl --user daemon-reload
+    systemctl --user enable --now xwalk-gerrit-ci-autostart.path >/dev/null
+}
 if [ "$GERRIT_PROXY_MODE" = "local-http" ]; then
     if ! "$HOME/bin/gerrit-caddy-control" status >/dev/null 2>&1; then
         if ! "$HOME/bin/gerrit-caddy-control" start; then
@@ -35,6 +50,11 @@ if [ -r "$HOME/.xwalk-ci.env" ]; then
         exit 2
     }
     if ! "$HOME/bin/gerrit-ci-control" start; then
+        rollback_started_services
+        exit 1
+    fi
+    if ! enable_ci_autostart; then
+        "$HOME/bin/gerrit-ci-control" stop || true
         rollback_started_services
         exit 1
     fi

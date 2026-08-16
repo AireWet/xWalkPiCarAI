@@ -96,6 +96,7 @@ class XWalkGerritLogServer:
         ("xwalk-streaming", "xWalk Streaming"),
         ("xwalk-quality", "xWalk Quality"),
         ("xwalk-deployment", "xWalk Deployment"),
+        ("developer-note", "Developer Documentation"),
         ("codescene-code-health", "MyPiCarX / Code Health"),
         ("host-quality-gate", "xWalk Host Quality Gate"),
     )

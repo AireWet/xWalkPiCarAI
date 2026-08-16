@@ -10,6 +10,7 @@ import shutil
 import socket
 import subprocess
 import tempfile
+import time
 import types
 import unittest
 from unittest import mock
@@ -605,9 +606,24 @@ class GerritServerSetupTest(unittest.TestCase):
             )
             gerrit_control.chmod(0o700)
             (home / "gerrit-env.sh").write_text(
-                f"export GERRIT_SITE='{site}'\nexport GERRIT_PROXY_MODE='none'\n",
+                f"export GERRIT_SITE='{site}'\nexport GERRIT_PROXY_MODE='none'\n"
+                "export GERRIT_PROCESS_MANAGER='systemd'\n",
                 encoding="utf-8",
             )
+            systemd_directory = home / ".config/systemd/user"
+            systemd_directory.mkdir(parents=True)
+            for name in (
+                "xwalk-gerrit-ci-autostart.path", "xwalk-gerrit-ci-autostart.service",
+            ):
+                (systemd_directory / name).write_text("[Unit]\n", encoding="utf-8")
+            systemctl_log = site / "systemctl.log"
+            systemctl = commands / "systemctl"
+            systemctl.write_text(
+                "#!/bin/sh\n"
+                f"printf '%s\\n' \"$*\" >> '{systemctl_log}'\n",
+                encoding="utf-8",
+            )
+            systemctl.chmod(0o700)
             (home / ".xwalk-ci.env").write_text("GERRIT_PROJECT=test\n", encoding="utf-8")
             ci_control = commands / "gerrit-ci-control"
             ci_control.write_text(
@@ -626,7 +642,10 @@ class GerritServerSetupTest(unittest.TestCase):
                 target = commands / name
                 shutil.copyfile(GERRIT_ROOT / "bin" / name, target)
                 target.chmod(0o700)
-            environment = {**os.environ, "HOME": str(home)}
+            environment = {
+                **os.environ, "HOME": str(home),
+                "PATH": f"{commands}:{os.environ.get('PATH', '')}",
+            }
             for action in ("gerrit-start", "gerrit-status", "gerrit-restart"):
                 result = subprocess.run(
                     [str(commands / action)], check=False, env=environment,
@@ -635,6 +654,10 @@ class GerritServerSetupTest(unittest.TestCase):
                 self.assertEqual(result.returncode, 0, result.stderr)
                 self.assertTrue(gerrit_state.is_file())
                 self.assertTrue(ci_state.is_file())
+            self.assertIn(
+                "--user enable --now xwalk-gerrit-ci-autostart.path",
+                systemctl_log.read_text(encoding="utf-8"),
+            )
             result = subprocess.run(
                 [str(commands / "gerrit-stop")], check=False, env=environment,
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
@@ -642,6 +665,54 @@ class GerritServerSetupTest(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertFalse(gerrit_state.exists())
             self.assertFalse(ci_state.exists())
+
+    def test_ci_autostart_follows_the_gerrit_pid_lifetime(self) -> None:
+        """Start CI with Gerrit and stop it after Gerrit's PID file disappears."""
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            home = pathlib.Path(temporary_directory)
+            commands = home / "bin"
+            commands.mkdir()
+            site = home / "gerrit-site"
+            logs = site / "logs"
+            logs.mkdir(parents=True)
+            pid_file = logs / "gerrit.pid"
+            pid_file.write_text("123\n", encoding="utf-8")
+            lifecycle_log = site / "ci-lifecycle.log"
+            (home / "gerrit-env.sh").write_text(
+                f"export GERRIT_SITE='{site}'\n", encoding="utf-8",
+            )
+            ci_control = commands / "gerrit-ci-control"
+            ci_control.write_text(
+                "#!/bin/sh\n"
+                f"printf '%s\\n' \"$1\" >> '{lifecycle_log}'\n",
+                encoding="utf-8",
+            )
+            ci_control.chmod(0o700)
+            sleep = commands / "sleep"
+            sleep.write_text("#!/bin/sh\nexec /bin/sleep 0.01\n", encoding="utf-8")
+            sleep.chmod(0o700)
+            environment = {
+                **os.environ, "HOME": str(home),
+                "PATH": f"{commands}:{os.environ.get('PATH', '')}",
+            }
+            process = subprocess.Popen(
+                ["/bin/sh", str(GERRIT_ROOT / "bin/gerrit-ci-autostart")], env=environment,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+            )
+            for unused_attempt in range(100):
+                if lifecycle_log.is_file() and "start" in lifecycle_log.read_text():
+                    break
+                time.sleep(0.01)
+            else:
+                process.terminate()
+                self.fail("CI autostart supervisor did not start CI")
+            pid_file.unlink()
+            unused_stdout, stderr = process.communicate(timeout=2)
+            self.assertEqual(process.returncode, 0, stderr)
+            self.assertEqual(
+                lifecycle_log.read_text(encoding="utf-8").splitlines(), ["start", "stop"],
+            )
 
     def test_management_start_rolls_back_new_gerrit_when_ci_fails(self) -> None:
         """A configured CI startup failure stops Gerrit started by the same command."""
@@ -809,6 +880,14 @@ class GerritServerSetupTest(unittest.TestCase):
             self.assertIn('username" != "joxy', installed_commands)
             self.assertTrue((home / "apps" / "gerrit" / "tools" / "xWalkGerritCi.py").is_file())
             self.assertTrue((home / "gerrit-site" / "plugins" / "xWalkReviewControls.js").is_file())
+            path_unit = home / ".config/systemd/user/xwalk-gerrit-ci-autostart.path"
+            service_unit = home / ".config/systemd/user/xwalk-gerrit-ci-autostart.service"
+            self.assertTrue(path_unit.is_file())
+            self.assertTrue(service_unit.is_file())
+            self.assertIn(
+                "/shared storage/joxy/gerrit-site/logs/gerrit.pid", path_unit.read_text(),
+            )
+            self.assertIn("%h/bin/gerrit-ci-autostart", service_unit.read_text())
             self.assertIn("XWALK_CI_LOG_WEB_URL=https://10.20.30.40:18443/ci", guides)
 
     def test_readmes_document_standard_download_button_commands(self) -> None:

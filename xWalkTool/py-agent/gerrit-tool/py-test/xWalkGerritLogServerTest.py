@@ -198,15 +198,15 @@ class XWalkGerritLogServerTest(unittest.TestCase):
             self.assertIn(f'id="job-{identifier}"', page)
             self.assertIn(f'/changes/9/2/jobs/{identifier}', page)
 
-    def test_required_eleven_module_nodes_are_rendered(self) -> None:
-        """Expose the ten build modules and Code Health between preparation and gate."""
+    def test_required_twelve_module_nodes_are_rendered(self) -> None:
+        """Expose product, documentation, and Code Health nodes between preparation and gate."""
 
         page = self.render(self.state())
         module_identifiers = [identifier for identifier, unused in self.log_server.MODULES[1:-1]]
-        self.assertEqual(len(module_identifiers), 11)
+        self.assertEqual(len(module_identifiers), 12)
         for name in (
             "xWalkAgent", "xWalkHal", "xWalk Quality", "xWalk Deployment",
-            "MyPiCarX / Code Health",
+            "Developer Documentation", "MyPiCarX / Code Health",
         ):
             self.assertIn(name, page)
 

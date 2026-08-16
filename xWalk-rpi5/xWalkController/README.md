@@ -106,7 +106,7 @@ Install the complete deployment layout after a successful build:
 DESTDIR="$PWD/build-host/deploy" cmake --install build-host/cmake
 ```
 
-See the [deployment guide](../devloper-note/Doc/note/Deployment%20Guide.md) for the installed
+See the [deployment guide](../../devloper-note/xwalk-rpi5-note/Doc/note/Deployment%20Guide.md) for the installed
 paths, package list, Robot HAT revision safeguards, and permission policy.
 
 The last command lists hardware tests without executing them. Do not execute those tests until the correct

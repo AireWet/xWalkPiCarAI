@@ -132,10 +132,10 @@ before returning. The encrypted licence and netrc files must also have mode
 `0600`. Executing the script instead of sourcing it fails because a child
 process cannot update its parent shell environment.
 
-See the [licence-key workflow](../../xWalk-rpi5/devloper-note/Doc/note/License%20Key%20Workflow.md)
+See the [licence-key workflow](../../devloper-note/xwalk-rpi5-note/Doc/note/License%20Key%20Workflow.md)
 for encryption, decryption, virtual-environment setup, and key-storage rules.
 The dedicated
-[environment loader guide](../../xWalk-rpi5/devloper-note/Doc/note/xWalk%20Environment%20Loader%20Guide.md)
+[environment loader guide](../../devloper-note/xwalk-rpi5-note/Doc/note/xWalk%20Environment%20Loader%20Guide.md)
 documents the validation order, failure behavior, and shell-environment lifetime.
 
 ## Verification
