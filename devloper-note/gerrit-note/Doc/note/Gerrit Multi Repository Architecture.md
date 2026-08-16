@@ -296,13 +296,18 @@ match the selected source. Component GitHub repositories, component GitHub
 remotes, `git push --mirror`, `git push --all`, wildcard refspecs, force push,
 and `git submodule foreach git push` are prohibited.
 
+The integration metadata check runs `validate-publication-policy.sh`. It rejects direct GitHub push commands in
+GitHub Actions and project-owned code outside the two guarded synchronization implementations. This makes a direct
+publication command a Host Quality failure before submission.
+
 ```bash
 xWalkTool/py-agent/gerrit-tool/shell-script/gerrit-github-sync.sh --dry-run
 ```
 
 The event-driven service additionally requires `GITHUB_PUSH_ENABLED=true`, an
 exact integrated-project destination, and the configured CI account's
-`Verified +1` on the submitted revision. The standalone synchronization helper
+`Verified +1` on the submitted patch-set revision. It publishes Gerrit's
+resulting branch revision, including a Gerrit-created merge commit. The standalone synchronization helper
 requires `XWALK_INTEGRATION_VERIFIED_COMMIT` to equal the fetched Gerrit branch
 tip. The only push refspec is the configured source branch to its same-named
 GitHub branch. The helper reads the GitHub branch back and requires the exact

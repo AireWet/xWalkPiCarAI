@@ -87,8 +87,18 @@ After a component change passes its module-scoped Host Quality gate and is submi
 automatically uploads the required
 `xWalkPiCarAI` integration review. For `xWalk-rpi5-sim`, that generated review changes only the
 `xWalk-rpi5-py3` gitlink. The integration review runs the complete graph. After that exact verified integration
-commit is submitted, the guarded synchronization service fast-forwards the configured GitHub branch. Developers
-do not create a second manual component implementation commit for this chain.
+patch set is submitted, the guarded synchronization service fast-forwards the configured GitHub branch to
+Gerrit's resulting revision. This supports both fast-forward submissions and Gerrit-created merge commits.
+Developers do not create a second manual component implementation commit for this chain.
+
+`validate-publication-policy.sh` rejects GitHub push commands in workflows and all project-owned paths except the
+guarded event worker and its Gerrit-verified synchronization helper. Source changes must always enter Gerrit through
+`refs/for/master`; GitHub receives only the resulting submitted integration revision.
+
+Sourcing the repository-root `xWalk-git-env.sh` also replaces every local GitHub push URL in the integration checkout
+and its real gitlink submodules with a non-routable policy URL. Fetch URLs remain unchanged. The dedicated CI worker
+does not use those developer remotes; it creates a temporary guarded GitHub remote only after validating the exact
+submitted Gerrit event and CI vote.
 
 Submitted component changes receive a separate `xWalk Integration Uplift`
 change-log entry showing whether the integration review was uploaded. Submitted

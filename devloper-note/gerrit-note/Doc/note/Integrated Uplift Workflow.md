@@ -143,9 +143,10 @@ key before populating `GITHUB_INTEGRATION_REMOTE`. Automation does not guess or 
 ## GitHub synchronization
 
 Only a `change-merged` event for the configured integrated project and branch is eligible. The service re-queries
-the merged change, requires its exact revision to have the CI account's `Verified +1`, fetches the current Gerrit
-branch tip, and requires it to equal the merge result. It then performs a non-force branch-to-branch push and reads
-the GitHub branch back to verify the exact SHA.
+the merged change, requires its exact patch-set revision to have the CI account's `Verified +1`, fetches the current
+Gerrit branch tip, and requires it to equal the merge result. The patch-set revision and merge result may differ when
+Gerrit creates a merge commit. The service then performs a non-force branch-to-branch push and reads the GitHub
+branch back to verify the exact merge SHA.
 
 An already matching GitHub SHA is a successful idempotent no-op. A diverged GitHub branch, missing Gerrit revision,
 failed fetch, rejected push, or read-back mismatch stops synchronization. Component repositories and GitHub events

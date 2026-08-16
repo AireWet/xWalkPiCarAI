@@ -133,6 +133,42 @@ _xwalk_git_env_prepend_path "${XWALK_GERRIT_TOOL_DIRECTORY}/bin"
 export PATH
 unset -f _xwalk_git_env_prepend_path
 
+_xwalk_git_env_block_direct_github_pushes()
+{
+    local repository_path remote_name push_urls
+    local blocked_url="xwalk-gerrit-uplift-only://direct-github-push-disabled"
+
+    for repository_path in "${XWALK_REPOSITORY_ROOT}" ${XWALK_GITLINK_SUBMODULE_PATHS}
+    do
+        [[ "${repository_path}" == "${XWALK_REPOSITORY_ROOT}" ]] || \
+            repository_path="${XWALK_REPOSITORY_ROOT}/${repository_path}"
+        [[ -d "${repository_path}" ]] || continue
+        while IFS= read -r remote_name
+        do
+            [[ -n "${remote_name}" ]] || continue
+            push_urls=$(git -C "${repository_path}" remote get-url \
+                --push --all "${remote_name}" 2>/dev/null || true)
+            if grep -qE '(^|[@/:])github\.com([/:]|$)' <<<"${push_urls}"
+            then
+                if ! git -C "${repository_path}" config --local --replace-all \
+                    "remote.${remote_name}.pushurl" "${blocked_url}"
+                then
+                    printf 'Unable to guard GitHub push URL for %s/%s.\n' \
+                        "${repository_path}" "${remote_name}" >&2
+                    return 1
+                fi
+            fi
+        done < <(git -C "${repository_path}" remote)
+    done
+}
+
+if ! _xwalk_git_env_block_direct_github_pushes
+then
+    unset -f _xwalk_git_env_block_direct_github_pushes
+    return 1
+fi
+unset -f _xwalk_git_env_block_direct_github_pushes
+
 xwalk_git_env_show()
 {
     printf '%-30s %s\n' \
@@ -145,6 +181,7 @@ xwalk_git_env_show()
         'Gerrit CI dashboard:' "${XWALK_CI_LOG_WEB_URL}" \
         'Gerrit CI state:' "${XWALK_CI_STATE_DIRECTORY}" \
         'Automatic server start:' "${XWALK_GIT_AUTO_START}" \
+        'Source publication:' 'Gerrit review and guarded uplift only' \
         'GitHub repository:' "${GITHUB_REPOSITORY}" \
         'Developer notes:' "${XWALK_DEVELOPER_NOTE_URL}" \
         'Configured submodules:' "${XWALK_CONFIGURED_SUBMODULE_PATHS:-none}" \

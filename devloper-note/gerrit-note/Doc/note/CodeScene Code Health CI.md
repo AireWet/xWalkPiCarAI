@@ -127,15 +127,16 @@ uplift supplies the supported integrated-history analysis.
 
 Only the submitted `xWalk-rpi5/master` integration commit is eligible for GitHub synchronization.
 Component repositories
-are never pushed independently. The worker first confirms that the submitted revision is the current patch set with
-the CI account's `Verified +1`, then performs a non-force fast-forward push to GitHub. Existing guards prevent a
-GitHub-to-Gerrit loop.
+are never pushed independently. The worker confirms that the submitted patch-set revision is current and has the CI
+account's `Verified +1`, then performs a non-force fast-forward push of Gerrit's resulting branch revision to
+GitHub. The resulting revision may be the patch-set commit or a Gerrit-created merge commit. Existing guards prevent
+a GitHub-to-Gerrit loop.
 
 For a patch set, `summary.json` records `GERRIT_CHANGE_NUMBER`, `GERRIT_PATCHSET_NUMBER`,
 `GERRIT_PATCHSET_REVISION`, and `GERRIT_REFSPEC`. For GitHub, it records the base, head, and workflow commit IDs. The
-submitted Gerrit revision is the integrated commit; the successful push makes the same object ID the GitHub commit
-SHA. A CodeScene-provided analysis link is retained with that revision. Credentials from either system are never
-included in this correlation record.
+submitted Gerrit patch-set revision identifies the analysed code. The successful push makes Gerrit's resulting
+branch revision the GitHub commit SHA. A CodeScene-provided analysis link is retained with the analysed revision.
+Credentials from either system are never included in this correlation record.
 
 ## Local operation
 

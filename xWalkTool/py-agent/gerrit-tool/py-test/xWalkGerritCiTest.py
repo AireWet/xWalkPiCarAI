@@ -669,7 +669,38 @@ class XWalkGerritCiTest(unittest.TestCase):
         self.assertIsNotNone(event)
         assert event is not None
         self.assertEqual(event["newRev"], revision)
-        self.assertEqual(event["patchSet"], {"number": 2})
+        self.assertEqual(
+            event["patchSet"], {"number": 2, "revision": revision}
+        )
+
+    def test_merge_commit_uplift_checks_verified_patch_set_revision(self) -> None:
+        """Verify the reviewed patch set while publishing Gerrit's merge commit."""
+
+        patch_revision = "a" * 40
+        merge_revision = "b" * 40
+        self.ci.log_directory = pathlib.Path("/logs")
+        event = {
+            "type": "change-merged",
+            "change": {
+                "project": "xWalk-rpi5",
+                "branch": "master",
+                "number": 153,
+                "owner": {"email": "owner@example.test"},
+            },
+            "patchSet": {"number": 2, "revision": patch_revision},
+            "newRev": merge_revision,
+        }
+        with mock.patch.object(
+            self.ci, "submitted_revision_verified", return_value=True
+        ) as verified, mock.patch.object(
+            self.ci, "execute_mirror", return_value=(True, "master")
+        ) as mirror, mock.patch.object(
+            self.ci, "post_message", return_value=True
+        ), mock.patch.object(self.ci, "append_changelog"):
+            self.ci.mirror(event)
+
+        verified.assert_called_once_with(153, patch_revision)
+        self.assertEqual(mirror.call_args.args[0], merge_revision)
 
     def test_module_checkout_uses_integrated_source_baseline(self) -> None:
         """Overlay a module patch set onto the current xWalkPiCarAI source tree."""

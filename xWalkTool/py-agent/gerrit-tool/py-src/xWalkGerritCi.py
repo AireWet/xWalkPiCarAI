@@ -1087,7 +1087,7 @@ class XWalkGerritCi:
         return str(owner.get("email", "")) if isinstance(owner, dict) else ""
 
     def submitted_revision_verified(self, change: int, revision: str) -> bool:
-        """Require the configured CI account's Verified +1 on the submitted revision."""
+        """Require the configured CI account's Verified +1 on the submitted patch set."""
 
         command = f"gerrit query --current-patch-set --format=JSON change:{change}"
         result = self.run_ssh(command, capture_output=True)
@@ -1280,7 +1280,10 @@ class XWalkGerritCi:
                 return {
                     "type": "change-merged",
                     "change": change,
-                    "patchSet": {"number": patch_set["number"]},
+                    "patchSet": {
+                        "number": patch_set["number"],
+                        "revision": patch_set["revision"],
+                    },
                     "newRev": revision,
                 }
         return None
@@ -1393,6 +1396,7 @@ class XWalkGerritCi:
         patch_data = event["patchSet"]
         change = int(change_data["number"])
         patch_set = int(patch_data["number"])
+        patch_revision = str(patch_data.get("revision", ""))
         revision = str(event["newRev"])
         owner_email = self.change_owner_email(change_data)
         timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -1405,10 +1409,10 @@ class XWalkGerritCi:
             f"{self.github_web_url}/commit/{revision}" if self.github_web_url else "",
         )
 
-        if not self.submitted_revision_verified(change, revision):
+        if not patch_revision or not self.submitted_revision_verified(change, patch_revision):
             message = "\n".join([
                 "xWalk GitHub Uplift", "Status: SKIPPED",
-                "Reason: submitted revision lacks CI Verified +1",
+                "Reason: submitted patch set lacks CI Verified +1",
             ])
             self.post_message(
                 change, patch_set, message,

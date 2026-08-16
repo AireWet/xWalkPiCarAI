@@ -2,6 +2,7 @@
 set -Eeuo pipefail
 
 root="$(git rev-parse --show-toplevel)"
+"$root/xWalkTool/shell-agent/gerrit-tool/validate-publication-policy.sh"
 components=(
     xWalkAgent xWalkAudioResources xWalkController xWalkHal xWalkIW xWalkLibrary
     DevloperNote xWalkTrace
