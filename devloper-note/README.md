@@ -95,10 +95,9 @@ The `github` profile only creates `build-devloper-note-wiki/github-site`; it nev
 synchronized to `jochuuu/xWalkPiCarAI/master`. In GitHub, enable **Settings → Pages → Source: GitHub Actions**
 once before the first deployment.
 
-The workflow uses the existing Gerrit submodule variables and secrets to check out the exact submitted
-`DevloperNote` revision. Configure `GERRIT_SUBMODULE_SSH_KEY`, `GERRIT_SSH_KNOWN_HOSTS`,
-`GERRIT_SUBMODULE_USERNAME`, `GERRIT_SERVER_HOST`, and `GERRIT_SSH_PORT` in the integration repository before
-running the workflow.
+The workflow validates the committed integration metadata without initializing private Gerrit submodules. The
+developer-note sources are already part of the exact submitted integration commit synchronized to GitHub, so
+the Pages build requires no Gerrit SSH key, server address, or account variables.
 
 ## CI verification
 

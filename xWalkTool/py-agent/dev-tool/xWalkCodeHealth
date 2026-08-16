@@ -373,18 +373,37 @@ def analyze(root: Path, configuration: dict[str, Any]) -> int:
         return 1 if strict else 0
 
     raw_output = redact(result.stdout)
-    (output_directory / "delta-analysis.json").write_text(raw_output, encoding="utf-8")
+    diagnostic_lines = [
+        f"exit_code={result.returncode}",
+        f"stdout_bytes={len(result.stdout.encode('utf-8'))}",
+        f"stderr_bytes={len(result.stderr.encode('utf-8'))}",
+    ]
     if result.stderr:
-        (output_directory / "diagnostic.txt").write_text(
-            redact(result.stderr), encoding="utf-8"
+        diagnostic_lines.extend(("", redact(result.stderr).rstrip()))
+    (output_directory / "diagnostic.txt").write_text(
+        "\n".join(diagnostic_lines).rstrip() + "\n", encoding="utf-8"
+    )
+    (output_directory / "delta-analysis.json").write_text(raw_output, encoding="utf-8")
+    if result.returncode == 0 and not raw_output.strip():
+        summary.update({
+            "code_health_degradation": "NO",
+            "quality_gate": "PASSED",
+            "reason": "CodeScene CLI delta analysis completed with no new findings.",
+            "status": "PASSED",
+        })
+        write_summary(output_directory / "summary.json", summary)
+        print(
+            f"CodeScene Code Health: PASSED - analysed {len(analysed)} changed files; "
+            "the CLI returned no new findings"
         )
+        return 0
     try:
         result_data = json.loads(raw_output)
     except json.JSONDecodeError:
         result_data = None
     if result_data is None:
         summary["reason"] = (
-            "CodeScene CLI did not return the requested JSON result; inspect diagnostic.txt."
+            "CodeScene CLI failed or returned malformed JSON; inspect diagnostic.txt."
         )
         write_summary(output_directory / "summary.json", summary)
         print(f"CodeScene Code Health: UNAVAILABLE - {summary['reason']}")

@@ -284,6 +284,86 @@ class XWalkCodeHealthTest(unittest.TestCase):
             command, ["/opt/cs", "delta", "--output-format", "json", baseline, revision]
         )
 
+    def test_successful_empty_cli_result_reports_no_new_findings(self) -> None:
+        """Treat the CLI's successful empty JSON-mode response as a clean delta."""
+
+        baseline = "a" * 40
+        revision = "b" * 40
+        completed = subprocess.CompletedProcess(
+            ["cs"], returncode=0, stdout="", stderr=""
+        )
+
+        with tempfile.TemporaryDirectory() as directory:
+            environment = {
+                "CS_ACCESS_TOKEN": "test-token",
+                "XWALK_CODESCENE_REPORT_DIRECTORY": directory,
+                "XWALK_CODESCENE_BASE_REVISION": baseline,
+                "XWALK_CODESCENE_REVISION": revision,
+                "XWALK_CODESCENE_STRICT": "true",
+            }
+            with mock.patch.dict(os.environ, environment, clear=False), \
+                    mock.patch.object(
+                        MODULE, "resolve_revision", side_effect=[revision, baseline]
+                    ), \
+                    mock.patch.object(
+                        MODULE,
+                        "changed_files",
+                        return_value=["devloper-note/README.md"],
+                    ), \
+                    mock.patch.object(MODULE, "configured_cli", return_value="/opt/cs"), \
+                    mock.patch.object(MODULE.subprocess, "run", return_value=completed):
+                result = MODULE.analyze(self.root, self.configuration)
+            report = Path(directory)
+            summary = json.loads((report / "summary.json").read_text(encoding="utf-8"))
+            diagnostic = (report / "diagnostic.txt").read_text(encoding="utf-8")
+
+        self.assertEqual(result, 0)
+        self.assertEqual(summary["status"], "PASSED")
+        self.assertEqual(summary["quality_gate"], "PASSED")
+        self.assertEqual(summary["code_health_degradation"], "NO")
+        self.assertIn("no new findings", summary["reason"])
+        self.assertIn("exit_code=0", diagnostic)
+
+    def test_failed_empty_cli_result_retains_diagnostic_metadata(self) -> None:
+        """Keep an empty failed response unavailable and explain its exit status."""
+
+        baseline = "a" * 40
+        revision = "b" * 40
+        completed = subprocess.CompletedProcess(
+            ["cs"], returncode=1, stdout="", stderr=""
+        )
+
+        with tempfile.TemporaryDirectory() as directory:
+            environment = {
+                "CS_ACCESS_TOKEN": "test-token",
+                "XWALK_CODESCENE_REPORT_DIRECTORY": directory,
+                "XWALK_CODESCENE_BASE_REVISION": baseline,
+                "XWALK_CODESCENE_REVISION": revision,
+                "XWALK_CODESCENE_STRICT": "false",
+            }
+            with mock.patch.dict(os.environ, environment, clear=False), \
+                    mock.patch.object(
+                        MODULE, "resolve_revision", side_effect=[revision, baseline]
+                    ), \
+                    mock.patch.object(
+                        MODULE,
+                        "changed_files",
+                        return_value=["xWalk-rpi5/xWalkHal/example.cpp"],
+                    ), \
+                    mock.patch.object(MODULE, "configured_cli", return_value="/opt/cs"), \
+                    mock.patch.object(MODULE.subprocess, "run", return_value=completed):
+                result = MODULE.analyze(self.root, self.configuration)
+            report = Path(directory)
+            summary = json.loads((report / "summary.json").read_text(encoding="utf-8"))
+            diagnostic = (report / "diagnostic.txt").read_text(encoding="utf-8")
+
+        self.assertEqual(result, 0)
+        self.assertEqual(summary["status"], "UNAVAILABLE")
+        self.assertIn("malformed JSON", summary["reason"])
+        self.assertIn("exit_code=1", diagnostic)
+        self.assertIn("stdout_bytes=0", diagnostic)
+        self.assertIn("stderr_bytes=0", diagnostic)
+
     def test_correlation_contains_identifiers_but_no_credentials(self) -> None:
         """Record review and mirror identifiers without capturing secret variables."""
 
