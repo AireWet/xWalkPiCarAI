@@ -20,6 +20,10 @@ DEFAULT_LOCAL_PORT=8000
 DEFAULT_SERVER_HOST=0.0.0.0
 DEFAULT_SERVER_PORT=8080
 DEFAULT_GITHUB_URL=https://jochuuu.github.io/xWalkPiCarAI/
+DEFAULT_GITHUB_SOURCE_REPOSITORY=https://github.com/jochuuu/xWalkPiCarAI
+DEFAULT_GITHUB_SOURCE_REVISION=master
+GITHUB_SOURCE_REPOSITORY=${XWALK_WIKI_GITHUB_SOURCE_REPOSITORY:-${DEFAULT_GITHUB_SOURCE_REPOSITORY}}
+GITHUB_SOURCE_REVISION=${XWALK_WIKI_GITHUB_SOURCE_REVISION:-${DEFAULT_GITHUB_SOURCE_REVISION}}
 
 print_usage()
 {
@@ -162,6 +166,12 @@ prepare_wiki_sources()
     do
         cp -a -- "${DOCUMENTATION_DIRECTORY}/${collection}" "${STAGED_DOCUMENTATION}/${collection}"
     done
+    "${VIRTUAL_ENVIRONMENT}/bin/python" "${SCRIPT_DIRECTORY}/rewrite_wiki_links.py" \
+        "${REPOSITORY_ROOT}" \
+        "${DOCUMENTATION_DIRECTORY}" \
+        "${STAGED_DOCUMENTATION}" \
+        "${GITHUB_SOURCE_REPOSITORY}" \
+        "${GITHUB_SOURCE_REVISION}"
 
     sed "s#^site_dir: site\$#site_dir: ${site_subdirectory}#" \
         "${MKDOCS_CONFIGURATION}" >"${GENERATED_CONFIGURATION}"
@@ -327,6 +337,9 @@ verify_wiki()
     local search_index="${GITHUB_SITE_DIRECTORY}/search/search_index.json"
 
     ensure_environment
+    PYTHONPATH="${SCRIPT_DIRECTORY}" "${VIRTUAL_ENVIRONMENT}/bin/python" -m unittest discover \
+        --start-directory "${SCRIPT_DIRECTORY}/test" \
+        --pattern 'test_*.py'
     "${VIRTUAL_ENVIRONMENT}/bin/python" "${SCRIPT_DIRECTORY}/verify_wiki.py" \
         "${DOCUMENTATION_DIRECTORY}"
     build_profile verify "${GITHUB_SITE_DIRECTORY}" "${site_url}" true
@@ -338,6 +351,10 @@ verify_wiki()
         fail "Generated wiki homepage does not contain the expected title"
     grep -Fq "${site_url}" "${GITHUB_SITE_DIRECTORY}/sitemap.xml" || \
         fail "Generated wiki sitemap does not contain the configured public URL"
+    "${VIRTUAL_ENVIRONMENT}/bin/python" "${SCRIPT_DIRECTORY}/verify_wiki.py" \
+        "${DOCUMENTATION_DIRECTORY}" \
+        --site-root "${GITHUB_SITE_DIRECTORY}" \
+        --site-url "${site_url}"
     printf 'Wiki verification passed: %s\n' "${GITHUB_SITE_DIRECTORY}"
 }
 

@@ -1,7 +1,7 @@
 # xWalk Raspberry Pi 5 Python 3 Notes
 
 This collection explains the Python 3 simulator and opt-in SunFounder PiCar-X hardware backend in
-`xWalk-rpi5-py3`. The component [README](../../xWalk-rpi5-py3/README.md) remains the authoritative description
+`xWalk-rpi5-py3`. The component `xWalk-rpi5-py3/README.md` remains the authoritative description
 of current implementation status, dependency pins, and verified support.
 
 ## Start here

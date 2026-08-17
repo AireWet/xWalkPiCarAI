@@ -36,7 +36,7 @@ export EDUVPN_SERVER_IP="SERVER_IP_FROM_ASSESSMENT"
 export GERRIT_STORAGE_PATH=""
 export GERRIT_SHA256="OFFICIAL_GERRIT_WAR_SHA256"
 export GERRIT_PROJECT="xWalk-rpi5"
-export GERRIT_BRANCH="main"
+export GERRIT_BRANCH="master"
 ```
 
 An empty `GERRIT_STORAGE_PATH` selects `$HOME/gerrit-site`. If an administrator provides another persistent

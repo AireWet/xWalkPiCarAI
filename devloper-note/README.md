@@ -134,6 +134,7 @@ This removes only the validated `build-devloper-note-wiki` directory. It does no
 
 - `mkdocs.yml` enables Material navigation, tables, heading anchors, and local full-text search.
 - Every profile stages a fresh copy of the Markdown source before building or serving it.
-- Links to workspace files outside `devloper-note` remain unchanged and are not treated as wiki-owned pages.
+- Links to workspace files outside `devloper-note` are converted in the staged artifact to GitHub source links
+  for the exact deployed revision. Source Markdown retains its checkout-relative links.
 - Every build cleans stale HTML from its profile-specific site directory.
 - Generated environments and HTML must not be committed.

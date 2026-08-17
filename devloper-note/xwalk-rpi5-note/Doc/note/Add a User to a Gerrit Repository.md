@@ -14,7 +14,7 @@ Collect these values before making changes:
 | `GERRIT_SSH_PORT` | `xWalkTool/py-agent/gerrit-tool/config/gerrit-setup.conf` |
 | `GERRIT_ADMIN_USER` | `xWalkTool/py-agent/gerrit-tool/config/gerrit-setup.conf` |
 | `PROJECT_NAME` | Gerrit project list or the installer configuration |
-| `PROJECT_BRANCH` | Protected review branch, normally `main` |
+| `PROJECT_BRANCH` | Protected review branch, normally `master` |
 | `USERNAME` | Unique lowercase login selected for the person |
 | `USER_EMAIL` | The person's individual email address |
 
@@ -122,7 +122,7 @@ After making and testing a change, upload it for review:
 git push origin HEAD:refs/for/PROJECT_BRANCH
 ```
 
-The commit message must contain a `Change-Id`. Component changes are uploaded only to Gerrit `main`; they are
+The commit message must contain a `Change-Id`. Component changes are uploaded only to Gerrit `master`; they are
 never pushed directly to GitHub.
 
 ## Verify and revoke access

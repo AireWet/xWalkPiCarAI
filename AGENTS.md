@@ -99,17 +99,17 @@ HAT setup is connected and safe.
 ## Gerrit-only publication
 
 Never push component changes directly to GitHub. Commit them in their
-independent component repository and upload them only to Gerrit `main` with:
+independent component repository and upload them only to Gerrit `master` with:
 
 ```bash
-git push origin HEAD:refs/for/main
+git push origin HEAD:refs/for/master
 ```
 
 An active upload triggers Gerrit CI automatically. To defer CI, upload the
 change as WIP:
 
 ```bash
-git push origin HEAD:refs/for/main%wip
+git push origin HEAD:refs/for/master%wip
 ```
 
 For a WIP change, Gerrit's **Mark As Active** button is the Activate action.
@@ -118,7 +118,7 @@ an active change into WIP must not trigger CI.
 
 GitHub contains only the configured integrated repository. During the current
 migration that repository is `xWalkPiCarAI/master`; the final target is
-`xWalk-rpi5/main`. Component repositories must not have GitHub remotes. After
+`xWalk-rpi5/master`. Component repositories must not have GitHub remotes. After
 an integration change passes complete CI, receives approval, and is submitted
 to the configured Gerrit integration branch, the dedicated synchronization
 service may fast-forward that exact submitted commit to the matching GitHub

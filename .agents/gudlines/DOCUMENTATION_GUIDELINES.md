@@ -38,9 +38,10 @@ The complete developer-note wiki is configured by `devloper-note/mkdocs.yml` and
 `build-devloper-note-wiki` directory. Do not commit generated site output. The local profile must bind to
 loopback. The college-server profile may bind publicly only on an authorized host. The GitHub profile may build
 a Pages artifact but must not push; publication follows the approved Gerrit integration synchronization flow.
-Gerrit and GitHub CI must run `xWalkTool/doc-tool/wiki.sh verify` to validate wiki-owned links and strictly build
-and
-inspect the generated Pages artifact before publication.
+During staging, convert links from developer-note pages to tracked files outside `devloper-note` into GitHub
+source links for the deployed integration revision. Preserve checkout-relative links in the source Markdown.
+Gerrit and GitHub CI must run `xWalkTool/doc-tool/wiki.sh verify` to validate wiki-owned and repository-owned
+links, strictly build the generated Pages artifact, and inspect it before publication.
 
 Documentation must:
 
