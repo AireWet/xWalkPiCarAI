@@ -123,7 +123,6 @@ xWalk-rpi5/<component>/.project         independently importable Eclipse compone
 xWalk-rpi5/<component>/.cproject        C/C++ component indexing configuration when applicable
 devloper-note/xwalk-rpi5-note/Doc/note/ C++ Markdown documentation mirroring upstream pages
 devloper-note/xwalk-rpi5-note/index.md  C++ architecture and module documentation index
-devloper-note/xwalk-rpi5-py3-note/      Python simulator and PiCar-X hardware documentation
 devloper-note/gerrit-note/              Gerrit administration and CI documentation
 devloper-note/mkdocs.yml                searchable developer-note wiki configuration
 Doc/image/                   hardware and project images referenced by documentation

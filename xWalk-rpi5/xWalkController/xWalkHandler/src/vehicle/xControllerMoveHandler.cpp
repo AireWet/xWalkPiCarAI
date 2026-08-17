@@ -43,6 +43,11 @@ namespace xwalk::ctrl
 
     /**
      * @brief Executes the move command.
+     *
+     * @details Refreshes a bounded forward or backward motor request every 250 milliseconds, observes
+     * cancellation through the existing sliced delay, and stops both motors on every bounded-move exit.
+     * Zero-duration requests proceed directly to the stopped state. Demo requests retain their dedicated flow.
+     *
      * @param[in] request Validated action, speed percentage, and duration.
      * @return Zero after movement and the final stop complete.
      */
@@ -52,20 +57,35 @@ namespace xwalk::ctrl
         {
             return XWALK_handlerMoveExample();
         }
-        const ::ctrl::boolean operationRequested = operationMayContinue();
-        if (operationRequested == false)
+        constexpr ::ctrl::uint32 refreshIntervalMs{250U};
+        ::ctrl::uint32 remainingMs = request.durationMs;
+        ::ctrl::boolean operationRequested{true};
+        while ((remainingMs > 0U) && operationRequested)
         {
-            return 0;
+            operationRequested = operationMayContinue();
+            if (operationRequested == false)
+            {
+                break;
+            }
+
+            if (request.action == XWalkMoveAction::Forward)
+            {
+                picarxObject->forward(request.speedPercent);
+            }
+            else
+            {
+                picarxObject->backward(request.speedPercent);
+            }
+
+            const ::ctrl::uint32 sliceMs = (remainingMs < refreshIntervalMs) ? remainingMs : refreshIntervalMs;
+            const ::ctrl::boolean delayCompleted = delayWhileOperationRequested(sliceMs);
+            if (delayCompleted == false)
+            {
+                break;
+            }
+
+            remainingMs -= sliceMs;
         }
-        if (request.action == XWalkMoveAction::Forward)
-        {
-            picarxObject->forward(request.speedPercent);
-        }
-        else
-        {
-            picarxObject->backward(request.speedPercent);
-        }
-        static_cast<void>(delayWhileOperationRequested(request.durationMs));
         picarxObject->stop();
         return 0;
     }

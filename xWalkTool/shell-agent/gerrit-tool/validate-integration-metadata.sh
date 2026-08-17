@@ -28,26 +28,13 @@ validate_integrated_sources()
             exit 1
         }
     done
-    [[ "$(git -C "$root" config -f .gitmodules --get-regexp '^submodule\..*\.path$' | wc -l)" -eq 1 ]]
-    [[ "$(git -C "$root" config -f .gitmodules --get submodule.xWalk-rpi5-py3.path)" == xWalk-rpi5-py3 ]]
-    [[ "$(git -C "$root" config -f .gitmodules --get submodule.xWalk-rpi5-py3.branch)" == master ]]
-    local simulation_url
-    simulation_url="$(git -C "$root" config -f .gitmodules --get submodule.xWalk-rpi5-py3.url)"
-    [[ "$simulation_url" != *github.com* && "$simulation_url" == */xWalk-rpi5-sim ]] || {
-        echo "Simulation submodule must point only to its Gerrit repository" >&2
-        exit 1
-    }
-    [[ "$(git -C "$root" ls-files --stage -- xWalk-rpi5-py3 | awk '{print $1}')" == 160000 ]] || {
-        echo "Missing xWalk-rpi5-py3 gitlink" >&2
-        exit 1
-    }
-    echo "Validated eight integrated module source trees and the Gerrit simulation gitlink"
+    [[ "$({ git -C "$root" config -f .gitmodules --get-regexp '^submodule\..*\.path$' 2>/dev/null || true; } | wc -l)" -eq 0 ]]
+    echo "Validated eight integrated module source trees"
 }
 
 validate_hierarchical_migration()
 {
-    local component config_name expected_path expected_url expected_branch mode path url branch
-    local simulation_config simulation_path
+    local component config_name expected_path expected_url expected_branch path url branch
     local nested="$root/xWalk-rpi5/.gitmodules"
     local -A expected_top=(
         [xWalkTool]=1
@@ -58,16 +45,6 @@ validate_hierarchical_migration()
         echo "Missing nested xWalk-rpi5/.gitmodules" >&2
         exit 1
     }
-    if git -C "$root" config -f .gitmodules --get submodule.xWalk-rpi5-py3.path >/dev/null; then
-        simulation_config=xWalk-rpi5-py3
-    elif git -C "$root" config -f .gitmodules --get submodule.xWalk-rpi5-sim.path >/dev/null; then
-        simulation_config=xWalk-rpi5-sim
-    else
-        echo "Missing hierarchical Gerrit simulation mapping" >&2
-        exit 1
-    fi
-    simulation_path="$simulation_config"
-    expected_top["$simulation_config"]=xWalk-rpi5-sim
     for component in "${!expected_top[@]}"; do
         path="$(git -C "$root" config -f .gitmodules --get "submodule.$component.path")"
         url="$(git -C "$root" config -f .gitmodules --get "submodule.$component.url")"
@@ -118,21 +95,17 @@ validate_hierarchical_migration()
         echo "Expected seven nested xWalk-rpi5 component mappings" >&2
         exit 1
     }
-    mode="$(git -C "$root" ls-files --stage -- "$simulation_path" | awk -v path="$simulation_path" \
-        '$4 == path {print $1}')"
-    [[ "$mode" == 160000 ]] || { echo "Missing $simulation_path gitlink" >&2; exit 1; }
-    echo "Validated root developer notes, hierarchical migration metadata, and the Gerrit simulation gitlink"
+    echo "Validated root developer notes and hierarchical migration metadata"
 }
 
 validate_gitlink_superproject()
 {
     local component expected_path expected_url path url branch mode
     local -A expected=()
-    for component in "${components[@]}" xWalk-rpi5-py3; do
+    for component in "${components[@]}"; do
         expected_path="$component"
         [[ "$component" != DevloperNote ]] || expected_path="devloper-note"
         expected_url="$component"
-        [[ "$component" != xWalk-rpi5-py3 ]] || expected_url=xWalk-rpi5-sim
         expected["$expected_path"]=1
         path="$(git -C "$root" config -f .gitmodules --get "submodule.$component.path")"
         url="$(git -C "$root" config -f .gitmodules --get "submodule.$component.url")"
@@ -149,13 +122,13 @@ validate_gitlink_superproject()
     while IFS= read -r path; do
         [[ -n "${expected[$path]:-}" ]] || { echo "Unexpected submodule: $path" >&2; exit 1; }
     done < <(git -C "$root" config -f .gitmodules --get-regexp '^submodule\..*\.path$' | awk '{print $2}')
-    echo "Validated nine exact Gerrit component gitlinks"
+    echo "Validated eight exact Gerrit component gitlinks"
 }
 
-submodule_count="$(git -C "$root" config -f .gitmodules --get-regexp '^submodule\..*\.path$' | wc -l)"
+submodule_count="$({ git -C "$root" config -f .gitmodules --get-regexp '^submodule\..*\.path$' 2>/dev/null || true; } | wc -l)"
 case "$submodule_count" in
-    1) validate_integrated_sources ;;
-    4) validate_hierarchical_migration ;;
-    9) validate_gitlink_superproject ;;
-    *) echo "Expected one legacy, four hierarchical, or nine direct submodule mappings" >&2; exit 1 ;;
+    0) validate_integrated_sources ;;
+    3) validate_hierarchical_migration ;;
+    8) validate_gitlink_superproject ;;
+    *) echo "Expected zero integrated, three hierarchical, or eight direct submodule mappings" >&2; exit 1 ;;
 esac

@@ -27,12 +27,12 @@ class XWalkGerritCi:
     integration_repositories = {"xWalk-rpi5", "xWalkPiCarAI"}
     component_repositories = {
         "DevloperNote", "xWalkAgent", "xWalkAudioResources", "xWalkController",
-        "xWalkHal", "xWalkIW", "xWalkLibrary", "xWalkTool", "xWalkTrace", "xWalk-rpi5-sim",
+        "xWalkHal", "xWalkIW", "xWalkLibrary", "xWalkTool", "xWalkTrace",
     }
-    direct_checkout_repositories = {"xWalkTool", "xWalk-rpi5-sim"}
+    direct_checkout_repositories = {"xWalkTool"}
     repositories = {
         "DevloperNote", "xWalkAgent", "xWalkAudioResources", "xWalkController",
-        "xWalkHal", "xWalkIW", "xWalkLibrary", "xWalkTool", "xWalkTrace", "xWalk-rpi5-sim",
+        "xWalkHal", "xWalkIW", "xWalkLibrary", "xWalkTool", "xWalkTrace",
         "xWalk-rpi5",
     }
 
@@ -531,27 +531,6 @@ class XWalkGerritCi:
         target_project = verification_project or self.project
         if target_project in self.integration_repositories:
             return []
-        if target_project == "xWalk-rpi5-sim":
-            python = ".ci-venv/bin/python3"
-            return [
-                ["python3", "-m", "venv", ".ci-venv"],
-                [python, "-m", "pip", "install", "-e", ".[dev]"],
-                [python, "-m", "ruff", "format", "--check", "."],
-                [python, "-m", "ruff", "check", "."],
-                [python, "-m", "mypy", "--config-file", "pyproject.toml", "src"],
-                [python, "-m", "compileall", "src", "tests", "scripts"],
-                [python, "-m", "pytest", "-c", "pyproject.toml", "tests", "-m", "not hardware"],
-                [python, "-m", "xwalk_rpi5_py3.cli", "--help"],
-                [python, "-m", "xwalk_rpi5_py3.cli", "validate-config"],
-                [python, "-m", "xwalk_rpi5_py3.cli", "run", "--backend", "sim"],
-                ["bash", "-n", "scripts/setup_ubuntu_picarx.sh"],
-                ["bash", "-n", "scripts/configure_hardware.sh"],
-                ["bash", "-n", "scripts/setup_robot_hat_audio.sh"],
-                ["shellcheck", "scripts/setup_ubuntu_picarx.sh"],
-                ["shellcheck", "scripts/configure_hardware.sh"],
-                ["shellcheck", "scripts/setup_robot_hat_audio.sh"],
-                ["scripts/setup_ubuntu_picarx.sh", "--dry-run"],
-            ]
         if target_project == "DevloperNote":
             wiki = directory / "xWalkTool/doc-tool/wiki.sh"
             return [
@@ -601,64 +580,41 @@ class XWalkGerritCi:
         """Build one module-scoped Host Quality graph for a reviewed component."""
 
         commands = self.standalone_commands(directory, target_project)
-        if target_project == "xWalk-rpi5-sim":
+        generic_details = (
+            ("configure", "Configure standalone component"),
+            ("build", "Build standalone component"),
+            ("tests", "Run standalone component tests"),
+        )
+        if target_project == "xWalkTool":
             check_details = (
-                ("venv", "Create isolated Python environment"),
-                ("install", "Install project and development dependencies"),
-                ("format", "Ruff formatting"),
-                ("lint", "Ruff linting"),
-                ("typing", "mypy type checking"),
-                ("compile", "Python source compilation"),
-                ("tests", "Mocked and simulator tests"),
-                ("cli-help", "Command-line help"),
-                ("config", "Configuration validation"),
-                ("simulator", "Simulator backend startup"),
-                ("setup-syntax", "Ubuntu setup shell syntax"),
-                ("hardware-syntax", "Hardware configuration shell syntax"),
-                ("audio-syntax", "Audio setup shell syntax"),
-                ("setup-shellcheck", "Ubuntu setup ShellCheck"),
-                ("hardware-shellcheck", "Hardware configuration ShellCheck"),
-                ("audio-shellcheck", "Audio setup ShellCheck"),
-                ("setup-dry-run", "Non-actuating Ubuntu setup dry-run"),
+                ("python", "Gerrit Python tests"),
+                ("review-controls", "Gerrit review-control tests"),
+                ("shellcheck", "Repository shell validation"),
+                ("format", "Repository formatting validation"),
             )
-            module_identifier = "xwalk-rpi5-py3"
-            module_name = "xWalk PiCar-X Python"
+        elif target_project == "DevloperNote":
+            check_details = (
+                ("syntax", "Wiki shell syntax"),
+                ("shellcheck", "Wiki shell validation"),
+                ("wiki", "Strict wiki build and artifact validation"),
+            )
         else:
-            generic_details = (
-                ("configure", "Configure standalone component"),
-                ("build", "Build standalone component"),
-                ("tests", "Run standalone component tests"),
+            check_details = (
+                (("validate", "Validate component changes"),)
+                if len(commands) == 1 else generic_details[:len(commands)]
             )
-            if target_project == "xWalkTool":
-                check_details = (
-                    ("python", "Gerrit Python tests"),
-                    ("review-controls", "Gerrit review-control tests"),
-                    ("shellcheck", "Repository shell validation"),
-                    ("format", "Repository formatting validation"),
-                )
-            elif target_project == "DevloperNote":
-                check_details = (
-                    ("syntax", "Wiki shell syntax"),
-                    ("shellcheck", "Wiki shell validation"),
-                    ("wiki", "Strict wiki build and artifact validation"),
-                )
-            else:
-                check_details = (
-                    (("validate", "Validate component changes"),)
-                    if len(commands) == 1 else generic_details[:len(commands)]
-                )
-            module_identifier = {
-                "DevloperNote": "developer-note",
-                "xWalkAgent": "xwalk-agent",
-                "xWalkAudioResources": "xwalk-audio-resources",
-                "xWalkController": "xwalk-controller",
-                "xWalkHal": "xwalk-hal",
-                "xWalkIW": "xwalk-iw",
-                "xWalkLibrary": "xwalk-library",
-                "xWalkTool": "xwalk-tool",
-                "xWalkTrace": "xwalk-trace",
-            }[target_project]
-            module_name = target_project
+        module_identifier = {
+            "DevloperNote": "developer-note",
+            "xWalkAgent": "xwalk-agent",
+            "xWalkAudioResources": "xwalk-audio-resources",
+            "xWalkController": "xwalk-controller",
+            "xWalkHal": "xwalk-hal",
+            "xWalkIW": "xwalk-iw",
+            "xWalkLibrary": "xwalk-library",
+            "xWalkTool": "xwalk-tool",
+            "xWalkTrace": "xwalk-trace",
+        }[target_project]
+        module_name = target_project
         if len(check_details) != len(commands):
             raise RuntimeError(f"Missing structured check metadata for {target_project}")
 

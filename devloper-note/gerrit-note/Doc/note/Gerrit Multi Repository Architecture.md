@@ -2,7 +2,7 @@
 
 ## Scope and safety state
 
-The target architecture has ten Gerrit-only component repositories and one
+The target architecture has nine Gerrit-only component repositories and one
 private Gerrit integration repository. During migration, `xWalkPiCarAI/master`
 is the active integrated Gerrit and GitHub branch; the final integration target
 is `xWalk-rpi5/master`. The migration tools stage work in new clones so the source
@@ -12,8 +12,7 @@ permissions exist.
 
 The component repositories are `DevloperNote`, `xWalkAgent`,
 `xWalkAudioResources`, `xWalkController`, `xWalkHal`, `xWalkIW`,
-`xWalkLibrary`, `xWalkTool`, `xWalkTrace`, and `xWalk-rpi5-sim`. The Python repository retains
-that Gerrit name during migration but uses the local path `xWalk-rpi5-py3`.
+`xWalkLibrary`, `xWalkTool`, and `xWalkTrace`.
 `xWalk-rpi5` records the components as exact submodule gitlinks together with
 top-level integration files, CMake entry points, GitHub workflows, and
 integration history. Reproducible builds must use
@@ -48,7 +47,6 @@ The optional permission-only parent is `xWalk-Projects`.
 | `xWalkTrace` | Read/clone | Review push | Full/Owner | Read and Verified |
 | `xWalkAudioResources` | No access | No access | Full/Owner | Read and Verified |
 | `xWalkTool` | No access | No access | Full/Owner | Read and Verified |
-| `xWalk-rpi5-sim` | No access | No access | Full/Owner | Read and Verified |
 | `xWalk-rpi5` | No access | No access | Full/Owner | Read, uplift review push and Verified |
 
 Review push means read plus upload to `refs/for/master`; it does not grant direct
@@ -279,7 +277,7 @@ xWalkTool/py-agent/gerrit-tool/shell-script/gerrit-auto-uplift.sh --apply xWalkH
 
 Apply acquires a lock, clones clean `xWalkPiCarAI/master`, and proves the component
 commit is reachable from its Gerrit `master`. During migration it replaces only the selected integrated module
-source tree. For `xWalk-rpi5-sim`, it updates only the top-level `xWalk-rpi5-py3` gitlink. It then creates a
+source tree. It then creates a
 signed-off uplift commit and uploads an active review. The patch-set event runs the complete integrated CI graph.
 Automatic review, submission, and GitHub synchronization are disabled until their
 separate service accounts and Gerrit policy are installed and tested. See

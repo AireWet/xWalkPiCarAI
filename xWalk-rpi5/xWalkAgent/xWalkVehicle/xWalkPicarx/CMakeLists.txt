@@ -116,9 +116,16 @@ endif()
 
 if(XWALK_PICARX_BUILD_HARDWARE_TESTS)
     add_executable(xWalkPicarxHardwareTest test/hardware/src/xAgent_Rpi5CarPicarxHardwareTest.cpp)
-target_link_libraries(xWalkPicarxHardwareTest PRIVATE xWalkTrace)
+    target_link_libraries(xWalkPicarxHardwareTest PRIVATE xWalkTrace)
+    if(DEFINED XWALK_AGENT_HARDWARE_V4_CONFIG_FILE)
+        set(XWALK_PICARX_HARDWARE_TEST_CONFIG_FILE
+            "${XWALK_AGENT_HARDWARE_V4_CONFIG_FILE}")
+    else()
+        set(XWALK_PICARX_HARDWARE_TEST_CONFIG_FILE
+            "${XWALK_PICARX_CONFIG_FILE}")
+    endif()
     target_compile_definitions(xWalkPicarxHardwareTest PRIVATE
-        XWALK_PICARX_CONFIG_FILE="${XWALK_PICARX_CONFIG_FILE}")
+        XWALK_PICARX_CONFIG_FILE="${XWALK_PICARX_HARDWARE_TEST_CONFIG_FILE}")
     target_link_libraries(xWalkPicarxHardwareTest PRIVATE
         xWalkPicarx
         xWalkBoardControl

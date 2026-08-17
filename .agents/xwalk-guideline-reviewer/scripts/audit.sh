@@ -108,11 +108,6 @@ then
     report_issue "documentation-index" "devloper-note/xwalk-rpi5-note/index.md is missing"
 fi
 
-if [ ! -f "${REPOSITORY_ROOT}/devloper-note/xwalk-rpi5-py3-note/index.md" ]
-then
-    report_issue "documentation-index" "devloper-note/xwalk-rpi5-py3-note/index.md is missing"
-fi
-
 while IFS= read -r unexpected_file
 do
     report_issue "documentation-layout" \
@@ -120,15 +115,6 @@ do
 done < <(
     find "${REPOSITORY_ROOT}/devloper-note/xwalk-rpi5-note/Doc" -type f -name '*.md' \
         ! -path '*/devloper-note/xwalk-rpi5-note/Doc/note/*' -print 2>/dev/null
-)
-
-while IFS= read -r unexpected_file
-do
-    report_issue "documentation-layout" \
-        "${unexpected_file}: Markdown must be under devloper-note/xwalk-rpi5-py3-note/Doc/note"
-done < <(
-    find "${REPOSITORY_ROOT}/devloper-note/xwalk-rpi5-py3-note/Doc" -type f -name '*.md' \
-        ! -path '*/devloper-note/xwalk-rpi5-py3-note/Doc/note/*' -print 2>/dev/null
 )
 
 while IFS= read -r unexpected_file

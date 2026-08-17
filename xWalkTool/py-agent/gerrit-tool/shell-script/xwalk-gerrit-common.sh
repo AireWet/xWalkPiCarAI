@@ -8,13 +8,13 @@ xwalk_config="${XWALK_GERRIT_MULTI_REPO_CONFIG:-$xwalk_root/config/multi-repo.co
 # shellcheck disable=SC2034 # These arrays are consumed by scripts that source this helper.
 xwalk_repositories=(
     DevloperNote xWalkAgent xWalkAudioResources xWalkController xWalkHal
-    xWalkIW xWalkLibrary xWalkTool xWalkTrace xWalk-rpi5-sim xWalk-rpi5
+    xWalkIW xWalkLibrary xWalkTool xWalkTrace xWalk-rpi5
     xWalkPiCarAI
 )
 # shellcheck disable=SC2034 # Consumed by scripts that source this helper.
 xwalk_components=(
     DevloperNote xWalkAgent xWalkAudioResources xWalkController xWalkHal
-    xWalkIW xWalkLibrary xWalkTrace xWalk-rpi5-sim
+    xWalkIW xWalkLibrary xWalkTrace
 )
 
 xwalk_load_config()
@@ -135,7 +135,7 @@ xwalk_component_path()
 {
     case "$1" in
         DevloperNote) printf '%s\n' "devloper-note" ;;
-        xWalkAgent|xWalkAudioResources|xWalkController|xWalkHal|xWalkIW|xWalkLibrary|xWalkTool|xWalkTrace|xWalk-rpi5-sim)
+        xWalkAgent|xWalkAudioResources|xWalkController|xWalkHal|xWalkIW|xWalkLibrary|xWalkTool|xWalkTrace)
             printf '%s\n' "$1"
             ;;
         *)

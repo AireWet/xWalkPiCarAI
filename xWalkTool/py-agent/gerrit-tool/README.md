@@ -38,7 +38,7 @@ export GERRIT_ADMIN_ROLE="Student"
 export GERRIT_ADMIN_EMAIL="joxjoh24@student.hh.se"
 export GERRIT_PROJECT="xWalkPiCarAI"
 export GERRIT_BRANCH="master"
-export GERRIT_VERIFICATION_TARGETS="xWalkPiCarAI:master,DevloperNote:master,xWalkAgent:master,xWalkAudioResources:master,xWalkController:master,xWalkHal:master,xWalkIW:master,xWalkLibrary:master,xWalkTool:master,xWalkTrace:master,xWalk-rpi5-sim:master"
+export GERRIT_VERIFICATION_TARGETS="xWalkPiCarAI:master,DevloperNote:master,xWalkAgent:master,xWalkAudioResources:master,xWalkController:master,xWalkHal:master,xWalkIW:master,xWalkLibrary:master,xWalkTool:master,xWalkTrace:master"
 export GERRIT_HTTPS_PORT="18443"
 export GERRIT_SSH_PORT="29418"
 export GERRIT_HTTP_PORT="8080"
@@ -75,18 +75,12 @@ initializes exact pinned dependencies when required, and overlays the reviewed p
 The graph contains only Preparation, that component's checks, and the Host Quality Gate; unrelated modules do
 not run.
 
-The self-contained `xWalk-rpi5-sim:master` target checks out only the locally named `xWalk-rpi5-py3` Python
-repository. It runs device-free formatting, linting, typing, compilation, mocked tests, CLI validation,
-ShellCheck, and the simulator setup dry-run. It does not initialize SunFounder submodules, overlay the change
-into `xWalkPiCarAI`, or select physical hardware tests.
-
 The `xWalkTool:master` target checks out the independent tool repository directly. It runs the Gerrit Python
 tests, review-control tests, ShellCheck, and repository formatting validation without running hardware tests.
 
 After a component change passes its module-scoped Host Quality gate and is submitted, the event worker
-automatically uploads the required
-`xWalkPiCarAI` integration review. For `xWalk-rpi5-sim`, that generated review changes only the
-`xWalk-rpi5-py3` gitlink. The integration review runs the complete graph. After that exact verified integration
+automatically uploads the required `xWalkPiCarAI` integration review. The integration review runs the complete
+graph. After that exact verified integration
 patch set is submitted, the guarded synchronization service fast-forwards the configured GitHub branch to
 Gerrit's resulting revision. This supports both fast-forward submissions and Gerrit-created merge commits.
 Developers do not create a second manual component implementation commit for this chain.

@@ -60,3 +60,11 @@ Use `XWALK_PICARX_BUILD_HOST_TESTS=ON` for standalone host verification or
 `XWALK_PICARX_BUILD_HARDWARE_TESTS=ON` for the Linux/RPi compile path. Hardware tests remain off by default.
 Official CMake targets replace the source-visible relative configuration path
 with the absolute `XWALK_PICARX_CONFIG_FILE` cache value.
+
+The Controller CMake configuration also generates the standalone Robot HAT v4
+hardware-test profile at `config/xwalk-agent-hardware-v4.conf` under
+`CMAKE_BINARY_DIR`. Use it explicitly for build-tree diagnostics:
+
+```bash
+xwalk-picarx-control --deployment-config build-rpi/cmake/config/xwalk-agent-hardware-v4.conf doctor
+```

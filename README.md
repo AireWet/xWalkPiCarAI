@@ -4,10 +4,6 @@ xWalk is a C++17 control and automation workspace for the SunFounder PiCar-X on 
 contains the complete product integration, host-safe simulation and tests, deployment configuration, documentation,
 and development tooling.
 
-The project-local Python 3 simulator and Raspberry Pi hardware adapter are maintained in `xWalk-rpi5-py3`.
-During the repository-name migration, that local submodule path still resolves to the existing Gerrit repository
-named `xWalk-rpi5-sim`.
-
 Normal host builds use simulated or software backends and do not actuate physical hardware.
 
 ## Repository layout
@@ -27,9 +23,7 @@ MyPiCarX/
 │   └── cmake/                 Shared CMake modules and toolchains
 ├── devloper-note/             Developer documentation components
 │   ├── gerrit-note/           Gerrit administration and CI documentation
-│   ├── xwalk-rpi5-note/       C++ architecture, build, and deployment documentation
-│   └── xwalk-rpi5-py3-note/   Python simulator and PiCar-X hardware documentation
-├── xWalk-rpi5-py3/            Python 3 simulator and Raspberry Pi 5 PiCar-X hardware adapter
+│   └── xwalk-rpi5-note/       C++ architecture, build, and deployment documentation
 └── xWalkTool/                 CI, Gerrit, deployment, quality, and maintenance tools
 ```
 
@@ -118,7 +112,6 @@ confirming the Raspberry Pi model, Robot HAT revision, wiring, power, clear move
 
 - [Open the published xWalk Developer Notes wiki](https://jochuuu.github.io/xWalkPiCarAI/)
 - [C++ documentation index](devloper-note/xwalk-rpi5-note/index.md)
-- [Python simulator and PiCar-X notes](devloper-note/xwalk-rpi5-py3-note/index.md)
 - [Build and open the developer-note wiki](devloper-note/README.md)
 - [Build and installation guide](devloper-note/xwalk-rpi5-note/Doc/note/Installation.md)
 - [Controller and CLI overview](xWalk-rpi5/xWalkController/README.md)

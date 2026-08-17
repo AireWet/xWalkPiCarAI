@@ -28,11 +28,6 @@ devloper-note/xwalk-rpi5-note/
 ```
 
 Keep Gerrit administration and CI documentation in `devloper-note/gerrit-note`.
-Keep Python simulator, PiCar-X hardware-adapter, setup, command, calibration,
-diagnostic, commissioning, and SunFounder compatibility documentation in
-`devloper-note/xwalk-rpi5-py3-note`. Use `Doc/note` for its Markdown pages and
-maintain its root `index.md` as the collection index.
-
 The complete developer-note wiki is configured by `devloper-note/mkdocs.yml` and operated through
 `xWalkTool/doc-tool/wiki.sh`. Keep generated Python environments and rendered HTML under the ignored
 `build-devloper-note-wiki` directory. Do not commit generated site output. The local profile must bind to

@@ -112,14 +112,10 @@ run concurrently. The service owns patch-set workspaces below
 `XWALK_CI_WORK_DIRECTORY` (default `$HOME/gerrit-ci/work`) and removes
 interrupted `change-*` directories there during startup recovery.
 
-The `xWalk-rpi5-sim` component retains device-free formatting, linting, typing, compilation, mocked tests, CLI
-checks, ShellCheck, and the simulator setup dry-run. Its patch set is overlaid at `xWalk-rpi5-py3`, but unrelated
-product modules do not run. No component flow runs hardware-labelled tests or actuates Raspberry Pi or Robot HAT
-hardware.
+No component flow runs hardware-labelled tests or actuates Raspberry Pi or Robot HAT hardware.
 
-Submitting a verified component emits a merge event that invokes the automatic integration uplift. The Python
-component uplift changes only the `xWalk-rpi5-py3` gitlink in `xWalkPiCarAI`; it does not copy the Python source
-into the integration repository. The generated integration review runs the complete graph. Submission of that
+Submitting a verified component emits a merge event that invokes the automatic integration uplift. The generated
+integration review runs the complete graph. Submission of that
 exact verified integration revision then invokes the guarded GitHub synchronization path.
 
 Integration reviews run the complete module graph. Component reviews run only their module-scoped graph. The

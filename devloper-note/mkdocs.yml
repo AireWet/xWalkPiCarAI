@@ -1,5 +1,5 @@
 site_name: xWalk Developer Notes
-site_description: Architecture, PiCar-X, Python simulator, Gerrit, CI, and deployment notes for xWalk.
+site_description: Architecture, PiCar-X, Gerrit, CI, and deployment notes for xWalk.
 docs_dir: docs
 site_dir: site
 use_directory_urls: true

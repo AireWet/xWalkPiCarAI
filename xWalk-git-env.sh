@@ -89,12 +89,11 @@ export GITHUB_INTEGRATION_WEB_URL="https://github.com/${GITHUB_REPOSITORY}"
 export GITHUB_INTEGRATION_REMOTE="git@github.com:${GITHUB_REPOSITORY}.git"
 export XWALK_DEVELOPER_NOTE_URL="https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY_NAME}/"
 
-export XWALK_GERRIT_COMPONENT_REPOSITORIES="DevloperNote xWalkAgent xWalkAudioResources xWalkController xWalkHal xWalkIW xWalkLibrary xWalkTool xWalkTrace xWalk-rpi5-sim"
-export GERRIT_VERIFICATION_TARGETS="${GERRIT_VERIFICATION_TARGETS:-xWalkPiCarAI:master,DevloperNote:master,xWalkAgent:master,xWalkAudioResources:master,xWalkController:master,xWalkHal:master,xWalkIW:master,xWalkLibrary:master,xWalkTool:master,xWalkTrace:master,xWalk-rpi5-sim:master}"
+export XWALK_GERRIT_COMPONENT_REPOSITORIES="DevloperNote xWalkAgent xWalkAudioResources xWalkController xWalkHal xWalkIW xWalkLibrary xWalkTool xWalkTrace"
+export GERRIT_VERIFICATION_TARGETS="${GERRIT_VERIFICATION_TARGETS:-xWalkPiCarAI:master,DevloperNote:master,xWalkAgent:master,xWalkAudioResources:master,xWalkController:master,xWalkHal:master,xWalkIW:master,xWalkLibrary:master,xWalkTool:master,xWalkTrace:master}"
 
 export XWALK_TOOL_DIRECTORY="${XWALK_REPOSITORY_ROOT}/xWalkTool"
 export XWALK_RPI5_DIRECTORY="${XWALK_REPOSITORY_ROOT}/xWalk-rpi5"
-export XWALK_RPI5_PY3_DIRECTORY="${XWALK_REPOSITORY_ROOT}/xWalk-rpi5-py3"
 export XWALK_DEVELOPER_NOTE_DIRECTORY="${XWALK_REPOSITORY_ROOT}/devloper-note"
 export XWALK_GERRIT_TOOL_DIRECTORY="${XWALK_TOOL_DIRECTORY}/py-agent/gerrit-tool"
 export XWALK_DOC_TOOL_DIRECTORY="${XWALK_TOOL_DIRECTORY}/doc-tool"
@@ -211,8 +210,6 @@ Defaults:
 Examples:
   xwalk_git_start_servers
   xwalk_gerrit_push
-  xwalk_gerrit_push "$XWALK_RPI5_PY3_DIRECTORY" main
-  xwalk_gerrit_push_wip "$XWALK_RPI5_PY3_DIRECTORY" main
 EOF
 }
 

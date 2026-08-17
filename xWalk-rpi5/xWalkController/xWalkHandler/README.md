@@ -54,6 +54,11 @@ flags; they do not index or interpret a `ctrl::stringvector`. Commands with no
 payload receive `XWalkNoArgumentRequest`, and commands whose only value is
 `start` or `stop` share `XWalkLifecycleRequest`.
 
+Bounded forward and backward movement refreshes the requested motor output
+every 250 milliseconds while retaining the shared cancellable-delay polling.
+Every bounded exit stops both motors, and a zero-duration request never
+energizes them. The separate movement demo retains its existing sequence.
+
 ## Handler source inventory
 
 | Group | Source | Handler responsibility |

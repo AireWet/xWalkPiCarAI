@@ -29,6 +29,18 @@ set(XWALK_INSTALL_DATA_DIR "${CMAKE_INSTALL_DATADIR}/xwalk" CACHE PATH
 set(XWALK_RUNTIME_DATA_DIRECTORY "${CMAKE_INSTALL_FULL_DATADIR}/xwalk" CACHE PATH
     "Absolute PiCar-X packaged-resource directory compiled into applications")
 
+set(XWALK_BUILD_CONFIG_DIR "${CMAKE_BINARY_DIR}/config")
+file(MAKE_DIRECTORY "${XWALK_BUILD_CONFIG_DIR}")
+
+set(XWALK_AGENT_HARDWARE_V4_CONFIG_FILE
+    "${XWALK_BUILD_CONFIG_DIR}/xwalk-agent-hardware-v4.conf"
+    CACHE INTERNAL "Generated Robot HAT v4 hardware-test configuration" FORCE)
+
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/xWalkConfig/xwalk-agent-hardware-v4.conf.in"
+    "${XWALK_AGENT_HARDWARE_V4_CONFIG_FILE}"
+    @ONLY)
+
 if(XWALK_CLI_BUILD_RPI AND NOT DEFINED XWALK_PICARX_CONFIG_FILE)
     set(XWALK_PICARX_CONFIG_FILE "${XWALK_INSTALL_STATE_DIR}/picar-x.conf"
         CACHE FILEPATH "Writable PiCar-X calibration configuration file")

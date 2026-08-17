@@ -91,29 +91,29 @@ class XWalkGerritLogServerTest(unittest.TestCase):
         state["jobs"] = [
             state["jobs"][0],
             {
-                "id": "xwalk-rpi5-py3", "name": "xWalk PiCar-X Python",
-                "needs": ["preparation"], "log_link": "jobs/xwalk-rpi5-py3",
+                "id": "xwalk-controller", "name": "xWalkController",
+                "needs": ["preparation"], "log_link": "jobs/xwalk-controller",
                 "status": "PASSED", "duration_seconds": 7.0,
                 "checks": [{
-                    "id": "tests", "name": "Mocked and simulator tests",
+                    "id": "tests", "name": "Controller host tests",
                     "status": "PASSED", "duration_seconds": 0.2,
                 }],
             },
             {
                 **state["jobs"][-1],
                 "name": "xWalk Component Quality Gate",
-                "needs": ["xwalk-rpi5-py3"],
+                "needs": ["xwalk-controller"],
             },
         ]
         page = self.render(state)
 
-        self.assertIn('href="/changes/9/2/jobs/xwalk-rpi5-py3"', page)
-        self.assertIn("xWalk PiCar-X Python", page)
+        self.assertIn('href="/changes/9/2/jobs/xwalk-controller"', page)
+        self.assertIn("xWalkController", page)
         self.assertIn("xWalk Component Quality Gate", page)
         self.assertNotIn("xWalkAgent", page)
         self.assertEqual(
-            self.log_server.job_url(9, 2, "xwalk-rpi5-py3"),
-            "http://ci.example:8091/changes/9/2/jobs/xwalk-rpi5-py3",
+            self.log_server.job_url(9, 2, "xwalk-controller"),
+            "http://ci.example:8091/changes/9/2/jobs/xwalk-controller",
         )
 
     def test_failed_module_and_gate_are_distinguishable(self) -> None:

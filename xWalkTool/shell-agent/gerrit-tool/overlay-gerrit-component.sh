@@ -16,7 +16,7 @@ target_directory="$(realpath -m -- "$target_directory")"
 }
 case "$target_directory/" in
     "$root/xWalk-rpi5/"*) ;;
-    "$root/xWalkTool/"|"$root/devloper-note/"|"$root/xWalk-rpi5-py3/") ;;
+    "$root/xWalkTool/"|"$root/devloper-note/") ;;
     *) echo "Component target is not an approved integration path" >&2; exit 2 ;;
 esac
 [[ ! -L "$target_directory" ]] || {

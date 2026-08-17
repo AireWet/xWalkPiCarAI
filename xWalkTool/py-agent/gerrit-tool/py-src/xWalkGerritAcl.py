@@ -14,12 +14,12 @@ PUBLIC = {"DevloperNote", "xWalkHal", "xWalkLibrary", "xWalkTrace"}
 PARTNER_REVIEW = {"DevloperNote", "xWalkHal", "xWalkController", "xWalkLibrary", "xWalkTrace"}
 PARTNER_READ = PARTNER_REVIEW | {"xWalkIW", "xWalkAgent"}
 PRIVATE_PARTNER = {
-    "xWalkAudioResources", "xWalkTool", "xWalk-rpi5-sim", "xWalk-rpi5", "xWalkPiCarAI",
+    "xWalkAudioResources", "xWalkTool", "xWalk-rpi5", "xWalkPiCarAI",
 }
 REPOSITORIES = (
     "xWalk-Projects",
     "DevloperNote", "xWalkAgent", "xWalkAudioResources", "xWalkController", "xWalkHal",
-    "xWalkIW", "xWalkLibrary", "xWalkTool", "xWalkTrace", "xWalk-rpi5-sim", "xWalk-rpi5",
+    "xWalkIW", "xWalkLibrary", "xWalkTool", "xWalkTrace", "xWalk-rpi5",
     "xWalkPiCarAI",
 )
 

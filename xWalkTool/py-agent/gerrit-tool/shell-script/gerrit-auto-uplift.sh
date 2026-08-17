@@ -52,7 +52,7 @@ plan()
 
 apply()
 {
-    local state marker work integration source target target_relative gitlink_entry changed baseline latest commit
+    local state marker work integration source target target_relative changed baseline latest commit
     local message
     local push_output review_number
     local push_succeeded=false push_attempt
@@ -101,37 +101,22 @@ apply()
         "$change_id" "$source_commit" "success" \
         "Fetched and resolved the exact merged source commit" "$integration_link"
 
-    if [[ "$module" == xWalk-rpi5-sim ]]; then
-        target_relative="xWalk-rpi5-py3"
-        if ! git -C "$integration" ls-files --error-unmatch "$target_relative" >/dev/null 2>&1; then
-            target_relative="xWalk-rpi5-sim"
-        fi
-        gitlink_entry="$(git -C "$integration" ls-files -s -- "$target_relative")"
-        [[ "${gitlink_entry%% *}" == 160000 ]] || {
-            xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
-                "$change_id" "missing-target" "failed" \
-                "Integrated Python component gitlink is missing" "$integration_link"
-            return 1
-        }
-        git -C "$integration" update-index --cacheinfo "160000,$source_commit,$target_relative"
+    if [[ "$module" == xWalkTool ]]; then
+        target_relative=xWalkTool
     else
-        if [[ "$module" == xWalkTool ]]; then
-            target_relative=xWalkTool
-        else
-            target_relative="$GERRIT_INTEGRATION_SOURCE_ROOT/$component_path"
-        fi
-        target="$integration/$target_relative"
-        [[ -d "$target" && ! -L "$target" ]] || {
-            xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
-                "$change_id" "missing-target" "failed" \
-                "Integrated module directory is missing or symbolic" "$integration_link"
-            return 1
-        }
-        git -C "$integration" rm --quiet -r -- "$target_relative"
-        mkdir -p "$target"
-        git -C "$source" archive "$source_commit" | tar -x -C "$target"
-        git -C "$integration" add -- "$target_relative"
+        target_relative="$GERRIT_INTEGRATION_SOURCE_ROOT/$component_path"
     fi
+    target="$integration/$target_relative"
+    [[ -d "$target" && ! -L "$target" ]] || {
+        xwalk_changelog "$module" "uplift" "$source_reference" "$source_commit" \
+            "$change_id" "missing-target" "failed" \
+            "Integrated module directory is missing or symbolic" "$integration_link"
+        return 1
+    }
+    git -C "$integration" rm --quiet -r -- "$target_relative"
+    mkdir -p "$target"
+    git -C "$source" archive "$source_commit" | tar -x -C "$target"
+    git -C "$integration" add -- "$target_relative"
     changed="$(git -C "$integration" diff --cached --name-only)"
     if [[ -z "$changed" ]]; then
         : > "$marker"

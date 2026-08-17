@@ -148,7 +148,7 @@ prepare_wiki_sources()
     require_file "${DOCUMENTATION_DIRECTORY}/index.md"
     require_file "${DOCUMENTATION_DIRECTORY}/README.md"
     require_file "${MKDOCS_CONFIGURATION}"
-    for collection in gerrit-note xwalk-rpi5-note xwalk-rpi5-py3-note
+    for collection in gerrit-note xwalk-rpi5-note
     do
         [ -d "${DOCUMENTATION_DIRECTORY}/${collection}" ] || \
             fail "Documentation collection is missing: ${DOCUMENTATION_DIRECTORY}/${collection}"
@@ -162,7 +162,7 @@ prepare_wiki_sources()
     sed 's#](README.md)#](wiki-tool/index.md)#' \
         "${DOCUMENTATION_DIRECTORY}/index.md" >"${STAGED_DOCUMENTATION}/index.md"
     cp -a -- "${DOCUMENTATION_DIRECTORY}/README.md" "${STAGED_DOCUMENTATION}/wiki-tool/index.md"
-    for collection in gerrit-note xwalk-rpi5-note xwalk-rpi5-py3-note
+    for collection in gerrit-note xwalk-rpi5-note
     do
         cp -a -- "${DOCUMENTATION_DIRECTORY}/${collection}" "${STAGED_DOCUMENTATION}/${collection}"
     done

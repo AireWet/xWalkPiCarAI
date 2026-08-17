@@ -31,14 +31,12 @@ the migration can complete without rewriting the safety policy.
 | `xWalkTool` | `master` | `xWalkTool` |
 | `DevloperNote` | `master` | `devloper-note` |
 | `xWalkTrace` | `master` | `xWalk-rpi5/xWalkTrace` |
-| `xWalk-rpi5-sim` | `master` | `xWalk-rpi5-py3` gitlink |
 
-The Python component changes only its explicit Gerrit gitlink. The other nine components replace only their
-mapped integrated source trees.
+The nine components replace only their mapped integrated source trees.
 
 ## Event and uplift processing
 
-The CI service listens for `change-merged` events from the ten allowlisted component repositories. The uplift
+The CI service listens for `change-merged` events from the nine allowlisted component repositories. The uplift
 worker validates the full source SHA and patch-set number. It proves that the SHA is reachable from the component
 `master` branch, and copies the exact Git archive into the mapped integrated directory, except for the Python
 component's exact gitlink update. Files outside the selected integration path cannot enter the uplift commit.
