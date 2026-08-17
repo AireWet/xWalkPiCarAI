@@ -29,6 +29,7 @@ namespace xwalk::agent::test
             ::ctrl::stringvector inputLines{};              /**< Calibration input in read order. */
             ::ctrl::size inputIndex{};                      /**< Next unread calibration input. */
             ::ctrl::uint32vector delays{};                  /**< Requested delays in call order. */
+            ::ctrl::uint64 monotonicMilliseconds{};         /**< Simulated elapsed monotonic time. */
             ::ctrl::float64vector leftSpeeds{};             /**< Left motor speed at every delay. */
             ::ctrl::float64vector rightSpeeds{};            /**< Right motor speed at every delay. */
             ::ctrl::float64vector steeringAngles{};         /**< Steering angle at every delay. */

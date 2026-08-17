@@ -182,9 +182,15 @@ namespace
     {
         TestCliBackend& backend = *static_cast<TestCliBackend*>(context);
         backend.delays.push_back(durationMs);
+        backend.monotonicMilliseconds += static_cast<::ctrl::uint64>(durationMs) + backend.delayOverrunMs;
         backend.leftSpeeds.push_back(backend.motors->left().speed());
         backend.rightSpeeds.push_back(backend.motors->right().speed());
         backend.steeringAngles.push_back(backend.picarx->directionAngleDegrees());
+    }
+
+    ::ctrl::uint64 monotonicMilliseconds(ctrl::contextpointer context) noexcept
+    {
+        return static_cast<TestCliBackend*>(context)->monotonicMilliseconds;
     }
 
     /** @brief Records one self-drive delay and reports explicit failure status. */
@@ -355,7 +361,7 @@ namespace
         backend.motors = &motors;
         backend.picarx = &picarx;
         const xwalk::ctrl::XWalkControllerCallbacks callbacks{
-            &outputLine, &inputLine, &delayMilliseconds, &continueOperation, &soundOperation};
+            &outputLine, &inputLine, &delayMilliseconds, &monotonicMilliseconds, &continueOperation, &soundOperation};
         xwalk::agent::XWalkLineTracking lineTracking(picarx, &backend, &delayMilliseconds);
         const XWalkHal::XWalkMusicCallbacks musicCallbacks{&enableMusicOutput,
                                                            &playMusicSound,
@@ -480,6 +486,24 @@ namespace
         assert(delayedMs == 250U);
         assert(motors.left().speed() == 0.0);
         assert(motors.right().speed() == 0.0);
+
+        backend.delayOverrunMs = 5U;
+        const ::ctrl::uint64 moveStartMs = backend.monotonicMilliseconds;
+        delayStart = backend.delays.size();
+        assert(xwalk::ctrl::XWALK_runControllerCommand(cli, {"move", "backward", "--speed", "40", "--duration=0.6"}) ==
+               0);
+        delayedMs = 0U;
+        for (ctrl::size index = delayStart; index < backend.delays.size(); ++index)
+        {
+            delayedMs += backend.delays[index];
+        }
+        const ::ctrl::uint64 moveElapsedMs = backend.monotonicMilliseconds - moveStartMs;
+        assert(delayedMs < 600U);
+        assert(moveElapsedMs >= 600U);
+        assert(moveElapsedMs <= 625U);
+        assert(motors.left().speed() == 0.0);
+        assert(motors.right().speed() == 0.0);
+        backend.delayOverrunMs = 0U;
 
         assert(xwalk::ctrl::XWALK_runControllerCommand(cli, {"cliff-detection", "stop"}) == 0);
         const ctrl::uint32 cliffQueryStart = backend.operationQueries;

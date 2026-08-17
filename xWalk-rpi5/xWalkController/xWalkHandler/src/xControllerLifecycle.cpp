@@ -353,8 +353,8 @@ namespace xwalk::ctrl
     void XWalkController::validateCallbacks(const XWalkControllerCallbacks& backendCallbacks)
     {
         if ((backendCallbacks.output == nullptr) || (backendCallbacks.input == nullptr) ||
-            (backendCallbacks.delay == nullptr) || (backendCallbacks.continueOperation == nullptr) ||
-            (backendCallbacks.sound == nullptr))
+            (backendCallbacks.delay == nullptr) || (backendCallbacks.monotonicMilliseconds == nullptr) ||
+            (backendCallbacks.continueOperation == nullptr) || (backendCallbacks.sound == nullptr))
         {
             XWALK_CTRL_ERROR(XWALK_INVAL, "PiCar-X CLI callbacks must be complete");
         }

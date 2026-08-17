@@ -60,6 +60,7 @@ namespace xwalk::ctrl
         const XWalkControllerCallbacks callbacks{&XWALK_outputLine,
                                                  &XWALK_inputLine,
                                                  &XWALK_delayMilliseconds,
+                                                 &XWALK_monotonicMilliseconds,
                                                  &XWALK_continueOperation,
                                                  &XWALK_performSound};
 

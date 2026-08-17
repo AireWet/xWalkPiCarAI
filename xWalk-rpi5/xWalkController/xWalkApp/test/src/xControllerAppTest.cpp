@@ -167,12 +167,15 @@ namespace
         const ctrl::string response = xwalk::ctrl::XWALK_inputLine(nullptr, "prompt: ");
         const ctrl::string endOfFileResponse = xwalk::ctrl::XWALK_inputLine(nullptr, "again: ");
         xwalk::ctrl::XWALK_delayMilliseconds(nullptr, 0U);
+        const ctrl::uint64 monotonicStartMs = xwalk::ctrl::XWALK_monotonicMilliseconds(nullptr);
+        const ctrl::uint64 monotonicEndMs = xwalk::ctrl::XWALK_monotonicMilliseconds(nullptr);
 
         std::cin.rdbuf(previousInput);
         std::cout.rdbuf(previousOutput);
         EXPECT_EQ(response, "response");
         EXPECT_EQ(endOfFileResponse, "skip");
         EXPECT_EQ(output.str(), "line\nprompt: again: ");
+        EXPECT_LE(monotonicStartMs, monotonicEndMs);
     }
 
     /** @brief Verifies every specialized Controller command boot-mode selection. */
@@ -231,6 +234,7 @@ namespace
         const xwalk::ctrl::XWalkControllerCallbacks callbacks{&xwalk::ctrl::XWALK_outputLine,
                                                               &xwalk::ctrl::XWALK_inputLine,
                                                               &xwalk::ctrl::XWALK_delayMilliseconds,
+                                                              &xwalk::ctrl::XWALK_monotonicMilliseconds,
                                                               &xwalk::ctrl::XWALK_continueOperation,
                                                               &xwalk::ctrl::XWALK_performSound};
         xwalk::ctrl::XWalkController controller(doctorLines, &applicationContext, callbacks);

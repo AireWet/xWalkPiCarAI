@@ -129,6 +129,13 @@ namespace xwalk::ctrl
     void XWALK_delayMilliseconds(::ctrl::contextpointer context, ::ctrl::uint32 durationMs);
 
     /**
+     * @brief Reads elapsed monotonic time for bounded Controller operations.
+     * @param[in] context Optional context; unused.
+     * @return Monotonic milliseconds from the platform steady-clock epoch.
+     */
+    ::ctrl::uint64 XWALK_monotonicMilliseconds(::ctrl::contextpointer context) noexcept;
+
+    /**
      * @brief Requests graceful shutdown of the active operation from a process signal.
      * @param[in] signalNumber Delivered signal number; ignored after dispatch.
      */

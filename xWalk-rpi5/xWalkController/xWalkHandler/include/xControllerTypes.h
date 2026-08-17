@@ -70,6 +70,13 @@ namespace xwalk::ctrl
     using controllerdelaycallback = void (*)(::ctrl::contextpointer context, ::ctrl::uint32 durationMs);
 
     /**
+     * @brief Reads elapsed monotonic time in milliseconds.
+     * @param[in,out] context Non-owning application context that outlives the CLI.
+     * @return Monotonic milliseconds from a platform-defined epoch.
+     */
+    using controllermonotoniccallback = ::ctrl::uint64 (*)(::ctrl::contextpointer context) noexcept;
+
+    /**
      * @brief Reports whether the active command may perform another bounded step.
      * @param[in,out] context Non-owning application context that outlives the CLI.
      * @return `true` to continue; otherwise `false` to request emergency actuator shutdown.
@@ -98,6 +105,8 @@ namespace xwalk::ctrl
             controllerinputcallback input{nullptr};
             /** @brief Non-null delay operation. */
             controllerdelaycallback delay{nullptr};
+            /** @brief Non-null monotonic elapsed-time query. */
+            controllermonotoniccallback monotonicMilliseconds{nullptr};
             /** @brief Non-null cancellation query shared by every bounded command. */
             controllercontinuecallback continueOperation{nullptr};
             /** @brief Non-null audio operation that may report backend unavailability. */

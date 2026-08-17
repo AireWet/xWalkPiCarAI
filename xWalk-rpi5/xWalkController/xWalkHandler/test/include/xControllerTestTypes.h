@@ -68,6 +68,8 @@ namespace xwalk::source_types::xcontrollertest
             ::ctrl::stringvector inputLines;
             ::ctrl::size inputIndex{};
             ::ctrl::uint32vector delays;
+            ::ctrl::uint64 monotonicMilliseconds{}; /**< Simulated elapsed monotonic time. */
+            ::ctrl::uint32 delayOverrunMs{};        /**< Simulated scheduler overrun per delay callback. */
             ::ctrl::float64vector leftSpeeds;
             ::ctrl::float64vector rightSpeeds;
             ::ctrl::float64vector steeringAngles;

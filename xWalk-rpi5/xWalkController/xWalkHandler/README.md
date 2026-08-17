@@ -55,7 +55,8 @@ payload receive `XWalkNoArgumentRequest`, and commands whose only value is
 `start` or `stop` share `XWalkLifecycleRequest`.
 
 Bounded forward and backward movement refreshes the requested motor output
-every 250 milliseconds while retaining the shared cancellable-delay polling.
+on a 250-millisecond monotonic schedule while retaining the shared cancellable-delay polling.
+Absolute deadlines prevent scheduling and backend overhead from extending the requested duration.
 Every bounded exit stops both motors, and a zero-duration request never
 energizes them. The separate movement demo retains its existing sequence.
 

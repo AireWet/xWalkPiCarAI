@@ -103,6 +103,17 @@ namespace
     }
 
     /**
+     * @brief Supplies deterministic monotonic time to commands that do not move.
+     * @param[in,out] context Test context; unused.
+     * @return Zero milliseconds.
+     */
+    ::ctrl::uint64 monotonicMilliseconds(ctrl::contextpointer context) noexcept
+    {
+        static_cast<void>(context);
+        return 0U;
+    }
+
+    /**
      * @brief Permits every bounded simulated operation.
      *
      * @param[in,out] context
@@ -144,7 +155,7 @@ namespace
      */
     xwalk::ctrl::XWalkControllerCallbacks callbacks()
     {
-        return {&output, &input, &delay, &continueOperation, &sound};
+        return {&output, &input, &delay, &monotonicMilliseconds, &continueOperation, &sound};
     }
 
     /******************************************************************************

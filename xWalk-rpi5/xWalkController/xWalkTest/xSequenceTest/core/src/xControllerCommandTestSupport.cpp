@@ -167,9 +167,15 @@ namespace
         CallbackContext& callbackContext = *static_cast<CallbackContext*>(context);
         callbackContext.state->eventLog.emplace_back("controller.delay");
         callbackContext.state->delays.push_back(durationMs);
+        callbackContext.state->monotonicMilliseconds += durationMs;
         callbackContext.state->leftSpeeds.push_back(callbackContext.motors->left().speed());
         callbackContext.state->rightSpeeds.push_back(callbackContext.motors->right().speed());
         callbackContext.state->steeringAngles.push_back(callbackContext.picarx->directionAngleDegrees());
+    }
+
+    ::ctrl::uint64 monotonicMilliseconds(::ctrl::contextpointer context) noexcept
+    {
+        return static_cast<CallbackContext*>(context)->state->monotonicMilliseconds;
     }
 
     ::ctrl::boolean startVision(::ctrl::contextpointer context)
@@ -665,7 +671,7 @@ namespace xwalk::agent::test
 
         CallbackContext callbackContext{&state, &motors, &picarx};
         const xwalk::ctrl::XWalkControllerCallbacks controllerCallbacks{
-            &output, &input, &delay, &continueOperation, &sound};
+            &output, &input, &delay, &monotonicMilliseconds, &continueOperation, &sound};
         XWalkLineTracking lineTracking(picarx, &callbackContext, &delay);
         const hal::XWalkMusicCallbacks musicCallbacks{&enableMusic,
                                                       &playSound,
