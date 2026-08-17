@@ -160,6 +160,9 @@ namespace xwalk::ctrl
             ::ctrl::boolean operationMayContinue();
             /** @brief Performs a cancellable delay using bounded application-owned slices. */
             ::ctrl::boolean delayWhileOperationRequested(::ctrl::uint32 durationMs);
+            /** @brief Delays until the next bounded-movement refresh or the movement deadline. */
+            ::ctrl::boolean
+            delayUntilNextMoveRefresh(::ctrl::uint64 endMs, ::ctrl::uint64& currentMs, ::ctrl::uint64& nextRefreshMs);
             /** @brief Executes the move command. */
             ::ctrl::int32 XWALK_handlerMove(const XWalkMoveRequest& request);
             /** @brief Runs the bounded movement sequence ported from `2.move.py`. */

@@ -18,8 +18,11 @@ pkg_check_modules(JSON_C REQUIRED IMPORTED_TARGET json-c)
 set(XWALK_TRACE_PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/..)
 set(XWALK_TRACE_GENERATOR
     ${CMAKE_CURRENT_SOURCE_DIR}/pre-compiler/xHal_Rpi5CarTracePreCompiler.py)
-set(XWALK_TRACE_PRIORITY_CONFIG
-    ${CMAKE_CURRENT_SOURCE_DIR}/config/xWalkTracePriorities.json)
+set(XWALK_TRACE_PRIORITY_CONFIGS
+    ${CMAKE_CURRENT_SOURCE_DIR}/config/xWalkTraceCriticalPriorities.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/config/xWalkTraceErrorPriorities.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/config/xWalkTraceWarningPriorities.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/config/xWalkTraceInfoPriorities.json)
 set(XWALK_TRACE_GENERATED_DIRECTORY ${CMAKE_BINARY_DIR}/generated)
 set(XWALK_TRACE_GENERATED_XML ${XWALK_TRACE_GENERATED_DIRECTORY}/xwalk-traces.xml)
 set(XWALK_TRACE_GENERATED_INCLUDE_DIRECTORY
@@ -51,9 +54,12 @@ add_custom_command(
     COMMAND ${Python3_EXECUTABLE} ${XWALK_TRACE_GENERATOR}
         --project-root ${XWALK_TRACE_PROJECT_ROOT}
         --source-root ${XWALK_TRACE_PROJECT_ROOT}
-        --priority-config ${XWALK_TRACE_PRIORITY_CONFIG}
+        --priority-config ${CMAKE_CURRENT_SOURCE_DIR}/config/xWalkTraceCriticalPriorities.json
+        --priority-config ${CMAKE_CURRENT_SOURCE_DIR}/config/xWalkTraceErrorPriorities.json
+        --priority-config ${CMAKE_CURRENT_SOURCE_DIR}/config/xWalkTraceWarningPriorities.json
+        --priority-config ${CMAKE_CURRENT_SOURCE_DIR}/config/xWalkTraceInfoPriorities.json
         --output ${XWALK_TRACE_GENERATED_XML}
-    DEPENDS ${XWALK_TRACE_GENERATOR} ${XWALK_TRACE_PRIORITY_CONFIG}
+    DEPENDS ${XWALK_TRACE_GENERATOR} ${XWALK_TRACE_PRIORITY_CONFIGS}
         ${XWALK_TRACE_SCANNED_SOURCES}
     COMMENT "Validating xWalk trace identifiers and generating XML metadata"
     VERBATIM)

@@ -11,6 +11,7 @@ import sys
 import tempfile
 import unittest
 import xml.etree.ElementTree as ElementTree
+import json
 
 
 SCRIPT_PATH = (
@@ -40,6 +41,45 @@ XWALK_LIB_TRACE_UID0(LIB.4001, "Library ready");
         )
         self.assertEqual([trace.priority for trace in traces], [0, 3, 1, 2])
         self.assertEqual([trace.format_argument_count for trace in traces], [0, 1, 0, 0])
+
+    def testNamedPriorityGroupsAreLoaded(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            priority_paths: list[Path] = []
+            groups = {
+                "critical": {"RPI.1001": 0},
+                "error": {"CTRL.2001": 1},
+                "warning": {"RPIAGENT.3001": 2},
+                "info": {"LIB.4001": 3},
+            }
+            for group_name, entries in groups.items():
+                priority_path = Path(directory) / f"{group_name}.json"
+                priority_path.write_text(json.dumps({group_name: entries}), encoding="utf-8")
+                priority_paths.append(priority_path)
+            self.assertEqual(
+                TRACE_GENERATOR.loadPriorities(priority_paths),
+                {"RPI.1001": 0, "CTRL.2001": 1, "RPIAGENT.3001": 2, "LIB.4001": 3},
+            )
+
+    def testPriorityGroupsRejectUnknownNames(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            priority_paths: list[Path] = []
+            for group_name in ("critical", "error", "warning", "debug"):
+                priority_path = Path(directory) / f"{group_name}.json"
+                priority_path.write_text(json.dumps({group_name: {}}), encoding="utf-8")
+                priority_paths.append(priority_path)
+            with self.assertRaisesRegex(TRACE_GENERATOR.ScannerError, "Invalid trace priority groups"):
+                TRACE_GENERATOR.loadPriorities(priority_paths)
+
+    def testPriorityGroupsRejectMismatchedValues(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            priority_paths: list[Path] = []
+            groups = {"critical": {"RPI.1001": 1}, "error": {}, "warning": {}, "info": {}}
+            for group_name, entries in groups.items():
+                priority_path = Path(directory) / f"{group_name}.json"
+                priority_path.write_text(json.dumps({group_name: entries}), encoding="utf-8")
+                priority_paths.append(priority_path)
+            with self.assertRaisesRegex(TRACE_GENERATOR.ScannerError, "must be 0 in critical"):
+                TRACE_GENERATOR.loadPriorities(priority_paths)
 
     def testSameNumericIdInDistinctTagsIsValid(self) -> None:
         traces = TRACE_GENERATOR.scanSource(

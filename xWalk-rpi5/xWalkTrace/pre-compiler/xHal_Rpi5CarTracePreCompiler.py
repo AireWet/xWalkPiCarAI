@@ -31,6 +31,12 @@ SOURCE_COMPONENTS = {
 SOURCE_SUFFIXES = {".c", ".cc", ".cpp", ".cxx", ".h", ".hpp"}
 MAXIMUM_FORMAT_ARGUMENTS = 5
 DEFAULT_TRACE_PRIORITY = 3
+TRACE_PRIORITY_GROUPS = {
+    "critical": 0,
+    "error": 1,
+    "warning": 2,
+    "info": 3,
+}
 EXCLUDED_DIRECTORY_NAMES = {
     ".git",
     "external",
@@ -374,22 +380,50 @@ def validateUniqueness(occurrences: list[TraceOccurrence]) -> None:
     raise ScannerError("\n".join(lines))
 
 
-def loadPriorities(priority_path: Path) -> dict[str, int]:
-    """Load validated per-UID priorities from one project-owned JSON map."""
+def loadPriorities(priority_paths: list[Path]) -> dict[str, int]:
+    """Load validated per-UID priorities from separate named JSON group files."""
 
-    try:
-        document = json.loads(priority_path.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError) as error:
-        raise ScannerError(f"Trace priority configuration is invalid: {error}") from error
-    if not isinstance(document, dict):
-        raise ScannerError("Trace priority configuration root must be an object")
+    groups: dict[str, object] = {}
+    for priority_path in priority_paths:
+        try:
+            document = json.loads(priority_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError) as error:
+            raise ScannerError(f"Trace priority configuration is invalid: {priority_path}: {error}") from error
+        if not isinstance(document, dict):
+            raise ScannerError(f"Trace priority configuration root must be an object: {priority_path}")
+        if len(document) != 1:
+            raise ScannerError(f"Trace priority configuration must contain one level object: {priority_path}")
+        group_name, group = next(iter(document.items()))
+        if group_name in groups:
+            raise ScannerError(f"Duplicate trace priority group: {group_name}")
+        groups[group_name] = group
+
+    configured_groups = set(groups)
+    expected_groups = set(TRACE_PRIORITY_GROUPS)
+    if configured_groups != expected_groups:
+        missing_groups = sorted(expected_groups - configured_groups)
+        unknown_groups = sorted(configured_groups - expected_groups)
+        details: list[str] = []
+        if missing_groups:
+            details.append("missing groups: " + ", ".join(missing_groups))
+        if unknown_groups:
+            details.append("unknown groups: " + ", ".join(unknown_groups))
+        raise ScannerError("Invalid trace priority groups: " + "; ".join(details))
     priorities: dict[str, int] = {}
-    for uid, priority in document.items():
-        if not isinstance(uid, str) or UID_PATTERN.fullmatch(uid) is None:
-            raise ScannerError(f"Invalid trace priority UID: {uid}")
-        if not isinstance(priority, int) or priority not in range(4):
-            raise ScannerError(f"Invalid trace priority for {uid}: {priority}")
-        priorities[uid] = priority
+    for group_name, group_priority in TRACE_PRIORITY_GROUPS.items():
+        group = groups[group_name]
+        if not isinstance(group, dict):
+            raise ScannerError(f"Trace priority group must be an object: {group_name}")
+        for uid, priority in group.items():
+            if not isinstance(uid, str) or UID_PATTERN.fullmatch(uid) is None:
+                raise ScannerError(f"Invalid trace priority UID: {uid}")
+            if priority != group_priority:
+                raise ScannerError(
+                    f"Trace priority for {uid} must be {group_priority} in {group_name}: {priority}"
+                )
+            if uid in priorities:
+                raise ScannerError(f"Duplicate trace priority UID: {uid}")
+            priorities[uid] = priority
     return priorities
 
 
@@ -505,20 +539,20 @@ class XWalkTracePreCompiler:
 
     def __init__(
         self, project_root: Path, source_roots: list[Path], output_path: Path,
-        priority_path: Path | None = None,
+        priority_paths: list[Path] | None = None,
     ) -> None:
         """Retain resolved build inputs without scanning during construction."""
 
         self.project_root = project_root.resolve()
         self.source_roots = [path.resolve() for path in source_roots]
         self.output_path = output_path.resolve()
-        self.priority_path = priority_path.resolve() if priority_path is not None else None
+        self.priority_paths = [path.resolve() for path in priority_paths] if priority_paths is not None else None
 
     def run(self) -> list[TraceOccurrence]:
         """Scan, validate, and generate metadata for the configured source roots."""
 
         occurrences: list[TraceOccurrence] = []
-        priorities = loadPriorities(self.priority_path) if self.priority_path is not None else None
+        priorities = loadPriorities(self.priority_paths) if self.priority_paths is not None else None
         for source_path in collectSources(self.source_roots, self.project_root):
             relative_path = source_path.relative_to(self.project_root).as_posix()
             source_text = source_path.read_text(encoding="utf-8")
@@ -545,7 +579,7 @@ def main() -> int:
     parser.add_argument("--project-root", type=Path, required=True)
     parser.add_argument("--source-root", type=Path, action="append", required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--priority-config", type=Path)
+    parser.add_argument("--priority-config", type=Path, action="append")
     arguments = parser.parse_args()
     try:
         pre_compiler = XWalkTracePreCompiler(

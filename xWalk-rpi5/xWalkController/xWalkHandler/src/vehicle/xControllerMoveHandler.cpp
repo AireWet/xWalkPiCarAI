@@ -26,6 +26,8 @@
 
 #include "xController.h"
 
+#include "xHal_Rpi5CarTrace.h"
+
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -40,6 +42,47 @@ namespace xwalk::ctrl
     /******************************************************************************
      * Member function definitions
      ******************************************************************************/
+
+    /**
+     * @brief Delays until the next bounded-movement refresh or the movement deadline.
+     *
+     * @details Advances the absolute 250-millisecond refresh schedule, skips elapsed refresh slots, and retains
+     * cancellation through the shared sliced-delay mechanism.
+     *
+     * @param[in] endMs Absolute monotonic movement deadline in milliseconds.
+     * @param[in,out] currentMs Most recently observed monotonic time in milliseconds.
+     * @param[in,out] nextRefreshMs Absolute monotonic time of the current refresh slot.
+     * @return `true` when the delay completes; otherwise `false` when the deadline or cancellation stops movement.
+     */
+    ::ctrl::boolean XWalkController::delayUntilNextMoveRefresh(::ctrl::uint64 endMs,
+                                                               ::ctrl::uint64& currentMs,
+                                                               ::ctrl::uint64& nextRefreshMs)
+    {
+        currentMs = callbacks.monotonicMilliseconds(callbackContext);
+        if (currentMs >= endMs)
+        {
+            return false;
+        }
+
+        constexpr ::ctrl::uint64 refreshIntervalMs{250U};
+        nextRefreshMs += refreshIntervalMs;
+        if (nextRefreshMs <= currentMs)
+        {
+            const ::ctrl::uint64 elapsedPastRefreshMs = currentMs - nextRefreshMs;
+            const ::ctrl::uint64 skippedRefreshCount = (elapsedPastRefreshMs / refreshIntervalMs) + 1U;
+            nextRefreshMs += skippedRefreshCount * refreshIntervalMs;
+        }
+
+        const ::ctrl::uint64 wakeMs = (nextRefreshMs < endMs) ? nextRefreshMs : endMs;
+        const ::ctrl::uint64 delayDurationMs = wakeMs - currentMs;
+        const ::ctrl::boolean delayCompleted =
+            delayWhileOperationRequested(static_cast<::ctrl::uint32>(delayDurationMs));
+        if (delayCompleted)
+        {
+            currentMs = callbacks.monotonicMilliseconds(callbackContext);
+        }
+        return delayCompleted;
+    }
 
     /**
      * @brief Executes the move command.
@@ -58,7 +101,6 @@ namespace xwalk::ctrl
         {
             return XWALK_handlerMoveExample();
         }
-        constexpr ::ctrl::uint64 refreshIntervalMs{250U};
         const ::ctrl::uint64 startMs = callbacks.monotonicMilliseconds(callbackContext);
         const ::ctrl::uint64 durationMs = static_cast<::ctrl::uint64>(request.durationMs);
         const ::ctrl::uint64 endMs = startMs + durationMs;
@@ -68,44 +110,27 @@ namespace xwalk::ctrl
         while ((currentMs < endMs) && operationRequested)
         {
             operationRequested = operationMayContinue();
-            if (operationRequested == false)
+            if (operationRequested)
             {
-                break;
-            }
+                if (request.action == XWalkMoveAction::Forward)
+                {
+                    picarxObject->forward(request.speedPercent);
+                }
+                else if (request.action == XWalkMoveAction::Backward)
+                {
+                    picarxObject->backward(request.speedPercent);
+                }
+                else
+                {
+                    XWALK_CTRL_WARNING(XWALK_INVAL, "Unsupported bounded-movement action; motors remain stopped.");
+                    operationRequested = false;
+                }
 
-            if (request.action == XWalkMoveAction::Forward)
-            {
-                picarxObject->forward(request.speedPercent);
+                if (operationRequested)
+                {
+                    operationRequested = delayUntilNextMoveRefresh(endMs, currentMs, nextRefreshMs);
+                }
             }
-            else
-            {
-                picarxObject->backward(request.speedPercent);
-            }
-
-            currentMs = callbacks.monotonicMilliseconds(callbackContext);
-            if (currentMs >= endMs)
-            {
-                break;
-            }
-
-            nextRefreshMs += refreshIntervalMs;
-            if (nextRefreshMs <= currentMs)
-            {
-                const ::ctrl::uint64 elapsedPastRefreshMs = currentMs - nextRefreshMs;
-                const ::ctrl::uint64 skippedRefreshCount = (elapsedPastRefreshMs / refreshIntervalMs) + 1U;
-                nextRefreshMs += skippedRefreshCount * refreshIntervalMs;
-            }
-
-            const ::ctrl::uint64 wakeMs = (nextRefreshMs < endMs) ? nextRefreshMs : endMs;
-            const ::ctrl::uint64 delayDurationMs = wakeMs - currentMs;
-            const ::ctrl::boolean delayCompleted =
-                delayWhileOperationRequested(static_cast<::ctrl::uint32>(delayDurationMs));
-            if (delayCompleted == false)
-            {
-                break;
-            }
-
-            currentMs = callbacks.monotonicMilliseconds(callbackContext);
         }
         picarxObject->stop();
         return 0;

@@ -31,8 +31,13 @@ valid in different tags. `RPI.001` and `RPI.1` conflict because they represent
 the same numeric value. The scanner also rejects a macro family used from the
 wrong owned source tree. The `UIDn` suffix is the exact number of formatting
 arguments after the UID and format string. Variants `UID0` through `UID5` are
-supported. Per-UID record priorities remain separately defined in
-`config/xWalkTracePriorities.json` and do not bypass runtime state.
+supported. Per-UID record priorities remain separately defined in the named
+`critical`, `error`, `warning`, and `info` objects in
+`config/xWalkTraceCriticalPriorities.json`, `config/xWalkTraceErrorPriorities.json`,
+`config/xWalkTraceWarningPriorities.json`, and `config/xWalkTraceInfoPriorities.json`.
+Every file owns exactly one level object, and every entry retains its matching
+numeric priority from zero through three so the precompiler can reject an
+identifier placed in the wrong level file. Priorities do not bypass runtime state.
 
 Warnings, errors, and numeric assertions remain intentionally unconditional:
 
