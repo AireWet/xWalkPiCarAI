@@ -30,7 +30,6 @@
 
 #include "xHal_Rpi5CarTestFunctions.h"
 
-#include <cassert>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -94,7 +93,7 @@ namespace
     void captureOutput(contextpointer context, XWalkTraceLevel level, stringview message)
     {
         TraceCapture& capture = *static_cast<TraceCapture*>(context);
-        assert(capture.count < XHAL_RPI5CAR_TRACE_TEST_RECORD_CAPACITY);
+        xwalk::hal::test::requireTestCondition(capture.count < XHAL_RPI5CAR_TRACE_TEST_RECORD_CAPACITY);
         capture.levels[capture.count] = level;
         capture.messages[capture.count] = string(message);
         ++capture.count;
@@ -105,7 +104,7 @@ namespace
     void writeRuntimeConfiguration(const filesystempath& configurationPath)
     {
         outputfilestream configuration(configurationPath, FILE_OPEN_WRITE_TRUNCATE);
-        assert(configuration.is_open());
+        xwalk::hal::test::requireTestCondition(configuration.is_open());
         configuration << R"xml(<?xml version="1.0" encoding="UTF-8"?>
 <xwalkTraceCatalogue version="1.0">
   <module name="CTRL" defaultState="disable">
@@ -141,7 +140,7 @@ namespace
 </xwalkTraceCatalogue>
 )xml";
         configuration.flush();
-        assert(configuration.good());
+        xwalk::hal::test::requireTestCondition(configuration.good());
     }
 
     /** @brief Returns one incremented value for disabled-argument evaluation tests.
@@ -168,9 +167,9 @@ namespace
     {
         tinyxml2::XMLDocument document;
         const tinyxml2::XMLError loadResult = document.LoadFile(configurationPath.string().c_str());
-        assert(loadResult == tinyxml2::XML_SUCCESS);
+        xwalk::hal::test::requireTestCondition(loadResult == tinyxml2::XML_SUCCESS);
         const tinyxml2::XMLElement* root = document.FirstChildElement("xwalkTraceCatalogue");
-        assert(root != nullptr);
+        xwalk::hal::test::requireTestCondition(root != nullptr);
         for (const tinyxml2::XMLElement* module = root->FirstChildElement("module"); module != nullptr;
              module = module->NextSiblingElement("module"))
         {
@@ -182,12 +181,12 @@ namespace
                 if (uidMatches)
                 {
                     const char* state = trace->Attribute("defaultState");
-                    assert(state != nullptr);
+                    xwalk::hal::test::requireTestCondition(state != nullptr);
                     return string(state);
                 }
             }
         }
-        assert(false);
+        xwalk::hal::test::requireTestCondition(false);
         return {};
     }
 
@@ -207,8 +206,8 @@ namespace
         XWalkTrace::configureGlobal(configurationPath, configuredLogPath);
         std::filesystem::current_path(originalDirectory);
 
-        assert(std::filesystem::exists(configuredLogPath));
-        assert(std::filesystem::exists(isolatedDirectory / "log") == false);
+        xwalk::hal::test::requireTestCondition(std::filesystem::exists(configuredLogPath));
+        xwalk::hal::test::requireTestCondition(std::filesystem::exists(isolatedDirectory / "log") == false);
     }
 
     /** @brief Verifies JSON ordering, strict states, unknown IDs, and precedence.
@@ -219,18 +218,18 @@ namespace
         writeRuntimeConfiguration(configurationPath);
         XWalkTrace::configureGlobal(configurationPath, "trace-argument.log");
 
-        assert(XWalkTrace::applyGlobalTraceArgument("RPI.91001.enable"));
-        assert(XWalkTrace::globalTraceIsEnabled("RPI.91001"));
-        assert(persistentTraceState(configurationPath, "RPI.91001") == "enable");
-        assert(XWalkTrace::applyGlobalTraceArgument("RPI.disable"));
-        assert(XWalkTrace::globalTraceIsEnabled("RPI.91001") == false);
-        assert(XWalkTrace::applyGlobalTraceArgument("all.enable"));
-        assert(XWalkTrace::globalTraceIsEnabled("RPI.91001"));
-        assert(XWalkTrace::globalTraceIsEnabled("CTRL.91001"));
-        assert(XWalkTrace::globalTraceIsEnabled("RPIAGENT.93001"));
-        assert(XWalkTrace::globalTraceIsEnabled("LIB.94001"));
-        assert(XWalkTrace::applyGlobalTraceArgument("CTRL.91001.disable"));
-        assert(XWalkTrace::globalTraceIsEnabled("CTRL.91001") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("RPI.91001.enable"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPI.91001"));
+        xwalk::hal::test::requireTestCondition(persistentTraceState(configurationPath, "RPI.91001") == "enable");
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("RPI.disable"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPI.91001") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("all.enable"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPI.91001"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("CTRL.91001"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPIAGENT.93001"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("LIB.94001"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("CTRL.91001.disable"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("CTRL.91001") == false);
 
         const filesystempath jsonPath("trace-argument.json");
         outputfilestream jsonFile(jsonPath, FILE_OPEN_WRITE_TRUNCATE);
@@ -242,39 +241,42 @@ namespace
   }
 })json";
         jsonFile.close();
-        assert(XWalkTrace::applyGlobalTraceArgument(jsonPath.string()));
-        assert(XWalkTrace::globalTraceIsEnabled("RPI.91001") == false);
-        assert(XWalkTrace::globalTraceIsEnabled("RPI.91004"));
-        assert(XWalkTrace::globalTraceIsEnabled("CTRL.91001"));
-        assert(XWalkTrace::globalTraceIsEnabled("CTRL.92004") == false);
-        assert(persistentTraceState(configurationPath, "RPI.91004") == "enable");
-        assert(persistentTraceState(configurationPath, "CTRL.91001") == "enable");
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument(jsonPath.string()));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPI.91001") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPI.91004"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("CTRL.91001"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("CTRL.92004") == false);
+        xwalk::hal::test::requireTestCondition(persistentTraceState(configurationPath, "RPI.91004") == "enable");
+        xwalk::hal::test::requireTestCondition(persistentTraceState(configurationPath, "CTRL.91001") == "enable");
 
         XWalkTrace::configureGlobal(configurationPath, "trace-argument-reload.log");
-        assert(XWalkTrace::globalTraceIsEnabled("RPI.91001") == false);
-        assert(XWalkTrace::globalTraceIsEnabled("RPI.91004"));
-        assert(XWalkTrace::globalTraceIsEnabled("CTRL.91001"));
-        assert(XWalkTrace::globalTraceIsEnabled("CTRL.92004") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPI.91001") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPI.91004"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("CTRL.91001"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("CTRL.92004") == false);
 
         outputfilestream invalidJson("trace-invalid-state.json", FILE_OPEN_WRITE_TRUNCATE);
         invalidJson << R"json({"trace":{"all":{"state":true}}})json";
         invalidJson.close();
-        assert(XWalkTrace::applyGlobalTraceArgument("trace-invalid-state.json") == false);
-        assert(XWalkTrace::globalTraceConfigurationError().find("enable or disable") != string::npos);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("trace-invalid-state.json") ==
+                                               false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceConfigurationError().find("enable or disable") !=
+                                               string::npos);
 
         outputfilestream unknownJson("trace-unknown-id.json", FILE_OPEN_WRITE_TRUNCATE);
         unknownJson << R"json({"trace":{"RPI":{"tags":{"99999":"enable"}}}})json";
         unknownJson.close();
-        assert(XWalkTrace::applyGlobalTraceArgument("trace-unknown-id.json") == false);
-        assert(XWalkTrace::globalTraceConfigurationError().find("RPI.99999") != string::npos);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("trace-unknown-id.json") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceConfigurationError().find("RPI.99999") !=
+                                               string::npos);
 
         const auto rejectJson = [](cstring path, stringview contents)
         {
             outputfilestream file(path, FILE_OPEN_WRITE_TRUNCATE);
             file << contents;
             file.close();
-            assert(XWalkTrace::applyGlobalTraceArgument(path) == false);
-            assert(!XWalkTrace::globalTraceConfigurationError().empty());
+            xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument(path) == false);
+            xwalk::hal::test::requireTestCondition(!XWalkTrace::globalTraceConfigurationError().empty());
         };
         rejectJson("trace-array-root.json", "[]");
         rejectJson("trace-missing-root.json", "{}");
@@ -292,11 +294,11 @@ namespace
         oversized.seekp(1'048'576);
         oversized.put('x');
         oversized.close();
-        assert(XWalkTrace::applyGlobalTraceArgument("trace-oversized.json") == false);
-        assert(XWalkTrace::applyGlobalTraceArgument("trace-missing.json") == false);
-        assert(XWalkTrace::applyGlobalTraceArgument("invalid-selector") == false);
-        assert(XWalkTrace::applyGlobalTraceArgument("RPI.91001.enabled") == false);
-        assert(XWalkTrace::applyGlobalTraceArgument("UNKNOWN.enable") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("trace-oversized.json") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("trace-missing.json") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("invalid-selector") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("RPI.91001.enabled") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("UNKNOWN.enable") == false);
     }
 
     /** @brief Verifies warning-default filtering and all severity entry points. */
@@ -305,21 +307,21 @@ namespace
         TraceCapture capture;
         XWalkTrace trace(&capture, &captureOutput);
 
-        assert(trace.level() == XWalkTraceLevel::Warning);
-        assert(trace.levelName() == XHAL_RPI5CAR_TRACE_LEVEL_WARNING_NAME);
+        xwalk::hal::test::requireTestCondition(trace.level() == XWalkTraceLevel::Warning);
+        xwalk::hal::test::requireTestCondition(trace.levelName() == XHAL_RPI5CAR_TRACE_LEVEL_WARNING_NAME);
         trace.debug("debug");
         trace.info("info");
         trace.warning("warning");
         trace.error("error");
         trace.critical("critical");
 
-        assert(capture.count == 3U);
-        assert(capture.levels[0U] == XWalkTraceLevel::Warning);
-        assert(capture.messages[0U] == "warning");
-        assert(capture.levels[1U] == XWalkTraceLevel::Error);
-        assert(capture.messages[1U] == "error");
-        assert(capture.levels[2U] == XWalkTraceLevel::Critical);
-        assert(capture.messages[2U] == "critical");
+        xwalk::hal::test::requireTestCondition(capture.count == 3U);
+        xwalk::hal::test::requireTestCondition(capture.levels[0U] == XWalkTraceLevel::Warning);
+        xwalk::hal::test::requireTestCondition(capture.messages[0U] == "warning");
+        xwalk::hal::test::requireTestCondition(capture.levels[1U] == XWalkTraceLevel::Error);
+        xwalk::hal::test::requireTestCondition(capture.messages[1U] == "error");
+        xwalk::hal::test::requireTestCondition(capture.levels[2U] == XWalkTraceLevel::Critical);
+        xwalk::hal::test::requireTestCondition(capture.messages[2U] == "critical");
     }
 
     /** @brief Verifies accepted records are emitted to the terminal and log file.
@@ -335,13 +337,13 @@ namespace
 
         const filesystempath logPath =
             filesystempath(XHAL_RPI5CAR_TRACE_LOG_DIRECTORY) / XHAL_RPI5CAR_TRACE_LOG_FILENAME;
-        assert(logPath.is_absolute());
+        xwalk::hal::test::requireTestCondition(logPath.is_absolute());
         const string logContents = readFileContents(logPath);
         const string terminalContents = terminalOutput.str();
-        assert(logContents.find("[LEGACY] [WARNING]") != string::npos);
-        assert(logContents.find("host file output record") != string::npos);
-        assert(terminalContents.find("[LEGACY] [WARNING]") != string::npos);
-        assert(terminalContents.find("host file output record") != string::npos);
+        xwalk::hal::test::requireTestCondition(logContents.find("[LEGACY] [WARNING]") != string::npos);
+        xwalk::hal::test::requireTestCondition(logContents.find("host file output record") != string::npos);
+        xwalk::hal::test::requireTestCondition(terminalContents.find("[LEGACY] [WARNING]") != string::npos);
+        xwalk::hal::test::requireTestCondition(terminalContents.find("host file output record") != string::npos);
     }
 
     /** @brief Verifies missing and malformed XML use safe disabled defaults. */
@@ -351,13 +353,13 @@ namespace
         errorcode operationError;
         static_cast<void>(removeFilesystemEntry(missingLog, operationError));
         XWalkTrace::configureGlobal("trace-config-does-not-exist.xml", missingLog);
-        assert(XWalkTrace::globalTraceIsEnabled("RPI.91001") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPI.91001") == false);
         XWALK_VERBOSE("Always visible value: %d", 9);
         const string missingContents = readFileContents(missingLog);
-        assert(missingContents.find("[TRACE] [WARNING]") != string::npos);
-        assert(missingContents.find("all normal traces are disabled") != string::npos);
-        assert(missingContents.find("[TRACE] [VERBOSE]") == string::npos);
-        assert(missingContents.find("Always visible value: 9") == string::npos);
+        xwalk::hal::test::requireTestCondition(missingContents.find("[TRACE] [WARNING]") != string::npos);
+        xwalk::hal::test::requireTestCondition(missingContents.find("all normal traces are disabled") != string::npos);
+        xwalk::hal::test::requireTestCondition(missingContents.find("[TRACE] [VERBOSE]") == string::npos);
+        xwalk::hal::test::requireTestCondition(missingContents.find("Always visible value: 9") == string::npos);
 
         const filesystempath malformedConfiguration("trace-malformed-config.xml");
         outputfilestream malformed(malformedConfiguration, FILE_OPEN_WRITE_TRUNCATE);
@@ -367,9 +369,9 @@ namespace
         operationError.clear();
         static_cast<void>(removeFilesystemEntry(malformedLog, operationError));
         XWalkTrace::configureGlobal(malformedConfiguration, malformedLog);
-        assert(XWalkTrace::globalTraceIsEnabled("RPI.91001") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPI.91001") == false);
         const string malformedContents = readFileContents(malformedLog);
-        assert(malformedContents.find("[TRACE] [ERROR]") != string::npos);
+        xwalk::hal::test::requireTestCondition(malformedContents.find("[TRACE] [ERROR]") != string::npos);
 
         const filesystempath duplicateConfiguration("trace-duplicate-config.xml");
         outputfilestream duplicate(duplicateConfiguration, FILE_OPEN_WRITE_TRUNCATE);
@@ -388,9 +390,9 @@ namespace
         operationError.clear();
         static_cast<void>(removeFilesystemEntry(duplicateLog, operationError));
         XWalkTrace::configureGlobal(duplicateConfiguration, duplicateLog);
-        assert(XWalkTrace::globalTraceIsEnabled("RPI.001") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPI.001") == false);
         const string duplicateContents = readFileContents(duplicateLog);
-        assert(duplicateContents.find("[TRACE] [ERROR]") != string::npos);
+        xwalk::hal::test::requireTestCondition(duplicateContents.find("[TRACE] [ERROR]") != string::npos);
     }
 
     /** @brief Verifies macro filtering, categories, call sites, timing, and
@@ -404,37 +406,37 @@ namespace
         static_cast<void>(removeFilesystemEntry(logPath, operationError));
         XWalkTrace::configureGlobal(configurationPath, logPath);
 
-        assert(XWalkTrace::globalTraceIsEnabled("RPI.91001") == false);
-        assert(XWalkTrace::globalTraceIsEnabled("CTRL.91001") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPI.91001") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("CTRL.91001") == false);
 
         const boolean leadingZeroTraceEnabled = XWalkTrace::enableGlobalTrace("RPI.001");
-        assert(leadingZeroTraceEnabled);
-        assert(XWalkTrace::globalTraceIsEnabled("RPI.001"));
+        xwalk::hal::test::requireTestCondition(leadingZeroTraceEnabled);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPI.001"));
         const boolean leadingZeroTraceDisabled = XWalkTrace::disableGlobalTrace("RPI.001");
-        assert(leadingZeroTraceDisabled);
-        assert(XWalkTrace::globalTraceIsEnabled("RPI.001") == false);
-        assert(XWalkTrace::enableGlobalTrace("RPI.Camera") == false);
-        assert(XWalkTrace::enableGlobalTrace("RPI.99999") == false);
+        xwalk::hal::test::requireTestCondition(leadingZeroTraceDisabled);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPI.001") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::enableGlobalTrace("RPI.Camera") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::enableGlobalTrace("RPI.99999") == false);
 
         const boolean allTracesDisabled = XWalkTrace::disableAllGlobalTraces();
-        assert(allTracesDisabled);
-        assert(XWalkTrace::globalTraceIsEnabled("RPI.91001") == false);
-        assert(XWalkTrace::globalTraceIsEnabled("CTRL.91001") == false);
-        assert(XWalkTrace::globalTraceIsEnabled("RPI.91004") == false);
+        xwalk::hal::test::requireTestCondition(allTracesDisabled);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPI.91001") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("CTRL.91001") == false);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPI.91004") == false);
         const boolean allTracesEnabled = XWalkTrace::enableAllGlobalTraces();
-        assert(allTracesEnabled);
-        assert(XWalkTrace::globalTraceIsEnabled("RPI.91001"));
-        assert(XWalkTrace::globalTraceIsEnabled("CTRL.91001"));
-        assert(XWalkTrace::globalTraceIsEnabled("RPI.91003"));
-        assert(XWalkTrace::applyGlobalTraceArgument("all.disable"));
-        assert(XWalkTrace::applyGlobalTraceArgument("RPI.enable"));
-        assert(XWalkTrace::applyGlobalTraceArgument("RPI.91002.disable"));
-        assert(XWalkTrace::applyGlobalTraceArgument("RPI.91003.disable"));
-        assert(XWalkTrace::applyGlobalTraceArgument("CTRL.enable"));
-        assert(XWalkTrace::applyGlobalTraceArgument("CTRL.92002.disable"));
-        assert(XWalkTrace::applyGlobalTraceArgument("CTRL.92003.disable"));
-        assert(XWalkTrace::applyGlobalTraceArgument("RPIAGENT.enable"));
-        assert(XWalkTrace::applyGlobalTraceArgument("LIB.enable"));
+        xwalk::hal::test::requireTestCondition(allTracesEnabled);
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPI.91001"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("CTRL.91001"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::globalTraceIsEnabled("RPI.91003"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("all.disable"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("RPI.enable"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("RPI.91002.disable"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("RPI.91003.disable"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("CTRL.enable"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("CTRL.92002.disable"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("CTRL.92003.disable"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("RPIAGENT.enable"));
+        xwalk::hal::test::requireTestCondition(XWalkTrace::applyGlobalTraceArgument("LIB.enable"));
 
         std::ostringstream terminalOutput;
         std::streambuf* const previousTerminalOutput = std::clog.rdbuf(terminalOutput.rdbuf());
@@ -488,59 +490,66 @@ namespace
         }
         std::clog.rdbuf(previousTerminalOutput);
 
-        assert(diagnosticInvocations == 0);
+        xwalk::hal::test::requireTestCondition(diagnosticInvocations == 0);
         const string contents = readFileContents(logPath);
         const string terminalContents = terminalOutput.str();
-        assert(terminalContents == contents);
-        assert(contents.find("[HAL] [P0] [RPI.91001]") != string::npos);
-        assert(contents.find("RPI.91002") == string::npos);
-        assert(contents.find("RPI.91003") == string::npos);
-        assert(contents.find("[HAL] [P3] [RPI.91004]") != string::npos);
-        assert(contents.find("[CTRL] [P1] [CTRL.91001]") != string::npos);
-        assert(contents.find("CTRL.92002") == string::npos);
-        assert(contents.find("CTRL.92003") == string::npos);
-        assert(contents.find("[CTRL] [P3] [CTRL.92004]") != string::npos);
-        assert(contents.find("[RPIAGENT] [P1] [RPIAGENT.93001]") != string::npos);
-        assert(contents.find("[LIB] [P2] [LIB.94001]") != string::npos);
-        assert(contents.find("[HAL] [WARNING]") != string::npos);
-        assert(contents.find("[HAL] [ERROR]") != string::npos);
-        assert(contents.find("[HAL] [WARNING] [XWALK_LOGIC]") != string::npos);
-        assert(contents.find("[HAL] [ERROR] [XWALK_TERM]") != string::npos);
-        assert(contents.find("[HAL] [ASSERT]") != string::npos);
-        assert(contents.find("[CTRL] [WARNING]") != string::npos);
-        assert(contents.find("[CTRL] [ERROR]") != string::npos);
-        assert(contents.find("[CTRL] [ASSERT]") != string::npos);
-        assert(contents.find("[RPIAGENT] [WARNING]") != string::npos);
-        assert(contents.find("[RPIAGENT] [ERROR]") != string::npos);
-        assert(contents.find("[RPIAGENT] [ASSERT]") != string::npos);
-        assert(contents.find("[LIB] [WARNING]") != string::npos);
-        assert(contents.find("[LIB] [ERROR]") != string::npos);
-        assert(contents.find("[LIB] [ASSERT]") != string::npos);
-        assert(contents.find("signal=100") != string::npos);
-        assert(contents.find("signal=200") != string::npos);
-        assert(contents.find("signal=300") != string::npos);
-        assert(contents.find("signal=400") != string::npos);
-        assert(terminalContents.find("[HAL] [P0] [RPI.91001]") != string::npos);
-        assert(terminalContents.find("RPI.91002") == string::npos);
-        assert(terminalContents.find("RPI.91003") == string::npos);
-        assert(terminalContents.find("[CTRL] [P1] [CTRL.91001]") != string::npos);
-        assert(terminalContents.find("CTRL.92002") == string::npos);
-        assert(terminalContents.find("CTRL.92003") == string::npos);
+        xwalk::hal::test::requireTestCondition(terminalContents == contents);
+        xwalk::hal::test::requireTestCondition(contents.find("[HAL] [P0] [RPI.91001]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("RPI.91002") == string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("RPI.91003") == string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[HAL] [P3] [RPI.91004]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[CTRL] [P1] [CTRL.91001]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("CTRL.92002") == string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("CTRL.92003") == string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[CTRL] [P3] [CTRL.92004]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[RPIAGENT] [P1] [RPIAGENT.93001]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[LIB] [P2] [LIB.94001]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[HAL] [WARNING]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[HAL] [ERROR]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[HAL] [WARNING] [XWALK_LOGIC]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[HAL] [ERROR] [XWALK_TERM]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[HAL] [ASSERT]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[CTRL] [WARNING]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[CTRL] [ERROR]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[CTRL] [ASSERT]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[RPIAGENT] [WARNING]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[RPIAGENT] [ERROR]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[RPIAGENT] [ASSERT]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[LIB] [WARNING]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[LIB] [ERROR]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("[LIB] [ASSERT]") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("signal=100") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("signal=200") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("signal=300") != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("signal=400") != string::npos);
+        xwalk::hal::test::requireTestCondition(terminalContents.find("[HAL] [P0] [RPI.91001]") != string::npos);
+        xwalk::hal::test::requireTestCondition(terminalContents.find("RPI.91002") == string::npos);
+        xwalk::hal::test::requireTestCondition(terminalContents.find("RPI.91003") == string::npos);
+        xwalk::hal::test::requireTestCondition(terminalContents.find("[CTRL] [P1] [CTRL.91001]") != string::npos);
+        xwalk::hal::test::requireTestCondition(terminalContents.find("CTRL.92002") == string::npos);
+        xwalk::hal::test::requireTestCondition(terminalContents.find("CTRL.92003") == string::npos);
 
         const string sourceName("xHal_Rpi5CarTraceTest.cpp:");
-        assert(contents.find("trace-test.cpp:6") != string::npos);
-        assert(contents.find(sourceName + std::to_string(XHAL_RPI5CAR_TRACE_TEST_METADATA_LINE)) != string::npos);
-        assert(contents.find(sourceName + std::to_string(halWarningLine)) != string::npos);
-        assert(contents.find(sourceName + std::to_string(halErrorLine)) != string::npos);
-        assert(contents.find(sourceName + std::to_string(halAssertLine)) != string::npos);
-        assert(contents.find(sourceName + std::to_string(ctrlWarningLine)) != string::npos);
-        assert(contents.find(sourceName + std::to_string(ctrlErrorLine)) != string::npos);
-        assert(contents.find(sourceName + std::to_string(ctrlAssertLine)) != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find("trace-test.cpp:6") != string::npos);
+        xwalk::hal::test::requireTestCondition(
+            contents.find(sourceName + std::to_string(XHAL_RPI5CAR_TRACE_TEST_METADATA_LINE)) != string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find(sourceName + std::to_string(halWarningLine)) !=
+                                               string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find(sourceName + std::to_string(halErrorLine)) !=
+                                               string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find(sourceName + std::to_string(halAssertLine)) !=
+                                               string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find(sourceName + std::to_string(ctrlWarningLine)) !=
+                                               string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find(sourceName + std::to_string(ctrlErrorLine)) !=
+                                               string::npos);
+        xwalk::hal::test::requireTestCondition(contents.find(sourceName + std::to_string(ctrlAssertLine)) !=
+                                               string::npos);
         const filesystempath compilerSourcePath(__FILE__);
         const boolean compilerPathAbsolute = compilerSourcePath.is_absolute();
         if (compilerPathAbsolute)
         {
-            assert(contents.find(__FILE__) == string::npos);
+            xwalk::hal::test::requireTestCondition(contents.find(__FILE__) == string::npos);
         }
 
         const std::regex timestampPattern(R"(^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z )");
@@ -552,12 +561,12 @@ namespace
         {
             const size lineEnd = contents.find('\n', lineStart);
             const string line = contents.substr(lineStart, lineEnd - lineStart);
-            assert(std::regex_search(line, timestampPattern));
-            assert(std::regex_search(line, elapsedPattern));
+            xwalk::hal::test::requireTestCondition(std::regex_search(line, timestampPattern));
+            xwalk::hal::test::requireTestCondition(std::regex_search(line, elapsedPattern));
             const size elapsedStart = line.find("[T+") + 3U;
             const size elapsedEnd = line.find("s]", elapsedStart);
             const float64 elapsed = std::stod(line.substr(elapsedStart, elapsedEnd - elapsedStart));
-            assert(elapsed >= previousElapsed);
+            xwalk::hal::test::requireTestCondition(elapsed >= previousElapsed);
             previousElapsed = elapsed;
             lineStart = (lineEnd == string::npos) ? contentsSize : lineEnd + 1U;
         }
@@ -570,24 +579,24 @@ namespace
         XWalkTrace trace(&capture, &captureOutput, XWalkTraceLevel::Info);
 
         trace.setLevel(static_cast<uint8>(XHAL_RPI5CAR_TRACE_LEVEL_DEBUG));
-        assert(trace.level() == XWalkTraceLevel::Debug);
-        assert(trace.levelName() == XHAL_RPI5CAR_TRACE_LEVEL_DEBUG_NAME);
-        assert(capture.count == 1U);
-        assert(capture.levels[0U] == XWalkTraceLevel::Debug);
-        assert(capture.messages[0U] == "Set trace level to [debug]");
+        xwalk::hal::test::requireTestCondition(trace.level() == XWalkTraceLevel::Debug);
+        xwalk::hal::test::requireTestCondition(trace.levelName() == XHAL_RPI5CAR_TRACE_LEVEL_DEBUG_NAME);
+        xwalk::hal::test::requireTestCondition(capture.count == 1U);
+        xwalk::hal::test::requireTestCondition(capture.levels[0U] == XWalkTraceLevel::Debug);
+        xwalk::hal::test::requireTestCondition(capture.messages[0U] == "Set trace level to [debug]");
 
         trace.info("selected info");
         trace.setLevel(XHAL_RPI5CAR_TRACE_LEVEL_ERROR_NAME);
         trace.warning("filtered warning");
         trace.error("selected error");
-        assert(trace.level() == XWalkTraceLevel::Error);
-        assert(trace.levelName() == XHAL_RPI5CAR_TRACE_LEVEL_ERROR_NAME);
-        assert(capture.count == 3U);
-        assert(capture.messages[1U] == "selected info");
-        assert(capture.messages[2U] == "selected error");
+        xwalk::hal::test::requireTestCondition(trace.level() == XWalkTraceLevel::Error);
+        xwalk::hal::test::requireTestCondition(trace.levelName() == XHAL_RPI5CAR_TRACE_LEVEL_ERROR_NAME);
+        xwalk::hal::test::requireTestCondition(capture.count == 3U);
+        xwalk::hal::test::requireTestCondition(capture.messages[1U] == "selected info");
+        xwalk::hal::test::requireTestCondition(capture.messages[2U] == "selected error");
 
         trace.setLevel(XWalkTraceLevel::Critical);
-        assert(trace.level() == XWalkTraceLevel::Critical);
+        xwalk::hal::test::requireTestCondition(trace.level() == XWalkTraceLevel::Critical);
     }
 
     /** @brief Verifies numeric and textual constructors preserve Python inputs. */
@@ -595,14 +604,14 @@ namespace
     {
         TraceCapture numericCapture;
         XWalkTrace numericTrace(&numericCapture, &captureOutput, static_cast<uint8>(XHAL_RPI5CAR_TRACE_LEVEL_CRITICAL));
-        assert(numericTrace.level() == XWalkTraceLevel::Critical);
-        assert(numericCapture.count == 0U);
+        xwalk::hal::test::requireTestCondition(numericTrace.level() == XWalkTraceLevel::Critical);
+        xwalk::hal::test::requireTestCondition(numericCapture.count == 0U);
 
         TraceCapture textCapture;
         XWalkTrace textTrace(&textCapture, &captureOutput, XHAL_RPI5CAR_TRACE_LEVEL_INFO_NAME);
-        assert(textTrace.level() == XWalkTraceLevel::Info);
-        assert(textTrace.levelName() == XHAL_RPI5CAR_TRACE_LEVEL_INFO_NAME);
-        assert(textCapture.count == 0U);
+        xwalk::hal::test::requireTestCondition(textTrace.level() == XWalkTraceLevel::Info);
+        xwalk::hal::test::requireTestCondition(textTrace.levelName() == XHAL_RPI5CAR_TRACE_LEVEL_INFO_NAME);
+        xwalk::hal::test::requireTestCondition(textCapture.count == 0U);
     }
 
     /** @brief Verifies every public error and operating-system signal selector. */
@@ -626,20 +635,20 @@ namespace
         static_assert(std::is_same<XWALK_WEAKPTR, badweakpointer>::value);
         static_assert(std::is_same<XWALK_EXCEPTION, standardexception>::value);
 
-        assert(XWALK_ABORT == SIGABRT);
-        assert(XWALK_FLOAT == SIGFPE);
-        assert(XWALK_ILL == SIGILL);
-        assert(XWALK_SEGV == SIGSEGV);
-        assert(XWALK_TERM == SIGTERM);
-        assert(XWALK_INT == SIGINT);
+        xwalk::hal::test::requireTestCondition(XWALK_ABORT == SIGABRT);
+        xwalk::hal::test::requireTestCondition(XWALK_FLOAT == SIGFPE);
+        xwalk::hal::test::requireTestCondition(XWALK_ILL == SIGILL);
+        xwalk::hal::test::requireTestCondition(XWALK_SEGV == SIGSEGV);
+        xwalk::hal::test::requireTestCondition(XWALK_TERM == SIGTERM);
+        xwalk::hal::test::requireTestCondition(XWALK_INT == SIGINT);
 #if defined(SIGPIPE)
-        assert(XWALK_PIPE == SIGPIPE);
+        xwalk::hal::test::requireTestCondition(XWALK_PIPE == SIGPIPE);
 #endif
 #if defined(SIGHUP)
-        assert(XWALK_HANG == SIGHUP);
+        xwalk::hal::test::requireTestCondition(XWALK_HANG == SIGHUP);
 #endif
 #if defined(SIGTRAP)
-        assert(XWALK_TRAP == SIGTRAP);
+        xwalk::hal::test::requireTestCondition(XWALK_TRAP == SIGTRAP);
 #endif
     }
 

@@ -103,7 +103,7 @@ namespace xwalk::ctrl
      *
      * @return
      * `true` when every application-global option is complete, path values are
-     * absolute, and trace selectors are valid; otherwise `false`.
+     * non-empty, and trace selectors are valid; otherwise `false`.
      */
     ::ctrl::boolean xWalkParseControllerApplicationArguments(::ctrl::int32 argumentCount,
                                                              ::ctrl::charpointer arguments[],
@@ -207,10 +207,6 @@ namespace xwalk::ctrl
             const ::ctrl::boolean moduleSelected = validTraceModule(traceTarget);
             const ::ctrl::boolean traceTargetValid = allTracesSelected || moduleSelected || validTraceUid(traceTarget);
             if (traceOption && (jsonTraceOption == false) && (traceTargetValid == false))
-            {
-                return false;
-            }
-            if ((traceOption == false) && (::ctrl::filesystempath(value).is_absolute() == false))
             {
                 return false;
             }

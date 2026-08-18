@@ -13,6 +13,9 @@ state have been confirmed.
 
 | Path | Purpose |
 |---|---|
+| `setup-rpi-local.sh` | Build pinned camera and Ollama runtimes below the current user's `${HOME}/.local`. |
+| `configure-rpi-runtime.sh` | Generate build-local configuration, start user Ollama, and list local models. |
+| `generate-rpi-runtime.sh` | Generate ignored build-local configuration and the `build-rpi/xwalk` launcher. |
 | `setup-rpi.sh` | Assess, validate, preview, or apply Raspberry Pi host provisioning. |
 | `provision-hardware.sh` | Record a verified Robot HAT and exact device identities in a writable configuration. |
 | `aarch64-dependency-audit.sh` | Validate an ARM64 sysroot and dependency architecture. |
@@ -56,8 +59,42 @@ permissions:
 xWalkTool/shell-agent/deploy-tool/provision-hardware.sh --profile robot_hat_v5 --config /var/lib/xwalk/picar-x.conf --gpio-device /dev/gpiochip0 --i2c-device /dev/i2c-1 --spi-device /dev/spidev0.0
 ```
 
-After provisioning, run the passive `doctor` or `--diagnose --no-hardware`
-flow before any separately authorized calibration or actuator test.
+After provisioning, run `--diagnose --no-hardware`, then the bounded `doctor`
+preflight before any separately authorized calibration or actuator test. Doctor
+pulses only the configured MCU reset GPIO and reports that activation explicitly.
+
+## Install the validated user-local runtime
+
+Preview the pinned Raspberry Pi 5 camera and Ollama workflow without changing
+the host:
+
+```bash
+xWalkTool/shell-agent/deploy-tool/setup-rpi-local.sh --dry-run
+```
+
+On the target Pi, apply it as the non-root runtime user. It builds the official
+Raspberry Pi libcamera fork and rpicam-apps into `${HOME}/.local`, installs an
+Ollama user service and `llama3.2:3b`, adds the runtime user to `video` and
+`render`, and generates ignored files below `build-rpi`. It never installs an
+xWalk package or camera build under `/usr` or `/usr/local`:
+
+```bash
+xWalkTool/shell-agent/deploy-tool/setup-rpi-local.sh --apply
+```
+
+Log out and back in or reboot after group changes. Then test the camera with
+`${HOME}/.local/bin/rpicam-still --list-cameras` and run the build-local CLI:
+
+```bash
+cd xWalk-rpi5 && ../build-rpi/xwalk doctor
+```
+
+To regenerate the runtime configuration later and ensure the existing Ollama
+user service is enabled and running, use:
+
+```bash
+xWalkTool/shell-agent/deploy-tool/configure-rpi-runtime.sh
+```
 
 ## Audit an ARM64 sysroot
 
@@ -82,6 +119,7 @@ bash xWalkTool/shell-agent/deploy-tool/test/setup-rpi-test.sh
 bash xWalkTool/shell-agent/deploy-tool/test/aarch64-dependency-audit-test.sh
 bash xWalkTool/shell-agent/deploy-tool/test/environment-loader-test.sh
 bash xWalkTool/shell-agent/deploy-tool/test/language-model-config-test.sh
+bash xWalkTool/shell-agent/deploy-tool/test/rpi-local-runtime-test.sh
 python3 xWalkTool/shell-agent/deploy-tool/test/dependency-installer-test.py
 ```
 

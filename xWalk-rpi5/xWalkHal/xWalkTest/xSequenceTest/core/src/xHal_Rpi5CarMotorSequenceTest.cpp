@@ -28,7 +28,7 @@
 #include "xHal_Rpi5CarMotorSequence.h"
 
 #include "xHal_Rpi5CarTrace.h"
-#include <cassert>
+#include "xHal_Rpi5CarTestFunctions.h"
 #include <vector>
 #include "xHal_Rpi5CarMotorSequenceTestTypes.h"
 
@@ -95,21 +95,21 @@ namespace
         TestGpio& state = *static_cast<TestGpio*>(context);
         state.pin = pin;
         state.value = initialValue;
-        assert(mode == XWalkHal::XWalkGpioMode::Output);
-        assert(pull == XWalkHal::XWalkGpioPull::None);
+        xwalk::hal::test::requireTestCondition(mode == XWalkHal::XWalkGpioMode::Output);
+        xwalk::hal::test::requireTestCondition(pull == XWalkHal::XWalkGpioPull::None);
     }
 
     XWalkHal::boolean readGpio(XWalkHal::contextpointer context, XWalkHal::uint8 pin)
     {
         const TestGpio& state = *static_cast<TestGpio*>(context);
-        assert(pin == state.pin);
+        xwalk::hal::test::requireTestCondition(pin == state.pin);
         return state.value;
     }
 
     void writeGpio(XWalkHal::contextpointer context, XWalkHal::uint8 pin, XWalkHal::boolean value)
     {
         TestGpio& state = *static_cast<TestGpio*>(context);
-        assert(pin == state.pin);
+        xwalk::hal::test::requireTestCondition(pin == state.pin);
         state.value = value;
     }
 
@@ -178,15 +178,16 @@ namespace
 
         sequence.run(1U);
 
-        assert(directionD4.pin == 23U);
-        assert(directionD5.pin == 24U);
-        assert(waitState.durations == XWalkHal::uint32vector({1'000U, 1'000U, 100U}));
-        assert(waitState.observedSpeeds == XWalkHal::float64vector({-50.0, -50.0, 50.0, 50.0, 0.0, 0.0}));
-        assert(waitState.observedDirections ==
-               std::vector<XWalkHal::boolean>({false, false, true, true, false, false}));
-        assert(firstMotor.speed() == 0.0);
-        assert(secondMotor.speed() == 0.0);
-        assert(i2cState.writeCount > 0U);
+        xwalk::hal::test::requireTestCondition(directionD4.pin == 23U);
+        xwalk::hal::test::requireTestCondition(directionD5.pin == 24U);
+        xwalk::hal::test::requireTestCondition(waitState.durations == XWalkHal::uint32vector({1'000U, 1'000U, 100U}));
+        xwalk::hal::test::requireTestCondition(waitState.observedSpeeds ==
+                                               XWalkHal::float64vector({-50.0, -50.0, 50.0, 50.0, 0.0, 0.0}));
+        xwalk::hal::test::requireTestCondition(
+            waitState.observedDirections == std::vector<XWalkHal::boolean>({false, false, true, true, false, false}));
+        xwalk::hal::test::requireTestCondition(firstMotor.speed() == 0.0);
+        xwalk::hal::test::requireTestCondition(secondMotor.speed() == 0.0);
+        xwalk::hal::test::requireTestCondition(i2cState.writeCount > 0U);
 
         XWalkHal::boolean rejectedCycles = false;
         try
@@ -197,7 +198,7 @@ namespace
         {
             rejectedCycles = true;
         }
-        assert(rejectedCycles);
+        xwalk::hal::test::requireTestCondition(rejectedCycles);
 
         waitState.durations.clear();
         waitState.observedSpeeds.clear();
@@ -212,12 +213,12 @@ namespace
         {
             propagatedFailure = true;
         }
-        assert(propagatedFailure);
-        assert(waitState.durations == XWalkHal::uint32vector({1'000U, 1'000U, 100U}));
-        assert(firstMotor.speed() == 0.0);
-        assert(secondMotor.speed() == 0.0);
-        assert(!directionD4.value);
-        assert(!directionD5.value);
+        xwalk::hal::test::requireTestCondition(propagatedFailure);
+        xwalk::hal::test::requireTestCondition(waitState.durations == XWalkHal::uint32vector({1'000U, 1'000U, 100U}));
+        xwalk::hal::test::requireTestCondition(firstMotor.speed() == 0.0);
+        xwalk::hal::test::requireTestCondition(secondMotor.speed() == 0.0);
+        xwalk::hal::test::requireTestCondition(!directionD4.value);
+        xwalk::hal::test::requireTestCondition(!directionD5.value);
     }
 
 } /* namespace */

@@ -142,7 +142,7 @@ namespace xwalk::ctrl
             agent::XWalkGptCar* gptCarObject{nullptr};
             /** @brief Nullable non-owning SPI transfer Agent pointer. */
             agent::XWalkSpiTransfer* spiTransferObject{nullptr};
-            /** @brief Nullable non-owning passive preflight lines supplied for doctor. */
+            /** @brief Nullable non-owning bounded preflight lines supplied for Doctor. */
             const ::ctrl::stringvector* doctorLinesObject{nullptr};
             /** @brief Nullable non-owning context forwarded synchronously to platform callbacks. */
             ::ctrl::contextpointer callbackContext{nullptr};
@@ -203,7 +203,7 @@ namespace xwalk::ctrl
             ::ctrl::int32 XWALK_handlerSound(const XWalkSoundRequest& request);
             /** @brief Executes one bounded full-duplex SPI transfer. */
             ::ctrl::int32 XWALK_handlerSpi(const XWalkSpiRequest& request);
-            /** @brief Traces one passive hardware preflight report. */
+            /** @brief Traces one bounded hardware preflight report. */
             ::ctrl::int32 XWALK_handlerDoctor(const XWalkNoArgumentRequest& request);
             /** @brief Runs the all-channel sequence ported from `servo_zeroing.py`. */
             ::ctrl::int32 XWALK_handlerServoZeroing(const XWalkNoArgumentRequest& request);
@@ -443,7 +443,7 @@ namespace xwalk::ctrl
                             const XWalkControllerCallbacks& backendCallbacks);
 
             /**
-             * @brief Constructs a CLI containing only a passive preflight report.
+             * @brief Constructs a CLI containing only a bounded preflight report.
              * @param[in] doctorLines Report lines that must outlive this CLI.
              * @param[in,out] context Optional platform callback context.
              * @param[in] backendCallbacks Complete non-null synchronous callback table.

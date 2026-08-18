@@ -26,7 +26,7 @@ keeping CLI commands and Agent types under the CLI aggregate. Its independent
 | `hardware/` | Reserved for explicitly approved CLI hardware adapters |
 
 The sequence accepts one through 32 non-empty commands, validates the complete list before execution, and
-stops at the first non-zero controller status. The generic contract test uses a passive Doctor composition.
+stops at the first non-zero controller status. The generic contract test uses a bounded Doctor report fixture.
 The command-specific files use injected, in-memory I2C, GPIO, PWM, ADC, SPI, audio, speech, language-model,
 and cancellation callbacks to verify the CLI-to-Controller-to-Agent-to-HAL sequence without opening physical
 devices, audio endpoints, cameras, or network resources.

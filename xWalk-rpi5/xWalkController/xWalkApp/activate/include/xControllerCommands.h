@@ -56,7 +56,7 @@ namespace xwalk::ctrl
      *
      * @return
      * `true` when every application-global option is complete, path values are
-     * absolute, and trace selectors are valid; otherwise `false`.
+     * non-empty, and trace selectors are valid; otherwise `false`.
      */
     ::ctrl::boolean xWalkParseControllerApplicationArguments(::ctrl::int32 argumentCount,
                                                              ::ctrl::charpointer arguments[],

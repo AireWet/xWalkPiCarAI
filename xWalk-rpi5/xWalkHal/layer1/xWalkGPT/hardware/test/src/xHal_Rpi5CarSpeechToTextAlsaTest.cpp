@@ -31,8 +31,8 @@ namespace
                                               XWalkHal::uint8 channels,
                                               XWalkHal::uint32 period)
     {
-        assert(device == "test-mic");
-        assert(rate == 16'000U && channels == 1U && period == 1'024U);
+        xwalk::hal::test::requireTestCondition(device == "test-mic");
+        xwalk::hal::test::requireTestCondition(rate == 16'000U && channels == 1U && period == 1'024U);
         return &static_cast<TestBackend*>(context)->token;
     }
 
@@ -42,7 +42,7 @@ namespace
                                 XWalkHal::size frames)
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
-        assert(handle == &backend.token);
+        xwalk::hal::test::requireTestCondition(handle == &backend.token);
         if (backend.delayRead)
         {
             backend.readStarted.store(true);
@@ -61,14 +61,14 @@ namespace
     XWalkHal::boolean
     recoverCapture(XWalkHal::contextpointer context, XWalkHal::speechcapturehandle handle, XWalkHal::int32 error)
     {
-        assert(handle == &static_cast<TestBackend*>(context)->token);
+        xwalk::hal::test::requireTestCondition(handle == &static_cast<TestBackend*>(context)->token);
         return error == -32;
     }
 
     void closeCapture(XWalkHal::contextpointer context, XWalkHal::speechcapturehandle handle)
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
-        assert(handle == &backend.token);
+        xwalk::hal::test::requireTestCondition(handle == &backend.token);
         ++backend.closeCount;
     }
 
@@ -85,14 +85,14 @@ namespace
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
         backend.recognizedBytes = pcm.size();
-        assert(rate == 16'000U && channels == 1U);
+        xwalk::hal::test::requireTestCondition(rate == 16'000U && channels == 1U);
         return "recognized microphone";
     }
 
     XWalkHal::string recognizeFile(XWalkHal::contextpointer context, XWalkHal::stringview path)
     {
         static_cast<void>(context);
-        assert(path == "sample.wav");
+        xwalk::hal::test::requireTestCondition(path == "sample.wav");
         return "recognized file";
     }
 
@@ -114,15 +114,15 @@ namespace
         XWalkHal::XWalkSpeechToTextAlsa adapter(&backend, operations(), "test-mic");
         {
             XWalkHal::XWalkSpeechToText speech(&adapter, adapter.callbacks());
-            assert(speech.isReady());
-            assert(speech.listen(100U) == "recognized microphone");
-            assert(backend.capturedFrames == 1'600U);
-            assert(backend.recognizedBytes == 3'200U);
-            assert(backend.closeCount == 1U);
-            assert(speech.transcribeFile("sample.wav") == "recognized file");
+            xwalk::hal::test::requireTestCondition(speech.isReady());
+            xwalk::hal::test::requireTestCondition(speech.listen(100U) == "recognized microphone");
+            xwalk::hal::test::requireTestCondition(backend.capturedFrames == 1'600U);
+            xwalk::hal::test::requireTestCondition(backend.recognizedBytes == 3'200U);
+            xwalk::hal::test::requireTestCondition(backend.closeCount == 1U);
+            xwalk::hal::test::requireTestCondition(speech.transcribeFile("sample.wav") == "recognized file");
             speech.stop();
         }
-        assert(backend.cancelCount == 2U);
+        xwalk::hal::test::requireTestCondition(backend.cancelCount == 2U);
     }
 
     void testValidation()
@@ -158,12 +158,12 @@ namespace
         {
             std::this_thread::sleep_for(XWalkHal::millisecondduration(1));
         }
-        assert(backend.readStarted.load());
+        xwalk::hal::test::requireTestCondition(backend.readStarted.load());
         speech.stop();
         listener.join();
-        assert(transcript.empty());
-        assert(backend.closeCount == 1U);
-        assert(backend.cancelCount == 1U);
+        xwalk::hal::test::requireTestCondition(transcript.empty());
+        xwalk::hal::test::requireTestCondition(backend.closeCount == 1U);
+        xwalk::hal::test::requireTestCondition(backend.cancelCount == 1U);
     }
 } /* namespace */
 

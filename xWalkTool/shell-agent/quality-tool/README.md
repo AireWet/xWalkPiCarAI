@@ -21,6 +21,12 @@ The command reports missing tools and prints the reviewed Ubuntu 24.04 package
 installation command. Package installation remains an explicit administrator
 action.
 
+GitHub Actions jobs install their dependencies through
+`install-github-host-packages.sh`. The helper replaces the Azure-hosted Ubuntu
+mirror with the official HTTPS Ubuntu archive before updating package indexes.
+It refuses to run outside GitHub Actions so local package sources cannot be
+changed accidentally.
+
 ## Run individual checks
 
 AddressSanitizer and UndefinedBehaviorSanitizer:

@@ -220,6 +220,21 @@ if(XWALK_BOOT_BUILD_HOST_TESTS)
     target_link_libraries(xWalkBootTest PRIVATE xWalkBoot)
     add_test(NAME xWalkBootHostTest COMMAND xWalkBootTest)
     set_tests_properties(xWalkBootHostTest PROPERTIES LABELS "host")
+    if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        add_executable(xWalkDoctorLinuxHostTest
+            hardware/src/xAgent_Rpi5CarDoctorLinuxExecutable.cpp
+            hardware/test/src/xAgent_Rpi5CarDoctorLinuxTest.cpp)
+        target_include_directories(xWalkDoctorLinuxHostTest PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/hardware/include)
+        target_link_libraries(xWalkDoctorLinuxHostTest PRIVATE xWalkLibraryCommon)
+        target_compile_features(xWalkDoctorLinuxHostTest PRIVATE cxx_std_17)
+        if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+            target_compile_options(xWalkDoctorLinuxHostTest PRIVATE
+                -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
+        endif()
+        add_test(NAME xWalkDoctorLinuxExecutableDiscoveryTest COMMAND xWalkDoctorLinuxHostTest)
+        set_tests_properties(xWalkDoctorLinuxExecutableDiscoveryTest PROPERTIES LABELS "host")
+    endif()
 endif()
 
 if(XWALK_BOOT_BUILD_RPI_BACKEND)
@@ -241,6 +256,7 @@ if(XWALK_BOOT_BUILD_RPI_BACKEND)
     endif()
     add_library(xWalkBootRpi STATIC
         hardware/src/xAgent_Rpi5CarDoctorLinux.cpp
+        hardware/src/xAgent_Rpi5CarDoctorLinuxExecutable.cpp
         hardware/src/xAgent_Rpi5CarBootRpi.cpp
         hardware/src/xAgent_Rpi5CarBootRpiAppControl.cpp
         hardware/src/xAgent_Rpi5CarBootRpiBase.cpp

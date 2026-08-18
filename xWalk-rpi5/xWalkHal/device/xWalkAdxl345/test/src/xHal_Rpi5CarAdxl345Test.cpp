@@ -61,19 +61,19 @@ namespace
         XWalkHal::XWalkAdxl345 accelerometer(i2c);
 
         const XWalkHal::float64 positiveValue = accelerometer.read(XWalkHal::XWalkAdxl345Axis::X);
-        assert(positiveValue == 1.0);
-        assert(accelerometer.address() == XHAL_RPI5CAR_ADXL345_ADDRESS);
-        assert(bus.formatWriteCount == 1U);
-        assert(bus.powerWriteCount == 1U);
-        assert(bus.registerReadCount == 2U);
-        assert(bus.lastRegister == XHAL_RPI5CAR_ADXL345_DATA_X_REGISTER);
-        assert(bus.lastLength == XHAL_RPI5CAR_ADXL345_SAMPLE_LENGTH);
+        xwalk::hal::test::requireTestCondition(positiveValue == 1.0);
+        xwalk::hal::test::requireTestCondition(accelerometer.address() == XHAL_RPI5CAR_ADXL345_ADDRESS);
+        xwalk::hal::test::requireTestCondition(bus.formatWriteCount == 1U);
+        xwalk::hal::test::requireTestCondition(bus.powerWriteCount == 1U);
+        xwalk::hal::test::requireTestCondition(bus.registerReadCount == 2U);
+        xwalk::hal::test::requireTestCondition(bus.lastRegister == XHAL_RPI5CAR_ADXL345_DATA_X_REGISTER);
+        xwalk::hal::test::requireTestCondition(bus.lastLength == XHAL_RPI5CAR_ADXL345_SAMPLE_LENGTH);
 
         bus.responses = {{0x00U, 0x00U}, {0x00U, 0xFFU}};
         bus.responseIndex = 0U;
         const XWalkHal::float64 negativeValue = accelerometer.read(XWalkHal::XWalkAdxl345Axis::Y);
-        assert(negativeValue == -1.0);
-        assert(bus.lastRegister == XHAL_RPI5CAR_ADXL345_DATA_Y_REGISTER);
+        xwalk::hal::test::requireTestCondition(negativeValue == -1.0);
+        xwalk::hal::test::requireTestCondition(bus.lastRegister == XHAL_RPI5CAR_ADXL345_DATA_Y_REGISTER);
     }
 
     /**
@@ -87,11 +87,11 @@ namespace
         XWalkHal::XWalkAdxl345 accelerometer(i2c);
 
         const XWalkHal::adxl345values values = accelerometer.read();
-        assert(values == XWalkHal::adxl345values({-1.0, 0.5, 2.0}));
-        assert(bus.formatWriteCount == 3U);
-        assert(bus.powerWriteCount == 3U);
-        assert(bus.registerReadCount == 6U);
-        assert(bus.lastRegister == XHAL_RPI5CAR_ADXL345_DATA_Z_REGISTER);
+        xwalk::hal::test::requireTestCondition(values == XWalkHal::adxl345values({-1.0, 0.5, 2.0}));
+        xwalk::hal::test::requireTestCondition(bus.formatWriteCount == 3U);
+        xwalk::hal::test::requireTestCondition(bus.powerWriteCount == 3U);
+        xwalk::hal::test::requireTestCondition(bus.registerReadCount == 6U);
+        xwalk::hal::test::requireTestCondition(bus.lastRegister == XHAL_RPI5CAR_ADXL345_DATA_Z_REGISTER);
     }
 
     /**
@@ -144,15 +144,15 @@ namespace
         char malformedSelector[] = "RPI.invalid.enable";
         XWalkHal::charpointer enableArguments[]{executable, option, enableSelector};
         xwalk::hal::sim::XWalkAdxl345SimulationArguments enable(3, enableArguments);
-        assert(enable.valid());
-        assert(enable.applyTraceUpdate());
+        xwalk::hal::test::requireTestCondition(enable.valid());
+        xwalk::hal::test::requireTestCondition(enable.applyTraceUpdate());
         XWalkHal::charpointer disableArguments[]{executable, option, disableSelector};
         xwalk::hal::sim::XWalkAdxl345SimulationArguments disable(3, disableArguments);
-        assert(disable.valid());
-        assert(disable.applyTraceUpdate());
+        xwalk::hal::test::requireTestCondition(disable.valid());
+        xwalk::hal::test::requireTestCondition(disable.applyTraceUpdate());
         XWalkHal::charpointer malformedArguments[]{executable, option, malformedSelector};
         const xwalk::hal::sim::XWalkAdxl345SimulationArguments malformed(3, malformedArguments);
-        assert(malformed.valid() == false);
+        xwalk::hal::test::requireTestCondition(malformed.valid() == false);
     }
 
 } /* namespace */

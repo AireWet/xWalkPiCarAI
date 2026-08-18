@@ -31,6 +31,7 @@
 #include "xHal_Rpi5CarLanguageModelOllama.h"
 #include "xHal_Rpi5CarSpeechToTextAlsa.h"
 #include "xHal_Rpi5CarTextToSpeechAlsa.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 #include "xHal_Rpi5CarVoiceAssistantBackendsTestTypes.h"
 
 /******************************************************************************
@@ -144,7 +145,7 @@ namespace
     void primeSpeaker(XWalkHal::contextpointer context, XWalkHal::uint32 durationMs)
     {
         ++static_cast<TestBackends*>(context)->primeCount;
-        assert(durationMs == XHAL_RPI5CAR_BOARD_CONTROL_SPEAKER_PRIME_DURATION_MS);
+        xwalk::hal::test::requireTestCondition(durationMs == XHAL_RPI5CAR_BOARD_CONTROL_SPEAKER_PRIME_DURATION_MS);
     }
 
     /** @brief Opens one simulated microphone capture handle. */
@@ -155,8 +156,8 @@ namespace
                                               XWalkHal::uint32 periodFrames)
     {
         TestBackends& state = *static_cast<TestBackends*>(context);
-        assert(deviceName == "test-microphone");
-        assert(sampleRateHz == 16'000U && channelCount == 1U && periodFrames == 1'024U);
+        xwalk::hal::test::requireTestCondition(deviceName == "test-microphone");
+        xwalk::hal::test::requireTestCondition(sampleRateHz == 16'000U && channelCount == 1U && periodFrames == 1'024U);
         return &state.captureToken;
     }
 
@@ -167,7 +168,7 @@ namespace
                                 XWalkHal::size frameCount)
     {
         TestBackends& state = *static_cast<TestBackends*>(context);
-        assert(captureHandle == &state.captureToken);
+        xwalk::hal::test::requireTestCondition(captureHandle == &state.captureToken);
         pcmData.assign(frameCount * 2U, 0x11U);
         state.capturedBytes += pcmData.size();
         return static_cast<XWalkHal::int32>(frameCount);
@@ -188,7 +189,7 @@ namespace
     void closeCapture(XWalkHal::contextpointer context, XWalkHal::speechcapturehandle captureHandle)
     {
         TestBackends& state = *static_cast<TestBackends*>(context);
-        assert(captureHandle == &state.captureToken);
+        xwalk::hal::test::requireTestCondition(captureHandle == &state.captureToken);
     }
 
     /** @brief Reports that the simulated recognizer is ready. */
@@ -205,7 +206,7 @@ namespace
                                   XWalkHal::uint8 channelCount)
     {
         TestBackends& state = *static_cast<TestBackends*>(context);
-        assert(!pcmData.empty() && sampleRateHz == 16'000U && channelCount == 1U);
+        xwalk::hal::test::requireTestCondition(!pcmData.empty() && sampleRateHz == 16'000U && channelCount == 1U);
         ++state.recognitionCount;
         return "where am I";
     }
@@ -246,9 +247,9 @@ namespace
                                XWalkHal::size maximumResponseBytes)
     {
         TestBackends& state = *static_cast<TestBackends*>(context);
-        assert(endpoint == "http://localhost:11434/api/chat");
-        assert(authorizationHeader.empty());
-        assert(timeoutMs > 0U && maximumResponseBytes > 0U);
+        xwalk::hal::test::requireTestCondition(endpoint == "http://localhost:11434/api/chat");
+        xwalk::hal::test::requireTestCondition(authorizationHeader.empty());
+        xwalk::hal::test::requireTestCondition(timeoutMs > 0U && maximumResponseBytes > 0U);
         state.modelRequest = requestJson;
         ++state.modelCount;
         return "{\"message\":{\"role\":\"assistant\",\"content\":\"You are here.\"}}";
@@ -267,7 +268,7 @@ namespace
     XWalkHal::audiopcmhandle openPcm(XWalkHal::contextpointer context, XWalkHal::stringview deviceName)
     {
         TestBackends& state = *static_cast<TestBackends*>(context);
-        assert(deviceName == "test-pcm");
+        xwalk::hal::test::requireTestCondition(deviceName == "test-pcm");
         return &state.pcmToken;
     }
 
@@ -277,8 +278,9 @@ namespace
                                    const XWalkHal::XWalkAudioStreamConfiguration& configuration)
     {
         TestBackends& state = *static_cast<TestBackends*>(context);
-        assert(pcmHandle == &state.pcmToken);
-        assert(configuration.sampleRateHz == 16'000U && configuration.channelCount == 1U);
+        xwalk::hal::test::requireTestCondition(pcmHandle == &state.pcmToken);
+        xwalk::hal::test::requireTestCondition(configuration.sampleRateHz == 16'000U &&
+                                               configuration.channelCount == 1U);
         return true;
     }
 
@@ -290,7 +292,7 @@ namespace
                              XWalkHal::size frameCount)
     {
         TestBackends& state = *static_cast<TestBackends*>(context);
-        assert(pcmHandle == &state.pcmToken && byteOffset == 0U);
+        xwalk::hal::test::requireTestCondition(pcmHandle == &state.pcmToken && byteOffset == 0U);
         state.playedBytes += pcmData.size();
         return static_cast<XWalkHal::int32>(frameCount);
     }
@@ -309,7 +311,7 @@ namespace
     void closePcm(XWalkHal::contextpointer context, XWalkHal::audiopcmhandle pcmHandle)
     {
         TestBackends& state = *static_cast<TestBackends*>(context);
-        assert(pcmHandle == &state.pcmToken);
+        xwalk::hal::test::requireTestCondition(pcmHandle == &state.pcmToken);
         ++state.streamCloseCount;
     }
 
@@ -317,7 +319,7 @@ namespace
     XWalkHal::audiomixerhandle openMixer(XWalkHal::contextpointer context, XWalkHal::stringview deviceName)
     {
         TestBackends& state = *static_cast<TestBackends*>(context);
-        assert(deviceName == "test-mixer");
+        xwalk::hal::test::requireTestCondition(deviceName == "test-mixer");
         return &state.mixerToken;
     }
 
@@ -328,8 +330,8 @@ namespace
                                      XWalkHal::uint8 volumePercent)
     {
         TestBackends& state = *static_cast<TestBackends*>(context);
-        assert(mixerHandle == &state.mixerToken && elementName == "PCM");
-        assert(volumePercent == 15U);
+        xwalk::hal::test::requireTestCondition(mixerHandle == &state.mixerToken && elementName == "PCM");
+        xwalk::hal::test::requireTestCondition(volumePercent == 15U);
         return true;
     }
 
@@ -337,7 +339,7 @@ namespace
     void closeMixer(XWalkHal::contextpointer context, XWalkHal::audiomixerhandle mixerHandle)
     {
         TestBackends& state = *static_cast<TestBackends*>(context);
-        assert(mixerHandle == &state.mixerToken);
+        xwalk::hal::test::requireTestCondition(mixerHandle == &state.mixerToken);
     }
 
     /** @brief Returns complete injected shared-audio operations. */
@@ -370,16 +372,16 @@ namespace
         XWalkHal::XWalkVoiceAssistant assistant(speechToText, languageModel, textToSpeech, configuration);
 
         assistant.start();
-        assert(assistant.runRound(100U) == "You are here.");
+        xwalk::hal::test::requireTestCondition(assistant.runRound(100U) == "You are here.");
         assistant.stop();
 
-        assert(state.primeCount == 1U);
-        assert(state.recognitionCount == 1U && state.capturedBytes == 3'200U);
-        assert(state.modelCount == 1U);
-        assert(state.modelRequest.find("where am I") != XWalkHal::string::npos);
-        assert(state.modelRequest.find("Answer briefly.") != XWalkHal::string::npos);
-        assert(state.synthesisCount == 1U && state.synthesizedText == "You are here.");
-        assert(state.playedBytes == 320U && state.streamCloseCount == 1U);
+        xwalk::hal::test::requireTestCondition(state.primeCount == 1U);
+        xwalk::hal::test::requireTestCondition(state.recognitionCount == 1U && state.capturedBytes == 3'200U);
+        xwalk::hal::test::requireTestCondition(state.modelCount == 1U);
+        xwalk::hal::test::requireTestCondition(state.modelRequest.find("where am I") != XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(state.modelRequest.find("Answer briefly.") != XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(state.synthesisCount == 1U && state.synthesizedText == "You are here.");
+        xwalk::hal::test::requireTestCondition(state.playedBytes == 320U && state.streamCloseCount == 1U);
     }
 
 } /* namespace */

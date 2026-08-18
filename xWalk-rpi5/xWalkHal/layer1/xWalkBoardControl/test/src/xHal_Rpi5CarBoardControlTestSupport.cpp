@@ -9,8 +9,8 @@
  * @copyright   Copyright (c) 2026 Joxy John. All rights reserved.
  ******************************************************************************/
 #include "xHal_Rpi5CarBoardControlTestSupport.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 #include "xHal_Rpi5CarTrace.h"
-#include <cassert>
 namespace xwalk::hal::test::boardcontrol
 {
     void configureGpio(contextpointer context, uint8 pin, XWalkGpioMode mode, XWalkGpioPull pull, boolean initialValue)
@@ -24,14 +24,14 @@ namespace xwalk::hal::test::boardcontrol
     boolean readGpio(contextpointer context, uint8 pin)
     {
         TestGpioBackend& backend = *static_cast<TestGpioBackend*>(context);
-        assert(pin == backend.pin);
+        xwalk::hal::test::requireTestCondition(pin == backend.pin);
         return backend.physicalValue;
     }
     void writeGpio(contextpointer context, uint8 pin, boolean value)
     {
         TestGpioBackend& backend = *static_cast<TestGpioBackend*>(context);
-        assert(pin == backend.pin);
-        assert(backend.writeCount < backend.writes.size());
+        xwalk::hal::test::requireTestCondition(pin == backend.pin);
+        xwalk::hal::test::requireTestCondition(backend.writeCount < backend.writes.size());
         backend.physicalValue = value;
         backend.writes[backend.writeCount] = value;
         ++backend.writeCount;
@@ -76,7 +76,7 @@ namespace xwalk::hal::test::boardcontrol
     {
         TestI2cBackend& backend = *static_cast<TestI2cBackend*>(context);
         static_cast<void>(address);
-        assert(length == XHAL_RPI5CAR_ADC_READ_LENGTH);
+        xwalk::hal::test::requireTestCondition(length == XHAL_RPI5CAR_ADC_READ_LENGTH);
         return backend.sampleBytes;
     }
     void primeSpeaker(contextpointer context, uint32 durationMs)
@@ -120,14 +120,14 @@ namespace xwalk::hal::test::boardcontrol
     void writeProperty(const filesystempath& path, stringview value, boolean appendNull)
     {
         outputfilestream file(path, FILE_OPEN_WRITE_TRUNCATE);
-        assert(file.is_open());
+        xwalk::hal::test::requireTestCondition(file.is_open());
         file << string(value);
         if (appendNull)
         {
             file.put('\0');
         }
         file.close();
-        assert(!file.fail());
+        xwalk::hal::test::requireTestCondition(!file.fail());
     }
     void createSupportedNode(const filesystempath& nodePath)
     {

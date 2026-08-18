@@ -11,7 +11,6 @@
 #include "xHal_Rpi5CarBoardControlTestSupport.h"
 #include "xHal_Rpi5CarTestFunctions.h"
 #include "xHal_Rpi5CarTrace.h"
-#include <cassert>
 namespace
 {
     using namespace xwalk::hal;
@@ -22,22 +21,22 @@ namespace
         createSupportedNode(nodePath);
         XWalkDevice device(rootPath.string());
         const XWalkDeviceInformation& info = device.information();
-        assert(info.detected);
-        assert(info.model == XWalkDeviceModel::RobotHatV5);
-        assert(info.productName == "Robot HAT 5");
-        assert(info.productId == 0x1902U);
-        assert(info.productVersion == 0x50U);
-        assert(info.uuid == XHAL_RPI5CAR_DEVICE_ROBOT_HAT_V5_UUID);
-        assert(info.vendor == "SunFounder");
-        assert(info.speakerEnablePin == 12U);
-        assert(info.motorMode == 2U);
-        assert(device.deviceTreeRoot() == rootPath);
+        xwalk::hal::test::requireTestCondition(info.detected);
+        xwalk::hal::test::requireTestCondition(info.model == XWalkDeviceModel::RobotHatV5);
+        xwalk::hal::test::requireTestCondition(info.productName == "Robot HAT 5");
+        xwalk::hal::test::requireTestCondition(info.productId == 0x1902U);
+        xwalk::hal::test::requireTestCondition(info.productVersion == 0x50U);
+        xwalk::hal::test::requireTestCondition(info.uuid == XHAL_RPI5CAR_DEVICE_ROBOT_HAT_V5_UUID);
+        xwalk::hal::test::requireTestCondition(info.vendor == "SunFounder");
+        xwalk::hal::test::requireTestCondition(info.speakerEnablePin == 12U);
+        xwalk::hal::test::requireTestCondition(info.motorMode == 2U);
+        xwalk::hal::test::requireTestCondition(device.deviceTreeRoot() == rootPath);
         writeProperty(nodePath / XHAL_RPI5CAR_DEVICE_UUID_PROPERTY, "unsupported-uuid", true);
         device.refresh();
-        assert(!device.information().detected);
-        assert(device.information().model == XWalkDeviceModel::RobotHatV4);
-        assert(device.information().speakerEnablePin == 20U);
-        assert(device.information().motorMode == 1U);
+        xwalk::hal::test::requireTestCondition(!device.information().detected);
+        xwalk::hal::test::requireTestCondition(device.information().model == XWalkDeviceModel::RobotHatV4);
+        xwalk::hal::test::requireTestCondition(device.information().speakerEnablePin == 20U);
+        xwalk::hal::test::requireTestCondition(device.information().motorMode == 1U);
         removeNode(nodePath);
     }
     void testCandidateFiltering(const filesystempath& rootPath)
@@ -45,7 +44,7 @@ namespace
         const filesystempath nodePath = rootPath / "board-v5";
         createSupportedNode(nodePath);
         XWalkDevice device(rootPath.string());
-        assert(!device.information().detected);
+        xwalk::hal::test::requireTestCondition(!device.information().detected);
         removeNode(nodePath);
     }
     void testPropertyValidation(const filesystempath& rootPath)
@@ -70,8 +69,8 @@ namespace
     void testRootValidation(const filesystempath& rootPath)
     {
         XWalkDevice device(rootPath.string());
-        assert(!device.information().detected);
-        assert(device.information().model == XWalkDeviceModel::RobotHatV4);
+        xwalk::hal::test::requireTestCondition(!device.information().detected);
+        xwalk::hal::test::requireTestCondition(device.information().model == XWalkDeviceModel::RobotHatV4);
         xwalk::hal::test::expectFailure(
             [&]()
             {
@@ -83,7 +82,7 @@ XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer argume
 {
     xwalk::hal::XWalkTrace::configureGlobal(XWALK_BOARD_CONTROL_SIMULATION_TRACE_CONFIG_PATH,
                                             XWALK_BOARD_CONTROL_SIMULATION_TRACE_LOG_PATH);
-    assert(argumentCount == 2);
+    xwalk::hal::test::requireTestCondition(argumentCount == 2);
     const XWalkHal::filesystempath rootPath(arguments[1]);
     static_cast<void>(XWalkHal::createDirectories(rootPath));
     XWALK_HAL_TRACE_UID0(RPI .335, "xWalkDevice host tests started");

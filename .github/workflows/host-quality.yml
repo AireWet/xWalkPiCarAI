@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install xWalk host validation dependencies
-        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+        run: xWalkTool/shell-agent/quality-tool/install-github-host-packages.sh $XWALK_HOST_PACKAGES
       - name: Validate shell scripts and CI metadata
         run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh preparation
       - name: Validate C++ formatting
@@ -37,7 +37,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install xWalk host dependencies
-        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+        run: xWalkTool/shell-agent/quality-tool/install-github-host-packages.sh $XWALK_HOST_PACKAGES
       - name: Configure and build xWalkAgent
         run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-agent-build
       - name: Run xWalkAgent aggregate tests
@@ -54,7 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install xWalk host dependencies
-        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+        run: xWalkTool/shell-agent/quality-tool/install-github-host-packages.sh $XWALK_HOST_PACKAGES
       - name: Configure and build xWalkController
         run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-controller-build
       - name: Run controller, CLI, and Controller-to-HAL tests
@@ -69,7 +69,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install xWalk host dependencies
-        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+        run: xWalkTool/shell-agent/quality-tool/install-github-host-packages.sh $XWALK_HOST_PACKAGES
       - name: Configure and build xWalkHal
         run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-hal-build
       - name: Run HAL unit and host-safe sequence tests
@@ -88,7 +88,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install xWalk host dependencies
-        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+        run: xWalkTool/shell-agent/quality-tool/install-github-host-packages.sh $XWALK_HOST_PACKAGES
       - name: Configure and build xWalkIW
         run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-iw-build
       - name: Run schema, serialization, gRPC, signal, and transport tests
@@ -101,7 +101,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install xWalk host dependencies
-        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+        run: xWalkTool/shell-agent/quality-tool/install-github-host-packages.sh $XWALK_HOST_PACKAGES
       - name: Configure and build xWalkLibrary consumers
         run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-library-build
       - name: Run shared-library, configuration, utility, licence, and architecture tests
@@ -114,7 +114,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install xWalk host dependencies
-        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+        run: xWalkTool/shell-agent/quality-tool/install-github-host-packages.sh $XWALK_HOST_PACKAGES
       - name: Build and run Trace formatting, routing, macro, and selector tests
         run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-trace-tests
 
@@ -125,7 +125,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install xWalk host dependencies
-        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+        run: xWalkTool/shell-agent/quality-tool/install-github-host-packages.sh $XWALK_HOST_PACKAGES
       - name: Configure and build recorded vision scenarios
         run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-vision-build
       - name: Validate recorded media, OpenCV scenarios, safety, and assets
@@ -138,7 +138,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install xWalk host dependencies
-        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+        run: xWalkTool/shell-agent/quality-tool/install-github-host-packages.sh $XWALK_HOST_PACKAGES
       - name: Configure and build xWalk Streaming
         run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-streaming-build
       - name: Run loopback HTTP, MJPEG, lifecycle, timeout, and backpressure tests
@@ -152,7 +152,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install xWalk quality dependencies
-        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+        run: xWalkTool/shell-agent/quality-tool/install-github-host-packages.sh $XWALK_HOST_PACKAGES
       - name: Run GCC Debug build and tests
         run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh build-and-test gcc Debug
       - name: Run GCC Release build and tests
@@ -206,7 +206,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install xWalk deployment dependencies
-        run: sudo apt-get update && sudo apt-get install --yes $XWALK_HOST_PACKAGES
+        run: xWalkTool/shell-agent/quality-tool/install-github-host-packages.sh $XWALK_HOST_PACKAGES
       - name: Validate deployment and provisioning scripts
         run: xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh deployment-scripts
       - name: Validate ARM64 dependencies and configured cross-build

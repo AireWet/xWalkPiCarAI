@@ -56,14 +56,14 @@ namespace
         xwalk::hal::XWalkAdc adc(i2c, 0U, XHAL_RPI5CAR_ADC_ADDRESS_1);
 
         const XWalkHal::uint16 sample = adc.read();
-        assert(sample == 0x0ABCU);
-        assert(adc.channel() == 0U);
-        assert(adc.command() == 0x17U);
-        assert(bus.writeAddress == XHAL_RPI5CAR_ADC_ADDRESS_1);
-        assert(bus.writeRegister == 0x17U);
-        assert(bus.writeData == XWalkHal::bytevector({0U, 0U}));
-        assert(bus.readAddress == XHAL_RPI5CAR_ADC_ADDRESS_1);
-        assert(bus.readLength == 2U);
+        xwalk::hal::test::requireTestCondition(sample == 0x0ABCU);
+        xwalk::hal::test::requireTestCondition(adc.channel() == 0U);
+        xwalk::hal::test::requireTestCondition(adc.command() == 0x17U);
+        xwalk::hal::test::requireTestCondition(bus.writeAddress == XHAL_RPI5CAR_ADC_ADDRESS_1);
+        xwalk::hal::test::requireTestCondition(bus.writeRegister == 0x17U);
+        xwalk::hal::test::requireTestCondition(bus.writeData == XWalkHal::bytevector({0U, 0U}));
+        xwalk::hal::test::requireTestCondition(bus.readAddress == XHAL_RPI5CAR_ADC_ADDRESS_1);
+        xwalk::hal::test::requireTestCondition(bus.readLength == 2U);
     }
 
     /**
@@ -79,11 +79,11 @@ namespace
             &bus, &xwalk::hal::test::adc::probe, &xwalk::hal::test::adc::writeRegister, &xwalk::hal::test::adc::read);
         xwalk::hal::XWalkAdc adc(i2c, "A7");
 
-        assert(adc.address() == XHAL_RPI5CAR_ADC_ADDRESS_2);
-        assert(adc.command() == 0x10U);
-        assert(bus.probes == XWalkHal::bytevector({0x14U, 0x15U}));
+        xwalk::hal::test::requireTestCondition(adc.address() == XHAL_RPI5CAR_ADC_ADDRESS_2);
+        xwalk::hal::test::requireTestCondition(adc.command() == 0x10U);
+        xwalk::hal::test::requireTestCondition(bus.probes == XWalkHal::bytevector({0x14U, 0x15U}));
         const XWalkHal::float64 voltageDifference = XHAL_ABSOLUTE_VALUE(adc.readVoltage() - 3.3);
-        assert(voltageDifference < 0.000001);
+        xwalk::hal::test::requireTestCondition(voltageDifference < 0.000001);
     }
 
     /**
@@ -174,9 +174,9 @@ namespace
         first.join();
         second.join();
 
-        assert(a0Value == 0x0111U);
-        assert(a1Value == 0x0222U);
-        assert(bus.operationOrder == XWalkHal::bytevector({0x17U, 0U, 0x16U, 0U}));
+        xwalk::hal::test::requireTestCondition(a0Value == 0x0111U);
+        xwalk::hal::test::requireTestCondition(a1Value == 0x0222U);
+        xwalk::hal::test::requireTestCondition(bus.operationOrder == XWalkHal::bytevector({0x17U, 0U, 0x16U, 0U}));
     }
 
     /** @brief Verifies persistent ADC trace selector parsing and application. */
@@ -189,15 +189,15 @@ namespace
         char malformedSelector[] = "RPI.invalid.enable";
         XWalkHal::charpointer enableArguments[]{executable, option, enableSelector};
         xwalk::hal::sim::XWalkAdcSimulationArguments enable(3, enableArguments);
-        assert(enable.valid());
-        assert(enable.applyTraceUpdate());
+        xwalk::hal::test::requireTestCondition(enable.valid());
+        xwalk::hal::test::requireTestCondition(enable.applyTraceUpdate());
         XWalkHal::charpointer disableArguments[]{executable, option, disableSelector};
         xwalk::hal::sim::XWalkAdcSimulationArguments disable(3, disableArguments);
-        assert(disable.valid());
-        assert(disable.applyTraceUpdate());
+        xwalk::hal::test::requireTestCondition(disable.valid());
+        xwalk::hal::test::requireTestCondition(disable.applyTraceUpdate());
         XWalkHal::charpointer malformedArguments[]{executable, option, malformedSelector};
         const xwalk::hal::sim::XWalkAdcSimulationArguments malformed(3, malformedArguments);
-        assert(malformed.valid() == false);
+        xwalk::hal::test::requireTestCondition(malformed.valid() == false);
     }
 
 } /* namespace */

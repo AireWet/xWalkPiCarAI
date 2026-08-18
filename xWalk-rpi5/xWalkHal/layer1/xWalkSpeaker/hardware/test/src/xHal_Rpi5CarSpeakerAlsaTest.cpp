@@ -98,14 +98,14 @@ namespace
         writeUint16(waveData, 50U, 32'767U);
         XWalkHal::outputfilestream file(filePath, XWalkHal::FILE_OPEN_WRITE_TRUNCATE);
         file << waveData;
-        assert(file.good());
+        xwalk::hal::test::requireTestCondition(file.good());
     }
 
     /** @brief Creates one empty optional-format fixture. */
     void createEmptyFile(const XWalkHal::filesystempath& filePath)
     {
         XWalkHal::outputfilestream file(filePath, XWalkHal::FILE_OPEN_WRITE_TRUNCATE);
-        assert(file.is_open());
+        xwalk::hal::test::requireTestCondition(file.is_open());
     }
 
     /** @brief Returns bounded normalized samples for optional format tests. */
@@ -143,9 +143,10 @@ namespace
                                    const XWalkHal::XWalkAudioStreamConfiguration& configuration)
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
-        assert(pcmHandle == &backend.pcmToken);
-        assert(configuration.format == XWalkHal::XWalkAudioSampleFormat::Float32LittleEndian);
-        assert(configuration.periodFrames == XHAL_RPI5CAR_SPEAKER_CHUNK_FRAME_COUNT);
+        xwalk::hal::test::requireTestCondition(pcmHandle == &backend.pcmToken);
+        xwalk::hal::test::requireTestCondition(configuration.format ==
+                                               XWalkHal::XWalkAudioSampleFormat::Float32LittleEndian);
+        xwalk::hal::test::requireTestCondition(configuration.periodFrames == XHAL_RPI5CAR_SPEAKER_CHUNK_FRAME_COUNT);
         ++backend.configureCount;
         return true;
     }
@@ -158,13 +159,13 @@ namespace
                              XWalkHal::size frameCount)
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
-        assert(pcmHandle == &backend.pcmToken);
-        assert(byteOffset == 0U);
+        xwalk::hal::test::requireTestCondition(pcmHandle == &backend.pcmToken);
+        xwalk::hal::test::requireTestCondition(byteOffset == 0U);
         if (backend.failWrite)
         {
             return -5;
         }
-        assert(pcmData.size() == (frameCount * 4U));
+        xwalk::hal::test::requireTestCondition(pcmData.size() == (frameCount * 4U));
         ++backend.writeCount;
         backend.writtenPcm.insert(backend.writtenPcm.end(), pcmData.begin(), pcmData.end());
         XWalkHal::common::sleepMilliseconds(1U);
@@ -185,7 +186,7 @@ namespace
     void closePcm(XWalkHal::contextpointer context, XWalkHal::audiopcmhandle pcmHandle)
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
-        assert(pcmHandle == &backend.pcmToken);
+        xwalk::hal::test::requireTestCondition(pcmHandle == &backend.pcmToken);
         ++backend.closeCount;
     }
 
@@ -203,8 +204,8 @@ namespace
                                      XWalkHal::uint8 volumePercent)
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
-        assert(mixerHandle == &backend.mixerToken);
-        assert(elementName == "PCM");
+        xwalk::hal::test::requireTestCondition(mixerHandle == &backend.mixerToken);
+        xwalk::hal::test::requireTestCondition(elementName == "PCM");
         backend.volumePercent = volumePercent;
         return true;
     }
@@ -213,7 +214,7 @@ namespace
     void closeMixer(XWalkHal::contextpointer context, XWalkHal::audiomixerhandle mixerHandle)
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
-        assert(mixerHandle == &backend.mixerToken);
+        xwalk::hal::test::requireTestCondition(mixerHandle == &backend.mixerToken);
     }
 
     /** @brief Returns the complete simulated ALSA operation table. */
@@ -231,7 +232,7 @@ namespace
         XWalkHal::XWalkSpeakerAlsa adapter(audio, &backend, operations, 15U);
         const XWalkHal::XWalkSpeakerCallbacks callbacks = adapter.callbacks();
         callbacks.enableOutput(&adapter);
-        assert(backend.volumePercent == 15U);
+        xwalk::hal::test::requireTestCondition(backend.volumePercent == 15U);
         const XWalkHal::speakerstreamhandle stream = callbacks.openStream(&adapter, 44'100U, 1U);
         const XWalkHal::XWalkSpeakerAudioData audioData{{0.0, 0.5, -1.0, 1.0}, 44'100U, 1U};
         callbacks.writeStream(&adapter, stream, audioData, 0U, 4U);
@@ -252,8 +253,8 @@ namespace
                                                0x00U,
                                                0x80U,
                                                0x3FU};
-        assert(backend.writtenPcm == expectedPcm);
-        assert(callbacks.createTaskId(&adapter) != callbacks.createTaskId(&adapter));
+        xwalk::hal::test::requireTestCondition(backend.writtenPcm == expectedPcm);
+        xwalk::hal::test::requireTestCondition(callbacks.createTaskId(&adapter) != callbacks.createTaskId(&adapter));
     }
 
     /** @brief Verifies built-in WAVE decoding, short playback, and task cleanup. */
@@ -266,10 +267,10 @@ namespace
         XWalkHal::XWalkSpeaker speaker(&adapter, adapter.callbacks());
         static_cast<void>(speaker.play(wavePath.string()));
         XWalkHal::common::sleepMilliseconds(20U);
-        assert(speaker.listTasks().empty());
-        assert(backend.volumePercent == 12U);
-        assert(backend.writtenPcm.size() == 16U);
-        assert(backend.closeCount == 1U);
+        xwalk::hal::test::requireTestCondition(speaker.listTasks().empty());
+        xwalk::hal::test::requireTestCondition(backend.volumePercent == 12U);
+        xwalk::hal::test::requireTestCondition(backend.writtenPcm.size() == 16U);
+        xwalk::hal::test::requireTestCondition(backend.closeCount == 1U);
     }
 
     /** @brief Verifies optional decoder routing plus pause, resume, cancellation, and cleanup. */
@@ -284,17 +285,17 @@ namespace
         XWalkHal::XWalkSpeakerAlsa adapter(audio, &backend, operations, 10U);
         XWalkHal::XWalkSpeaker speaker(&adapter, adapter.callbacks());
         const XWalkHal::string oggTask = speaker.play(oggPath.string());
-        assert(backend.handler == XWalkHal::XWalkSpeakerAudioHandler::SoundFile);
+        xwalk::hal::test::requireTestCondition(backend.handler == XWalkHal::XWalkSpeakerAudioHandler::SoundFile);
         XWalkHal::common::sleepMilliseconds(2U);
         speaker.pause(oggTask);
         speaker.resume(oggTask);
-        assert(speaker.stop(oggTask));
+        xwalk::hal::test::requireTestCondition(speaker.stop(oggTask));
 
         const XWalkHal::string mp3Task = speaker.play(mp3Path.string());
-        assert(backend.handler == XWalkHal::XWalkSpeakerAudioHandler::Librosa);
-        assert(speaker.stop(mp3Task));
-        assert(speaker.listTasks().empty());
-        assert(backend.closeCount == 2U);
+        xwalk::hal::test::requireTestCondition(backend.handler == XWalkHal::XWalkSpeakerAudioHandler::Librosa);
+        xwalk::hal::test::requireTestCondition(speaker.stop(mp3Task));
+        xwalk::hal::test::requireTestCondition(speaker.listTasks().empty());
+        xwalk::hal::test::requireTestCondition(backend.closeCount == 2U);
     }
 
     /** @brief Verifies malformed input, invalid setup, decoded bounds, and stream failure. */
@@ -377,7 +378,7 @@ namespace
  */
 XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer argumentValues[])
 {
-    assert(argumentCount == 4);
+    xwalk::hal::test::requireTestCondition(argumentCount == 4);
     const XWalkHal::filesystempath wavePath(argumentValues[1]);
     const XWalkHal::filesystempath oggPath(argumentValues[2]);
     const XWalkHal::filesystempath mp3Path(argumentValues[3]);

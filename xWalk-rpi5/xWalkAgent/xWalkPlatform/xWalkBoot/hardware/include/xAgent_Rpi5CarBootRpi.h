@@ -84,7 +84,7 @@ namespace xwalk::agent
             /** @brief Applies fail-safe automatic or explicit Robot HAT selection. */
             static hal::XWalkDeviceInformation selectBoard(const hal::XWalkDeviceInformation& detectedInformation,
                                                            agent::stringview requestedBoard);
-            /** @brief Runs the passive Doctor mode. */
+            /** @brief Runs the bounded MCU-reset Doctor mode. */
             agent::int32 runDoctor(agent::contextpointer context, bootapplicationcallback callback);
             /** @brief Runs the camera-only text-and-vision mode. */
             agent::int32 runTextVisionTalk(agent::contextpointer context,

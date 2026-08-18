@@ -57,19 +57,20 @@ namespace
     void testPersistence(const XWalkHal::filesystempath& filePath)
     {
         xwalk::hal::XWalkConfigStore store(filePath.string());
-        assert(xwalk::hal::isRegularFile(filePath));
-        assert(store.filePath() == filePath.string());
-        assert(store.get("missing", "fallback") == "fallback");
+        xwalk::hal::test::requireTestCondition(xwalk::hal::isRegularFile(filePath));
+        xwalk::hal::test::requireTestCondition(store.filePath() == filePath.string());
+        xwalk::hal::test::requireTestCondition(store.get("missing", "fallback") == "fallback");
 
         const XWalkHal::filesystempermissions permissionsBefore = xwalk::hal::filesystemStatus(filePath).permissions();
         store.set("motor_direction", "1");
         store.set("motor_speed", "42");
-        assert(store.get("motor_direction") == "1");
-        assert(store.get("motor_speed") == "42");
-        assert(xwalk::hal::filesystemStatus(filePath).permissions() == permissionsBefore);
+        xwalk::hal::test::requireTestCondition(store.get("motor_direction") == "1");
+        xwalk::hal::test::requireTestCondition(store.get("motor_speed") == "42");
+        xwalk::hal::test::requireTestCondition(xwalk::hal::filesystemStatus(filePath).permissions() ==
+                                               permissionsBefore);
 
         store.set("motor_speed", "64");
-        assert(store.get("motor_speed") == "64");
+        xwalk::hal::test::requireTestCondition(store.get("motor_speed") == "64");
     }
 
     /**
@@ -87,13 +88,13 @@ namespace
         file << "duplicate = first\n";
         file << "duplicate = second\n";
         file.close();
-        assert(!file.fail());
+        xwalk::hal::test::requireTestCondition(!file.fail());
 
         xwalk::hal::XWalkConfigStore store(filePath.string());
-        assert(store.get("trimmed") == "123");
-        assert(store.get("duplicate") == "second");
+        xwalk::hal::test::requireTestCondition(store.get("trimmed") == "123");
+        xwalk::hal::test::requireTestCondition(store.get("duplicate") == "second");
         store.set("duplicate", "updated");
-        assert(store.get("duplicate") == "updated");
+        xwalk::hal::test::requireTestCondition(store.get("duplicate") == "updated");
     }
 
     /**
@@ -113,33 +114,34 @@ namespace
                                                 xwalk::hal::FILE_OPEN_WRITE_TRUNCATE);
         providerFile << "provider = ollama\n";
         providerFile.close();
-        assert(!providerFile.fail());
+        xwalk::hal::test::requireTestCondition(!providerFile.fail());
 
         XWalkHal::outputfilestream voiceFile(includeDirectory / "voice.conf", xwalk::hal::FILE_OPEN_WRITE_TRUNCATE);
         voiceFile << "include = ai/ollama.conf\n";
         voiceFile << "shared = included\n";
         voiceFile.close();
-        assert(!voiceFile.fail());
+        xwalk::hal::test::requireTestCondition(!voiceFile.fail());
 
         XWalkHal::outputfilestream primaryFile(filePath, xwalk::hal::FILE_OPEN_WRITE_TRUNCATE);
         primaryFile << "include = picar-x.d/voice.conf\n";
         primaryFile << "shared = primary\n";
         primaryFile.close();
-        assert(!primaryFile.fail());
+        xwalk::hal::test::requireTestCondition(!primaryFile.fail());
 
         xwalk::hal::XWalkConfigStore store(filePath.string());
-        assert(store.get("provider") == "ollama");
-        assert(store.get("shared") == "primary");
+        xwalk::hal::test::requireTestCondition(store.get("provider") == "ollama");
+        xwalk::hal::test::requireTestCondition(store.get("shared") == "primary");
         store.set("calibration", "verified");
-        assert(store.get("calibration") == "verified");
+        xwalk::hal::test::requireTestCondition(store.get("calibration") == "verified");
         const XWalkHal::string primaryContents = xwalk::hal::readFileContents(filePath);
-        assert(primaryContents.find("include = picar-x.d/voice.conf") != XWalkHal::string::npos);
-        assert(primaryContents.find("provider = ollama") == XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(primaryContents.find("include = picar-x.d/voice.conf") !=
+                                               XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(primaryContents.find("provider = ollama") == XWalkHal::string::npos);
 
         primaryFile.open(filePath, xwalk::hal::FILE_OPEN_WRITE_TRUNCATE);
         primaryFile << "include = picar-x.conf\n";
         primaryFile.close();
-        assert(!primaryFile.fail());
+        xwalk::hal::test::requireTestCondition(!primaryFile.fail());
         xwalk::hal::test::expectFailure(
             [&]()
             {
@@ -149,7 +151,7 @@ namespace
         primaryFile.open(filePath, xwalk::hal::FILE_OPEN_WRITE_TRUNCATE);
         primaryFile << "include = ../outside.conf\n";
         primaryFile.close();
-        assert(!primaryFile.fail());
+        xwalk::hal::test::requireTestCondition(!primaryFile.fail());
         xwalk::hal::test::expectFailure(
             [&]()
             {
@@ -206,9 +208,9 @@ namespace
     void testRecreation(const XWalkHal::filesystempath& filePath)
     {
         xwalk::hal::XWalkConfigStore store(filePath.string());
-        assert(xwalk::hal::removeFilesystemEntry(filePath));
-        assert(store.get("missing", "recreated") == "recreated");
-        assert(xwalk::hal::isRegularFile(filePath));
+        xwalk::hal::test::requireTestCondition(xwalk::hal::removeFilesystemEntry(filePath));
+        xwalk::hal::test::requireTestCondition(store.get("missing", "recreated") == "recreated");
+        xwalk::hal::test::requireTestCondition(xwalk::hal::isRegularFile(filePath));
     }
 
 } /* namespace */

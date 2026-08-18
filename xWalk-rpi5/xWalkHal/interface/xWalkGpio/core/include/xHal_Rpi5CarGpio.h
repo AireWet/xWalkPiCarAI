@@ -299,6 +299,24 @@ namespace xwalk::hal
 
         public:
             /**************************************************************************
+             * Public static functions
+             **************************************************************************/
+
+            /**
+             * @brief Tries to resolve a Robot HAT board name to a Linux GPIO line offset.
+             *
+             * @param[in] pinName
+             * Case-sensitive name from the Robot HAT pin dictionary.
+             *
+             * @param[out] pin
+             * Mapped GPIO line offset when the name is supported; unchanged otherwise.
+             *
+             * @return
+             * `true` when `pinName` was resolved; otherwise `false`.
+             */
+            static boolean tryResolvePin(stringview pinName, uint8& pin) noexcept;
+
+            /**************************************************************************
              * Public constructors and destructor
              **************************************************************************/
 

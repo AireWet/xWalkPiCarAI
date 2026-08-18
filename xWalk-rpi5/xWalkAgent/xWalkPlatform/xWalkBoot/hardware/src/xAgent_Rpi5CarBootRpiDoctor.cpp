@@ -1,10 +1,10 @@
 /******************************************************************************
  * @file        xAgent_Rpi5CarBootRpiDoctor.cpp
- * @brief       Composes the passive Raspberry Pi Doctor mode.
+ * @brief       Composes the bounded Raspberry Pi Doctor preflight.
  *
  * @details
- * Produces the deployment inspection service without claiming actuator or
- * media resources.
+ * Produces the deployment inspection service after the MCU-reset-only
+ * preflight without claiming actuator or media resources.
  *
  * @project     xWalk Firmware
  * @module      xWalkBoot RPi
@@ -26,7 +26,7 @@ namespace xwalk::agent
 {
 
     /**
-     * @brief Runs the passive Doctor mode.
+     * @brief Runs the bounded MCU-reset Doctor preflight.
      * @param[in,out] context Nullable caller-owned application context.
      * @param[in] callback Non-null synchronous application callback.
      * @return Status returned by `callback`.

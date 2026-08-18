@@ -389,8 +389,8 @@ namespace
     {
         ctrl::string executable{"xwalk-picarx-control"};
         ctrl::string configurationOption{"--deployment-config"};
-        ctrl::string configurationPath{"/var/lib/xwalk/picar-x.conf"};
-        ctrl::string resourceOption{"--resource-directory=/usr/share/xwalk"};
+        ctrl::string configurationPath{"../build-rpi/runtime/picar-x.conf"};
+        ctrl::string resourceOption{"--resource-directory=./xWalkAudioResources"};
         ctrl::string traceEnableOption{"--trace"};
         ctrl::string traceEnableSelector{"RPI.001.enable"};
         ctrl::string traceDisableOption{"--trace=CTRL.2001.disable"};
@@ -413,7 +413,7 @@ namespace
         EXPECT_TRUE(
             xwalk::ctrl::xWalkParseControllerApplicationArguments(10, arguments, defaultConfig, applicationArguments));
         EXPECT_EQ(applicationArguments.appConfig.configurationFilePath, configurationPath);
-        EXPECT_EQ(applicationArguments.appConfig.resourceDirectory, "/usr/share/xwalk");
+        EXPECT_EQ(applicationArguments.appConfig.resourceDirectory, "./xWalkAudioResources");
         ASSERT_EQ(applicationArguments.traceArguments.size(), 3U);
         EXPECT_EQ(applicationArguments.traceArguments[0U], "RPI.001.enable");
         EXPECT_EQ(applicationArguments.traceArguments[1U], "CTRL.2001.disable");
@@ -427,20 +427,19 @@ namespace
     }
 
     /**
-     * @brief Verifies rejection of a relative global path in shared parsing.
+     * @brief Verifies rejection of incomplete global options in shared parsing.
      */
     TEST(XWalkAppGroup, InvalidControllerApplicationArguments)
     {
         ctrl::string executable{"xwalk-picarx-control"};
-        ctrl::string option{"--resource-directory"};
-        ctrl::string relativePath{"relative/resources"};
+        ctrl::string option{"--resource-directory="};
         ctrl::string command{"help"};
-        ctrl::charpointer arguments[]{executable.data(), option.data(), relativePath.data(), command.data()};
+        ctrl::charpointer arguments[]{executable.data(), option.data(), command.data()};
         xwalk::ctrl::XWalkControllerApplicationArguments applicationArguments;
         const xwalk::ctrl::XWalkAppConfig defaultConfig{"/default/config", "/default/resources"};
 
         EXPECT_FALSE(
-            xwalk::ctrl::xWalkParseControllerApplicationArguments(4, arguments, defaultConfig, applicationArguments));
+            xwalk::ctrl::xWalkParseControllerApplicationArguments(3, arguments, defaultConfig, applicationArguments));
 
         ctrl::string traceOption{"--trace"};
         ctrl::string invalidUid{"RPI.Camera.enable"};
@@ -743,11 +742,11 @@ namespace
     }
 
     /**
-     * @brief Verifies rejection of a relative deployment-configuration path.
+     * @brief Verifies acceptance of a relative deployment-configuration path.
      */
-    TEST(XWalkAppGroup, InvalidDeploymentConfiguration)
+    TEST(XWalkAppGroup, RelativeDeploymentConfiguration)
     {
-        EXPECT_EQ(runHostApplication("--deployment-config", "relative.conf", "--help"), 2);
+        EXPECT_EQ(runHostApplication("--deployment-config", "../build-rpi/runtime/picar-x.conf", "--help"), 0);
     }
 
     /**

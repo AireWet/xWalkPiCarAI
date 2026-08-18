@@ -57,75 +57,108 @@ namespace xwalk::hal
      */
     uint8 XWalkGpio::resolvePin(stringview pinName)
     {
+        uint8 pin{};
+        if (tryResolvePin(pinName, pin))
+        {
+            return pin;
+        }
+        XWALK_HAL_ERROR(XWALK_INVAL, "GPIO pin name is not supported");
+    }
+
+    /**
+     * @brief Tries to resolve a Robot HAT board name to a Linux GPIO line offset.
+     * @param[in] pinName Case-sensitive name from the Robot HAT pin dictionary.
+     * @param[out] pin Mapped line offset when the name is supported; unchanged otherwise.
+     * @return `true` when `pinName` was resolved; otherwise `false`.
+     */
+    boolean XWalkGpio::tryResolvePin(stringview pinName, uint8& pin) noexcept
+    {
         if (pinName == "D0")
         {
-            return 17U;
+            pin = 17U;
+            return true;
         }
         if ((pinName == "D1") || (pinName == "D7"))
         {
-            return 4U;
+            pin = 4U;
+            return true;
         }
         if (pinName == "D2")
         {
-            return 27U;
+            pin = 27U;
+            return true;
         }
         if (pinName == "D3")
         {
-            return 22U;
+            pin = 22U;
+            return true;
         }
         if (pinName == "D4")
         {
-            return 23U;
+            pin = 23U;
+            return true;
         }
         if (pinName == "D5")
         {
-            return 24U;
+            pin = 24U;
+            return true;
         }
         if ((pinName == "D6") || (pinName == "SW") || (pinName == "USER"))
         {
-            return 25U;
+            pin = 25U;
+            return true;
         }
         if ((pinName == "D8") || (pinName == "MCURST"))
         {
-            return 5U;
+            pin = 5U;
+            return true;
         }
         if (pinName == "D9")
         {
-            return 6U;
+            pin = 6U;
+            return true;
         }
         if ((pinName == "D10") || (pinName == "BOARD_TYPE"))
         {
-            return 12U;
+            pin = 12U;
+            return true;
         }
         if ((pinName == "D11") || (pinName == "BLEINT"))
         {
-            return 13U;
+            pin = 13U;
+            return true;
         }
         if (pinName == "D12")
         {
-            return 19U;
+            pin = 19U;
+            return true;
         }
         if ((pinName == "D13") || (pinName == "RST"))
         {
-            return 16U;
+            pin = 16U;
+            return true;
         }
         if ((pinName == "D14") || (pinName == "LED"))
         {
-            return 26U;
+            pin = 26U;
+            return true;
         }
         if ((pinName == "D15") || (pinName == "BLERST"))
         {
-            return 20U;
+            pin = 20U;
+            return true;
         }
         if (pinName == "D16")
         {
-            return 21U;
+            pin = 21U;
+            return true;
         }
         if (pinName == "CE")
         {
-            return 8U;
+            pin = 8U;
+            return true;
         }
-        XWALK_HAL_ERROR(XWALK_INVAL, "GPIO pin name is not supported");
+        return false;
     }
 
     /**

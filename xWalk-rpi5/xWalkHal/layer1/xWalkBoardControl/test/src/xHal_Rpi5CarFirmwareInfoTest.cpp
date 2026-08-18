@@ -11,7 +11,6 @@
 #include "xHal_Rpi5CarBoardControlTestSupport.h"
 #include "xHal_Rpi5CarTestFunctions.h"
 #include "xHal_Rpi5CarTrace.h"
-#include <cassert>
 namespace
 {
     using namespace xwalk::hal;
@@ -26,17 +25,17 @@ namespace
         bus.respondingAddresses.insert(XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_1);
         XWalkI2c i2c = createI2c(bus);
         XWalkFirmwareInfo information(i2c);
-        assert(information.address() == XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_1);
-        assert(bus.probes == bytevector({XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_1}));
+        xwalk::hal::test::requireTestCondition(information.address() == XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_1);
+        xwalk::hal::test::requireTestCondition(bus.probes == bytevector({XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_1}));
         const XWalkFirmwareVersion version = information.read();
-        assert(version.major == 2U);
-        assert(version.minor == 5U);
-        assert(version.patch == 5U);
-        assert(bus.readAddress == XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_1);
-        assert(bus.readRegister == XHAL_RPI5CAR_FIRMWARE_INFO_VERSION_REGISTER);
-        assert(bus.readLength == XHAL_RPI5CAR_FIRMWARE_INFO_VERSION_BYTE_COUNT);
-        assert(information.readText() == "2.5.5");
-        assert(XWalkFirmwareInfo::libraryVersion() == "2.5.5");
+        xwalk::hal::test::requireTestCondition(version.major == 2U);
+        xwalk::hal::test::requireTestCondition(version.minor == 5U);
+        xwalk::hal::test::requireTestCondition(version.patch == 5U);
+        xwalk::hal::test::requireTestCondition(bus.readAddress == XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_1);
+        xwalk::hal::test::requireTestCondition(bus.readRegister == XHAL_RPI5CAR_FIRMWARE_INFO_VERSION_REGISTER);
+        xwalk::hal::test::requireTestCondition(bus.readLength == XHAL_RPI5CAR_FIRMWARE_INFO_VERSION_BYTE_COUNT);
+        xwalk::hal::test::requireTestCondition(information.readText() == "2.5.5");
+        xwalk::hal::test::requireTestCondition(XWalkFirmwareInfo::libraryVersion() == "2.5.5");
     }
     void testSecondAddressSelection()
     {
@@ -44,8 +43,9 @@ namespace
         bus.respondingAddresses.insert(XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_2);
         XWalkI2c i2c = createI2c(bus);
         XWalkFirmwareInfo information(i2c);
-        assert(information.address() == XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_2);
-        assert(bus.probes == bytevector({XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_1, XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_2}));
+        xwalk::hal::test::requireTestCondition(information.address() == XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_2);
+        xwalk::hal::test::requireTestCondition(
+            bus.probes == bytevector({XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_1, XHAL_RPI5CAR_FIRMWARE_INFO_ADDRESS_2}));
     }
     void testFailures()
     {

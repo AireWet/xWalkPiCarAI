@@ -90,11 +90,17 @@ TEST_F(TEST_SUITE_XWALK_GPIO, NamedPinMap)
          {"MCURST", 5U}, {"CE", 8U}}};
     for (const xwalk::hal::test::gpio::PinMapping& mapping : mappings)
     {
+        XWalkHal::uint8 resolvedPin{};
+        EXPECT_TRUE(xwalk::hal::XWalkGpio::tryResolvePin(mapping.name, resolvedPin));
+        EXPECT_EQ(resolvedPin, mapping.pin);
         xwalk::hal::sim::XWalkGpioHostStub pinStub;
         xwalk::hal::XWalkGpioLinux pinBackend(pinStub, "host-gpio-mirror");
         xwalk::hal::XWalkGpio mappedGpio(&pinBackend, XHAL_GPIO_CALLBACKS(xwalk::hal::XWalkGpioLinux), mapping.name);
         EXPECT_EQ(mappedGpio.pin(), mapping.pin);
     }
+    XWalkHal::uint8 unresolvedPin{42U};
+    EXPECT_FALSE(xwalk::hal::XWalkGpio::tryResolvePin("UNKNOWN", unresolvedPin));
+    EXPECT_EQ(unresolvedPin, 42U);
 }
 
 TEST_F(TEST_SUITE_XWALK_GPIO, Interrupt)
