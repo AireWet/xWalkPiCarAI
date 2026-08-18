@@ -36,8 +36,11 @@ add_executable(xGoogleTest
     src/main.cpp
     src/TestConfig.cpp
     src/TestRunner.cpp
-    src/xHal_Rpi5CarSimulationArgumentsTest.cpp
 )
+if(NOT XWALK_HAL_BUILD_RPI)
+    target_sources(xGoogleTest PRIVATE
+        src/xHal_Rpi5CarSimulationArgumentsTest.cpp)
+endif()
 target_link_libraries(xGoogleTest PRIVATE xWalkTrace)
 set_target_properties(xGoogleTest PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
