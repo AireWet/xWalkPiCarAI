@@ -62,50 +62,55 @@ namespace
 
         XWalkHal::XWalkGrayscaleModule grayscale(left, middle, right);
         const XWalkHal::linetrackervalues grayscaleData = grayscale.read();
-        assert(grayscaleData == XWalkHal::linetrackervalues({1'200, 800, 1'000}));
+        xwalk::hal::test::requireTestCondition(grayscaleData == XWalkHal::linetrackervalues({1'200, 800, 1'000}));
         const XWalkHal::linetrackerstatus defaultStatus = grayscale.readStatus();
-        assert(defaultStatus == XWalkHal::linetrackerstatus({0U, 1U, 1U}));
+        xwalk::hal::test::requireTestCondition(defaultStatus == XWalkHal::linetrackerstatus({0U, 1U, 1U}));
         grayscale.setReference({1'100, 700, 1'001});
-        assert(grayscale.reference() == XWalkHal::linetrackervalues({1'100, 700, 1'001}));
+        xwalk::hal::test::requireTestCondition(grayscale.reference() ==
+                                               XWalkHal::linetrackervalues({1'100, 700, 1'001}));
         const XWalkHal::linetrackerstatus updatedStatus = grayscale.readStatus();
-        assert(updatedStatus == XWalkHal::linetrackerstatus({0U, 0U, 1U}));
+        xwalk::hal::test::requireTestCondition(updatedStatus == XWalkHal::linetrackerstatus({0U, 0U, 1U}));
         const XWalkHal::int32 middleValue = grayscale.readChannel(1U);
-        assert(middleValue == 800);
+        xwalk::hal::test::requireTestCondition(middleValue == 800);
 
         XWalkHal::XWalkLineTracker tracker(left, middle, right);
         const XWalkHal::linetrackervalues rawTrackerData = tracker.read(true);
-        assert(rawTrackerData == XWalkHal::linetrackervalues({1'200, 800, 1'000}));
-        assert(bus.readCount == 13U);
+        xwalk::hal::test::requireTestCondition(rawTrackerData == XWalkHal::linetrackervalues({1'200, 800, 1'000}));
+        xwalk::hal::test::requireTestCondition(bus.readCount == 13U);
         const XWalkHal::XWalkLineCalibration manualCalibration{{1.0, 2.0, 0.5}, {0.0, 10.0, -10.0}};
         tracker.setCalibrationData(manualCalibration);
-        assert(tracker.calibrateData({100, 200, 300}) == XWalkHal::linetrackervalues({100, 410, 140}));
+        xwalk::hal::test::requireTestCondition(tracker.calibrateData({100, 200, 300}) ==
+                                               XWalkHal::linetrackervalues({100, 410, 140}));
 
-        assert(tracker.isOnCliff({119, 500, 500}));
-        assert(!tracker.isOnCliff({120, 500, 500}));
+        xwalk::hal::test::requireTestCondition(tracker.isOnCliff({119, 500, 500}));
+        xwalk::hal::test::requireTestCondition(!tracker.isOnCliff({120, 500, 500}));
         tracker.setCliffThreshold(150);
-        assert(tracker.cliffThreshold() == 150);
-        assert(tracker.isOnCliff({149, 500, 500}));
+        xwalk::hal::test::requireTestCondition(tracker.cliffThreshold() == 150);
+        xwalk::hal::test::requireTestCondition(tracker.isOnCliff({149, 500, 500}));
         tracker.setCliffThreshold(120);
 
-        assert(tracker.isOnLine({500, 800, 500}));
-        assert(!tracker.isOnLine({500, 700, 600}));
-        assert(!tracker.isOnLine({119, 800, 500}));
+        xwalk::hal::test::requireTestCondition(tracker.isOnLine({500, 800, 500}));
+        xwalk::hal::test::requireTestCondition(!tracker.isOnLine({500, 700, 600}));
+        xwalk::hal::test::requireTestCondition(!tracker.isOnLine({119, 800, 500}));
         const XWalkHal::float64 leftPosition = tracker.getLinePosition({200, 1'000, 1'000});
         const XWalkHal::float64 rightPosition = tracker.getLinePosition({1'000, 1'000, 200});
         const XWalkHal::float64 absentPosition = tracker.getLinePosition({1'000, 1'000, 1'000});
-        assert(leftPosition == -0.53);
-        assert(rightPosition == 0.53);
-        assert(absentPosition == 0.0);
+        xwalk::hal::test::requireTestCondition(leftPosition == -0.53);
+        xwalk::hal::test::requireTestCondition(rightPosition == 0.53);
+        xwalk::hal::test::requireTestCondition(absentPosition == 0.0);
 
         tracker.updateLineBackgroundReference({400, 600, 800});
         tracker.updateLineReference({400, 600, 800});
-        assert(XHAL_ABSOLUTE_VALUE(tracker.lineBackgroundReference() - 990.0) < 0.000001);
-        assert(XHAL_ABSOLUTE_VALUE(tracker.lineReference() - 210.0) < 0.000001);
+        xwalk::hal::test::requireTestCondition(XHAL_ABSOLUTE_VALUE(tracker.lineBackgroundReference() - 990.0) <
+                                               0.000001);
+        xwalk::hal::test::requireTestCondition(XHAL_ABSOLUTE_VALUE(tracker.lineReference() - 210.0) < 0.000001);
 
         const XWalkHal::XWalkLineCalibration derived = tracker.calibrate({1'000, 800, 900}, {100, 80, 90});
-        assert(derived.slopes == XWalkHal::linetrackercalibrationvalues({1.0, 1.25, 1.11}));
-        assert(derived.offsets == XWalkHal::linetrackercalibrationvalues({0.0, 0.0, 0.0}));
-        assert(tracker.calibrationData().slopes == derived.slopes);
+        xwalk::hal::test::requireTestCondition(derived.slopes ==
+                                               XWalkHal::linetrackercalibrationvalues({1.0, 1.25, 1.11}));
+        xwalk::hal::test::requireTestCondition(derived.offsets ==
+                                               XWalkHal::linetrackercalibrationvalues({0.0, 0.0, 0.0}));
+        xwalk::hal::test::requireTestCondition(tracker.calibrationData().slopes == derived.slopes);
     }
 
     /**
@@ -152,15 +157,15 @@ namespace
         char malformedSelector[] = "RPI.invalid.enable";
         XWalkHal::charpointer enableArguments[]{executable, option, enableSelector};
         xwalk::hal::sim::XWalkLineTrackerSimulationArguments enable(3, enableArguments);
-        assert(enable.valid());
-        assert(enable.applyTraceUpdate());
+        xwalk::hal::test::requireTestCondition(enable.valid());
+        xwalk::hal::test::requireTestCondition(enable.applyTraceUpdate());
         XWalkHal::charpointer disableArguments[]{executable, option, disableSelector};
         xwalk::hal::sim::XWalkLineTrackerSimulationArguments disable(3, disableArguments);
-        assert(disable.valid());
-        assert(disable.applyTraceUpdate());
+        xwalk::hal::test::requireTestCondition(disable.valid());
+        xwalk::hal::test::requireTestCondition(disable.applyTraceUpdate());
         XWalkHal::charpointer malformedArguments[]{executable, option, malformedSelector};
         const xwalk::hal::sim::XWalkLineTrackerSimulationArguments malformed(3, malformedArguments);
-        assert(malformed.valid() == false);
+        xwalk::hal::test::requireTestCondition(malformed.valid() == false);
     }
 
 } /* namespace */

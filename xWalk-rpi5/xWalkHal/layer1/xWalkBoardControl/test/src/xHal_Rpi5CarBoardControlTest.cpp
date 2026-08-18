@@ -12,7 +12,6 @@
 #include "xHal_Rpi5CarBoardControlSimulationArguments.h"
 #include "xHal_Rpi5CarTestFunctions.h"
 #include "xHal_Rpi5CarTrace.h"
-#include <cassert>
 namespace
 {
     using namespace xwalk::hal;
@@ -30,20 +29,21 @@ namespace
         XWalkAdc batteryAdc(i2c, XHAL_RPI5CAR_BOARD_CONTROL_BATTERY_ADC_CHANNEL, XHAL_RPI5CAR_ADC_ADDRESS_1);
         XWalkBoardControl control(resetGpio, speakerGpio, batteryAdc, &primeState, &primeSpeaker);
         control.setPin(resetGpio, true);
-        assert(resetBackend.physicalValue);
+        xwalk::hal::test::requireTestCondition(resetBackend.physicalValue);
         resetBackend.writeCount = 0U;
         control.resetMcu();
-        assert(resetBackend.writeCount == 2U);
-        assert(!resetBackend.writes[0U]);
-        assert(resetBackend.writes[1U]);
+        xwalk::hal::test::requireTestCondition(resetBackend.writeCount == 2U);
+        xwalk::hal::test::requireTestCondition(!resetBackend.writes[0U]);
+        xwalk::hal::test::requireTestCondition(resetBackend.writes[1U]);
         const float64 difference = XHAL_ABSOLUTE_VALUE(control.batteryVoltage() - 9.9);
-        assert(difference < 0.000001);
+        xwalk::hal::test::requireTestCondition(difference < 0.000001);
         control.enableSpeaker();
-        assert(speakerBackend.physicalValue);
-        assert(primeState.callCount == 1U);
-        assert(primeState.durationMs == XHAL_RPI5CAR_BOARD_CONTROL_SPEAKER_PRIME_DURATION_MS);
+        xwalk::hal::test::requireTestCondition(speakerBackend.physicalValue);
+        xwalk::hal::test::requireTestCondition(primeState.callCount == 1U);
+        xwalk::hal::test::requireTestCondition(primeState.durationMs ==
+                                               XHAL_RPI5CAR_BOARD_CONTROL_SPEAKER_PRIME_DURATION_MS);
         control.disableSpeaker();
-        assert(!speakerBackend.physicalValue);
+        xwalk::hal::test::requireTestCondition(!speakerBackend.physicalValue);
     }
     void testFailureAndValidation()
     {
@@ -65,7 +65,7 @@ namespace
             {
                 control.enableSpeaker();
             });
-        assert(!speakerBackend.physicalValue);
+        xwalk::hal::test::requireTestCondition(!speakerBackend.physicalValue);
         xwalk::hal::test::expectFailure(
             [&]()
             {
@@ -108,15 +108,15 @@ namespace
         const sim::XWalkBoardControlSimulationArguments malformedArguments(3, malformedValues);
         const sim::XWalkBoardControlSimulationArguments unknownArguments(3, unknownValues);
         const sim::XWalkBoardControlSimulationArguments nullArguments(3, nullptr);
-        assert(defaultArguments.valid() && defaultArguments.applyTraceUpdate());
-        assert(helpArguments.valid() && helpArguments.helpRequested());
-        assert(shortHelpArguments.valid() && shortHelpArguments.helpRequested());
-        assert(enableArguments.valid() && enableArguments.applyTraceUpdate());
-        assert(disableArguments.valid() && disableArguments.applyTraceUpdate());
-        assert(jsonArguments.valid());
-        assert(!malformedArguments.valid());
-        assert(!unknownArguments.valid());
-        assert(!nullArguments.valid());
+        xwalk::hal::test::requireTestCondition(defaultArguments.valid() && defaultArguments.applyTraceUpdate());
+        xwalk::hal::test::requireTestCondition(helpArguments.valid() && helpArguments.helpRequested());
+        xwalk::hal::test::requireTestCondition(shortHelpArguments.valid() && shortHelpArguments.helpRequested());
+        xwalk::hal::test::requireTestCondition(enableArguments.valid() && enableArguments.applyTraceUpdate());
+        xwalk::hal::test::requireTestCondition(disableArguments.valid() && disableArguments.applyTraceUpdate());
+        xwalk::hal::test::requireTestCondition(jsonArguments.valid());
+        xwalk::hal::test::requireTestCondition(!malformedArguments.valid());
+        xwalk::hal::test::requireTestCondition(!unknownArguments.valid());
+        xwalk::hal::test::requireTestCondition(!nullArguments.valid());
     }
 } /* namespace */
 XWalkHal::int32 main()

@@ -28,7 +28,6 @@
 #include "xHal_Rpi5CarToneSequence.h"
 #include "xHal_Rpi5CarTestFunctions.h"
 
-#include <cassert>
 #include "xHal_Rpi5CarToneSequenceTestTypes.h"
 
 /******************************************************************************
@@ -147,30 +146,31 @@ namespace
                     .size();
         }
 
-        assert(state.enableCount == 1U);
-        assert(state.volumeCount == 1U);
-        assert(state.normalizedVolume == 0.8);
-        assert(state.toneCount == 72U);
-        assert(totalBeatValue == 12.0);
-        assert(state.totalPcmBytes == expectedPcmBytes);
-        assert(state.sampleRateHz == XHAL_RPI5CAR_MUSIC_SAMPLE_RATE_HZ);
-        assert(state.channelCount == 1U);
-        assert(state.measures.size() == 17U);
+        xwalk::hal::test::requireTestCondition(state.enableCount == 1U);
+        xwalk::hal::test::requireTestCondition(state.volumeCount == 1U);
+        xwalk::hal::test::requireTestCondition(state.normalizedVolume == 0.8);
+        xwalk::hal::test::requireTestCondition(state.toneCount == 72U);
+        xwalk::hal::test::requireTestCondition(totalBeatValue == 12.0);
+        xwalk::hal::test::requireTestCondition(state.totalPcmBytes == expectedPcmBytes);
+        xwalk::hal::test::requireTestCondition(state.sampleRateHz == XHAL_RPI5CAR_MUSIC_SAMPLE_RATE_HZ);
+        xwalk::hal::test::requireTestCondition(state.channelCount == 1U);
+        xwalk::hal::test::requireTestCondition(state.measures.size() == 17U);
         for (XWalkHal::size index = 0U; index < state.measures.size(); ++index)
         {
-            assert(state.measures[index] == index + 1U);
+            xwalk::hal::test::requireTestCondition(state.measures[index] == index + 1U);
         }
 
         const xwalk::hal::test::tonesequenceeventarray& melody = xwalk::hal::test::XWalkToneSequence::melody();
-        assert(melody.front().measureNumber == 1U);
-        assert(melody.front().noteName == "G4");
-        assert(melody.front().beatValue == XHAL_RPI5CAR_MUSIC_EIGHTH_NOTE);
-        assert(melody[1U].noteName == "A#4");
-        assert(melody[38U].measureNumber == 10U);
-        assert(melody[38U].noteName == "F5");
-        assert(melody.back().measureNumber == 17U);
-        assert(melody.back().noteName == "G4");
-        assert(melody.back().beatValue == XHAL_RPI5CAR_MUSIC_QUARTER_NOTE + XHAL_RPI5CAR_MUSIC_EIGHTH_NOTE);
+        xwalk::hal::test::requireTestCondition(melody.front().measureNumber == 1U);
+        xwalk::hal::test::requireTestCondition(melody.front().noteName == "G4");
+        xwalk::hal::test::requireTestCondition(melody.front().beatValue == XHAL_RPI5CAR_MUSIC_EIGHTH_NOTE);
+        xwalk::hal::test::requireTestCondition(melody[1U].noteName == "A#4");
+        xwalk::hal::test::requireTestCondition(melody[38U].measureNumber == 10U);
+        xwalk::hal::test::requireTestCondition(melody[38U].noteName == "F5");
+        xwalk::hal::test::requireTestCondition(melody.back().measureNumber == 17U);
+        xwalk::hal::test::requireTestCondition(melody.back().noteName == "G4");
+        xwalk::hal::test::requireTestCondition(melody.back().beatValue ==
+                                               XHAL_RPI5CAR_MUSIC_QUARTER_NOTE + XHAL_RPI5CAR_MUSIC_EIGHTH_NOTE);
 
         xwalk::hal::test::expectFailure(
             [&]()

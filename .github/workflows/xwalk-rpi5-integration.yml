@@ -9,6 +9,13 @@ on:
 permissions:
   contents: read
 
+env:
+  XWALK_INTEGRATION_PACKAGES: >-
+    clang cmake ninja-build libasound2-dev libcurl4-openssl-dev libgmock-dev
+    libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev
+    python3-nacl protobuf-compiler protobuf-compiler-grpc libprotobuf-dev
+    libgrpc++-dev
+
 jobs:
   metadata:
     runs-on: ubuntu-24.04
@@ -45,7 +52,7 @@ jobs:
           GERRIT_SSH_PORT: ${{ vars.GERRIT_SSH_PORT }}
         run: xWalkTool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
       - name: Install host dependencies
-        run: sudo apt-get update && sudo apt-get install --yes clang cmake ninja-build libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
+        run: xWalkTool/shell-agent/quality-tool/install-github-host-packages.sh $XWALK_INTEGRATION_PACKAGES
       - name: Select compiler
         run: |
           if [ "${{ matrix.compiler }}" = clang ]; then echo "CC=clang" >> "$GITHUB_ENV"; echo "CXX=clang++" >> "$GITHUB_ENV"; else echo "CC=gcc" >> "$GITHUB_ENV"; echo "CXX=g++" >> "$GITHUB_ENV"; fi
@@ -84,7 +91,7 @@ jobs:
           GERRIT_SSH_PORT: ${{ vars.GERRIT_SSH_PORT }}
         run: xWalkTool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
       - name: Install sanitizer dependencies
-        run: sudo apt-get update && sudo apt-get install --yes clang cmake ninja-build libasound2-dev libcurl4-openssl-dev libgmock-dev libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev python3-nacl protobuf-compiler protobuf-compiler-grpc libprotobuf-dev libgrpc++-dev
+        run: xWalkTool/shell-agent/quality-tool/install-github-host-packages.sh $XWALK_INTEGRATION_PACKAGES
       - name: Configure ASan and UBSan
         run: CC=clang CXX=clang++ cmake --fresh -S xWalk-rpi5 -B build-host/sanitizers -G Ninja -DCMAKE_BUILD_TYPE=Debug -DXWALK_ENABLE_SANITIZERS=ON -DXWALK_ENABLE_STRICT_WARNINGS=ON
       - name: Build and test ASan and UBSan

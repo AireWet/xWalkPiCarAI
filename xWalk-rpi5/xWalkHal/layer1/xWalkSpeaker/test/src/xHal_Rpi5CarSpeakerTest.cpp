@@ -24,24 +24,24 @@ namespace
         const XWalkHal::XWalkSpeakerCallbacks callbacks = speakerCallbacks();
         {
             XWalkHal::XWalkSpeaker speaker(&backend, callbacks);
-            assert(speaker.isSpeakerEnabled());
-            assert(backend.enableCount == 1U);
+            xwalk::hal::test::requireTestCondition(speaker.isSpeakerEnabled());
+            xwalk::hal::test::requireTestCondition(backend.enableCount == 1U);
             const XWalkHal::string taskId = speaker.play(wavePath.string());
             XWalkHal::common::sleepMilliseconds(10U);
             speaker.pause(taskId);
             const XWalkHal::XWalkSpeakerProgress progress = speaker.getProgress(taskId);
-            assert(progress.isPlaying == false);
-            assert(progress.totalFrames == backend.decodedFrameCount);
-            assert(progress.progressRatio >= 0.0);
-            assert(progress.progressRatio <= 1.0);
+            xwalk::hal::test::requireTestCondition(progress.isPlaying == false);
+            xwalk::hal::test::requireTestCondition(progress.totalFrames == backend.decodedFrameCount);
+            xwalk::hal::test::requireTestCondition(progress.progressRatio >= 0.0);
+            xwalk::hal::test::requireTestCondition(progress.progressRatio <= 1.0);
             speaker.resume(taskId);
-            assert(speaker.stop(taskId));
-            assert(speaker.stop(taskId) == false);
-            assert(speaker.listTasks().empty());
-            assert(backend.openCount == 1U);
-            assert(backend.closeCount == 1U);
+            xwalk::hal::test::requireTestCondition(speaker.stop(taskId));
+            xwalk::hal::test::requireTestCondition(speaker.stop(taskId) == false);
+            xwalk::hal::test::requireTestCondition(speaker.listTasks().empty());
+            xwalk::hal::test::requireTestCondition(backend.openCount == 1U);
+            xwalk::hal::test::requireTestCondition(backend.closeCount == 1U);
         }
-        assert(backend.disableCount == 1U);
+        xwalk::hal::test::requireTestCondition(backend.disableCount == 1U);
     }
     /** @brief Verifies compressed routing and automatic completion cleanup. */
     void testFormatAndCompletion(const XWalkHal::filesystempath& compressedPath)
@@ -52,9 +52,9 @@ namespace
         XWalkHal::XWalkSpeaker speaker(&backend, callbacks);
         static_cast<void>(speaker.play(compressedPath.string()));
         XWalkHal::common::sleepMilliseconds(20U);
-        assert(speaker.listTasks().empty());
-        assert(backend.handler == XWalkHal::XWalkSpeakerAudioHandler::Librosa);
-        assert(backend.closeCount == 1U);
+        xwalk::hal::test::requireTestCondition(speaker.listTasks().empty());
+        xwalk::hal::test::requireTestCondition(backend.handler == XWalkHal::XWalkSpeakerAudioHandler::Librosa);
+        xwalk::hal::test::requireTestCondition(backend.closeCount == 1U);
     }
     /** @brief Verifies all eight bounded task slots can be occupied. */
     void testTaskCapacity(const XWalkHal::filesystempath& wavePath)
@@ -66,7 +66,7 @@ namespace
         {
             static_cast<void>(speaker.play(wavePath.string()));
         }
-        assert(speaker.listTasks().size() == XHAL_RPI5CAR_SPEAKER_MAXIMUM_TASK_COUNT);
+        xwalk::hal::test::requireTestCondition(speaker.listTasks().size() == XHAL_RPI5CAR_SPEAKER_MAXIMUM_TASK_COUNT);
     }
     /** @brief Verifies rejection of a ninth playback task. */
     void testTaskCapacityFailure(const XWalkHal::filesystempath& wavePath)
@@ -144,21 +144,21 @@ namespace
         char malformedSelector[] = "RPI.invalid.enable";
         XWalkHal::charpointer enableArguments[]{executable, option, enableSelector};
         xwalk::hal::sim::XWalkSpeakerSimulationArguments enable(3, enableArguments);
-        assert(enable.valid());
-        assert(enable.applyTraceUpdate());
+        xwalk::hal::test::requireTestCondition(enable.valid());
+        xwalk::hal::test::requireTestCondition(enable.applyTraceUpdate());
         XWalkHal::charpointer disableArguments[]{executable, option, disableSelector};
         xwalk::hal::sim::XWalkSpeakerSimulationArguments disable(3, disableArguments);
-        assert(disable.valid());
-        assert(disable.applyTraceUpdate());
+        xwalk::hal::test::requireTestCondition(disable.valid());
+        xwalk::hal::test::requireTestCondition(disable.applyTraceUpdate());
         XWalkHal::charpointer malformedArguments[]{executable, option, malformedSelector};
         const xwalk::hal::sim::XWalkSpeakerSimulationArguments malformed(3, malformedArguments);
-        assert(malformed.valid() == false);
+        xwalk::hal::test::requireTestCondition(malformed.valid() == false);
     }
 } /* namespace */
 /** @brief Runs host-side Speaker tests using build-local fixture files. */
 XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer arguments[])
 {
-    assert(argumentCount == 5);
+    xwalk::hal::test::requireTestCondition(argumentCount == 5);
     xwalk::hal::XWalkTrace::configureGlobal(XWALK_SPEAKER_SIMULATION_TRACE_CONFIG_PATH,
                                             XWALK_SPEAKER_SIMULATION_TRACE_LOG_PATH);
     const XWalkHal::filesystempath wavePath(arguments[1]);
@@ -183,7 +183,7 @@ XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer argume
     }
     else
     {
-        assert(suiteMode == "failure");
+        xwalk::hal::test::requireTestCondition(suiteMode == "failure");
         testTaskCapacityFailure(wavePath);
         testValidation(unsupportedPath, missingPath);
         testWorkerFailure(wavePath);

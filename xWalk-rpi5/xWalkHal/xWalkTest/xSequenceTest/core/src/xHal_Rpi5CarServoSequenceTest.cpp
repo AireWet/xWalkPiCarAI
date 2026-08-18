@@ -28,7 +28,6 @@
 #include "xHal_Rpi5CarServoSequence.h"
 #include "xHal_Rpi5CarTestFunctions.h"
 
-#include <cassert>
 #include "xHal_Rpi5CarServoSequenceTestTypes.h"
 
 /******************************************************************************
@@ -169,11 +168,11 @@ namespace
 
         sequence.run(1U);
 
-        assert(waitState.durations.size() == 24U);
-        assert(waitState.pulseWidthSnapshots.size() == 288U);
+        xwalk::hal::test::requireTestCondition(waitState.durations.size() == 24U);
+        xwalk::hal::test::requireTestCondition(waitState.pulseWidthSnapshots.size() == 288U);
         for (XWalkHal::size waitIndex = 0U; waitIndex < 24U; ++waitIndex)
         {
-            assert(waitState.durations[waitIndex] == 100U);
+            xwalk::hal::test::requireTestCondition(waitState.durations[waitIndex] == 100U);
             const XWalkHal::size activeChannel = waitIndex % 12U;
             const XWalkHal::boolean positiveSweep = waitIndex >= 12U;
             for (XWalkHal::size channel = 0U; channel < 12U; ++channel)
@@ -188,14 +187,15 @@ namespace
                     expectedPulseWidth = 261U;
                 }
                 const XWalkHal::size snapshotIndex = (waitIndex * 12U) + channel;
-                assert(waitState.pulseWidthSnapshots[snapshotIndex] == expectedPulseWidth);
+                xwalk::hal::test::requireTestCondition(waitState.pulseWidthSnapshots[snapshotIndex] ==
+                                                       expectedPulseWidth);
             }
         }
         for (const XWalkHal::XWalkPwm* const pwm : waitState.pwmObjects)
         {
-            assert(pwm->pulseWidth() == 352U);
+            xwalk::hal::test::requireTestCondition(pwm->pulseWidth() == 352U);
         }
-        assert(i2cState.writeCount > 0U);
+        xwalk::hal::test::requireTestCondition(i2cState.writeCount > 0U);
 
         xwalk::hal::test::expectFailure(
             [&]()

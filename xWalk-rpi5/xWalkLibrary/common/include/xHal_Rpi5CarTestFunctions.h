@@ -1,10 +1,10 @@
 /******************************************************************************
  * @file        xHal_Rpi5CarTestFunctions.h
- * @brief       Provides host-test process isolation helpers.
+ * @brief       Provides always-active checks and process-isolation helpers.
  *
  * @details
- * Runs failure scenarios in child processes so tests can verify rejected
- * operations without installing C++ exception handlers.
+ * Keeps test requirements active in every build configuration and runs
+ * failure scenarios in child processes without installing exception handlers.
  *
  * @project     xWalk Firmware
  * @module      xWalkLibraryCommon
@@ -51,6 +51,24 @@ namespace xwalk::hal::test
      ******************************************************************************/
 
     /**
+     * @brief Enforces one always-active test requirement.
+     *
+     * @param[in] requirementSatisfied
+     * True when the verified requirement passed; false terminates the test
+     * process immediately.
+     *
+     * @warning
+     * A failed requirement terminates the current process with `std::abort`.
+     */
+    inline void requireTestCondition(const boolean requirementSatisfied) noexcept
+    {
+        if (requirementSatisfied == false)
+        {
+            std::abort();
+        }
+    }
+
+    /**
      * @brief Verifies that an operation terminates its isolated child process.
      *
      * @details
@@ -68,7 +86,7 @@ namespace xwalk::hal::test
     {
 #ifdef __linux__
         const auto childProcess = ::fork();
-        assert(childProcess >= 0);
+        requireTestCondition(childProcess >= 0);
         if (childProcess == 0)
         {
             std::set_terminate(
@@ -88,11 +106,11 @@ namespace xwalk::hal::test
 
         int32 childStatus{};
         const auto completedProcess = ::waitpid(childProcess, &childStatus, 0);
-        assert(completedProcess == childProcess);
-        assert(!WIFEXITED(childStatus) || (WEXITSTATUS(childStatus) != EXIT_SUCCESS));
+        requireTestCondition(completedProcess == childProcess);
+        requireTestCondition(!WIFEXITED(childStatus) || (WEXITSTATUS(childStatus) != EXIT_SUCCESS));
 #else
         static_cast<void>(operation);
-        assert(false && "Failure isolation requires a Linux host");
+        requireTestCondition(false);
 #endif
     }
 

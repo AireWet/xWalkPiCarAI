@@ -10,10 +10,10 @@
  ******************************************************************************/
 #include "xHal_Rpi5CarUltrasonic.h"
 #include "xHal_Rpi5CarTrace.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 #include "xHal_Rpi5CarUltrasonicSimulationArguments.h"
 #include "xHal_Rpi5CarUltrasonicSimulationConfig.h"
 #include "xHal_Rpi5CarUltrasonicTestSupport.h"
-#include <cassert>
 namespace
 {
     using xwalk::hal::test::ultrasonic::callbacks;
@@ -30,15 +30,15 @@ namespace
         XWalkHal::XWalkGpio trigger(&backend, callbackSet, "D2");
         XWalkHal::XWalkGpio echo(&backend, callbackSet, "D3");
         XWalkHal::XWalkUltrasonic ultrasonic(trigger, echo);
-        assert(backend.triggerMode == XWalkHal::XWalkGpioMode::Output);
-        assert(backend.echoMode == XWalkHal::XWalkGpioMode::Input);
-        assert(backend.echoPull == XWalkHal::XWalkGpioPull::Down);
-        assert(ultrasonic.timeoutMicroseconds() == 20'000U);
+        xwalk::hal::test::requireTestCondition(backend.triggerMode == XWalkHal::XWalkGpioMode::Output);
+        xwalk::hal::test::requireTestCondition(backend.echoMode == XWalkHal::XWalkGpioMode::Input);
+        xwalk::hal::test::requireTestCondition(backend.echoPull == XWalkHal::XWalkGpioPull::Down);
+        xwalk::hal::test::requireTestCondition(ultrasonic.timeoutMicroseconds() == 20'000U);
         const XWalkHal::float64 distanceCentimeters = ultrasonic.read(1U);
         const XWalkHal::float64 maximumTimeoutDistanceCentimeters = 350.0;
-        assert(distanceCentimeters > 1.0);
-        assert(distanceCentimeters < maximumTimeoutDistanceCentimeters);
-        assert(backend.triggerLevels == XWalkHal::bytevector({0U, 1U, 0U}));
+        xwalk::hal::test::requireTestCondition(distanceCentimeters > 1.0);
+        xwalk::hal::test::requireTestCondition(distanceCentimeters < maximumTimeoutDistanceCentimeters);
+        xwalk::hal::test::requireTestCondition(backend.triggerLevels == XWalkHal::bytevector({0U, 1U, 0U}));
     }
 
     /** @brief Verifies timeout-only retry and invalid-pulse behavior. */
@@ -51,12 +51,12 @@ namespace
         XWalkHal::XWalkGpio echo(&backend, callbackSet, "D3");
         XWalkHal::XWalkUltrasonic ultrasonic(trigger, echo, 5'000U);
         const XWalkHal::float64 distanceCentimeters = ultrasonic.read(2U);
-        assert(distanceCentimeters == XHAL_RPI5CAR_ULTRASONIC_INVALID_PULSE_RESULT_CM);
-        assert(backend.triggerCount == 2U);
+        xwalk::hal::test::requireTestCondition(distanceCentimeters == XHAL_RPI5CAR_ULTRASONIC_INVALID_PULSE_RESULT_CM);
+        xwalk::hal::test::requireTestCondition(backend.triggerCount == 2U);
         backend.behavior = EchoBehavior::Invalid;
         backend.triggerCount = 0U;
-        assert(ultrasonic.read(3U) == XHAL_RPI5CAR_ULTRASONIC_INVALID_PULSE_RESULT_CM);
-        assert(backend.triggerCount == 1U);
+        xwalk::hal::test::requireTestCondition(ultrasonic.read(3U) == XHAL_RPI5CAR_ULTRASONIC_INVALID_PULSE_RESULT_CM);
+        xwalk::hal::test::requireTestCondition(backend.triggerCount == 1U);
     }
 
     /** @brief Verifies complete timeout and zero-attempt behavior. */
@@ -68,11 +68,11 @@ namespace
         XWalkHal::XWalkGpio trigger(&backend, callbackSet, "D2");
         XWalkHal::XWalkGpio echo(&backend, callbackSet, "D3");
         XWalkHal::XWalkUltrasonic ultrasonic(trigger, echo, 200U);
-        assert(ultrasonic.read(2U) == XHAL_RPI5CAR_ULTRASONIC_TIMEOUT_RESULT_CM);
-        assert(backend.triggerCount == 2U);
+        xwalk::hal::test::requireTestCondition(ultrasonic.read(2U) == XHAL_RPI5CAR_ULTRASONIC_TIMEOUT_RESULT_CM);
+        xwalk::hal::test::requireTestCondition(backend.triggerCount == 2U);
         backend.triggerCount = 0U;
-        assert(ultrasonic.read(0U) == XHAL_RPI5CAR_ULTRASONIC_TIMEOUT_RESULT_CM);
-        assert(backend.triggerCount == 0U);
+        xwalk::hal::test::requireTestCondition(ultrasonic.read(0U) == XHAL_RPI5CAR_ULTRASONIC_TIMEOUT_RESULT_CM);
+        xwalk::hal::test::requireTestCondition(backend.triggerCount == 0U);
         ultrasonic.close();
     }
 
@@ -86,15 +86,15 @@ namespace
         char malformedSelector[] = "RPI.invalid.enable";
         XWalkHal::charpointer enableArguments[]{executable, option, enableSelector};
         xwalk::hal::sim::XWalkUltrasonicSimulationArguments enable(3, enableArguments);
-        assert(enable.valid());
-        assert(enable.applyTraceUpdate());
+        xwalk::hal::test::requireTestCondition(enable.valid());
+        xwalk::hal::test::requireTestCondition(enable.applyTraceUpdate());
         XWalkHal::charpointer disableArguments[]{executable, option, disableSelector};
         xwalk::hal::sim::XWalkUltrasonicSimulationArguments disable(3, disableArguments);
-        assert(disable.valid());
-        assert(disable.applyTraceUpdate());
+        xwalk::hal::test::requireTestCondition(disable.valid());
+        xwalk::hal::test::requireTestCondition(disable.applyTraceUpdate());
         XWalkHal::charpointer malformedArguments[]{executable, option, malformedSelector};
         const xwalk::hal::sim::XWalkUltrasonicSimulationArguments malformed(3, malformedArguments);
-        assert(malformed.valid() == false);
+        xwalk::hal::test::requireTestCondition(malformed.valid() == false);
     }
 } /* namespace */
 

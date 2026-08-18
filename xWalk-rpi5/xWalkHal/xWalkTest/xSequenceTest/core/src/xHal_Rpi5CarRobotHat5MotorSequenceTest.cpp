@@ -28,7 +28,7 @@
 #include "xHal_Rpi5CarRobotHat5MotorSequence.h"
 
 #include "xHal_Rpi5CarTrace.h"
-#include <cassert>
+#include "xHal_Rpi5CarTestFunctions.h"
 #include "xHal_Rpi5CarRobotHat5MotorSequenceTestTypes.h"
 
 /******************************************************************************
@@ -123,14 +123,15 @@ namespace
 
         sequence.run(1U);
 
-        assert(waitState.durations == XWalkHal::uint32vector({1'000U, 1'000U, 100U}));
-        assert(waitState.observedSpeeds ==
-               XWalkHal::float64vector({-50.0, -50.0, -50.0, -50.0, 50.0, 50.0, 50.0, 50.0, 0.0, 0.0, 0.0, 0.0}));
-        assert(firstMotor.speed() == 0.0);
-        assert(secondMotor.speed() == 0.0);
-        assert(thirdMotor.speed() == 0.0);
-        assert(fourthMotor.speed() == 0.0);
-        assert(i2cState.writeCount > 0U);
+        xwalk::hal::test::requireTestCondition(waitState.durations == XWalkHal::uint32vector({1'000U, 1'000U, 100U}));
+        xwalk::hal::test::requireTestCondition(
+            waitState.observedSpeeds ==
+            XWalkHal::float64vector({-50.0, -50.0, -50.0, -50.0, 50.0, 50.0, 50.0, 50.0, 0.0, 0.0, 0.0, 0.0}));
+        xwalk::hal::test::requireTestCondition(firstMotor.speed() == 0.0);
+        xwalk::hal::test::requireTestCondition(secondMotor.speed() == 0.0);
+        xwalk::hal::test::requireTestCondition(thirdMotor.speed() == 0.0);
+        xwalk::hal::test::requireTestCondition(fourthMotor.speed() == 0.0);
+        xwalk::hal::test::requireTestCondition(i2cState.writeCount > 0U);
 
         XWalkHal::boolean rejectedCycles = false;
         try
@@ -141,7 +142,7 @@ namespace
         {
             rejectedCycles = true;
         }
-        assert(rejectedCycles);
+        xwalk::hal::test::requireTestCondition(rejectedCycles);
 
         waitState.durations.clear();
         waitState.observedSpeeds.clear();
@@ -155,12 +156,12 @@ namespace
         {
             propagatedFailure = true;
         }
-        assert(propagatedFailure);
-        assert(waitState.durations == XWalkHal::uint32vector({1'000U, 100U}));
-        assert(firstMotor.speed() == 0.0);
-        assert(secondMotor.speed() == 0.0);
-        assert(thirdMotor.speed() == 0.0);
-        assert(fourthMotor.speed() == 0.0);
+        xwalk::hal::test::requireTestCondition(propagatedFailure);
+        xwalk::hal::test::requireTestCondition(waitState.durations == XWalkHal::uint32vector({1'000U, 100U}));
+        xwalk::hal::test::requireTestCondition(firstMotor.speed() == 0.0);
+        xwalk::hal::test::requireTestCondition(secondMotor.speed() == 0.0);
+        xwalk::hal::test::requireTestCondition(thirdMotor.speed() == 0.0);
+        xwalk::hal::test::requireTestCondition(fourthMotor.speed() == 0.0);
     }
 
 } /* namespace */

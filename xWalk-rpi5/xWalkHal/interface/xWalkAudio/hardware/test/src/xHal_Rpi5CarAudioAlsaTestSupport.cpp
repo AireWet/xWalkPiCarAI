@@ -26,8 +26,7 @@
  ******************************************************************************/
 
 #include "xHal_Rpi5CarAudioAlsaTestSupport.h"
-
-#include <cassert>
+#include "xHal_Rpi5CarTestFunctions.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -107,7 +106,7 @@ namespace xwalk::hal::test::audio
     boolean recoverPcm(contextpointer context, audiopcmhandle pcmHandle, int32 errorValue)
     {
         static_cast<void>(pcmHandle);
-        assert(errorValue < 0);
+        xwalk::hal::test::requireTestCondition(errorValue < 0);
         TestAudioOperations& state = *static_cast<TestAudioOperations*>(context);
         ++state.recoverCount;
         return state.recoverSucceeds;
@@ -120,7 +119,7 @@ namespace xwalk::hal::test::audio
      */
     void closePcm(contextpointer context, audiopcmhandle pcmHandle)
     {
-        assert(pcmHandle != nullptr);
+        xwalk::hal::test::requireTestCondition(pcmHandle != nullptr);
         ++static_cast<TestAudioOperations*>(context)->closePcmCount;
     }
 
@@ -149,7 +148,7 @@ namespace xwalk::hal::test::audio
     boolean
     setMixerVolume(contextpointer context, audiomixerhandle mixerHandle, stringview elementName, uint8 volumePercent)
     {
-        assert(mixerHandle != nullptr);
+        xwalk::hal::test::requireTestCondition(mixerHandle != nullptr);
         TestAudioOperations& state = *static_cast<TestAudioOperations*>(context);
         ++state.setVolumeCount;
         state.mixerElement = string(elementName);
@@ -164,7 +163,7 @@ namespace xwalk::hal::test::audio
      */
     void closeMixer(contextpointer context, audiomixerhandle mixerHandle)
     {
-        assert(mixerHandle != nullptr);
+        xwalk::hal::test::requireTestCondition(mixerHandle != nullptr);
         ++static_cast<TestAudioOperations*>(context)->closeMixerCount;
     }
 

@@ -32,34 +32,34 @@ namespace
         xwalk::hal::XWalkGpio direction(&gpioBackend, callbacks, "D4");
         const XWalkHal::uint32 writesBeforeMotorConstruction = bus.writeCount;
         xwalk::hal::XWalkMotor motor(pwm, direction);
-        assert(bus.writeCount == writesBeforeMotorConstruction);
-        assert(!motor.initialized());
+        xwalk::hal::test::requireTestCondition(bus.writeCount == writesBeforeMotorConstruction);
+        xwalk::hal::test::requireTestCondition(!motor.initialized());
         xwalk::hal::test::expectFailure(
             [&motor]()
             {
                 motor.setSpeed(1.0);
             });
-        assert(bus.writeCount == writesBeforeMotorConstruction);
-        assert(motor.stopSafely());
-        assert(bus.writeCount == writesBeforeMotorConstruction);
-        assert(motor.initialize());
+        xwalk::hal::test::requireTestCondition(bus.writeCount == writesBeforeMotorConstruction);
+        xwalk::hal::test::requireTestCondition(motor.stopSafely());
+        xwalk::hal::test::requireTestCondition(bus.writeCount == writesBeforeMotorConstruction);
+        xwalk::hal::test::requireTestCondition(motor.initialize());
         const XWalkHal::uint32 initializationWrites = bus.writeCount;
-        assert(motor.initialize());
-        assert(bus.writeCount == initializationWrites);
-        assert(motor.initialized());
-        assert(motor.mode() == XWalkHal::XWalkMotorMode::PwmAndDirection);
-        assert(motor.frequency() == 100.0);
+        xwalk::hal::test::requireTestCondition(motor.initialize());
+        xwalk::hal::test::requireTestCondition(bus.writeCount == initializationWrites);
+        xwalk::hal::test::requireTestCondition(motor.initialized());
+        xwalk::hal::test::requireTestCondition(motor.mode() == XWalkHal::XWalkMotorMode::PwmAndDirection);
+        xwalk::hal::test::requireTestCondition(motor.frequency() == 100.0);
         motor.setSpeed(50.0);
-        assert((motor.speed() == 50.0) && (pwm.pulseWidthPercent() == 50.0));
-        assert(gpioBackend.value);
+        xwalk::hal::test::requireTestCondition((motor.speed() == 50.0) && (pwm.pulseWidthPercent() == 50.0));
+        xwalk::hal::test::requireTestCondition(gpioBackend.value);
         motor.setSpeed(-25.0);
-        assert((motor.speed() == -25.0) && (pwm.pulseWidthPercent() == 25.0));
-        assert(gpioBackend.value == false);
+        xwalk::hal::test::requireTestCondition((motor.speed() == -25.0) && (pwm.pulseWidthPercent() == 25.0));
+        xwalk::hal::test::requireTestCondition(gpioBackend.value == false);
         motor.setReversed(true);
         motor.setSpeed(10.0);
-        assert(gpioBackend.value == false);
+        xwalk::hal::test::requireTestCondition(gpioBackend.value == false);
         motor.stop();
-        assert((motor.speed() == 0.0) && (pwm.pulseWidthPercent() == 0.0));
+        xwalk::hal::test::requireTestCondition((motor.speed() == 0.0) && (pwm.pulseWidthPercent() == 0.0));
     }
 
     /** @brief Verifies dual-PWM speed selection, reversal, stopping, and braking.
@@ -73,24 +73,27 @@ namespace
         xwalk::hal::XWalkPwm reversePwm(i2c, 13U, 0x14U, timerState);
         const XWalkHal::uint32 writesBeforeMotorConstruction = bus.writeCount;
         xwalk::hal::XWalkMotor motor(forwardPwm, reversePwm);
-        assert(bus.writeCount == writesBeforeMotorConstruction);
+        xwalk::hal::test::requireTestCondition(bus.writeCount == writesBeforeMotorConstruction);
         xwalk::hal::test::expectFailure(
             [&motor]()
             {
                 motor.brake();
             });
-        assert(bus.writeCount == writesBeforeMotorConstruction);
-        assert(motor.initialize());
+        xwalk::hal::test::requireTestCondition(bus.writeCount == writesBeforeMotorConstruction);
+        xwalk::hal::test::requireTestCondition(motor.initialize());
         motor.setSpeed(40.0);
-        assert((forwardPwm.pulseWidthPercent() == 40.0) && (reversePwm.pulseWidthPercent() == 0.0));
+        xwalk::hal::test::requireTestCondition((forwardPwm.pulseWidthPercent() == 40.0) &&
+                                               (reversePwm.pulseWidthPercent() == 0.0));
         motor.setSpeed(-30.0);
-        assert((forwardPwm.pulseWidthPercent() == 0.0) && (reversePwm.pulseWidthPercent() == 30.0));
+        xwalk::hal::test::requireTestCondition((forwardPwm.pulseWidthPercent() == 0.0) &&
+                                               (reversePwm.pulseWidthPercent() == 30.0));
         motor.setReversed(true);
         motor.setSpeed(20.0);
-        assert(reversePwm.pulseWidthPercent() == 20.0);
+        xwalk::hal::test::requireTestCondition(reversePwm.pulseWidthPercent() == 20.0);
         motor.brake();
-        assert((forwardPwm.pulseWidthPercent() == 100.0) && (reversePwm.pulseWidthPercent() == 100.0));
-        assert(motor.speed() == 0.0);
+        xwalk::hal::test::requireTestCondition((forwardPwm.pulseWidthPercent() == 100.0) &&
+                                               (reversePwm.pulseWidthPercent() == 100.0));
+        xwalk::hal::test::requireTestCondition(motor.speed() == 0.0);
     }
 
     /** @brief Verifies paired movement, role configuration, and fail-safe stopping.
@@ -111,22 +114,22 @@ namespace
         xwalk::hal::XWalkMotors motors(firstMotor, secondMotor, configuration);
         motors.arm();
         motors.turnLeft(35.0);
-        assert((motors.left().speed() == -35.0) && (motors.right().speed() == 35.0));
+        xwalk::hal::test::requireTestCondition((motors.left().speed() == -35.0) && (motors.right().speed() == 35.0));
         motors.turnRight(20.0);
-        assert((motors.left().speed() == 20.0) && (motors.right().speed() == -20.0));
+        xwalk::hal::test::requireTestCondition((motors.left().speed() == 20.0) && (motors.right().speed() == -20.0));
         motors.setLeftMotorId(2U);
         motors.setRightMotorId(1U);
         motors.forward(10.0);
-        assert((secondMotor.speed() == 10.0) && (firstMotor.speed() == 10.0));
-        assert(motors.toggleLeftReversed());
-        assert(secondMotor.reversed());
+        xwalk::hal::test::requireTestCondition((secondMotor.speed() == 10.0) && (firstMotor.speed() == 10.0));
+        xwalk::hal::test::requireTestCondition(motors.toggleLeftReversed());
+        xwalk::hal::test::requireTestCondition(secondMotor.reversed());
         motors.setSpeed(30.0, 40.0);
         const XWalkHal::uint32 firstStopWrite = bus.writeCount + 1U;
         bus.failingWrites = {firstStopWrite, firstStopWrite + 2U};
-        assert(motors.stopSafely() == false);
-        assert(bus.writeCount == (firstStopWrite + 3U));
+        xwalk::hal::test::requireTestCondition(motors.stopSafely() == false);
+        xwalk::hal::test::requireTestCondition(bus.writeCount == (firstStopWrite + 3U));
         bus.failingWrites.clear();
-        assert(motors.stopSafely());
+        xwalk::hal::test::requireTestCondition(motors.stopSafely());
     }
 
     /** @brief Verifies speed, frequency, identifier, and mode validation. */
@@ -179,7 +182,7 @@ namespace
             {
                 motors.setSpeed(20.0, 101.0);
             });
-        assert((motor.speed() == 12.0) && (secondMotor.speed() == 13.0));
+        xwalk::hal::test::requireTestCondition((motor.speed() == 12.0) && (secondMotor.speed() == 13.0));
     }
 
     /** @brief Verifies exact deterministic watchdog expiry and explicit recovery.
@@ -206,16 +209,16 @@ namespace
         motors.arm();
         motors.forward(25.0);
         clock.milliseconds = 99U;
-        assert(!motors.checkWatchdog());
+        xwalk::hal::test::requireTestCondition(!motors.checkWatchdog());
         xwalk::hal::test::expectFailure(
             [&motors]()
             {
                 motors.setSpeed(101.0, 0.0);
             });
         clock.milliseconds = 100U;
-        assert(motors.checkWatchdog());
-        assert(!motors.isArmed());
-        assert((firstMotor.speed() == 0.0) && (secondMotor.speed() == 0.0));
+        xwalk::hal::test::requireTestCondition(motors.checkWatchdog());
+        xwalk::hal::test::requireTestCondition(!motors.isArmed());
+        xwalk::hal::test::requireTestCondition((firstMotor.speed() == 0.0) && (secondMotor.speed() == 0.0));
         xwalk::hal::test::expectFailure(
             [&motors]()
             {
@@ -228,11 +231,11 @@ namespace
         clock.milliseconds = 249U;
         motors.heartbeat();
         clock.milliseconds = 348U;
-        assert(!motors.checkWatchdog());
+        xwalk::hal::test::requireTestCondition(!motors.checkWatchdog());
         clock.milliseconds = 349U;
-        assert(motors.checkWatchdog());
-        assert(motors.disarm());
-        assert(motors.disarm());
+        xwalk::hal::test::requireTestCondition(motors.checkWatchdog());
+        xwalk::hal::test::requireTestCondition(motors.disarm());
+        xwalk::hal::test::requireTestCondition(motors.disarm());
     }
 
     /** @brief Verifies clock rollback and large forward jumps expire safely. */
@@ -259,17 +262,17 @@ namespace
         motors.arm();
         motors.forward(20.0);
         clock.milliseconds = 999U;
-        assert(motors.checkWatchdog());
-        assert(!motors.isArmed());
-        assert((firstMotor.speed() == 0.0) && (secondMotor.speed() == 0.0));
+        xwalk::hal::test::requireTestCondition(motors.checkWatchdog());
+        xwalk::hal::test::requireTestCondition(!motors.isArmed());
+        xwalk::hal::test::requireTestCondition((firstMotor.speed() == 0.0) && (secondMotor.speed() == 0.0));
 
         clock.milliseconds = 2'000U;
         motors.arm();
         motors.forward(20.0);
         clock.milliseconds = std::numeric_limits<XWalkHal::uint64>::max();
-        assert(motors.checkWatchdog());
-        assert(!motors.isArmed());
-        assert((firstMotor.speed() == 0.0) && (secondMotor.speed() == 0.0));
+        xwalk::hal::test::requireTestCondition(motors.checkWatchdog());
+        xwalk::hal::test::requireTestCondition(!motors.isArmed());
+        xwalk::hal::test::requireTestCondition((firstMotor.speed() == 0.0) && (secondMotor.speed() == 0.0));
     }
 
     /** @brief Verifies watchdog timeout boundaries without waiting in real time. */
@@ -332,8 +335,8 @@ namespace
                 xwalk::hal::XWalkMotors motors(firstMotor, secondMotor, configuration);
                 static_cast<void>(motors);
             });
-        assert(bus.writeCount == writesBeforeConstruction);
-        assert(!firstMotor.initialized() && !secondMotor.initialized());
+        xwalk::hal::test::requireTestCondition(bus.writeCount == writesBeforeConstruction);
+        xwalk::hal::test::requireTestCondition(!firstMotor.initialized() && !secondMotor.initialized());
     }
 
     /** @brief Verifies partial single-motor initialization remains uninitialized
@@ -352,11 +355,11 @@ namespace
             {
                 static_cast<void>(motor.initialize());
             });
-        assert(!motor.initialized());
-        assert(motor.speed() == 0.0);
+        xwalk::hal::test::requireTestCondition(!motor.initialized());
+        xwalk::hal::test::requireTestCondition(motor.speed() == 0.0);
         bus.failingWrites.clear();
-        assert(motor.initialize());
-        assert(motor.initialized());
+        xwalk::hal::test::requireTestCondition(motor.initialize());
+        xwalk::hal::test::requireTestCondition(motor.initialized());
     }
 
     /** @brief Verifies persistent Motor trace-selector behavior. */
@@ -369,15 +372,15 @@ namespace
         char malformedSelector[] = "RPI.invalid.enable";
         XWalkHal::charpointer enableArguments[]{executable, option, enableSelector};
         xwalk::hal::sim::XWalkMotorSimulationArguments enable(3, enableArguments);
-        assert(enable.valid());
-        assert(enable.applyTraceUpdate());
+        xwalk::hal::test::requireTestCondition(enable.valid());
+        xwalk::hal::test::requireTestCondition(enable.applyTraceUpdate());
         XWalkHal::charpointer disableArguments[]{executable, option, disableSelector};
         xwalk::hal::sim::XWalkMotorSimulationArguments disable(3, disableArguments);
-        assert(disable.valid());
-        assert(disable.applyTraceUpdate());
+        xwalk::hal::test::requireTestCondition(disable.valid());
+        xwalk::hal::test::requireTestCondition(disable.applyTraceUpdate());
         XWalkHal::charpointer malformedArguments[]{executable, option, malformedSelector};
         const xwalk::hal::sim::XWalkMotorSimulationArguments malformed(3, malformedArguments);
-        assert(malformed.valid() == false);
+        xwalk::hal::test::requireTestCondition(malformed.valid() == false);
     }
 } /* namespace */
 

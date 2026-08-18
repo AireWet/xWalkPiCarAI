@@ -9,6 +9,7 @@
  * @copyright   Copyright (c) 2026 Joxy John. All rights reserved.
  ******************************************************************************/
 #include "xHal_Rpi5CarSpeakerTestSupport.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 #include "xHal_Rpi5CarTrace.h"
 namespace xwalk::hal::test::speaker
 {
@@ -35,8 +36,8 @@ namespace xwalk::hal::test::speaker
     speakerstreamhandle openStream(contextpointer context, uint32 sampleRateHz, uint8 channelCount)
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
-        assert(sampleRateHz == 44'100U);
-        assert(channelCount == 1U);
+        xwalk::hal::test::requireTestCondition(sampleRateHz == 44'100U);
+        xwalk::hal::test::requireTestCondition(channelCount == 1U);
         const mutexlock lock(backend.callbackMutex);
         ++backend.openCount;
         return context;
@@ -48,9 +49,9 @@ namespace xwalk::hal::test::speaker
                      size frameCount)
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
-        assert(stream == context);
-        assert((firstFrame + frameCount) <= audioData.samples.size());
-        assert(frameCount <= XHAL_RPI5CAR_SPEAKER_CHUNK_FRAME_COUNT);
+        xwalk::hal::test::requireTestCondition(stream == context);
+        xwalk::hal::test::requireTestCondition((firstFrame + frameCount) <= audioData.samples.size());
+        xwalk::hal::test::requireTestCondition(frameCount <= XHAL_RPI5CAR_SPEAKER_CHUNK_FRAME_COUNT);
         if (backend.failWrite)
         {
             XWALK_HAL_ERROR(XWALK_RUNTIME, "Simulated speaker stream failure");
@@ -68,7 +69,7 @@ namespace xwalk::hal::test::speaker
     void closeStream(contextpointer context, speakerstreamhandle stream)
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
-        assert(stream == context);
+        xwalk::hal::test::requireTestCondition(stream == context);
         const mutexlock lock(backend.callbackMutex);
         ++backend.closeCount;
     }
@@ -85,7 +86,7 @@ namespace xwalk::hal::test::speaker
     void createTestFile(const filesystempath& path)
     {
         outputfilestream file(path, FILE_OPEN_WRITE_TRUNCATE);
-        assert(file.is_open());
+        xwalk::hal::test::requireTestCondition(file.is_open());
     }
     boolean waitForWriteCount(TestBackend& backend, uint32 expectedCount)
     {

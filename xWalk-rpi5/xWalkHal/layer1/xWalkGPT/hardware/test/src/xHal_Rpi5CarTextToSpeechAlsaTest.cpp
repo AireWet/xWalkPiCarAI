@@ -85,7 +85,7 @@ namespace
     XWalkHal::audiopcmhandle openPcm(XWalkHal::contextpointer context, XWalkHal::stringview deviceName)
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
-        assert(deviceName == "pcm");
+        xwalk::hal::test::requireTestCondition(deviceName == "pcm");
         ++backend.openCount;
         return &backend.pcmToken;
     }
@@ -103,11 +103,12 @@ namespace
                                    const XWalkHal::XWalkAudioStreamConfiguration& configuration)
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
-        assert(pcmHandle == &backend.pcmToken);
-        assert(configuration.sampleRateHz == backend.audioData.sampleRateHz);
-        assert(configuration.channelCount == backend.audioData.channelCount);
-        assert(configuration.format == XWalkHal::XWalkAudioSampleFormat::Signed16LittleEndian);
-        assert(configuration.periodFrames == XHAL_RPI5CAR_TEXT_TO_SPEECH_PERIOD_FRAMES);
+        xwalk::hal::test::requireTestCondition(pcmHandle == &backend.pcmToken);
+        xwalk::hal::test::requireTestCondition(configuration.sampleRateHz == backend.audioData.sampleRateHz);
+        xwalk::hal::test::requireTestCondition(configuration.channelCount == backend.audioData.channelCount);
+        xwalk::hal::test::requireTestCondition(configuration.format ==
+                                               XWalkHal::XWalkAudioSampleFormat::Signed16LittleEndian);
+        xwalk::hal::test::requireTestCondition(configuration.periodFrames == XHAL_RPI5CAR_TEXT_TO_SPEECH_PERIOD_FRAMES);
         return true;
     }
 
@@ -128,8 +129,8 @@ namespace
                              XWalkHal::size frameCount)
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
-        assert(pcmHandle == &backend.pcmToken);
-        assert(byteOffset == 0U);
+        xwalk::hal::test::requireTestCondition(pcmHandle == &backend.pcmToken);
+        xwalk::hal::test::requireTestCondition(byteOffset == 0U);
         if (backend.failWrite)
         {
             return -5;
@@ -165,7 +166,7 @@ namespace
     void closePcm(XWalkHal::contextpointer context, XWalkHal::audiopcmhandle pcmHandle)
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
-        assert(pcmHandle == &backend.pcmToken);
+        xwalk::hal::test::requireTestCondition(pcmHandle == &backend.pcmToken);
         ++backend.closeCount;
     }
 
@@ -179,7 +180,7 @@ namespace
     XWalkHal::audiomixerhandle openMixer(XWalkHal::contextpointer context, XWalkHal::stringview deviceName)
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
-        assert(deviceName == "mixer");
+        xwalk::hal::test::requireTestCondition(deviceName == "mixer");
         return &backend.mixerToken;
     }
 
@@ -198,8 +199,8 @@ namespace
                                      XWalkHal::uint8 volumePercent)
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
-        assert(mixerHandle == &backend.mixerToken);
-        assert(elementName == "PCM");
+        xwalk::hal::test::requireTestCondition(mixerHandle == &backend.mixerToken);
+        xwalk::hal::test::requireTestCondition(elementName == "PCM");
         backend.volumePercent = volumePercent;
         return true;
     }
@@ -213,7 +214,7 @@ namespace
     void closeMixer(XWalkHal::contextpointer context, XWalkHal::audiomixerhandle mixerHandle)
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
-        assert(mixerHandle == &backend.mixerToken);
+        xwalk::hal::test::requireTestCondition(mixerHandle == &backend.mixerToken);
     }
 
     /**
@@ -236,12 +237,12 @@ namespace
         const XWalkHal::XWalkTextToSpeechAlsaOperations operations{&synthesize};
         XWalkHal::XWalkTextToSpeechAlsa adapter(audio, &backend, operations, 15U);
         adapter.callback()(&adapter, "bounded speech");
-        assert(backend.text == "bounded speech");
-        assert(backend.synthesisCount == 1U);
-        assert(backend.volumePercent == 15U);
-        assert(backend.frameCounts == XWalkHal::uint32vector({1'024U, 1'024U, 452U}));
-        assert(backend.writtenPcm == backend.audioData.pcmData);
-        assert(backend.openCount == 1U && backend.closeCount == 1U);
+        xwalk::hal::test::requireTestCondition(backend.text == "bounded speech");
+        xwalk::hal::test::requireTestCondition(backend.synthesisCount == 1U);
+        xwalk::hal::test::requireTestCondition(backend.volumePercent == 15U);
+        xwalk::hal::test::requireTestCondition(backend.frameCounts == XWalkHal::uint32vector({1'024U, 1'024U, 452U}));
+        xwalk::hal::test::requireTestCondition(backend.writtenPcm == backend.audioData.pcmData);
+        xwalk::hal::test::requireTestCondition(backend.openCount == 1U && backend.closeCount == 1U);
     }
 
     /**
@@ -254,9 +255,9 @@ namespace
         const XWalkHal::XWalkTextToSpeechAlsaOperations operations{&synthesize};
         XWalkHal::XWalkTextToSpeechAlsa adapter(audio, &backend, operations, 15U);
         adapter.callback()(&adapter, "");
-        assert(backend.synthesisCount == 1U);
-        assert(backend.text.empty());
-        assert(backend.openCount == 0U && backend.closeCount == 0U);
+        xwalk::hal::test::requireTestCondition(backend.synthesisCount == 1U);
+        xwalk::hal::test::requireTestCondition(backend.text.empty());
+        xwalk::hal::test::requireTestCondition(backend.openCount == 0U && backend.closeCount == 0U);
     }
 
     /**

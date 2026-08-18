@@ -115,7 +115,7 @@ namespace
         XWalkHal::outputfilestream image(imagePath, XWalkHal::FILE_OPEN_WRITE_TRUNCATE);
         const XWalkHal::string bytes{"\x01\x02\x03", 3U};
         image << bytes;
-        assert(image.good());
+        xwalk::hal::test::requireTestCondition(image.good());
         return imagePath;
     }
 
@@ -137,16 +137,19 @@ namespace
         model.setMaximumMessages(4U);
         model.addMessage(XWalkHal::XWalkLanguageModelRole::Assistant, "prior");
         const XWalkHal::string result = model.prompt("inspect\nimage", imagePath.string());
-        assert(result == u8"hello\nå🚀");
-        assert(transport.endpoint == "http://127.0.0.1:11434/api/chat");
-        assert(transport.timeoutMs == 5'000U);
-        assert(transport.maximumResponseBytes == XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_RESPONSE_BYTES);
-        assert(transport.request.find("\"model\":\"tiny\"") != XWalkHal::string::npos);
-        assert(transport.request.find("answer \\\"briefly\\\"") != XWalkHal::string::npos);
-        assert(transport.request.find("inspect\\u000Aimage") != XWalkHal::string::npos);
-        assert(transport.request.find("\"images\":[\"AQID\"]") != XWalkHal::string::npos);
-        assert(transport.request.find("\"stream\":false") != XWalkHal::string::npos);
-        assert(transport.authorizationHeader.empty());
+        xwalk::hal::test::requireTestCondition(result == u8"hello\nå🚀");
+        xwalk::hal::test::requireTestCondition(transport.endpoint == "http://127.0.0.1:11434/api/chat");
+        xwalk::hal::test::requireTestCondition(transport.timeoutMs == 5'000U);
+        xwalk::hal::test::requireTestCondition(transport.maximumResponseBytes ==
+                                               XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_RESPONSE_BYTES);
+        xwalk::hal::test::requireTestCondition(transport.request.find("\"model\":\"tiny\"") != XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(transport.request.find("answer \\\"briefly\\\"") !=
+                                               XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(transport.request.find("inspect\\u000Aimage") != XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(transport.request.find("\"images\":[\"AQID\"]") !=
+                                               XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(transport.request.find("\"stream\":false") != XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(transport.authorizationHeader.empty());
     }
 
     /**
@@ -170,26 +173,29 @@ namespace
         XWalkHal::XWalkLanguageModel model(&backend, backend.callbacks());
         model.setInstructions("be concise");
         const XWalkHal::string result = model.prompt("inspect", imagePath.string());
-        assert(result == "cloud-ready");
-        assert(transport.authorizationHeader == "Authorization: Bearer test-secret");
-        assert(transport.request.find("test-secret") == XWalkHal::string::npos);
-        assert(transport.request.find("\"model\":\"selected-model\"") != XWalkHal::string::npos);
-        assert(transport.request.find("\"max_tokens\":321") != XWalkHal::string::npos);
-        assert(transport.request.find("\"type\":\"image_url\"") != XWalkHal::string::npos);
-        assert(transport.request.find("data:image/jpeg;base64,AQID") != XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(result == "cloud-ready");
+        xwalk::hal::test::requireTestCondition(transport.authorizationHeader == "Authorization: Bearer test-secret");
+        xwalk::hal::test::requireTestCondition(transport.request.find("test-secret") == XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(transport.request.find("\"model\":\"selected-model\"") !=
+                                               XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(transport.request.find("\"max_tokens\":321") != XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(transport.request.find("\"type\":\"image_url\"") !=
+                                               XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(transport.request.find("data:image/jpeg;base64,AQID") !=
+                                               XWalkHal::string::npos);
     }
 
     /** @brief Verifies deployment provider-name mapping and unsupported Kiro
      * rejection. */
     void testProviderNames()
     {
-        assert(XWalkHal::XWalkLanguageModelHttp::dialectFromString("ollama") ==
-               XWalkHal::XWalkLanguageModelHttpDialect::Ollama);
+        xwalk::hal::test::requireTestCondition(XWalkHal::XWalkLanguageModelHttp::dialectFromString("ollama") ==
+                                               XWalkHal::XWalkLanguageModelHttpDialect::Ollama);
         for (const XWalkHal::stringview provider :
              {"openai", "chatgpt", "gemini", "grok", "xai", "claude", "anthropic", "openai_compatible"})
         {
-            assert(XWalkHal::XWalkLanguageModelHttp::dialectFromString(provider) ==
-                   XWalkHal::XWalkLanguageModelHttpDialect::OpenAiChatCompletions);
+            xwalk::hal::test::requireTestCondition(XWalkHal::XWalkLanguageModelHttp::dialectFromString(provider) ==
+                                                   XWalkHal::XWalkLanguageModelHttpDialect::OpenAiChatCompletions);
         }
         xwalk::hal::test::expectFailure(
             []()
@@ -216,14 +222,14 @@ namespace
         model.addMessage(XWalkHal::XWalkLanguageModelRole::User, "discarded");
         model.addMessage(XWalkHal::XWalkLanguageModelRole::Assistant, "retained-one");
         model.addMessage(XWalkHal::XWalkLanguageModelRole::User, "retained-two");
-        assert(model.prompt("first") == "ready");
-        assert(transport.request.find("discarded") == XWalkHal::string::npos);
-        assert(transport.request.find("retained-one") != XWalkHal::string::npos);
-        assert(transport.request.find("retained-two") != XWalkHal::string::npos);
-        assert(model.prompt("second") == "ready");
-        assert(transport.request.find("first") != XWalkHal::string::npos);
-        assert(transport.request.find("ready") != XWalkHal::string::npos);
-        assert(transport.request.find("retained-two") == XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(model.prompt("first") == "ready");
+        xwalk::hal::test::requireTestCondition(transport.request.find("discarded") == XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(transport.request.find("retained-one") != XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(transport.request.find("retained-two") != XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(model.prompt("second") == "ready");
+        xwalk::hal::test::requireTestCondition(transport.request.find("first") != XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(transport.request.find("ready") != XWalkHal::string::npos);
+        xwalk::hal::test::requireTestCondition(transport.request.find("retained-two") == XWalkHal::string::npos);
     }
 
     /**
@@ -391,7 +397,7 @@ XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer argume
     XWalkHal::XWalkTrace::configureGlobal(XWALK_LANGUAGE_MODEL_SIMULATION_TRACE_CONFIG_PATH,
                                           XWALK_LANGUAGE_MODEL_SIMULATION_TRACE_LOG_PATH);
     XWALK_HAL_TRACE_UID0(RPI .155, "HTTP language-model provider tests started");
-    assert(argumentCount == 2);
+    xwalk::hal::test::requireTestCondition(argumentCount == 2);
     const XWalkHal::filesystempath imagePath = writeImageFixture(argumentValues[1]);
     testRequestAndResponse(imagePath);
     testOpenAiCompatibleRequest(imagePath);

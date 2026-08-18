@@ -97,6 +97,10 @@ synchronized to the configured GitHub `xWalkPiCarAI/master` branch.
 - Keep assertions enabled in every host verification configuration, including
   Release. New tests evaluate state-changing operations before asserting their
   results so static analysis and reviewers can see both the action and check.
+- Use `xwalk::hal::test::requireTestCondition()` for legacy and standalone test
+  requirements that must remain active when a non-host Release configuration
+  defines `NDEBUG`. Do not retain a value that becomes unused only because a
+  required test check was compiled out.
 
 ## Project structure
 

@@ -28,7 +28,6 @@
 #include "xHal_Rpi5CarServoHatSequence.h"
 #include "xHal_Rpi5CarTestFunctions.h"
 
-#include <cassert>
 #include "xHal_Rpi5CarServoHatSequenceTestTypes.h"
 
 /******************************************************************************
@@ -197,7 +196,7 @@ namespace
     {
         static_cast<void>(context);
         static_cast<void>(address);
-        assert(length == 2U);
+        xwalk::hal::test::requireTestCondition(length == 2U);
         return {0x01U, 0x02U};
     }
 
@@ -226,7 +225,7 @@ namespace
         if (durationMilliseconds == 100U)
         {
             const XWalkHal::size channel = static_cast<XWalkHal::size>(state.currentServoChannel);
-            assert(channel < state.pwmObjects.size());
+            xwalk::hal::test::requireTestCondition(channel < state.pwmObjects.size());
             state.observedPulseWidths.push_back(state.pwmObjects[channel]->pulseWidth());
         }
     }
@@ -356,28 +355,30 @@ namespace
 
         sequence.run(1U);
 
-        assert(resetState.writeCount == 2U);
-        assert(!resetState.writes[0U]);
-        assert(resetState.writes[1U]);
-        assert(sequenceState.reportedServoChannels ==
-               XWalkHal::uint32vector({0U, 1U, 2U, 3U, 4U, 5U, 6U, 7U, 8U, 9U, 10U, 11U, 12U, 13U, 14U, 15U}));
-        assert(sequenceState.observedPulseWidths.size() == 32U);
+        xwalk::hal::test::requireTestCondition(resetState.writeCount == 2U);
+        xwalk::hal::test::requireTestCondition(!resetState.writes[0U]);
+        xwalk::hal::test::requireTestCondition(resetState.writes[1U]);
+        xwalk::hal::test::requireTestCondition(
+            sequenceState.reportedServoChannels ==
+            XWalkHal::uint32vector({0U, 1U, 2U, 3U, 4U, 5U, 6U, 7U, 8U, 9U, 10U, 11U, 12U, 13U, 14U, 15U}));
+        xwalk::hal::test::requireTestCondition(sequenceState.observedPulseWidths.size() == 32U);
         for (XWalkHal::size index = 0U; index < sequenceState.observedPulseWidths.size(); ++index)
         {
             const XWalkHal::uint32 expectedPulseWidth = ((index % 2U) == 0U) ? 329U : 307U;
-            assert(sequenceState.observedPulseWidths[index] == expectedPulseWidth);
+            xwalk::hal::test::requireTestCondition(sequenceState.observedPulseWidths[index] == expectedPulseWidth);
         }
-        assert(sequenceState.durations.size() == 34U);
-        assert(sequenceState.durations.front() == 1'000U);
-        assert(sequenceState.durations.back() == 1'000U);
-        assert(sequenceState.adcReportCount == 1U);
-        assert(sequenceState.lastReadings == xwalk::hal::test::servohatreadings({258U, 258U, 258U, 258U, 258U}));
-        assert(adc0.channel() == 0U);
-        assert(adc1.channel() == 1U);
-        assert(adc2.channel() == 2U);
-        assert(adc3.channel() == 3U);
-        assert(adc4.channel() == 4U);
-        assert(i2cState.writeCount > 0U);
+        xwalk::hal::test::requireTestCondition(sequenceState.durations.size() == 34U);
+        xwalk::hal::test::requireTestCondition(sequenceState.durations.front() == 1'000U);
+        xwalk::hal::test::requireTestCondition(sequenceState.durations.back() == 1'000U);
+        xwalk::hal::test::requireTestCondition(sequenceState.adcReportCount == 1U);
+        xwalk::hal::test::requireTestCondition(sequenceState.lastReadings ==
+                                               xwalk::hal::test::servohatreadings({258U, 258U, 258U, 258U, 258U}));
+        xwalk::hal::test::requireTestCondition(adc0.channel() == 0U);
+        xwalk::hal::test::requireTestCondition(adc1.channel() == 1U);
+        xwalk::hal::test::requireTestCondition(adc2.channel() == 2U);
+        xwalk::hal::test::requireTestCondition(adc3.channel() == 3U);
+        xwalk::hal::test::requireTestCondition(adc4.channel() == 4U);
+        xwalk::hal::test::requireTestCondition(i2cState.writeCount > 0U);
 
         xwalk::hal::test::expectFailure(
             [&]()
