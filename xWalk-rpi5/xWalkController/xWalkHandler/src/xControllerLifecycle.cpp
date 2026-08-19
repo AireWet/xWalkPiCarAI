@@ -249,7 +249,7 @@ namespace xwalk::ctrl
     }
 
     /**
-     * @brief Constructs a CLI containing only a passive preflight report.
+     * @brief Constructs a CLI containing only a bounded preflight report.
      * @param[in] doctorLines Report lines that must outlive this CLI.
      * @param[in,out] context Optional platform callback context.
      * @param[in] backendCallbacks Complete non-null synchronous callback table.

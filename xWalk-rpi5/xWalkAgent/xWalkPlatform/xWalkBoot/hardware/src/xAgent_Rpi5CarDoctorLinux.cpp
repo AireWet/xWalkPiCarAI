@@ -1,10 +1,10 @@
 /******************************************************************************
  * @file        xAgent_Rpi5CarDoctorLinux.cpp
- * @brief       Implements passive Linux deployment inspection.
+ * @brief       Implements the bounded Linux hardware preflight.
  *
  * @details
- * Collects deployment status through non-actuating Linux operations and emits
- * a stable textual report for the CLI Doctor command.
+ * Pulses only the configured MCU reset GPIO before collecting deployment status
+ * and emits a stable textual report for the CLI Doctor command.
  *
  * @project     xWalk Firmware
  * @module      xWalkBoot RPi Doctor
@@ -29,9 +29,11 @@
 
 #include "xHal_Rpi5CarCommonFunctions.h"
 #include "xHal_Rpi5CarConfigStore.h"
+#include "xHal_Rpi5CarGpio.h"
 #include "xHal_Rpi5CarLinuxHeaders.h"
 
-#include <cstdlib>
+#include <charconv>
+#include <cstdio>
 
 /******************************************************************************
  * Namespace definitions
@@ -103,39 +105,6 @@ namespace xwalk::agent
     agent::boolean XWalkDoctorLinux::readablePath(agent::stringview path)
     {
         return !path.empty() && (::access(agent::string(path).c_str(), R_OK) == 0);
-    }
-
-    /**
-     * @brief Reports whether one named or absolute executable is available.
-     * @param[in] executable Executable name or absolute path.
-     * @return `true` when an executable regular file is found; otherwise `false`.
-     */
-    agent::boolean XWalkDoctorLinux::executableAvailable(agent::stringview executable)
-    {
-        const agent::boolean executableEmpty = static_cast<agent::boolean>(executable.empty());
-        if (executableEmpty)
-        {
-            return false;
-        }
-        const agent::string owned(executable);
-        const agent::boolean ownedDifferent = static_cast<agent::boolean>(owned.find('/') != agent::string::npos);
-        if (ownedDifferent)
-        {
-            return ::access(owned.c_str(), X_OK) == 0;
-        }
-        const agent::fixedarray<agent::cstring, 4U> roots{
-            "/usr/local/bin/", "/usr/bin/", "/bin/", "/opt/homebrew/bin/"};
-        for (const agent::cstring root : roots)
-        {
-            const agent::string candidate = agent::string(root) + owned;
-            const agent::boolean candidateCStrMatched =
-                static_cast<agent::boolean>(::access(candidate.c_str(), X_OK) == 0);
-            if (candidateCStrMatched)
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -212,34 +181,56 @@ namespace xwalk::agent
     }
 
     /**
-     * @brief Inspects one GPIO chip without requesting a line.
+     * @brief Parses one unsigned configuration value or returns its fallback.
+     * @param[in] value Decimal configuration text.
+     * @param[in] fallback Value returned when the complete text is not a valid unsigned integer.
+     * @return Parsed value or `fallback`.
+     */
+    agent::uint32 XWalkDoctorLinux::configurationUnsigned(agent::stringview value, agent::uint32 fallback)
+    {
+        agent::uint32 parsed{};
+        const std::from_chars_result result = std::from_chars(value.data(), value.data() + value.size(), parsed);
+        return ((result.ec == std::errc{}) && (result.ptr == (value.data() + value.size()))) ? parsed : fallback;
+    }
+
+    /**
+     * @brief Inspects GPIO identity and performs the bounded MCU reset pulse.
      * @param[in,out] lines Report receiving GPIO results.
      * @param[in] device GPIO character-device path.
      * @param[in] expectedName Configured exact chip name.
      * @param[in] expectedLabel Configured exact chip label.
+     * @param[in] minimumLineCount Configured minimum number of GPIO lines.
+     * @param[in] resetPin Configured Robot HAT reset-pin name.
+     * @param[in] resetSettleMilliseconds Delay after the line is driven high.
+     * @return `true` only when identity validation and the complete reset pulse succeed.
      */
-    void XWalkDoctorLinux::inspectGpio(agent::stringvector& lines,
-                                       agent::stringview device,
-                                       agent::stringview expectedName,
-                                       agent::stringview expectedLabel)
+    agent::boolean XWalkDoctorLinux::inspectAndResetGpio(agent::stringvector& lines,
+                                                         agent::stringview device,
+                                                         agent::stringview expectedName,
+                                                         agent::stringview expectedLabel,
+                                                         agent::uint32 minimumLineCount,
+                                                         agent::stringview resetPin,
+                                                         agent::uint32 resetSettleMilliseconds)
     {
         const agent::int32 descriptor = ::open(agent::string(device).c_str(), O_RDONLY | O_CLOEXEC);
         if (descriptor < 0)
         {
             appendResult(lines, false, "GPIO", agent::string(device) + " is unavailable");
-            return;
+            appendResult(lines, false, "MCU reset", "GPIO chip is unavailable");
+            return false;
         }
         gpiochip_info information{};
         const agent::boolean inspected = ::ioctl(descriptor, GPIO_GET_CHIPINFO_IOCTL, &information) == 0;
-        static_cast<void>(::close(descriptor));
         if (!inspected)
         {
             appendResult(lines, false, "GPIO", "chip metadata could not be read");
-            return;
+            appendResult(lines, false, "MCU reset", "GPIO chip metadata is unavailable");
+            static_cast<void>(::close(descriptor));
+            return false;
         }
         const agent::string name(information.name);
         const agent::string label(information.label);
-        const agent::boolean countPassed = information.lines >= 28U;
+        const agent::boolean countPassed = information.lines >= minimumLineCount;
         appendResult(lines,
                      countPassed,
                      "GPIO chip",
@@ -249,13 +240,60 @@ namespace xwalk::agent
         if (expectedNameExpectedLabelInvalid)
         {
             appendResult(lines, false, "GPIO identity", "run provisioning to record chip name and label");
-            return;
+            appendResult(lines, false, "MCU reset", "GPIO identity is not configured");
+            static_cast<void>(::close(descriptor));
+            return false;
         }
         const agent::boolean matches = (name == expectedName) && (label == expectedLabel);
         appendResult(lines,
                      matches,
                      "GPIO identity",
                      matches ? "configured identity matches" : "configured identity does not match the selected chip");
+        if (!countPassed || !matches)
+        {
+            appendResult(lines, false, "MCU reset", "GPIO chip validation failed");
+            static_cast<void>(::close(descriptor));
+            return false;
+        }
+
+        hal::uint8 resetLine{};
+        if (!hal::XWalkGpio::tryResolvePin(resetPin, resetLine))
+        {
+            appendResult(lines, false, "MCU reset", agent::string(resetPin) + " is not a supported Robot HAT pin");
+            static_cast<void>(::close(descriptor));
+            return false;
+        }
+        gpiohandle_request request{};
+        request.lineoffsets[0U] = resetLine;
+        request.flags = GPIOHANDLE_REQUEST_OUTPUT;
+        request.default_values[0U] = 0U;
+        request.lines = 1U;
+        static_cast<void>(
+            std::snprintf(request.consumer_label, sizeof(request.consumer_label), "%s", "xwalk-doctor-reset"));
+        const agent::boolean lineRequested = ::ioctl(descriptor, GPIO_GET_LINEHANDLE_IOCTL, &request) == 0;
+        static_cast<void>(::close(descriptor));
+        if (!lineRequested)
+        {
+            appendResult(lines, false, "MCU reset", "configured reset GPIO could not be requested");
+            return false;
+        }
+        hal::common::sleepMilliseconds(10U);
+        gpiohandle_data highLevel{};
+        highLevel.values[0U] = 1U;
+        const agent::boolean drivenHigh = ::ioctl(request.fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &highLevel) == 0;
+        static_cast<void>(::close(request.fd));
+        if (!drivenHigh)
+        {
+            appendResult(lines, false, "MCU reset", "reset GPIO could not be driven high");
+            return false;
+        }
+        hal::common::sleepMilliseconds(resetSettleMilliseconds);
+        appendResult(lines,
+                     true,
+                     "MCU reset",
+                     agent::string(resetPin) + " driven low for 10 ms, then high; settled for " +
+                         hal::common::uint32ToString(resetSettleMilliseconds) + " ms");
+        return true;
     }
 
     /**
@@ -279,21 +317,18 @@ namespace xwalk::agent
         agent::fixedarray<agent::uint8, 3U> firmware{};
         for (const agent::uint8 address : addresses)
         {
-            agent::uint8 firmwareRegister{0x05U};
-            i2c_msg messages[2U]{};
-            messages[0U].addr = address;
-            messages[0U].len = 1U;
-            messages[0U].buf = &firmwareRegister;
-            messages[1U].addr = address;
-            messages[1U].flags = I2C_M_RD;
-            messages[1U].len = 3U;
-            messages[1U].buf = firmware.data();
-            i2c_rdwr_ioctl_data operation{messages, 2U};
-            const agent::boolean descriptorOperationMatched =
-                static_cast<agent::boolean>(::ioctl(descriptor, I2C_RDWR, &operation) == 0);
-            if (descriptorOperationMatched)
+            union i2c_smbus_data data = {};
+            data.block[0U] = 3U;
+            struct i2c_smbus_ioctl_data operation = {I2C_SMBUS_READ, 0x05U, I2C_SMBUS_I2C_BLOCK_DATA, &data};
+            const agent::boolean addressSelected = ::ioctl(descriptor, I2C_SLAVE, address) == 0;
+            const agent::boolean firmwareRead =
+                addressSelected && (::ioctl(descriptor, I2C_SMBUS, &operation) == 0) && (data.block[0U] == 3U);
+            if (firmwareRead)
             {
                 selectedAddress = address;
+                firmware[0U] = data.block[1U];
+                firmware[1U] = data.block[2U];
+                firmware[2U] = data.block[3U];
                 break;
             }
         }
@@ -495,13 +530,13 @@ namespace xwalk::agent
      ******************************************************************************/
 
     /**
-     * @brief Builds one passive deployment report.
+     * @brief Builds one bounded hardware preflight report.
      * @param[in] configurationFilePath Layered deployment configuration path inspected without mutation.
      * @return Owned report lines prefixed with `[PASS]`, `[WARN]`, or `[FAIL]`.
      */
     agent::stringvector XWalkDoctorLinux::inspect(agent::stringview configurationFilePath)
     {
-        agent::stringvector lines{"=== PiCar-X Passive Hardware Preflight ==="};
+        agent::stringvector lines{"=== PiCar-X Bounded Hardware Preflight ==="};
         const agent::string path(configurationFilePath);
         const agent::boolean readable = ::access(path.c_str(), R_OK) == 0;
         const agent::boolean writable = ::access(path.c_str(), W_OK) == 0;
@@ -548,21 +583,41 @@ namespace xwalk::agent
         }
         appendResult(lines, profileValid, "Robot HAT profile", profileDetail);
 
-        const agent::string i2cDevice =
-            configurationValue(path, "hardware_i2c_device", XHAL_RPI5CAR_I2C_DEFAULT_DEVICE);
-        inspectI2c(lines, i2cDevice);
         const agent::string gpioDevice =
             configurationValue(path, "hardware_gpio_device", XHAL_RPI5CAR_GPIO_DEFAULT_DEVICE);
-        inspectGpio(lines,
-                    gpioDevice,
-                    configurationValue(path, "hardware_gpio_chip_name", ""),
-                    configurationValue(path, "hardware_gpio_chip_label", ""));
+        const agent::uint32 minimumLineCount =
+            configurationUnsigned(configurationValue(path, "hardware_gpio_minimum_line_count", "28"), 28U);
+        const agent::uint32 resetSettleMilliseconds =
+            configurationUnsigned(configurationValue(path, "hardware_mcu_reset_settle_ms", "200"), 200U);
+        const agent::boolean resetCompleted =
+            inspectAndResetGpio(lines,
+                                gpioDevice,
+                                configurationValue(path, "hardware_gpio_chip_name", ""),
+                                configurationValue(path, "hardware_gpio_chip_label", ""),
+                                minimumLineCount,
+                                configurationValue(path, "hardware_mcu_reset_pin", "MCURST"),
+                                resetSettleMilliseconds);
+        const agent::string i2cDevice =
+            configurationValue(path, "hardware_i2c_device", XHAL_RPI5CAR_I2C_DEFAULT_DEVICE);
+        if (resetCompleted)
+        {
+            inspectI2c(lines, i2cDevice);
+        }
+        else
+        {
+            appendResult(lines, false, "I2C", "inspection skipped because MCU reset did not complete");
+            appendResult(lines, false, "Robot HAT firmware", "not read");
+            appendResult(lines, false, "Battery", "not read");
+        }
         inspectSpi(lines, configurationValue(path, "hardware_spi_device", XHAL_RPI5CAR_SPI_DEFAULT_DEVICE));
         inspectOptionalServices(lines, path);
         appendWarning(lines,
                       "Safety",
-                      "no GPIO line, actuator, speaker, camera, microphone, SPI transfer, "
-                      "or model endpoint was activated");
+                      resetCompleted
+                          ? "the configured MCU reset GPIO was activated low for 10 ms and then high; no motor, "
+                            "servo, speaker, camera, microphone, SPI transfer, or model endpoint was activated"
+                          : "the configured MCU reset GPIO was the only output attempted; no motor, servo, speaker, "
+                            "camera, microphone, SPI transfer, or model endpoint was activated");
         return lines;
     }
 

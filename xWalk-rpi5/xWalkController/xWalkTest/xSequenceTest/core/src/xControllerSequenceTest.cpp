@@ -171,7 +171,7 @@ namespace
     void runTest()
     {
         TestState passingState;
-        const ctrl::stringvector passingReport{"=== PiCar-X Passive Hardware Preflight ===",
+        const ctrl::stringvector passingReport{"=== PiCar-X Bounded Hardware Preflight ===",
                                                "[PASS] Configuration: ready"};
         xwalk::ctrl::XWalkController passingController(passingReport, &passingState, callbacks());
         xwalk::agent::test::XWalkControllerSequence passingSequence(passingController);

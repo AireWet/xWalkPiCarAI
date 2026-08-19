@@ -39,7 +39,7 @@
 #define XWALK_CNTRL_HELP_REQ (::ctrl::uint16{0x2001U})
 /** @brief Requests one SPI transfer. */
 #define XWALK_CNTRL_SPI_REQ (::ctrl::uint16{0x2002U})
-/** @brief Requests the passive platform preflight report. */
+/** @brief Requests the bounded MCU-reset platform preflight report. */
 #define XWALK_CNTRL_DOCTOR_REQ (::ctrl::uint16{0x2003U})
 /** @brief Requests the twelve-channel servo-zeroing sequence. */
 #define XWALK_CNTRL_SERVO_ZEROING_REQ (::ctrl::uint16{0x2004U})

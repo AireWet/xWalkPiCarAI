@@ -55,7 +55,7 @@
 
 /** @brief Creates the base PiCar-X controller graph. */
 #define XWALK_BOOT_BASE_REQ (::agent::uint8{0U})
-/** @brief Performs passive deployment inspection without claiming outputs. */
+/** @brief Performs the bounded MCU-reset hardware preflight. */
 #define XWALK_BOOT_DOCTOR_REQ (::agent::uint8{1U})
 /** @brief Selects only the configured OpenCV camera provider. */
 #define XWALK_BOOT_COMPUTER_VISION_REQ (::agent::uint8{2U})
@@ -119,7 +119,7 @@ namespace xwalk::agent
      */
     struct XWalkBootServices
     {
-            /** @brief Optional passive preflight lines selected by Doctor boot mode. */
+            /** @brief Optional bounded preflight lines selected by Doctor boot mode. */
             const agent::stringvector* doctorLines{nullptr};
             /** @brief Base PiCar-X coordinator, null for the SPI-only boot mode. */
             XWalkPicarx* picarx{nullptr};

@@ -12,7 +12,7 @@ The Raspberry Pi object does not claim resources during construction. Its
 one-shot `run()` call loads the layered deployment configuration and delegates
 to one mode-specific source file. Actuator modes
 detect the Robot HAT, reset the MCU, and construct the selected motor topology;
-camera-only and passive modes bypass those steps. Every service remains valid
+camera-only and bounded preflight modes bypass the actuator graph. Every service remains valid
 until the application callback returns.
 The graph is then destroyed in reverse construction order. The automatic boot
 object itself is destroyed when `main()` exits.
@@ -22,7 +22,7 @@ Boot modes are intentionally bounded:
 | Mode | Services |
 | --- | --- |
 | `Base` | PiCar-X and its required HAL graph |
-| `Doctor` | Passive report only; no actuator or service ownership |
+| `Doctor` | MCU-reset-only bounded preflight; no actuator or service ownership |
 | `ComputerVision` | OpenCV camera provider and `XWalkComputerVision` only |
 | `FaceTracking` | Base PiCar-X graph, OpenCV provider, and `XWalkFaceTracking` |
 | `BullFight` | Base PiCar-X graph, OpenCV red detection, and `XWalkBullFight` |
@@ -53,9 +53,11 @@ Camera capture uses CSI through `rpicam-still` or a USB V4L2 webcam through
 `ffmpeg`. Buzzer and user-button modules are not claimed by CLI commands.
 SPI mode bypasses the base graph: it does not detect or reset the HAT and does
 not claim I2C, GPIO, motors, servos, audio, camera, speech, or model resources.
-Doctor mode also bypasses the base graph. It may read firmware and ADC battery
-data, but it never requests GPIO lines, performs SPI transfers, enables audio,
-captures media, resets the MCU, constructs actuators, or contacts model services.
+Doctor mode also bypasses the base graph. It verifies the configured GPIO chip,
+pulses only `hardware_mcu_reset_pin` low for 10 ms and then high, waits
+`hardware_mcu_reset_settle_ms`, and may read firmware and ADC battery data. It
+never constructs or moves an actuator, performs an SPI transfer, enables audio,
+captures media, or contacts model services.
 ComputerVision mode also bypasses the base graph and claims only the configured
 camera stream. It does not inspect or reset the Robot HAT or claim motors, GPIO,
 I2C, SPI, audio, speech, model, or network services.
@@ -213,7 +215,7 @@ The Raspberry Pi implementation files have one composition responsibility:
 | `BootRpiVehicle.cpp` | Shared I2C, GPIO, sensor, servo, and motor graph |
 | `BootRpiVehicleMode.cpp` | Dispatch after the common PiCar-X graph exists |
 | `BootRpiBase.cpp` | Base PiCar-X service |
-| `BootRpiDoctor.cpp` | Passive deployment inspection |
+| `BootRpiDoctor.cpp` | Bounded MCU-reset deployment preflight |
 | `BootRpiSpiTransfer.cpp` | Isolated SPI service |
 | `BootRpiServoZeroing.cpp` | Twelve-channel servo-zeroing graph |
 | `BootRpiComputerVision.cpp` | Camera-only interactive computer vision |

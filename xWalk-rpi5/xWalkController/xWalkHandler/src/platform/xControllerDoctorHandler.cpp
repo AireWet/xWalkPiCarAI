@@ -45,7 +45,7 @@ namespace xwalk::ctrl
      ******************************************************************************/
 
     /**
-     * @brief Traces one passive hardware preflight report.
+     * @brief Traces one bounded hardware preflight report.
      * @param[in] request Validated empty request.
      * @return Zero when every reported check passes; otherwise two.
      */

@@ -55,7 +55,7 @@ namespace xwalk::ctrl
         "  xwalk-picarx-control {-h|--help|help}\n"
         "\n"
         "Commands:\n"
-        "  doctor                   Inspect deployment without claiming actuator outputs.\n"
+        "  doctor                   Run the bounded MCU-reset hardware preflight.\n"
         "  move <forward|backward>  Drive for a bounded duration, then stop.\n"
         "  turn <left|right>        Perform a fixed turn sequence.\n"
         "  cam <pan|tilt>           Set one camera-servo angle.\n"

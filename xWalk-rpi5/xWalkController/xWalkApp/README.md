@@ -78,7 +78,7 @@ xwalk-picarx-control --deployment-config=/absolute/path/to/picar-x.conf --diagno
 This is schema and layering evidence only. A passing report does not prove that
 the named device nodes exist, that the Robot HAT revision matches, or that any
 physical channel is wired correctly. Use the ordinary `doctor` command later on
-the Raspberry Pi for passive device discovery, then follow the wheels-up
+the Raspberry Pi for its bounded MCU-reset hardware preflight, then follow the wheels-up
 commissioning sequence before enabling actuator commands.
 
 The repeatable global `--trace VALUE` option atomically updates the shared XML
@@ -100,12 +100,14 @@ duplicated IDs and every declaration path and line. A successful normal build ge
 the deterministic persistent catalogue at
 `<build-directory>/generated/xwalk-traces.xml`.
 
-`doctor` selects a separate passive boot graph. It reports board-profile and
+`doctor` selects a separate bounded preflight graph. It reports board-profile and
 Device Tree agreement, I2C and firmware response, battery voltage, GPIO chip
 metadata and identity, SPI open availability, camera and ALSA metadata,
 configuration permissions, executables, Vosk, and configured model resources.
-It does not reset the MCU, request a GPIO line, construct PWM, servo, or motor
-objects, transfer SPI payloads, enable audio, capture media, or contact Ollama.
+It validates the configured GPIO identity, drives only `hardware_mcu_reset_pin`
+low for 10 ms and then high, and waits the configured settle interval before
+I2C inspection. It does not construct PWM, servo, or motor objects, transfer
+SPI payloads, enable audio, capture media, or contact Ollama.
 Checks prefixed `[FAIL]` produce status 2; `[WARN]` is advisory.
 
 ## Complete CLI command and action reference
@@ -114,7 +116,7 @@ The following table lists every command group and action name accepted by the CL
 
 | Command group | Accepted actions | Additional arguments |
 | --- | --- | --- |
-| `doctor` | None | Passive deployment report |
+| `doctor` | None | Bounded MCU-reset deployment report |
 | `move` | `forward`, `backward`, `demo` | Options apply only to direct movement |
 | `turn` | `left`, `right` | Optional `--angle N` |
 | `cam` | `pan`, `tilt` | Required `--angle N` |
@@ -146,10 +148,10 @@ The following table lists every command group and action name accepted by the CL
 Complete command shapes:
 
 ```text
-xwalk-picarx-control [--deployment-config ABSOLUTE_PATH] [--resource-directory ABSOLUTE_PATH] <command>
-xwalk-picarx-control --deployment-config ABSOLUTE_PATH --validate-config
-xwalk-picarx-control --deployment-config ABSOLUTE_PATH --print-effective-config
-xwalk-picarx-control --deployment-config ABSOLUTE_PATH --diagnose --no-hardware
+xwalk-picarx-control [--deployment-config PATH] [--resource-directory PATH] <command>
+xwalk-picarx-control --deployment-config PATH --validate-config
+xwalk-picarx-control --deployment-config PATH --print-effective-config
+xwalk-picarx-control --deployment-config PATH --diagnose --no-hardware
 xwalk-picarx-control doctor
 xwalk-picarx-control move <forward|backward> [--speed N] [--duration S]
 xwalk-picarx-control move demo
@@ -182,6 +184,13 @@ xwalk-picarx-control text-vision-talk <start|stop>
 xwalk-picarx-control online-llm-test <start|stop>
 xwalk-picarx-control servo-zeroing
 xwalk-picarx-control calibrate
+```
+
+Relative deployment and resource paths are resolved from the process working directory. From the
+`xWalk-rpi5` source root, run the Raspberry Pi build's bounded Doctor graph with:
+
+```bash
+../build-rpi/xwalk doctor
 ```
 
 Use `xwalk-picarx-control --help` or `xwalk-picarx-control -h` for command
@@ -469,7 +478,7 @@ v4 boards and GPIO12 for Robot HAT v5. A legacy board receives PWM-and-direction
 motors on P13/D4 and P12/D5. Robot HAT v5 receives dual-PWM
 motors on P12/P13 and P14/P15, without claiming the legacy direction GPIOs. The executable creates fresh ADC
 objects after reset and stores calibration in `/var/lib/xwalk/picar-x.conf` by default. Use the global
-`--deployment-config` option for another absolute deployment path.
+`--deployment-config` option for another deployment path.
 
 Use the `hardware_board` value in `../xWalkConfig/picar-x.d/hardware.conf`. Run
 `xWalkTool/shell-agent/deploy-tool/provision-hardware.sh --profile <profile> --config <file>` to discover and record one GPIO

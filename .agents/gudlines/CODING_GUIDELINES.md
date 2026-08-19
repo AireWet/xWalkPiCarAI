@@ -670,11 +670,13 @@ retaining normal compiler warnings and compilation checks.
 - Compose the CLI SPI command through its dedicated SPI-only boot mode. It must
   not detect or reset the Robot HAT, claim GPIO, construct actuators, or start
   audio, camera, speech, or model services.
-- Compose the CLI Doctor command through a dedicated passive boot mode. It may
-  open configured device descriptors, inspect metadata, read firmware, and
-  sample battery ADC A4. It must not request GPIO lines, reset the MCU,
-  construct actuators, transfer SPI data, enable audio, capture media, or
-  contact a model endpoint.
+- Compose the CLI Doctor command through a dedicated bounded preflight mode. It
+  may validate the configured GPIO chip, pulse only `hardware_mcu_reset_pin`
+  low for 10 ms and then high, wait `hardware_mcu_reset_settle_ms`, open
+  configured device descriptors, inspect metadata, read firmware, and sample
+  battery ADC A4. It must not construct or move actuators, transfer SPI data,
+  enable audio, capture media, or contact a model endpoint. Its safety result
+  must disclose the MCU reset GPIO activation.
 - GPIO interrupt application contexts are non-owning. They must outlive the
   registration, and handlers invoked by a backend worker must not throw or block
   indefinitely. Cancel the registration before destroying the handler context.

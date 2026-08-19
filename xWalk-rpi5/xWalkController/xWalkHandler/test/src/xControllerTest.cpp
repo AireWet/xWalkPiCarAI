@@ -399,7 +399,7 @@ namespace
         XWalkHal::XWalkSpi spi(nullptr, &transferSpi);
         xwalk::agent::XWalkSpiTransfer spiTransfer(spi);
         xwalk::ctrl::XWalkController spiCli(spiTransfer, &backend, callbacks);
-        const ctrl::stringvector passingDoctorReport{"=== PiCar-X Passive Hardware Preflight ===",
+        const ctrl::stringvector passingDoctorReport{"=== PiCar-X Bounded Hardware Preflight ===",
                                                      "[PASS] Configuration: ready"};
         xwalk::ctrl::XWalkController doctorCli(passingDoctorReport, &backend, callbacks);
         const ctrl::stringvector failingDoctorReport{"[FAIL] I2C: unavailable"};
