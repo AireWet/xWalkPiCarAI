@@ -646,6 +646,35 @@ class XWalkGerritCiTest(unittest.TestCase):
             event["patchSet"], {"number": 2, "revision": revision}
         )
 
+    def test_merge_commit_tip_query_uses_latest_patch_set(self) -> None:
+        """Recover the latest reviewed patch when Gerrit creates a merge commit."""
+
+        self.ci.user = "ci"
+        self.ci.host = "gerrit.example"
+        self.ci.port = "29418"
+        self.ci.private_key = pathlib.Path("/gerrit-key")
+        self.ci.state_directory = pathlib.Path("/state")
+        patch_revision = "a" * 40
+        merge_revision = "b" * 40
+        change = {
+            "project": "xWalk-rpi5",
+            "branch": "master",
+            "number": 153,
+            "status": "MERGED",
+            "owner": {"email": "owner@example.test"},
+            "currentPatchSet": {"number": 3, "revision": patch_revision},
+        }
+        result = mock.Mock(returncode=0, stdout=json.dumps(change))
+        with mock.patch("xWalkGerritCi.subprocess.run", return_value=result):
+            event = self.ci.submitted_change_event(merge_revision)
+
+        self.assertIsNotNone(event)
+        assert event is not None
+        self.assertEqual(event["newRev"], merge_revision)
+        self.assertEqual(
+            event["patchSet"], {"number": 3, "revision": patch_revision}
+        )
+
     def test_merge_commit_uplift_checks_verified_patch_set_revision(self) -> None:
         """Verify the reviewed patch set while publishing Gerrit's merge commit."""
 
@@ -830,6 +859,26 @@ class XWalkGerritCiTest(unittest.TestCase):
         result = mock.Mock(returncode=0, stdout=f"{json.dumps(query)}\n")
         with mock.patch("xWalkGerritCi.subprocess.run", return_value=result):
             self.assertFalse(self.ci.submitted_revision_verified(13, "b" * 40))
+
+    def test_github_sync_rejects_verified_outdated_patch_set(self) -> None:
+        """Require the CI vote to belong to the current latest patch revision."""
+
+        self.ci.user = "xwalk-ci"
+        self.ci.host = "gerrit.example"
+        self.ci.port = "29418"
+        self.ci.private_key = pathlib.Path("/key")
+        self.ci.state_directory = pathlib.Path("/state")
+        query = {
+            "currentPatchSet": {
+                "revision": "c" * 40,
+                "approvals": [
+                    {"type": "Verified", "value": "1", "by": {"username": "xwalk-ci"}}
+                ],
+            }
+        }
+        result = mock.Mock(returncode=0, stdout=f"{json.dumps(query)}\n")
+        with mock.patch("xWalkGerritCi.subprocess.run", return_value=result):
+            self.assertFalse(self.ci.submitted_revision_verified(14, "b" * 40))
 
     def test_each_module_posts_a_separate_uniquely_tagged_change_log_entry(self) -> None:
         """Keep module results separate while reserving the gate for the Verified vote."""

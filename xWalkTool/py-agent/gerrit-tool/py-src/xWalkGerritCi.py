@@ -1222,14 +1222,22 @@ class XWalkGerritCi:
             except json.JSONDecodeError:
                 continue
             patch_set = change.get("currentPatchSet", {})
-            matches_revision = patch_set.get("revision") == revision
+            patch_revision = patch_set.get("revision")
+            valid_patch_revision = (
+                isinstance(patch_revision, str)
+                and len(patch_revision) == 40
+                and all(
+                    character in "0123456789abcdefABCDEF"
+                    for character in patch_revision
+                )
+            )
             matches_source = (
                 change.get("project") == expected_project
                 and change.get("branch") == expected_branch
             )
             if (
                 change.get("status") == "MERGED"
-                and matches_revision
+                and valid_patch_revision
                 and matches_source
                 and isinstance(patch_set.get("number"), int)
             ):
@@ -1238,7 +1246,7 @@ class XWalkGerritCi:
                     "change": change,
                     "patchSet": {
                         "number": patch_set["number"],
-                        "revision": patch_set["revision"],
+                        "revision": patch_revision,
                     },
                     "newRev": revision,
                 }
