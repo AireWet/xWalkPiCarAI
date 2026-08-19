@@ -10,7 +10,7 @@ cleanup() {
 trap cleanup EXIT HUP INT TERM
 
 build_directory="$test_directory/cmake"
-cmake -S "$repository_root/xWalk-rpi5" -B "$build_directory" -G Ninja \
+env SHELLOPTS=pipefail cmake -S "$repository_root/xWalk-rpi5" -B "$build_directory" -G Ninja \
     -DBUILD_TESTING=OFF \
     -DXWALK_BUILD_RPI=ON \
     -DXWALK_ENABLE_PACKAGING=OFF >/dev/null
@@ -40,7 +40,7 @@ grep -Fq -- '--validate-ollama' "$test_directory/provision-commands.log"
 grep -Fq 'xwalk-picarx-control' "$test_directory/provision-commands.log"
 
 override_build_directory="$test_directory/override-cmake"
-cmake -S "$repository_root/xWalk-rpi5" -B "$override_build_directory" -G Ninja \
+env SHELLOPTS=pipefail cmake -S "$repository_root/xWalk-rpi5" -B "$override_build_directory" -G Ninja \
     -DBUILD_TESTING=OFF \
     -DXWALK_BUILD_RPI=ON \
     -DXWALK_ENABLE_PACKAGING=OFF \

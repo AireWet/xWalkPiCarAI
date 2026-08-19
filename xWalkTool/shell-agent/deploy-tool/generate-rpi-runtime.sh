@@ -65,7 +65,11 @@ case "$build_directory" in
     *) build_directory="$(CDPATH='' cd -- "$(dirname -- "$build_directory")" && pwd)/$(basename -- "$build_directory")" ;;
 esac
 
-runtime_home="$(getent passwd "$runtime_user" | awk -F: 'NR == 1 { print $6 }')"
+runtime_account=""
+runtime_home=""
+if runtime_account="$(getent passwd "$runtime_user")"; then
+    runtime_home="$(printf '%s\n' "$runtime_account" | awk -F: 'NR == 1 { print $6 }')"
+fi
 if [ -z "$runtime_home" ] || [ ! -d "$runtime_home" ]; then
     if [ "$initialize_only" = "true" ]; then
         runtime_home="/home/$runtime_user"
@@ -172,7 +176,11 @@ set -eu
 launcher_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 workspace_root="$(CDPATH='' cd -- "$launcher_directory/.." && pwd)"
 runtime_user="@XWALK_RUNTIME_USER@"
-runtime_home="$(getent passwd "$runtime_user" | awk -F: 'NR == 1 { print $6 }')"
+runtime_account=""
+runtime_home=""
+if runtime_account="$(getent passwd "$runtime_user")"; then
+    runtime_home="$(printf '%s\n' "$runtime_account" | awk -F: 'NR == 1 { print $6 }')"
+fi
 if [ -z "$runtime_home" ] || [ ! -d "$runtime_home" ]; then
     echo "Unable to resolve the runtime home for $runtime_user." >&2
     exit 2
