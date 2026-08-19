@@ -434,8 +434,11 @@ namespace
             assert(backend.outputLines.back().find("  " + action) != ctrl::string::npos);
         }
         assert(xwalk::ctrl::XWALK_runControllerCommand(doctorCli, {"doctor"}) == 0);
+        assert(backend.outputLines.at(backend.outputLines.size() - 2U) == "=== PiCar-X Bounded Hardware Preflight ===");
+        assert(backend.outputLines.back() == "[PASS] Configuration: ready");
 
         assert(xwalk::ctrl::XWALK_runControllerCommand(failingDoctorCli, {"doctor"}) == 2);
+        assert(backend.outputLines.back() == "[FAIL] I2C: unavailable");
 
         assert(xwalk::ctrl::XWALK_runControllerCommand(cli, {"line-track", "stop"}) == 3);
 

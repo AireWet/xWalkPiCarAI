@@ -135,7 +135,7 @@
       "binaryDir": "${sourceParentDir}/build-rpi/cmake",
       "cacheVariables": {
         "BUILD_TESTING": "ON",
-        "XWALK_PICARX_CONFIG_FILE": "${sourceDir}/xWalkController/xWalkConfig/picar-x.conf",
+        "XWALK_PICARX_CONFIG_FILE": "${sourceParentDir}/build-rpi/runtime/picar-x.conf",
         "XWALK_BUILD_RPI": "ON",
         "XWALK_ENABLE_PACKAGING": "ON"
       }
@@ -167,6 +167,7 @@
     { "name": "valgrind", "configurePreset": "valgrind" },
     { "name": "fuzz", "configurePreset": "fuzz", "targets": ["xWalkFuzzers"] },
     { "name": "rpi-release", "configurePreset": "rpi-release" },
+    { "name": "rpi-provision", "configurePreset": "rpi-release", "targets": ["rpi-provision"] },
     { "name": "aarch64-rpi-release", "configurePreset": "aarch64-rpi-release" }
   ],
   "testPresets": [

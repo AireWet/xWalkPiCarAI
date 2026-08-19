@@ -3,13 +3,25 @@
 set -eu
 
 usage() {
-    echo "Usage: $0 [--dry-run|--check|--apply]"
+    echo "Usage: $0 [--runtime-user USER] [hardware options] [--dry-run|--check|--apply]"
     echo "  Builds pinned camera components, installs user Ollama, and generates build-rpi runtime files."
 }
 
 mode="dry-run"
+runtime_user="$(id -un)"
+profile="robot_hat_v4"
+gpio_device="/dev/gpiochip4"
+i2c_device="/dev/i2c-1"
+spi_device="/dev/spidev0.0"
+camera="csi"
 while [ "$#" -gt 0 ]; do
     case "$1" in
+        --runtime-user) runtime_user="${2-}"; shift 2 ;;
+        --profile) profile="${2-}"; shift 2 ;;
+        --gpio-device) gpio_device="${2-}"; shift 2 ;;
+        --i2c-device) i2c_device="${2-}"; shift 2 ;;
+        --spi-device) spi_device="${2-}"; shift 2 ;;
+        --camera) camera="${2-}"; shift 2 ;;
         --dry-run) mode="dry-run"; shift ;;
         --check) mode="check"; shift ;;
         --apply) mode="apply"; shift ;;
@@ -20,10 +32,13 @@ done
 
 script_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 workspace_root="$(CDPATH='' cd -- "$script_directory/../../.." && pwd)"
-runtime_user="$(id -un)"
 runtime_home="$(getent passwd "$runtime_user" | awk -F: 'NR == 1 { print $6 }')"
 if [ -z "$runtime_home" ] || [ ! -d "$runtime_home" ]; then
     echo "Unable to resolve the runtime home for $runtime_user." >&2
+    exit 2
+fi
+if [ "$runtime_user" != "$(id -un)" ]; then
+    echo "Run this workflow while logged in as the selected runtime user: $runtime_user" >&2
     exit 2
 fi
 if [ -n "${HOME-}" ] && [ "$HOME" != "$runtime_home" ]; then
@@ -117,6 +132,12 @@ if [ "$mode" = "check" ]; then
         exit 1
     fi
     "$script_directory/generate-rpi-runtime.sh" \
+        --runtime-user "$runtime_user" \
+        --profile "$profile" \
+        --gpio-device "$gpio_device" \
+        --i2c-device "$i2c_device" \
+        --spi-device "$spi_device" \
+        --camera "$camera" \
         --ollama-manifest "$local_share/ollama/models/manifests/registry.ollama.ai/library/llama3.2/3b"
     echo "User-local Raspberry Pi setup is ready."
     exit 0
@@ -250,7 +271,14 @@ for access_group in video render; do
     fi
 done
 
-"$script_directory/generate-rpi-runtime.sh" --ollama-manifest "$ollama_manifest"
+"$script_directory/generate-rpi-runtime.sh" \
+    --runtime-user "$runtime_user" \
+    --profile "$profile" \
+    --gpio-device "$gpio_device" \
+    --i2c-device "$i2c_device" \
+    --spi-device "$spi_device" \
+    --camera "$camera" \
+    --ollama-manifest "$ollama_manifest"
 rm -rf -- "$build_root"
 rm -f -- "$archive_path"
 trap - EXIT HUP INT TERM
@@ -258,4 +286,4 @@ trap - EXIT HUP INT TERM
 echo "Setup completed without installing xWalk or camera files under /usr or /usr/local."
 echo "Log out and back in, or reboot, before using the video and render group memberships."
 echo "After reboot, test CSI with: $local_bin/rpicam-still --list-cameras"
-echo "Then run from xWalk-rpi5: ../build-rpi/xwalk doctor"
+echo "Then run: $workspace_root/build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control doctor"

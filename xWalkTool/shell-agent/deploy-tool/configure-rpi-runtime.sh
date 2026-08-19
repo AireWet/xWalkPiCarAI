@@ -3,18 +3,21 @@
 set -eu
 
 usage() {
-    echo "Usage: $0 [--build-directory DIRECTORY] [--ollama-manifest FILE] [--generate-only]"
+    echo "Usage: $0 [--build-directory DIRECTORY] [--runtime-user USER]"
+    echo "  [--ollama-manifest FILE] [--generate-only]"
 }
 
 script_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 workspace_root="$(CDPATH='' cd -- "$script_directory/../../.." && pwd)"
 build_directory="$workspace_root/build-rpi"
+runtime_user="$(id -un)"
 ollama_manifest=""
 generate_only="false"
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
         --build-directory) build_directory="${2-}"; shift 2 ;;
+        --runtime-user) runtime_user="${2-}"; shift 2 ;;
         --ollama-manifest) ollama_manifest="${2-}"; shift 2 ;;
         --generate-only) generate_only="true"; shift ;;
         -h|--help) usage; exit 0 ;;
@@ -22,13 +25,12 @@ while [ "$#" -gt 0 ]; do
     esac
 done
 
-runtime_user="$(id -un)"
 runtime_home="$(getent passwd "$runtime_user" | awk -F: 'NR == 1 { print $6 }')"
 if [ -z "$runtime_home" ] || [ ! -d "$runtime_home" ]; then
     echo "Unable to resolve the runtime home for $runtime_user." >&2
     exit 2
 fi
-if [ -n "${HOME-}" ] && [ "$HOME" != "$runtime_home" ]; then
+if [ "$runtime_user" = "$(id -un)" ] && [ -n "${HOME-}" ] && [ "$HOME" != "$runtime_home" ]; then
     echo "HOME does not match the account database for $runtime_user." >&2
     exit 2
 fi
@@ -54,6 +56,7 @@ fi
 
 "$script_directory/generate-rpi-runtime.sh" \
     --build-directory "$build_directory" \
+    --runtime-user "$runtime_user" \
     --ollama-manifest "$ollama_manifest"
 
 if [ "$generate_only" = "true" ]; then
@@ -72,5 +75,5 @@ systemctl --user --no-pager status ollama.service
 "$ollama_executable" list
 
 echo "Runtime configuration and the Ollama user service are ready."
-echo "Run from xWalk-rpi5: ../build-rpi/xwalk --validate-config"
-echo "Doctor performs the documented MCU-reset-only bounded preflight: ../build-rpi/xwalk doctor"
+echo "Validate with: $build_directory/cmake/xWalkController/xWalkApp/xwalk-picarx-control --validate-config"
+echo "Run Doctor with: $build_directory/cmake/xWalkController/xWalkApp/xwalk-picarx-control doctor"

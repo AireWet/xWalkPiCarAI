@@ -21,6 +21,37 @@ option(XWALK_BUILD_FUZZERS "Build Clang libFuzzer harnesses" OFF)
 option(XWALK_AARCH64_DEPENDENCY_AUDIT
     "Audit required target dependencies before an AArch64 RPI configure" ON)
 
+execute_process(
+    COMMAND id -un
+    OUTPUT_VARIABLE XWALK_CURRENT_USER
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    RESULT_VARIABLE XWALK_CURRENT_USER_RESULT)
+if(NOT XWALK_CURRENT_USER_RESULT EQUAL 0 OR XWALK_CURRENT_USER STREQUAL "")
+    message(FATAL_ERROR "Unable to determine the current user for Raspberry Pi provisioning")
+endif()
+
+set(XWALK_RPI_PROFILE "robot_hat_v4" CACHE STRING
+    "Explicit Robot HAT profile used by the opt-in Raspberry Pi provisioner")
+set_property(CACHE XWALK_RPI_PROFILE PROPERTY STRINGS robot_hat_v4 robot_hat_v5)
+set(XWALK_RPI_RUNTIME_USER "${XWALK_CURRENT_USER}" CACHE STRING
+    "Operating-system account used by the opt-in Raspberry Pi provisioner")
+set(XWALK_RPI_GPIO_DEVICE "/dev/gpiochip4" CACHE FILEPATH
+    "Explicit GPIO device used by the opt-in Raspberry Pi provisioner")
+set(XWALK_RPI_I2C_DEVICE "/dev/i2c-1" CACHE FILEPATH
+    "Explicit I2C device used by the opt-in Raspberry Pi provisioner")
+set(XWALK_RPI_SPI_DEVICE "/dev/spidev0.0" CACHE FILEPATH
+    "Explicit SPI device used by the opt-in Raspberry Pi provisioner")
+set(XWALK_RPI_CAMERA "csi" CACHE STRING
+    "Camera connection used by the opt-in Raspberry Pi provisioner")
+set_property(CACHE XWALK_RPI_CAMERA PROPERTY STRINGS csi usb)
+option(XWALK_RPI_WITH_VOSK "Install repository-controlled Vosk assets while provisioning" ON)
+option(XWALK_RPI_WITH_OLLAMA "Install and configure the user-local Ollama runtime while provisioning" ON)
+
+set(XWALK_RPI_RUNTIME_ROOT "${CMAKE_BINARY_DIR}/../runtime")
+set(XWALK_RPI_RUNTIME_CONFIG_FILE "${XWALK_RPI_RUNTIME_ROOT}/picar-x.conf")
+set(XWALK_PICARX_CONFIG_FILE "${XWALK_RPI_RUNTIME_CONFIG_FILE}" CACHE FILEPATH
+    "Writable PiCar-X runtime configuration compiled into the build-tree CLI")
+
 add_custom_target(host-dependency-check
     COMMAND "${XWALK_WORKSPACE_ROOT}/xWalkTool/shell-agent/quality-tool/check-host-quality-dependencies.sh"
     WORKING_DIRECTORY "${XWALK_WORKSPACE_ROOT}"
@@ -83,6 +114,31 @@ set(XWALK_CLI_INSTALL_RUNTIME
 if(XWALK_BUILD_RPI)
     set(XWALK_CLI_INSTALL_RUNTIME ON CACHE BOOL
         "Install the CLI runtime layout" FORCE)
+endif()
+
+if(XWALK_BUILD_RPI)
+    execute_process(
+        COMMAND
+            "${XWALK_WORKSPACE_ROOT}/xWalkTool/shell-agent/deploy-tool/generate-rpi-runtime.sh"
+            --build-directory "${CMAKE_BINARY_DIR}/.."
+            --runtime-user "${XWALK_RPI_RUNTIME_USER}"
+            --profile "${XWALK_RPI_PROFILE}"
+            --gpio-device "${XWALK_RPI_GPIO_DEVICE}"
+            --i2c-device "${XWALK_RPI_I2C_DEVICE}"
+            --spi-device "${XWALK_RPI_SPI_DEVICE}"
+            --camera "${XWALK_RPI_CAMERA}"
+            --initialize-only
+        RESULT_VARIABLE XWALK_RPI_RUNTIME_GENERATION_RESULT
+        OUTPUT_VARIABLE XWALK_RPI_RUNTIME_GENERATION_OUTPUT
+        ERROR_VARIABLE XWALK_RPI_RUNTIME_GENERATION_ERROR)
+    if(NOT XWALK_RPI_RUNTIME_GENERATION_RESULT EQUAL 0)
+        message(FATAL_ERROR
+            "Unable to initialize the generated Raspberry Pi runtime configuration.\n"
+            "${XWALK_RPI_RUNTIME_GENERATION_OUTPUT}${XWALK_RPI_RUNTIME_GENERATION_ERROR}")
+    endif()
+    message(STATUS "${XWALK_RPI_RUNTIME_GENERATION_OUTPUT}")
+    message(STATUS "RPi CLI runtime configuration: ${XWALK_PICARX_CONFIG_FILE}")
+    message(STATUS "RPi provisioning selected GPIO device: ${XWALK_RPI_GPIO_DEVICE}")
 endif()
 
 if(XWALK_HAL_BUILD_HOST AND XWALK_HAL_BUILD_RPI)
@@ -321,6 +377,62 @@ endif()
 if(XWALK_HAL_BUILD_CLI OR XWALK_HAL_BUILD_HOST OR XWALK_HAL_BUILD_RPI)
     add_subdirectory(xWalkController)
 endif()
+
+if(XWALK_BUILD_RPI)
+    set(XWALK_RPI_SETUP_COMMAND
+        "${XWALK_WORKSPACE_ROOT}/xWalkTool/shell-agent/deploy-tool/setup-rpi.sh"
+        --profile "${XWALK_RPI_PROFILE}"
+        --runtime-user "${XWALK_RPI_RUNTIME_USER}"
+        --gpio-device "${XWALK_RPI_GPIO_DEVICE}"
+        --i2c-device "${XWALK_RPI_I2C_DEVICE}"
+        --spi-device "${XWALK_RPI_SPI_DEVICE}"
+        --config "${XWALK_RPI_RUNTIME_CONFIG_FILE}"
+        --template-config
+            "${XWALK_RPI5_ROOT}/xWalkController/xWalkConfig/picar-x.conf"
+        --template-fragments
+            "${XWALK_RPI5_ROOT}/xWalkController/xWalkConfig/picar-x.d"
+        --camera "${XWALK_RPI_CAMERA}")
+    if(XWALK_RPI_WITH_VOSK)
+        list(APPEND XWALK_RPI_SETUP_COMMAND
+            --with-vosk
+            --vosk-library-source "${XWALK_LIBRARY_NATIVE_PREFIX}/lib/libvosk.so"
+            --vosk-model-source
+                "${XWALK_LIBRARY_COMMON_PREFIX}/models/vosk/vosk-model-small-en-us-0.15")
+    endif()
+    if(XWALK_RPI_WITH_OLLAMA)
+        list(APPEND XWALK_RPI_SETUP_COMMAND --validate-ollama)
+    endif()
+    list(APPEND XWALK_RPI_SETUP_COMMAND --apply)
+
+    if(XWALK_RPI_WITH_OLLAMA)
+        add_custom_target(rpi-provision
+            COMMAND "${CMAKE_COMMAND}" -E echo
+                "Provisioning ${XWALK_RPI_PROFILE} with selected GPIO device ${XWALK_RPI_GPIO_DEVICE}"
+            COMMAND
+                "${XWALK_WORKSPACE_ROOT}/xWalkTool/shell-agent/deploy-tool/setup-rpi-local.sh"
+                --runtime-user "${XWALK_RPI_RUNTIME_USER}"
+                --profile "${XWALK_RPI_PROFILE}"
+                --gpio-device "${XWALK_RPI_GPIO_DEVICE}"
+                --i2c-device "${XWALK_RPI_I2C_DEVICE}"
+                --spi-device "${XWALK_RPI_SPI_DEVICE}"
+                --camera "${XWALK_RPI_CAMERA}"
+                --apply
+            COMMAND ${XWALK_RPI_SETUP_COMMAND}
+            DEPENDS xwalk-picarx-control
+            WORKING_DIRECTORY "${XWALK_WORKSPACE_ROOT}"
+            USES_TERMINAL
+            VERBATIM)
+    else()
+        add_custom_target(rpi-provision
+            COMMAND "${CMAKE_COMMAND}" -E echo
+                "Provisioning ${XWALK_RPI_PROFILE} with selected GPIO device ${XWALK_RPI_GPIO_DEVICE}"
+            COMMAND ${XWALK_RPI_SETUP_COMMAND}
+            DEPENDS xwalk-picarx-control
+            WORKING_DIRECTORY "${XWALK_WORKSPACE_ROOT}"
+            USES_TERMINAL
+            VERBATIM)
+    endif()
+endif()
 if(XWALK_BUILD_FUZZERS)
     add_subdirectory("${XWALK_WORKSPACE_ROOT}/xWalkTool/cpp-tool/fuzz" xWalkTool/cpp-tool/fuzz)
 endif()
@@ -383,6 +495,11 @@ if(BUILD_TESTING)
         COMMAND bash
             "${XWALK_WORKSPACE_ROOT}/xWalkTool/shell-agent/deploy-tool/test/setup-rpi-test.sh")
     set_tests_properties(xWalkProvisioningHostTest PROPERTIES LABELS "host;deployment")
+    add_test(NAME xWalkRpiProvisionCMakeHostTest
+        COMMAND bash
+            "${XWALK_WORKSPACE_ROOT}/xWalkTool/shell-agent/deploy-tool/test/rpi-provision-cmake-test.sh")
+    set_tests_properties(xWalkRpiProvisionCMakeHostTest PROPERTIES
+        LABELS "host;deployment;cmake")
     add_test(NAME xWalkLanguageModelConfigHostTest
         COMMAND bash
             "${XWALK_WORKSPACE_ROOT}/xWalkTool/shell-agent/deploy-tool/test/language-model-config-test.sh")

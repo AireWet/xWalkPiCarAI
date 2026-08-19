@@ -86,7 +86,7 @@ Log out and back in or reboot after group changes. Then test the camera with
 `${HOME}/.local/bin/rpicam-still --list-cameras` and run the build-local CLI:
 
 ```bash
-cd xWalk-rpi5 && ../build-rpi/xwalk doctor
+build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control doctor
 ```
 
 To regenerate the runtime configuration later and ensure the existing Ollama

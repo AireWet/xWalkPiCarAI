@@ -6,7 +6,9 @@ usage() {
     echo "Usage: $0 --profile robot_hat_v4|robot_hat_v5 --runtime-user USER"
     echo "  --gpio-device /dev/gpiochipN [--i2c-device /dev/i2c-N]"
     echo "  [--spi-device /dev/spidevN.N] [--config FILE] [--camera csi|usb]"
-    echo "  [--with-vosk] [--with-ollama] [--check|--validate|--dry-run|--apply]"
+    echo "  [--template-config FILE] [--template-fragments DIRECTORY]"
+    echo "  [--with-vosk --vosk-library-source FILE --vosk-model-source DIRECTORY]"
+    echo "  [--validate-ollama] [--check|--validate|--dry-run|--apply]"
 }
 
 profile=""
@@ -15,9 +17,13 @@ gpio_device=""
 i2c_device="/dev/i2c-1"
 spi_device="/dev/spidev0.0"
 config_file="/var/lib/xwalk/picar-x.conf"
+template_config="/etc/xwalk/picar-x.conf"
+template_fragments="/etc/xwalk/picar-x.d"
 camera="csi"
 with_vosk="false"
-with_ollama="false"
+validate_ollama="false"
+vosk_library_source=""
+vosk_model_source=""
 mode="dry-run"
 
 while [ "$#" -gt 0 ]; do
@@ -28,9 +34,13 @@ while [ "$#" -gt 0 ]; do
         --i2c-device) i2c_device="${2-}"; shift 2 ;;
         --spi-device) spi_device="${2-}"; shift 2 ;;
         --config) config_file="${2-}"; shift 2 ;;
+        --template-config) template_config="${2-}"; shift 2 ;;
+        --template-fragments) template_fragments="${2-}"; shift 2 ;;
         --camera) camera="${2-}"; shift 2 ;;
         --with-vosk) with_vosk="true"; shift ;;
-        --with-ollama) with_ollama="true"; shift ;;
+        --vosk-library-source) vosk_library_source="${2-}"; shift 2 ;;
+        --vosk-model-source) vosk_model_source="${2-}"; shift 2 ;;
+        --validate-ollama) validate_ollama="true"; shift ;;
         --check|--validate) mode="check"; shift ;;
         --dry-run) mode="dry-run"; shift ;;
         --apply) mode="apply"; shift ;;
@@ -53,6 +63,15 @@ if [ -z "$gpio_device" ]; then
 fi
 if [ "$camera" != "csi" ] && [ "$camera" != "usb" ]; then
     echo "--camera must be csi or usb." >&2
+    exit 2
+fi
+if [ -z "$template_config" ] || [ -z "$template_fragments" ]; then
+    echo "Configuration template paths must not be empty." >&2
+    exit 2
+fi
+if [ "$with_vosk" = "true" ] && \
+    { [ -z "$vosk_library_source" ] || [ -z "$vosk_model_source" ]; }; then
+    echo "--with-vosk requires repository-controlled library and model sources." >&2
     exit 2
 fi
 
@@ -140,7 +159,10 @@ required_packages=(
     espeak-ng libttspico-utils curl ca-certificates
 )
 if [ "$camera" = "csi" ]; then
-    required_packages+=(rpicam-apps)
+    runtime_home="$(getent passwd "$runtime_user" | awk -F: 'NR == 1 { print $6 }')"
+    if [ ! -x "$runtime_home/.local/bin/rpicam-still" ]; then
+        required_packages+=(rpicam-apps)
+    fi
 else
     required_packages+=(ffmpeg)
 fi
@@ -155,6 +177,27 @@ effective_config="$(root_path "$config_file")"
 config_ready="true"
 if [ ! -f "$effective_config" ]; then
     config_ready="false"
+fi
+effective_fragment_directory="$(dirname -- "$effective_config")/picar-x.d"
+fragments_ready="true"
+if [ ! -d "$effective_fragment_directory" ]; then
+    fragments_ready="false"
+fi
+effective_template_config="$template_config"
+effective_template_fragments="$template_fragments"
+template_ready="true"
+if [ ! -r "$effective_template_config" ] || [ ! -d "$effective_template_fragments" ]; then
+    template_ready="false"
+fi
+
+canonical_config="$(realpath -m -- "$config_file")"
+canonical_template_config="$(realpath -m -- "$template_config")"
+canonical_fragment_destination="$(realpath -m -- "$(dirname -- "$config_file")/picar-x.d")"
+canonical_template_fragments="$(realpath -m -- "$template_fragments")"
+if [ "$canonical_config" = "$canonical_template_config" ] || \
+    [ "$canonical_fragment_destination" = "$canonical_template_fragments" ]; then
+    echo "Writable deployment paths must differ from repository or installed templates." >&2
+    exit 2
 fi
 
 configuration_value() {
@@ -212,10 +255,16 @@ echo "  board: $model"
 echo "  Robot HAT profile: $profile"
 echo "  runtime user: $runtime_user"
 echo "  writable configuration: $config_file"
-if [ "$config_ready" != "true" ]; then
-    echo "  configuration action: install the default file before apply mode"
+if [ "$config_ready" != "true" ] || [ "$fragments_ready" != "true" ]; then
+    if [ "$template_ready" = "true" ]; then
+        echo "  configuration action: initialize the writable copy from $template_config"
+        echo "  fragment action: initialize the writable copy from $template_fragments"
+    else
+        echo "  configuration action: templates are unavailable"
+    fi
 fi
-echo "  exact devices: $i2c_device, $gpio_device, $spi_device"
+echo "  SELECTED GPIO DEVICE: $gpio_device"
+echo "  exact devices: I2C=$i2c_device, GPIO=$gpio_device, SPI=$spi_device"
 if [ "${#missing_packages[@]}" -ne 0 ]; then
     echo "  install packages: ${missing_packages[*]}"
 else
@@ -233,31 +282,24 @@ echo "  add $runtime_user to xwalk, i2c, gpio, spi, audio, video, and render whe
 echo "  install one udev rule for only the three selected device nodes"
 echo "  Robot HAT overlays: no overlay will be installed or changed"
 if [ "$with_vosk" = "true" ]; then
-    if [ "$config_ready" = "true" ]; then
-        vosk_library="$(configuration_value voice_vosk_library)"
-        vosk_model="$(configuration_value voice_vosk_model)"
-        if { [ -f "$vosk_library" ] ||
-            ldconfig -p 2>/dev/null | grep -Fq "$vosk_library"; } &&
-            [ -d "$vosk_model" ] && [ -r "$vosk_model" ]; then
-            echo "  Vosk: configured library and model are locally available"
-        else
-            echo "  Vosk: configured library or model is missing; install it from an approved source"
-        fi
-    else
-        echo "  Vosk: validation deferred until the configuration is installed"
+    if [ ! -r "$vosk_library_source" ] || [ ! -d "$vosk_model_source" ]; then
+        echo "Vosk repository-controlled source assets are unavailable." >&2
+        exit 2
     fi
+    echo "  Vosk action: install repository assets under /usr/lib/xwalk and /usr/share/xwalk/models/vosk"
 fi
-if [ "$with_ollama" = "true" ]; then
+if [ "$validate_ollama" = "true" ]; then
+    runtime_home="$(getent passwd "$runtime_user" | awk -F: 'NR == 1 { print $6 }')"
     if [ "$config_ready" = "true" ]; then
         ollama_manifest="$(configuration_value voice_ollama_model_manifest)"
-        if command -v ollama >/dev/null 2>&1 && [ -n "$ollama_manifest" ] && \
+        if [ -x "$runtime_home/.local/bin/ollama" ] && [ -n "$ollama_manifest" ] && \
             [ -r "$ollama_manifest" ]; then
-            echo "  Ollama: executable and configured model manifest are locally available"
+            echo "  Ollama validation: user-local executable and model manifest are available"
         else
-            echo "  Ollama: executable or model manifest is missing; install from an approved source"
+            echo "  Ollama validation: setup-rpi-local.sh must install the executable and model"
         fi
     else
-        echo "  Ollama: validation deferred until the configuration is installed"
+        echo "  Ollama validation: deferred until the writable configuration is initialized"
     fi
 fi
 
@@ -279,8 +321,9 @@ if [ "$mode" = "check" ]; then
             required_failures=$((required_failures + 1))
         fi
     done
-    if [ "$config_ready" != "true" ]; then
-        echo "[FAIL] required configuration: $config_file is unavailable"
+    if { [ "$config_ready" != "true" ] || [ "$fragments_ready" != "true" ]; } && \
+        [ "$template_ready" != "true" ]; then
+        echo "[FAIL] required configuration: $config_file and its templates are unavailable"
         required_failures=$((required_failures + 1))
     fi
     if [ "$required_failures" -ne 0 ]; then
@@ -296,16 +339,9 @@ if [ "$mode" = "dry-run" ]; then
     exit 0
 fi
 
-if [ "$config_ready" != "true" ]; then
-    config_template="/etc/xwalk/picar-x.conf"
-    if [ ! -r "$config_template" ]; then
-        echo "Apply mode requires the installed template at $config_template." >&2
-        exit 2
-    fi
-fi
-config_fragment_template="/etc/xwalk/picar-x.d"
-if [ ! -d "$config_fragment_template" ]; then
-    echo "Apply mode requires the installed configuration fragments at $config_fragment_template." >&2
+if { [ "$config_ready" != "true" ] || [ "$fragments_ready" != "true" ]; } && \
+    [ "$template_ready" != "true" ]; then
+    echo "Apply mode requires readable configuration templates." >&2
     exit 2
 fi
 
@@ -353,11 +389,11 @@ run_root usermod -a -G "$runtime_groups" "$runtime_user"
 config_directory="$(dirname -- "$config_file")"
 run_root install -d -m 0770 -o root -g xwalk "$config_directory"
 if [ ! -f "$config_file" ]; then
-    run_root install -m 0660 -o root -g xwalk /etc/xwalk/picar-x.conf "$config_file"
+    run_root install -m 0660 -o root -g xwalk "$template_config" "$config_file"
 fi
 config_fragment_directory="$config_directory/picar-x.d"
 if [ ! -d "$config_fragment_directory" ]; then
-    run_root cp -a "$config_fragment_template" "$config_fragment_directory"
+    run_root cp -a "$template_fragments" "$config_fragment_directory"
 fi
 run_root chown -R root:xwalk "$config_fragment_directory"
 run_root find "$config_fragment_directory" -type d -exec chmod 0750 {} +
@@ -368,6 +404,48 @@ if [ -f "$config_file" ]; then
 else
     echo "Install the default configuration at $config_file before running the application." >&2
     exit 2
+fi
+
+set_runtime_configuration_value() {
+    local target_file="$1"
+    local requested_key="$2"
+    local replacement_value="$3"
+    local temporary_configuration
+    temporary_configuration="$(mktemp)"
+    # shellcheck disable=SC2016  # The AWK program intentionally owns dollar expressions.
+    run_root awk -v key="$requested_key" -v value="$replacement_value" '
+        BEGIN { replaced = 0 }
+        {
+            separator = index($0, "=")
+            name = separator == 0 ? "" : substr($0, 1, separator - 1)
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", name)
+            if (name == key) {
+                print key " = " value
+                replaced = 1
+            } else {
+                print
+            }
+        }
+        END { if (replaced == 0) print key " = " value }
+    ' "$target_file" > "$temporary_configuration"
+    run_root install -m 0640 -o root -g xwalk "$temporary_configuration" "$target_file"
+    rm -f "$temporary_configuration"
+}
+
+if [ "$with_vosk" = "true" ]; then
+    vosk_library_destination="/usr/lib/xwalk/libvosk.so"
+    vosk_model_destination="/usr/share/xwalk/models/vosk/vosk-model-small-en-us-0.15"
+    run_root install -d -m 0755 -o root -g root "$(dirname -- "$vosk_library_destination")"
+    run_root install -m 0644 -o root -g root "$vosk_library_source" "$vosk_library_destination"
+    run_root install -d -m 0755 -o root -g root "$vosk_model_destination"
+    run_root cp -a "$vosk_model_source/." "$vosk_model_destination/"
+    run_root chown -R root:root "$vosk_model_destination"
+    run_root find "$vosk_model_destination" -type d -exec chmod 0755 {} +
+    run_root find "$vosk_model_destination" -type f -exec chmod 0644 {} +
+    set_runtime_configuration_value "$config_fragment_directory/voice.conf" \
+        voice_vosk_library "$vosk_library_destination"
+    set_runtime_configuration_value "$config_fragment_directory/voice.conf" \
+        voice_vosk_model "$vosk_model_destination"
 fi
 
 temporary_rule="$(mktemp)"
@@ -391,4 +469,4 @@ else
 fi
 
 echo "Provisioning complete. Reboot if an interface was enabled, then log out and back in."
-echo "Run xwalk-picarx-control doctor before actuator calibration."
+echo "Run build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control doctor before actuator calibration."

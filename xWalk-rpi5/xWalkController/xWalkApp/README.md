@@ -100,7 +100,7 @@ duplicated IDs and every declaration path and line. A successful normal build ge
 the deterministic persistent catalogue at
 `<build-directory>/generated/xwalk-traces.xml`.
 
-`doctor` selects a separate bounded preflight graph. It reports board-profile and
+`doctor` selects a separate bounded preflight graph and prints its report directly. It reports board-profile and
 Device Tree agreement, I2C and firmware response, battery voltage, GPIO chip
 metadata and identity, SPI open availability, camera and ALSA metadata,
 configuration permissions, executables, Vosk, and configured model resources.
@@ -108,7 +108,8 @@ It validates the configured GPIO identity, drives only `hardware_mcu_reset_pin`
 low for 10 ms and then high, and waits the configured settle interval before
 I2C inspection. It does not construct PWM, servo, or motor objects, transfer
 SPI payloads, enable audio, capture media, or contact Ollama.
-Checks prefixed `[FAIL]` produce status 2; `[WARN]` is advisory.
+Checks prefixed `[FAIL]` produce status 2; `[WARN]` is advisory. Enabling
+`CTRL.024` duplicates the report through the trace backend for trace capture.
 
 ## Complete CLI command and action reference
 
@@ -186,11 +187,12 @@ xwalk-picarx-control servo-zeroing
 xwalk-picarx-control calibrate
 ```
 
-Relative deployment and resource paths are resolved from the process working directory. From the
-`xWalk-rpi5` source root, run the Raspberry Pi build's bounded Doctor graph with:
+Relative deployment and resource paths are resolved from the process working
+directory. From the workspace root, run the Raspberry Pi build's bounded Doctor
+graph with its compiled generated-runtime configuration:
 
 ```bash
-../build-rpi/xwalk doctor
+build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control doctor
 ```
 
 Use `xwalk-picarx-control --help` or `xwalk-picarx-control -h` for command

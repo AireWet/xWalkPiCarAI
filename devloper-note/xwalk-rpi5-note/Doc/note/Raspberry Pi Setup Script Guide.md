@@ -58,14 +58,20 @@ running setup.
 | `--i2c-device /dev/i2c-N` | `/dev/i2c-1` | Selects the exact I2C controller |
 | `--spi-device /dev/spidevN.N` | `/dev/spidev0.0` | Selects the exact SPI controller and chip select |
 | `--config FILE` | `/var/lib/xwalk/picar-x.conf` | Selects the writable runtime configuration |
+| `--template-config FILE` | `/etc/xwalk/picar-x.conf` | Selects a read-only manifest template |
+| `--template-fragments DIRECTORY` | `/etc/xwalk/picar-x.d` | Selects read-only fragment templates |
 | `--camera csi` | `csi` | Selects `rpicam-apps` as the required camera package |
 | `--camera usb` | Not selected | Selects `ffmpeg` as the required camera package |
-| `--with-vosk` | Disabled | Reports configured Vosk library and model availability |
-| `--with-ollama` | Disabled | Reports Ollama executable and model-manifest availability |
+| `--with-vosk` | Disabled | Installs explicitly supplied repository-controlled Vosk assets |
+| `--vosk-library-source FILE` | Required with Vosk | Selects the architecture-matched library source |
+| `--vosk-model-source DIRECTORY` | Required with Vosk | Selects the model source directory |
+| `--validate-ollama` | Disabled | Validates the selected user's installed executable and model manifest |
 | `--help`, `-h` | Not applicable | Prints usage without changing the system |
 
-The Vosk and Ollama options add availability reporting only. They do not install large optional components
-or contact a remote service.
+The Vosk option copies only the explicitly supplied repository-controlled assets
+to `/usr/lib/xwalk` and `/usr/share/xwalk/models/vosk`. Ollama installation is
+owned by `setup-rpi-local.sh`; `--validate-ollama` performs no installation and
+does not contact the service.
 
 ## Operating modes
 
@@ -167,7 +173,7 @@ Apply mode can perform these operations:
 3. Create the system groups `xwalk`, `i2c`, `gpio`, and `spi` when absent.
 4. Add the runtime user to those groups and to existing `audio`, `video`, and `render` groups.
 5. Create the selected configuration directory with owner `root:xwalk` and mode `0770`.
-6. Create the runtime manifest and `picar-x.d` fragments from `/etc/xwalk` when absent.
+6. Create the runtime manifest and `picar-x.d` fragments from the selected templates when absent.
 7. Set the manifest to `0660` and included configuration files to `0640`, owned by `root:xwalk`.
 8. Install `/etc/udev/rules.d/99-xwalk-picarx.rules` for only the selected device names.
 9. Reload udev rules and trigger the I2C, GPIO, and SPI subsystems.

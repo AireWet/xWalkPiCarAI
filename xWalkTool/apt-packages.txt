@@ -219,8 +219,9 @@ NOT MANAGED BY THIS APT MANIFEST
 # Reviewed ARM64/x86-64 Vosk libraries and a shared model are under root-level xWalkLibrary.
 # Other portable libraries may also use that project prefix; this manifest supplies the system fallback.
 # Ollama requires its executable and separately downloaded model manifests.
-# Neither optional component is installed into a system prefix by setup-rpi.sh; enable
-# its validation explicitly with --with-vosk or --with-ollama.
+# setup-rpi.sh can install explicitly supplied repository-controlled Vosk assets.
+# setup-rpi-local.sh owns the user-local Ollama installation; setup-rpi.sh only validates
+# that result when --validate-ollama is selected.
 
 XWALK MACHINE-READABLE PACKAGE CATALOG V1
 # Parsed by xWalkTool/py-agent/dev-tool/xHal_Rpi5CarDependencyInstaller. Do not change the field order.

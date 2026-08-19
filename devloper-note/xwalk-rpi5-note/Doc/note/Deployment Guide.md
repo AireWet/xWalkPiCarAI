@@ -96,7 +96,7 @@ or in an approved matching ARM build environment:
 ```sh
 cmake --fresh --preset rpi-release
 cmake --build --preset rpi-release --parallel
-ctest --test-dir build-rpi/cmake -N -L hardware
+ctest --test-dir ../build-rpi/cmake -N -L hardware
 ```
 
 The last command only lists physical tests. Never run them until the correct target is attached and secured.
@@ -115,7 +115,8 @@ The preset-to-directory mapping is:
 | `sanitizers` | `build-host/sanitizers/` |
 | `thread-sanitizer` | `build-host/thread-sanitizer/` |
 | `coverage` | `build-host/coverage/` |
-| `rpi-release` | `build-rpi/cmake/` |
+| `rpi-release` | `../build-rpi/cmake/` |
+| `rpi-provision` | Opt-in target in `../build-rpi/cmake/` |
 
 If presets cannot be used, configure the same host sanity build explicitly:
 
@@ -128,10 +129,14 @@ ctest --test-dir build-host/sanity --output-on-failure --no-tests=error
 Configure the same native Raspberry Pi Release build explicitly with:
 
 ```sh
-cmake --fresh -S . -B build-rpi/cmake -G Ninja -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DXWALK_BUILD_RPI=ON -DXWALK_ENABLE_PACKAGING=ON
-cmake --build build-rpi/cmake --parallel
-ctest --test-dir build-rpi/cmake -N -L hardware
+cmake --fresh -S . -B ../build-rpi/cmake -G Ninja -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DXWALK_BUILD_RPI=ON -DXWALK_ENABLE_PACKAGING=ON
+cmake --build ../build-rpi/cmake --parallel
+ctest --test-dir ../build-rpi/cmake -N -L hardware
 ```
+
+Run `cmake --build --preset rpi-provision --parallel` only after reviewing the
+selected profile, runtime user, and device paths. This explicit target is not
+part of an ordinary build.
 
 Host Release verification keeps assertions active even though the compiler defines `NDEBUG`; this prevents
 existing state-changing test assertions from disappearing. New tests should still evaluate an operation
@@ -267,10 +272,11 @@ activation, and an escaping application failure. Host fakes exercise those paths
 
 ## Optional voice/model setup
 
-`--with-vosk` validates the architecture-selected runtime and model installed
-from `xWalkLibrary`. `--with-ollama` adds validation and provisioning reminders,
-not a remote installer pipeline. Deploy Ollama model data separately, then set
-its absolute manifest path in the active configuration. `doctor` reports
+The CMake `rpi-provision` target supplies the architecture-selected Vosk runtime
+and model from `xWalkLibrary`, so `--with-vosk` installs those reviewed assets.
+Ollama installation, its user service, `llama3.2:3b`, and manifest discovery are
+owned by `setup-rpi-local.sh`. The host provisioner accepts
+`--validate-ollama` only as an offline availability check. `doctor` reports
 availability without recording audio or contacting a model service.
 
 ## Uninstall

@@ -48,10 +48,11 @@ components:
 - the `pico2wave` executable from `libttspico-utils` for treasure hunt;
 - working ALSA capture, PCM playback, and mixer devices.
 
-Their paths and device names are configured in
-`xWalk-rpi5/xWalkController/xWalkConfig/picar-x.conf`. Vosk is loaded dynamically, so
-vendor development headers are not required to compile xWalk. Verify deployment
-package names and model locations for the Raspberry Pi operating-system release.
+Their machine-independent defaults are maintained below
+`xWalk-rpi5/xWalkController/xWalkConfig`. The RPi configure initializes the
+writable `build-rpi/runtime/picar-x.conf` tree and compiles that generated
+manifest path into the build-tree CLI. Vosk is loaded dynamically, so vendor
+development headers are not required to compile xWalk.
 
 The install target places the selected Vosk runtime at
 `/usr/lib/xwalk/libvosk.so` and the model below
@@ -86,6 +87,23 @@ cmake --fresh --preset rpi-release
 cmake --build --preset rpi-release --parallel
 ctest --test-dir ../build-rpi/cmake -N -L hardware
 ```
+
+After reviewing the configured profile, runtime user, and exact device paths,
+run the opt-in provisioning target from `xWalk-rpi5`:
+
+```sh
+cmake --build --preset rpi-provision --parallel
+```
+
+From the workspace root, where the nested preset cannot be discovered, use:
+
+```sh
+cmake --build build-rpi/cmake --target rpi-provision --parallel
+```
+
+Ordinary build targets never invoke privileged provisioning. The provisioning
+target updates only the generated runtime configuration and leaves the tracked
+templates unchanged.
 
 Stage the CLI, administrator configuration, profiles, media, provisioning tools,
 systemd files, permissions template, and documentation without modifying the host:

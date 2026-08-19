@@ -3,35 +3,72 @@
 set -eu
 
 usage() {
-    echo "Usage: $0 [--build-directory DIRECTORY] [--ollama-manifest FILE]"
+    echo "Usage: $0 [--build-directory DIRECTORY] [--runtime-user USER] [hardware options]"
+    echo "  [--profile robot_hat_v4|robot_hat_v5] [--gpio-device /dev/gpiochipN]"
+    echo "  [--i2c-device /dev/i2c-N] [--spi-device /dev/spidevN.N] [--camera csi|usb]"
+    echo "  [--ollama-manifest FILE] [--initialize-only]"
 }
 
 script_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 workspace_root="$(CDPATH='' cd -- "$script_directory/../../.." && pwd)"
 build_directory="$workspace_root/build-rpi"
+runtime_user="$(id -un)"
+profile="robot_hat_v4"
+gpio_device="/dev/gpiochip4"
+i2c_device="/dev/i2c-1"
+spi_device="/dev/spidev0.0"
+camera="csi"
 ollama_manifest=""
+initialize_only="false"
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
         --build-directory) build_directory="${2-}"; shift 2 ;;
+        --runtime-user) runtime_user="${2-}"; shift 2 ;;
+        --profile) profile="${2-}"; shift 2 ;;
+        --gpio-device) gpio_device="${2-}"; shift 2 ;;
+        --i2c-device) i2c_device="${2-}"; shift 2 ;;
+        --spi-device) spi_device="${2-}"; shift 2 ;;
+        --camera) camera="${2-}"; shift 2 ;;
         --ollama-manifest) ollama_manifest="${2-}"; shift 2 ;;
+        --initialize-only) initialize_only="true"; shift ;;
         -h|--help) usage; exit 0 ;;
         *) usage >&2; exit 2 ;;
     esac
 done
+
+if [ "$profile" != "robot_hat_v4" ] && [ "$profile" != "robot_hat_v5" ]; then
+    echo "--profile must be robot_hat_v4 or robot_hat_v5." >&2
+    exit 2
+fi
+printf '%s\n' "$gpio_device" | grep -Eq '^/dev/gpiochip[0-9]+$' || {
+    echo "Invalid GPIO device path: $gpio_device" >&2
+    exit 2
+}
+printf '%s\n' "$i2c_device" | grep -Eq '^/dev/i2c-[0-9]+$' || {
+    echo "Invalid I2C device path: $i2c_device" >&2
+    exit 2
+}
+printf '%s\n' "$spi_device" | grep -Eq '^/dev/spidev[0-9]+\.[0-9]+$' || {
+    echo "Invalid SPI device path: $spi_device" >&2
+    exit 2
+}
+if [ "$camera" != "csi" ] && [ "$camera" != "usb" ]; then
+    echo "--camera must be csi or usb." >&2
+    exit 2
+fi
 
 case "$build_directory" in
     /*) ;;
     *) build_directory="$(CDPATH='' cd -- "$(dirname -- "$build_directory")" && pwd)/$(basename -- "$build_directory")" ;;
 esac
 
-runtime_user="$(id -un)"
 runtime_home="$(getent passwd "$runtime_user" | awk -F: 'NR == 1 { print $6 }')"
 if [ -z "$runtime_home" ] || [ ! -d "$runtime_home" ]; then
     echo "Unable to resolve the runtime home for $runtime_user." >&2
     exit 2
 fi
-if [ -n "${HOME-}" ] && [ "$HOME" != "$runtime_home" ]; then
+if [ "$runtime_user" = "$(id -un)" ] && [ -n "${HOME-}" ] && [ "$HOME" != "$runtime_home" ]; then
     echo "HOME does not match the account database for $runtime_user." >&2
     exit 2
 fi
@@ -47,6 +84,11 @@ esac
 source_configuration="$workspace_root/xWalk-rpi5/xWalkController/xWalkConfig"
 runtime_directory="$build_directory/runtime"
 mkdir -p "$build_directory"
+if [ "$initialize_only" = "true" ] && [ -f "$runtime_directory/picar-x.conf" ] && \
+    [ -d "$runtime_directory/picar-x.d" ]; then
+    echo "Preserved existing generated runtime configuration at $runtime_directory"
+    exit 0
+fi
 temporary_runtime="$(mktemp -d "$build_directory/.runtime.XXXXXX")"
 cleanup() {
     rm -rf -- "$temporary_runtime"
@@ -82,17 +124,19 @@ set_configuration_value() {
     mv -- "$temporary_file" "$file_path"
 }
 
-set_configuration_value "$temporary_runtime/picar-x.d/vision.conf" camera_connection csi
-set_configuration_value "$temporary_runtime/picar-x.d/vision.conf" camera_csi_executable \
-    "$runtime_home/.local/bin/rpicam-still"
-set_configuration_value "$temporary_runtime/picar-x.d/vision.conf" camera_csi_device /dev/media0
+set_configuration_value "$temporary_runtime/picar-x.d/vision.conf" camera_connection "$camera"
+if [ "$camera" = "csi" ]; then
+    set_configuration_value "$temporary_runtime/picar-x.d/vision.conf" camera_csi_executable \
+        "$runtime_home/.local/bin/rpicam-still"
+    set_configuration_value "$temporary_runtime/picar-x.d/vision.conf" camera_csi_device /dev/media0
+fi
 
-set_configuration_value "$temporary_runtime/picar-x.d/hardware.conf" hardware_board robot_hat_v4
-set_configuration_value "$temporary_runtime/picar-x.d/hardware.conf" hardware_i2c_device /dev/i2c-1
-set_configuration_value "$temporary_runtime/picar-x.d/hardware.conf" hardware_gpio_device /dev/gpiochip4
-set_configuration_value "$temporary_runtime/picar-x.d/hardware.conf" hardware_gpio_chip_name gpiochip4
-set_configuration_value "$temporary_runtime/picar-x.d/hardware.conf" hardware_gpio_chip_label pinctrl-rp1
-set_configuration_value "$temporary_runtime/picar-x.d/hardware.conf" hardware_spi_device /dev/spidev0.0
+set_configuration_value "$temporary_runtime/picar-x.d/hardware.conf" hardware_board "$profile"
+set_configuration_value "$temporary_runtime/picar-x.d/hardware.conf" hardware_i2c_device "$i2c_device"
+set_configuration_value "$temporary_runtime/picar-x.d/hardware.conf" hardware_gpio_device "$gpio_device"
+set_configuration_value "$temporary_runtime/picar-x.d/hardware.conf" hardware_gpio_chip_name ""
+set_configuration_value "$temporary_runtime/picar-x.d/hardware.conf" hardware_gpio_chip_label ""
+set_configuration_value "$temporary_runtime/picar-x.d/hardware.conf" hardware_spi_device "$spi_device"
 
 set_configuration_value "$temporary_runtime/picar-x.d/voice.conf" voice_vosk_library \
     "$workspace_root/xWalk-rpi5/xWalkLibrary/aarch64/lib/libvosk.so"
@@ -104,6 +148,7 @@ set_configuration_value "$ollama_configuration" voice_language_model_provider ol
 set_configuration_value "$ollama_configuration" voice_language_model_endpoint \
     http://127.0.0.1:11434/api/chat
 set_configuration_value "$ollama_configuration" voice_language_model_model_environment ""
+set_configuration_value "$ollama_configuration" voice_language_model_model llama3.2:3b
 set_configuration_value "$ollama_configuration" voice_ollama_model llama3.2:3b
 set_configuration_value "$ollama_configuration" voice_ollama_model_manifest "$ollama_manifest"
 

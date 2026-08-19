@@ -41,9 +41,9 @@ configure_file(
     "${XWALK_AGENT_HARDWARE_V4_CONFIG_FILE}"
     @ONLY)
 
-if(XWALK_CLI_BUILD_RPI AND NOT DEFINED XWALK_PICARX_CONFIG_FILE)
-    set(XWALK_PICARX_CONFIG_FILE "${XWALK_INSTALL_STATE_DIR}/picar-x.conf"
-        CACHE FILEPATH "Writable PiCar-X calibration configuration file")
+if(XWALK_CLI_BUILD_RPI)
+    set(XWALK_PICARX_CONFIG_FILE "${CMAKE_BINARY_DIR}/../runtime/picar-x.conf"
+        CACHE FILEPATH "Writable PiCar-X runtime configuration compiled into the build-tree CLI")
 endif()
 
 if(XWALK_CLI_BUILD_HOST AND XWALK_CLI_BUILD_RPI)

@@ -366,9 +366,13 @@ The complete option set is:
 | `--i2c-device DEVICE` | `/dev/i2c-1` | Selects one `/dev/i2c-N` controller |
 | `--spi-device DEVICE` | `/dev/spidev0.0` | Selects one `/dev/spidevN.N` controller |
 | `--config FILE` | `/var/lib/xwalk/picar-x.conf` | Selects mutable deployment configuration |
+| `--template-config FILE` | `/etc/xwalk/picar-x.conf` | Selects the read-only manifest template |
+| `--template-fragments DIRECTORY` | `/etc/xwalk/picar-x.d` | Selects the read-only fragment templates |
 | `--camera csi\|usb` | `csi` | Selects `rpicam-apps` or `ffmpeg` as the camera dependency |
-| `--with-vosk` | Disabled | Reports configured Vosk library and model availability |
-| `--with-ollama` | Disabled | Reports Ollama executable and model-manifest availability |
+| `--with-vosk` | Disabled | Installs the explicitly selected repository-controlled Vosk assets |
+| `--vosk-library-source FILE` | Required with Vosk | Selects the architecture-matched Vosk library source |
+| `--vosk-model-source DIRECTORY` | Required with Vosk | Selects the Vosk model source |
+| `--validate-ollama` | Disabled | Validates the selected user's installed Ollama executable and manifest |
 | `--dry-run` | Default | Prints the plan without changing the system |
 | `--check`, `--validate` | Optional mode | Validates required target state without changing it |
 | `--apply` | Optional mode | Performs the reported privileged changes |
@@ -383,6 +387,7 @@ The setup workflow:
 - validates I2C, SPI, GPIO, configuration, camera, voice, and model prerequisites;
 - preserves existing boot configuration and rejects conflicting disabled interfaces;
 - plans narrowly scoped groups and udev rules for selected device nodes;
+- initializes only writable deployment copies from explicitly selected templates;
 - never installs, enables, disables, or guesses a Robot HAT overlay.
 
 `--apply` may install packages, enable base I2C and SPI interfaces, create groups, update membership, install a

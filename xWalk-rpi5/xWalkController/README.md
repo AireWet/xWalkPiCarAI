@@ -57,7 +57,7 @@ the sibling `xWalkAgent` aggregate and are imported through CMake targets.
 | Path | Responsibility |
 | --- | --- |
 | `CMakeLists.txt` | CLI aggregate options and Agent dependency composition |
-| `xWalkConfig/picar-x.conf` | Writable manifest, provider selection, and calibration overrides |
+| `xWalkConfig/picar-x.conf` | Machine-independent manifest template and provider selection |
 | `xWalkConfig/picar-x.d/` | Functional settings and separate AI-provider profiles |
 | `xWalkHandler/` | Controller contract, implementation, and direct in-memory test |
 | `xWalkApp/` | Application build, includes, sources, generated help, and executable tests |
@@ -76,66 +76,70 @@ The seven handler suites are also selectable directly with `ctest --preset sanit
 
 ## Raspberry Pi compilation and test discovery
 
-Run the Raspberry Pi workflow from `xWalk-rpi5`. The `rpi-release` preset
-compiles the repository configuration path into the executable, so reconfigure
-with `--fresh` after changing that preset or path:
+Run the Raspberry Pi configuration from the workspace root. CMake initializes
+`build-rpi/runtime/picar-x.conf` and its fragment tree from the repository
+templates without overwriting an existing generated runtime. The RPi CLI
+compiles that writable generated manifest as its default:
 
 ```bash
-cmake --fresh --preset rpi-release
-cmake --build --preset rpi-release --parallel
+cmake --fresh -S xWalk-rpi5 --preset rpi-release
+cmake --build build-rpi/cmake --parallel
 ```
 
 List the hardware tests without executing them:
 
 ```bash
-ctest --test-dir ../build-rpi/cmake -N -L hardware
+ctest --test-dir build-rpi/cmake -N -L hardware
 ```
 
 Only after confirming the correct Raspberry Pi and Robot HAT are connected and
 safe, execute the hardware-labelled tests:
 
 ```bash
-ctest --test-dir ../build-rpi/cmake -L hardware --output-on-failure
+ctest --test-dir build-rpi/cmake -L hardware --output-on-failure
 ```
 
-Bootstrap the installed configuration templates needed by host provisioning:
+Provisioning is a separate opt-in target and is never part of an ordinary
+build. Review `XWALK_RPI_PROFILE`, `XWALK_RPI_RUNTIME_USER`,
+`XWALK_RPI_GPIO_DEVICE`, `XWALK_RPI_I2C_DEVICE`, `XWALK_RPI_SPI_DEVICE`,
+`XWALK_RPI_CAMERA`, `XWALK_RPI_WITH_VOSK`, and `XWALK_RPI_WITH_OLLAMA` in the
+CMake cache first. In particular, `/dev/gpiochip4` is a machine-specific
+default and must be confirmed from the target Raspberry Pi.
+
+From `xWalk-rpi5`, the provisioning build preset is:
 
 ```bash
-sudo cmake --install ../build-rpi/cmake
+cmake --build --preset rpi-provision --parallel
 ```
 
-Apply the Robot HAT v4 host provisioning and user-local camera, Vosk, and
-Ollama selection. This updates the writable configuration below
-`/var/lib/xwalk`; it does not edit the tracked repository configuration:
+Because CMake cannot discover `xWalk-rpi5/CMakePresets.json` from its workspace
+parent, use the equivalent explicit target from the workspace root:
 
 ```bash
-../xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --profile robot_hat_v4 --runtime-user "$USER" --gpio-device /dev/gpiochip4 --i2c-device /dev/i2c-1 --spi-device /dev/spidev0.0 --camera csi --with-vosk --with-ollama --apply
+cmake --build build-rpi/cmake --target rpi-provision --parallel
 ```
 
-When intentionally using the repository configuration as the compiled
-`rpi-release` default, copy the verified hardware identity into it with the
-focused provisioner:
+The target depends on `xwalk-picarx-control`, runs the approved user-local
+camera and Ollama setup when enabled, initializes the writable runtime from
+repository templates when necessary, installs repository-controlled Vosk
+assets when enabled, and invokes `setup-rpi.sh`. The setup script validates the
+selected Robot HAT and device identities before modifying the generated runtime.
+It never changes ownership, permissions, or values in the tracked templates.
+
+After provisioning, the CLI uses the generated runtime without
+`--deployment-config`:
 
 ```bash
-../xWalkTool/shell-agent/deploy-tool/provision-hardware.sh --profile robot_hat_v4 --config "$PWD/xWalkController/xWalkConfig/picar-x.conf" --gpio-device /dev/gpiochip4 --i2c-device /dev/i2c-1 --spi-device /dev/spidev0.0
-```
-
-That command records machine-specific GPIO identity in a tracked file. Do not
-commit the resulting configuration unless the repository is intentionally
-dedicated to that exact Raspberry Pi. The safer general deployment default
-remains `/var/lib/xwalk/picar-x.conf`.
-
-The repository-built executable can then use its compiled configuration path
-without `--deployment-config`:
-
-```bash
-../build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control doctor
-../build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control --trace CTRL.024.enable doctor
-../build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control --help
-../build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control --diagnose --no-hardware
+build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control doctor
+build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control --trace CTRL.024.enable doctor
+build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control --help
+build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control --diagnose --no-hardware
 ```
 
 Doctor is a bounded hardware preflight that pulses only the configured MCU
-reset GPIO. The `--diagnose --no-hardware` command is the device-free check.
+reset GPIO. It prints its report directly; `CTRL.024` additionally enables the
+same lines in trace output. Doctor returns zero when all required checks pass
+and two when any `[FAIL]` result exists. The `--diagnose --no-hardware` command
+is the device-free check.
 See the [deployment guide](../../devloper-note/xwalk-rpi5-note/Doc/note/Deployment%20Guide.md) for installed
 paths, package selection, Robot HAT safeguards, and permission policy.

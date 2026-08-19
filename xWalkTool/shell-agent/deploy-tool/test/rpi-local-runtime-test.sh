@@ -15,6 +15,7 @@ runtime_home="$(getent passwd "$(id -un)" | awk -F: 'NR == 1 { print $6 }')"
 manifest="$runtime_home/.local/share/ollama/models/manifests/registry.ollama.ai/library/llama3.2/3b"
 "$configuration_script" \
     --build-directory "$build_directory" \
+    --runtime-user "$(id -un)" \
     --ollama-manifest "$manifest" \
     --generate-only >/dev/null
 
@@ -31,15 +32,36 @@ grep -Fxq "camera_csi_executable = $runtime_home/.local/bin/rpicam-still" "$visi
 grep -Fxq "camera_csi_device = /dev/media0" "$vision"
 grep -Fxq "hardware_board = robot_hat_v4" "$hardware"
 grep -Fxq "hardware_gpio_device = /dev/gpiochip4" "$hardware"
-grep -Fxq "hardware_gpio_chip_name = gpiochip4" "$hardware"
-grep -Fxq "hardware_gpio_chip_label = pinctrl-rp1" "$hardware"
+grep -Eq '^hardware_gpio_chip_name =[[:space:]]*$' "$hardware"
+grep -Eq '^hardware_gpio_chip_label =[[:space:]]*$' "$hardware"
 grep -Fq "/xWalk-rpi5/xWalkLibrary/aarch64/lib/libvosk.so" "$voice"
 grep -Fxq "voice_language_model_provider = ollama" "$ollama"
+grep -Fxq "voice_language_model_endpoint = http://127.0.0.1:11434/api/chat" "$ollama"
+grep -Fxq "voice_language_model_model = llama3.2:3b" "$ollama"
 grep -Fxq "voice_ollama_model = llama3.2:3b" "$ollama"
 grep -Fxq "voice_ollama_model_manifest = $manifest" "$ollama"
 grep -Fq "export PATH=\"\$runtime_home/.local/bin:\${PATH-}\"" "$launcher"
 grep -Fq "exec \"\$executable\" --deployment-config=\"\$configuration\" --resource-directory=\"\$resources\" \"\$@\"" \
     "$launcher"
 bash -n "$launcher"
+
+source_checksum="$(find "$script_directory/../../../../xWalk-rpi5/xWalkController/xWalkConfig" -type f \
+    -exec sha256sum {} + | sort | sha256sum)"
+"$script_directory/../generate-rpi-runtime.sh" \
+    --build-directory "$build_directory" \
+    --runtime-user "$(id -un)" \
+    --profile robot_hat_v5 \
+    --gpio-device /dev/gpiochip7 \
+    --i2c-device /dev/i2c-3 \
+    --spi-device /dev/spidev2.1 \
+    --camera usb \
+    --ollama-manifest "$manifest" >/dev/null
+grep -Fxq "hardware_board = robot_hat_v5" "$hardware"
+grep -Fxq "hardware_gpio_device = /dev/gpiochip7" "$hardware"
+grep -Fxq "hardware_i2c_device = /dev/i2c-3" "$hardware"
+grep -Fxq "hardware_spi_device = /dev/spidev2.1" "$hardware"
+grep -Fxq "camera_connection = usb" "$vision"
+test "$source_checksum" = "$(find "$script_directory/../../../../xWalk-rpi5/xWalkController/xWalkConfig" \
+    -type f -exec sha256sum {} + | sort | sha256sum)"
 
 echo "RPi user-local runtime generation test passed"

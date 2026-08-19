@@ -51,9 +51,14 @@ if ! command -v gpiodetect >/dev/null 2>&1; then
     exit 2
 fi
 
+test_root="${XWALK_PROVISION_TEST_ROOT-}"
+root_path() {
+    printf '%s%s\n' "$test_root" "$1"
+}
+
 v5_uuid="9daeea78-0000-076e-0032-582369ac3e02"
 v5_detected="false"
-for uuid_file in /proc/device-tree/*hat*/uuid; do
+for uuid_file in "$(root_path /proc/device-tree)"/*hat*/uuid; do
     if [ -r "$uuid_file" ] && [ "$(tr -d '\000' < "$uuid_file")" = "$v5_uuid" ]; then
         v5_detected="true"
     fi
@@ -69,9 +74,9 @@ fi
 
 if [ -z "$gpio_device" ]; then
     candidate_count=0
-    for candidate in /dev/gpiochip*; do
+    for candidate in "$(root_path /dev)"/gpiochip*; do
         if [ -e "$candidate" ]; then
-            gpio_device="$candidate"
+            gpio_device="/${candidate#"$test_root/"}"
             candidate_count=$((candidate_count + 1))
         fi
     done
@@ -142,4 +147,4 @@ mv "$temporary_file" "$config_file"
 trap - EXIT
 
 echo "Provisioned $profile with $gpio_device, name=$gpio_name, label=$gpio_label, lines=$gpio_lines."
-echo "Run xwalk-picarx-control doctor before actuator calibration."
+echo "Run build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control doctor before actuator calibration."

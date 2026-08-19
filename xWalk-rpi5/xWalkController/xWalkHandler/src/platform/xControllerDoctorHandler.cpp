@@ -45,7 +45,7 @@ namespace xwalk::ctrl
      ******************************************************************************/
 
     /**
-     * @brief Traces one bounded hardware preflight report.
+     * @brief Prints and traces one bounded hardware preflight report.
      * @param[in] request Validated empty request.
      * @return Zero when every reported check passes; otherwise two.
      */
@@ -60,6 +60,7 @@ namespace xwalk::ctrl
         ::ctrl::boolean passed = true;
         for (const ::ctrl::string& line : *doctorLinesObject)
         {
+            callbacks.output(callbackContext, line);
             XWALK_CTRL_TRACE_UID1(CTRL .024, "%s", line.c_str());
             const ::ctrl::boolean lineDifferent =
                 static_cast<::ctrl::boolean>(line.find("[FAIL]") != ::ctrl::string::npos);
