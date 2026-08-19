@@ -64,7 +64,7 @@ namespace xwalk::hal
         armedValue = true;
         commandActiveValue = false;
         watchdogCondition.notify_all();
-        static_cast<void>(rollbackGuard.release());
+        static_cast<void>(rollbackGuard.release()); // NOLINT(bugprone-unused-return-value): disarms rollback only.
     }
 
     boolean XWalkMotors::disarm() noexcept
@@ -186,7 +186,7 @@ namespace xwalk::hal
         commandActiveValue = true;
         refreshWatchdogUnlocked();
         watchdogCondition.notify_all();
-        static_cast<void>(rollbackGuard.release());
+        static_cast<void>(rollbackGuard.release()); // NOLINT(bugprone-unused-return-value): disarms rollback only.
     }
 
     /**
@@ -227,7 +227,7 @@ namespace xwalk::hal
             refreshWatchdogUnlocked();
         }
         watchdogCondition.notify_all();
-        static_cast<void>(rollbackGuard.release());
+        static_cast<void>(rollbackGuard.release()); // NOLINT(bugprone-unused-return-value): disarms rollback only.
         XWALK_HAL_TRACE_UID2(RPI .251,
                              "Paired motor speeds applied at left %.2f and right %.2f percent",
                              leftSpeedPercent,

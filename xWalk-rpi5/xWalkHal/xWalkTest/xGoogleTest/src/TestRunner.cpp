@@ -984,6 +984,10 @@ namespace xwalk::hal::test
             for (const TestSelection& selection : selections)
             {
                 TestSuiteConfig* suite = findSuite(selectedSuites, selection.suiteName);
+                if (suite == nullptr)
+                {
+                    XWALK_HAL_ERROR(XWALK_LOGIC, "Validated test-suite selection is unavailable");
+                }
                 const hal::boolean caseNameEmpty = static_cast<hal::boolean>(selection.caseName.empty());
                 if (caseNameEmpty)
                 {
@@ -996,6 +1000,10 @@ namespace xwalk::hal::test
                 else
                 {
                     TestCaseConfig* testCase = findCase(*suite, selection.caseName);
+                    if (testCase == nullptr)
+                    {
+                        XWALK_HAL_ERROR(XWALK_LOGIC, "Validated test-case selection is unavailable");
+                    }
                     testCase->enabled = selection.enabled;
                     if (selection.enabled)
                     {

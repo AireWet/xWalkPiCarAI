@@ -192,7 +192,7 @@ namespace xwalk::agent
         motorsObject->arm();
         emergencyStopRequestedValue.store(false);
         initializedValue = true;
-        static_cast<void>(rollbackGuard.release());
+        static_cast<void>(rollbackGuard.release()); // NOLINT(bugprone-unused-return-value): disarms rollback only.
         XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .001, "PiCar-X coordinator initialized and motors armed at zero output");
         return true;
     }

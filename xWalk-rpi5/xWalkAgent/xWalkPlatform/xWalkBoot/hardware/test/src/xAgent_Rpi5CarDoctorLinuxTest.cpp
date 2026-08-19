@@ -173,10 +173,8 @@ int main()
     const agent::boolean localPathSet = ::setenv("PATH", directory, 1) == 0;
     const agent::boolean localPathFound = xwalk::agent::XWalkDoctorLinux::executableAvailable(executableName);
 
-    if (directoryRecorded)
-    {
-        static_cast<void>(::chdir(originalDirectory));
-    }
+    const agent::boolean directoryRestored =
+        static_cast<agent::boolean>((!directoryRecorded) || (::chdir(originalDirectory) == 0));
     if (originalPathValue == nullptr)
     {
         static_cast<void>(::unsetenv("PATH"));
@@ -188,7 +186,8 @@ int main()
     static_cast<void>(::unlink(executablePath.c_str()));
     static_cast<void>(::rmdir(directory));
 
-    if (!fixtureWritten || !directoryRecorded || !changedDirectory || !emptyPathSet || !localPathSet)
+    if (!fixtureWritten || !directoryRecorded || !changedDirectory || !emptyPathSet || !localPathSet ||
+        !directoryRestored)
     {
         return xwalk::agent::test::doctor::fail("test environment setup failed");
     }

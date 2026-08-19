@@ -209,7 +209,7 @@ namespace xwalk::hal
         }
         speedPercentValue = 0.0;
         initializedValue = true;
-        static_cast<void>(rollbackGuard.release());
+        static_cast<void>(rollbackGuard.release()); // NOLINT(bugprone-unused-return-value): disarms rollback only.
         return true;
     }
 

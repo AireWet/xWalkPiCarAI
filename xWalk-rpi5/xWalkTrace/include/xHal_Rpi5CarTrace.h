@@ -208,6 +208,13 @@ namespace xwalk::hal
                 }
                 else
                 {
+                    /* The trace API intentionally forwards a runtime format string through this type-preserving
+                     * template. GCC and Clang cannot reapply printf literal checking after that forwarding, so
+                     * confine -Wformat-nonliteral suppression to the two snprintf calls that implement the API. */
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#endif
                     const int32 requiredLength = static_cast<int32>(std::snprintf(nullptr, 0, format, arguments...));
                     if (requiredLength < 0)
                     {
@@ -218,6 +225,9 @@ namespace xwalk::hal
                     string message(outputLength + 1U, '\0');
                     const int32 writtenLength =
                         static_cast<int32>(std::snprintf(message.data(), message.size(), format, arguments...));
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
                     if (writtenLength != requiredLength)
                     {
                         throw runtimeerror("Trace message formatting was incomplete");

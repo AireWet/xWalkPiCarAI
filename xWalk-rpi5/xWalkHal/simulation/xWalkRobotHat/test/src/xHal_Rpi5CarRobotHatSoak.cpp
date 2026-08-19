@@ -267,7 +267,7 @@ int main(int argumentCount, char** arguments)
     }
     enterLogicalSafeState(model);
     const ProcessSnapshot final = processSnapshot();
-    constexpr uint64 MEMORY_TOLERANCE_BYTES{8U * 1'024U * 1'024U};
+    constexpr uint64 MEMORY_TOLERANCE_BYTES{uint64{8U} * 1'024U * 1'024U};
     passed = passed && !model.armed && (model.commandedLeftSpeed == 0.0) && (model.commandedRightSpeed == 0.0) &&
              (final.residentBytes <= baseline.residentBytes + MEMORY_TOLERANCE_BYTES) &&
              (final.descriptors <= baseline.descriptors) && (final.threads <= baseline.threads);

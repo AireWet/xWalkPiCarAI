@@ -16,7 +16,7 @@ namespace xwalk::agent
     namespace
     {
         constexpr agent::size MINIMUM_JPEG_BYTES{4U};
-        constexpr agent::size MAXIMUM_JPEG_BYTES{10U * 1'024U * 1'024U};
+        constexpr agent::size MAXIMUM_JPEG_BYTES{agent::size{10U} * 1'024U * 1'024U};
         constexpr agent::uint32 MAXIMUM_CLIENTS{32U};
         constexpr agent::uint32 MAXIMUM_QUEUE_CAPACITY{16U};
         constexpr agent::stringview MULTIPART_BOUNDARY{"--xwalk-frame\r\n"};

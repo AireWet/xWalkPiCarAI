@@ -99,7 +99,17 @@ namespace xwalk::hal
         {
             throw runtimeerror("File could not be opened for binary input");
         }
-        const string contents{std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
+        string contents;
+        fixedarray<char, 4096U> buffer{};
+        while (file)
+        {
+            file.read(buffer.data(), static_cast<std::streamsize>(buffer.size()));
+            const std::streamsize bytesRead = file.gcount();
+            if (bytesRead > 0)
+            {
+                contents.append(buffer.data(), static_cast<size>(bytesRead));
+            }
+        }
         const hal::boolean streamReadFailed = static_cast<hal::boolean>(file.bad());
         if (streamReadFailed)
         {

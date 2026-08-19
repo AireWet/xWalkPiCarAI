@@ -27,7 +27,9 @@ run_asan() {
     cmake --build build-host/sanitizers --parallel || return 1
     # xCliGoogleTestHostTest embeds the same legacy Controller scenario. Keep
     # that isolated wrapper and omit the duplicate fork-heavy executable.
-    ASAN_OPTIONS="detect_leaks=0:halt_on_error=1" \
+    # LeakSanitizer has a separate runtime probe and build because traced hosts
+    # cannot initialize its process inspection reliably.
+    ASAN_OPTIONS="abort_on_error=1:detect_leaks=0:strict_string_checks=1:check_initialization_order=1" \
         UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=1" \
         ctest --test-dir build-host/sanitizers --output-on-failure --no-tests=error \
             --timeout 120 -E '^xWalkControllerHostTest$' || return 1

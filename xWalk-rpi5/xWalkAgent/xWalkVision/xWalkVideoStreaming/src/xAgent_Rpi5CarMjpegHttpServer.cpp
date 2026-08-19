@@ -23,10 +23,10 @@ namespace xwalk::agent
 
     namespace
     {
-        constexpr agent::size MAXIMUM_REQUEST_BYTES{64U * 1'024U};
-        constexpr agent::size MAXIMUM_PENDING_BYTES{16U * 1'024U * 1'024U};
+        constexpr agent::size MAXIMUM_REQUEST_BYTES{agent::size{64U} * 1'024U};
+        constexpr agent::size MAXIMUM_PENDING_BYTES{agent::size{16U} * 1'024U * 1'024U};
         constexpr agent::uint64 MAXIMUM_TIMEOUT_MILLISECONDS{300'000U};
-        constexpr agent::size READ_CHUNK_BYTES{2U * 1'024U};
+        constexpr agent::size READ_CHUNK_BYTES{agent::size{2U} * 1'024U};
 
         /** @brief Saturating-increments one observability counter. */
         void incrementSaturated(agent::uint64& value) noexcept

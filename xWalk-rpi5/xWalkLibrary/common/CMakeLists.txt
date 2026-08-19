@@ -22,14 +22,30 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     endif()
 
     if(XWALK_ENABLE_STRICT_WARNINGS)
-        target_compile_options(xWalkLibraryCommon INTERFACE -Wshadow)
+        target_compile_options(xWalkLibraryCommon INTERFACE
+            -Wshadow
+            -Wformat=2
+            -Wnull-dereference
+            -Wdouble-promotion
+            -Wimplicit-fallthrough
+            -Wcast-align
+            -Wcast-qual
+            -Woverloaded-virtual
+            -Wnon-virtual-dtor
+            -Wold-style-cast)
     endif()
 
     if(XWALK_ENABLE_SANITIZERS)
         target_compile_options(xWalkLibraryCommon INTERFACE
-            -fsanitize=address,undefined -fno-omit-frame-pointer -g)
+            -fsanitize=address,undefined
+            -fno-omit-frame-pointer
+            -fno-sanitize-recover=all
+            -g3
+            -O1)
         target_link_options(xWalkLibraryCommon INTERFACE
-            -fsanitize=address,undefined -fno-omit-frame-pointer)
+            -fsanitize=address,undefined
+            -fno-omit-frame-pointer
+            -fno-sanitize-recover=all)
     endif()
 
     if(XWALK_ENABLE_THREAD_SANITIZER)
