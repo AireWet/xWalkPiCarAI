@@ -28,6 +28,9 @@
 #include "xHal_Rpi5CarMusicAlsa.h"
 
 #include "xHal_Rpi5CarTrace.h"
+
+#include <csignal>
+#include <pthread.h>
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -125,6 +128,56 @@ namespace xwalk::hal
     /******************************************************************************
      * Protected member function definitions
      ******************************************************************************/
+
+    /**
+     * @brief Starts one worker while blocking process-cancellation signals in the new thread.
+     *
+     * @param[in] workerOperation
+     * Non-null playback member function executed by the new worker.
+     *
+     * @return
+     * Joinable worker whose inherited signal mask blocks SIGINT and SIGTERM.
+     *
+     * @throws std::runtime_error
+     * If the calling thread's signal mask cannot be changed or restored.
+     */
+    threadhandle XWalkMusicAlsa::startWorker(void (XWalkMusicAlsa::*workerOperation)() noexcept)
+    {
+        sigset_t cancellationSignals;
+        sigset_t previousSignals;
+        static_cast<void>(::sigemptyset(&cancellationSignals));
+        static_cast<void>(::sigaddset(&cancellationSignals, SIGINT));
+        static_cast<void>(::sigaddset(&cancellationSignals, SIGTERM));
+        const int blockResult = ::pthread_sigmask(SIG_BLOCK, &cancellationSignals, &previousSignals);
+        if (blockResult != 0)
+        {
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Music worker cancellation signals could not be blocked");
+        }
+
+        threadhandle worker;
+        try
+        {
+            worker = threadhandle(workerOperation, this);
+        }
+        catch (...)
+        {
+            static_cast<void>(::pthread_sigmask(SIG_SETMASK, &previousSignals, nullptr));
+            throw;
+        }
+
+        const int restoreResult = ::pthread_sigmask(SIG_SETMASK, &previousSignals, nullptr);
+        if (restoreResult != 0)
+        {
+            {
+                const mutexlock lock(stateMutex);
+                soundStopRequested = true;
+                musicStopRequested = true;
+            }
+            worker.join();
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Music worker caller signal mask could not be restored");
+        }
+        return worker;
+    }
 
     /**
      * @brief Converts a callback context into its required adapter.

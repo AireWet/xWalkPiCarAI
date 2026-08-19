@@ -228,6 +228,19 @@ namespace xwalk::hal
              */
             void musicPlaybackLoop() noexcept;
             /**
+             * @brief Starts one worker while blocking process-cancellation signals in the new thread.
+             *
+             * @param[in] workerOperation
+             * Non-null playback member function executed by the new worker.
+             *
+             * @return
+             * Joinable worker whose inherited signal mask blocks SIGINT and SIGTERM.
+             *
+             * @throws std::runtime_error
+             * If the calling thread's signal mask cannot be changed or restored.
+             */
+            threadhandle startWorker(void (XWalkMusicAlsa::*workerOperation)() noexcept);
+            /**
              * @brief Requests and joins the retained background sound worker.
              *
              * @post

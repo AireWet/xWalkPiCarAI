@@ -131,8 +131,12 @@ ctrl::int32 main(ctrl::int32 argumentCount, ctrl::charpointer arguments[])
     }
 
     xwalk::ctrl::XWALK_resetOperationRequest();
-    static_cast<void>(::signal(SIGINT, &xwalk::ctrl::XWALK_requestOperationStop));
-    static_cast<void>(::signal(SIGTERM, &xwalk::ctrl::XWALK_requestOperationStop));
+    const ctrl::boolean signalHandlingPrepared = xwalk::ctrl::XWALK_prepareOperationSignalHandling();
+    if (signalHandlingPrepared == false)
+    {
+        std::cerr << "Could not prepare graceful cancellation handling" << std::endl;
+        return 2;
+    }
 
     xwalk::ctrl::XWalkControllerBootContext bootContext{&commandArguments,
                                                         applicationArguments.appConfig.resourceDirectory};

@@ -38,9 +38,11 @@
 #include "xHal_Rpi5CarTypes.h"
 
 #include <algorithm>
+#include <csignal>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <pthread.h>
 #include <sstream>
 #include <type_traits>
 
@@ -153,6 +155,96 @@ namespace
         EXPECT_FALSE(xwalk::ctrl::XWALK_continueOperation(nullptr));
 
         xwalk::ctrl::XWALK_resetOperationRequest();
+    }
+
+    /** @brief Verifies that installed cancellation handlers interrupt input and request graceful shutdown. */
+    TEST(XWalkAppGroup, ApplicationSignalHandlers)
+    {
+        struct sigaction previousInterruptAction
+        {
+        };
+        struct sigaction previousTerminationAction
+        {
+        };
+        sigset_t previousSignalMask;
+        ASSERT_EQ(::sigaction(SIGINT, nullptr, &previousInterruptAction), 0);
+        ASSERT_EQ(::sigaction(SIGTERM, nullptr, &previousTerminationAction), 0);
+        ASSERT_EQ(::pthread_sigmask(SIG_SETMASK, nullptr, &previousSignalMask), 0);
+
+        xwalk::ctrl::XWALK_resetOperationRequest();
+        EXPECT_TRUE(xwalk::ctrl::XWALK_prepareOperationSignalHandling());
+        sigset_t preparedSignalMask;
+        EXPECT_EQ(::pthread_sigmask(SIG_SETMASK, nullptr, &preparedSignalMask), 0);
+        EXPECT_EQ(::sigismember(&preparedSignalMask, SIGINT), 1);
+        EXPECT_EQ(::sigismember(&preparedSignalMask, SIGTERM), 1);
+        EXPECT_TRUE(xwalk::ctrl::XWALK_activateOperationSignalHandling());
+        sigset_t activeSignalMask;
+        EXPECT_EQ(::pthread_sigmask(SIG_SETMASK, nullptr, &activeSignalMask), 0);
+        EXPECT_EQ(::sigismember(&activeSignalMask, SIGINT), 0);
+        EXPECT_EQ(::sigismember(&activeSignalMask, SIGTERM), 0);
+        struct sigaction installedInterruptAction
+        {
+        };
+        struct sigaction installedTerminationAction
+        {
+        };
+        EXPECT_EQ(::sigaction(SIGINT, nullptr, &installedInterruptAction), 0);
+        EXPECT_EQ(::sigaction(SIGTERM, nullptr, &installedTerminationAction), 0);
+        EXPECT_EQ(installedInterruptAction.sa_flags & SA_RESTART, 0);
+        EXPECT_EQ(installedTerminationAction.sa_flags & SA_RESTART, 0);
+        EXPECT_EQ(::raise(SIGINT), 0);
+        EXPECT_FALSE(xwalk::ctrl::XWALK_continueOperation(nullptr));
+
+        EXPECT_EQ(::sigaction(SIGINT, &previousInterruptAction, nullptr), 0);
+        EXPECT_EQ(::sigaction(SIGTERM, &previousTerminationAction, nullptr), 0);
+        EXPECT_EQ(::pthread_sigmask(SIG_SETMASK, &previousSignalMask, nullptr), 0);
+        xwalk::ctrl::XWALK_resetOperationRequest();
+    }
+
+    /** @brief Verifies that SIGINT interrupts a blocked terminal read and returns through normal cleanup. */
+    TEST(XWalkAppGroup, ApplicationSignalInterruptsInput)
+    {
+        int inputPipe[2]{};
+        int readyPipe[2]{};
+        ASSERT_EQ(::pipe(inputPipe), 0);
+        ASSERT_EQ(::pipe(readyPipe), 0);
+        const pid_t childProcess = ::fork();
+        ASSERT_GE(childProcess, 0);
+        if (childProcess == 0)
+        {
+            static_cast<void>(::close(inputPipe[1]));
+            static_cast<void>(::close(readyPipe[0]));
+            if (::dup2(inputPipe[0], STDIN_FILENO) < 0)
+            {
+                ::_exit(2);
+            }
+            xwalk::ctrl::XWALK_resetOperationRequest();
+            if ((!xwalk::ctrl::XWALK_prepareOperationSignalHandling()) ||
+                (!xwalk::ctrl::XWALK_activateOperationSignalHandling()))
+            {
+                ::_exit(3);
+            }
+            const char ready{'1'};
+            if (::write(readyPipe[1], &ready, 1U) != 1)
+            {
+                ::_exit(4);
+            }
+            const ctrl::string response = xwalk::ctrl::XWALK_inputLine(nullptr, "blocked> ");
+            const ctrl::boolean cancelled = static_cast<ctrl::boolean>(!xwalk::ctrl::XWALK_continueOperation(nullptr));
+            ::_exit(((response == "skip") && cancelled) ? 0 : 5);
+        }
+
+        static_cast<void>(::close(inputPipe[0]));
+        static_cast<void>(::close(readyPipe[1]));
+        char ready{};
+        ASSERT_EQ(::read(readyPipe[0], &ready, 1U), 1);
+        EXPECT_EQ(::kill(childProcess, SIGINT), 0);
+        static_cast<void>(::close(inputPipe[1]));
+        static_cast<void>(::close(readyPipe[0]));
+        int childStatus{};
+        ASSERT_EQ(::waitpid(childProcess, &childStatus, 0), childProcess);
+        EXPECT_TRUE(WIFEXITED(childStatus));
+        EXPECT_EQ(WEXITSTATUS(childStatus), 0);
     }
 
     /** @brief Verifies the terminal output, input, EOF, and zero-delay callbacks. */

@@ -10,3 +10,7 @@ The Agent resolves reviewed sound and music assets below caller-owned resource
 directories, sets streamed-music volume to 20 percent at startup, and stops
 active music during normal or cancelled cleanup. It owns no ALSA device,
 decoder, terminal, worker, or filesystem deployment policy.
+
+The Raspberry Pi application keeps `SIGINT` and `SIGTERM` on its Controller
+thread. ALSA playback workers block those signals, allowing `Ctrl+C` to
+interrupt terminal input and complete the same joined cleanup path as `x`.

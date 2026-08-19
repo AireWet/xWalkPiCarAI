@@ -39,6 +39,18 @@ namespace
                                                           "hal.music.sound",
                                                           "controller.delay",
                                                           "hal.music.control"}));
+
+        context.state->eventLog.clear();
+        context.state->inputLines = {"c"};
+        context.state->inputIndex = 0U;
+        context.state->operationQueries = 0U;
+        context.state->operationQueryLimit = 2U;
+        const ctrl::int32 cancellationStatus = xwalk::ctrl::XWALK_runControllerCommand(
+            *context.soundBackgroundMusicController, {"sound-background-music"});
+
+        assert(cancellationStatus == 0);
+        assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,
+                                                         {"hal.music.volume", "controller.input", "hal.music.sound"}));
     }
 
 } /* namespace */

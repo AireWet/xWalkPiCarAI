@@ -143,7 +143,7 @@ namespace xwalk::hal
             self.soundAudio = std::move(audioData);
             self.soundStopRequested = false;
         }
-        self.soundWorker = threadhandle(&XWalkMusicAlsa::soundPlaybackLoop, &self);
+        self.soundWorker = self.startWorker(&XWalkMusicAlsa::soundPlaybackLoop);
     }
 
     /**
@@ -192,7 +192,7 @@ namespace xwalk::hal
             self.musicStopRequested = false;
             self.musicPauseRequested = false;
         }
-        self.musicWorker = threadhandle(&XWalkMusicAlsa::musicPlaybackLoop, &self);
+        self.musicWorker = self.startWorker(&XWalkMusicAlsa::musicPlaybackLoop);
     }
 
     /**

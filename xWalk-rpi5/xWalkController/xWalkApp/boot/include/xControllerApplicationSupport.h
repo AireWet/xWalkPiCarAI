@@ -100,6 +100,20 @@ namespace xwalk::ctrl
     void XWALK_resetOperationRequest() noexcept;
 
     /**
+     * @brief Installs cancellation handlers and blocks their signals during boot-worker construction.
+     * @return `true` when both handlers and the temporary signal mask are established; otherwise `false`.
+     * @post SIGINT and SIGTERM remain pending on the calling thread until operation handling is activated.
+     */
+    ::ctrl::boolean XWALK_prepareOperationSignalHandling() noexcept;
+
+    /**
+     * @brief Unblocks cancellation signals on the Controller thread before command execution.
+     * @return `true` when SIGINT and SIGTERM are unblocked; otherwise `false`.
+     * @post Terminal input is interruptible and cancellation changes only the operation-request flag.
+     */
+    ::ctrl::boolean XWALK_activateOperationSignalHandling() noexcept;
+
+    /**
      * @brief Applies ordered persistent trace requests before boot.
      * @param[in] applicationArguments Validated process-global trace requests.
      * @return `true` when every requested XML and memory update succeeds.

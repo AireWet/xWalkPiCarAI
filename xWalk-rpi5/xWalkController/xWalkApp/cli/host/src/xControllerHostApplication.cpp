@@ -126,8 +126,12 @@ namespace xwalk::ctrl
         }
 
         XWALK_resetOperationRequest();
-        static_cast<void>(::signal(SIGINT, &XWALK_requestOperationStop));
-        static_cast<void>(::signal(SIGTERM, &XWALK_requestOperationStop));
+        const ::ctrl::boolean signalHandlingPrepared = XWALK_prepareOperationSignalHandling();
+        if (signalHandlingPrepared == false)
+        {
+            std::cerr << "Could not prepare graceful cancellation handling\n";
+            return 2;
+        }
         XWalkControllerBootContext bootContext{&commandArguments, applicationArguments.appConfig.resourceDirectory};
         agent::XWalkBootServices hostServices{};
         agent::XWalkBootHostStub boot(hostServices);

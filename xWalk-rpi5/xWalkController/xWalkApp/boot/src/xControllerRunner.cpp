@@ -54,6 +54,11 @@ namespace xwalk::ctrl
      */
     ::ctrl::int32 XWALK_runController(::ctrl::contextpointer context, agent::XWalkBootServices& services)
     {
+        const ::ctrl::boolean signalHandlingActivated = XWALK_activateOperationSignalHandling();
+        if (signalHandlingActivated == false)
+        {
+            return 2;
+        }
         XWALK_CTRL_TRACE_UID0(CTRL .001, "Controller command execution started");
         const XWalkControllerBootContext& bootContext = *static_cast<XWalkControllerBootContext*>(context);
         const ::ctrl::stringvector& commandArguments = *bootContext.commandArguments;

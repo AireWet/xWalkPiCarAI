@@ -34,6 +34,7 @@
 #include "xHal_Rpi5CarTrace.h"
 
 #include <iostream>
+#include <pthread.h>
 
 /******************************************************************************
  * Anonymous namespace
@@ -92,6 +93,48 @@ namespace xwalk::ctrl
     void XWALK_resetOperationRequest() noexcept
     {
         operationRequested = 1;
+    }
+
+    /**
+     * @brief Installs cancellation handlers and blocks their signals during boot-worker construction.
+     * @return `true` when both handlers and the temporary signal mask are established; otherwise `false`.
+     * @post SIGINT and SIGTERM remain pending on the calling thread until operation handling is activated.
+     */
+    ::ctrl::boolean XWALK_prepareOperationSignalHandling() noexcept
+    {
+        struct sigaction cancellationAction
+        {
+        };
+        cancellationAction.sa_handler = &XWALK_requestOperationStop;
+        static_cast<void>(::sigemptyset(&cancellationAction.sa_mask));
+        cancellationAction.sa_flags = 0;
+
+        const ::ctrl::boolean interruptHandlerInstalled =
+            static_cast<::ctrl::boolean>(::sigaction(SIGINT, &cancellationAction, nullptr) == 0);
+        const ::ctrl::boolean terminationHandlerInstalled =
+            static_cast<::ctrl::boolean>(::sigaction(SIGTERM, &cancellationAction, nullptr) == 0);
+        sigset_t cancellationSignals;
+        static_cast<void>(::sigemptyset(&cancellationSignals));
+        static_cast<void>(::sigaddset(&cancellationSignals, SIGINT));
+        static_cast<void>(::sigaddset(&cancellationSignals, SIGTERM));
+        const ::ctrl::boolean cancellationSignalsBlocked =
+            static_cast<::ctrl::boolean>(::pthread_sigmask(SIG_BLOCK, &cancellationSignals, nullptr) == 0);
+        return static_cast<::ctrl::boolean>(interruptHandlerInstalled && terminationHandlerInstalled &&
+                                            cancellationSignalsBlocked);
+    }
+
+    /**
+     * @brief Unblocks cancellation signals on the Controller thread before command execution.
+     * @return `true` when SIGINT and SIGTERM are unblocked; otherwise `false`.
+     * @post Terminal input is interruptible and cancellation changes only the operation-request flag.
+     */
+    ::ctrl::boolean XWALK_activateOperationSignalHandling() noexcept
+    {
+        sigset_t cancellationSignals;
+        static_cast<void>(::sigemptyset(&cancellationSignals));
+        static_cast<void>(::sigaddset(&cancellationSignals, SIGINT));
+        static_cast<void>(::sigaddset(&cancellationSignals, SIGTERM));
+        return static_cast<::ctrl::boolean>(::pthread_sigmask(SIG_UNBLOCK, &cancellationSignals, nullptr) == 0);
     }
 
     /**
