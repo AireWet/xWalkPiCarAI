@@ -135,6 +135,7 @@
       "binaryDir": "${sourceParentDir}/build-rpi/cmake",
       "cacheVariables": {
         "BUILD_TESTING": "ON",
+        "XWALK_PICARX_CONFIG_FILE": "${sourceDir}/xWalkController/xWalkConfig/picar-x.conf",
         "XWALK_BUILD_RPI": "ON",
         "XWALK_ENABLE_PACKAGING": "ON"
       }

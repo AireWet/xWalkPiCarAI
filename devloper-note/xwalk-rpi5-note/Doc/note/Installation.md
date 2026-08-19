@@ -31,7 +31,7 @@ without a connected Robot HAT:
 ```sh
 cmake --fresh --preset rpi-release
 cmake --build --preset rpi-release --parallel
-ctest --test-dir build-rpi/cmake -N -L hardware
+ctest --test-dir ../build-rpi/cmake -N -L hardware
 ```
 
 The last command only lists hardware tests. Run hardware tests later on the
@@ -61,7 +61,7 @@ After the complete receiver, actuator, Raspberry Pi, and Robot HAT setup is
 connected and verified safe, run every registered submodule hardware test:
 
 ```sh
-ctest --test-dir xWalk-rpi5/xWalkHal/build-rpi --output-on-failure
+ctest --test-dir ../build-rpi/cmake -L hardware --output-on-failure
 ```
 
 Only hardware tests are registered in this build tree. Host and RPI flags are
@@ -84,7 +84,7 @@ without executing them:
 ```sh
 cmake --fresh --preset rpi-release
 cmake --build --preset rpi-release --parallel
-ctest --test-dir build-rpi/cmake -N -L hardware
+ctest --test-dir ../build-rpi/cmake -N -L hardware
 ```
 
 Stage the CLI, administrator configuration, profiles, media, provisioning tools,

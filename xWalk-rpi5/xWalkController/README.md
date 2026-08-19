@@ -76,38 +76,66 @@ The seven handler suites are also selectable directly with `ctest --preset sanit
 
 ## Raspberry Pi compilation and test discovery
 
-The repository provides a dry-run-first setup tool for required packages,
-interfaces, device groups, and exact-node permissions. After installing the
-RPi build, preview setup with an explicit board profile and GPIO controller:
-
-```bash
-/usr/lib/xwalk/setup-rpi.sh --dry-run --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
-```
-
-Review the plan and repeat it with `--apply`. Use `--camera usb` for a USB V4L2
-webcam. Installation includes the architecture-selected `xWalkLibrary` Vosk
-runtime at `/usr/lib/xwalk/libvosk.so` and its shared model under
-`/usr/share/xwalk/models/vosk`. Configure ALSA device names in the active
-`/var/lib/xwalk/picar-x.d/voice.conf` before running the command. The manifest
-loads resources, vehicle, hardware, voice, vision, connectivity, AI-feature,
-and one selected generic AI-provider file in declaration order.
-The SPI command additionally requires an enabled `/dev/spidev*` node configured
-with the target peripheral's mode, clock speed, and bits per word.
+Run the Raspberry Pi workflow from `xWalk-rpi5`. The `rpi-release` preset
+compiles the repository configuration path into the executable, so reconfigure
+with `--fresh` after changing that preset or path:
 
 ```bash
 cmake --fresh --preset rpi-release
 cmake --build --preset rpi-release --parallel
-ctest --test-dir build-rpi/cmake -N -L hardware
 ```
 
-Install the complete deployment layout after a successful build:
+List the hardware tests without executing them:
 
 ```bash
-DESTDIR="$PWD/build-host/deploy" cmake --install build-host/cmake
+ctest --test-dir ../build-rpi/cmake -N -L hardware
 ```
 
-See the [deployment guide](../../devloper-note/xwalk-rpi5-note/Doc/note/Deployment%20Guide.md) for the installed
-paths, package list, Robot HAT revision safeguards, and permission policy.
+Only after confirming the correct Raspberry Pi and Robot HAT are connected and
+safe, execute the hardware-labelled tests:
 
-The last command lists hardware tests without executing them. Do not execute those tests until the correct
-Raspberry Pi and Robot HAT are connected and the robot has been placed in a safe test configuration.
+```bash
+ctest --test-dir ../build-rpi/cmake -L hardware --output-on-failure
+```
+
+Bootstrap the installed configuration templates needed by host provisioning:
+
+```bash
+sudo cmake --install ../build-rpi/cmake
+```
+
+Apply the Robot HAT v4 host provisioning and user-local camera, Vosk, and
+Ollama selection. This updates the writable configuration below
+`/var/lib/xwalk`; it does not edit the tracked repository configuration:
+
+```bash
+../xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --profile robot_hat_v4 --runtime-user "$USER" --gpio-device /dev/gpiochip4 --i2c-device /dev/i2c-1 --spi-device /dev/spidev0.0 --camera csi --with-vosk --with-ollama --apply
+```
+
+When intentionally using the repository configuration as the compiled
+`rpi-release` default, copy the verified hardware identity into it with the
+focused provisioner:
+
+```bash
+../xWalkTool/shell-agent/deploy-tool/provision-hardware.sh --profile robot_hat_v4 --config "$PWD/xWalkController/xWalkConfig/picar-x.conf" --gpio-device /dev/gpiochip4 --i2c-device /dev/i2c-1 --spi-device /dev/spidev0.0
+```
+
+That command records machine-specific GPIO identity in a tracked file. Do not
+commit the resulting configuration unless the repository is intentionally
+dedicated to that exact Raspberry Pi. The safer general deployment default
+remains `/var/lib/xwalk/picar-x.conf`.
+
+The repository-built executable can then use its compiled configuration path
+without `--deployment-config`:
+
+```bash
+../build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control doctor
+../build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control --trace CTRL.024.enable doctor
+../build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control --help
+../build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control --diagnose --no-hardware
+```
+
+Doctor is a bounded hardware preflight that pulses only the configured MCU
+reset GPIO. The `--diagnose --no-hardware` command is the device-free check.
+See the [deployment guide](../../devloper-note/xwalk-rpi5-note/Doc/note/Deployment%20Guide.md) for installed
+paths, package selection, Robot HAT safeguards, and permission policy.
