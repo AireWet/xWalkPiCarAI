@@ -280,7 +280,7 @@ namespace xwalk::ctrl
         const ::ctrl::boolean sensorArgumentCountInvalid = static_cast<::ctrl::boolean>(arguments.size() != 2U);
         if (sensorArgumentCountInvalid)
         {
-            XWALK_CTRL_ERROR(XWALK_EXCEPTION, "sensor requires exactly one type");
+            XWALK_CTRL_ERROR(XWALK_INVAL, "sensor requires exactly one type");
         }
         if (arguments[1U] == "distance")
         {

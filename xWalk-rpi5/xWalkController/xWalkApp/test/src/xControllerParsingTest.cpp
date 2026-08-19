@@ -172,7 +172,7 @@ namespace
         EXPECT_THROW(xwalk::ctrl::XWALK_parseTurnRequest({"turn", "around"}), ctrl::invalidargument);
         EXPECT_THROW(xwalk::ctrl::XWALK_parseCameraRequest({"cam"}), ctrl::invalidargument);
         EXPECT_THROW(xwalk::ctrl::XWALK_parseCameraRequest({"cam", "roll", "--angle", "0"}), ctrl::invalidargument);
-        EXPECT_THROW(xwalk::ctrl::XWALK_parseSensorRequest({"sensor"}), ctrl::standardexception);
+        EXPECT_THROW(xwalk::ctrl::XWALK_parseSensorRequest({"sensor"}), ctrl::invalidargument);
         EXPECT_THROW(xwalk::ctrl::XWALK_parseSensorRequest({"sensor", "temperature"}), ctrl::invalidargument);
         EXPECT_THROW(xwalk::ctrl::XWALK_parseSelfDriveRequest({"self-drive"}), ctrl::invalidargument);
         EXPECT_THROW(xwalk::ctrl::XWALK_parseSoundRequest({"sound"}), ctrl::invalidargument);

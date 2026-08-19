@@ -193,12 +193,17 @@ namespace xwalk::agent
      */
     void XWalkSelfDrive::start()
     {
-        agent::mutexlock lock(stateMutex);
         const agent::boolean workerAlreadyRunning = static_cast<agent::boolean>(runningValue.load());
         if (workerAlreadyRunning)
         {
             XWALK_RPIAGENT_ERROR(XWALK_LOGIC, "Self-drive worker is already running");
         }
+        const agent::boolean completedWorkerJoinable = static_cast<agent::boolean>(worker.joinable());
+        if (completedWorkerJoinable)
+        {
+            worker.join();
+        }
+        agent::mutexlock lock(stateMutex);
         actionQueue.clear();
         statusValue = XWalkSelfDriveStatus::Standby;
         lastStatusValue = XWalkSelfDriveStatus::Standby;

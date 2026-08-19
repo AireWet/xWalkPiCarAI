@@ -407,8 +407,10 @@ namespace
         selfDrive.start();
         assert(selfDrive.addAction("forward"));
         const agent::boolean workerCompleted = selfDrive.waitActionsDone();
-        selfDrive.stop();
         backend.failDelayWhileMoving = false;
+        selfDrive.start();
+        assert(selfDrive.running());
+        selfDrive.stop();
         assert(!workerCompleted);
         assert(picarx.emergencyStopRequested());
         assert(motors.left().speed() == 0.0);
