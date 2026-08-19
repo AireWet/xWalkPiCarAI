@@ -222,10 +222,13 @@ if(XWALK_BOOT_BUILD_HOST_TESTS)
     set_tests_properties(xWalkBootHostTest PROPERTIES LABELS "host")
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         add_executable(xWalkDoctorLinuxHostTest
+            hardware/src/xAgent_Rpi5CarDoctorAssessment.cpp
             hardware/src/xAgent_Rpi5CarDoctorLinuxExecutable.cpp
-            hardware/test/src/xAgent_Rpi5CarDoctorLinuxTest.cpp)
+            hardware/test/src/xAgent_Rpi5CarDoctorLinuxTest.cpp
+            hardware/test/src/xAgent_Rpi5CarDoctorLinuxTestSupport.cpp)
         target_include_directories(xWalkDoctorLinuxHostTest PRIVATE
-            ${CMAKE_CURRENT_SOURCE_DIR}/hardware/include)
+            ${CMAKE_CURRENT_SOURCE_DIR}/hardware/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/hardware/test/include)
         target_link_libraries(xWalkDoctorLinuxHostTest PRIVATE xWalkLibraryCommon)
         target_compile_features(xWalkDoctorLinuxHostTest PRIVATE cxx_std_17)
         if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -255,6 +258,7 @@ if(XWALK_BOOT_BUILD_RPI_BACKEND)
         message(FATAL_ERROR "xWalkBoot Raspberry Pi dependencies are incomplete")
     endif()
     add_library(xWalkBootRpi STATIC
+        hardware/src/xAgent_Rpi5CarDoctorAssessment.cpp
         hardware/src/xAgent_Rpi5CarDoctorLinux.cpp
         hardware/src/xAgent_Rpi5CarDoctorLinuxExecutable.cpp
         hardware/src/xAgent_Rpi5CarBootRpi.cpp

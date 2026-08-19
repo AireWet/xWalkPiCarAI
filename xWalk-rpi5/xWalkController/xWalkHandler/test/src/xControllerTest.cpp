@@ -400,7 +400,8 @@ namespace
         xwalk::agent::XWalkSpiTransfer spiTransfer(spi);
         xwalk::ctrl::XWalkController spiCli(spiTransfer, &backend, callbacks);
         const ctrl::stringvector passingDoctorReport{"=== PiCar-X Bounded Hardware Preflight ===",
-                                                     "[PASS] Configuration: ready"};
+                                                     "[PASS] Configuration: ready",
+                                                     "[WARN] Optional advisory: incomplete"};
         xwalk::ctrl::XWalkController doctorCli(passingDoctorReport, &backend, callbacks);
         const ctrl::stringvector failingDoctorReport{"[FAIL] I2C: unavailable"};
         xwalk::ctrl::XWalkController failingDoctorCli(failingDoctorReport, &backend, callbacks);
@@ -434,8 +435,8 @@ namespace
             assert(backend.outputLines.back().find("  " + action) != ctrl::string::npos);
         }
         assert(xwalk::ctrl::XWALK_runControllerCommand(doctorCli, {"doctor"}) == 0);
-        assert(backend.outputLines.at(backend.outputLines.size() - 2U) == "=== PiCar-X Bounded Hardware Preflight ===");
-        assert(backend.outputLines.back() == "[PASS] Configuration: ready");
+        assert(backend.outputLines.at(backend.outputLines.size() - 3U) == "=== PiCar-X Bounded Hardware Preflight ===");
+        assert(backend.outputLines.back() == "[WARN] Optional advisory: incomplete");
 
         assert(xwalk::ctrl::XWALK_runControllerCommand(failingDoctorCli, {"doctor"}) == 2);
         assert(backend.outputLines.back() == "[FAIL] I2C: unavailable");

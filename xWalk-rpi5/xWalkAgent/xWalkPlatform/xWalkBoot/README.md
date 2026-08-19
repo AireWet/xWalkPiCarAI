@@ -58,6 +58,13 @@ pulses only `hardware_mcu_reset_pin` low for 10 ms and then high, waits
 `hardware_mcu_reset_settle_ms`, and may read firmware and ADC battery data. It
 never constructs or moves an actuator, performs an SPI transfer, enables audio,
 captures media, or contacts model services.
+An explicit provisioned v4 profile passes operational verification only when no
+supported v5 UUID conflicts, the exact GPIO name and label agree, reset
+completes, the MCU answers at address `0x14` or `0x15`, firmware is read, and a
+battery sample succeeds. This is operational agreement, not an undocumented
+v4 electrical identifier. V5 and automatic selection continue to require the
+supported Device Tree UUID. Safety passes only when the tracked reset completes
+and no actuator, speaker, media-capture, SPI-transfer, or model operation occurs.
 ComputerVision mode also bypasses the base graph and claims only the configured
 camera stream. It does not inspect or reset the Robot HAT or claim motors, GPIO,
 I2C, SPI, audio, speech, model, or network services.
@@ -200,6 +207,8 @@ core/include/     Shared boot lifecycle and service types
 core/src/         Shared boot lifecycle implementation
 hardware/include/ Raspberry Pi boot contract
 hardware/src/     One Raspberry Pi composition source per boot mode plus shared vehicle wiring
+hardware/test/include/ Host-only Doctor test-support declarations
+hardware/test/src/ Host-only Doctor assessment and executable-discovery coverage
 stub/include/     Device-free host-stub contract
 stub/src/         Device-free host-stub implementation
 stub/test/include/ Host-only test fixtures and callback declarations
@@ -216,6 +225,8 @@ The Raspberry Pi implementation files have one composition responsibility:
 | `BootRpiVehicleMode.cpp` | Dispatch after the common PiCar-X graph exists |
 | `BootRpiBase.cpp` | Base PiCar-X service |
 | `BootRpiDoctor.cpp` | Bounded MCU-reset deployment preflight |
+| `DoctorAssessment.cpp` | Host-testable Robot HAT evidence and safety decisions |
+| `DoctorLinux.cpp` | Linux metadata, reset, firmware, battery, and prerequisite inspection |
 | `BootRpiSpiTransfer.cpp` | Isolated SPI service |
 | `BootRpiServoZeroing.cpp` | Twelve-channel servo-zeroing graph |
 | `BootRpiComputerVision.cpp` | Camera-only interactive computer vision |

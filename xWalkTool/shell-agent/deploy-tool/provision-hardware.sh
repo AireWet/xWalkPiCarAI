@@ -51,6 +51,13 @@ if ! command -v gpiodetect >/dev/null 2>&1; then
     exit 2
 fi
 
+config_owner="$(stat -c '%u' "$config_file")"
+current_user="$(id -u)"
+if [ "$current_user" -ne 0 ] && [ "$current_user" -ne "$config_owner" ]; then
+    echo "Configuration replacement must run as root or the file owner: $config_file" >&2
+    exit 2
+fi
+
 test_root="${XWALK_PROVISION_TEST_ROOT-}"
 root_path() {
     printf '%s%s\n' "$test_root" "$1"
@@ -142,6 +149,11 @@ END {
     if (!i2c_seen && i2c != "") print "hardware_i2c_device = " i2c
     if (!spi_seen && spi != "") print "hardware_spi_device = " spi
 }' "$config_file" > "$temporary_file"
+if [ "$current_user" -eq 0 ]; then
+    chown --reference="$config_file" "$temporary_file"
+else
+    chgrp --reference="$config_file" "$temporary_file"
+fi
 chmod --reference="$config_file" "$temporary_file"
 mv "$temporary_file" "$config_file"
 trap - EXIT

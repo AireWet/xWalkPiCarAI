@@ -1,9 +1,9 @@
 /******************************************************************************
  * @file        xAgent_Rpi5CarDoctorLinuxTest.cpp
- * @brief       Verifies host-safe Linux Doctor executable discovery.
+ * @brief       Verifies host-safe Linux Doctor decisions and executable discovery.
  *
  * @details
- * Uses one temporary executable to verify absolute and user-local PATH lookup
+ * Exercises Robot HAT and bounded-operation assessments plus executable lookup
  * without opening any hardware device.
  *
  * @project     xWalk Firmware
@@ -19,24 +19,12 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarDoctorLinux.h"
+#include "xAgent_Rpi5CarDoctorLinuxTestSupport.h"
 
 #include "xHal_Rpi5CarLinuxHeaders.h"
 
 #include <cstdlib>
-#include <iostream>
 #include <limits.h>
-
-namespace xwalk::agent::test::doctor
-{
-
-    /** @brief Returns a failing test status after writing one diagnostic. */
-    int fail(const char* message)
-    {
-        std::cerr << message << '\n';
-        return 1;
-    }
-
-} /* namespace xwalk::agent::test::doctor */
 
 /**
  * @brief Verifies absolute lookup, PATH lookup, and ignored empty PATH entries.
@@ -44,6 +32,116 @@ namespace xwalk::agent::test::doctor
  */
 int main()
 {
+    using xwalk::agent::XWalkDoctorAssessment;
+    using xwalk::agent::XWalkDoctorOperationState;
+    using xwalk::agent::XWalkDoctorResultStatus;
+    using xwalk::agent::XWalkDoctorRobotHatEvidence;
+    using xwalk::agent::test::doctor::requireAssessment;
+
+    const XWalkDoctorRobotHatEvidence verifiedV4{false, true, true, true, true, true, 0x14U};
+    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", verifiedV4),
+                          XWalkDoctorResultStatus::Pass,
+                          "MCU response at 0x14",
+                          "complete Robot HAT v4 evidence did not pass") != 0)
+    {
+        return 1;
+    }
+    XWalkDoctorRobotHatEvidence incompleteV4 = verifiedV4;
+    incompleteV4.gpioIdentityMatched = false;
+    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", incompleteV4),
+                          XWalkDoctorResultStatus::Warn,
+                          "evidence is incomplete",
+                          "mismatched v4 GPIO identity was not incomplete") != 0)
+    {
+        return 1;
+    }
+    incompleteV4 = verifiedV4;
+    incompleteV4.mcuResponded = false;
+    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", incompleteV4),
+                          XWalkDoctorResultStatus::Warn,
+                          "evidence is incomplete",
+                          "missing v4 MCU response was not incomplete") != 0)
+    {
+        return 1;
+    }
+    incompleteV4 = verifiedV4;
+    incompleteV4.firmwareRead = false;
+    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", incompleteV4),
+                          XWalkDoctorResultStatus::Warn,
+                          "evidence is incomplete",
+                          "v4 firmware-read failure was not incomplete") != 0)
+    {
+        return 1;
+    }
+    incompleteV4 = verifiedV4;
+    incompleteV4.batterySampleRead = false;
+    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", incompleteV4),
+                          XWalkDoctorResultStatus::Warn,
+                          "evidence is incomplete",
+                          "v4 battery-read failure was not incomplete") != 0)
+    {
+        return 1;
+    }
+    XWalkDoctorRobotHatEvidence conflictingV4 = verifiedV4;
+    conflictingV4.v5UuidDetected = true;
+    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", conflictingV4),
+                          XWalkDoctorResultStatus::Fail,
+                          "conflicts with detected Robot HAT v5 UUID",
+                          "conflicting Robot HAT v5 UUID did not fail v4 verification") != 0)
+    {
+        return 1;
+    }
+    const XWalkDoctorRobotHatEvidence verifiedV5{true, false, false, false, false, false, 0U};
+    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("robot_hat_v5", verifiedV5),
+                          XWalkDoctorResultStatus::Pass,
+                          "9daeea78-0000-076e-0032-582369ac3e02",
+                          "supported Robot HAT v5 UUID did not pass") != 0)
+    {
+        return 1;
+    }
+    const XWalkDoctorRobotHatEvidence missingV5{};
+    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("robot_hat_v5", missingV5),
+                          XWalkDoctorResultStatus::Fail,
+                          "requires Device Tree UUID",
+                          "Robot HAT v5 without its UUID did not fail") != 0)
+    {
+        return 1;
+    }
+    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("auto", missingV5),
+                          XWalkDoctorResultStatus::Fail,
+                          "cannot select Robot HAT v4",
+                          "automatic selection inferred Robot HAT v4") != 0)
+    {
+        return 1;
+    }
+
+    const XWalkDoctorOperationState boundedState{true, true, false, false, false, false, false};
+    if (requireAssessment(XWalkDoctorAssessment::assessSafety(boundedState),
+                          XWalkDoctorResultStatus::Pass,
+                          "MCU reset completed",
+                          "successful bounded reset did not pass Safety") != 0)
+    {
+        return 1;
+    }
+    XWalkDoctorOperationState failedResetState = boundedState;
+    failedResetState.resetCompleted = false;
+    if (requireAssessment(XWalkDoctorAssessment::assessSafety(failedResetState),
+                          XWalkDoctorResultStatus::Fail,
+                          "reset did not finish",
+                          "failed reset did not fail Safety") != 0)
+    {
+        return 1;
+    }
+    XWalkDoctorOperationState violatedState = boundedState;
+    violatedState.spiTransferActivated = true;
+    if (requireAssessment(XWalkDoctorAssessment::assessSafety(violatedState),
+                          XWalkDoctorResultStatus::Fail,
+                          "invariant violated",
+                          "prohibited Doctor operation did not fail Safety") != 0)
+    {
+        return 1;
+    }
+
     char directoryTemplate[] = "/tmp/xwalk-doctor-path.XXXXXX";
     char* const directory = ::mkdtemp(directoryTemplate);
     if (directory == nullptr)

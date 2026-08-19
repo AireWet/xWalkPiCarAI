@@ -28,7 +28,7 @@
  * Includes
  ******************************************************************************/
 
-#include "xHal_Rpi5CarCommon.h"
+#include "xAgent_Rpi5CarDoctorAssessment.h"
 
 /******************************************************************************
  * Namespace declarations
@@ -65,8 +65,10 @@ namespace xwalk::agent
                                      agent::boolean passed,
                                      agent::stringview name,
                                      agent::stringview detail);
-            /** @brief Appends one non-failing advisory result. */
-            static void appendWarning(agent::stringvector& lines, agent::stringview name, agent::stringview detail);
+            /** @brief Appends one typed Doctor assessment result. */
+            static void appendAssessment(agent::stringvector& lines,
+                                         agent::stringview name,
+                                         const XWalkDoctorAssessmentResult& assessment);
             /** @brief Reports whether one regular path is readable. */
             static agent::boolean readablePath(agent::stringview path);
             /** @brief Reports whether one path names an executable regular file. */
@@ -80,15 +82,15 @@ namespace xwalk::agent
             /** @brief Parses one unsigned configuration value or returns its fallback. */
             static agent::uint32 configurationUnsigned(agent::stringview value, agent::uint32 fallback);
             /** @brief Inspects GPIO identity and performs the bounded MCU reset pulse. */
-            static agent::boolean inspectAndResetGpio(agent::stringvector& lines,
-                                                      agent::stringview device,
-                                                      agent::stringview expectedName,
-                                                      agent::stringview expectedLabel,
-                                                      agent::uint32 minimumLineCount,
-                                                      agent::stringview resetPin,
-                                                      agent::uint32 resetSettleMilliseconds);
+            static XWalkDoctorGpioEvidence inspectAndResetGpio(agent::stringvector& lines,
+                                                               agent::stringview device,
+                                                               agent::stringview expectedName,
+                                                               agent::stringview expectedLabel,
+                                                               agent::uint32 minimumLineCount,
+                                                               agent::stringview resetPin,
+                                                               agent::uint32 resetSettleMilliseconds);
             /** @brief Reads Robot HAT firmware and battery data without constructing actuators. */
-            static void inspectI2c(agent::stringvector& lines, agent::stringview device);
+            static XWalkDoctorI2cEvidence inspectI2c(agent::stringvector& lines, agent::stringview device);
             /** @brief Checks one SPI device by opening and closing it without transferring data. */
             static void inspectSpi(agent::stringvector& lines, agent::stringview device);
             /** @brief Checks passive camera, audio, model, executable, and library prerequisites. */

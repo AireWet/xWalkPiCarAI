@@ -57,7 +57,8 @@ xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --profile robot_hat_v5 --runtime-
 
 The hardware provisioner validates the detected HAT identity and GPIO metadata,
 then atomically updates an existing writable configuration while preserving its
-permissions:
+owner, group, and mode. Root may preserve any existing ownership; a non-root
+caller must own the configuration and retain permission to use its group:
 
 ```bash
 xWalkTool/shell-agent/deploy-tool/provision-hardware.sh --profile robot_hat_v5 --config /var/lib/xwalk/picar-x.conf --gpio-device /dev/gpiochip0 --i2c-device /dev/i2c-1 --spi-device /dev/spidev0.0
@@ -66,6 +67,9 @@ xWalkTool/shell-agent/deploy-tool/provision-hardware.sh --profile robot_hat_v5 -
 After provisioning, run `--diagnose --no-hardware`, then the bounded `doctor`
 preflight before any separately authorized calibration or actuator test. Doctor
 pulses only the configured MCU reset GPIO and reports that activation explicitly.
+For an explicit v4 profile, Doctor verifies the recorded GPIO identity and
+successful MCU firmware and battery transactions without claiming that an
+absent v5 UUID alone identifies v4.
 
 ## Install the validated user-local runtime
 

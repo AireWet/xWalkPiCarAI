@@ -108,6 +108,12 @@ if grep -q '\[FAIL\] required configuration' "$fixture_root/check.log"; then
 fi
 
 cp "$template_config" "$fixture_root/runtime.conf"
+chmod 0640 "$fixture_root/runtime.conf"
+if [ "$(id -u)" -eq 0 ]; then
+    chown 65534:65534 "$fixture_root/runtime.conf"
+fi
+runtime_owner_before="$(stat -c '%u:%g' "$fixture_root/runtime.conf")"
+runtime_mode_before="$(stat -c '%a' "$fixture_root/runtime.conf")"
 printf '#!/usr/bin/env bash\nprintf "gpiochip4 [pinctrl-rp1] (54 lines)\\n"\n' \
     > "$fixture_root/bin/gpiodetect"
 chmod 0755 "$fixture_root/bin/gpiodetect"
@@ -122,5 +128,15 @@ grep -q '^hardware_gpio_chip_name = gpiochip4$' "$fixture_root/runtime.conf"
 grep -q '^hardware_gpio_chip_label = pinctrl-rp1$' "$fixture_root/runtime.conf"
 grep -q '^hardware_i2c_device = /dev/i2c-1$' "$fixture_root/runtime.conf"
 grep -q '^hardware_spi_device = /dev/spidev0.0$' "$fixture_root/runtime.conf"
+runtime_owner_after="$(stat -c '%u:%g' "$fixture_root/runtime.conf")"
+runtime_mode_after="$(stat -c '%a' "$fixture_root/runtime.conf")"
+if [ "$runtime_owner_after" != "$runtime_owner_before" ]; then
+    echo "Hardware provisioning did not preserve configuration ownership." >&2
+    exit 1
+fi
+if [ "$runtime_mode_after" != "$runtime_mode_before" ]; then
+    echo "Hardware provisioning did not preserve configuration mode." >&2
+    exit 1
+fi
 
 echo "Provisioning host tests passed."

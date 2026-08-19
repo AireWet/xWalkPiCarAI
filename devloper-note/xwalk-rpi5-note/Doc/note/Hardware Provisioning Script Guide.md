@@ -65,9 +65,10 @@ hardware_spi_device
 An omitted I2C or SPI option does not guess a device. Existing matching values are blanked, or no new key is
 added when the key is absent. Other configuration lines are preserved.
 
-The update is assembled in a temporary file beside the selected configuration, preserves the original file
-mode, and replaces the selected file with `mv` after successful generation. A temporary file is removed on
-an ordinary trapped exit.
+The update is assembled in a temporary file beside the selected configuration, preserves the original owner,
+group, and mode, and replaces the selected file with `mv` after successful generation. Root may preserve any
+existing ownership. A non-root caller must own the configuration and must be permitted to retain its group.
+A temporary file is removed on an ordinary trapped exit, including metadata-preservation failure.
 
 ## Validate the result
 
@@ -84,6 +85,11 @@ sed -n '/^hardware_/p' /var/lib/xwalk/picar-x.conf
 ```
 
 The script's successful exit confirms configuration provisioning, not physical motor or servo safety.
+For an explicit v4 profile, Doctor combines the absence of a conflicting supported v5 UUID with the exact
+provisioned GPIO identity, completed reset, supported MCU response, firmware read, and battery sample. This is
+operational verification and does not claim that an absent v5 UUID alone identifies v4. V5 and automatic
+selection continue to require the supported Device Tree UUID. A successful Safety result records that only the
+bounded MCU reset completed and no actuator, speaker, media capture, SPI transfer, or model endpoint was activated.
 
 ## Exit behavior
 
@@ -99,3 +105,5 @@ The repository test uses a temporary simulated target and does not access physic
 bash -n xWalkTool/shell-agent/deploy-tool/provision-hardware.sh
 bash xWalkTool/shell-agent/deploy-tool/test/setup-rpi-test.sh
 ```
+
+Hardware-labelled tests remain opt-in and require an explicitly confirmed safe Raspberry Pi and Robot HAT setup.

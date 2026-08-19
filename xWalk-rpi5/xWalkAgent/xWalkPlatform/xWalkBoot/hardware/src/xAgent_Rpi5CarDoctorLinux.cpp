@@ -87,14 +87,25 @@ namespace xwalk::agent
     }
 
     /**
-     * @brief Appends one non-failing advisory result.
+     * @brief Appends one typed Doctor assessment result.
      * @param[in,out] lines Report receiving one line.
      * @param[in] name Stable check name.
-     * @param[in] detail Human-readable advisory detail.
+     * @param[in] assessment Typed status and evidence detail.
      */
-    void XWalkDoctorLinux::appendWarning(agent::stringvector& lines, agent::stringview name, agent::stringview detail)
+    void XWalkDoctorLinux::appendAssessment(agent::stringvector& lines,
+                                            agent::stringview name,
+                                            const XWalkDoctorAssessmentResult& assessment)
     {
-        lines.emplace_back(agent::string("[WARN] ") + agent::string(name) + ": " + agent::string(detail));
+        agent::string prefix("[WARN] ");
+        if (assessment.status == XWalkDoctorResultStatus::Pass)
+        {
+            prefix = "[PASS] ";
+        }
+        else if (assessment.status == XWalkDoctorResultStatus::Fail)
+        {
+            prefix = "[FAIL] ";
+        }
+        lines.emplace_back(prefix + agent::string(name) + ": " + assessment.detail);
     }
 
     /**
@@ -202,22 +213,23 @@ namespace xwalk::agent
      * @param[in] minimumLineCount Configured minimum number of GPIO lines.
      * @param[in] resetPin Configured Robot HAT reset-pin name.
      * @param[in] resetSettleMilliseconds Delay after the line is driven high.
-     * @return `true` only when identity validation and the complete reset pulse succeed.
+     * @return Collected GPIO identity and reset-operation evidence.
      */
-    agent::boolean XWalkDoctorLinux::inspectAndResetGpio(agent::stringvector& lines,
-                                                         agent::stringview device,
-                                                         agent::stringview expectedName,
-                                                         agent::stringview expectedLabel,
-                                                         agent::uint32 minimumLineCount,
-                                                         agent::stringview resetPin,
-                                                         agent::uint32 resetSettleMilliseconds)
+    XWalkDoctorGpioEvidence XWalkDoctorLinux::inspectAndResetGpio(agent::stringvector& lines,
+                                                                  agent::stringview device,
+                                                                  agent::stringview expectedName,
+                                                                  agent::stringview expectedLabel,
+                                                                  agent::uint32 minimumLineCount,
+                                                                  agent::stringview resetPin,
+                                                                  agent::uint32 resetSettleMilliseconds)
     {
+        XWalkDoctorGpioEvidence evidence{};
         const agent::int32 descriptor = ::open(agent::string(device).c_str(), O_RDONLY | O_CLOEXEC);
         if (descriptor < 0)
         {
             appendResult(lines, false, "GPIO", agent::string(device) + " is unavailable");
             appendResult(lines, false, "MCU reset", "GPIO chip is unavailable");
-            return false;
+            return evidence;
         }
         gpiochip_info information{};
         const agent::boolean inspected = ::ioctl(descriptor, GPIO_GET_CHIPINFO_IOCTL, &information) == 0;
@@ -226,11 +238,12 @@ namespace xwalk::agent
             appendResult(lines, false, "GPIO", "chip metadata could not be read");
             appendResult(lines, false, "MCU reset", "GPIO chip metadata is unavailable");
             static_cast<void>(::close(descriptor));
-            return false;
+            return evidence;
         }
         const agent::string name(information.name);
         const agent::string label(information.label);
         const agent::boolean countPassed = information.lines >= minimumLineCount;
+        evidence.lineCountMatched = countPassed;
         appendResult(lines,
                      countPassed,
                      "GPIO chip",
@@ -242,9 +255,10 @@ namespace xwalk::agent
             appendResult(lines, false, "GPIO identity", "run provisioning to record chip name and label");
             appendResult(lines, false, "MCU reset", "GPIO identity is not configured");
             static_cast<void>(::close(descriptor));
-            return false;
+            return evidence;
         }
         const agent::boolean matches = (name == expectedName) && (label == expectedLabel);
+        evidence.identityMatched = matches;
         appendResult(lines,
                      matches,
                      "GPIO identity",
@@ -253,7 +267,7 @@ namespace xwalk::agent
         {
             appendResult(lines, false, "MCU reset", "GPIO chip validation failed");
             static_cast<void>(::close(descriptor));
-            return false;
+            return evidence;
         }
 
         hal::uint8 resetLine{};
@@ -261,7 +275,7 @@ namespace xwalk::agent
         {
             appendResult(lines, false, "MCU reset", agent::string(resetPin) + " is not a supported Robot HAT pin");
             static_cast<void>(::close(descriptor));
-            return false;
+            return evidence;
         }
         gpiohandle_request request{};
         request.lineoffsets[0U] = resetLine;
@@ -275,8 +289,9 @@ namespace xwalk::agent
         if (!lineRequested)
         {
             appendResult(lines, false, "MCU reset", "configured reset GPIO could not be requested");
-            return false;
+            return evidence;
         }
+        evidence.resetRequested = true;
         hal::common::sleepMilliseconds(10U);
         gpiohandle_data highLevel{};
         highLevel.values[0U] = 1U;
@@ -285,32 +300,36 @@ namespace xwalk::agent
         if (!drivenHigh)
         {
             appendResult(lines, false, "MCU reset", "reset GPIO could not be driven high");
-            return false;
+            return evidence;
         }
         hal::common::sleepMilliseconds(resetSettleMilliseconds);
+        evidence.resetCompleted = true;
         appendResult(lines,
                      true,
                      "MCU reset",
                      agent::string(resetPin) + " driven low for 10 ms, then high; settled for " +
                          hal::common::uint32ToString(resetSettleMilliseconds) + " ms");
-        return true;
+        return evidence;
     }
 
     /**
      * @brief Reads Robot HAT firmware and battery data without constructing actuators.
      * @param[in,out] lines Report receiving I2C results.
      * @param[in] device Linux I2C character-device path.
+     * @return Collected MCU response, firmware, address, and battery evidence.
      */
-    void XWalkDoctorLinux::inspectI2c(agent::stringvector& lines, agent::stringview device)
+    XWalkDoctorI2cEvidence XWalkDoctorLinux::inspectI2c(agent::stringvector& lines, agent::stringview device)
     {
+        XWalkDoctorI2cEvidence evidence{};
         const agent::int32 descriptor = ::open(agent::string(device).c_str(), O_RDWR | O_CLOEXEC);
         if (descriptor < 0)
         {
             appendResult(lines, false, "I2C", agent::string(device) + " is unavailable");
             appendResult(lines, false, "Robot HAT firmware", "not read");
             appendResult(lines, false, "Battery", "not read");
-            return;
+            return evidence;
         }
+        evidence.deviceOpened = true;
         appendResult(lines, true, "I2C", agent::string(device) + " opened");
         const agent::fixedarray<agent::uint8, 2U> addresses{0x14U, 0x15U};
         agent::uint8 selectedAddress{};
@@ -337,8 +356,11 @@ namespace xwalk::agent
             appendResult(lines, false, "Robot HAT firmware", "no response at 0x14 or 0x15");
             appendResult(lines, false, "Battery", "not read because no Robot HAT responded");
             static_cast<void>(::close(descriptor));
-            return;
+            return evidence;
         }
+        evidence.mcuResponded = true;
+        evidence.firmwareRead = true;
+        evidence.mcuAddress = selectedAddress;
         const agent::string firmwareText = hal::common::uint32ToString(firmware[0U]) + "." +
                                            hal::common::uint32ToString(firmware[1U]) + "." +
                                            hal::common::uint32ToString(firmware[2U]);
@@ -354,6 +376,7 @@ namespace xwalk::agent
                                                              static_cast<ssize_t>(adcBytes.size()));
         if (sampleRead)
         {
+            evidence.batterySampleRead = true;
             const agent::uint16 count =
                 static_cast<agent::uint16>((static_cast<agent::uint16>(adcBytes[0U]) << 8U) | adcBytes[1U]);
             const agent::float64 countValue = static_cast<agent::float64>(count);
@@ -367,6 +390,7 @@ namespace xwalk::agent
             appendResult(lines, false, "Battery", "ADC A4 sample failed");
         }
         static_cast<void>(::close(descriptor));
+        return evidence;
     }
 
     /**
@@ -571,16 +595,6 @@ namespace xwalk::agent
         {
             profileDetail = "unsupported hardware_board value";
         }
-        if (v5Detected)
-        {
-            appendResult(lines, true, "Robot HAT discovery", "supported Robot HAT v5 UUID detected");
-        }
-        else
-        {
-            appendWarning(lines,
-                          "Robot HAT discovery",
-                          "supported v5 UUID not detected; this does not prove that v4 is connected");
-        }
         appendResult(lines, profileValid, "Robot HAT profile", profileDetail);
 
         const agent::string gpioDevice =
@@ -589,7 +603,7 @@ namespace xwalk::agent
             configurationUnsigned(configurationValue(path, "hardware_gpio_minimum_line_count", "28"), 28U);
         const agent::uint32 resetSettleMilliseconds =
             configurationUnsigned(configurationValue(path, "hardware_mcu_reset_settle_ms", "200"), 200U);
-        const agent::boolean resetCompleted =
+        const XWalkDoctorGpioEvidence gpioEvidence =
             inspectAndResetGpio(lines,
                                 gpioDevice,
                                 configurationValue(path, "hardware_gpio_chip_name", ""),
@@ -599,9 +613,10 @@ namespace xwalk::agent
                                 resetSettleMilliseconds);
         const agent::string i2cDevice =
             configurationValue(path, "hardware_i2c_device", XHAL_RPI5CAR_I2C_DEFAULT_DEVICE);
-        if (resetCompleted)
+        XWalkDoctorI2cEvidence i2cEvidence{};
+        if (gpioEvidence.resetCompleted)
         {
-            inspectI2c(lines, i2cDevice);
+            i2cEvidence = inspectI2c(lines, i2cDevice);
         }
         else
         {
@@ -609,15 +624,20 @@ namespace xwalk::agent
             appendResult(lines, false, "Robot HAT firmware", "not read");
             appendResult(lines, false, "Battery", "not read");
         }
+        const XWalkDoctorRobotHatEvidence robotHatEvidence{v5Detected,
+                                                           gpioEvidence.identityMatched,
+                                                           gpioEvidence.resetCompleted,
+                                                           i2cEvidence.mcuResponded,
+                                                           i2cEvidence.firmwareRead,
+                                                           i2cEvidence.batterySampleRead,
+                                                           i2cEvidence.mcuAddress};
+        appendAssessment(
+            lines, "Robot HAT verification", XWalkDoctorAssessment::assessRobotHat(profile, robotHatEvidence));
         inspectSpi(lines, configurationValue(path, "hardware_spi_device", XHAL_RPI5CAR_SPI_DEFAULT_DEVICE));
         inspectOptionalServices(lines, path);
-        appendWarning(lines,
-                      "Safety",
-                      resetCompleted
-                          ? "the configured MCU reset GPIO was activated low for 10 ms and then high; no motor, "
-                            "servo, speaker, camera, microphone, SPI transfer, or model endpoint was activated"
-                          : "the configured MCU reset GPIO was the only output attempted; no motor, servo, speaker, "
-                            "camera, microphone, SPI transfer, or model endpoint was activated");
+        const XWalkDoctorOperationState operationState{
+            gpioEvidence.resetRequested, gpioEvidence.resetCompleted, false, false, false, false, false};
+        appendAssessment(lines, "Safety", XWalkDoctorAssessment::assessSafety(operationState));
         return lines;
     }
 

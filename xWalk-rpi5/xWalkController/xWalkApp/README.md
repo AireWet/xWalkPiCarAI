@@ -108,6 +108,13 @@ It validates the configured GPIO identity, drives only `hardware_mcu_reset_pin`
 low for 10 ms and then high, and waits the configured settle interval before
 I2C inspection. It does not construct PWM, servo, or motor objects, transfer
 SPI payloads, enable audio, capture media, or contact Ollama.
+For an explicitly provisioned v4 profile, Doctor reports Robot HAT verification
+PASS only when the supported v5 UUID is absent, the exact GPIO identity matches,
+reset completes, the MCU answers at `0x14` or `0x15`, firmware is read, and the
+battery ADC returns a sample. This operational evidence does not turn absence
+of the v5 UUID into automatic v4 identification. V5 and `auto` still require
+the supported v5 UUID. Safety reports PASS only after the explicit
+MCU-reset-only operation invariant succeeds.
 Checks prefixed `[FAIL]` produce status 2; `[WARN]` is advisory. Enabling
 `CTRL.024` duplicates the report through the trace backend for trace capture.
 
