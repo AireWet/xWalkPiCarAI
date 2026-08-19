@@ -10,14 +10,16 @@ usage() {
 }
 
 script_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
+# shellcheck source=rpi-defaults.conf
+. "$script_directory/rpi-defaults.conf"
 workspace_root="$(CDPATH='' cd -- "$script_directory/../../.." && pwd)"
 build_directory="$workspace_root/build-rpi"
-runtime_user="$(id -un)"
-profile="robot_hat_v4"
-gpio_device="/dev/gpiochip4"
-i2c_device="/dev/i2c-1"
-spi_device="/dev/spidev0.0"
-camera="csi"
+runtime_user="$XWALK_DEFAULT_RPI_RUNTIME_USER"
+profile="$XWALK_DEFAULT_RPI_PROFILE"
+gpio_device="$XWALK_DEFAULT_RPI_GPIO_DEVICE"
+i2c_device="$XWALK_DEFAULT_RPI_I2C_DEVICE"
+spi_device="$XWALK_DEFAULT_RPI_SPI_DEVICE"
+camera="$XWALK_DEFAULT_RPI_CAMERA"
 ollama_manifest=""
 initialize_only="false"
 
@@ -65,8 +67,12 @@ esac
 
 runtime_home="$(getent passwd "$runtime_user" | awk -F: 'NR == 1 { print $6 }')"
 if [ -z "$runtime_home" ] || [ ! -d "$runtime_home" ]; then
-    echo "Unable to resolve the runtime home for $runtime_user." >&2
-    exit 2
+    if [ "$initialize_only" = "true" ]; then
+        runtime_home="/home/$runtime_user"
+    else
+        echo "Unable to resolve the runtime home for $runtime_user." >&2
+        exit 2
+    fi
 fi
 if [ "$runtime_user" = "$(id -un)" ] && [ -n "${HOME-}" ] && [ "$HOME" != "$runtime_home" ]; then
     echo "HOME does not match the account database for $runtime_user." >&2
@@ -165,7 +171,7 @@ set -eu
 
 launcher_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 workspace_root="$(CDPATH='' cd -- "$launcher_directory/.." && pwd)"
-runtime_user="$(id -un)"
+runtime_user="@XWALK_RUNTIME_USER@"
 runtime_home="$(getent passwd "$runtime_user" | awk -F: 'NR == 1 { print $6 }')"
 if [ -z "$runtime_home" ] || [ ! -d "$runtime_home" ]; then
     echo "Unable to resolve the runtime home for $runtime_user." >&2
@@ -179,6 +185,7 @@ executable="$launcher_directory/cmake/xWalkController/xWalkApp/xwalk-picarx-cont
 
 exec "$executable" --deployment-config="$configuration" --resource-directory="$resources" "$@"
 EOF
+sed -i "s/@XWALK_RUNTIME_USER@/$runtime_user/g" "$temporary_launcher"
 chmod 0755 "$temporary_launcher"
 mv -- "$temporary_launcher" "$launcher"
 

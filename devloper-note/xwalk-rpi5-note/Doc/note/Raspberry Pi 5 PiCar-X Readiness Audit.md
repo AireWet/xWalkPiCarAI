@@ -312,7 +312,7 @@ Examples are `move -> XWalkPicarx -> XWalkRobot -> XWalkMotor -> XWalkPwm -> XWa
 ## Hardware architecture and revision findings
 
 The current code primarily targets Robot HAT V5, while retaining a V4 motor path. The deployed `hardware.conf`
-selects the board revision and defaults to `/dev/i2c-1`, `/dev/gpiochip0`, MCU reset `MCURST`, I2C address `0x14`,
+defaults to Robot HAT v4, `/dev/i2c-1`, `/dev/gpiochip4`, MCU reset `MCURST`, and I2C address `0x14`,
 servos `P0/P1/P2`, grayscale `A0/A1/A2`, ultrasonic `D2/D3`, battery `A4`, V5 motors `P12/P13` and `P14/P15`, and
 V4 motors `P13` plus `D4` and `P12` plus `D5`. The physical Robot HAT marking must decide the profile;
 auto-detection is not a substitute for inspecting the board.
@@ -953,7 +953,7 @@ camera hardware](https://www.raspberrypi.com/documentation/accessories/camera.ht
   otherwise has strong mock coverage.
 - `XWalkI2c::writeRegisterThenRead()` holds one mutex across each ADC request and response; concurrent A0/A1 tests
   prove software ordering, while physical MCU timing and bus-failure behaviour remain unverified.
-- `/dev/i2c-1`, `/dev/gpiochip0`, the V4L2 `/dev/video0` source, ALSA `default`, channel inversion and centres are
+- `/dev/i2c-1`, `/dev/gpiochip4`, the V4L2 `/dev/video0` source, ALSA `default`, channel inversion and centres are
   configurable defaults, not discovered facts.
 - External RGB LED, buzzer and ADXL345 modules are implemented but are not guaranteed standard kit contents.
 - The configuration doctor is useful but cannot prove actuator wiring or a safe mechanical range.
@@ -1030,14 +1030,15 @@ camera guide states broad CSI-stack support from Ubuntu 25.04:
 
 The setup script supports both OS families for non-camera dependencies.
 
-Inspect the script before use, then run it with the observed board revision and user:
+Inspect the script before use, then preview its Robot HAT v4, `xwalk`,
+`/dev/gpiochip4`, I2C, SPI, and CSI defaults:
 
 ``` bash
 ./xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --help
 ```
 
 ``` bash
-sudo ./xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --board v5 --runtime-user "$USER" --gpio-device /dev/gpiochip0
+./xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --dry-run
 ```
 
 The script installs the compiler, CMake, Ninja, Git-related build tooling, Protobuf/gRPC dependencies, I2C tools
@@ -1127,9 +1128,9 @@ Copy the installed examples and retain conservative values. The exact key spelli
 
 ``` ini
 # hardware.conf
-hardware_board = auto
+hardware_board = robot_hat_v4
 hardware_i2c_device = /dev/i2c-1
-hardware_gpio_device = /dev/gpiochip0
+hardware_gpio_device = /dev/gpiochip4
 hardware_direction_pwm_channel = P2
 hardware_pan_pwm_channel = P0
 hardware_tilt_pwm_channel = P1

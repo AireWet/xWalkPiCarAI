@@ -134,7 +134,9 @@ Robot HAT modules normally probe supported MCU addresses `0x14`, `0x15`, and, wh
 One `XWalkGpioLinux` instance owns one claimed Linux GPIO line and any associated event worker. `XWalkGpio`
 contains logical name mapping, direction, polarity, pull, edge, debounce, and callback dispatch.
 
-The current default is `/dev/gpiochip0` and the Linux GPIO character-device ABI version 1. Boot passes the
+The Raspberry Pi deployment default is `/dev/gpiochip4`; individual HAL test
+targets retain their explicitly configured device paths. The Linux backend uses
+GPIO character-device ABI version 1. Boot passes the
 configured path to every owner. Optional exact kernel name and label checks plus a minimum required line count
 reject a mismatched controller before any line claim. No backend scans or selects the first chip automatically.
 

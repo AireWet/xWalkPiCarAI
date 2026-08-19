@@ -80,9 +80,9 @@ PiCar-X configuration file:
 
 | Key | Default |
 | --- | --- |
-| `hardware_board` | `auto` |
+| `hardware_board` | `robot_hat_v4` |
 | `hardware_i2c_device` | `/dev/i2c-1` |
-| `hardware_gpio_device` | `/dev/gpiochip0` |
+| `hardware_gpio_device` | `/dev/gpiochip4` |
 | `hardware_device_tree_root` | `/proc/device-tree` |
 | `hardware_gpio_chip_name` | empty; no name verification |
 | `hardware_gpio_chip_label` | empty; no label verification |

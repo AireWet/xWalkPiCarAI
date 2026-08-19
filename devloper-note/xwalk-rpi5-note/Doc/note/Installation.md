@@ -39,6 +39,11 @@ correct Raspberry Pi and Robot HAT after reviewing actuator and power safety.
 The Ubuntu RPI build requires the Linux GPIO, I2C, and SPI UAPI headers supplied by
 the `linux-libc-dev` package.
 
+The `rpi-release` preset reads its defaults from
+`xWalkTool/shell-agent/deploy-tool/rpi-defaults.conf`: Robot HAT v4, runtime user
+`xwalk`, `/dev/gpiochip4`, `/dev/i2c-1`, `/dev/spidev0.0`, and a CSI camera.
+Explicit `-DXWALK_RPI_*=...` values continue to override them.
+
 The offline voice-car commands additionally require these Raspberry Pi runtime
 components:
 

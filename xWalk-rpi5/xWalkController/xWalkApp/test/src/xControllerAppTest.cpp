@@ -492,6 +492,15 @@ namespace
         EXPECT_TRUE(validReport.valid);
         ASSERT_FALSE(validReport.lines.empty());
         EXPECT_NE(validReport.lines.back().find("No hardware device"), ctrl::string::npos);
+        const ctrl::stringvector repositoryEffective =
+            xwalk::ctrl::XWALK_effectiveDeploymentConfig(repositoryConfiguration.string());
+        EXPECT_NE(std::find(repositoryEffective.begin(), repositoryEffective.end(), "hardware_board = robot_hat_v4"),
+                  repositoryEffective.end());
+        EXPECT_NE(
+            std::find(repositoryEffective.begin(), repositoryEffective.end(), "hardware_gpio_device = /dev/gpiochip4"),
+            repositoryEffective.end());
+        EXPECT_NE(std::find(repositoryEffective.begin(), repositoryEffective.end(), "camera_connection = csi"),
+                  repositoryEffective.end());
 
         const ctrl::filesystempath invalidConfiguration =
             ctrl::filesystempath("/tmp") /

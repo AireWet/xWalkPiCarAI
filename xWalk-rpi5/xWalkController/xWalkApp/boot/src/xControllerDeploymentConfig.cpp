@@ -27,9 +27,9 @@ namespace
 
     constexpr std::array<ConfigDefault, 38U> knownConfiguration{
         {{"deployment_config_version", "1"},
-         {"hardware_board", "auto"},
+         {"hardware_board", "robot_hat_v4"},
          {"hardware_i2c_device", "/dev/i2c-1"},
-         {"hardware_gpio_device", "/dev/gpiochip0"},
+         {"hardware_gpio_device", "/dev/gpiochip4"},
          {"hardware_spi_device", "/dev/spidev0.0"},
          {"hardware_gpio_minimum_line_count", "28"},
          {"hardware_v5_left_forward_pwm_channel", "P12"},

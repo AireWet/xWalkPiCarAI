@@ -21,27 +21,39 @@ option(XWALK_BUILD_FUZZERS "Build Clang libFuzzer harnesses" OFF)
 option(XWALK_AARCH64_DEPENDENCY_AUDIT
     "Audit required target dependencies before an AArch64 RPI configure" ON)
 
-execute_process(
-    COMMAND id -un
-    OUTPUT_VARIABLE XWALK_CURRENT_USER
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    RESULT_VARIABLE XWALK_CURRENT_USER_RESULT)
-if(NOT XWALK_CURRENT_USER_RESULT EQUAL 0 OR XWALK_CURRENT_USER STREQUAL "")
-    message(FATAL_ERROR "Unable to determine the current user for Raspberry Pi provisioning")
-endif()
+set(XWALK_RPI_DEFAULTS_FILE
+    "${XWALK_WORKSPACE_ROOT}/xWalkTool/shell-agent/deploy-tool/rpi-defaults.conf")
+function(xwalk_read_rpi_default default_name)
+    file(STRINGS "${XWALK_RPI_DEFAULTS_FILE}" default_entry
+        REGEX "^${default_name}=.+$")
+    list(LENGTH default_entry default_entry_count)
+    if(NOT default_entry_count EQUAL 1)
+        message(FATAL_ERROR
+            "${XWALK_RPI_DEFAULTS_FILE} must define ${default_name} exactly once")
+    endif()
+    string(REGEX REPLACE "^[^=]+=" "" default_value "${default_entry}")
+    set(${default_name} "${default_value}" PARENT_SCOPE)
+endfunction()
 
-set(XWALK_RPI_PROFILE "robot_hat_v4" CACHE STRING
+xwalk_read_rpi_default(XWALK_DEFAULT_RPI_PROFILE)
+xwalk_read_rpi_default(XWALK_DEFAULT_RPI_RUNTIME_USER)
+xwalk_read_rpi_default(XWALK_DEFAULT_RPI_GPIO_DEVICE)
+xwalk_read_rpi_default(XWALK_DEFAULT_RPI_I2C_DEVICE)
+xwalk_read_rpi_default(XWALK_DEFAULT_RPI_SPI_DEVICE)
+xwalk_read_rpi_default(XWALK_DEFAULT_RPI_CAMERA)
+
+set(XWALK_RPI_PROFILE "${XWALK_DEFAULT_RPI_PROFILE}" CACHE STRING
     "Explicit Robot HAT profile used by the opt-in Raspberry Pi provisioner")
 set_property(CACHE XWALK_RPI_PROFILE PROPERTY STRINGS robot_hat_v4 robot_hat_v5)
-set(XWALK_RPI_RUNTIME_USER "${XWALK_CURRENT_USER}" CACHE STRING
+set(XWALK_RPI_RUNTIME_USER "${XWALK_DEFAULT_RPI_RUNTIME_USER}" CACHE STRING
     "Operating-system account used by the opt-in Raspberry Pi provisioner")
-set(XWALK_RPI_GPIO_DEVICE "/dev/gpiochip4" CACHE FILEPATH
+set(XWALK_RPI_GPIO_DEVICE "${XWALK_DEFAULT_RPI_GPIO_DEVICE}" CACHE FILEPATH
     "Explicit GPIO device used by the opt-in Raspberry Pi provisioner")
-set(XWALK_RPI_I2C_DEVICE "/dev/i2c-1" CACHE FILEPATH
+set(XWALK_RPI_I2C_DEVICE "${XWALK_DEFAULT_RPI_I2C_DEVICE}" CACHE FILEPATH
     "Explicit I2C device used by the opt-in Raspberry Pi provisioner")
-set(XWALK_RPI_SPI_DEVICE "/dev/spidev0.0" CACHE FILEPATH
+set(XWALK_RPI_SPI_DEVICE "${XWALK_DEFAULT_RPI_SPI_DEVICE}" CACHE FILEPATH
     "Explicit SPI device used by the opt-in Raspberry Pi provisioner")
-set(XWALK_RPI_CAMERA "csi" CACHE STRING
+set(XWALK_RPI_CAMERA "${XWALK_DEFAULT_RPI_CAMERA}" CACHE STRING
     "Camera connection used by the opt-in Raspberry Pi provisioner")
 set_property(CACHE XWALK_RPI_CAMERA PROPERTY STRINGS csi usb)
 option(XWALK_RPI_WITH_VOSK "Install repository-controlled Vosk assets while provisioning" ON)

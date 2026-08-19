@@ -136,8 +136,7 @@
       "cacheVariables": {
         "BUILD_TESTING": "ON",
         "XWALK_PICARX_CONFIG_FILE": "${sourceParentDir}/build-rpi/runtime/picar-x.conf",
-        "XWALK_BUILD_RPI": "ON",
-        "XWALK_ENABLE_PACKAGING": "ON"
+        "XWALK_BUILD_RPI": "ON"
       }
     },
     {

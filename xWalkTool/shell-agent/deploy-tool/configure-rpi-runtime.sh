@@ -8,9 +8,11 @@ usage() {
 }
 
 script_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
+# shellcheck source=rpi-defaults.conf
+. "$script_directory/rpi-defaults.conf"
 workspace_root="$(CDPATH='' cd -- "$script_directory/../../.." && pwd)"
 build_directory="$workspace_root/build-rpi"
-runtime_user="$(id -un)"
+runtime_user="$XWALK_DEFAULT_RPI_RUNTIME_USER"
 ollama_manifest=""
 generate_only="false"
 

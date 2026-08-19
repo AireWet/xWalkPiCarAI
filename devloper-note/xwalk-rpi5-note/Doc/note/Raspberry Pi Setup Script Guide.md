@@ -36,17 +36,21 @@ xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --help
 
 After installation, the equivalent script is normally `/usr/lib/xwalk/setup-rpi.sh`.
 
-## Required arguments
+## Hardware defaults and overrides
 
-| Argument | Meaning |
-| --- | --- |
-| `--profile robot_hat_v4` | Selects a physically verified Robot HAT v4 |
-| `--profile robot_hat_v5` | Selects v5 only when its supported Device Tree UUID is detected |
-| `--runtime-user USER` | Selects an existing unprivileged account that will run xWalk |
-| `--gpio-device /dev/gpiochipN` | Selects one exact GPIO controller |
+| Argument | Default | Meaning |
+| --- | --- | --- |
+| `--profile robot_hat_v4\|robot_hat_v5` | `robot_hat_v4` | Selects the Robot HAT profile |
+| `--runtime-user USER` | `xwalk` | Selects an existing unprivileged account that will run xWalk |
+| `--gpio-device /dev/gpiochipN` | `/dev/gpiochip4` | Selects one exact GPIO controller |
+| `--i2c-device /dev/i2c-N` | `/dev/i2c-1` | Selects the exact I2C controller |
+| `--spi-device /dev/spidevN.N` | `/dev/spidev0.0` | Selects the exact SPI controller and chip select |
+| `--camera csi\|usb` | `csi` | Selects the camera connection and package family |
 
-Exactly one profile is required. A v4 profile conflicts with a detected v5 UUID. A v5 profile is rejected
-unless UUID `9daeea78-0000-076e-0032-582369ac3e02` is present.
+The authoritative values are in `rpi-defaults.conf` and are shared with CMake
+and runtime-generation scripts. Explicit options override them. A v4 profile
+conflicts with a detected v5 UUID. A v5 profile is rejected unless UUID
+`9daeea78-0000-076e-0032-582369ac3e02` is present.
 
 The script does not create the runtime user. Create and review the dedicated account separately before
 running setup.
@@ -55,13 +59,9 @@ running setup.
 
 | Argument | Default | Meaning |
 | --- | --- | --- |
-| `--i2c-device /dev/i2c-N` | `/dev/i2c-1` | Selects the exact I2C controller |
-| `--spi-device /dev/spidevN.N` | `/dev/spidev0.0` | Selects the exact SPI controller and chip select |
 | `--config FILE` | `/var/lib/xwalk/picar-x.conf` | Selects the writable runtime configuration |
 | `--template-config FILE` | `/etc/xwalk/picar-x.conf` | Selects a read-only manifest template |
 | `--template-fragments DIRECTORY` | `/etc/xwalk/picar-x.d` | Selects read-only fragment templates |
-| `--camera csi` | `csi` | Selects `rpicam-apps` as the required camera package |
-| `--camera usb` | Not selected | Selects `ffmpeg` as the required camera package |
 | `--with-vosk` | Disabled | Installs explicitly supplied repository-controlled Vosk assets |
 | `--vosk-library-source FILE` | Required with Vosk | Selects the architecture-matched library source |
 | `--vosk-model-source DIRECTORY` | Required with Vosk | Selects the model source directory |
@@ -103,10 +103,10 @@ be enabled or available. Do not guess a GPIO controller when more than one is li
 
 ### 2. Review the dry-run plan
 
-Use the verified profile, existing runtime user, and exact GPIO device:
+When the target matches all reviewed defaults, preview the plan with:
 
 ```sh
-xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --dry-run --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --dry-run
 ```
 
 The dry run reports:
@@ -126,7 +126,7 @@ Only an administrator should run apply mode. The script uses the current root ac
 individual privileged commands when available:
 
 ```sh
-xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --apply --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --apply --profile robot_hat_v4 --runtime-user xwalk --gpio-device /dev/gpiochip4
 ```
 
 Do not add a Robot HAT overlay merely to make profile validation succeed. Robot HAT v5 requires its already
@@ -142,16 +142,16 @@ receives the new supplementary groups.
 Run the same selection in check mode:
 
 ```sh
-xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --check --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --check
 ```
 
 Then inspect identity and permissions:
 
 ```sh
-id pi
-groups pi
-stat /dev/i2c-1 /dev/gpiochip0 /dev/spidev0.0
-getfacl /dev/i2c-1 /dev/gpiochip0 /dev/spidev0.0
+id xwalk
+groups xwalk
+stat /dev/i2c-1 /dev/gpiochip4 /dev/spidev0.0
+getfacl /dev/i2c-1 /dev/gpiochip4 /dev/spidev0.0
 udevadm verify /etc/udev/rules.d/99-xwalk-picarx.rules
 ```
 

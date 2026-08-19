@@ -161,6 +161,9 @@ if(XWALK_CLI_INSTALL_RUNTIME)
         "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/shell-agent/deploy-tool/setup-rpi.sh"
         "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/shell-agent/deploy-tool/provision-hardware.sh"
         DESTINATION "lib/xwalk")
+    install(FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/shell-agent/deploy-tool/rpi-defaults.conf"
+        DESTINATION "lib/xwalk")
     install(PROGRAMS
         "${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkTool/shell-agent/env-tool/license/xWalkEnv.sh"
         DESTINATION "lib/xwalk/xWalkTool/shell-agent/env-tool/license")

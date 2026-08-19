@@ -105,6 +105,10 @@ cmake --build build-rpi/cmake --parallel
 ctest --test-dir build-rpi/cmake -N -L hardware
 ```
 
+The RPi preset uses Robot HAT v4, runtime user `xwalk`, `/dev/gpiochip4`,
+`/dev/i2c-1`, `/dev/spidev0.0`, and a CSI camera unless explicitly overridden
+with the corresponding `XWALK_RPI_*` CMake cache value.
+
 The final command lists hardware tests; it does not execute them. Run hardware-labelled tests only after explicitly
 confirming the Raspberry Pi model, Robot HAT revision, wiring, power, clear movement area, and emergency-stop plan.
 

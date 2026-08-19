@@ -73,13 +73,16 @@ installed in an active environment located outside the repository.
 
 ## Raspberry Pi provisioning
 
-`setup-rpi.sh` requires an explicit Robot HAT profile, runtime user, and GPIO
-controller. Its default mode is a dry run. Review that plan before using
-`--check` or the privileged `--apply` mode:
+`setup-rpi.sh` defaults to Robot HAT v4, runtime user `xwalk`,
+`/dev/gpiochip4`, `/dev/i2c-1`, `/dev/spidev0.0`, a CSI camera, and dry-run
+mode. Review that plan before using `--check` or privileged `--apply` mode:
 
 ```sh
-xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --profile robot_hat_v5 --runtime-user <user> --gpio-device /dev/gpiochip0 --dry-run
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --dry-run
 ```
+
+Explicit options preserve Robot HAT v5, alternate device nodes, USB cameras,
+and other existing runtime users.
 
 Use `provision-hardware.sh` only on a verified target. It validates the
 selected profile and detected GPIO identity, then updates the specified

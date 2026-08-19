@@ -11,6 +11,10 @@ mkdir -p "$fixture_root/etc" "$fixture_root/proc/device-tree" \
 printf 'ID=ubuntu\nVERSION_ID="24.04"\n' > "$fixture_root/etc/os-release"
 printf 'Raspberry Pi 5 Model B Rev 1.0\000' > "$fixture_root/proc/device-tree/model"
 printf '# retained fixture setting\ndtparam=audio=on\n' > "$fixture_root/boot/firmware/config.txt"
+# shellcheck disable=SC2016  # The generated fixture script owns these expansions.
+printf '#!/usr/bin/env bash\nif [ "${1-}" = xwalk ]; then exit 0; fi\nexec /usr/bin/id "$@"\n' \
+    > "$fixture_root/bin/id"
+chmod 0755 "$fixture_root/bin/id"
 template_config="$repository_root/xWalk-rpi5/xWalkController/xWalkConfig/picar-x.conf"
 template_fragments="$repository_root/xWalk-rpi5/xWalkController/xWalkConfig/picar-x.d"
 vosk_library="$repository_root/xWalk-rpi5/xWalkLibrary/x86_64/lib/libvosk.so"
@@ -20,8 +24,19 @@ template_checksum="$(find "$repository_root/xWalk-rpi5/xWalkController/xWalkConf
 template_mode="$(stat -c '%a:%U:%G' "$template_config")"
 
 before_checksum="$(sha256sum "$fixture_root/boot/firmware/config.txt")"
+PATH="$fixture_root/bin:$PATH" XWALK_SETUP_TEST_ROOT="$fixture_root" \
+    "$repository_root/xWalkTool/shell-agent/deploy-tool/setup-rpi.sh" --dry-run \
+    > "$fixture_root/default-dry-run.log"
+grep -q 'mode: dry-run' "$fixture_root/default-dry-run.log"
+grep -q 'Robot HAT profile: robot_hat_v4' "$fixture_root/default-dry-run.log"
+grep -q 'runtime user: xwalk' "$fixture_root/default-dry-run.log"
+grep -q 'SELECTED GPIO DEVICE: /dev/gpiochip4' "$fixture_root/default-dry-run.log"
+grep -q 'exact devices: I2C=/dev/i2c-1, GPIO=/dev/gpiochip4, SPI=/dev/spidev0.0' \
+    "$fixture_root/default-dry-run.log"
+
 XWALK_SETUP_TEST_ROOT="$fixture_root" "$repository_root/xWalkTool/shell-agent/deploy-tool/setup-rpi.sh" \
     --profile robot_hat_v4 --runtime-user "$(id -un)" --gpio-device /dev/gpiochip0 \
+    --i2c-device /dev/i2c-3 --spi-device /dev/spidev2.1 --camera usb \
     --template-config "$template_config" --template-fragments "$template_fragments" \
     --with-vosk --vosk-library-source "$vosk_library" --vosk-model-source "$vosk_model" \
     --dry-run \
@@ -32,7 +47,13 @@ grep -q 'mode: dry-run' "$fixture_root/dry-run.log"
 grep -q 'Robot HAT overlays: no overlay will be installed or changed' "$fixture_root/dry-run.log"
 grep -q 'configuration action: initialize the writable copy' "$fixture_root/dry-run.log"
 grep -q 'SELECTED GPIO DEVICE: /dev/gpiochip0' "$fixture_root/dry-run.log"
+grep -q 'exact devices: I2C=/dev/i2c-3, GPIO=/dev/gpiochip0, SPI=/dev/spidev2.1' \
+    "$fixture_root/dry-run.log"
 grep -q 'Vosk action: install repository assets' "$fixture_root/dry-run.log"
+"$repository_root/xWalkTool/shell-agent/deploy-tool/setup-rpi.sh" --help > "$fixture_root/help.log"
+grep -q 'profile=robot_hat_v4, runtime-user=xwalk' "$fixture_root/help.log"
+grep -q 'gpio=/dev/gpiochip4, i2c=/dev/i2c-1' "$fixture_root/help.log"
+grep -q 'spi=/dev/spidev0.0, camera=csi, mode=dry-run' "$fixture_root/help.log"
 test "$template_checksum" = "$(find "$repository_root/xWalk-rpi5/xWalkController/xWalkConfig" -type f \
     -exec sha256sum {} + | sort | sha256sum)"
 test "$template_mode" = "$(stat -c '%a:%U:%G' "$template_config")"

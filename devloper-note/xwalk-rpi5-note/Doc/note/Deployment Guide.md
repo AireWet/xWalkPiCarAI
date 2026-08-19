@@ -15,13 +15,16 @@ option is selected.
 Inspect the target without changing it:
 
 ```sh
-xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --check --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
-xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --dry-run --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --check
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --dry-run
 ```
 
-Use the real profile and GPIO device. The script detects Raspberry Pi OS or Ubuntu, the Pi model, and the
-applicable `/boot/firmware/config.txt` or `/boot/config.txt`. It reports all privileged changes before
-`--apply`, adds no duplicate setting or group membership, and refuses an unverified Robot HAT v5 profile.
+The shared defaults are Robot HAT v4, runtime user `xwalk`,
+`/dev/gpiochip4`, `/dev/i2c-1`, `/dev/spidev0.0`, and CSI camera. Override any
+value that differs on the target. The script detects Raspberry Pi OS or Ubuntu,
+the Pi model, and the applicable boot configuration. It reports all privileged
+changes before `--apply`, adds no duplicate setting or group membership, and
+refuses an unverified Robot HAT v5 profile.
 It never changes a Robot HAT overlay. A 40-pin header does not identify a HAT revision; v4 is always selected
 manually, while v5 requires its supported Device Tree UUID.
 
@@ -94,15 +97,16 @@ Run the native Raspberry Pi Release configuration on the target Raspberry Pi
 or in an approved matching ARM build environment:
 
 ```sh
-cmake --fresh --preset rpi-release
-cmake --build --preset rpi-release --parallel
-ctest --test-dir ../build-rpi/cmake -N -L hardware
+cmake --fresh -S xWalk-rpi5 --preset rpi-release
+cmake --build build-rpi/cmake --parallel
+ctest --test-dir build-rpi/cmake -N -L hardware
 ```
 
 The last command only lists physical tests. Never run them until the correct target is attached and secured.
 The RPi configuration requires the target development packages, including ALSA,
-libcurl, and libsndfile. It also enables Debian packaging but does not install a
-package or access hardware during compilation.
+libcurl, and libsndfile. It does not install a package or access hardware during
+compilation. Use the ARM64 preset or explicitly enable packaging for a package
+build.
 
 The preset-to-directory mapping is:
 
@@ -129,7 +133,7 @@ ctest --test-dir build-host/sanity --output-on-failure --no-tests=error
 Configure the same native Raspberry Pi Release build explicitly with:
 
 ```sh
-cmake --fresh -S . -B ../build-rpi/cmake -G Ninja -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DXWALK_BUILD_RPI=ON -DXWALK_ENABLE_PACKAGING=ON
+cmake --fresh -S . -B ../build-rpi/cmake -G Ninja -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DXWALK_BUILD_RPI=ON
 cmake --build ../build-rpi/cmake --parallel
 ctest --test-dir ../build-rpi/cmake -N -L hardware
 ```
@@ -224,10 +228,10 @@ Validate the actual account and exact nodes after login or reboot:
 ```sh
 id xwalk
 groups xwalk
-stat /dev/i2c-1 /dev/gpiochip0 /dev/spidev0.0
-getfacl /dev/i2c-1 /dev/gpiochip0 /dev/spidev0.0
+stat /dev/i2c-1 /dev/gpiochip4 /dev/spidev0.0
+getfacl /dev/i2c-1 /dev/gpiochip4 /dev/spidev0.0
 udevadm verify /etc/udev/rules.d/99-xwalk-picarx.rules
-udevadm test /sys/class/gpio/gpiochip0
+udevadm test /sys/class/gpio/gpiochip4
 ```
 
 Adjust paths to the provisioned devices. A template containing unresolved substitutions is not an installed

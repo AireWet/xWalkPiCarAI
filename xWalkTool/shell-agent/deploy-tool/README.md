@@ -16,6 +16,7 @@ state have been confirmed.
 | `setup-rpi-local.sh` | Build pinned camera and Ollama runtimes below the current user's `${HOME}/.local`. |
 | `configure-rpi-runtime.sh` | Generate build-local configuration, start user Ollama, and list local models. |
 | `generate-rpi-runtime.sh` | Generate ignored build-local configuration and the `build-rpi/xwalk` launcher. |
+| `rpi-defaults.conf` | Own the shared CMake and deployment-script Raspberry Pi defaults. |
 | `setup-rpi.sh` | Assess, validate, preview, or apply Raspberry Pi host provisioning. |
 | `provision-hardware.sh` | Record a verified Robot HAT and exact device identities in a writable configuration. |
 | `aarch64-dependency-audit.sh` | Validate an ARM64 sysroot and dependency architecture. |
@@ -33,20 +34,23 @@ Show the supported options:
 xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --help
 ```
 
-The script defaults to dry-run, but it still requires a real supported
-Raspberry Pi identity and matching Robot HAT profile. Preview the exact plan:
+The script defaults to Robot HAT v4, runtime user `xwalk`, `/dev/gpiochip4`,
+`/dev/i2c-1`, `/dev/spidev0.0`, CSI camera, and dry-run mode. It still requires
+a real supported Raspberry Pi identity and an existing runtime user. Preview
+the default plan:
 
 ```bash
-xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --profile robot_hat_v5 --runtime-user "$USER" --gpio-device /dev/gpiochip0 --i2c-device /dev/i2c-1 --spi-device /dev/spidev0.0 --dry-run
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --dry-run
 ```
 
 Use `--check` to validate the target without changing it. `--apply` may install
 packages, update boot configuration, install service and access-control assets,
 and change the target configuration. Review the complete dry-run output before
-authorization:
+authorization. Explicit options continue to select Robot HAT v5, alternate
+devices, USB cameras, or another runtime user:
 
 ```bash
-xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --profile robot_hat_v5 --runtime-user "$USER" --gpio-device /dev/gpiochip0 --i2c-device /dev/i2c-1 --spi-device /dev/spidev0.0 --check
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --profile robot_hat_v5 --runtime-user operator --gpio-device /dev/gpiochip0 --camera usb --check
 ```
 
 ## Record verified hardware

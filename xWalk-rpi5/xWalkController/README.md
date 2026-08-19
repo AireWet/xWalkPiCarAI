@@ -100,11 +100,13 @@ ctest --test-dir build-rpi/cmake -L hardware --output-on-failure
 ```
 
 Provisioning is a separate opt-in target and is never part of an ordinary
-build. Review `XWALK_RPI_PROFILE`, `XWALK_RPI_RUNTIME_USER`,
+build. The shared defaults select Robot HAT v4, runtime user `xwalk`,
+`/dev/gpiochip4`, `/dev/i2c-1`, `/dev/spidev0.0`, and a CSI camera. Review
+`XWALK_RPI_PROFILE`, `XWALK_RPI_RUNTIME_USER`,
 `XWALK_RPI_GPIO_DEVICE`, `XWALK_RPI_I2C_DEVICE`, `XWALK_RPI_SPI_DEVICE`,
 `XWALK_RPI_CAMERA`, `XWALK_RPI_WITH_VOSK`, and `XWALK_RPI_WITH_OLLAMA` in the
-CMake cache first. In particular, `/dev/gpiochip4` is a machine-specific
-default and must be confirmed from the target Raspberry Pi.
+CMake cache first. In particular, the device nodes must be confirmed from the
+target Raspberry Pi. Explicit cache values override the shared defaults.
 
 From `xWalk-rpi5`, the provisioning build preset is:
 

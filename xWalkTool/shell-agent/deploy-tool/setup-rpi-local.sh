@@ -7,13 +7,17 @@ usage() {
     echo "  Builds pinned camera components, installs user Ollama, and generates build-rpi runtime files."
 }
 
+script_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
+# shellcheck source=rpi-defaults.conf
+. "$script_directory/rpi-defaults.conf"
+
 mode="dry-run"
-runtime_user="$(id -un)"
-profile="robot_hat_v4"
-gpio_device="/dev/gpiochip4"
-i2c_device="/dev/i2c-1"
-spi_device="/dev/spidev0.0"
-camera="csi"
+runtime_user="$XWALK_DEFAULT_RPI_RUNTIME_USER"
+profile="$XWALK_DEFAULT_RPI_PROFILE"
+gpio_device="$XWALK_DEFAULT_RPI_GPIO_DEVICE"
+i2c_device="$XWALK_DEFAULT_RPI_I2C_DEVICE"
+spi_device="$XWALK_DEFAULT_RPI_SPI_DEVICE"
+camera="$XWALK_DEFAULT_RPI_CAMERA"
 while [ "$#" -gt 0 ]; do
     case "$1" in
         --runtime-user) runtime_user="${2-}"; shift 2 ;;
@@ -30,7 +34,6 @@ while [ "$#" -gt 0 ]; do
     esac
 done
 
-script_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 workspace_root="$(CDPATH='' cd -- "$script_directory/../../.." && pwd)"
 runtime_home="$(getent passwd "$runtime_user" | awk -F: 'NR == 1 { print $6 }')"
 if [ -z "$runtime_home" ] || [ ! -d "$runtime_home" ]; then

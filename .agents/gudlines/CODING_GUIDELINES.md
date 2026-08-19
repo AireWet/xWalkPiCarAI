@@ -1472,9 +1472,11 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
   staging. Install immutable resources under the configured data directory,
   administrator configuration under `/etc/xwalk`, and runtime state under
   `/var/lib/xwalk`, `/var/cache/xwalk`, or `/run/xwalk`.
-- Keep Raspberry Pi setup idempotent and dry-run-first. Report privileged
-  changes before applying them, require an explicit Robot HAT profile, and do
-  not infer or install a board overlay from failed discovery.
+- Keep Raspberry Pi setup idempotent and dry-run-first. Maintain the reviewed
+  Robot HAT v4, `xwalk` runtime-user, device-node, and CSI-camera defaults in
+  `xWalkTool/shell-agent/deploy-tool/rpi-defaults.conf`; preserve explicit
+  command-line overrides and do not infer or install a board overlay from
+  failed discovery.
 - Grant device permissions through standard operating-system groups and exact
   configured I2C, GPIO, and SPI node matches. Do not add broad device wildcards.
 

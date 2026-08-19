@@ -335,8 +335,9 @@ The report command is also a gate. It fails below 75 percent total line,
 
 ## Raspberry Pi provisioning
 
-`setup-rpi.sh` supports Debian-family Raspberry Pi OS and Ubuntu Server on a Raspberry Pi. It requires an
-explicit Robot HAT profile, runtime user, and GPIO device. Inspection and planning must precede apply mode.
+`setup-rpi.sh` supports Debian-family Raspberry Pi OS and Ubuntu Server on a Raspberry Pi. Its authoritative
+defaults select Robot HAT v4, runtime user `xwalk`, `/dev/gpiochip4`, `/dev/i2c-1`, `/dev/spidev0.0`, and a CSI
+camera. Inspection and planning must precede apply mode.
 
 Show available options:
 
@@ -347,22 +348,22 @@ xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --help
 Run a non-modifying plan after physically identifying the board revision:
 
 ```sh
-xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --dry-run --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --dry-run
 ```
 
 Run required validation without changing the system:
 
 ```sh
-xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --check --profile robot_hat_v4 --runtime-user pi --gpio-device /dev/gpiochip0
+xWalkTool/shell-agent/deploy-tool/setup-rpi.sh --check
 ```
 
 The complete option set is:
 
 | Option | Required/default | Effect |
 |---|---|---|
-| `--profile robot_hat_v4\|robot_hat_v5` | Required | Selects an explicitly verified HAT profile |
-| `--runtime-user USER` | Required | Selects an existing unprivileged runtime user |
-| `--gpio-device DEVICE` | Required | Selects one `/dev/gpiochipN` controller |
+| `--profile robot_hat_v4\|robot_hat_v5` | `robot_hat_v4` | Selects the HAT profile |
+| `--runtime-user USER` | `xwalk` | Selects an existing unprivileged runtime user |
+| `--gpio-device DEVICE` | `/dev/gpiochip4` | Selects one `/dev/gpiochipN` controller |
 | `--i2c-device DEVICE` | `/dev/i2c-1` | Selects one `/dev/i2c-N` controller |
 | `--spi-device DEVICE` | `/dev/spidev0.0` | Selects one `/dev/spidevN.N` controller |
 | `--config FILE` | `/var/lib/xwalk/picar-x.conf` | Selects mutable deployment configuration |

@@ -3,23 +3,35 @@
 set -eu
 
 usage() {
-    echo "Usage: $0 --profile robot_hat_v4|robot_hat_v5 --runtime-user USER"
-    echo "  --gpio-device /dev/gpiochipN [--i2c-device /dev/i2c-N]"
+    echo "Usage: $0 [--profile robot_hat_v4|robot_hat_v5] [--runtime-user USER]"
+    echo "  [--gpio-device /dev/gpiochipN] [--i2c-device /dev/i2c-N]"
     echo "  [--spi-device /dev/spidevN.N] [--config FILE] [--camera csi|usb]"
     echo "  [--template-config FILE] [--template-fragments DIRECTORY]"
     echo "  [--with-vosk --vosk-library-source FILE --vosk-model-source DIRECTORY]"
     echo "  [--validate-ollama] [--check|--validate|--dry-run|--apply]"
+    echo "Defaults: profile=$XWALK_DEFAULT_RPI_PROFILE, runtime-user=$XWALK_DEFAULT_RPI_RUNTIME_USER"
+    echo "  gpio=$XWALK_DEFAULT_RPI_GPIO_DEVICE, i2c=$XWALK_DEFAULT_RPI_I2C_DEVICE"
+    echo "  spi=$XWALK_DEFAULT_RPI_SPI_DEVICE, camera=$XWALK_DEFAULT_RPI_CAMERA, mode=dry-run"
 }
 
-profile=""
-runtime_user=""
-gpio_device=""
-i2c_device="/dev/i2c-1"
-spi_device="/dev/spidev0.0"
+script_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
+defaults_file="$script_directory/rpi-defaults.conf"
+if [ ! -r "$defaults_file" ]; then
+    echo "The Raspberry Pi defaults file was not found: $defaults_file" >&2
+    exit 2
+fi
+# shellcheck source=rpi-defaults.conf
+. "$defaults_file"
+
+profile="$XWALK_DEFAULT_RPI_PROFILE"
+runtime_user="$XWALK_DEFAULT_RPI_RUNTIME_USER"
+gpio_device="$XWALK_DEFAULT_RPI_GPIO_DEVICE"
+i2c_device="$XWALK_DEFAULT_RPI_I2C_DEVICE"
+spi_device="$XWALK_DEFAULT_RPI_SPI_DEVICE"
 config_file="/var/lib/xwalk/picar-x.conf"
 template_config="/etc/xwalk/picar-x.conf"
 template_fragments="/etc/xwalk/picar-x.d"
-camera="csi"
+camera="$XWALK_DEFAULT_RPI_CAMERA"
 with_vosk="false"
 validate_ollama="false"
 vosk_library_source=""
@@ -50,15 +62,11 @@ while [ "$#" -gt 0 ]; do
 done
 
 if [ "$profile" != "robot_hat_v4" ] && [ "$profile" != "robot_hat_v5" ]; then
-    echo "An explicit robot_hat_v4 or robot_hat_v5 profile is required." >&2
+    echo "--profile must be robot_hat_v4 or robot_hat_v5." >&2
     exit 2
 fi
 if [ -z "$runtime_user" ] || ! id "$runtime_user" >/dev/null 2>&1; then
     echo "--runtime-user must name an existing operating-system user." >&2
-    exit 2
-fi
-if [ -z "$gpio_device" ]; then
-    echo "Select the GPIO controller explicitly with --gpio-device." >&2
     exit 2
 fi
 if [ "$camera" != "csi" ] && [ "$camera" != "usb" ]; then
@@ -238,7 +246,6 @@ configuration_values_from_file() {
     ' "$source_file")
 }
 
-script_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 rule_template="$script_directory/udev/99-xwalk-picarx.rules.in"
 if [ ! -f "$rule_template" ]; then
     rule_template="$script_directory/../../share/xwalk/deployment/udev/99-xwalk-picarx.rules.in"
