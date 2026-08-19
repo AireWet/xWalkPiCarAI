@@ -19,6 +19,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarBootRpi.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include "xAgent_Rpi5CarCameraCapture.h"
 #include "xHal_Rpi5CarCameraLinux.h"
@@ -39,6 +40,7 @@ namespace xwalk::agent
                                                  bootapplicationcallback callback,
                                                  hal::XWalkConfigStore& config)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .062, "Boot composing text-vision conversation services");
         const hal::XWalkCameraConnection cameraConnection =
             hal::XWalkCamera::connectionFromString(config.get("camera_connection", "csi"));
         const agent::boolean csiSelected =

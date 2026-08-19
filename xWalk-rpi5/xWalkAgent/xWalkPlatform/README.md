@@ -8,3 +8,8 @@ implementations or verification boundaries.
 
 Set `XWALK_AGENT_PLATFORM_BUILD_HOST_TESTS=ON` to run the Boot module's GoogleTest case independently.
 Set `XWALK_AGENT_PLATFORM_BUILD_HARDWARE_TESTS=ON` to compile its hardware-profile case.
+
+## Tracing
+
+Every Platform child module owns a registered `RPIAGENT` lifecycle trace. Use the authoritative
+[Agent trace table](../README.md#runtime-tracing) to select Boot composition diagnostics.

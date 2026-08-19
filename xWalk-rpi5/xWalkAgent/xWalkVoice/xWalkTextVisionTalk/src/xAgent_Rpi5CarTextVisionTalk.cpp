@@ -12,6 +12,8 @@
 
 #include "xAgent_Rpi5CarTextVisionTalk.h"
 
+#include "xHal_Rpi5CarTrace.h"
+
 /** @namespace xwalk::agent @brief Contains application coordinators for xWalk firmware. */
 namespace xwalk::agent
 {
@@ -22,6 +24,8 @@ namespace xwalk::agent
      */
     agent::int32 XWalkTextVisionTalk::run()
     {
+        XWALK_RPIAGENT_TRACE_UID1(
+            RPIAGENT .041, "Text-vision conversation started with a %u-message bound", configuration.maximumMessages);
         languageModelObject->setMaximumMessages(configuration.maximumMessages);
         languageModelObject->setInstructions(configuration.instructions);
         languageModelObject->setWelcome(configuration.welcome);

@@ -14,6 +14,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarBootRpi.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include "xAgent_Rpi5CarVideoRecordingOpenCv.h"
 #include "xHal_Rpi5CarConfigStore.h"
@@ -32,6 +33,7 @@ namespace xwalk::agent
                                                  bootapplicationcallback callback,
                                                  hal::XWalkConfigStore& config)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .066, "Boot composing video-recording services");
         XWalkVideoRecordingOpenCvConfiguration videoConfiguration;
         videoConfiguration.cameraBackend =
             XWalkVideoRecordingOpenCv::backendFromString(config.get("video_recording_camera_backend", "v4l2"));

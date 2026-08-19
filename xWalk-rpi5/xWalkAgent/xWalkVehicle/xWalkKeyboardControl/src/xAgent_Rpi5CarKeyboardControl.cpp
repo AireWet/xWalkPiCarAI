@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarKeyboardControl.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -62,6 +63,7 @@ namespace xwalk::agent
         }
 
         const char key = keyText[0U];
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .077, "Keyboard-control received a bounded key command");
         if ((key == 'w') || (key == 'W'))
         {
             picarxObject->setDirectionServoAngle(0.0);

@@ -22,6 +22,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarBootHostStub.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -57,6 +58,7 @@ namespace xwalk::agent
      */
     agent::int32 XWalkBootHostStub::run(agent::contextpointer context, bootapplicationcallback callback)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .075, "Host boot stub publishing simulated services");
         begin(callback);
         return callback(context, services);
     }

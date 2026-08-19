@@ -34,7 +34,12 @@ namespace xwalk::agent
     /** @brief Captures one image and returns its owned destination path. */
     agent::string XWalkCameraCapture::capture()
     {
-        return cameraObject->capture(outputPathValue);
+        agent::string capturedPath = cameraObject->capture(outputPathValue);
+        if (!capturedPath.empty())
+        {
+            XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .020, "Voice image capture completed");
+        }
+        return capturedPath;
     }
 
     /** @brief Adapts this object to a voice-active image callback. */

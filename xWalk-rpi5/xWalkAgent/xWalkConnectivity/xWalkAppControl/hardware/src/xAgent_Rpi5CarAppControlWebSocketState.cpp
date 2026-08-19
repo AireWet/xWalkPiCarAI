@@ -9,6 +9,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarAppControlWebSocketState.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/core.hpp>
@@ -155,6 +156,7 @@ namespace xwalk::agent
 
     void XWalkAppControlWebSocketState::run(agent::uint16 port) noexcept
     {
+        XWALK_RPIAGENT_TRACE_UID1(RPIAGENT .047, "App-control WebSocket event loop entered on port %u", port);
         namespace asio = boost::asio;
         namespace beast = boost::beast;
         namespace websocket = beast::websocket;

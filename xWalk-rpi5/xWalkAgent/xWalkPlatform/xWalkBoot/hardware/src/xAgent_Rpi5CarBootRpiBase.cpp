@@ -14,6 +14,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarBootRpi.h"
+#include "xHal_Rpi5CarTrace.h"
 
 namespace xwalk::agent
 {
@@ -28,6 +29,7 @@ namespace xwalk::agent
     agent::int32
     XWalkBootRpi::runBase(agent::contextpointer context, bootapplicationcallback callback, XWalkPicarx& picarx)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .049, "Boot publishing base PiCar-X services");
         XWalkBootServices services{};
         services.picarx = &picarx;
         return callback(context, services);

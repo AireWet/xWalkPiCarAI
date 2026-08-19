@@ -58,6 +58,7 @@ namespace xwalk::agent
         {
             XWALK_RPIAGENT_ERROR(XWALK_INVAL, "Cliff detection requires complete callbacks");
         }
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .025, "Cliff-detection coordinator configured");
     }
 
     /******************************************************************************

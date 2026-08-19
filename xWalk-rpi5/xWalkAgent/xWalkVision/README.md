@@ -19,3 +19,9 @@ camera delivery remain deployment integration work.
 
 Set `XWALK_AGENT_VISION_BUILD_HOST_TESTS=ON` to run one GoogleTest case per child module independently.
 Set `XWALK_AGENT_VISION_BUILD_HARDWARE_TESTS=ON` to compile the matching hardware-profile cases.
+
+## Tracing
+
+Every Vision child module owns a registered `RPIAGENT` lifecycle or bounded-operation trace. Use the
+authoritative [Agent trace table](../README.md#runtime-tracing) to select one child. Traces exclude images,
+frames, detected text, network payloads, and resource paths.

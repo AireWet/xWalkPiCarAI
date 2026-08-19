@@ -56,6 +56,7 @@ namespace xwalk::agent
         selfDriveObject->start();
         ledObject->off();
         assistantObject->start();
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .010, "Voice-active-car processing loop started");
         const agent::boolean processingLoopRequested{true};
         while (processingLoopRequested)
         {
@@ -97,6 +98,8 @@ namespace xwalk::agent
                         ledObject->on();
                         assistantObject->say(configuration.answerOnWake);
                         ledObject->off();
+                        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .011,
+                                                  "Voice-active-car wake phrase accepted and acknowledged");
                     }
                     continue;
                 }
@@ -109,6 +112,10 @@ namespace xwalk::agent
             selfDriveObject->setStatus(XWalkSelfDriveStatus::Think);
             const XWalkVoiceActiveCarResponse response =
                 parseConfiguredResponse(assistantObject->think(prompt, imagePath));
+            XWALK_RPIAGENT_TRACE_UID2(RPIAGENT .012,
+                                      "Voice-active-car parsed %llu action request(s) and %llu response character(s)",
+                                      static_cast<unsigned long long>(response.actions.size()),
+                                      static_cast<unsigned long long>(response.text.size()));
             selfDriveObject->setStatus(XWalkSelfDriveStatus::Actions);
             dispatchActions(response.actions);
             ledObject->on();
@@ -119,6 +126,7 @@ namespace xwalk::agent
                 stop();
                 return 1;
             }
+            XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .013, "Voice-active-car assistant round completed");
             ledObject->off();
             wakeDetectedValue = !configuration.wakeEnabled;
         }
@@ -378,14 +386,24 @@ namespace xwalk::agent
      */
     void XWalkVoiceActiveCar::dispatchActions(const agent::stringvector& actions)
     {
+        agent::size acceptedActionCount{};
         for (const agent::string& action : actions)
         {
             const agent::boolean actionAdded = selfDriveObject->addAction(action);
             if (actionAdded == false)
             {
+                XWALK_RPIAGENT_WARNING(XWALK_INVAL, "Voice-active-car rejected an unsupported model action");
                 callbacks.output(callbackContext, agent::string("Unsupported voice action: ") + action);
             }
+            else
+            {
+                ++acceptedActionCount;
+            }
         }
+        XWALK_RPIAGENT_TRACE_UID2(RPIAGENT .015,
+                                  "Voice-active-car queued %llu of %llu parsed action request(s)",
+                                  static_cast<unsigned long long>(acceptedActionCount),
+                                  static_cast<unsigned long long>(actions.size()));
     }
 
     agent::string XWalkVoiceActiveCar::sensorPrompt()
@@ -396,6 +414,8 @@ namespace xwalk::agent
             static_cast<void>(selfDriveObject->addAction("backward"));
             const agent::string distance = hal::common::float64ToString(distanceCm);
             callbacks.output(callbackContext, agent::string("Ultrasonic sense too close: ") + distance + "cm");
+            XWALK_RPIAGENT_TRACE_UID1(
+                RPIAGENT .014, "Voice-active-car proximity response triggered at %.2f cm", distanceCm);
             return agent::string("<<<Ultrasonic sense too close: ") + distance + "cm>>>";
         }
         return {};

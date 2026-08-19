@@ -27,6 +27,8 @@
 
 #include "xAgent_Rpi5CarVoiceActiveCarGpt.h"
 
+#include "xHal_Rpi5CarTrace.h"
+
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -120,6 +122,7 @@ Answer length: appropriately detailed
      */
     XWalkVoiceActiveCarConfiguration XWalkVoiceActiveCarGpt::carConfiguration()
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .042, "Jarvis voice-active-car profile selected");
         return {10.0, true, 30'000U, true, WAKE_WORD, ANSWER_ON_WAKE};
     }
 

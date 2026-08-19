@@ -14,6 +14,7 @@ add_library(xWalk::GptCar ALIAS xWalkGptCar)
 target_include_directories(xWalkGptCar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkGptCar PUBLIC cxx_std_17)
 target_link_libraries(xWalkGptCar PUBLIC xWalkVoiceActiveCar)
+target_link_libraries(xWalkGptCar PRIVATE xWalkTrace)
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkGptCar PRIVATE
         -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)

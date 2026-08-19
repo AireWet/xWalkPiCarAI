@@ -94,6 +94,7 @@ namespace xwalk::agent
         if (startedValue)
         {
             callbacks.setColor(callbackContext, XWalkComputerVisionColor::Red);
+            XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .030, "Bull-fight vision provider started with red detection enabled");
         }
         return startedValue;
     }

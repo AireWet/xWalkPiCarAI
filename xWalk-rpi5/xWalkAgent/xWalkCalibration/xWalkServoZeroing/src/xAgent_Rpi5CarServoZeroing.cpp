@@ -23,6 +23,8 @@
 
 #include "xAgent_Rpi5CarServoZeroing.h"
 
+#include "xHal_Rpi5CarTrace.h"
+
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -69,6 +71,7 @@ namespace xwalk::agent
                 break;
             }
         }
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .016, "Servo-zeroing sequence completed after cancellation");
         return true;
     }
 

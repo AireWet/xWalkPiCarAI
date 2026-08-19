@@ -129,6 +129,10 @@ namespace xwalk::agent
         qrEnabledValue = false;
         lastQrData.clear();
         startedValue = callbacks.start(callbackContext);
+        if (startedValue)
+        {
+            XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .021, "Computer-vision provider started with detectors disabled");
+        }
         return startedValue;
     }
 

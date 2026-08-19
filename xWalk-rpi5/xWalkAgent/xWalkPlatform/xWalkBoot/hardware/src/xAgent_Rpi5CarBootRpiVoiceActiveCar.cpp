@@ -14,6 +14,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarBootRpi.h"
+#include "xHal_Rpi5CarTrace.h"
 
 namespace xwalk::agent
 {
@@ -43,6 +44,7 @@ namespace xwalk::agent
                                                  agent::uint32 minimumGpioLineCount,
                                                  const hal::XWalkGpioCallbacks& gpioCallbacks)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .067, "Boot selecting voice-active-car composition");
         return runVoiceActiveMode(XWALK_BOOT_VOICE_ACTIVE_CAR_REQ,
                                   context,
                                   callback,

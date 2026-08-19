@@ -19,6 +19,7 @@ namespace xwalk::agent
     agent::int32 XWalkVoiceControlledCar::run()
     {
         XWalkPicarxSafetyGuard safetyGuard(*picarxObject);
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .043, "Voice-controlled-car wake loop started");
         callbacks.output(callbackContext,
                          "Say \"hey robot\" to wake me up! Then say: forward / backward / "
                          "left / right. Say \"sleep\" to stop listening.");

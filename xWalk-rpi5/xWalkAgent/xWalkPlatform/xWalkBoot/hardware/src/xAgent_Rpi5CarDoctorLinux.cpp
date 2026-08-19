@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarDoctorLinux.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include "xHal_Rpi5CarCommonFunctions.h"
 #include "xHal_Rpi5CarConfigStore.h"
@@ -560,6 +561,7 @@ namespace xwalk::agent
      */
     agent::stringvector XWalkDoctorLinux::inspect(agent::stringview configurationFilePath)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .073, "Doctor bounded Linux inspection started");
         agent::stringvector lines{"=== PiCar-X Bounded Hardware Preflight ==="};
         const agent::string path(configurationFilePath);
         const agent::boolean readable = ::access(path.c_str(), R_OK) == 0;

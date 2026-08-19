@@ -56,7 +56,7 @@ if(XWALK_APP_CONTROL_BUILD_WEBSOCKET_BACKEND)
     target_compile_definitions(xWalkAppControlWebSocket PRIVATE
         BOOST_ERROR_CODE_HEADER_ONLY=1)
     target_link_libraries(xWalkAppControlWebSocket PUBLIC
-        xWalkAppControl Threads::Threads PRIVATE PkgConfig::JSON_C)
+        xWalkAppControl Threads::Threads PRIVATE PkgConfig::JSON_C xWalkTrace)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         target_compile_options(xWalkAppControlWebSocket PRIVATE
             -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)

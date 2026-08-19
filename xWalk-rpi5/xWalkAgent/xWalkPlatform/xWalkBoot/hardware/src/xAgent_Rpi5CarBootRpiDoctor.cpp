@@ -19,6 +19,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarBootRpi.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include "xAgent_Rpi5CarDoctorLinux.h"
 
@@ -33,6 +34,7 @@ namespace xwalk::agent
      */
     agent::int32 XWalkBootRpi::runDoctor(agent::contextpointer context, bootapplicationcallback callback)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .052, "Boot starting bounded Doctor composition");
         const agent::stringvector doctorLines = XWalkDoctorLinux::inspect(configurationFilePath);
         XWalkBootServices services{};
         services.doctorLines = &doctorLines;

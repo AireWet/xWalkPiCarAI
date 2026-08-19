@@ -26,6 +26,8 @@
  ******************************************************************************/
 #include "xAgent_Rpi5CarSelfDrive.h"
 
+#include "xHal_Rpi5CarTrace.h"
+
 /******************************************************************************
  * Anonymous namespace
  ******************************************************************************/
@@ -118,7 +120,15 @@ namespace xwalk::agent
             const agent::boolean actionAvailable = static_cast<agent::boolean>(!action.empty());
             if (actionAvailable)
             {
-                static_cast<void>(doAction(action));
+                const agent::boolean actionCompleted = doAction(action);
+                if (actionCompleted)
+                {
+                    XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .005, "Self-drive queued action completed");
+                }
+                else
+                {
+                    XWALK_RPIAGENT_WARNING(XWALK_INVAL, "Self-drive queued action could not be completed");
+                }
                 const agent::boolean actionFailed = static_cast<agent::boolean>(operationFailedValue.load());
                 if (actionFailed)
                 {
@@ -162,10 +172,17 @@ namespace xwalk::agent
             return false;
         }
 
-        agent::mutexlock lock(stateMutex);
-        actionQueue.emplace_back(action);
-        statusValue = XWalkSelfDriveStatus::Actions;
-        stateChanged.notify_all();
+        agent::size queueDepth{};
+        {
+            agent::mutexlock lock(stateMutex);
+            actionQueue.emplace_back(action);
+            queueDepth = actionQueue.size();
+            statusValue = XWalkSelfDriveStatus::Actions;
+            stateChanged.notify_all();
+        }
+        XWALK_RPIAGENT_TRACE_UID1(RPIAGENT .004,
+                                  "Self-drive accepted an action; queue depth is %llu",
+                                  static_cast<unsigned long long>(queueDepth));
         return true;
     }
 

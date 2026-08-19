@@ -99,6 +99,10 @@ namespace xwalk::agent
                 startedValue = false;
             }
         }
+        if (startedValue)
+        {
+            XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .034, "Video-car provider completed startup warm-up");
+        }
         return startedValue;
     }
 

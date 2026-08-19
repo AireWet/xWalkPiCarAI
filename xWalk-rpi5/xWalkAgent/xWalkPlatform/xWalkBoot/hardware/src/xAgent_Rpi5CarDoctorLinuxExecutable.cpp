@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarDoctorLinux.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include "xHal_Rpi5CarLinuxHeaders.h"
 
@@ -69,6 +70,7 @@ namespace xwalk::agent
      */
     agent::boolean XWalkDoctorLinux::executableAvailable(agent::stringview executable)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .074, "Doctor checking one executable prerequisite");
         const agent::boolean executableEmpty = static_cast<agent::boolean>(executable.empty());
         if (executableEmpty)
         {

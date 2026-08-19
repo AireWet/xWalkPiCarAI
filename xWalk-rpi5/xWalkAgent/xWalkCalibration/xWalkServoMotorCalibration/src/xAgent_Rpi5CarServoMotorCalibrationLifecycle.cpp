@@ -61,6 +61,7 @@ namespace xwalk::agent
                                     picarx.cameraPanServoCalibration(),
                                     picarx.cameraTiltServoCalibration()};
         resultValue.motorDirections = picarx.motorDirections();
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .023, "Servo-motor-calibration coordinator configured");
     }
 
     /** @brief Performs a best-effort drive-motor stop. */

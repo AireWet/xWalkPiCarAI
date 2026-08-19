@@ -14,6 +14,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarBootRpi.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include "xAgent_Rpi5CarServoZeroing.h"
 #include "xHal_Rpi5CarI2c.h"
@@ -33,6 +34,7 @@ namespace xwalk::agent
     agent::int32
     XWalkBootRpi::runServoZeroing(agent::contextpointer context, bootapplicationcallback callback, hal::XWalkI2c& i2c)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .057, "Boot composing twelve-channel servo-zeroing services");
         hal::XWalkPwmTimerState timerState;
         hal::XWalkPwm pwm0(i2c, 0U, {}, timerState);
         hal::XWalkPwm pwm1(i2c, 1U, {}, timerState);

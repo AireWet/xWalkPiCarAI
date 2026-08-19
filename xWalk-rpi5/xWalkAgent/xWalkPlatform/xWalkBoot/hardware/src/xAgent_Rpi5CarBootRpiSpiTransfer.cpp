@@ -14,6 +14,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarBootRpi.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include "xAgent_Rpi5CarSpiTransfer.h"
 #include "xHal_Rpi5CarConfigStore.h"
@@ -33,6 +34,7 @@ namespace xwalk::agent
                                               bootapplicationcallback callback,
                                               hal::XWalkConfigStore& config)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .060, "Boot composing bounded SPI-transfer services");
         const agent::string spiDevice = config.get("hardware_spi_device", XHAL_RPI5CAR_SPI_DEFAULT_DEVICE);
         hal::XWalkSpiConfiguration spiConfiguration{};
         spiConfiguration.speedHz = parseUnsigned(

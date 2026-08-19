@@ -46,6 +46,7 @@ namespace xwalk::agent
         {
             XWALK_RPIAGENT_ERROR(XWALK_INVAL, "Road-user safety requires complete callbacks");
         }
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .032, "Road-user-safety evaluator configured");
     }
 
     /**

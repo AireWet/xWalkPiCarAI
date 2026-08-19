@@ -229,7 +229,7 @@ if(XWALK_BOOT_BUILD_HOST_TESTS)
         target_include_directories(xWalkDoctorLinuxHostTest PRIVATE
             ${CMAKE_CURRENT_SOURCE_DIR}/hardware/include
             ${CMAKE_CURRENT_SOURCE_DIR}/hardware/test/include)
-        target_link_libraries(xWalkDoctorLinuxHostTest PRIVATE xWalkLibraryCommon)
+        target_link_libraries(xWalkDoctorLinuxHostTest PRIVATE xWalkLibraryCommon xWalkTrace)
         target_compile_features(xWalkDoctorLinuxHostTest PRIVATE cxx_std_17)
         if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
             target_compile_options(xWalkDoctorLinuxHostTest PRIVATE

@@ -14,6 +14,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarBootRpi.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include "xHal_Rpi5CarConfigStore.h"
 #include "xHal_Rpi5CarTextToSpeechPiper.h"
@@ -36,6 +37,7 @@ namespace xwalk::agent
                                                     hal::XWalkBoardControl& boardControl,
                                                     XWalkPicarx& picarx)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .061, "Boot composing storytelling-robot services");
         hal::XWalkTextToSpeechPiper piper(config.get("voice_piper_executable", "piper"),
                                           config.get("voice_piper_playback_executable", "aplay"),
                                           config.get("voice_piper_model", "en_US-amy-low"));

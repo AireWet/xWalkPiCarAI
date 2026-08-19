@@ -25,6 +25,7 @@
  * Includes
  ******************************************************************************/
 #include "xAgent_Rpi5CarLineTracking.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -158,6 +159,7 @@ namespace xwalk::agent
         currentStateValue = classify(picarxObject->lineStatus(readings));
         if (currentStateValue == XWalkLineTrackingState::Stop)
         {
+            XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .078, "Line-tracking entered bounded line recovery");
             return recoverLine(readings);
         }
 

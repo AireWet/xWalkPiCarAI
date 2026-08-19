@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarGrayscaleCalibration.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -151,6 +152,7 @@ namespace xwalk::agent
      */
     agent::boolean XWalkGrayscaleCalibration::calibrateLine()
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .045, "Grayscale line-calibration motion sequence started");
         lineMinimumValues = {4'096, 4'096, 4'096};
         lineMaximumValues = {0, 0, 0};
         const agent::boolean leftForwardCompleted = runLinePhase(-35.0, true, 800U);

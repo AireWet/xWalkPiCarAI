@@ -212,6 +212,8 @@ namespace xwalk::agent
     agent::int32 XWalkBootRpi::run(agent::contextpointer context, bootapplicationcallback callback)
     {
         begin(callback);
+        XWALK_RPIAGENT_TRACE_UID1(
+            RPIAGENT .019, "Raspberry Pi boot composition selected mode %u", static_cast<agent::uint32>(selectedMode));
         if (selectedMode == XWALK_BOOT_DOCTOR_REQ)
         {
             return runDoctor(context, callback);

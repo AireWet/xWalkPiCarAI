@@ -73,6 +73,7 @@ namespace xwalk::agent
                 stop();
                 return false;
             }
+            XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .035, "Video-recording camera completed startup warm-up");
         }
         return startedValue;
     }

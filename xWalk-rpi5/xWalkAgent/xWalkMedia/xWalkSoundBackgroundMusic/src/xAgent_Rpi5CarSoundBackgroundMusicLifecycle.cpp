@@ -94,6 +94,7 @@ namespace xwalk::agent
         musicObject->musicSetVolume(configurationValue.musicVolumePercent);
         musicPlayingValue = false;
         startedValue = true;
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .018, "Sound-background-music resources validated and coordinator started");
         return true;
     }
 

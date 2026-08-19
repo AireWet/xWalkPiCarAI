@@ -12,6 +12,8 @@
 
 #include "xAgent_Rpi5CarOnlineLlmTest.h"
 
+#include "xHal_Rpi5CarTrace.h"
+
 /** @namespace xwalk::agent @brief Contains application coordinators for xWalk firmware. */
 namespace xwalk::agent
 {
@@ -19,6 +21,8 @@ namespace xwalk::agent
     /** @brief Runs the configured text-only conversation. @return Zero after cancellation. */
     agent::int32 XWalkOnlineLlmTest::run()
     {
+        XWALK_RPIAGENT_TRACE_UID1(
+            RPIAGENT .039, "Online language-model loop started with a %u-message bound", configuration.maximumMessages);
         languageModelObject->setMaximumMessages(configuration.maximumMessages);
         languageModelObject->setInstructions(configuration.instructions);
         languageModelObject->setWelcome(configuration.welcome);

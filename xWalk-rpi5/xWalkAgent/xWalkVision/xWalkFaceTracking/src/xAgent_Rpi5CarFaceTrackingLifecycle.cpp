@@ -91,6 +91,7 @@ namespace xwalk::agent
         if (startedValue)
         {
             callbacks.setFace(callbackContext, true);
+            XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .031, "Face-tracking vision provider started");
         }
         return startedValue;
     }

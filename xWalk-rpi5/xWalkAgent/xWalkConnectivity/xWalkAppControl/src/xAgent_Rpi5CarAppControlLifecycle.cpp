@@ -109,6 +109,7 @@ namespace xwalk::agent
             return false;
         }
         startedValue = true;
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .024, "App-control transport and vision providers started");
         return true;
     }
 

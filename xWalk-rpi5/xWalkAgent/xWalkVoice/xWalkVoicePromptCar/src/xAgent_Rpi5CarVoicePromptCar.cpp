@@ -12,12 +12,15 @@
 
 #include "xAgent_Rpi5CarPicarxSafetyGuard.h"
 
+#include "xHal_Rpi5CarTrace.h"
+
 namespace xwalk::agent
 {
 
     agent::int32 XWalkVoicePromptCar::run()
     {
         XWalkPicarxSafetyGuard safetyGuard(*picarxObject);
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .044, "Voice-prompt-car bounded demonstration started");
         textToSpeechObject->speak("Hello! I'm PiCar-X.");
         const agent::boolean forwardMovementAllowed =
             static_cast<agent::boolean>(callbacks.shouldContinue(callbackContext));

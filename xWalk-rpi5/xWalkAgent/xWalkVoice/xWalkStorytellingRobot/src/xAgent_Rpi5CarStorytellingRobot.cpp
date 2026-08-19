@@ -12,12 +12,15 @@
 
 #include "xAgent_Rpi5CarPicarxSafetyGuard.h"
 
+#include "xHal_Rpi5CarTrace.h"
+
 namespace xwalk::agent
 {
 
     agent::int32 XWalkStorytellingRobot::run()
     {
         XWalkPicarxSafetyGuard safetyGuard(*picarxObject);
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .040, "Storytelling-robot bounded movement sequence started");
         textToSpeechObject->speak(configuration.greeting);
         const agent::boolean firstLegRequested = callbacks.shouldContinue(callbackContext);
         if (firstLegRequested == false)

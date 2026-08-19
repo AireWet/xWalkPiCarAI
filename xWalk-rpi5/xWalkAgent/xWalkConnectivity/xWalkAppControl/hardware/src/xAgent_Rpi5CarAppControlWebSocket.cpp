@@ -11,6 +11,7 @@
 #include "xAgent_Rpi5CarAppControlWebSocket.h"
 
 #include "xAgent_Rpi5CarAppControlWebSocketState.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include <chrono>
 #include <memory>
@@ -95,6 +96,7 @@ namespace xwalk::agent
             stop();
             return false;
         }
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .046, "App-control WebSocket worker started");
         return true;
     }
 

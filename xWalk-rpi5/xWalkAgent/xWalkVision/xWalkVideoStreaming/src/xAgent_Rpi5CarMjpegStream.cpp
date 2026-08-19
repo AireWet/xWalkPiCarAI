@@ -8,6 +8,8 @@
 
 #include "xAgent_Rpi5CarMjpegStream.h"
 
+#include "xHal_Rpi5CarTrace.h"
+
 #include <algorithm>
 
 namespace xwalk::agent
@@ -72,16 +74,22 @@ namespace xwalk::agent
         {
             return XWalkMjpegStreamStatus::InvalidConfiguration;
         }
-        const std::lock_guard<std::mutex> lock(state.mutex);
-        if (state.started)
         {
-            return XWalkMjpegStreamStatus::Ok;
+            const std::lock_guard<std::mutex> lock(state.mutex);
+            if (state.started)
+            {
+                return XWalkMjpegStreamStatus::Ok;
+            }
+            state.configuration = configuration;
+            state.clients.clear();
+            state.nextSequence = 1U;
+            state.cameraAvailable = true;
+            state.started = true;
         }
-        state.configuration = configuration;
-        state.clients.clear();
-        state.nextSequence = 1U;
-        state.cameraAvailable = true;
-        state.started = true;
+        XWALK_RPIAGENT_TRACE_UID2(RPIAGENT .036,
+                                  "MJPEG stream started for %u client(s) with queue capacity %u",
+                                  configuration.maximumClients,
+                                  configuration.queueCapacity);
         return XWalkMjpegStreamStatus::Ok;
     }
 

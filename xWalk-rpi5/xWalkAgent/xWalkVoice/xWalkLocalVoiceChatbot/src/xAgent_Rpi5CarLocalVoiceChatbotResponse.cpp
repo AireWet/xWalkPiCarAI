@@ -22,6 +22,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarLocalVoiceChatbot.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include <algorithm>
 #include <cctype>
@@ -149,6 +150,9 @@ namespace xwalk::agent
 
     agent::string XWalkLocalVoiceChatbot::stripThinking(agent::stringview response)
     {
+        XWALK_RPIAGENT_TRACE_UID1(RPIAGENT .085,
+                                  "Local voice-chatbot filtering %llu response character(s)",
+                                  static_cast<unsigned long long>(response.size()));
         agent::string result(response);
         removePairedTag(result, "think");
         removePairedTag(result, "thinking");

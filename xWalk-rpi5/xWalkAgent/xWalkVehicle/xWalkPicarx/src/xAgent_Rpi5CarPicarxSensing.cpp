@@ -25,6 +25,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarPicarx.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -47,6 +48,7 @@ namespace xwalk::agent
     /** @brief Sets and persists all grayscale line references. */
     void XWalkPicarx::setGrayscaleReference(const hal::linetrackervalues& value)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .082, "PiCar-X grayscale reference update requested");
         grayscaleObject->setReference(value);
         configStoreObject->set("line_reference", formatReferences(value));
     }

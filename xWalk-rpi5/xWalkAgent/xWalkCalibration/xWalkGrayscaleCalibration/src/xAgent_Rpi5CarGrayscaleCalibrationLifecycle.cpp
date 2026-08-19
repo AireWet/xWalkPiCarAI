@@ -66,6 +66,7 @@ namespace xwalk::agent
         }
         resultValue.lineReference = picarxObject->grayscaleReference();
         resultValue.cliffReference = picarxObject->cliffReference();
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .022, "Grayscale-calibration coordinator configured");
     }
 
     /******************************************************************************

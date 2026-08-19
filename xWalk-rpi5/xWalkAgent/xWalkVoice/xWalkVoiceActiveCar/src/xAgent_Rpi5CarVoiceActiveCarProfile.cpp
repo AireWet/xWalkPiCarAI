@@ -17,6 +17,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarVoiceActiveCar.h"
+#include "xHal_Rpi5CarTrace.h"
 
 namespace xwalk::agent
 {
@@ -84,6 +85,7 @@ Answer length: appropriately detailed
      */
     XWalkVoiceActiveCarConfiguration XWalkVoiceActiveCar::carConfiguration()
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .086, "Default voice-active-car profile selected");
         return {10.0, true, 30'000U, true, WAKE_WORD, ANSWER_ON_WAKE};
     }
 

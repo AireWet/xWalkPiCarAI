@@ -7,6 +7,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarMjpegHttpServer.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include <arpa/inet.h>
 #include <cerrno>
@@ -510,6 +511,7 @@ namespace xwalk::agent
         server.clients.clear();
         server.nextClientIdentifier = 1U;
         server.started = true;
+        XWALK_RPIAGENT_TRACE_UID1(RPIAGENT .084, "MJPEG HTTP server started on port %u", configuration.stream.port);
         if (server.configuration.observability != nullptr)
         {
             ::xwalk::recordFailureEvent(

@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarBootRpi.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include "xAgent_Rpi5CarLocalVoiceChatbot.h"
 #include "xHal_Rpi5CarConfigStore.h"
@@ -44,6 +45,7 @@ namespace xwalk::agent
                                             hal::XWalkBoardControl& boardControl,
                                             XWalkPicarx& picarx)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .069, "Boot composing local voice-chat services");
         hal::XWalkSpeechRecognizerVosk recognizer(
             config.get("voice_vosk_library", "/usr/lib/xwalk/libvosk.so"),
             config.get("voice_vosk_model", "/usr/share/xwalk/models/vosk/vosk-model-small-en-us-0.15"));

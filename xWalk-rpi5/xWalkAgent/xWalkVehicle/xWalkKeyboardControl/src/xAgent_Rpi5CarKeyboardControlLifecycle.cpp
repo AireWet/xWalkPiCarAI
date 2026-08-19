@@ -63,6 +63,7 @@ namespace xwalk::agent
         {
             XWALK_RPIAGENT_ERROR(XWALK_INVAL, "Keyboard control requires complete callbacks");
         }
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .026, "Keyboard-control coordinator configured");
     }
 
     /******************************************************************************

@@ -27,6 +27,7 @@ namespace xwalk::agent
         {
             XWALK_RPIAGENT_ERROR(XWALK_INVAL, "Move example requires complete callbacks");
         }
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .028, "Move-example coordinator configured");
     }
 
     XWalkMoveExample::~XWalkMoveExample()

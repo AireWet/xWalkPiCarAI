@@ -14,6 +14,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarBootRpi.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include "xAgent_Rpi5CarLineTracking.h"
 
@@ -30,6 +31,7 @@ namespace xwalk::agent
     agent::int32
     XWalkBootRpi::runLineTracking(agent::contextpointer context, bootapplicationcallback callback, XWalkPicarx& picarx)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .055, "Boot composing line-tracking services");
         XWalkLineTracking lineTracking(picarx, nullptr, &delayMilliseconds);
         XWalkBootServices services{};
         services.picarx = &picarx;

@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarDoctorAssessment.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -51,6 +52,7 @@ namespace xwalk::agent
     XWalkDoctorAssessmentResult XWalkDoctorAssessment::assessRobotHat(agent::stringview profile,
                                                                       const XWalkDoctorRobotHatEvidence& evidence)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .072, "Doctor evaluating Robot HAT evidence");
         if (profile == "robot_hat_v5")
         {
             if (evidence.v5UuidDetected)

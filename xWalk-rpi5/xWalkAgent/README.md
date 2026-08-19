@@ -114,6 +114,72 @@ with the `agent-aggregate` label and execute it only after Raspberry Pi and Robo
 The command-line application is a separate sibling aggregate under `xWalkController`. The standalone Agent
 tree does not contain or compose `xWalkController` or `xWalkApp`.
 
+## Runtime tracing
+
+Agent diagnostics use registered `RPIAGENT` trace identifiers. Enable the complete Agent module for one
+Jarvis run with:
+
+```bash
+build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control --trace RPIAGENT.enable voice-active-car-gpt start
+```
+
+Use an individual selector such as `--trace RPIAGENT.012.enable` when only one event is needed. Selection is
+persisted in `<build-directory>/generated/xwalk-traces.xml`, and records are appended to
+`<build-directory>/log/xWalkTrace.log`.
+
+| Functional group | Child module | Trace identifiers |
+| --- | --- | --- |
+| Calibration | GrayscaleCalibration | `RPIAGENT.022` |
+| Calibration | ServoMotorCalibration | `RPIAGENT.023` |
+| Calibration | ServoZeroing | `RPIAGENT.016` |
+| Connectivity | AppControl | `RPIAGENT.024` |
+| Connectivity | SpiTransfer | `RPIAGENT.017` |
+| Media | SoundBackgroundMusic | `RPIAGENT.018` |
+| Platform | Boot | `RPIAGENT.019` |
+| Vehicle | CliffDetection | `RPIAGENT.025` |
+| Vehicle | KeyboardControl | `RPIAGENT.026` |
+| Vehicle | LineTracking | `RPIAGENT.027` |
+| Vehicle | MoveExample | `RPIAGENT.028` |
+| Vehicle | ObstacleAvoidance | `RPIAGENT.029` |
+| Vehicle | Picarx | `RPIAGENT.001` |
+| Vehicle | SelfDrive | `RPIAGENT.002`–`RPIAGENT.009` |
+| Vision | BullFight | `RPIAGENT.030` |
+| Vision | CameraCapture | `RPIAGENT.020` |
+| Vision | ComputerVision | `RPIAGENT.021` |
+| Vision | FaceTracking | `RPIAGENT.031` |
+| Vision | RoadUserSafety | `RPIAGENT.032` |
+| Vision | TreasureHunt | `RPIAGENT.033` |
+| Vision | VideoCar | `RPIAGENT.034` |
+| Vision | VideoRecording | `RPIAGENT.035` |
+| Vision | VideoStreaming | `RPIAGENT.036` |
+| Voice | GptCar | `RPIAGENT.037` |
+| Voice | LocalVoiceChatbot | `RPIAGENT.038` |
+| Voice | OnlineLlmTest | `RPIAGENT.039` |
+| Voice | StorytellingRobot | `RPIAGENT.040` |
+| Voice | TextVisionTalk | `RPIAGENT.041` |
+| Voice | VoiceActiveCar | `RPIAGENT.010`–`RPIAGENT.015` |
+| Voice | VoiceActiveCarGpt | `RPIAGENT.042` |
+| Voice | VoiceControlledCar | `RPIAGENT.043` |
+| Voice | VoicePromptCar | `RPIAGENT.044` |
+
+The production-source coverage continues with file-level operational events:
+
+| Trace identifiers | Production source coverage |
+| --- | --- |
+| `RPIAGENT.045` | Grayscale calibration execution |
+| `RPIAGENT.046`–`RPIAGENT.047` | App-control WebSocket facade and worker state |
+| `RPIAGENT.048`–`RPIAGENT.071` | Individual Raspberry Pi Boot composition sources |
+| `RPIAGENT.072`–`RPIAGENT.075` | Doctor assessment, Linux prerequisites, and host Boot stub |
+| `RPIAGENT.076`–`RPIAGENT.083` | Vehicle danger, recovery, input, calibration, guard, sensing, and gesture events |
+| `RPIAGENT.084` | MJPEG HTTP transport startup |
+| `RPIAGENT.085`–`RPIAGENT.086` | Voice response filtering and default-profile selection |
+
+Every project-owned production `.cpp` below the seven Agent functional groups contains at least one registered
+diagnostic. Test sources remain governed by their owning test assertions and do not emit production trace IDs.
+
+Warnings remain visible independently of normal trace selection. Agent traces never contain recognized speech,
+prompts, model-response text, spoken text, credentials, action text, audio, images, or cleanup callback data.
+
 Host verification is deterministic and uses in-memory callbacks:
 
 ```bash

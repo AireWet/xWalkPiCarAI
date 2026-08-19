@@ -108,6 +108,7 @@ namespace xwalk::agent
             return false;
         }
         renewTarget();
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .033, "Treasure-hunt vision provider started and target selected");
         return true;
     }
 

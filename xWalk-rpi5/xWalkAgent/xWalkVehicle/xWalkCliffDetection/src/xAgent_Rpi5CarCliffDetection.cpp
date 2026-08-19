@@ -21,6 +21,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarCliffDetection.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -62,6 +63,7 @@ namespace xwalk::agent
         picarxObject->backward(80.0);
         if (lastDangerValue == false)
         {
+            XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .076, "Cliff-detection entered the danger response");
             const agent::boolean delayCompleted = wait(100U);
             if (delayCompleted == false)
             {

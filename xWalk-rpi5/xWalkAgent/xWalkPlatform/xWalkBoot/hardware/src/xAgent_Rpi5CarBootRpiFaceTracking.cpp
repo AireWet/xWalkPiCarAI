@@ -14,6 +14,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarBootRpi.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include "xAgent_Rpi5CarComputerVisionOpenCv.h"
 #include "xAgent_Rpi5CarFaceTracking.h"
@@ -35,6 +36,7 @@ namespace xwalk::agent
                                                hal::XWalkConfigStore& config,
                                                XWalkPicarx& picarx)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .053, "Boot composing face-tracking services");
         XWalkComputerVisionOpenCvConfiguration visionConfiguration;
         visionConfiguration.cameraBackend =
             XWalkComputerVisionOpenCv::backendFromString(config.get("computer_vision_camera_backend", "v4l2"));

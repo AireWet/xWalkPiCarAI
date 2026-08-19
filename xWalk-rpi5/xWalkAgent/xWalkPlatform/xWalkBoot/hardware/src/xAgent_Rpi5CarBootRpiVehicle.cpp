@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarBootRpi.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include "xAgent_Rpi5CarPicarxConfiguration.h"
 #include "xHal_Rpi5CarAdc.h"
@@ -43,6 +44,7 @@ namespace xwalk::agent
                                           bootapplicationcallback callback,
                                           hal::XWalkConfigStore& config)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .064, "Boot composing Robot HAT vehicle services");
         const agent::string i2cDevice = config.get("hardware_i2c_device", XHAL_RPI5CAR_I2C_DEFAULT_DEVICE);
         const agent::string gpioDevice = config.get("hardware_gpio_device", XHAL_RPI5CAR_GPIO_DEFAULT_DEVICE);
         const agent::string deviceTreeRoot = config.get("hardware_device_tree_root", XHAL_RPI5CAR_DEVICE_TREE_ROOT);

@@ -9,6 +9,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarMoveExample.h"
+#include "xHal_Rpi5CarTrace.h"
 
 namespace xwalk::agent
 {
@@ -63,6 +64,7 @@ namespace xwalk::agent
 
     agent::boolean XWalkMoveExample::run()
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .079, "Move-example bounded motion sequence started");
         const agent::boolean operationRequested = continueCallback(callbackContext);
         if (operationRequested == false)
         {

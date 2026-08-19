@@ -14,6 +14,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarBootRpi.h"
+#include "xHal_Rpi5CarTrace.h"
 
 #include "xAgent_Rpi5CarSelfDrive.h"
 #include "xHal_Rpi5CarConfigStore.h"
@@ -36,6 +37,7 @@ namespace xwalk::agent
                                             hal::XWalkConfigStore& config,
                                             XWalkPicarx& picarx)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .056, "Boot composing self-drive services");
         hal::XWalkAudioAlsa audioBackend(config.get("voice_playback_device", "default"),
                                          config.get("voice_mixer_device", "default"),
                                          config.get("voice_mixer_element", "PCM"));

@@ -65,6 +65,7 @@ namespace xwalk::agent
     agent::int32 XWalkLocalVoiceChatbot::run()
     {
         assistantObject->start();
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .038, "Local voice-chatbot assistant started");
         callbacks.output(callbackContext, configuration.welcome);
         const agent::boolean processingLoopRequested{true};
         while (processingLoopRequested)

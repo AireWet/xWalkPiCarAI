@@ -15,6 +15,7 @@ add_library(xWalk::SpiTransfer ALIAS xWalkSpiTransfer)
 target_include_directories(xWalkSpiTransfer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkSpiTransfer PUBLIC cxx_std_17)
 target_link_libraries(xWalkSpiTransfer PUBLIC xWalkSpi)
+target_link_libraries(xWalkSpiTransfer PRIVATE xWalkTrace)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkSpiTransfer PRIVATE

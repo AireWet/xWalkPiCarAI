@@ -25,6 +25,7 @@
  * Includes
  ******************************************************************************/
 #include "xAgent_Rpi5CarSelfDrive.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -48,6 +49,7 @@ namespace xwalk::agent
      */
     void XWalkSelfDrive::waveHands()
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .083, "Self-drive bounded gesture sequence started");
         picarxObject->reset();
         picarxObject->setCameraTiltAngle(20.0);
         for (agent::uint32 index = 0U; index < 2U; ++index)

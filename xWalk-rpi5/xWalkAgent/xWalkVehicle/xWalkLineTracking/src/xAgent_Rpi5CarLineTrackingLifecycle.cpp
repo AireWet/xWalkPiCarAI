@@ -70,6 +70,7 @@ namespace xwalk::agent
         : picarxObject(&picarx), callbackContext(context), delayCallback(callback), configurationValue(configuration)
     {
         validateConfiguration(configurationValue, delayCallback);
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .027, "Line-tracking coordinator configured");
     }
 
     /******************************************************************************

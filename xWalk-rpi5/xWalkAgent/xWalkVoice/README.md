@@ -8,3 +8,9 @@ profiles, model providers, prompt flows, and hardware dependencies.
 
 Set `XWALK_AGENT_VOICE_BUILD_HOST_TESTS=ON` to run one GoogleTest case per child module independently.
 Set `XWALK_AGENT_VOICE_BUILD_HARDWARE_TESTS=ON` to compile the matching hardware-profile cases.
+
+## Tracing
+
+Every Voice child module owns a registered `RPIAGENT` lifecycle or bounded-operation trace. Use the authoritative
+[Agent trace table](../README.md#runtime-tracing) to select one child. Traces exclude recognized speech,
+prompts, model-response text, spoken text, credentials, and images.

@@ -18,6 +18,7 @@ target_include_directories(xWalkVideoStreaming PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkVideoStreaming PUBLIC cxx_std_17)
 target_link_libraries(xWalkVideoStreaming PUBLIC xWalkLibraryCommon)
+target_link_libraries(xWalkVideoStreaming PRIVATE xWalkTrace)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkVideoStreaming PRIVATE

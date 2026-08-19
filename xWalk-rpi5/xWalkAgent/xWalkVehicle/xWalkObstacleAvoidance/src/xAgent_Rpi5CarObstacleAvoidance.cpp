@@ -28,6 +28,7 @@
 #include "xAgent_Rpi5CarObstacleAvoidance.h"
 
 #include "xHal_Rpi5CarCommonFunctions.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -77,6 +78,7 @@ namespace xwalk::agent
         }
         if (distanceCm >= dangerDistanceCm)
         {
+            XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .080, "Obstacle avoidance entered its bounded turn response");
             picarxObject->setDirectionServoAngle(30.0);
             picarxObject->forward(powerPercent);
             const agent::boolean reverseDelayCompleted = wait(100U);

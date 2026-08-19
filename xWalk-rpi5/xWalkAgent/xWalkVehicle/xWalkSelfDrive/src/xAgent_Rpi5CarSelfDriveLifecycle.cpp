@@ -90,6 +90,7 @@ namespace xwalk::agent
         {
             XWALK_RPIAGENT_ERROR(XWALK_INVAL, "Self-drive resource configuration must not be empty");
         }
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .002, "Self-drive coordinator configured with bounded audio resources");
     }
 
     /******************************************************************************
@@ -221,6 +222,7 @@ namespace xwalk::agent
         operationFailedValue.store(false);
         runningValue.store(true);
         worker = agent::threadhandle(&XWalkSelfDrive::actionLoop, this);
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .003, "Self-drive action worker started");
     }
 
     /**

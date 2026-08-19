@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarPicarxSafetyGuard.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Namespace definitions
@@ -48,6 +49,7 @@ namespace xwalk::agent
      */
     XWalkPicarxSafetyGuard::XWalkPicarxSafetyGuard(XWalkPicarx& picarx) noexcept : picarxObject(&picarx)
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .081, "PiCar-X scope safety guard armed");
     }
 
     /******************************************************************************

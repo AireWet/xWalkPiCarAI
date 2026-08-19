@@ -27,6 +27,7 @@
 #include "xAgent_Rpi5CarSelfDrive.h"
 
 #include "xHal_Rpi5CarFileFunctions.h"
+#include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
  * Anonymous namespace
@@ -118,9 +119,11 @@ namespace xwalk::agent
             static_cast<agent::boolean>(!hal::isReadableRegularFile(soundPath));
         if (readableRegularFileNotMatched)
         {
+            XWALK_RPIAGENT_WARNING(XWALK_INVAL, "Self-drive horn resource is unavailable");
             return false;
         }
         musicObject->soundPlayBackground(soundPath.string(), 100.0);
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .008, "Self-drive horn playback started");
         return true;
     }
 
@@ -136,9 +139,11 @@ namespace xwalk::agent
         const agent::boolean soundFileUnreadable = static_cast<agent::boolean>(!hal::isReadableRegularFile(soundPath));
         if (soundFileUnreadable)
         {
+            XWALK_RPIAGENT_WARNING(XWALK_INVAL, "Self-drive engine-sound resource is unavailable");
             return false;
         }
         musicObject->soundPlayBackground(soundPath.string(), 50.0);
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .009, "Self-drive engine-sound playback started");
         return true;
     }
 
@@ -154,10 +159,12 @@ namespace xwalk::agent
         const agent::boolean musicFileUnreadable = static_cast<agent::boolean>(!hal::isReadableRegularFile(musicPath));
         if (musicFileUnreadable)
         {
+            XWALK_RPIAGENT_WARNING(XWALK_INVAL, "Self-drive background-music resource is unavailable");
             return false;
         }
         musicObject->musicPlay(musicPath.string(), 1, 0.0, BACKGROUND_MUSIC_VOLUME_PERCENT);
         backgroundMusicPlayingValue = true;
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .006, "Self-drive background-music playback started");
         return true;
     }
 
@@ -172,6 +179,7 @@ namespace xwalk::agent
         {
             musicObject->musicStop();
             backgroundMusicPlayingValue = false;
+            XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .007, "Self-drive background-music playback stopped");
         }
         return true;
     }

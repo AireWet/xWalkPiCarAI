@@ -27,6 +27,8 @@
 
 #include "xAgent_Rpi5CarSpiTransfer.h"
 
+#include "xHal_Rpi5CarTrace.h"
+
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -68,7 +70,12 @@ namespace xwalk::agent
      */
     agent::bytevector XWalkSpiTransfer::transfer(const agent::bytevector& transmitData)
     {
-        return spiObject->transfer(transmitData);
+        agent::bytevector receivedData = spiObject->transfer(transmitData);
+        XWALK_RPIAGENT_TRACE_UID2(RPIAGENT .017,
+                                  "SPI transaction completed with %zu transmitted and %zu received bytes",
+                                  transmitData.size(),
+                                  receivedData.size());
+        return receivedData;
     }
 
 } /* namespace xwalk::agent */

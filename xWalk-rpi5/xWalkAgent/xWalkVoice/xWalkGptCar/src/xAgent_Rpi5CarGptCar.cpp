@@ -13,6 +13,8 @@
 
 #include "xAgent_Rpi5CarGptCar.h"
 
+#include "xHal_Rpi5CarTrace.h"
+
 /** @brief Contains application coordinators for the xWalk firmware. */
 namespace xwalk::agent
 {
@@ -78,6 +80,7 @@ banter. Keep answers moderately detailed.)XWALK";
      */
     agent::int32 XWalkGptCar::run()
     {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .037, "GPT-car profile delegated to the bounded voice coordinator");
         return voiceCarObject->run();
     }
 
