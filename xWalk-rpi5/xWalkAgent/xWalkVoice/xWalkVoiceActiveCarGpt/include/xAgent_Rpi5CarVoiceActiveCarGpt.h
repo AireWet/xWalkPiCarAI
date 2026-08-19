@@ -1,10 +1,10 @@
 /******************************************************************************
  * @file        xAgent_Rpi5CarVoiceActiveCarGpt.h
- * @brief       Declares the example-21 English GPT voice-car profile.
+ * @brief       Declares the Gemini-backed Jarvis voice-car profile.
  *
  * @details
- * Defines the source-compatible Buddy identity, OpenAI model, Piper voice,
- * wake behavior, proximity threshold, camera setting, and assistant prompt.
+ * Defines the Jarvis identity, Gemini model, Piper voice, wake behavior,
+ * proximity threshold, camera setting, and filtered assistant action prompt.
  *
  * @project     xWalk Firmware
  * @module      xWalkVoiceActiveCarGpt
@@ -47,7 +47,7 @@ namespace xwalk::agent
 
     /**
      * @class XWalkVoiceActiveCarGpt
-     * @brief Supplies immutable source defaults for example 21.
+     * @brief Supplies immutable Gemini-backed Jarvis profile defaults.
      *
      * @details
      * Owns no hardware, credential, provider, or mutable conversation state. The
@@ -57,32 +57,33 @@ namespace xwalk::agent
     class XWalkVoiceActiveCarGpt final
     {
         public:
-            /** @brief Source robot name. */
-            static constexpr agent::cstring NAME = "Buddy";
+            /** @brief Configured robot-assistant name. */
+            static constexpr agent::cstring NAME = "Jarvis";
             /** @brief Source speech-recognition language. */
             static constexpr agent::cstring SPEECH_LANGUAGE = "en-us";
-            /** @brief Source Piper voice model. */
-            static constexpr agent::cstring SPEECH_VOICE = "en_US-ryan-low";
-            /** @brief Source OpenAI language-model name. */
-            static constexpr agent::cstring MODEL_NAME = "gpt-4o-mini";
-            /** @brief OpenAI-compatible endpoint used when deployment does not override it. */
-            static constexpr agent::cstring MODEL_ENDPOINT = "https://api.openai.com/v1/chat/completions";
-            /** @brief Environment variable that exclusively supplies the credential. */
-            static constexpr agent::cstring API_KEY_ENVIRONMENT = "OPENAI_API_KEY";
-            /** @brief Source case-insensitive wake phrase. */
-            static constexpr agent::cstring WAKE_WORD = "hey buddy";
-            /** @brief Source response spoken when the wake phrase is detected. */
-            static constexpr agent::cstring ANSWER_ON_WAKE = "Hi there";
+            /** @brief British male Piper model path used for spoken Jarvis replies. */
+            static constexpr agent::cstring SPEECH_VOICE = "/usr/share/xwalk/models/piper/en_GB-alan-medium.onnx";
+            /** @brief Stable Gemini language-model name used by the profile default. */
+            static constexpr agent::cstring MODEL_NAME = "gemini-3.7-flash";
+            /** @brief Gemini OpenAI-compatible endpoint used when deployment does not override it. */
+            static constexpr agent::cstring MODEL_ENDPOINT =
+                "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
+            /** @brief Environment variable that exclusively supplies the Gemini credential. */
+            static constexpr agent::cstring API_KEY_ENVIRONMENT = "GEMINI_API_KEY";
+            /** @brief Configured case-insensitive wake phrase. */
+            static constexpr agent::cstring WAKE_WORD = "hey jarvis";
+            /** @brief Response spoken when the Jarvis wake phrase is detected. */
+            static constexpr agent::cstring ANSWER_ON_WAKE = "Systems online. Ready when you are, Joxy.";
 
             /**
-             * @brief Returns the complete source-compatible instructions and welcome text.
+             * @brief Returns filtered Jarvis instructions and welcome text.
              * @return Owned assistant configuration for one caller-created coordinator.
              */
             static hal::XWalkVoiceAssistantConfiguration assistantConfiguration();
 
             /**
-             * @brief Returns source-compatible sensing, image, recognition, and wake settings.
-             * @return Ten-centimetre, image-enabled, English Buddy configuration.
+             * @brief Returns Jarvis sensing, image, recognition, and wake settings.
+             * @return Ten-centimetre, image-enabled, English Jarvis configuration.
              */
             static XWalkVoiceActiveCarConfiguration carConfiguration();
     };

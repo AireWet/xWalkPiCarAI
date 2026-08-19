@@ -46,7 +46,8 @@ namespace xwalk::agent
                                  nullptr,
                                  &selfDriveDelayMilliseconds,
                                  nullptr,
-                                 config.get("resource_sound_directory", "/usr/share/xwalk/sounds"));
+                                 config.get("resource_sound_directory", "/usr/share/xwalk/sounds"),
+                                 config.get("resource_music_directory", "/usr/share/xwalk/music"));
         XWalkBootServices services{};
         services.picarx = &picarx;
         services.selfDrive = &selfDrive;

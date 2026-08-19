@@ -83,7 +83,7 @@
 #define XWALK_BOOT_VOICE_CHAT_REQ (::agent::uint8{13U})
 /** @brief Selects the base voice-active-car composition. */
 #define XWALK_BOOT_VOICE_ACTIVE_CAR_REQ (::agent::uint8{14U})
-/** @brief Selects the English GPT voice-active-car profile. */
+/** @brief Selects the Gemini-backed Jarvis voice-active-car profile. */
 #define XWALK_BOOT_VOICE_ACTIVE_CAR_GPT_REQ (::agent::uint8{15U})
 /** @brief Selects the upstream GPT PiCar-X assistant profile. */
 #define XWALK_BOOT_GPT_CAR_REQ (::agent::uint8{16U})

@@ -1,14 +1,15 @@
 # xWalkSelfDrive
 
 `xWalkSelfDrive` is a C++17 Agent coordinator for the named
-gesture, short movement, horn, engine-start, status, queue, and worker behavior while keeping platform and
-hardware ownership outside the module.
+gesture, short movement, horn, engine-start, background-music, status, queue, and worker behavior while keeping
+platform and hardware ownership outside the module.
 
 ## Behavior
 
 - accepts the exact upstream movement names: `shake head`, `nod`, `wave hands`, `resist`, `act cute`,
   `rub hands`, `think`, `twist body`, `celebrate`, `depressed`, `forward`, `backward`, and `stop`;
 - accepts the upstream sound names `honking` and `start engine`;
+- accepts `play background music` and `stop background music` for the configured packaged song;
 - preserves servo angles, motor commands, delay intervals, action names, and sound volumes;
 - provides synchronous `doAction()` plus explicit standby, think, queued-actions, start, stop, and wait
   flow;
@@ -27,13 +28,17 @@ to standby and wakes waiting callers.
 Voice-requested `stop` is queued through the worker with every other action. It therefore waits for an active
 thinking pose to finish before touching the PiCar-X motors and cannot race the worker's actuator writes.
 
-## Sound resources
+## Audio resources
 
 The preset sound actions resolve `car-double-horn.wav` and `car-start-engine.wav` below the constructor's
 sound directory. The root-level [`xWalkAudioResources`](../../../xWalkAudioResources) directory supplies
 development assets and
 provenance; installed composition uses `/usr/share/xwalk/sounds` by default. A missing or unreadable regular
 file rejects its action before playback or movement.
+
+The background-music action resolves `slow-trail-Ahjay_Stelino.mp3` below the constructor's music directory,
+uses twenty-percent volume, and can be stopped idempotently. Coordinator shutdown also stops music that it
+started. Installed composition uses `/usr/share/xwalk/music` by default.
 
 ## Safety
 

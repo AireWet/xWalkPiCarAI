@@ -61,6 +61,12 @@ namespace xwalk::agent
      *
      * @param[in] soundDirectory
      * Sound-resource directory copied for later preset resolution.
+
+     * @param[in] musicDirectory
+     * Music-resource directory copied for later background-song resolution.
+
+     * @param[in] backgroundMusicFilename
+     * Filename resolved below `musicDirectory` for background-song playback.
      *
      * @throws std::invalid_argument
      * If `callback` is null.
@@ -70,15 +76,19 @@ namespace xwalk::agent
                                    agent::contextpointer context,
                                    selfdrivedelaycallback callback,
                                    selfdrivecontinuecallback continueOperation,
-                                   agent::stringview soundDirectory)
-        : picarxObject(&picarx), musicObject(&music), soundDirectoryValue(soundDirectory), callbackContext(context),
-          delayCallback(callback), continueCallback(continueOperation)
+                                   agent::stringview soundDirectory,
+                                   agent::stringview musicDirectory,
+                                   agent::stringview backgroundMusicFilename)
+        : picarxObject(&picarx), musicObject(&music), soundDirectoryValue(soundDirectory),
+          musicDirectoryValue(musicDirectory), backgroundMusicFilenameValue(backgroundMusicFilename),
+          callbackContext(context), delayCallback(callback), continueCallback(continueOperation)
     {
         validateDelayCallback(delayCallback);
-        const agent::boolean soundDirectoryEmpty = static_cast<agent::boolean>(soundDirectoryValue.empty());
-        if (soundDirectoryEmpty)
+        const agent::boolean resourceConfigurationInvalid = static_cast<agent::boolean>(
+            soundDirectoryValue.empty() || musicDirectoryValue.empty() || backgroundMusicFilenameValue.empty());
+        if (resourceConfigurationInvalid)
         {
-            XWALK_RPIAGENT_ERROR(XWALK_INVAL, "Self-drive sound directory must not be empty");
+            XWALK_RPIAGENT_ERROR(XWALK_INVAL, "Self-drive resource configuration must not be empty");
         }
     }
 
@@ -227,6 +237,11 @@ namespace xwalk::agent
         if (workerJoinable)
         {
             worker.join();
+        }
+        if (backgroundMusicPlayingValue)
+        {
+            musicObject->musicStop();
+            backgroundMusicPlayingValue = false;
         }
     }
 

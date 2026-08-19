@@ -38,9 +38,10 @@ The `online-llm-test start|stop` command ports example 18 with typed text-only
 prompts and OpenAI `gpt-4o`; its credential comes only from `OPENAI_API_KEY`.
 The interactive `treasure-hunt` command ports example 20 with six random color
 targets, Pico2Wave prompts, bounded keyboard driving, and OpenCV detection.
-The `voice-active-car-gpt start|stop` command ports example 21 with the Buddy
-wake profile, OpenAI `gpt-4o-mini`, Piper `en_US-ryan-low`, image input, sensor
-triggers, and preset actions.
+The `voice-active-car-gpt start|stop` command adapts example 21 as Jarvis with
+the `hey jarvis` wake phrase, Gemini `gemini-3.7-flash`, the British male Piper
+voice `en_GB-alan-medium`, spoken speaker replies, image input, sensor triggers,
+and locally filtered actions.
 The `voice-active-car start|stop` command ports `voice_active_car.py` with the
 Rolly profile, `hey rolly` wake phrase, image input, ultrasonic safety trigger,
 OpenAI `gpt-4o-mini`, and `OPENAI_API_KEY` credential boundary.
@@ -57,8 +58,10 @@ the sibling `xWalkAgent` aggregate and are imported through CMake targets.
 | Path | Responsibility |
 | --- | --- |
 | `CMakeLists.txt` | CLI aggregate options and Agent dependency composition |
+| [`GEMINI_CONFIGURATION.md`](GEMINI_CONFIGURATION.md) | Gemini credential and voice-profile setup |
 | `xWalkConfig/picar-x.conf` | Machine-independent manifest template and provider selection |
 | `xWalkConfig/picar-x.d/` | Functional settings and separate AI-provider profiles |
+| `PICARX_COMMAND_CHEAT_SHEET.md` | Copyable PiCar-X Controller command reference |
 | `xWalkHandler/` | Controller contract, implementation, and direct in-memory test |
 | `xWalkApp/` | Application build, includes, sources, generated help, and executable tests |
 | `xWalkTest/xGoogleTest/` | Independent CLI unit runner and strict grouped XML inventory |
@@ -76,72 +79,54 @@ The seven handler suites are also selectable directly with `ctest --preset sanit
 
 ## Raspberry Pi compilation and test discovery
 
-Run the Raspberry Pi configuration from the workspace root. CMake initializes
-`build-rpi/runtime/picar-x.conf` and its fragment tree from the repository
-templates without overwriting an existing generated runtime. The RPi CLI
-compiles that writable generated manifest as its default:
+From the integration checkout, configure and build the Raspberry Pi release,
+list hardware tests without running them, record the connected Robot HAT, and
+run the bounded Doctor preflight:
+
+Confirm the provisioning values on the target Raspberry Pi:
+
+| Provisioning option | Inspection | Value to observe |
+| --- | --- | --- |
+| `--config` | `ls -l build-rpi/runtime/picar-x.conf` | Existing writable runtime file |
+| `--profile` | Inspect the physical board revision | Confirmed `robot_hat_v4` or `robot_hat_v5` |
+| `--gpio-device` | `gpiodetect` | `gpiochip4 [pinctrl-rp1] (54 lines)` |
+| `--i2c-device` | `i2cdetect -l` | `/dev/i2c-1` for the intended HAT bus |
+| `--spi-device` | `ls -l /dev/spidev*` | `/dev/spidev0.0` for the intended SPI device |
+| V5 UUID path | `find /proc/device-tree -path '*hat*/uuid' -type f` | HAT UUID property path |
+| V5 UUID value | `tr -d '\000' < UUID_FILE` | Supported Robot HAT v5 UUID |
+
+Robot HAT v5 requires Device Tree UUID
+`9daeea78-0000-076e-0032-582369ac3e02`. An absent v5 UUID does not prove that
+Robot HAT v4 is connected; confirm the v4 revision physically.
+
+Configure the Raspberry Pi release:
 
 ```bash
+cd /repo/joxjoh24/xWalkPiCarAI
 cmake --fresh -S xWalk-rpi5 --preset rpi-release
-cmake --build build-rpi/cmake --parallel
 ```
 
-List the hardware tests without executing them:
+Build and list the hardware tests:
 
 ```bash
+cmake --build build-rpi/cmake --parallel
 ctest --test-dir build-rpi/cmake -N -L hardware
 ```
 
-Only after confirming the correct Raspberry Pi and Robot HAT are connected and
-safe, execute the hardware-labelled tests:
+Provision the connected hardware:
 
 ```bash
-ctest --test-dir build-rpi/cmake -L hardware --output-on-failure
+sudo xWalkTool/shell-agent/deploy-tool/provision-hardware.sh --profile robot_hat_v4 --config "$PWD/build-rpi/runtime/picar-x.conf" --gpio-device /dev/gpiochip4 --i2c-device /dev/i2c-1 --spi-device /dev/spidev0.0
 ```
 
-Provisioning is a separate opt-in target and is never part of an ordinary
-build. The shared defaults select Robot HAT v4, runtime user `xwalk`,
-`/dev/gpiochip4`, `/dev/i2c-1`, `/dev/spidev0.0`, and a CSI camera. Review
-`XWALK_RPI_PROFILE`, `XWALK_RPI_RUNTIME_USER`,
-`XWALK_RPI_GPIO_DEVICE`, `XWALK_RPI_I2C_DEVICE`, `XWALK_RPI_SPI_DEVICE`,
-`XWALK_RPI_CAMERA`, `XWALK_RPI_WITH_VOSK`, and `XWALK_RPI_WITH_OLLAMA` in the
-CMake cache first. In particular, the device nodes must be confirmed from the
-target Raspberry Pi. Explicit cache values override the shared defaults.
-
-From `xWalk-rpi5`, the provisioning build preset is:
-
-```bash
-cmake --build --preset rpi-provision --parallel
-```
-
-Because CMake cannot discover `xWalk-rpi5/CMakePresets.json` from its workspace
-parent, use the equivalent explicit target from the workspace root:
-
-```bash
-cmake --build build-rpi/cmake --target rpi-provision --parallel
-```
-
-The target depends on `xwalk-picarx-control`, runs the approved user-local
-camera and Ollama setup when enabled, initializes the writable runtime from
-repository templates when necessary, installs repository-controlled Vosk
-assets when enabled, and invokes `setup-rpi.sh`. The setup script validates the
-selected Robot HAT and device identities before modifying the generated runtime.
-It never changes ownership, permissions, or values in the tracked templates.
-
-After provisioning, the CLI uses the generated runtime without
-`--deployment-config`:
+Run Doctor:
 
 ```bash
 build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control doctor
 build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control --trace CTRL.024.enable doctor
-build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control --help
-build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control --diagnose --no-hardware
 ```
 
-Doctor is a bounded hardware preflight that pulses only the configured MCU
-reset GPIO. It prints its report directly; `CTRL.024` additionally enables the
-same lines in trace output. Doctor returns zero when all required checks pass
-and two when any `[FAIL]` result exists. The `--diagnose --no-hardware` command
-is the device-free check.
-See the [deployment guide](../../devloper-note/xwalk-rpi5-note/Doc/note/Deployment%20Guide.md) for installed
-paths, package selection, Robot HAT safeguards, and permission policy.
+Confirm the correct Raspberry Pi and Robot HAT before provisioning or running
+Doctor. The `ctest -N` command only lists hardware tests; it does not execute
+them. Doctor pulses only the configured MCU-reset GPIO and returns `0` when no
+check fails or `2` when the report contains a `[FAIL]` result.

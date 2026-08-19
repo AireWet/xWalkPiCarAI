@@ -114,7 +114,7 @@ namespace xwalk::agent
 
         agent::string profileApiKeyEnvironment;
         const agent::boolean rollyProfile = static_cast<agent::boolean>(mode == XWALK_BOOT_VOICE_ACTIVE_CAR_REQ);
-        const agent::boolean buddyProfile = static_cast<agent::boolean>(mode == XWALK_BOOT_VOICE_ACTIVE_CAR_GPT_REQ);
+        const agent::boolean jarvisProfile = static_cast<agent::boolean>(mode == XWALK_BOOT_VOICE_ACTIVE_CAR_GPT_REQ);
         if (rollyProfile)
         {
             profileApiKeyEnvironment = config.get("voice_active_car_api_key_environment", "OPENAI_API_KEY");
@@ -122,9 +122,10 @@ namespace xwalk::agent
             modelName = config.get("voice_active_car_model", XWalkVoiceActiveCar::MODEL_NAME);
             maximumOutputTokensText = config.get("voice_active_car_maximum_output_tokens", "1024");
         }
-        else if (buddyProfile)
+        else if (jarvisProfile)
         {
-            profileApiKeyEnvironment = config.get("voice_active_car_gpt_api_key_environment", "OPENAI_API_KEY");
+            profileApiKeyEnvironment =
+                config.get("voice_active_car_gpt_api_key_environment", XWalkVoiceActiveCarGpt::API_KEY_ENVIRONMENT);
             modelEndpoint = config.get("voice_active_car_gpt_endpoint", XWalkVoiceActiveCarGpt::MODEL_ENDPOINT);
             modelName = config.get("voice_active_car_gpt_model", XWalkVoiceActiveCarGpt::MODEL_NAME);
             maximumOutputTokensText = config.get("voice_active_car_gpt_maximum_output_tokens", "1024");
@@ -166,7 +167,7 @@ namespace xwalk::agent
         hal::XWalkTextToSpeechPiper piper(piperExecutable, piperPlaybackExecutable, piperModel);
         agent::contextpointer textToSpeechContext = &textToSpeechBackend;
         hal::texttospeechspeakcallback textToSpeechCallback = textToSpeechBackend.callback();
-        if (buddyProfile)
+        if (jarvisProfile)
         {
             textToSpeechContext = &piper;
             textToSpeechCallback = piper.callback();
@@ -176,7 +177,7 @@ namespace xwalk::agent
             modelDialect, modelEndpoint, modelName, modelApiKey, modelTimeoutMs, maximumOutputTokens);
         hal::XWalkLanguageModel languageModel(&modelBackend, modelBackend.callbacks());
         hal::XWalkVoiceAssistantConfiguration assistantConfiguration{};
-        if (buddyProfile)
+        if (jarvisProfile)
         {
             assistantConfiguration = XWalkVoiceActiveCarGpt::assistantConfiguration();
         }
@@ -197,7 +198,8 @@ namespace xwalk::agent
                                  nullptr,
                                  &selfDriveDelayMilliseconds,
                                  nullptr,
-                                 config.get("resource_sound_directory", "/usr/share/xwalk/sounds"));
+                                 config.get("resource_sound_directory", "/usr/share/xwalk/sounds"),
+                                 config.get("resource_music_directory", "/usr/share/xwalk/music"));
         const agent::string gpioDeviceValue(gpioDevice);
         const agent::string gpioChipNameValue(gpioChipName);
         const agent::string gpioChipLabelValue(gpioChipLabel);

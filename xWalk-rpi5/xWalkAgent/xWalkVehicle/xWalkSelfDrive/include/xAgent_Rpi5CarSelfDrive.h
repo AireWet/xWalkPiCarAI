@@ -70,6 +70,10 @@ namespace xwalk::agent
             hal::XWalkMusic* musicObject{nullptr};
             /** @brief Sound directory copied from deployment configuration or a host-test override. */
             agent::string soundDirectoryValue{"../xWalkAudioResources/sounds"};
+            /** @brief Music directory copied from deployment configuration or a host-test override. */
+            agent::string musicDirectoryValue{"../xWalkAudioResources/music"};
+            /** @brief Background-music filename resolved below `musicDirectoryValue`. */
+            agent::string backgroundMusicFilenameValue{"slow-trail-Ahjay_Stelino.mp3"};
             /** @brief Nullable non-owning context passed to the delay callback. */
             agent::contextpointer callbackContext{nullptr};
             /** @brief Non-null synchronous delay operation copied from the caller. */
@@ -94,6 +98,8 @@ namespace xwalk::agent
             agent::boolean hasLastStatus{};
             /** @brief Records an explicit callback failure without exception handling. */
             agent::atomicboolean operationFailedValue{false};
+            /** @brief Records whether this coordinator started streamed background music. */
+            agent::boolean backgroundMusicPlayingValue{};
 
         protected:
             /**************************************************************************
@@ -138,6 +144,10 @@ namespace xwalk::agent
             agent::boolean honking();
             /** @brief Starts the upstream engine sound asynchronously. */
             agent::boolean startEngine();
+            /** @brief Starts the configured background song after validating its resource path. */
+            agent::boolean playBackgroundMusic();
+            /** @brief Stops background music previously started by this coordinator. */
+            agent::boolean stopBackgroundMusic();
 
         public:
             /**************************************************************************
@@ -164,6 +174,12 @@ namespace xwalk::agent
              *
              * @param[in] soundDirectory
              * Sound-resource directory. Deployment supplies an absolute path; tests may override it.
+
+             * @param[in] musicDirectory
+             * Music-resource directory. Deployment supplies an absolute path; tests may override it.
+
+             * @param[in] backgroundMusicFilename
+             * Filename resolved below `musicDirectory` for the bounded background-music action.
              *
              * @throws std::invalid_argument
              * If `callback` is null.
@@ -173,7 +189,9 @@ namespace xwalk::agent
                            agent::contextpointer context,
                            selfdrivedelaycallback callback,
                            selfdrivecontinuecallback continueOperation = nullptr,
-                           agent::stringview soundDirectory = "../xWalkAudioResources/sounds");
+                           agent::stringview soundDirectory = "../xWalkAudioResources/sounds",
+                           agent::stringview musicDirectory = "../xWalkAudioResources/music",
+                           agent::stringview backgroundMusicFilename = "slow-trail-Ahjay_Stelino.mp3");
 
             /**
              * @brief Stops and joins the worker without releasing injected objects.

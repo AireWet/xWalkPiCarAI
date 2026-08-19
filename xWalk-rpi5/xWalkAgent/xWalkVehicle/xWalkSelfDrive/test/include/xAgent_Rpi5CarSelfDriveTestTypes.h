@@ -66,6 +66,11 @@ namespace xwalk::source_types::xagent_rpi5carselfdrivetest
             agent::uint32vector delays{};
             agent::stringvector backgroundFiles{};
             agent::float64vector backgroundVolumes{};
+            agent::string musicFile{};
+            agent::int32 musicLoops{};
+            agent::float64 musicStartSeconds{};
+            agent::float64 musicVolume{};
+            agent::uint32 musicControlCount{};
             agent::boolean outputEnabled{};
             agent::uint32 continueQueries{};
             agent::uint32 continueQueryLimit{1'000'000U};

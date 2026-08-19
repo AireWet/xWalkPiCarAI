@@ -50,10 +50,10 @@ final motor safety.
 The treasure-hunt scenario verifies camera warm-up, deterministic injected
 target selection, wide-color success, spoken prompts, bounded movement, target
 repeat, quit, camera shutdown, motor cleanup, and goodbye speech.
-The voice-active-car-gpt scenario verifies case-insensitive Buddy wake
-detection, the wake answer, one model prompt, parsed action dispatch, response
-speech, recognition shutdown, and final motor cleanup without external service
-or microphone access.
+The voice-active-car-gpt scenario verifies case-insensitive Jarvis wake
+detection before each round, the wake answer, a general question, a robot
+request, parsed action dispatch, response speech, recognition shutdown, and
+final motor cleanup without external service or microphone access.
 The video-recording scenario verifies camera warm-up, start, pause, continue,
 AVI stop reporting, and camera shutdown without opening a physical device.
 The video-car scenario verifies every interactive key, retained speed and

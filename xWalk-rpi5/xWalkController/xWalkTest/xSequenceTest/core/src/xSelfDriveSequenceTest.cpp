@@ -32,7 +32,9 @@ namespace
                                          "forward",
                                          "backward",
                                          "honking",
-                                         "start-engine"};
+                                         "start-engine",
+                                         "play-background-music",
+                                         "stop-background-music"};
         xwalk::agent::test::controllercommandsequence commands;
         for (const ctrl::string& action : actions)
         {

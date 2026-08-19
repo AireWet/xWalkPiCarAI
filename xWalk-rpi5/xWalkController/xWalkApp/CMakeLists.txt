@@ -357,7 +357,8 @@ if(XWALK_CONTROLLER_BUILD_HOST_TESTS)
     target_include_directories(xWalkControllerTest PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkHandler/test/include)
     target_compile_definitions(xWalkControllerTest PRIVATE
-        XWALK_TEST_SOUND_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkAudioResources/sounds")
+        XWALK_TEST_SOUND_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkAudioResources/sounds"
+        XWALK_TEST_MUSIC_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkAudioResources/music")
     target_link_libraries(xWalkControllerTest PRIVATE xWalkController)
     add_test(NAME xWalkControllerHostTest COMMAND xWalkControllerTest
         ${CMAKE_CURRENT_BINARY_DIR}/test-data/cli-test.conf)

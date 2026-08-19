@@ -36,7 +36,7 @@ Boot modes are intentionally bounded:
 | `Sound` | Base plus ALSA Music |
 | `VoiceChat` | Base plus Vosk, Piper, local Ollama, and VoiceAssistant |
 | `VoiceActiveCar` | Base voice graph plus Music, SelfDrive, status LED, and still camera |
-| `VoiceActiveCarGpt` | VoiceActiveCar graph plus the English Buddy profile |
+| `VoiceActiveCarGpt` | VoiceActiveCar graph plus the Gemini-backed Jarvis profile |
 | `GptCar` | VoiceActiveCar graph plus the upstream JSON GPT-car profile |
 | `VoiceControlledCar` | Base plus Vosk, ALSA capture, and speech recognition |
 | `VoicePromptCar` | Base plus Espeak, ALSA playback, and speaker control |
@@ -127,10 +127,10 @@ PiCar-X configuration file:
 | `voice_language_model_api_key_environment` | empty for Ollama |
 | `voice_language_model_maximum_output_tokens` | `1024` |
 | `voice_language_model_timeout_ms` | `120000` |
-| `voice_active_car_gpt_endpoint` | `https://api.openai.com/v1/chat/completions` |
-| `voice_active_car_gpt_model` | `gpt-4o-mini` |
+| `voice_active_car_gpt_endpoint` | Gemini OpenAI-compatible chat-completions URL |
+| `voice_active_car_gpt_model` | `gemini-3.7-flash` |
 | `voice_active_car_gpt_maximum_output_tokens` | `1024` |
-| `voice_active_car_gpt_piper_model` | `en_US-ryan-low` |
+| `voice_active_car_gpt_piper_model` | `/usr/share/xwalk/models/piper/en_GB-alan-medium.onnx` |
 | `voice_ollama_model_manifest` | empty; provision the local manifest path |
 | `camera_connection` | `csi` |
 | `camera_csi_executable` | `rpicam-still` |
@@ -177,8 +177,9 @@ The dedicated `voice-chat` composition preserves example 19 with local Ollama,
 Piper, and a 20-message history. The `voice-active-car` mode preserves the
 Rolly profile from `example/voice_active_car.py`, uses OpenAI `gpt-4o-mini`,
 and reads its credential from `OPENAI_API_KEY`. Example 21's
-`voice-active-car-gpt` mode also uses OpenAI `gpt-4o-mini` and uses Piper
-`en_US-ryan-low`. Supported generic provider names are `ollama`, `openai`,
+`voice-active-car-gpt` mode uses Gemini `gemini-3.7-flash`, reads
+`GEMINI_API_KEY`, and uses Piper `en_GB-alan-medium`. Supported generic provider
+names are `ollama`, `openai`,
 `chatgpt`, `gemini`, `grok`, `xai`, `claude`, `anthropic`, and
 `openai_compatible`. Cloud
 providers require HTTPS, an endpoint ending in `/chat/completions`, a model,
@@ -248,7 +249,7 @@ The Raspberry Pi implementation files have one composition responsibility:
 | `BootRpiOnlineLlmTest.cpp` | Environment-authenticated online model |
 | `BootRpiVoiceActiveMode.cpp` | Shared speech, model, camera, LED, and action graph |
 | `BootRpiVoiceActiveCar.cpp` | Rolly profile selection |
-| `BootRpiVoiceActiveCarGpt.cpp` | Buddy profile selection |
+| `BootRpiVoiceActiveCarGpt.cpp` | Gemini-backed Jarvis profile selection |
 | `BootRpiGptCar.cpp` | GPT-car profile selection |
 
 ## Host verification

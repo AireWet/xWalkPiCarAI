@@ -374,8 +374,13 @@ namespace
                                                            &musicSoundLength,
                                                            &playMusicTone};
         XWalkHal::XWalkMusic music(&backend, musicCallbacks);
-        xwalk::agent::XWalkSelfDrive selfDrive(
-            picarx, music, &backend, &selfDriveDelayMilliseconds, nullptr, XWALK_TEST_SOUND_DIRECTORY);
+        xwalk::agent::XWalkSelfDrive selfDrive(picarx,
+                                               music,
+                                               &backend,
+                                               &selfDriveDelayMilliseconds,
+                                               nullptr,
+                                               XWALK_TEST_SOUND_DIRECTORY,
+                                               XWALK_TEST_MUSIC_DIRECTORY);
         xwalk::agent::XWalkGrayscaleCalibration grayscaleCalibration(
             picarx, &backend, &delayMilliseconds, &continueOperation);
         xwalk::agent::XWalkServoMotorCalibration servoMotorCalibration(
@@ -418,7 +423,9 @@ namespace
                                                   "forward",
                                                   "backward",
                                                   "honking",
-                                                  "start-engine"};
+                                                  "start-engine",
+                                                  "play-background-music",
+                                                  "stop-background-music"};
 
         assert(xwalk::ctrl::XWALK_runControllerCommand(cli, {"-h"}) == 0);
         assert(backend.outputLines.back() == xwalk::ctrl::XWALK_controllerUsage());

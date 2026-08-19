@@ -684,13 +684,34 @@ namespace xwalk::agent::test
                                                       &soundLength,
                                                       &playTone};
         hal::XWalkMusic music(&callbackContext, musicCallbacks);
-        XWalkSelfDrive selfDrive(picarx, music, &callbackContext, &selfDriveDelay, nullptr, XWALK_TEST_SOUND_DIRECTORY);
-        XWalkSelfDrive selfDriveGpt(
-            picarx, music, &callbackContext, &selfDriveQuietDelay, nullptr, XWALK_TEST_SOUND_DIRECTORY);
-        XWalkSelfDrive selfDriveVoice(
-            picarx, music, &callbackContext, &selfDriveQuietDelay, nullptr, XWALK_TEST_SOUND_DIRECTORY);
-        XWalkSelfDrive selfDriveGptCar(
-            picarx, music, &callbackContext, &selfDriveQuietDelay, nullptr, XWALK_TEST_SOUND_DIRECTORY);
+        XWalkSelfDrive selfDrive(picarx,
+                                 music,
+                                 &callbackContext,
+                                 &selfDriveDelay,
+                                 nullptr,
+                                 XWALK_TEST_SOUND_DIRECTORY,
+                                 XWALK_TEST_MUSIC_DIRECTORY);
+        XWalkSelfDrive selfDriveGpt(picarx,
+                                    music,
+                                    &callbackContext,
+                                    &selfDriveQuietDelay,
+                                    nullptr,
+                                    XWALK_TEST_SOUND_DIRECTORY,
+                                    XWALK_TEST_MUSIC_DIRECTORY);
+        XWalkSelfDrive selfDriveVoice(picarx,
+                                      music,
+                                      &callbackContext,
+                                      &selfDriveQuietDelay,
+                                      nullptr,
+                                      XWALK_TEST_SOUND_DIRECTORY,
+                                      XWALK_TEST_MUSIC_DIRECTORY);
+        XWalkSelfDrive selfDriveGptCar(picarx,
+                                       music,
+                                       &callbackContext,
+                                       &selfDriveQuietDelay,
+                                       nullptr,
+                                       XWALK_TEST_SOUND_DIRECTORY,
+                                       XWALK_TEST_MUSIC_DIRECTORY);
         XWalkGrayscaleCalibration grayscaleCalibration(picarx, &callbackContext, &delay, &continueOperation);
         XWalkServoMotorCalibration servoMotorCalibration(picarx, &callbackContext, &delay, &continueOperation);
         XWalkMoveExample moveExample(picarx, &callbackContext, &delay, &continueOperation);

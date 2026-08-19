@@ -143,7 +143,7 @@ The following table lists every command group and action name accepted by the CL
 | `sound` | `play`, `volume`, `music`, `stop` | File or volume according to the selected action |
 | `voice-chat` | `start`, `stop` | Start runs until SIGINT or SIGTERM |
 | `voice-active-car` | `start`, `stop` | Base sensor-aware voice-car behavior |
-| `voice-active-car-gpt` | `start`, `stop` | English Buddy profile; configured model |
+| `voice-active-car-gpt` | `start`, `stop` | Gemini-backed Jarvis profile |
 | `gpt-car` | `start`, `stop` | Optional `--keyboard` and `--no-img` source flags |
 | `voice-controlled-car` | `start`, `stop` | “Hey robot” movement-command loop |
 | `voice-prompt-car` | `start`, `stop` | Spoken four-movement demonstration |
@@ -385,13 +385,13 @@ Piper, local Ollama, and speaker-power ownership. It defaults to Piper
 `example/19.local_voice_chatbot.py`.
 
 The two voice-active-car commands use the common sensor/action coordinator with
-Rolly and English Buddy profiles. Each accepts only `start` or `stop`. The
+Rolly and Jarvis profiles. Each accepts only `start` or `stop`. The
 `voice_active_car.py` Rolly profile requires `hey rolly`, answers `Hi there`,
 uses image input and OpenAI `gpt-4o-mini`, and reads its credential exclusively
-from `OPENAI_API_KEY`. Example 21's Buddy profile requires `hey buddy`, answers
-`Hi there`, uses OpenAI `gpt-4o-mini` with `OPENAI_API_KEY`, and speaks through
-Piper `en_US-ryan-low`. The RPi graph adds Music, SelfDrive, the Robot HAT
-status LED, and still-image capture. Set
+from `OPENAI_API_KEY`. The Jarvis profile requires `hey jarvis`, answers
+`Systems online. Ready when you are, Joxy.`, uses Gemini `gemini-3.7-flash` with `GEMINI_API_KEY`, and
+speaks through Piper `en_GB-alan-medium`. The RPi graph adds Music, SelfDrive,
+the Robot HAT status LED, and still-image capture. Set
 `camera_connection` to `csi` for the Raspberry Pi camera connector or `usb` for
 a V4L2 webcam. The corresponding `rpicam-still` or `ffmpeg` provider must be installed.
 
@@ -455,6 +455,8 @@ xwalk-picarx-control self-drive forward
 xwalk-picarx-control self-drive backward
 xwalk-picarx-control self-drive honking
 xwalk-picarx-control self-drive start-engine
+xwalk-picarx-control self-drive play-background-music
+xwalk-picarx-control self-drive stop-background-music
 ```
 
 The preset actions perform the following operations:
@@ -475,6 +477,8 @@ The preset actions perform the following operations:
 | `backward` | Drives backward briefly and stops |
 | `honking` | Plays the horn sound in the background |
 | `start-engine` | Plays the engine-start sound in the background |
+| `play-background-music` | Plays the configured packaged background song |
+| `stop-background-music` | Stops background music started by self-drive |
 
 For compatibility, multi-word actions may also be quoted or passed as separate
 shell arguments, such as `self-drive "wave hands"` or `self-drive wave hands`.
@@ -490,9 +494,10 @@ objects after reset and stores calibration in `/var/lib/xwalk/picar-x.conf` by d
 `--deployment-config` option for another deployment path.
 
 Use the `hardware_board` value in `../xWalkConfig/picar-x.d/hardware.conf`. Run
-`xWalkTool/shell-agent/deploy-tool/provision-hardware.sh --profile <profile> --config <file>` to discover and record one GPIO
-device, kernel chip name, and label. Provisioning rejects a v4 selection when the v5 UUID is present and rejects
-a v5 selection when that UUID is absent. It never interprets failure to detect v5 as proof of v4.
+`xWalkTool/shell-agent/deploy-tool/provision-hardware.sh --profile <profile> --config <file>` to discover and
+record one GPIO device, kernel chip name, and label. Provisioning rejects a v4 selection when the v5 UUID is
+present and rejects a v5 selection when that UUID is absent. It never interprets failure to detect v5 as proof
+of v4.
 
 The Robot HAT v5 PWM pairs follow the upstream SunFounder test mapping. Confirm the physical left/right ports
 and direction polarity with raised wheels before allowing a movement command to run on a new hardware setup.

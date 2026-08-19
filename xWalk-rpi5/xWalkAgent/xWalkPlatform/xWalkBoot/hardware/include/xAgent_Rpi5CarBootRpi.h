@@ -203,7 +203,7 @@ namespace xwalk::agent
                                            agent::stringview gpioChipLabel,
                                            agent::uint32 minimumGpioLineCount,
                                            const hal::XWalkGpioCallbacks& gpioCallbacks);
-            /** @brief Runs the Buddy voice-active-car profile. */
+            /** @brief Runs the Gemini-backed Jarvis voice-active-car profile. */
             agent::int32 runVoiceActiveCarGpt(agent::contextpointer context,
                                               bootapplicationcallback callback,
                                               hal::XWalkConfigStore& config,

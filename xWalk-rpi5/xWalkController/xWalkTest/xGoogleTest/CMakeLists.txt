@@ -23,7 +23,8 @@ target_include_directories(xCliGoogleControllerTest PRIVATE
 target_compile_features(xCliGoogleControllerTest PRIVATE cxx_std_17)
 target_compile_definitions(xCliGoogleControllerTest PRIVATE
     main=xWalkControllerLegacyMain
-    XWALK_TEST_SOUND_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkAudioResources/sounds")
+    XWALK_TEST_SOUND_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkAudioResources/sounds"
+    XWALK_TEST_MUSIC_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkAudioResources/music")
 target_link_libraries(xCliGoogleControllerTest PRIVATE xWalkController)
 
 add_executable(xCliGoogleTest

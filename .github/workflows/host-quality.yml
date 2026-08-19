@@ -11,7 +11,7 @@ permissions:
 env:
   XWALK_HOST_PACKAGES: >-
     ansible-core clang clang-format clang-tools cmake cppcheck gcovr jq libasound2-dev
-    libclang-rt-18-dev libcurl4-openssl-dev libgmock-dev libgrpc++-dev
+    libboost-dev libclang-rt-18-dev libcurl4-openssl-dev libgmock-dev libgrpc++-dev
     libgtest-dev libjson-c-dev libopencv-dev libprotobuf-dev libsndfile1-dev libtinyxml2-dev
     libyaml-cpp-dev llvm ninja-build nodejs protobuf-compiler
     protobuf-compiler-grpc python3-nacl python3-yaml shellcheck valgrind

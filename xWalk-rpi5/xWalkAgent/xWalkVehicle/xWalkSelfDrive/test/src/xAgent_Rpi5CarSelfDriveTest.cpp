@@ -177,29 +177,28 @@ namespace
         backend.backgroundVolumes.push_back(volume.has_value() ? *volume : -1.0);
     }
 
-    /** @brief Accepts one unused streamed-music request. */
+    /** @brief Records one streamed-music request. */
     void playMusic(agent::contextpointer context,
                    agent::stringview filename,
                    agent::int32 loops,
                    agent::float64 startSeconds)
     {
-        static_cast<void>(context);
-        static_cast<void>(filename);
-        static_cast<void>(loops);
-        static_cast<void>(startSeconds);
+        TestBackend& backend = *static_cast<TestBackend*>(context);
+        backend.musicFile = filename;
+        backend.musicLoops = loops;
+        backend.musicStartSeconds = startSeconds;
     }
 
-    /** @brief Accepts one unused music-volume request. */
+    /** @brief Records one streamed-music volume request. */
     void setMusicVolume(agent::contextpointer context, agent::float64 volume)
     {
-        static_cast<void>(context);
-        static_cast<void>(volume);
+        static_cast<TestBackend*>(context)->musicVolume = volume;
     }
 
-    /** @brief Accepts one unused music-control request. */
+    /** @brief Records one streamed-music control request. */
     void controlMusic(agent::contextpointer context)
     {
-        static_cast<void>(context);
+        ++static_cast<TestBackend*>(context)->musicControlCount;
     }
 
     /** @brief Returns a deterministic zero-second sound length. */
@@ -305,8 +304,13 @@ namespace
                                                            &soundLength,
                                                            &playTone};
         xwalk::hal::XWalkMusic music(&backend, musicCallbacks);
-        xwalk::agent::XWalkSelfDrive selfDrive(
-            picarx, music, &backend, &delayMilliseconds, nullptr, XWALK_TEST_SOUND_DIRECTORY);
+        xwalk::agent::XWalkSelfDrive selfDrive(picarx,
+                                               music,
+                                               &backend,
+                                               &delayMilliseconds,
+                                               nullptr,
+                                               XWALK_TEST_SOUND_DIRECTORY,
+                                               XWALK_TEST_MUSIC_DIRECTORY);
         assert(backend.outputEnabled);
 
         agent::size delayCount = backend.delays.size();
@@ -353,6 +357,17 @@ namespace
             backend.backgroundFiles[1U] ==
             (agent::filesystempath(XWALK_TEST_SOUND_DIRECTORY) / "car-start-engine.wav").lexically_normal().string());
         assert(backend.backgroundVolumes[1U] == 0.5);
+        assert(selfDrive.doAction("play background music"));
+        assert(backend.musicFile == (agent::filesystempath(XWALK_TEST_MUSIC_DIRECTORY) / "slow-trail-Ahjay_Stelino.mp3")
+                                        .lexically_normal()
+                                        .string());
+        assert(backend.musicLoops == 1);
+        assert(backend.musicStartSeconds == 0.0);
+        assert(backend.musicVolume == 0.2);
+        assert(selfDrive.doAction("stop background music"));
+        assert(backend.musicControlCount == 1U);
+        assert(selfDrive.doAction("stop background music"));
+        assert(backend.musicControlCount == 1U);
         assert(!selfDrive.doAction("unknown"));
         assert(!selfDrive.addAction("unknown"));
 

@@ -54,8 +54,8 @@ prompts and a caller-owned OpenAI-compatible model.
 `xWalkLocalVoiceChatbot` ports `example/19.local_voice_chatbot.py` with Vosk
 recognition, hidden-thinking filtering, and a caller-owned local voice pipeline.
 `xWalkVoiceActiveCarGpt` ports `example/21.voice_active_car_gpt.py` with the
-Buddy wake profile, full action prompt, OpenAI `gpt-4o-mini`, Piper
-`en_US-ryan-low`, image input, and ten-centimetre proximity triggering.
+Jarvis wake profile, filtered action prompt, Gemini `gemini-3.7-flash`, Piper
+`en_GB-alan-medium`, image input, and ten-centimetre proximity triggering.
 `xWalkVoiceActiveCar` ports `example/voice_active_car.py` with the Rolly
 profile, wake gating, ultrasonic trigger, image input, LED states, and actions.
 `xWalkGptCar` ports `gpt_examples/gpt_car.py` with voice or keyboard input,

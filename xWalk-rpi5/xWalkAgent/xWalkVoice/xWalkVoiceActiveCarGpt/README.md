@@ -1,17 +1,33 @@
 # xWalkVoiceActiveCarGpt
 
-`xWalkVoiceActiveCarGpt` ports `example/21.voice_active_car_gpt.py` as an
-immutable profile over the shared `xWalkVoiceActiveCar` sensor/action
-coordinator. It preserves the Buddy identity, ten-centimetre ultrasonic
-trigger, image input, English recognition profile, `hey buddy` wake phrase,
-`Hi there` wake answer, complete hardware and response instructions, and
-source welcome text.
+`xWalkVoiceActiveCarGpt` adapts `example/21.voice_active_car_gpt.py` as the
+Gemini-backed Jarvis profile over the shared `xWalkVoiceActiveCar`
+sensor/action coordinator. It retains the ten-centimetre ultrasonic trigger,
+image input, English recognition profile, and bounded hardware composition.
+The configured wake phrase is `hey jarvis`, and the cinematic AI-style wake
+answer is `Systems online. Ready when you are, Joxy.`
 
-The Raspberry Pi composition uses OpenAI `gpt-4o-mini`, Piper
-`en_US-ryan-low`, Vosk microphone recognition, still-image capture, the Robot
-HAT status LED, and the shared SelfDrive actions. `OPENAI_API_KEY` exclusively
-supplies the credential; the key is never accepted through CLI arguments,
-committed configuration, or diagnostics.
+The Raspberry Pi composition uses Gemini `gemini-3.7-flash` through Google's
+OpenAI-compatible endpoint, the independently trained British male Piper voice
+`en_GB-alan-medium`, Vosk microphone recognition, still-image capture, the
+Robot HAT status LED, and the shared SelfDrive actions. `GEMINI_API_KEY`
+exclusively supplies the credential; the key is never accepted through CLI
+arguments, committed configuration, or diagnostics.
+
+Jarvis may return only the exact locally allowlisted actions for bounded
+directions, horn and engine sounds, expression gestures, and background-music
+start or stop. Unsupported action names are rejected by `XWalkSelfDrive`.
+Emoji remain response text and never become executable actions.
+Each completed Gemini response is split into spoken response text and filtered
+actions. Piper synthesizes the response through the configured playback device
+while the SelfDrive worker executes accepted actions. The profile does not
+clone or impersonate an actor's voice.
+
+Jarvis also answers ordinary safe questions through Gemini; a question does
+not need to request vehicle movement. For a conversational answer, Gemini puts
+the answer in the response-text section and emits `stop` as the fail-safe
+action. The action metadata is never spoken and cannot expand the local
+allowlist.
 
 ## Source layout
 

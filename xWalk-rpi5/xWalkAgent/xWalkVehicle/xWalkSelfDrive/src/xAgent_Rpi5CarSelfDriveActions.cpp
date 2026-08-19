@@ -42,6 +42,7 @@ namespace
     constexpr xwalk::agent::uint32 PRESET_DRIVE_DURATION_MS = 1'000U;
     constexpr xwalk::agent::cstring HORN_SOUND_FILE = "car-double-horn.wav";
     constexpr xwalk::agent::cstring ENGINE_SOUND_FILE = "car-start-engine.wav";
+    constexpr xwalk::agent::float64 BACKGROUND_MUSIC_VOLUME_PERCENT = 20.0;
 
 } /* namespace */
 
@@ -74,7 +75,8 @@ namespace xwalk::agent
         return (action == "shake head") || (action == "nod") || (action == "wave hands") || (action == "resist") ||
                (action == "act cute") || (action == "rub hands") || (action == "think") || (action == "twist body") ||
                (action == "celebrate") || (action == "depressed") || (action == "forward") || (action == "backward") ||
-               (action == "stop") || (action == "honking") || (action == "start engine");
+               (action == "stop") || (action == "honking") || (action == "start engine") ||
+               (action == "play background music") || (action == "stop background music");
     }
 
     /**
@@ -137,6 +139,40 @@ namespace xwalk::agent
             return false;
         }
         musicObject->soundPlayBackground(soundPath.string(), 50.0);
+        return true;
+    }
+
+    /**
+     * @brief Starts the configured background song after validating its resource path.
+     * @return `true` after playback starts; otherwise `false` when the file is unavailable.
+     * @post Successful playback uses the bounded configured resource at twenty-percent volume.
+     */
+    agent::boolean XWalkSelfDrive::playBackgroundMusic()
+    {
+        const agent::filesystempath musicPath =
+            hal::resolveResourcePath(musicDirectoryValue, backgroundMusicFilenameValue);
+        const agent::boolean musicFileUnreadable = static_cast<agent::boolean>(!hal::isReadableRegularFile(musicPath));
+        if (musicFileUnreadable)
+        {
+            return false;
+        }
+        musicObject->musicPlay(musicPath.string(), 1, 0.0, BACKGROUND_MUSIC_VOLUME_PERCENT);
+        backgroundMusicPlayingValue = true;
+        return true;
+    }
+
+    /**
+     * @brief Stops background music previously started by this coordinator.
+     * @return `true`; an already stopped stream is treated as a completed idempotent action.
+     * @post `backgroundMusicPlayingValue` is `false`.
+     */
+    agent::boolean XWalkSelfDrive::stopBackgroundMusic()
+    {
+        if (backgroundMusicPlayingValue)
+        {
+            musicObject->musicStop();
+            backgroundMusicPlayingValue = false;
+        }
         return true;
     }
 
@@ -214,6 +250,14 @@ namespace xwalk::agent
         else if (action == "start engine")
         {
             return startEngine();
+        }
+        else if (action == "play background music")
+        {
+            return playBackgroundMusic();
+        }
+        else if (action == "stop background music")
+        {
+            return stopBackgroundMusic();
         }
         else
         {
