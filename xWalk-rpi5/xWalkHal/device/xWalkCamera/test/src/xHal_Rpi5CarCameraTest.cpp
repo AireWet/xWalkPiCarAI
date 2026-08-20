@@ -100,18 +100,18 @@ namespace
         xwalk::hal::XWalkCameraStream stream(&state, streamCallbacks());
         XWalkHal::bytevector jpeg;
         const XWalkHal::boolean captureBeforeStart = stream.capture(jpeg);
-        assert(captureBeforeStart == false);
-        assert(jpeg.empty());
+        xwalk::hal::test::requireTestCondition(captureBeforeStart == false);
+        xwalk::hal::test::requireTestCondition(jpeg.empty());
         const XWalkHal::boolean streamStarted = stream.start();
-        assert(streamStarted);
-        assert(stream.started());
+        xwalk::hal::test::requireTestCondition(streamStarted);
+        xwalk::hal::test::requireTestCondition(stream.started());
         const XWalkHal::boolean frameCaptured = stream.capture(jpeg);
-        assert(frameCaptured);
-        assert(state.captureCount == 1U);
-        assert(jpeg.size() == 5U);
+        xwalk::hal::test::requireTestCondition(frameCaptured);
+        xwalk::hal::test::requireTestCondition(state.captureCount == 1U);
+        xwalk::hal::test::requireTestCondition(jpeg.size() == 5U);
         stream.stop();
-        assert(stream.started() == false);
-        assert(state.started == false);
+        xwalk::hal::test::requireTestCondition(stream.started() == false);
+        xwalk::hal::test::requireTestCondition(state.started == false);
 
         xwalk::hal::test::expectFailure(
             [&state]()
