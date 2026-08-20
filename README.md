@@ -126,6 +126,21 @@ confirming the Raspberry Pi model, Robot HAT revision, wiring, power, clear move
 
 ### Start the local Gerrit server
 
+Load the repository Git environment once in each checkout. It configures the
+repository-local Gerrit push transport so an ordinary `git push` starts the
+Gerrit stack installed on the current machine before opening the Gerrit SSH
+connection:
+
+```bash
+source xWalk-git-env.sh
+```
+
+On a personal workstation this starts its local Gerrit profile. On the college
+host it starts that machine's managed Gerrit profile. A client without a local
+Gerrit installation connects to its configured remote server without attempting
+to manage that server. Set `XWALK_GIT_AUTO_START=false` in the machine-local Git
+environment override to disable push-triggered startup.
+
 Assess the local host before the first installation:
 
 ```bash

@@ -96,6 +96,7 @@ export XWALK_TOOL_DIRECTORY="${XWALK_REPOSITORY_ROOT}/xWalkTool"
 export XWALK_RPI5_DIRECTORY="${XWALK_REPOSITORY_ROOT}/xWalk-rpi5"
 export XWALK_DEVELOPER_NOTE_DIRECTORY="${XWALK_REPOSITORY_ROOT}/devloper-note"
 export XWALK_GERRIT_TOOL_DIRECTORY="${XWALK_TOOL_DIRECTORY}/py-agent/gerrit-tool"
+export XWALK_GERRIT_GIT_CONNECT="${XWALK_GERRIT_TOOL_DIRECTORY}/bin/xwalk-gerrit-git-connect"
 export XWALK_DOC_TOOL_DIRECTORY="${XWALK_TOOL_DIRECTORY}/doc-tool"
 export XWALK_GERRIT_TOOL_HOME="${XWALK_GERRIT_TOOL_HOME:-${XWALK_GERRIT_TOOL_DIRECTORY}/py-src}"
 export XWALK_CI_STATE_DIRECTORY="${XWALK_CI_STATE_DIRECTORY:-${HOME}/gerrit-ci/state}"
@@ -158,6 +159,55 @@ _xwalk_git_env_block_direct_github_pushes()
                 fi
             fi
         done < <(git -C "${repository_path}" remote)
+    done
+}
+
+_xwalk_git_env_project_name()
+{
+    local repository_path=$1
+
+    if [[ "${repository_path}" == "${XWALK_REPOSITORY_ROOT}" ]]
+    then
+        printf '%s\n' "${GERRIT_PROJECT}"
+    elif [[ "${repository_path}" == "${XWALK_DEVELOPER_NOTE_DIRECTORY}" ]]
+    then
+        printf 'DevloperNote\n'
+    else
+        basename -- "${repository_path}"
+    fi
+}
+
+_xwalk_git_env_configure_gerrit_pushes()
+{
+    local repository_path remote_name project_name push_url
+
+    [[ -x "${XWALK_GERRIT_GIT_CONNECT}" ]] || {
+        printf 'Missing Gerrit Git connector: %s\n' "${XWALK_GERRIT_GIT_CONNECT}" >&2
+        return 1
+    }
+    [[ "${XWALK_GERRIT_GIT_CONNECT}" != *[[:space:]]* ]] || {
+        printf 'Gerrit Git connector path must not contain whitespace: %s\n' \
+            "${XWALK_GERRIT_GIT_CONNECT}" >&2
+        return 1
+    }
+
+    for repository_path in "${XWALK_REPOSITORY_ROOT}" ${XWALK_GITLINK_SUBMODULE_PATHS}
+    do
+        [[ "${repository_path}" == "${XWALK_REPOSITORY_ROOT}" ]] || \
+            repository_path="${XWALK_REPOSITORY_ROOT}/${repository_path}"
+        [[ -d "${repository_path}" ]] || continue
+        project_name=$(_xwalk_git_env_project_name "${repository_path}")
+        push_url="ext::${XWALK_GERRIT_GIT_CONNECT} ${GERRIT_USER}@${GERRIT_SERVER_HOST} "
+        push_url+="${GERRIT_SSH_PORT} ${project_name} ${XWALK_GIT_AUTO_START} %S"
+        git -C "${repository_path}" config --local protocol.ext.allow always
+        for remote_name in origin gerrit
+        do
+            if git -C "${repository_path}" config --local --get "remote.${remote_name}.url" >/dev/null
+            then
+                git -C "${repository_path}" config --local --replace-all \
+                    "remote.${remote_name}.pushurl" "${push_url}"
+            fi
+        done
     done
 }
 
@@ -286,18 +336,17 @@ xwalk_gerrit_push_wip()
     git -C "${repository_path}" push "${remote_name}" "HEAD:refs/for/${target_branch}%wip"
 }
 
-if [[ "${XWALK_GIT_AUTO_START}" == true ]]
-then
-    if ! xwalk_git_start_servers
-    then
-        printf 'Failed to start the local Gerrit server stack.\n' >&2
-        return 1
-    fi
-elif [[ "${XWALK_GIT_AUTO_START}" != false ]]
+if [[ "${XWALK_GIT_AUTO_START}" != true && "${XWALK_GIT_AUTO_START}" != false ]]
 then
     printf 'XWALK_GIT_AUTO_START must be true or false.\n' >&2
     return 2
 fi
+if ! _xwalk_git_env_configure_gerrit_pushes
+then
+    unset -f _xwalk_git_env_configure_gerrit_pushes _xwalk_git_env_project_name
+    return 1
+fi
+unset -f _xwalk_git_env_configure_gerrit_pushes _xwalk_git_env_project_name
 
 if [[ "${XWALK_GIT_ENV_QUIET:-false}" != true ]]
 then

@@ -30,6 +30,13 @@ must be deferred, upload the change as WIP:
 git push origin HEAD:refs/for/master%wip
 ```
 
+Source `xWalk-git-env.sh` once per checkout to install the repository-local
+Gerrit push transport. With `XWALK_GIT_AUTO_START=true`, every ordinary Gerrit
+push starts the server stack installed on the current machine before SSH:
+personal workstations start their local profile, the college host starts its
+managed profile, and clients without a local installation connect to the
+configured remote endpoint without attempting remote service management.
+
 For a WIP change, use Gerrit's **Mark As Active** button as the Activate action.
 The WIP-to-active transition triggers CI for the current patch set. Moving an
 active change into WIP does not trigger CI.

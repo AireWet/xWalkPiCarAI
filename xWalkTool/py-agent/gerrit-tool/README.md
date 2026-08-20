@@ -94,6 +94,15 @@ and its real gitlink submodules with a non-routable policy URL. Fetch URLs remai
 does not use those developer remotes; it creates a temporary guarded GitHub remote only after validating the exact
 submitted Gerrit event and CI vote.
 
+The same environment configures a repository-local Gerrit push transport.
+Before an ordinary `git push` opens Gerrit's SSH connection, the transport runs
+the installed `$HOME/bin/gerrit-start` command when automatic startup is
+enabled. The personal workstation therefore starts its local profile, while a
+checkout on the college host starts the managed college profile. A machine
+without an installed Gerrit server only connects to its configured remote
+endpoint. The transport applies only to push URLs; fetch URLs and temporary CI
+SSH commands remain unchanged.
+
 Submitted component changes receive a separate `xWalk Integration Uplift`
 change-log entry showing whether the integration review was uploaded. Submitted
 integration changes receive a separate `xWalk GitHub Uplift` entry showing
