@@ -21,41 +21,15 @@ namespace xwalk::agent
 
     /**
      * @brief Runs the configured GPT-car profile.
-     * @param[in,out] context Nullable caller-owned application context.
-     * @param[in] callback Non-null synchronous application callback.
-     * @param[in,out] config Loaded deployment configuration.
-     * @param[in,out] boardControl Caller-owned board controller.
-     * @param[in,out] picarx Caller-owned PiCar-X coordinator.
-     * @param[in] gpioDevice Configured GPIO device path.
-     * @param[in] gpioChipName Optional exact GPIO chip name.
-     * @param[in] gpioChipLabel Optional exact GPIO chip label.
-     * @param[in] minimumGpioLineCount Required minimum GPIO line count.
-     * @param[in] gpioCallbacks Linux GPIO callback table.
-     * @return Status returned by `callback`.
+     * @param[in] parameters Non-owning application, vehicle, configuration, and
+     * GPIO dependencies valid through the synchronous dispatch.
+     * @return Status returned by the configured application callback.
+     * @pre Every required pointer in `parameters` is non-null.
      */
-    agent::int32 XWalkBootRpi::runGptCar(agent::contextpointer context,
-                                         bootapplicationcallback callback,
-                                         hal::XWalkConfigStore& config,
-                                         hal::XWalkBoardControl& boardControl,
-                                         XWalkPicarx& picarx,
-                                         agent::stringview gpioDevice,
-                                         agent::stringview gpioChipName,
-                                         agent::stringview gpioChipLabel,
-                                         agent::uint32 minimumGpioLineCount,
-                                         const hal::XWalkGpioCallbacks& gpioCallbacks)
+    agent::int32 XWalkBootRpi::runGptCar(const xAgentContext& parameters)
     {
         XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .054, "Boot selecting GPT-car voice composition");
-        return runVoiceActiveMode(XWALK_BOOT_GPT_CAR_REQ,
-                                  context,
-                                  callback,
-                                  config,
-                                  boardControl,
-                                  picarx,
-                                  gpioDevice,
-                                  gpioChipName,
-                                  gpioChipLabel,
-                                  minimumGpioLineCount,
-                                  gpioCallbacks);
+        return runVoiceActiveMode(XWALK_BOOT_GPT_CAR_REQ, parameters);
     }
 
 } /* namespace xwalk::agent */

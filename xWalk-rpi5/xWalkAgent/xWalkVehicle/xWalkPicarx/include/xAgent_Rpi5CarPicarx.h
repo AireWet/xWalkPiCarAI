@@ -32,6 +32,7 @@
 #include "xHal_Rpi5CarMotors.h"
 #include "xHal_Rpi5CarServo.h"
 #include "xHal_Rpi5CarUltrasonic.h"
+#include "xWalk_Rpi5CarAgentConfigType.h"
 
 /******************************************************************************
  * Namespace declarations
@@ -131,21 +132,10 @@ namespace xwalk::agent
             /**
              * @brief Constructs a PiCar-X coordinator and loads persisted calibration.
              *
-             * @param[in] motors Paired motors that must outlive this object.
-             * @param[in] directionServo Steering servo that must outlive this object.
-             * @param[in] cameraPanServo Camera pan servo that must outlive this object.
-             * @param[in] cameraTiltServo Camera tilt servo that must outlive this object.
-             * @param[in] grayscale Grayscale module that must outlive this object.
-             * @param[in] ultrasonic Ultrasonic sensor that must outlive this object.
-             * @param[in] configStore Configuration store that must outlive this object.
+             * @param[in] ctx Non-owning dependency context whose PiCar-X fields must remain valid.
+             * @pre `motors`, `dirServo`, `panServo`, `tiltServo`, `grayscale`, `ultrasonic`, and `config` are non-null.
              */
-            XWalkPicarx(hal::XWalkMotors& motors,
-                        hal::XWalkServo& directionServo,
-                        hal::XWalkServo& cameraPanServo,
-                        hal::XWalkServo& cameraTiltServo,
-                        hal::XWalkGrayscaleModule& grayscale,
-                        hal::XWalkUltrasonic& ultrasonic,
-                        hal::XWalkConfigStore& configStore);
+            explicit XWalkPicarx(const xAgentContext& ctx);
 
             /**
              * @brief Latches an emergency stop without releasing any non-owning dependency.

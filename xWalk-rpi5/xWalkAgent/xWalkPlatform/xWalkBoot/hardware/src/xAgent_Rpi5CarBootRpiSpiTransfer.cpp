@@ -25,15 +25,14 @@ namespace xwalk::agent
 
     /**
      * @brief Runs one configured SPI transaction service.
-     * @param[in,out] applicationContext Nullable caller-owned application context.
-     * @param[in] callback Non-null synchronous application callback.
-     * @param[in,out] config Loaded deployment configuration.
-     * @return Status returned by `callback`.
+     * @param[in] parameters Non-owning application callback and configuration
+     * dependency valid through this synchronous composition.
+     * @return Status returned by the configured callback.
+     * @pre `parameters.callback` and `parameters.config` are non-null.
      */
-    agent::int32 XWalkBootRpi::runSpiTransfer(agent::contextpointer applicationContext,
-                                              bootapplicationcallback callback,
-                                              hal::XWalkConfigStore& config)
+    agent::int32 XWalkBootRpi::runSpiTransfer(const xAgentContext& parameters)
     {
+        hal::XWalkConfigStore& config = *parameters.config;
         XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .060, "Boot composing bounded SPI-transfer services");
         const agent::string spiDevice = config.get("hardware_spi_device", XHAL_RPI5CAR_SPI_DEFAULT_DEVICE);
         hal::XWalkSpiConfiguration spiConfiguration{};
@@ -50,7 +49,7 @@ namespace xwalk::agent
         XWalkSpiTransfer spiTransfer(spi);
         XWalkBootServices services{};
         services.spiTransfer = &spiTransfer;
-        return callback(applicationContext, services);
+        return parameters.callback(parameters.appContext, services);
     }
 
 } /* namespace xwalk::agent */

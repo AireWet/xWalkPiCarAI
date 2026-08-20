@@ -48,6 +48,7 @@
 #include "xAgent_Rpi5CarOnlineLlmTest.h"
 #include "xAgent_Rpi5CarGptCar.h"
 #include "xAgent_Rpi5CarServoZeroing.h"
+#include "xWalk_Rpi5CarAgentConfigType.h"
 
 /******************************************************************************
  * Boot request definitions
@@ -170,18 +171,6 @@ namespace xwalk::agent
             /** @brief Optional boot-owned language model for text-vision talk. */
             hal::XWalkLanguageModel* languageModel{nullptr};
     };
-
-    /******************************************************************************
-     * Type definitions
-     ******************************************************************************/
-
-    /**
-     * @brief Executes one application operation while boot services remain alive.
-     * @param[in,out] context Nullable caller-owned application context.
-     * @param[in,out] services Non-owning services valid only for this callback.
-     * @return Application-defined process status.
-     */
-    using bootapplicationcallback = agent::int32 (*)(agent::contextpointer context, XWalkBootServices& services);
 
 } /* namespace xwalk::agent */
 

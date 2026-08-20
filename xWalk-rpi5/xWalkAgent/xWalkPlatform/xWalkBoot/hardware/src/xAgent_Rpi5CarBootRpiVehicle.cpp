@@ -34,26 +34,25 @@ namespace xwalk::agent
 
     /**
      * @brief Composes the common Robot HAT and PiCar-X graph.
-     * @param[in,out] context Nullable caller-owned application context.
-     * @param[in] callback Non-null synchronous application callback.
-     * @param[in,out] config Loaded deployment configuration.
+     * @param[in] parameters Application callback and non-owning loaded
+     * configuration valid through this synchronous composition.
      * @return Status returned by the selected mode callback.
+     * @pre `parameters.config` and `parameters.callback` are non-null.
      * @warning Resets the configured Robot HAT MCU and may claim actuator resources.
      */
-    agent::int32 XWalkBootRpi::runVehicle(agent::contextpointer context,
-                                          bootapplicationcallback callback,
-                                          hal::XWalkConfigStore& config)
+    agent::int32 XWalkBootRpi::runVehicle(const xAgentContext& parameters)
     {
+        hal::XWalkConfigStore& config = *parameters.config;
         XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .064, "Boot composing Robot HAT vehicle services");
         const agent::string i2cDevice = config.get("hardware_i2c_device", XHAL_RPI5CAR_I2C_DEFAULT_DEVICE);
         const agent::string gpioDevice = config.get("hardware_gpio_device", XHAL_RPI5CAR_GPIO_DEFAULT_DEVICE);
         const agent::string deviceTreeRoot = config.get("hardware_device_tree_root", XHAL_RPI5CAR_DEVICE_TREE_ROOT);
         const agent::string requestedBoard = config.get("hardware_board", "auto");
-        const agent::string gpioChipName = config.get("hardware_gpio_chip_name", "");
-        const agent::string gpioChipLabel = config.get("hardware_gpio_chip_label", "");
-        const agent::uint32 minimumGpioLineCount = parseUnsigned(config.get("hardware_gpio_minimum_line_count", "28"),
-                                                                 "hardware_gpio_minimum_line_count",
-                                                                 hal::common::UINT32_MAXIMUM);
+        const agent::string chipName = config.get("hardware_gpio_chip_name", "");
+        const agent::string chipLabel = config.get("hardware_gpio_chip_label", "");
+        const agent::uint32 minLines = parseUnsigned(config.get("hardware_gpio_minimum_line_count", "28"),
+                                                     "hardware_gpio_minimum_line_count",
+                                                     hal::common::UINT32_MAXIMUM);
 
         hal::XWalkDevice device(deviceTreeRoot);
         const hal::XWalkDeviceInformation deviceInformation = selectBoard(device.information(), requestedBoard);
@@ -64,11 +63,11 @@ namespace xwalk::agent
                           XHAL_I2C_READ_CALLBACK(hal::XWalkI2cLinux),
                           XHAL_I2C_READ_REGISTER_CALLBACK(hal::XWalkI2cLinux),
                           XHAL_I2C_TRY_WRITE_REGISTER_CALLBACK(hal::XWalkI2cLinux));
-        const hal::XWalkGpioCallbacks gpioCallbacks = XHAL_GPIO_CALLBACKS(hal::XWalkGpioLinux);
-        hal::XWalkGpioLinux speakerBackend(gpioDevice.c_str(), gpioChipName, gpioChipLabel, minimumGpioLineCount);
-        hal::XWalkGpio speakerGpio(&speakerBackend, gpioCallbacks, deviceInformation.speakerEnablePin);
-        hal::XWalkGpioLinux resetBackend(gpioDevice.c_str(), gpioChipName, gpioChipLabel, minimumGpioLineCount);
-        hal::XWalkGpio resetGpio(&resetBackend, gpioCallbacks, config.get("hardware_mcu_reset_pin", "MCURST"));
+        const hal::XWalkGpioCallbacks gpioOps = XHAL_GPIO_CALLBACKS(hal::XWalkGpioLinux);
+        hal::XWalkGpioLinux speakerBackend(gpioDevice.c_str(), chipName, chipLabel, minLines);
+        hal::XWalkGpio speakerGpio(&speakerBackend, gpioOps, deviceInformation.speakerEnablePin);
+        hal::XWalkGpioLinux resetBackend(gpioDevice.c_str(), chipName, chipLabel, minLines);
+        hal::XWalkGpio resetGpio(&resetBackend, gpioOps, config.get("hardware_mcu_reset_pin", "MCURST"));
         hal::XWalkAdc batteryAdc(i2c, config.get("hardware_battery_adc_channel", "A4"));
         hal::XWalkBoardControl boardControl(resetGpio, speakerGpio, batteryAdc, nullptr, &primeSpeaker);
         boardControl.resetMcu();
@@ -81,7 +80,9 @@ namespace xwalk::agent
             static_cast<agent::boolean>(selectedMode == XWALK_BOOT_SERVO_ZEROING_REQ);
         if (servoZeroingSelected)
         {
-            return runServoZeroing(context, callback, i2c);
+            xAgentContext servoParameters = parameters;
+            servoParameters.i2c = &i2c;
+            return runServoZeroing(servoParameters);
         }
         const agent::boolean speakerRequired = static_cast<agent::boolean>(
             (selectedMode == XWALK_BOOT_SELF_DRIVE_REQ) || (selectedMode == XWALK_BOOT_SOUND_REQ) ||
@@ -111,10 +112,10 @@ namespace xwalk::agent
         hal::XWalkServo panServo(panPwm, panServoConfiguration);
         hal::XWalkServo tiltServo(tiltPwm, tiltServoConfiguration);
         hal::XWalkServo directionServo(directionPwm, directionServoConfiguration);
-        hal::XWalkGpioLinux triggerBackend(gpioDevice.c_str(), gpioChipName, gpioChipLabel, minimumGpioLineCount);
-        hal::XWalkGpioLinux echoBackend(gpioDevice.c_str(), gpioChipName, gpioChipLabel, minimumGpioLineCount);
-        hal::XWalkGpio trigger(&triggerBackend, gpioCallbacks, config.get("hardware_ultrasonic_trigger_pin", "D2"));
-        hal::XWalkGpio echo(&echoBackend, gpioCallbacks, config.get("hardware_ultrasonic_echo_pin", "D3"));
+        hal::XWalkGpioLinux triggerBackend(gpioDevice.c_str(), chipName, chipLabel, minLines);
+        hal::XWalkGpioLinux echoBackend(gpioDevice.c_str(), chipName, chipLabel, minLines);
+        hal::XWalkGpio trigger(&triggerBackend, gpioOps, config.get("hardware_ultrasonic_trigger_pin", "D2"));
+        hal::XWalkGpio echo(&echoBackend, gpioOps, config.get("hardware_ultrasonic_echo_pin", "D3"));
         hal::XWalkAdc adc0(i2c, config.get("hardware_grayscale_left_channel", "A0"));
         hal::XWalkAdc adc1(i2c, config.get("hardware_grayscale_middle_channel", "A1"));
         hal::XWalkAdc adc2(i2c, config.get("hardware_grayscale_right_channel", "A2"));
@@ -127,18 +128,26 @@ namespace xwalk::agent
                           hal::XHAL_RPI5CAR_MOTOR_WATCHDOG_MAXIMUM_MILLISECONDS);
         const auto runApplication = [&](hal::XWalkMotors& motors) -> agent::int32
         {
-            XWalkPicarx picarx(motors, directionServo, panServo, tiltServo, grayscale, ultrasonic, config);
+            xAgentContext carCtx = parameters;
+            carCtx.config = &config;
+            carCtx.motors = &motors;
+            carCtx.dirServo = &directionServo;
+            carCtx.panServo = &panServo;
+            carCtx.tiltServo = &tiltServo;
+            carCtx.grayscale = &grayscale;
+            carCtx.ultrasonic = &ultrasonic;
+            XWalkPicarx picarx(carCtx);
             static_cast<void>(picarx.initialize());
-            return runVehicleMode(context,
-                                  callback,
-                                  config,
-                                  boardControl,
-                                  picarx,
-                                  gpioDevice,
-                                  gpioChipName,
-                                  gpioChipLabel,
-                                  minimumGpioLineCount,
-                                  gpioCallbacks);
+            xAgentContext vehicleParameters = parameters;
+            vehicleParameters.board = &boardControl;
+            vehicleParameters.picarx = &picarx;
+            vehicleParameters.gpioDevice = gpioDevice;
+            vehicleParameters.chipName = chipName;
+            vehicleParameters.chipLabel = chipLabel;
+            vehicleParameters.minLines = minLines;
+            vehicleParameters.gpioOps = &gpioOps;
+            vehicleParameters.i2c = &i2c;
+            return runVehicleMode(vehicleParameters);
         };
 
         const agent::boolean v5MotorMode =
@@ -161,13 +170,12 @@ namespace xwalk::agent
 
         hal::XWalkPwm leftPwm(i2c, config.get("hardware_v4_left_pwm_channel", "P13"), {}, timerState);
         hal::XWalkPwm rightPwm(i2c, config.get("hardware_v4_right_pwm_channel", "P12"), {}, timerState);
-        hal::XWalkGpioLinux leftDirectionBackend(gpioDevice.c_str(), gpioChipName, gpioChipLabel, minimumGpioLineCount);
-        hal::XWalkGpioLinux rightDirectionBackend(
-            gpioDevice.c_str(), gpioChipName, gpioChipLabel, minimumGpioLineCount);
+        hal::XWalkGpioLinux leftDirectionBackend(gpioDevice.c_str(), chipName, chipLabel, minLines);
+        hal::XWalkGpioLinux rightDirectionBackend(gpioDevice.c_str(), chipName, chipLabel, minLines);
         hal::XWalkGpio leftDirection(
-            &leftDirectionBackend, gpioCallbacks, config.get("hardware_v4_left_direction_pin", "D4"));
+            &leftDirectionBackend, gpioOps, config.get("hardware_v4_left_direction_pin", "D4"));
         hal::XWalkGpio rightDirection(
-            &rightDirectionBackend, gpioCallbacks, config.get("hardware_v4_right_direction_pin", "D5"));
+            &rightDirectionBackend, gpioOps, config.get("hardware_v4_right_direction_pin", "D5"));
         hal::XWalkMotor leftMotor(leftPwm, leftDirection);
         hal::XWalkMotor rightMotor(rightPwm, rightDirection);
         hal::XWalkMotors motors(leftMotor, rightMotor, motorsConfiguration);

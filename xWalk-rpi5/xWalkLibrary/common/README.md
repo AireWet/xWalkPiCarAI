@@ -71,6 +71,19 @@ synchronization objects, and error codes. Modules use aliases such as
 `fileopenmode`, and `errorcode` instead of spelling the underlying standard type
 directly. Standard-library qualification remains inside the common boundary.
 
+Shared Agent composition parameters and the boot-application callback are
+declared in:
+
+```cpp
+#include "xWalk_Rpi5CarAgentConfigType.h"
+```
+
+`xAgentContext` groups non-owning application, configuration, PiCar-X HAL,
+vehicle, I2C, and GPIO dependencies for synchronous Agent composition without
+transferring resource ownership into the common library. PiCar-X construction
+uses the `motors`, `dirServo`, `panServo`, `tiltServo`, `grayscale`,
+`ultrasonic`, and `config` fields.
+
 Generic aliases are exported into three layer-specific namespaces:
 
 | Layer | Full namespace | Concise namespace |

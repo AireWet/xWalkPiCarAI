@@ -76,19 +76,21 @@ int main()
     xwalk::agent::XWalkBootServices services{};
     xwalk::agent::XWalkBootHostStub boot(services);
     xwalk::agent::test::XWalkBootTestState state{};
+    const xwalk::agent::xAgentContext invalidContext{&state, nullptr};
+    const xwalk::agent::xAgentContext agentContext{&state, &xwalk::agent::test::runBootTestApplication};
 
     xwalk::hal::test::expectFailure(
         [&]()
         {
-            static_cast<void>(boot.run(&state, nullptr));
+            static_cast<void>(boot.run(invalidContext));
         });
-    assert(boot.run(&state, &xwalk::agent::test::runBootTestApplication) == 7);
+    assert(boot.run(agentContext) == 7);
     assert(state.runCount == 1U);
 
     xwalk::hal::test::expectFailure(
         [&]()
         {
-            static_cast<void>(boot.run(&state, &xwalk::agent::test::runBootTestApplication));
+            static_cast<void>(boot.run(agentContext));
         });
     assert(state.runCount == 1U);
     return 0;

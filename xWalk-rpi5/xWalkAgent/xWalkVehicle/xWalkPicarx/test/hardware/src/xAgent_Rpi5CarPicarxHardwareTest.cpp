@@ -144,7 +144,15 @@ agent::int32 main()
     xwalk::hal::XWalkUltrasonic ultrasonic(trigger, echo);
     const auto closePicarx = [&](xwalk::hal::XWalkMotors& motors) -> agent::int32
     {
-        xwalk::agent::XWalkPicarx picarx(motors, directionServo, panServo, tiltServo, grayscale, ultrasonic, config);
+        xwalk::agent::xAgentContext carCtx{};
+        carCtx.config = &config;
+        carCtx.motors = &motors;
+        carCtx.dirServo = &directionServo;
+        carCtx.panServo = &panServo;
+        carCtx.tiltServo = &tiltServo;
+        carCtx.grayscale = &grayscale;
+        carCtx.ultrasonic = &ultrasonic;
+        xwalk::agent::XWalkPicarx picarx(carCtx);
         static_cast<void>(picarx.initialize());
         picarx.close();
         return 0;

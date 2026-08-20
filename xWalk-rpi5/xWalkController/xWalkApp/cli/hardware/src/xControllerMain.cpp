@@ -144,5 +144,6 @@ ctrl::int32 main(ctrl::int32 argumentCount, ctrl::charpointer arguments[])
     xwalk::agent::XWalkBootRpi boot(xwalk::ctrl::XWALK_selectBootMode(commandArguments),
                                     applicationArguments.appConfig.configurationFilePath);
 
-    return boot.run(&bootContext, &xwalk::ctrl::XWALK_runController);
+    const xwalk::agent::xAgentContext agentContext{&bootContext, &xwalk::ctrl::XWALK_runController};
+    return boot.run(agentContext);
 }

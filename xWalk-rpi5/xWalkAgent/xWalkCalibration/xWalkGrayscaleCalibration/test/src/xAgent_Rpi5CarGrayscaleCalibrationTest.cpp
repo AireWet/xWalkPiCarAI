@@ -200,8 +200,15 @@ namespace
         configuration.set("picarx_calibration_verified", "true");
         configuration.set("line_reference", "[900,900,900]");
         configuration.set("cliff_reference", "[400,401,402]");
-        xwalk::agent::XWalkPicarx picarx(
-            motors, directionServo, panServo, tiltServo, grayscale, ultrasonic, configuration);
+        xwalk::agent::xAgentContext carCtx{};
+        carCtx.config = &configuration;
+        carCtx.motors = &motors;
+        carCtx.dirServo = &directionServo;
+        carCtx.panServo = &panServo;
+        carCtx.tiltServo = &tiltServo;
+        carCtx.grayscale = &grayscale;
+        carCtx.ultrasonic = &ultrasonic;
+        xwalk::agent::XWalkPicarx picarx(carCtx);
         static_cast<void>(picarx.initialize());
         TestSchedule schedule;
         xwalk::agent::XWalkGrayscaleCalibration calibration(picarx, &schedule, &delay, &continueOperation);

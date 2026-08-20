@@ -32,6 +32,8 @@ int main()
     assert(assistant.instructions.find("Answer safe general-knowledge") != xwalk::agent::string::npos);
     assert(assistant.instructions.find("A question does not need to request a robot action") !=
            xwalk::agent::string::npos);
+    assert(assistant.instructions.find("Address the user as Joxy in every RESPONSE_TEXT reply") !=
+           xwalk::agent::string::npos);
     assert(assistant.welcome == "Hi, I'm Jarvis. Wake me up with: hey jarvis");
     assert(car.tooCloseCm == 10.0);
     assert(car.withImage);

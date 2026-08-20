@@ -24,15 +24,14 @@ namespace xwalk::agent
 
     /**
      * @brief Runs configured standalone video recording.
-     * @param[in,out] context Nullable caller-owned application context.
-     * @param[in] callback Non-null synchronous application callback.
-     * @param[in,out] config Loaded deployment configuration.
-     * @return Status returned by `callback`.
+     * @param[in] parameters Non-owning application callback and configuration
+     * dependency valid through this synchronous composition.
+     * @return Status returned by the configured callback.
+     * @pre `parameters.callback` and `parameters.config` are non-null.
      */
-    agent::int32 XWalkBootRpi::runVideoRecording(agent::contextpointer context,
-                                                 bootapplicationcallback callback,
-                                                 hal::XWalkConfigStore& config)
+    agent::int32 XWalkBootRpi::runVideoRecording(const xAgentContext& parameters)
     {
+        hal::XWalkConfigStore& config = *parameters.config;
         XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .066, "Boot composing video-recording services");
         XWalkVideoRecordingOpenCvConfiguration videoConfiguration;
         videoConfiguration.cameraBackend =
@@ -54,7 +53,7 @@ namespace xwalk::agent
         XWalkVideoRecording videoRecording(&videoBackend, videoCallbacks);
         XWalkBootServices services{};
         services.videoRecording = &videoRecording;
-        return callback(context, services);
+        return parameters.callback(parameters.appContext, services);
     }
 
 } /* namespace xwalk::agent */

@@ -54,31 +54,17 @@ namespace xwalk::agent
     /**
      * @brief Composes one configured voice-active vehicle profile.
      * @param[in] mode VoiceActiveCar, VoiceActiveCarGpt, or GptCar request macro.
-     * @param[in,out] context Nullable caller-owned application context.
-     * @param[in] callback Non-null synchronous application callback.
-     * @param[in,out] config Loaded deployment configuration.
-     * @param[in,out] boardControl Caller-owned board controller.
-     * @param[in,out] picarx Caller-owned PiCar-X coordinator.
-     * @param[in] gpioDevice Configured GPIO device path.
-     * @param[in] gpioChipName Optional exact GPIO chip name.
-     * @param[in] gpioChipLabel Optional exact GPIO chip label.
-     * @param[in] minimumGpioLineCount Required minimum GPIO line count.
-     * @param[in] gpioCallbacks Linux GPIO callback table.
-     * @return Status returned by `callback`.
+     * @param[in] parameters Non-owning application, vehicle, configuration, and
+     * GPIO dependencies valid through the synchronous dispatch.
+     * @return Status returned by the configured application callback.
      * @throws std::runtime_error If the selected credential environment is empty.
+     * @pre Every required pointer in `parameters` is non-null.
      */
-    agent::int32 XWalkBootRpi::runVoiceActiveMode(agent::uint8 mode,
-                                                  agent::contextpointer context,
-                                                  bootapplicationcallback callback,
-                                                  hal::XWalkConfigStore& config,
-                                                  hal::XWalkBoardControl& boardControl,
-                                                  XWalkPicarx& picarx,
-                                                  agent::stringview gpioDevice,
-                                                  agent::stringview gpioChipName,
-                                                  agent::stringview gpioChipLabel,
-                                                  agent::uint32 minimumGpioLineCount,
-                                                  const hal::XWalkGpioCallbacks& gpioCallbacks)
+    agent::int32 XWalkBootRpi::runVoiceActiveMode(agent::uint8 mode, const xAgentContext& parameters)
     {
+        hal::XWalkConfigStore& config = *parameters.config;
+        hal::XWalkBoardControl& boardControl = *parameters.board;
+        XWalkPicarx& picarx = *parameters.picarx;
         const agent::string voskLibrary = config.get("voice_vosk_library", "/usr/lib/xwalk/libvosk.so");
         const agent::string voskModel =
             config.get("voice_vosk_model", "/usr/share/xwalk/models/vosk/vosk-model-small-en-us-0.15");
@@ -200,12 +186,11 @@ namespace xwalk::agent
                                  nullptr,
                                  config.get("resource_sound_directory", "/usr/share/xwalk/sounds"),
                                  config.get("resource_music_directory", "/usr/share/xwalk/music"));
-        const agent::string gpioDeviceValue(gpioDevice);
-        const agent::string gpioChipNameValue(gpioChipName);
-        const agent::string gpioChipLabelValue(gpioChipLabel);
-        hal::XWalkGpioLinux ledBackend(
-            gpioDeviceValue.c_str(), gpioChipNameValue, gpioChipLabelValue, minimumGpioLineCount);
-        hal::XWalkGpio ledGpio(&ledBackend, gpioCallbacks, config.get("hardware_status_led_pin", "LED"));
+        const agent::string gpioPath(parameters.gpioDevice);
+        const agent::string chipName(parameters.chipName);
+        const agent::string chipLabel(parameters.chipLabel);
+        hal::XWalkGpioLinux ledBackend(gpioPath.c_str(), chipName, chipLabel, parameters.minLines);
+        hal::XWalkGpio ledGpio(&ledBackend, *parameters.gpioOps, config.get("hardware_status_led_pin", "LED"));
         hal::XWalkLed statusLed(ledGpio);
         const hal::XWalkCameraConnection cameraConnection =
             hal::XWalkCamera::connectionFromString(config.get("camera_connection", "csi"));
@@ -229,7 +214,7 @@ namespace xwalk::agent
         services.music = &music;
         services.voiceStatusLed = &statusLed;
         services.cameraCapture = &cameraCapture;
-        return callback(context, services);
+        return parameters.callback(parameters.appContext, services);
     }
 
 } /* namespace xwalk::agent */

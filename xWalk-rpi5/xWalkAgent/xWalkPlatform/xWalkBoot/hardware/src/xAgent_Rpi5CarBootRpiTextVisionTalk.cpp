@@ -31,15 +31,14 @@ namespace xwalk::agent
 
     /**
      * @brief Runs image-grounded text conversation with configured providers.
-     * @param[in,out] context Nullable caller-owned application context.
-     * @param[in] callback Non-null synchronous application callback.
-     * @param[in,out] config Loaded deployment configuration.
-     * @return Status returned by `callback`.
+     * @param[in] parameters Non-owning application callback and configuration
+     * dependency valid through this synchronous composition.
+     * @return Status returned by the configured callback.
+     * @pre `parameters.callback` and `parameters.config` are non-null.
      */
-    agent::int32 XWalkBootRpi::runTextVisionTalk(agent::contextpointer context,
-                                                 bootapplicationcallback callback,
-                                                 hal::XWalkConfigStore& config)
+    agent::int32 XWalkBootRpi::runTextVisionTalk(const xAgentContext& parameters)
     {
+        hal::XWalkConfigStore& config = *parameters.config;
         XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .062, "Boot composing text-vision conversation services");
         const hal::XWalkCameraConnection cameraConnection =
             hal::XWalkCamera::connectionFromString(config.get("camera_connection", "csi"));
@@ -63,7 +62,7 @@ namespace xwalk::agent
         XWalkBootServices services{};
         services.cameraCapture = &cameraCapture;
         services.languageModel = &languageModel;
-        return callback(context, services);
+        return parameters.callback(parameters.appContext, services);
     }
 
 } /* namespace xwalk::agent */

@@ -23,20 +23,20 @@ namespace xwalk::agent
 
     /**
      * @brief Runs line tracking with the caller-owned PiCar-X coordinator.
-     * @param[in,out] context Nullable caller-owned application context.
-     * @param[in] callback Non-null synchronous application callback.
-     * @param[in,out] picarx Caller-owned PiCar-X coordinator.
-     * @return Status returned by `callback`.
+     * @param[in] parameters Non-owning application callback and PiCar-X
+     * dependency valid through this synchronous composition.
+     * @return Status returned by the configured callback.
+     * @pre `parameters.callback` and `parameters.picarx` are non-null.
      */
-    agent::int32
-    XWalkBootRpi::runLineTracking(agent::contextpointer context, bootapplicationcallback callback, XWalkPicarx& picarx)
+    agent::int32 XWalkBootRpi::runLineTracking(const xAgentContext& parameters)
     {
+        XWalkPicarx& picarx = *parameters.picarx;
         XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .055, "Boot composing line-tracking services");
         XWalkLineTracking lineTracking(picarx, nullptr, &delayMilliseconds);
         XWalkBootServices services{};
         services.picarx = &picarx;
         services.lineTracking = &lineTracking;
-        return callback(context, services);
+        return parameters.callback(parameters.appContext, services);
     }
 
 } /* namespace xwalk::agent */

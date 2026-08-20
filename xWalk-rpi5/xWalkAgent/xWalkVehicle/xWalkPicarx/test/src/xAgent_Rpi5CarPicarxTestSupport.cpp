@@ -40,8 +40,15 @@ namespace xwalk::agent::test::picarx
         config.set("picarx_cam_pan_servo", "6");
         config.set("picarx_cam_tilt_servo", "7");
         config.set("picarx_apply_persisted_servo_positions", applyPersistedPositions ? "true" : "false");
-        vehicle =
-            std::make_unique<XWalkPicarx>(motors, directionServo, panServo, tiltServo, grayscale, ultrasonic, config);
+        xAgentContext carCtx{};
+        carCtx.config = &config;
+        carCtx.motors = &motors;
+        carCtx.dirServo = &directionServo;
+        carCtx.panServo = &panServo;
+        carCtx.tiltServo = &tiltServo;
+        carCtx.grayscale = &grayscale;
+        carCtx.ultrasonic = &ultrasonic;
+        vehicle = std::make_unique<XWalkPicarx>(carCtx);
         backend.clearEvents();
     }
 

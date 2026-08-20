@@ -31,16 +31,15 @@ namespace xwalk::agent
 
     /**
      * @brief Runs the configured online language-model test.
-     * @param[in,out] context Nullable caller-owned application context.
-     * @param[in] callback Non-null synchronous application callback.
-     * @param[in,out] config Loaded deployment configuration.
-     * @return Status returned by `callback`.
+     * @param[in] parameters Non-owning application callback and configuration
+     * dependency valid through this synchronous composition.
+     * @return Status returned by the configured callback.
      * @throws std::runtime_error If the configured credential is absent.
+     * @pre `parameters.callback` and `parameters.config` are non-null.
      */
-    agent::int32 XWalkBootRpi::runOnlineLlmTest(agent::contextpointer context,
-                                                bootapplicationcallback callback,
-                                                hal::XWalkConfigStore& config)
+    agent::int32 XWalkBootRpi::runOnlineLlmTest(const xAgentContext& parameters)
     {
+        hal::XWalkConfigStore& config = *parameters.config;
         const agent::string apiKeyEnvironment = config.get("online_llm_api_key_environment", "OPENAI_API_KEY");
         const agent::cstring apiKey = std::getenv(apiKeyEnvironment.c_str());
         const agent::boolean apiKeyMissing = static_cast<agent::boolean>((apiKey == nullptr) || (apiKey[0U] == '\0'));
@@ -58,7 +57,7 @@ namespace xwalk::agent
         hal::XWalkLanguageModel languageModel(&modelBackend, modelBackend.callbacks());
         XWalkBootServices services{};
         services.languageModel = &languageModel;
-        return callback(context, services);
+        return parameters.callback(parameters.appContext, services);
     }
 
 } /* namespace xwalk::agent */

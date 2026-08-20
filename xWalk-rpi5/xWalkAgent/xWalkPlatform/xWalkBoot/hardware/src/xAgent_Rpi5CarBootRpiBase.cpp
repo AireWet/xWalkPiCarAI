@@ -21,18 +21,18 @@ namespace xwalk::agent
 
     /**
      * @brief Runs the base PiCar-X service callback.
-     * @param[in,out] context Nullable caller-owned application context.
-     * @param[in] callback Non-null synchronous application callback.
-     * @param[in,out] picarx Caller-owned coordinator valid through this call.
-     * @return Status returned by `callback`.
+     * @param[in] parameters Non-owning application callback and PiCar-X
+     * dependency valid through this synchronous composition.
+     * @return Status returned by the configured callback.
+     * @pre `parameters.callback` and `parameters.picarx` are non-null.
      */
-    agent::int32
-    XWalkBootRpi::runBase(agent::contextpointer context, bootapplicationcallback callback, XWalkPicarx& picarx)
+    agent::int32 XWalkBootRpi::runBase(const xAgentContext& parameters)
     {
+        XWalkPicarx& picarx = *parameters.picarx;
         XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .049, "Boot publishing base PiCar-X services");
         XWalkBootServices services{};
         services.picarx = &picarx;
-        return callback(context, services);
+        return parameters.callback(parameters.appContext, services);
     }
 
 } /* namespace xwalk::agent */

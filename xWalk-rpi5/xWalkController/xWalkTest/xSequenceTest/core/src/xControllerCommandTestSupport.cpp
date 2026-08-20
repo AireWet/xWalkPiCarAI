@@ -666,7 +666,15 @@ namespace xwalk::agent::test
         hal::XWalkConfigStore configuration(configPath.string());
         configuration.set("picarx_max_motor_output_percent", "100");
         configuration.set("picarx_calibration_verified", "true");
-        XWalkPicarx picarx(motors, directionServo, panServo, tiltServo, grayscale, ultrasonic, configuration);
+        xAgentContext carCtx{};
+        carCtx.config = &configuration;
+        carCtx.motors = &motors;
+        carCtx.dirServo = &directionServo;
+        carCtx.panServo = &panServo;
+        carCtx.tiltServo = &tiltServo;
+        carCtx.grayscale = &grayscale;
+        carCtx.ultrasonic = &ultrasonic;
+        XWalkPicarx picarx(carCtx);
         static_cast<void>(picarx.initialize());
 
         CallbackContext callbackContext{&state, &motors, &picarx};

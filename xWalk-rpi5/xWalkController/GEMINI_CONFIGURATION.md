@@ -78,4 +78,5 @@ build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control voice-active-car-g
 
 Say `Hey Jarvis`, wait for `Systems online. Ready when you are, Joxy.`, and then
 ask a question or request an allowed robot action. Say `Hey Jarvis` again before
-each new request. Press `Ctrl+C` to stop.
+each new request. Jarvis addresses Joxy in every spoken or keyboard-chat reply.
+Press `Ctrl+C` to stop.

@@ -48,25 +48,20 @@ namespace xwalk::agent
     /**
      * @brief Constructs a PiCar-X coordinator and loads persisted calibration.
      *
-     * @param[in] motors Paired motors that must outlive this object.
-     * @param[in] directionServo Steering servo that must outlive this object.
-     * @param[in] cameraPanServo Camera pan servo that must outlive this object.
-     * @param[in] cameraTiltServo Camera tilt servo that must outlive this object.
-     * @param[in] grayscale Grayscale module that must outlive this object.
-     * @param[in] ultrasonic Ultrasonic sensor that must outlive this object.
-     * @param[in] configStore Configuration store that must outlive this object.
+     * @param[in] ctx Non-owning dependency context whose PiCar-X fields must remain valid.
+     * @pre `motors`, `dirServo`, `panServo`, `tiltServo`, `grayscale`, `ultrasonic`, and `config` are non-null.
      */
-    XWalkPicarx::XWalkPicarx(hal::XWalkMotors& motors,
-                             hal::XWalkServo& directionServo,
-                             hal::XWalkServo& cameraPanServo,
-                             hal::XWalkServo& cameraTiltServo,
-                             hal::XWalkGrayscaleModule& grayscale,
-                             hal::XWalkUltrasonic& ultrasonic,
-                             hal::XWalkConfigStore& configStore)
-        : motorsObject(&motors), directionServoObject(&directionServo), cameraPanServoObject(&cameraPanServo),
-          cameraTiltServoObject(&cameraTiltServo), grayscaleObject(&grayscale), ultrasonicObject(&ultrasonic),
-          configStoreObject(&configStore)
+    XWalkPicarx::XWalkPicarx(const xAgentContext& ctx)
+        : motorsObject(ctx.motors), directionServoObject(ctx.dirServo), cameraPanServoObject(ctx.panServo),
+          cameraTiltServoObject(ctx.tiltServo), grayscaleObject(ctx.grayscale), ultrasonicObject(ctx.ultrasonic),
+          configStoreObject(ctx.config)
     {
+        if ((motorsObject == nullptr) || (directionServoObject == nullptr) || (cameraPanServoObject == nullptr) ||
+            (cameraTiltServoObject == nullptr) || (grayscaleObject == nullptr) || (ultrasonicObject == nullptr) ||
+            (configStoreObject == nullptr))
+        {
+            XWALK_RPIAGENT_ERROR(XWALK_INVAL, "PiCar-X context dependencies must be non-null");
+        }
         loadConfiguration();
     }
 

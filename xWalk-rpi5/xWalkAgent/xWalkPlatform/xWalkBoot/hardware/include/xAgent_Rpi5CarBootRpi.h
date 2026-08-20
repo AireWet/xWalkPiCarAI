@@ -29,6 +29,7 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarBoot.h"
+#include "xWalk_Rpi5CarAgentConfigType.h"
 
 namespace xwalk::hal
 {
@@ -85,158 +86,59 @@ namespace xwalk::agent
             static hal::XWalkDeviceInformation selectBoard(const hal::XWalkDeviceInformation& detectedInformation,
                                                            agent::stringview requestedBoard);
             /** @brief Runs the bounded MCU-reset Doctor mode. */
-            agent::int32 runDoctor(agent::contextpointer context, bootapplicationcallback callback);
+            agent::int32 runDoctor(const xAgentContext& parameters);
             /** @brief Runs the camera-only text-and-vision mode. */
-            agent::int32 runTextVisionTalk(agent::contextpointer context,
-                                           bootapplicationcallback callback,
-                                           hal::XWalkConfigStore& config);
+            agent::int32 runTextVisionTalk(const xAgentContext& parameters);
             /** @brief Runs the online language-model mode. */
-            agent::int32 runOnlineLlmTest(agent::contextpointer context,
-                                          bootapplicationcallback callback,
-                                          hal::XWalkConfigStore& config);
+            agent::int32 runOnlineLlmTest(const xAgentContext& parameters);
             /** @brief Runs the camera-only computer-vision mode. */
-            agent::int32 runComputerVision(agent::contextpointer context,
-                                           bootapplicationcallback callback,
-                                           hal::XWalkConfigStore& config);
+            agent::int32 runComputerVision(const xAgentContext& parameters);
             /** @brief Runs the camera-only video-recording mode. */
-            agent::int32 runVideoRecording(agent::contextpointer context,
-                                           bootapplicationcallback callback,
-                                           hal::XWalkConfigStore& config);
+            agent::int32 runVideoRecording(const xAgentContext& parameters);
             /** @brief Runs the isolated SPI-transfer mode. */
-            agent::int32 runSpiTransfer(agent::contextpointer applicationContext,
-                                        bootapplicationcallback callback,
-                                        hal::XWalkConfigStore& config);
+            agent::int32 runSpiTransfer(const xAgentContext& parameters);
             /** @brief Composes the Robot HAT graph used by actuator modes. */
-            agent::int32
-            runVehicle(agent::contextpointer context, bootapplicationcallback callback, hal::XWalkConfigStore& config);
+            agent::int32 runVehicle(const xAgentContext& parameters);
             /** @brief Runs the isolated twelve-channel servo-zeroing mode. */
-            agent::int32
-            runServoZeroing(agent::contextpointer context, bootapplicationcallback callback, hal::XWalkI2c& i2c);
+            agent::int32 runServoZeroing(const xAgentContext& parameters);
             /** @brief Selects one mode after the common PiCar-X graph is available. */
-            agent::int32 runVehicleMode(agent::contextpointer context,
-                                        bootapplicationcallback callback,
-                                        hal::XWalkConfigStore& config,
-                                        hal::XWalkBoardControl& boardControl,
-                                        XWalkPicarx& picarx,
-                                        agent::stringview gpioDevice,
-                                        agent::stringview gpioChipName,
-                                        agent::stringview gpioChipLabel,
-                                        agent::uint32 minimumGpioLineCount,
-                                        const hal::XWalkGpioCallbacks& gpioCallbacks);
+            agent::int32 runVehicleMode(const xAgentContext& parameters);
             /** @brief Runs the base PiCar-X mode. */
-            agent::int32 runBase(agent::contextpointer context, bootapplicationcallback callback, XWalkPicarx& picarx);
+            agent::int32 runBase(const xAgentContext& parameters);
             /** @brief Runs face tracking. */
-            agent::int32 runFaceTracking(agent::contextpointer context,
-                                         bootapplicationcallback callback,
-                                         hal::XWalkConfigStore& config,
-                                         XWalkPicarx& picarx);
+            agent::int32 runFaceTracking(const xAgentContext& parameters);
             /** @brief Runs treasure hunt. */
-            agent::int32 runTreasureHunt(agent::contextpointer context,
-                                         bootapplicationcallback callback,
-                                         hal::XWalkConfigStore& config,
-                                         hal::XWalkBoardControl& boardControl,
-                                         XWalkPicarx& picarx);
+            agent::int32 runTreasureHunt(const xAgentContext& parameters);
             /** @brief Runs bull fight. */
-            agent::int32 runBullFight(agent::contextpointer context,
-                                      bootapplicationcallback callback,
-                                      hal::XWalkConfigStore& config,
-                                      XWalkPicarx& picarx);
+            agent::int32 runBullFight(const xAgentContext& parameters);
             /** @brief Runs video car. */
-            agent::int32 runVideoCar(agent::contextpointer context,
-                                     bootapplicationcallback callback,
-                                     hal::XWalkConfigStore& config,
-                                     XWalkPicarx& picarx);
+            agent::int32 runVideoCar(const xAgentContext& parameters);
             /** @brief Runs mobile application control. */
-            agent::int32 runAppControl(agent::contextpointer context,
-                                       bootapplicationcallback callback,
-                                       hal::XWalkConfigStore& config,
-                                       XWalkPicarx& picarx);
+            agent::int32 runAppControl(const xAgentContext& parameters);
             /** @brief Runs line tracking. */
-            agent::int32
-            runLineTracking(agent::contextpointer context, bootapplicationcallback callback, XWalkPicarx& picarx);
+            agent::int32 runLineTracking(const xAgentContext& parameters);
             /** @brief Runs self drive. */
-            agent::int32 runSelfDrive(agent::contextpointer context,
-                                      bootapplicationcallback callback,
-                                      hal::XWalkConfigStore& config,
-                                      XWalkPicarx& picarx);
+            agent::int32 runSelfDrive(const xAgentContext& parameters);
             /** @brief Runs standalone sound control. */
-            agent::int32 runSound(agent::contextpointer context,
-                                  bootapplicationcallback callback,
-                                  hal::XWalkConfigStore& config,
-                                  XWalkPicarx& picarx);
+            agent::int32 runSound(const xAgentContext& parameters);
             /** @brief Runs sound and background music. */
-            agent::int32 runSoundBackgroundMusic(agent::contextpointer context,
-                                                 bootapplicationcallback callback,
-                                                 hal::XWalkConfigStore& config,
-                                                 XWalkPicarx& picarx);
+            agent::int32 runSoundBackgroundMusic(const xAgentContext& parameters);
             /** @brief Runs wake-word vehicle control. */
-            agent::int32 runVoiceControlledCar(agent::contextpointer context,
-                                               bootapplicationcallback callback,
-                                               hal::XWalkConfigStore& config,
-                                               XWalkPicarx& picarx);
+            agent::int32 runVoiceControlledCar(const xAgentContext& parameters);
             /** @brief Runs the spoken movement demonstration. */
-            agent::int32 runVoicePromptCar(agent::contextpointer context,
-                                           bootapplicationcallback callback,
-                                           hal::XWalkConfigStore& config,
-                                           hal::XWalkBoardControl& boardControl,
-                                           XWalkPicarx& picarx);
+            agent::int32 runVoicePromptCar(const xAgentContext& parameters);
             /** @brief Runs the storytelling robot. */
-            agent::int32 runStorytellingRobot(agent::contextpointer context,
-                                              bootapplicationcallback callback,
-                                              hal::XWalkConfigStore& config,
-                                              hal::XWalkBoardControl& boardControl,
-                                              XWalkPicarx& picarx);
+            agent::int32 runStorytellingRobot(const xAgentContext& parameters);
             /** @brief Runs the local voice chatbot. */
-            agent::int32 runVoiceChat(agent::contextpointer context,
-                                      bootapplicationcallback callback,
-                                      hal::XWalkConfigStore& config,
-                                      hal::XWalkBoardControl& boardControl,
-                                      XWalkPicarx& picarx);
+            agent::int32 runVoiceChat(const xAgentContext& parameters);
             /** @brief Runs the Rolly voice-active-car profile. */
-            agent::int32 runVoiceActiveCar(agent::contextpointer context,
-                                           bootapplicationcallback callback,
-                                           hal::XWalkConfigStore& config,
-                                           hal::XWalkBoardControl& boardControl,
-                                           XWalkPicarx& picarx,
-                                           agent::stringview gpioDevice,
-                                           agent::stringview gpioChipName,
-                                           agent::stringview gpioChipLabel,
-                                           agent::uint32 minimumGpioLineCount,
-                                           const hal::XWalkGpioCallbacks& gpioCallbacks);
+            agent::int32 runVoiceActiveCar(const xAgentContext& parameters);
             /** @brief Runs the Gemini-backed Jarvis voice-active-car profile. */
-            agent::int32 runVoiceActiveCarGpt(agent::contextpointer context,
-                                              bootapplicationcallback callback,
-                                              hal::XWalkConfigStore& config,
-                                              hal::XWalkBoardControl& boardControl,
-                                              XWalkPicarx& picarx,
-                                              agent::stringview gpioDevice,
-                                              agent::stringview gpioChipName,
-                                              agent::stringview gpioChipLabel,
-                                              agent::uint32 minimumGpioLineCount,
-                                              const hal::XWalkGpioCallbacks& gpioCallbacks);
+            agent::int32 runVoiceActiveCarGpt(const xAgentContext& parameters);
             /** @brief Runs the GPT-car profile. */
-            agent::int32 runGptCar(agent::contextpointer context,
-                                   bootapplicationcallback callback,
-                                   hal::XWalkConfigStore& config,
-                                   hal::XWalkBoardControl& boardControl,
-                                   XWalkPicarx& picarx,
-                                   agent::stringview gpioDevice,
-                                   agent::stringview gpioChipName,
-                                   agent::stringview gpioChipLabel,
-                                   agent::uint32 minimumGpioLineCount,
-                                   const hal::XWalkGpioCallbacks& gpioCallbacks);
+            agent::int32 runGptCar(const xAgentContext& parameters);
             /** @brief Composes one of the three voice-active vehicle profiles. */
-            agent::int32 runVoiceActiveMode(agent::uint8 mode,
-                                            agent::contextpointer context,
-                                            bootapplicationcallback callback,
-                                            hal::XWalkConfigStore& config,
-                                            hal::XWalkBoardControl& boardControl,
-                                            XWalkPicarx& picarx,
-                                            agent::stringview gpioDevice,
-                                            agent::stringview gpioChipName,
-                                            agent::stringview gpioChipLabel,
-                                            agent::uint32 minimumGpioLineCount,
-                                            const hal::XWalkGpioCallbacks& gpioCallbacks);
+            agent::int32 runVoiceActiveMode(agent::uint8 mode, const xAgentContext& parameters);
 
         public:
             /**
@@ -257,14 +159,14 @@ namespace xwalk::agent
 
             /**
              * @brief Claims hardware and executes one application callback.
-             * @param[in,out] context Nullable caller-owned application context.
-             * @param[in] callback Non-null callback completed before hardware teardown.
-             * @return Status returned by `callback`.
-             * @throws std::invalid_argument If `callback` is null.
+             * @param[in] parameters Application context and non-null callback
+             * retained through the selected synchronous composition.
+             * @return Status returned by the configured callback.
+             * @throws std::invalid_argument If the configured callback is null.
              * @throws std::logic_error If this object already started once.
              * @warning Claims only the physical resources required by the selected mode.
              */
-            agent::int32 run(agent::contextpointer context, bootapplicationcallback callback);
+            agent::int32 run(const xAgentContext& parameters);
     };
 
 } /* namespace xwalk::agent */

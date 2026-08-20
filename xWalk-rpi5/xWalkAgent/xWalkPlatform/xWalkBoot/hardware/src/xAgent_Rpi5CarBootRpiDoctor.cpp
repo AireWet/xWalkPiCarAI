@@ -28,17 +28,18 @@ namespace xwalk::agent
 
     /**
      * @brief Runs the bounded MCU-reset Doctor preflight.
-     * @param[in,out] context Nullable caller-owned application context.
-     * @param[in] callback Non-null synchronous application callback.
-     * @return Status returned by `callback`.
+     * @param[in] parameters Application context and non-null callback retained
+     * through this synchronous composition.
+     * @return Status returned by the configured callback.
+     * @pre `parameters.callback` is non-null.
      */
-    agent::int32 XWalkBootRpi::runDoctor(agent::contextpointer context, bootapplicationcallback callback)
+    agent::int32 XWalkBootRpi::runDoctor(const xAgentContext& parameters)
     {
         XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .052, "Boot starting bounded Doctor composition");
         const agent::stringvector doctorLines = XWalkDoctorLinux::inspect(configurationFilePath);
         XWalkBootServices services{};
         services.doctorLines = &doctorLines;
-        return callback(context, services);
+        return parameters.callback(parameters.appContext, services);
     }
 
 } /* namespace xwalk::agent */

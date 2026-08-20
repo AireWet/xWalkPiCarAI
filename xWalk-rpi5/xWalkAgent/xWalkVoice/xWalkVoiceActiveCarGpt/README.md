@@ -26,8 +26,8 @@ clone or impersonate an actor's voice.
 Jarvis also answers ordinary safe questions through Gemini; a question does
 not need to request vehicle movement. For a conversational answer, Gemini puts
 the answer in the response-text section and emits `stop` as the fail-safe
-action. The action metadata is never spoken and cannot expand the local
-allowlist.
+action. Every spoken or keyboard-chat response addresses the user as Joxy. The
+action metadata is never spoken and cannot expand the local allowlist.
 
 ## Source layout
 

@@ -31,6 +31,9 @@ re-arms them. Initialization failure leaves motor movement unavailable.
 The upstream constructor resets the Robot HAT MCU before motor GPIO 5 is claimed. This port performs that step
 in the RPi composition root so the temporary reset GPIO backend can be destroyed before the right motor claims
 the same physical line. Applications must follow the same ordering before constructing `XWalkPicarx`.
+Populate the PiCar-X dependency fields in an `xAgentContext` and pass that
+context to the coordinator constructor. The context and every referenced HAL
+object remain caller-owned; all required PiCar-X fields must be non-null.
 
 `picarx_max_motor_output_percent` stores the post-verification deployment limit.
 `picarx_calibration_verified` must be exactly `true` or `false`; a missing or false value keeps the effective

@@ -135,7 +135,8 @@ namespace xwalk::ctrl
         XWalkControllerBootContext bootContext{&commandArguments, applicationArguments.appConfig.resourceDirectory};
         agent::XWalkBootServices hostServices{};
         agent::XWalkBootHostStub boot(hostServices);
-        return boot.run(&bootContext, &XWALK_runController);
+        const agent::xAgentContext agentContext{&bootContext, &XWALK_runController};
+        return boot.run(agentContext);
     }
 
 } /* namespace xwalk::ctrl */

@@ -25,17 +25,16 @@ namespace xwalk::agent
 
     /**
      * @brief Runs configured standalone sound control.
-     * @param[in,out] context Nullable caller-owned application context.
-     * @param[in] callback Non-null synchronous application callback.
-     * @param[in,out] config Loaded deployment configuration.
-     * @param[in,out] picarx Caller-owned PiCar-X coordinator.
-     * @return Status returned by `callback`.
+     * @param[in] parameters Non-owning application callback, configuration,
+     * and PiCar-X dependencies valid through this synchronous composition.
+     * @return Status returned by the configured callback.
+     * @pre `parameters.callback`, `parameters.config`, and
+     * `parameters.picarx` are non-null.
      */
-    agent::int32 XWalkBootRpi::runSound(agent::contextpointer context,
-                                        bootapplicationcallback callback,
-                                        hal::XWalkConfigStore& config,
-                                        XWalkPicarx& picarx)
+    agent::int32 XWalkBootRpi::runSound(const xAgentContext& parameters)
     {
+        hal::XWalkConfigStore& config = *parameters.config;
+        XWalkPicarx& picarx = *parameters.picarx;
         XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .059, "Boot composing sound services");
         hal::XWalkAudioAlsa audioBackend(config.get("voice_playback_device", "default"),
                                          config.get("voice_mixer_device", "default"),
@@ -45,7 +44,7 @@ namespace xwalk::agent
         XWalkBootServices services{};
         services.picarx = &picarx;
         services.music = &music;
-        return callback(context, services);
+        return parameters.callback(parameters.appContext, services);
     }
 
 } /* namespace xwalk::agent */

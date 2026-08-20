@@ -202,45 +202,47 @@ namespace xwalk::agent
 
     /**
      * @brief Claims hardware and executes one application callback.
-     * @param[in,out] context Nullable caller-owned application context.
-     * @param[in] callback Non-null callback completed before hardware teardown.
-     * @return Status returned by `callback`.
-     * @throws std::invalid_argument If `callback` is null.
+     * @param[in] parameters Application context and non-null callback retained
+     * through the selected synchronous composition.
+     * @return Status returned by the configured callback.
+     * @throws std::invalid_argument If the configured callback is null.
      * @throws std::logic_error If this object already started once.
      * @warning Claims only the physical resources required by the selected mode.
      */
-    agent::int32 XWalkBootRpi::run(agent::contextpointer context, bootapplicationcallback callback)
+    agent::int32 XWalkBootRpi::run(const xAgentContext& parameters)
     {
-        begin(callback);
+        begin(parameters.callback);
         XWALK_RPIAGENT_TRACE_UID1(
             RPIAGENT .019, "Raspberry Pi boot composition selected mode %u", static_cast<agent::uint32>(selectedMode));
         if (selectedMode == XWALK_BOOT_DOCTOR_REQ)
         {
-            return runDoctor(context, callback);
+            return runDoctor(parameters);
         }
 
         hal::XWalkConfigStore config(configurationFilePath);
+        xAgentContext configuredParameters = parameters;
+        configuredParameters.config = &config;
         if (selectedMode == XWALK_BOOT_TEXT_VISION_TALK_REQ)
         {
-            return runTextVisionTalk(context, callback, config);
+            return runTextVisionTalk(configuredParameters);
         }
         else if (selectedMode == XWALK_BOOT_ONLINE_LLM_TEST_REQ)
         {
-            return runOnlineLlmTest(context, callback, config);
+            return runOnlineLlmTest(configuredParameters);
         }
         else if (selectedMode == XWALK_BOOT_COMPUTER_VISION_REQ)
         {
-            return runComputerVision(context, callback, config);
+            return runComputerVision(configuredParameters);
         }
         else if (selectedMode == XWALK_BOOT_VIDEO_RECORDING_REQ)
         {
-            return runVideoRecording(context, callback, config);
+            return runVideoRecording(configuredParameters);
         }
         else if (selectedMode == XWALK_BOOT_SPI_TRANSFER_REQ)
         {
-            return runSpiTransfer(context, callback, config);
+            return runSpiTransfer(configuredParameters);
         }
-        return runVehicle(context, callback, config);
+        return runVehicle(configuredParameters);
     }
 
 } /* namespace xwalk::agent */

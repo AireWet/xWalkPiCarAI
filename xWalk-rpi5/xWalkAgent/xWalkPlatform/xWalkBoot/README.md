@@ -3,6 +3,10 @@
 `xWalkBoot` owns the process-level boundary between platform hardware and Agent
 coordinators. The host target supplies a device-free stub. The optional
 `xWalkBootRpi` target composes the complete hardware graph used by the CLI.
+Every Boot `run*` interface accepts the shared `xAgentContext` from
+`xWalkLibrary/common`. Composition stages copy the context and populate
+non-owning configuration, board, PiCar-X, GPIO, and I2C pointers only when the
+corresponding stack-owned dependencies become available.
 
 The shared `XWalkBoot` base owns callback validation and the one-shot lifecycle
 guard. Platform implementations reuse that lifecycle instead of placing boot
@@ -216,9 +220,9 @@ stub/test/include/ Host-only test fixtures and callback declarations
 stub/test/src/    Deterministic host lifecycle coverage
 ```
 
-The Raspberry Pi implementation files have one composition responsibility:
+The Raspberry Pi hardware files have one composition responsibility:
 
-| Source suffix | Responsibility |
+| Path suffix | Responsibility |
 | --- | --- |
 | `BootRpi.cpp` | Lifecycle validation and top-level mode dispatch |
 | `BootRpiBoard.cpp` | Robot HAT deployment selection |

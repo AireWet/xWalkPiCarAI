@@ -288,7 +288,15 @@ namespace
         xwalk::hal::XWalkConfigStore config(configPath);
         config.set("picarx_max_motor_output_percent", "100");
         config.set("picarx_calibration_verified", "true");
-        xwalk::agent::XWalkPicarx picarx(motors, directionServo, panServo, tiltServo, grayscale, ultrasonic, config);
+        xwalk::agent::xAgentContext carCtx{};
+        carCtx.config = &config;
+        carCtx.motors = &motors;
+        carCtx.dirServo = &directionServo;
+        carCtx.panServo = &panServo;
+        carCtx.tiltServo = &tiltServo;
+        carCtx.grayscale = &grayscale;
+        carCtx.ultrasonic = &ultrasonic;
+        xwalk::agent::XWalkPicarx picarx(carCtx);
         static_cast<void>(picarx.initialize());
 
         TestBackend backend;

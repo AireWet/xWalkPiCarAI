@@ -190,7 +190,15 @@ namespace
         config.set("picarx_calibration_verified", "true");
         config.set("line_reference", "[900, 1000, 1100]");
 
-        xwalk::agent::XWalkPicarx picarx(motors, directionServo, panServo, tiltServo, grayscale, ultrasonic, config);
+        xwalk::agent::xAgentContext carCtx{};
+        carCtx.config = &config;
+        carCtx.motors = &motors;
+        carCtx.dirServo = &directionServo;
+        carCtx.panServo = &panServo;
+        carCtx.tiltServo = &tiltServo;
+        carCtx.grayscale = &grayscale;
+        carCtx.ultrasonic = &ultrasonic;
+        xwalk::agent::XWalkPicarx picarx(carCtx);
         assert(picarx.isInitialized() == false);
         assert(picarx.initialize());
         assert(picarx.initialize() == false);
@@ -236,8 +244,7 @@ namespace
         assert(motors.left().speed() == 0.0);
         assert(motors.right().speed() == 0.0);
 
-        xwalk::agent::XWalkPicarx reloadedPicarx(
-            motors, directionServo, panServo, tiltServo, grayscale, ultrasonic, config);
+        xwalk::agent::XWalkPicarx reloadedPicarx(carCtx);
         static_cast<void>(reloadedPicarx.initialize());
         reloadedPicarx.setPower(20.0);
         assert(motors.left().speed() == 50.0);
@@ -248,15 +255,13 @@ namespace
         xwalk::hal::test::expectFailure(
             [&]()
             {
-                xwalk::agent::XWalkPicarx invalidPicarx(
-                    motors, directionServo, panServo, tiltServo, grayscale, ultrasonic, config);
+                xwalk::agent::XWalkPicarx invalidPicarx(carCtx);
             });
         config.set("picarx_motor_speed_calibration", "101");
         xwalk::hal::test::expectFailure(
             [&]()
             {
-                xwalk::agent::XWalkPicarx invalidPicarx(
-                    motors, directionServo, panServo, tiltServo, grayscale, ultrasonic, config);
+                xwalk::agent::XWalkPicarx invalidPicarx(carCtx);
             });
         config.set("picarx_motor_speed_calibration", "0");
         const agent::fixedarray<InvalidConfiguration, 16U> invalidConfigurations{
@@ -282,8 +287,7 @@ namespace
             xwalk::hal::test::expectFailure(
                 [&]()
                 {
-                    xwalk::agent::XWalkPicarx invalidPicarx(
-                        motors, directionServo, panServo, tiltServo, grayscale, ultrasonic, config);
+                    xwalk::agent::XWalkPicarx invalidPicarx(carCtx);
                 });
             config.set(invalidConfiguration.key, invalidConfiguration.validValue);
         }
@@ -325,7 +329,15 @@ namespace
         xwalk::hal::XWalkUltrasonic ultrasonic(trigger, echo, 0U);
         xwalk::hal::XWalkConfigStore config(configPath);
         config.set("picarx_max_motor_output_percent", "100");
-        xwalk::agent::XWalkPicarx picarx(motors, directionServo, panServo, tiltServo, grayscale, ultrasonic, config);
+        xwalk::agent::xAgentContext carCtx{};
+        carCtx.config = &config;
+        carCtx.motors = &motors;
+        carCtx.dirServo = &directionServo;
+        carCtx.panServo = &panServo;
+        carCtx.tiltServo = &tiltServo;
+        carCtx.grayscale = &grayscale;
+        carCtx.ultrasonic = &ultrasonic;
+        xwalk::agent::XWalkPicarx picarx(carCtx);
         static_cast<void>(picarx.initialize());
 
         assert(!picarx.calibrationVerified());

@@ -65,13 +65,13 @@ namespace xwalk::agent
 
             /**
              * @brief Executes one application callback with simulated services.
-             * @param[in,out] context Nullable caller-owned application context.
-             * @param[in] callback Non-null synchronous application callback.
-             * @return Status returned by `callback`.
-             * @throws std::invalid_argument If `callback` is null.
+             * @param[in] parameters Application context and non-null callback
+             * retained through the synchronous host dispatch.
+             * @return Status returned by the configured callback.
+             * @throws std::invalid_argument If the configured callback is null.
              * @throws std::logic_error If this object already started once.
              */
-            agent::int32 run(agent::contextpointer context, bootapplicationcallback callback);
+            agent::int32 run(const xAgentContext& parameters);
     };
 
 } /* namespace xwalk::agent */

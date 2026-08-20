@@ -32,19 +32,18 @@ namespace xwalk::agent
 
     /**
      * @brief Runs the configured local voice chatbot.
-     * @param[in,out] context Nullable caller-owned application context.
-     * @param[in] callback Non-null synchronous application callback.
-     * @param[in,out] config Loaded deployment configuration.
-     * @param[in,out] boardControl Caller-owned board controller.
-     * @param[in,out] picarx Caller-owned PiCar-X coordinator.
-     * @return Status returned by `callback`.
+     * @param[in] parameters Non-owning application callback, configuration,
+     * board-control, and PiCar-X dependencies valid through this synchronous
+     * composition.
+     * @return Status returned by the configured callback.
+     * @pre `parameters.callback`, `parameters.config`,
+     * `parameters.board`, and `parameters.picarx` are non-null.
      */
-    agent::int32 XWalkBootRpi::runVoiceChat(agent::contextpointer context,
-                                            bootapplicationcallback callback,
-                                            hal::XWalkConfigStore& config,
-                                            hal::XWalkBoardControl& boardControl,
-                                            XWalkPicarx& picarx)
+    agent::int32 XWalkBootRpi::runVoiceChat(const xAgentContext& parameters)
     {
+        hal::XWalkConfigStore& config = *parameters.config;
+        hal::XWalkBoardControl& boardControl = *parameters.board;
+        XWalkPicarx& picarx = *parameters.picarx;
         XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .069, "Boot composing local voice-chat services");
         hal::XWalkSpeechRecognizerVosk recognizer(
             config.get("voice_vosk_library", "/usr/lib/xwalk/libvosk.so"),
@@ -70,7 +69,7 @@ namespace xwalk::agent
         XWalkBootServices services{};
         services.picarx = &picarx;
         services.voiceAssistant = &voiceAssistant;
-        return callback(context, services);
+        return parameters.callback(parameters.appContext, services);
     }
 
 } /* namespace xwalk::agent */

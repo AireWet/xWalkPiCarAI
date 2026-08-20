@@ -1088,7 +1088,9 @@ retaining normal compiler warnings and compilation checks.
 - Accept every required class dependency as a constructor reference, then store
   its address in the non-owning pointer member. The constructor reference makes
   null invalid at the API boundary; the pointer supports the project's explicit
-  dependency representation inside the class.
+  dependency representation inside the class. The Agent PiCar-X coordinator is
+  the composition exception: accept one `xAgentContext`, validate all required
+  PiCar-X pointers before use, and retain those pointers without taking ownership.
 - Create concrete backends, interfaces, shared state, and consumers in `main()`
   or the equivalent test entry point. Construct dependencies before consumers,
   pass them by reference, and ensure consumers are destroyed first.
@@ -1532,9 +1534,14 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
 - Execute a command only when the CLI owns a complete safe composition. Return
   a distinct backend-unavailable status for optional services such as audio.
 - Enter RPI backend composition through one automatic `XWalkBootRpi` object.
-  Invoke its application callback at most once, consume a failed run attempt,
-  and retain the stack-owned backend graph until command completion. Return help
-  before constructing the boot object so discovery claims no platform resource.
+  Pass one `xAgentContext` to every Boot `run*` interface, invoke its application
+  callback at most once, consume a failed run attempt, and retain the stack-owned
+  backend graph until command completion. Return help before constructing the
+  boot object so discovery claims no platform resource.
+- Construct `XWalkPicarx` from one `xAgentContext`. Populate `config`, `motors`,
+  `dirServo`, `panServo`, `tiltServo`, `grayscale`, and `ultrasonic`; each field
+  is required and non-owning, and every referenced object must outlive the
+  coordinator.
 - Boot every backend required by the selected command exactly once. Do not
   initialize HAL backends that lack a CLI command or explicit deployment
   configuration, including microphone, recognizer, synthesizer, model endpoint,
@@ -1652,10 +1659,12 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
   Linux I2C and GPIO backend targets through the PiCar-X hardware dependency.
 - Never claim GPIO lines, move actuators, enable powered outputs, start audio,
   or contact an external service merely to discover a command or report status.
-- Construct project objects in `XWalkBootRpi::run()`, pass dependencies by
-  reference, and preserve the same ownership and lifetime rules as any other
-  application composition root. Command-specific optional graphs may remain in
-  their selected branch but must outlive the command invocation.
+- Construct project objects in `XWalkBootRpi::run()`, progressively populate
+  the non-owning dependency pointers in a copied `xAgentContext`, and preserve
+  the same ownership and lifetime rules as any other application composition
+  root. Each `run*` stage requires only its documented context fields.
+  Command-specific optional graphs may remain in their selected branch but must
+  outlive the command invocation.
 - Keep Agent modules physically nested under the documented functional group
   directory matching their primary responsibility. Each group owns only its
   source-tree organization and interface target; it must not merge coordinators,

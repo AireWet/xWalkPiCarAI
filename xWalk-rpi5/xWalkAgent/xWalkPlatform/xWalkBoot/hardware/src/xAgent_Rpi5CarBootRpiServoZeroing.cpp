@@ -26,14 +26,14 @@ namespace xwalk::agent
 
     /**
      * @brief Runs the ordered twelve-channel servo-zeroing service.
-     * @param[in,out] context Nullable caller-owned application context.
-     * @param[in] callback Non-null synchronous application callback.
-     * @param[in,out] i2c Caller-owned bus that remains valid through the callback.
-     * @return Status returned by `callback`.
+     * @param[in] parameters Non-owning application callback and I2C dependency
+     * valid through this synchronous composition.
+     * @return Status returned by the configured callback.
+     * @pre `parameters.callback` and `parameters.i2c` are non-null.
      */
-    agent::int32
-    XWalkBootRpi::runServoZeroing(agent::contextpointer context, bootapplicationcallback callback, hal::XWalkI2c& i2c)
+    agent::int32 XWalkBootRpi::runServoZeroing(const xAgentContext& parameters)
     {
+        hal::XWalkI2c& i2c = *parameters.i2c;
         XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .057, "Boot composing twelve-channel servo-zeroing services");
         hal::XWalkPwmTimerState timerState;
         hal::XWalkPwm pwm0(i2c, 0U, {}, timerState);
@@ -81,7 +81,7 @@ namespace xwalk::agent
         XWalkServoZeroing servoZeroing(servos, zeroingCallbacks);
         XWalkBootServices services{};
         services.servoZeroing = &servoZeroing;
-        return callback(context, services);
+        return parameters.callback(parameters.appContext, services);
     }
 
 } /* namespace xwalk::agent */
