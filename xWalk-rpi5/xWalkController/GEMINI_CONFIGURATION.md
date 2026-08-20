@@ -47,10 +47,11 @@ voice_active_car_gpt_piper_model = /usr/share/xwalk/models/piper/en_GB-alan-medi
 Confirm these values in `xWalkConfig/picar-x.d/voice.conf`:
 
 ```ini
+voice_capture_device = plughw:CARD=Device,DEV=0
 voice_playback_device = default
-voice_mixer_device = default
-voice_mixer_element = PCM
-voice_piper_executable = piper
+voice_mixer_device = pulse
+voice_mixer_element = Master
+voice_piper_executable = /opt/xwalk/piper-tts/venv/bin/piper
 voice_piper_playback_executable = aplay
 ```
 
