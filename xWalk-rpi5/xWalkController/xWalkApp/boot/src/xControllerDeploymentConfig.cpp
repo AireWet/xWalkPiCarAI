@@ -13,6 +13,7 @@
 
 #include <array>
 #include <charconv>
+#include <cctype>
 #include <cmath>
 #include "xControllerDeploymentConfigTypes.h"
 
@@ -25,7 +26,7 @@ using ConfigDefault = ::xwalk::source_types::xcontrollerdeploymentconfig::Config
 namespace
 {
 
-    constexpr std::array<ConfigDefault, 48U> knownConfiguration{
+    constexpr std::array<ConfigDefault, 70U> knownConfiguration{
         {{"deployment_config_version", "1"},
          {"hardware_board", "robot_hat_v4"},
          {"hardware_i2c_device", "/dev/i2c-1"},
@@ -72,6 +73,28 @@ namespace
          {"voice_language_model_endpoint", "http://127.0.0.1:11434/api/chat"},
          {"voice_language_model_api_key_environment", ""},
          {"voice_language_model_timeout_ms", "120000"},
+         {"voice_capture_device", "default"},
+         {"voice_playback_device", "default"},
+         {"voice_mixer_device", "default"},
+         {"voice_mixer_element", "PCM"},
+         {"voice_piper_executable", "piper"},
+         {"voice_vosk_endpoint_start_seconds", "0.5"},
+         {"voice_vosk_endpoint_end_seconds", "1.0"},
+         {"voice_vosk_endpoint_max_seconds", "15.0"},
+         {"voice_vosk_silence_peak_threshold", "500"},
+         {"voice_vosk_trace_transcript", "false"},
+         {"voice_active_car_gpt_api_key_environment", "GEMINI_API_KEY"},
+         {"voice_active_car_gpt_endpoint", "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"},
+         {"voice_active_car_gpt_model", "gemini-3.6-flash"},
+         {"voice_active_car_gpt_maximum_output_tokens", "256"},
+         {"voice_active_car_gpt_piper_model", "/usr/share/xwalk/models/piper/en_GB-alan-medium.onnx"},
+         {"voice_active_car_gpt_with_image", "false"},
+         {"voice_active_car_gpt_continuous_conversation", "true"},
+         {"voice_active_car_gpt_conversation_idle_timeout_ms", "30000"},
+         {"voice_active_car_gpt_conversation_maximum_rounds", "10"},
+         {"voice_active_car_gpt_conversation_maximum_misses", "3"},
+         {"voice_active_car_gpt_sleep_phrases", "goodbye jarvis,go to sleep,stop listening"},
+         {"voice_active_car_gpt_sleep_acknowledgement", "Going to sleep. Say hey Jarvis when you need me, Joxy."},
          {"app_control_bind_address", "127.0.0.1"},
          {"app_control_port", "8765"}}};
 
@@ -115,6 +138,74 @@ namespace
     ::ctrl::boolean validBoolean(::ctrl::stringview value) noexcept
     {
         return (value == "true") || (value == "false");
+    }
+
+    ::ctrl::boolean validEnvironmentName(::ctrl::stringview value) noexcept
+    {
+        const ::ctrl::boolean valueEmpty = static_cast<::ctrl::boolean>(value.empty());
+        if (valueEmpty)
+        {
+            return false;
+        }
+        const unsigned char first = static_cast<unsigned char>(value.front());
+        const ::ctrl::boolean firstValid =
+            static_cast<::ctrl::boolean>((std::isalpha(first) != 0) || (value.front() == '_'));
+        if (firstValid == false)
+        {
+            return false;
+        }
+        for (const char character : value)
+        {
+            const unsigned char converted = static_cast<unsigned char>(character);
+            const ::ctrl::boolean characterValid =
+                static_cast<::ctrl::boolean>((std::isalnum(converted) != 0) || (character == '_'));
+            if (characterValid == false)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    ::ctrl::boolean validPhraseList(::ctrl::stringview value) noexcept
+    {
+        if (value.empty())
+        {
+            return false;
+        }
+        ::ctrl::stringvector normalizedPhrases;
+        ::ctrl::size offset{};
+        while (offset <= value.size())
+        {
+            const ::ctrl::size comma = value.find(',', offset);
+            const ::ctrl::size end = comma == ::ctrl::stringview::npos ? value.size() : comma;
+            const ::ctrl::stringview phrase = value.substr(offset, end - offset);
+            const ::ctrl::size first = phrase.find_first_not_of(" \t\r\n");
+            const ::ctrl::size last = phrase.find_last_not_of(" \t\r\n");
+            if ((first == ::ctrl::stringview::npos) || (last == ::ctrl::stringview::npos))
+            {
+                return false;
+            }
+            ::ctrl::string normalized(phrase.substr(first, (last - first) + 1U));
+            for (char& character : normalized)
+            {
+                character = static_cast<char>(std::tolower(static_cast<unsigned char>(character)));
+            }
+            for (const ::ctrl::string& prior : normalizedPhrases)
+            {
+                if (prior == normalized)
+                {
+                    return false;
+                }
+            }
+            normalizedPhrases.emplace_back(normalized);
+            if (comma == ::ctrl::stringview::npos)
+            {
+                break;
+            }
+            offset = comma + 1U;
+        }
+        return true;
     }
 
     ::ctrl::boolean validMotorInversion(::ctrl::stringview value) noexcept
@@ -338,6 +429,78 @@ namespace xwalk::ctrl
                     parseUnsigned(value(store, "voice_language_model_timeout_ms"), 1U, 600'000U),
                     "Language-model timeout",
                     "range 1 through 600000 ms");
+        const ::ctrl::string captureDevice = value(store, "voice_capture_device");
+        const ::ctrl::string playbackDevice = value(store, "voice_playback_device");
+        const ::ctrl::string mixerDevice = value(store, "voice_mixer_device");
+        const ::ctrl::string mixerElement = value(store, "voice_mixer_element");
+        const ::ctrl::string piperExecutable = value(store, "voice_piper_executable");
+        appendCheck(report,
+                    !captureDevice.empty() && !playbackDevice.empty() && !mixerDevice.empty() &&
+                        !mixerElement.empty() && !piperExecutable.empty(),
+                    "Voice audio deployment",
+                    "non-empty capture, playback, mixer, element, and Piper selections");
+        const ::ctrl::string endpointStart = value(store, "voice_vosk_endpoint_start_seconds");
+        const ::ctrl::string endpointEnd = value(store, "voice_vosk_endpoint_end_seconds");
+        const ::ctrl::string endpointMaximum = value(store, "voice_vosk_endpoint_max_seconds");
+        ::ctrl::float64 endpointStartValue{};
+        ::ctrl::float64 endpointEndValue{};
+        ::ctrl::float64 endpointMaximumValue{};
+        const auto parseEndpoint = [](::ctrl::stringview text, ::ctrl::float64& result) noexcept -> ::ctrl::boolean
+        {
+            const char* const begin = text.data();
+            const char* const end = begin + text.size();
+            const std::from_chars_result conversion = std::from_chars(begin, end, result);
+            return (conversion.ec == std::errc{}) && (conversion.ptr == end) && std::isfinite(result) &&
+                   (result > 0.0) && (result <= 30.0);
+        };
+        const ::ctrl::boolean endpointValuesValid = parseEndpoint(endpointStart, endpointStartValue) &&
+                                                    parseEndpoint(endpointEnd, endpointEndValue) &&
+                                                    parseEndpoint(endpointMaximum, endpointMaximumValue);
+        appendCheck(report,
+                    endpointValuesValid && (endpointStartValue <= endpointMaximumValue) &&
+                        (endpointEndValue <= endpointMaximumValue),
+                    "Vosk streaming endpoint timing",
+                    "positive ordered seconds bounded by the 30-second hard timeout");
+        appendCheck(report,
+                    parseUnsigned(value(store, "voice_vosk_silence_peak_threshold"), 1U, 32'767U),
+                    "Vosk fallback silence threshold",
+                    "signed 16-bit PCM peak range 1 through 32767");
+        appendCheck(report,
+                    validBoolean(value(store, "voice_vosk_trace_transcript")),
+                    "Vosk transcript diagnostic",
+                    "strict boolean; disabled by default for privacy");
+        appendCheck(report,
+                    parseUnsigned(value(store, "voice_active_car_gpt_maximum_output_tokens"), 1U, 16'384U),
+                    "Jarvis spoken-output token bound",
+                    "range 1 through 16384 tokens");
+        const ::ctrl::string jarvisEnvironment = value(store, "voice_active_car_gpt_api_key_environment");
+        const ::ctrl::string jarvisEndpoint = value(store, "voice_active_car_gpt_endpoint");
+        const ::ctrl::string jarvisModel = value(store, "voice_active_car_gpt_model");
+        const ::ctrl::boolean jarvisEndpointHttps = jarvisEndpoint.rfind("https://", 0U) == 0U;
+        appendCheck(report,
+                    validEnvironmentName(jarvisEnvironment) && !jarvisModel.empty() && validEndpoint(jarvisEndpoint) &&
+                        jarvisEndpointHttps,
+                    "Jarvis Gemini provider",
+                    "non-empty model and environment name with an HTTPS endpoint");
+        appendCheck(report,
+                    validBoolean(value(store, "voice_active_car_gpt_with_image")) &&
+                        (value(store, "voice_active_car_gpt_with_image") == "false") &&
+                        validBoolean(value(store, "voice_active_car_gpt_continuous_conversation")),
+                    "Jarvis feature gates",
+                    "camera must be false and continuous conversation must be a strict boolean");
+        appendCheck(report,
+                    parseUnsigned(value(store, "voice_active_car_gpt_conversation_idle_timeout_ms"), 1U, 300'000U),
+                    "Jarvis conversation idle timeout",
+                    "range 1 through 300000 ms");
+        appendCheck(report,
+                    parseUnsigned(value(store, "voice_active_car_gpt_conversation_maximum_rounds"), 1U, 100U) &&
+                        parseUnsigned(value(store, "voice_active_car_gpt_conversation_maximum_misses"), 1U, 10U),
+                    "Jarvis conversation limits",
+                    "1-100 rounds and 1-10 consecutive misses");
+        appendCheck(report,
+                    validPhraseList(value(store, "voice_active_car_gpt_sleep_phrases")),
+                    "Jarvis sleep phrases",
+                    "comma-separated trimmed non-empty phrases");
         appendCheck(report,
                     parseUnsigned(value(store, "app_control_port"), 1U, 65'535U),
                     "App-control port",
@@ -361,7 +524,8 @@ namespace xwalk::ctrl
             const ::ctrl::stringview key(entry.name);
             const ::ctrl::boolean secretShaped = key.find("api_key") != ::ctrl::stringview::npos ||
                                                  key.find("secret") != ::ctrl::stringview::npos ||
-                                                 key.find("token") != ::ctrl::stringview::npos;
+                                                 ((key.find("token") != ::ctrl::stringview::npos) &&
+                                                  (key.find("maximum_output_tokens") == ::ctrl::stringview::npos));
             lines.emplace_back(::ctrl::string(entry.name) + " = " +
                                (secretShaped && !effectiveValue.empty() ? "<redacted>" : effectiveValue));
         }

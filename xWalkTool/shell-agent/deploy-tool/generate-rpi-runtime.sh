@@ -6,6 +6,8 @@ usage() {
     echo "Usage: $0 [--build-directory DIRECTORY] [--runtime-user USER] [hardware options]"
     echo "  [--profile robot_hat_v4|robot_hat_v5] [--gpio-device /dev/gpiochipN]"
     echo "  [--i2c-device /dev/i2c-N] [--spi-device /dev/spidevN.N] [--camera csi|usb]"
+    echo "  [--voice-capture-device DEVICE] [--voice-mixer-device DEVICE]"
+    echo "  [--voice-mixer-element ELEMENT] [--piper-executable PATH]"
     echo "  [--ollama-manifest FILE] [--initialize-only]"
 }
 
@@ -20,6 +22,10 @@ gpio_device="$XWALK_DEFAULT_RPI_GPIO_DEVICE"
 i2c_device="$XWALK_DEFAULT_RPI_I2C_DEVICE"
 spi_device="$XWALK_DEFAULT_RPI_SPI_DEVICE"
 camera="$XWALK_DEFAULT_RPI_CAMERA"
+voice_capture_device="$XWALK_DEFAULT_RPI_VOICE_CAPTURE_DEVICE"
+voice_mixer_device="$XWALK_DEFAULT_RPI_VOICE_MIXER_DEVICE"
+voice_mixer_element="$XWALK_DEFAULT_RPI_VOICE_MIXER_ELEMENT"
+piper_executable="$XWALK_DEFAULT_RPI_PIPER_EXECUTABLE"
 ollama_manifest=""
 initialize_only="false"
 
@@ -32,6 +38,10 @@ while [ "$#" -gt 0 ]; do
         --i2c-device) i2c_device="${2-}"; shift 2 ;;
         --spi-device) spi_device="${2-}"; shift 2 ;;
         --camera) camera="${2-}"; shift 2 ;;
+        --voice-capture-device) voice_capture_device="${2-}"; shift 2 ;;
+        --voice-mixer-device) voice_mixer_device="${2-}"; shift 2 ;;
+        --voice-mixer-element) voice_mixer_element="${2-}"; shift 2 ;;
+        --piper-executable) piper_executable="${2-}"; shift 2 ;;
         --ollama-manifest) ollama_manifest="${2-}"; shift 2 ;;
         --initialize-only) initialize_only="true"; shift ;;
         -h|--help) usage; exit 0 ;;
@@ -57,6 +67,11 @@ printf '%s\n' "$spi_device" | grep -Eq '^/dev/spidev[0-9]+\.[0-9]+$' || {
 }
 if [ "$camera" != "csi" ] && [ "$camera" != "usb" ]; then
     echo "--camera must be csi or usb." >&2
+    exit 2
+fi
+if [ -z "$voice_capture_device" ] || [ -z "$voice_mixer_device" ] || \
+    [ -z "$voice_mixer_element" ] || [ -z "$piper_executable" ]; then
+    echo "Raspberry Pi voice deployment overrides must not be empty." >&2
     exit 2
 fi
 
@@ -152,6 +167,10 @@ set_configuration_value "$temporary_runtime/picar-x.d/voice.conf" voice_vosk_lib
     "$workspace_root/xWalk-rpi5/xWalkLibrary/aarch64/lib/libvosk.so"
 set_configuration_value "$temporary_runtime/picar-x.d/voice.conf" voice_vosk_model \
     "$workspace_root/xWalk-rpi5/xWalkLibrary/common/models/vosk/vosk-model-small-en-us-0.15"
+set_configuration_value "$temporary_runtime/picar-x.d/voice.conf" voice_capture_device "$voice_capture_device"
+set_configuration_value "$temporary_runtime/picar-x.d/voice.conf" voice_mixer_device "$voice_mixer_device"
+set_configuration_value "$temporary_runtime/picar-x.d/voice.conf" voice_mixer_element "$voice_mixer_element"
+set_configuration_value "$temporary_runtime/picar-x.d/voice.conf" voice_piper_executable "$piper_executable"
 
 ollama_configuration="$temporary_runtime/picar-x.d/ai/providers/ollama.conf"
 set_configuration_value "$ollama_configuration" voice_language_model_provider ollama

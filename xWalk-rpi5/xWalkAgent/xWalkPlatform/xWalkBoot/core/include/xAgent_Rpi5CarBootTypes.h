@@ -141,6 +141,8 @@ namespace xwalk::agent
             XWalkLocalVoiceChatbot* localVoiceChatbot{nullptr};
             /** @brief Optional sensor-aware voice-active-car coordinator. */
             XWalkVoiceActiveCar* voiceActiveCar{nullptr};
+            /** @brief Optional boot-selected voice-active-car policy. */
+            const XWalkVoiceActiveCarConfiguration* voiceActiveCarConfiguration{nullptr};
             /** @brief Optional wake-word voice-controlled-car coordinator. */
             XWalkVoiceControlledCar* voiceControlledCar{nullptr};
             /** @brief Optional spoken movement-demonstration coordinator. */

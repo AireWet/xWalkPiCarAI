@@ -22,6 +22,11 @@ grep -Fxq 'XWALK_RPI_GPIO_DEVICE:FILEPATH=/dev/gpiochip4' "$test_directory/cache
 grep -Fxq 'XWALK_RPI_I2C_DEVICE:FILEPATH=/dev/i2c-1' "$test_directory/cache.log"
 grep -Fxq 'XWALK_RPI_SPI_DEVICE:FILEPATH=/dev/spidev0.0' "$test_directory/cache.log"
 grep -Fxq 'XWALK_RPI_CAMERA:STRING=csi' "$test_directory/cache.log"
+grep -Fxq 'XWALK_RPI_VOICE_CAPTURE_DEVICE:STRING=plughw:CARD=Device,DEV=0' "$test_directory/cache.log"
+grep -Fxq 'XWALK_RPI_VOICE_MIXER_DEVICE:STRING=pulse' "$test_directory/cache.log"
+grep -Fxq 'XWALK_RPI_VOICE_MIXER_ELEMENT:STRING=Master' "$test_directory/cache.log"
+grep -Fxq 'XWALK_RPI_PIPER_EXECUTABLE:FILEPATH=/opt/xwalk/piper-tts/venv/bin/piper' \
+    "$test_directory/cache.log"
 
 cmake --build "$build_directory" --target help | grep -q '^rpi-provision:'
 ninja -C "$build_directory" -t commands rpi-provision > "$test_directory/provision-commands.log"

@@ -498,7 +498,6 @@ namespace
 
     ::ctrl::string recognizeSpeech(::ctrl::contextpointer context, ::ctrl::uint32 timeoutMs)
     {
-        static_cast<void>(timeoutMs);
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
         state.eventLog.emplace_back("hal.speech.listen");
         const ::ctrl::boolean recognitionTranscriptUnavailable =
@@ -506,6 +505,11 @@ namespace
         if (recognitionTranscriptUnavailable)
         {
             return {};
+        }
+        if (state.recognitionTranscriptIndex < state.recognitionDurationsMs.size())
+        {
+            state.monotonicMilliseconds +=
+                std::min(state.recognitionDurationsMs[state.recognitionTranscriptIndex], timeoutMs);
         }
         const ::ctrl::string transcript = state.recognitionTranscripts[state.recognitionTranscriptIndex];
         ++state.recognitionTranscriptIndex;
@@ -772,7 +776,9 @@ namespace xwalk::agent::test
         const XWalkLocalVoiceChatbotCallbacks chatbotCallbacks{&output, &continueOperation, &delay};
         XWalkLocalVoiceChatbot voiceChat(chatbotAssistant, &callbackContext, chatbotCallbacks);
         const XWalkVoiceActiveCarCallbacks voiceCallbacks{
-            &output, &continueOperation, &delay, &captureVoiceActiveCarImage, &input};
+            &output, &continueOperation, &delay, &monotonicMilliseconds, &captureVoiceActiveCarImage, &input};
+        const XWalkVoiceActiveCarCallbacks jarvisCallbacks{
+            &output, &continueOperation, &delay, &monotonicMilliseconds, nullptr, &input};
         XWalkVoiceActiveCar voiceActive(picarx,
                                         selfDriveVoice,
                                         assistant,
@@ -785,7 +791,7 @@ namespace xwalk::agent::test
                                            gptAssistant,
                                            led,
                                            &callbackContext,
-                                           voiceCallbacks,
+                                           jarvisCallbacks,
                                            XWalkVoiceActiveCarGpt::carConfiguration());
         XWalkVoiceActiveCar gptCarCoordinator(picarx,
                                               selfDriveGptCar,

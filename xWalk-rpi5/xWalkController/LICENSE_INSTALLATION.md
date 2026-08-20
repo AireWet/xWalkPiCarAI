@@ -35,10 +35,10 @@ For the Gemini-backed Jarvis profile, populate every model field:
 ```ini
 [models]
 ANTHROPIC_MODEL = unused
-GEMINI_MODEL = gemini-3.7-flash
+GEMINI_MODEL = gemini-3.6-flash
 OLLAMA_MODEL = llama3.2:3b
 OPENAI_MODEL = unused
-XWALK_AI_MODEL = gemini-3.7-flash
+XWALK_AI_MODEL = gemini-3.6-flash
 ```
 
 The configuration must contain exactly the `[models]` section and all names from the committed template. Do not
@@ -104,7 +104,7 @@ Confirm that the Gemini credential and model were loaded without printing either
 
 ```bash
 test -n "${GEMINI_API_KEY:-}" && echo "GEMINI_API_KEY loaded"
-test "${GEMINI_MODEL:-}" = "gemini-3.7-flash" && echo "Gemini model loaded"
+test "${GEMINI_MODEL:-}" = "gemini-3.6-flash" && echo "Gemini model loaded"
 ```
 
 The variables exist only in the current shell. Source `xWalkEnv.sh` again in each new shell before starting an

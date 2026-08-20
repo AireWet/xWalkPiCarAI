@@ -71,7 +71,8 @@ writers, require application-level synchronization.
 
 - A missing parent directory and configuration file are created.
 - Missing keys return the supplied default.
-- ASCII spaces are removed from retrieved values to preserve the established file contract.
+- ASCII spaces are removed from unquoted retrieved values to preserve the established file contract.
+- Surround a value with double quotes when internal ASCII spaces are significant; the quotes are not returned.
 - The last duplicate key wins during retrieval.
 - `include = relative/path.conf` recursively inserts a `.conf` file at that
   position; absolute paths, parent traversal, cycles, and depth above eight are rejected.

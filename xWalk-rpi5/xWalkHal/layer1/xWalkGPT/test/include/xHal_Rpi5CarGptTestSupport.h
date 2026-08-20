@@ -49,6 +49,8 @@ namespace xwalk::hal::test::gpt
             uint32 releaseCount{};
             uint32 cancelCount{};
             uint32 endpointAfterFeed{};
+            uint32 speechAfterFeed{};
+            uint32 lowLevelAfterRead{};
             boolean endpointFinalized{};
             boolean failFirstRead{};
             boolean alwaysFailRead{};

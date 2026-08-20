@@ -84,6 +84,7 @@ namespace
         XWalkHal::outputfilestream file(filePath, xwalk::hal::FILE_OPEN_WRITE_TRUNCATE);
         file << "# preserved comment\n";
         file << "trimmed = 1 2 3\n";
+        file << "quoted = \"goodbye jarvis,go to sleep\"\n";
         file << "malformed line\n";
         file << "duplicate = first\n";
         file << "duplicate = second\n";
@@ -92,6 +93,7 @@ namespace
 
         xwalk::hal::XWalkConfigStore store(filePath.string());
         xwalk::hal::test::requireTestCondition(store.get("trimmed") == "123");
+        xwalk::hal::test::requireTestCondition(store.get("quoted") == "goodbye jarvis,go to sleep");
         xwalk::hal::test::requireTestCondition(store.get("duplicate") == "second");
         store.set("duplicate", "updated");
         xwalk::hal::test::requireTestCondition(store.get("duplicate") == "updated");

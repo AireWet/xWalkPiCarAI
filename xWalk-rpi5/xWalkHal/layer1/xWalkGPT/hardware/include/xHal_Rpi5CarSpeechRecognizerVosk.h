@@ -101,6 +101,8 @@ namespace xwalk::hal
             static void cancel(contextpointer context) noexcept;
             /** @brief Extracts and unescapes the `text` value from a Vosk JSON result. */
             static string extractText(stringview jsonResult);
+            /** @brief Extracts and unescapes one named string value from Vosk JSON. */
+            static string extractJsonValue(stringview jsonResult, stringview key);
 
         public:
             /**************************************************************************

@@ -226,18 +226,17 @@ namespace xwalk::ctrl
                 return XWALK_runControllerCommand(cli, commandArguments);
             }
 
-            if ((services.selfDrive == nullptr) || (services.voiceStatusLed == nullptr) ||
-                (services.cameraCapture == nullptr))
+            if ((services.selfDrive == nullptr) || (services.voiceStatusLed == nullptr))
             {
                 XWALK_CTRL_ERROR(XWALK_LOGIC, "xWalkBoot did not provide the voice-active-car hardware graph");
             }
 
-            const xwalk::agent::XWalkVoiceActiveCarCallbacks voiceCallbacks{
-                &XWALK_outputLine,
-                &XWALK_continueOperation,
-                &XWALK_delayMilliseconds,
-                &xwalk::agent::XWalkCameraCapture::captureImage,
-                &XWALK_inputLine};
+            const xwalk::agent::XWalkVoiceActiveCarCallbacks voiceCallbacks{&XWALK_outputLine,
+                                                                            &XWALK_continueOperation,
+                                                                            &XWALK_delayMilliseconds,
+                                                                            &XWALK_monotonicMilliseconds,
+                                                                            nullptr,
+                                                                            &XWALK_inputLine};
 
             xwalk::agent::XWalkVoiceActiveCarConfiguration voiceConfiguration =
                 xwalk::agent::XWalkVoiceActiveCar::carConfiguration();
@@ -259,13 +258,35 @@ namespace xwalk::ctrl
                 }
             }
 
-            voiceConfiguration.withImage = true;
+            if (services.voiceActiveCarConfiguration != nullptr)
+            {
+                voiceConfiguration = *services.voiceActiveCarConfiguration;
+            }
+            if (voiceActiveCarGptRequested)
+            {
+                voiceConfiguration.withImage = false;
+            }
+            const ::ctrl::boolean imageCaptureMissing =
+                static_cast<::ctrl::boolean>(voiceConfiguration.withImage && (services.cameraCapture == nullptr));
+            if (imageCaptureMissing)
+            {
+                XWALK_CTRL_ERROR(XWALK_LOGIC, "xWalkBoot did not provide enabled voice-active camera capture");
+            }
+            xwalk::agent::voiceactivecarimagecallback imageCallback = nullptr;
+            ::ctrl::contextpointer voiceContext = &applicationContext;
+            if (voiceConfiguration.withImage && (voiceActiveCarGptRequested == false))
+            {
+                imageCallback = &xwalk::agent::XWalkCameraCapture::captureImage;
+                voiceContext = services.cameraCapture;
+            }
+            xwalk::agent::XWalkVoiceActiveCarCallbacks configuredCallbacks = voiceCallbacks;
+            configuredCallbacks.captureImage = imageCallback;
             xwalk::agent::XWalkVoiceActiveCar voiceActiveCar(*services.picarx,
                                                              *services.selfDrive,
                                                              *services.voiceAssistant,
                                                              *services.voiceStatusLed,
-                                                             services.cameraCapture,
-                                                             voiceCallbacks,
+                                                             voiceContext,
+                                                             configuredCallbacks,
                                                              voiceConfiguration);
 
             const ::ctrl::boolean gptCarRequested =

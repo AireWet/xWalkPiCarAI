@@ -59,6 +59,8 @@ namespace xwalk::hal
     using voskacceptwaveformfunction = int32 (*)(voskrecognizerhandle recognizer, cstring pcmData, int32 byteCount);
     /** @brief Returns recognizer-owned endpoint JSON text after accepted speech. */
     using voskresultfunction = cstring (*)(voskrecognizerhandle recognizer);
+    /** @brief Returns recognizer-owned partial JSON text without finalizing recognition. */
+    using voskpartialresultfunction = cstring (*)(voskrecognizerhandle recognizer);
     /** @brief Returns recognizer-owned final JSON text. */
     using voskfinalresultfunction = cstring (*)(voskrecognizerhandle recognizer);
     /** @brief Releases one non-null recognizer handle. */
@@ -84,6 +86,8 @@ namespace xwalk::hal
             voskacceptwaveformfunction acceptWaveform{nullptr};
             /** @brief Non-null accepted-endpoint result function. */
             voskresultfunction result{nullptr};
+            /** @brief Non-null partial-result function used to observe recognized speech. */
+            voskpartialresultfunction partialResult{nullptr};
             /** @brief Non-null final-result function. */
             voskfinalresultfunction finalResult{nullptr};
             /** @brief Non-null recognizer-destruction function. */

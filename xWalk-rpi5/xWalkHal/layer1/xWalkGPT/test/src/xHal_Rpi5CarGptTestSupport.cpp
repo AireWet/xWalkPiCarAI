@@ -82,7 +82,9 @@ namespace xwalk::hal::test::gpt
             data.clear();
             return -32;
         }
-        data.assign(frames * 2U, 0x22U);
+        const boolean lowLevelPeriod =
+            static_cast<boolean>((backend.lowLevelAfterRead > 0U) && (backend.readCount >= backend.lowLevelAfterRead));
+        data.assign(frames * 2U, lowLevelPeriod ? 0x00U : 0x22U);
         backend.capturedFrames += frames;
         return static_cast<int32>(frames);
     }
@@ -127,8 +129,14 @@ namespace xwalk::hal::test::gpt
         ++backend.feedCount;
         const boolean endpointReached =
             static_cast<boolean>((backend.endpointAfterFeed > 0U) && (backend.feedCount >= backend.endpointAfterFeed));
-        return endpointReached ? XWalkSpeechRecognitionFeedStatus::Endpoint
-                               : XWalkSpeechRecognitionFeedStatus::Listening;
+        if (endpointReached)
+        {
+            return XWalkSpeechRecognitionFeedStatus::Endpoint;
+        }
+        const boolean speechObserved =
+            static_cast<boolean>((backend.speechAfterFeed > 0U) && (backend.feedCount >= backend.speechAfterFeed));
+        return speechObserved ? XWalkSpeechRecognitionFeedStatus::SpeechObserved
+                              : XWalkSpeechRecognitionFeedStatus::Listening;
     }
     string
     finishStreamingRecognition(contextpointer context, speechrecognitionsession session, boolean endpointDetected)

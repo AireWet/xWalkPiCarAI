@@ -36,8 +36,10 @@ namespace xwalk::hal
      */
     XWalkSpeechToTextAlsa::XWalkSpeechToTextAlsa(stringview deviceName,
                                                  contextpointer recognizerContext,
-                                                 const XWalkSpeechToTextAlsaOperations& recognizerOperations)
-        : XWalkSpeechToTextAlsa(recognizerContext, systemCaptureOperations(recognizerOperations), deviceName)
+                                                 const XWalkSpeechToTextAlsaOperations& recognizerOperations,
+                                                 const XWalkSpeechEndpointConfiguration& endpointSettings)
+        : XWalkSpeechToTextAlsa(
+              recognizerContext, systemCaptureOperations(recognizerOperations), deviceName, endpointSettings)
     {
     }
 
@@ -54,10 +56,13 @@ namespace xwalk::hal
      */
     XWalkSpeechToTextAlsa::XWalkSpeechToTextAlsa(contextpointer context,
                                                  const XWalkSpeechToTextAlsaOperations& backendOperations,
-                                                 stringview deviceName)
-        : operationContext(context), operations(backendOperations), microphoneDeviceName(deviceName)
+                                                 stringview deviceName,
+                                                 const XWalkSpeechEndpointConfiguration& endpointSettings)
+        : operationContext(context), operations(backendOperations), microphoneDeviceName(deviceName),
+          endpointConfiguration(endpointSettings)
     {
         validateOperations(operations, microphoneDeviceName);
+        validateEndpointConfiguration(endpointConfiguration);
     }
 
     /**
@@ -125,6 +130,60 @@ namespace xwalk::hal
     }
 
     /**
+     * @brief Validates bounded fallback endpoint and trace settings.
+     * @param[in] configuration Endpoint settings selected by deployment.
+     * @throws std::out_of_range If durations are zero, unordered, or exceed the listen bound.
+     */
+    void XWalkSpeechToTextAlsa::validateEndpointConfiguration(const XWalkSpeechEndpointConfiguration& configuration)
+    {
+        const boolean durationInvalid =
+            (configuration.minimumSpeechMilliseconds == 0U) || (configuration.trailingSilenceMilliseconds == 0U) ||
+            (configuration.maximumUtteranceMilliseconds == 0U) ||
+            (configuration.minimumSpeechMilliseconds > configuration.maximumUtteranceMilliseconds) ||
+            (configuration.trailingSilenceMilliseconds > configuration.maximumUtteranceMilliseconds) ||
+            (configuration.maximumUtteranceMilliseconds > XHAL_RPI5CAR_SPEECH_TO_TEXT_MAXIMUM_TIMEOUT_MS);
+        const boolean thresholdInvalid =
+            (configuration.silencePeakThreshold == 0U) || (configuration.silencePeakThreshold > 32'767U);
+        const hal::boolean endpointConfigurationInvalid =
+            static_cast<hal::boolean>(durationInvalid || thresholdInvalid);
+        if (endpointConfigurationInvalid)
+        {
+            XWALK_HAL_ERROR(XWALK_RANGE, "Speech fallback endpoint configuration is outside its range");
+        }
+    }
+
+    /**
+     * @brief Classifies one complete signed-sixteen little-endian PCM period.
+     * @param[in] pcmData Non-empty complete mono PCM bytes.
+     * @param[in] peakThreshold Inclusive absolute sample-magnitude threshold.
+     * @return `true` when every decoded sample is at or below `peakThreshold`.
+     */
+    boolean XWalkSpeechToTextAlsa::periodIsLowLevel(const bytevector& pcmData, uint32 peakThreshold)
+    {
+        const hal::boolean pcmMalformed = static_cast<hal::boolean>(pcmData.empty() || ((pcmData.size() % 2U) != 0U));
+        if (pcmMalformed)
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "Speech fallback endpoint requires complete signed-sixteen PCM");
+        }
+        for (size index{}; index < pcmData.size(); index += 2U)
+        {
+            const uint32 lowByte = pcmData[index];
+            const uint32 highByte = pcmData[index + 1U];
+            const uint32 rawSample = lowByte | (highByte << 8U);
+            const int32 signedSample =
+                rawSample >= 32'768U ? static_cast<int32>(rawSample) - 65'536 : static_cast<int32>(rawSample);
+            const uint32 magnitude =
+                signedSample < 0 ? static_cast<uint32>(-signedSample) : static_cast<uint32>(signedSample);
+            const hal::boolean sampleAboveThreshold = static_cast<hal::boolean>(magnitude > peakThreshold);
+            if (sampleAboveThreshold)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * @brief Converts one callback context into its required adapter.
      *
      * @param[in,out] context Non-null pointer to a live adapter.
@@ -184,6 +243,8 @@ namespace xwalk::hal
         }
         XWalkSpeechRecognitionGuard recognitionGuard(
             self.operationContext, session, self.operations.releaseRecognition);
+        XWALK_HAL_TRACE_UID1(
+            RPI .390, "Speech recognition session started with a %u millisecond hard timeout", timeoutMs);
         const uint64 sampleRate = XHAL_RPI5CAR_SPEECH_CAPTURE_SAMPLE_RATE_HZ;
         const uint64 requestedMilliseconds = timeoutMs;
         const uint64 requestedFrameProduct = sampleRate * requestedMilliseconds;
@@ -191,6 +252,16 @@ namespace xwalk::hal
         uint64 capturedFrames{};
         uint32 recoveryCount{};
         boolean endpointDetected{false};
+        boolean fallbackEndpointDetected{false};
+        boolean speechObserved{false};
+        uint64 observedSpeechFrames{};
+        uint64 trailingLowLevelFrames{};
+        const uint64 minimumSpeechFrames =
+            (sampleRate * self.endpointConfiguration.minimumSpeechMilliseconds + 999U) / 1'000U;
+        const uint64 trailingSilenceFrames =
+            (sampleRate * self.endpointConfiguration.trailingSilenceMilliseconds + 999U) / 1'000U;
+        const uint64 maximumUtteranceFrames =
+            (sampleRate * self.endpointConfiguration.maximumUtteranceMilliseconds + 999U) / 1'000U;
         const hal::boolean processingLoopRequested{true};
         while (processingLoopRequested)
         {
@@ -226,6 +297,7 @@ namespace xwalk::hal
                 if (feedStatus == XWalkSpeechRecognitionFeedStatus::Endpoint)
                 {
                     endpointDetected = true;
+                    XWALK_HAL_TRACE_UID0(RPI .391, "Speech recognition native Vosk endpoint detected");
                     break;
                 }
                 if (feedStatus == XWalkSpeechRecognitionFeedStatus::Cancelled)
@@ -233,8 +305,28 @@ namespace xwalk::hal
                     self.cancellationRequested.store(true);
                     break;
                 }
-                const hal::boolean feedStatusInvalid =
-                    static_cast<hal::boolean>(feedStatus != XWalkSpeechRecognitionFeedStatus::Listening);
+                const hal::boolean speechReported =
+                    static_cast<hal::boolean>(feedStatus == XWalkSpeechRecognitionFeedStatus::SpeechObserved);
+                speechObserved = static_cast<boolean>(speechObserved || speechReported);
+                if (speechObserved)
+                {
+                    observedSpeechFrames += completedFrames;
+                    const hal::boolean lowLevel =
+                        periodIsLowLevel(periodData, self.endpointConfiguration.silencePeakThreshold);
+                    trailingLowLevelFrames = lowLevel ? trailingLowLevelFrames + completedFrames : 0U;
+                    const boolean minimumSpeechReached = observedSpeechFrames >= minimumSpeechFrames;
+                    const boolean trailingSilenceReached = trailingLowLevelFrames >= trailingSilenceFrames;
+                    const boolean utteranceLimitReached = observedSpeechFrames >= maximumUtteranceFrames;
+                    fallbackEndpointDetected =
+                        static_cast<boolean>(utteranceLimitReached || (minimumSpeechReached && trailingSilenceReached));
+                    if (fallbackEndpointDetected)
+                    {
+                        XWALK_HAL_TRACE_UID0(RPI .392, "Speech recognition fallback endpoint detected");
+                        break;
+                    }
+                }
+                const hal::boolean feedStatusInvalid = static_cast<hal::boolean>(
+                    (feedStatus != XWalkSpeechRecognitionFeedStatus::Listening) && !speechReported);
                 if (feedStatusInvalid)
                 {
                     XWALK_HAL_ERROR(XWALK_RUNTIME, "Speech streaming recognizer returned an invalid status");
@@ -257,7 +349,28 @@ namespace xwalk::hal
         {
             return {};
         }
-        return self.operations.finishRecognition(self.operationContext, session, endpointDetected);
+        const boolean endpointAccepted = static_cast<boolean>(endpointDetected || fallbackEndpointDetected);
+        if (endpointAccepted == false)
+        {
+            XWALK_HAL_TRACE_UID0(RPI .393, "Speech recognition hard timeout reached before an endpoint");
+        }
+        const string transcript = self.operations.finishRecognition(self.operationContext, session, endpointDetected);
+        const hal::boolean transcriptEmpty = static_cast<hal::boolean>(transcript.empty());
+        if (transcriptEmpty)
+        {
+            XWALK_HAL_TRACE_UID0(RPI .394, "Speech recognition completed without recognized text");
+        }
+        else
+        {
+            XWALK_HAL_TRACE_UID1(RPI .395,
+                                 "Speech recognition completed with %llu transcript character(s)",
+                                 static_cast<unsigned long long>(transcript.size()));
+            if (self.endpointConfiguration.traceTranscript)
+            {
+                XWALK_HAL_TRACE_UID1(RPI .396, "Speech recognition diagnostic transcript: %s", transcript.c_str());
+            }
+        }
+        return transcript;
     }
 
     /**

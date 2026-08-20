@@ -595,6 +595,29 @@ namespace
             repositoryEffective.end());
         EXPECT_NE(std::find(repositoryEffective.begin(), repositoryEffective.end(), "camera_connection = csi"),
                   repositoryEffective.end());
+        EXPECT_NE(std::find(repositoryEffective.begin(),
+                            repositoryEffective.end(),
+                            "voice_active_car_gpt_maximum_output_tokens = 256"),
+                  repositoryEffective.end());
+        EXPECT_NE(std::find(repositoryEffective.begin(),
+                            repositoryEffective.end(),
+                            "voice_active_car_gpt_model = gemini-3.6-flash"),
+                  repositoryEffective.end());
+        EXPECT_NE(std::find(repositoryEffective.begin(),
+                            repositoryEffective.end(),
+                            "voice_active_car_gpt_with_image = false"),
+                  repositoryEffective.end());
+        EXPECT_NE(std::find(repositoryEffective.begin(),
+                            repositoryEffective.end(),
+                            "voice_active_car_gpt_continuous_conversation = true"),
+                  repositoryEffective.end());
+        const hal::XWalkConfigStore profileStore(repositoryConfiguration.string());
+        EXPECT_EQ(profileStore.get("voice_active_car_model", ""), "gpt-4o-mini");
+        EXPECT_EQ(profileStore.get("voice_active_car_api_key_environment", ""), "OPENAI_API_KEY");
+        EXPECT_EQ(profileStore.get("voice_active_car_endpoint", ""), "https://api.openai.com/v1/chat/completions");
+        EXPECT_EQ(profileStore.get("gpt_car_model", ""), "gpt-4o");
+        EXPECT_EQ(profileStore.get("gpt_car_api_key_environment", ""), "OPENAI_API_KEY");
+        EXPECT_EQ(profileStore.get("gpt_car_endpoint", ""), "https://api.openai.com/v1/chat/completions");
 
         const ctrl::filesystempath invalidConfiguration =
             ctrl::filesystempath("/tmp") /
@@ -635,7 +658,7 @@ namespace
     /** @brief Rejects boundary violations for every deployment value family. */
     TEST(XWalkAppGroup, DeploymentConfigurationRejectsUnsafeBoundaries)
     {
-        const ctrl::fixedarray<InvalidOverride, 27U> invalidOverrides{
+        const ctrl::fixedarray<InvalidOverride, 47U> invalidOverrides{
             {{"deployment_config_version", "2"},
              {"hardware_board", "unknown"},
              {"hardware_i2c_device", "i2c-1"},
@@ -662,6 +685,27 @@ namespace
              {"video_recording_fps", "121"},
              {"voice_language_model_provider", "unknown"},
              {"voice_language_model_endpoint", "https://user@example.invalid/api"},
+             {"voice_vosk_endpoint_start_seconds", "20"},
+             {"voice_vosk_endpoint_end_seconds", "20"},
+             {"voice_vosk_endpoint_max_seconds", "0"},
+             {"voice_vosk_silence_peak_threshold", "0"},
+             {"voice_vosk_trace_transcript", "yes"},
+             {"voice_active_car_gpt_api_key_environment", ""},
+             {"voice_active_car_gpt_endpoint",
+              "http://generativelanguage.googleapis.com/v1beta/openai/chat/completions"},
+             {"voice_active_car_gpt_model", ""},
+             {"voice_active_car_gpt_maximum_output_tokens", "0"},
+             {"voice_active_car_gpt_maximum_output_tokens", "16385"},
+             {"voice_active_car_gpt_with_image", "true"},
+             {"voice_active_car_gpt_with_image", "1"},
+             {"voice_active_car_gpt_continuous_conversation", "yes"},
+             {"voice_active_car_gpt_conversation_idle_timeout_ms", "0"},
+             {"voice_active_car_gpt_conversation_idle_timeout_ms", "300001"},
+             {"voice_active_car_gpt_conversation_maximum_rounds", "0"},
+             {"voice_active_car_gpt_conversation_maximum_rounds", "101"},
+             {"voice_active_car_gpt_conversation_maximum_misses", "0"},
+             {"voice_active_car_gpt_sleep_phrases", "goodbye jarvis,  ,stop listening"},
+             {"voice_active_car_gpt_sleep_phrases", "\"Goodbye Jarvis,goodbye jarvis\""},
              {"app_control_port", "0"}}};
 
         for (const InvalidOverride& invalidOverride : invalidOverrides)
@@ -675,29 +719,38 @@ namespace
     /** @brief Accepts supported alternatives and exact deployment boundaries. */
     TEST(XWalkAppGroup, DeploymentConfigurationAcceptsSupportedAlternatives)
     {
-        const ctrl::fixedarray<ValidOverride, 23U> validOverrides{{{"hardware_board", "robot_hat_v4"},
-                                                                   {"hardware_board", "robot_hat_v5"},
-                                                                   {"hardware_gpio_minimum_line_count", "1024"},
-                                                                   {"hardware_v4_left_direction_pin", "SW"},
-                                                                   {"hardware_v4_left_direction_pin", "USER"},
-                                                                   {"hardware_v4_left_direction_pin", "MCURST"},
-                                                                   {"hardware_v4_left_direction_pin", "BOARD_TYPE"},
-                                                                   {"hardware_v4_left_direction_pin", "BLEINT"},
-                                                                   {"hardware_v4_left_direction_pin", "RST"},
-                                                                   {"hardware_v4_left_direction_pin", "LED"},
-                                                                   {"hardware_v4_left_direction_pin", "BLERST"},
-                                                                   {"hardware_v4_left_direction_pin", "CE"},
-                                                                   {"picarx_dir_motor", "[-1,1]"},
-                                                                   {"picarx_dir_motor", "[1,-1]"},
-                                                                   {"picarx_dir_motor", "[-1,-1]"},
-                                                                   {"picarx_dir_servo", "-180"},
-                                                                   {"picarx_cam_tilt_servo", "180"},
-                                                                   {"picarx_max_motor_output_percent", "100"},
-                                                                   {"picarx_motor_watchdog_timeout_ms", "60000"},
-                                                                   {"camera_connection", "usb"},
-                                                                   {"computer_vision_camera_backend", "automatic"},
-                                                                   {"computer_vision_camera_backend", "gstreamer"},
-                                                                   {"app_control_port", "65535"}}};
+        const ctrl::fixedarray<ValidOverride, 31U> validOverrides{
+            {{"hardware_board", "robot_hat_v4"},
+             {"hardware_board", "robot_hat_v5"},
+             {"hardware_gpio_minimum_line_count", "1024"},
+             {"hardware_v4_left_direction_pin", "SW"},
+             {"hardware_v4_left_direction_pin", "USER"},
+             {"hardware_v4_left_direction_pin", "MCURST"},
+             {"hardware_v4_left_direction_pin", "BOARD_TYPE"},
+             {"hardware_v4_left_direction_pin", "BLEINT"},
+             {"hardware_v4_left_direction_pin", "RST"},
+             {"hardware_v4_left_direction_pin", "LED"},
+             {"hardware_v4_left_direction_pin", "BLERST"},
+             {"hardware_v4_left_direction_pin", "CE"},
+             {"picarx_dir_motor", "[-1,1]"},
+             {"picarx_dir_motor", "[1,-1]"},
+             {"picarx_dir_motor", "[-1,-1]"},
+             {"picarx_dir_servo", "-180"},
+             {"picarx_cam_tilt_servo", "180"},
+             {"picarx_max_motor_output_percent", "100"},
+             {"picarx_motor_watchdog_timeout_ms", "60000"},
+             {"camera_connection", "usb"},
+             {"computer_vision_camera_backend", "automatic"},
+             {"computer_vision_camera_backend", "gstreamer"},
+             {"voice_capture_device", "plughw:CARD=Device,DEV=0"},
+             {"voice_mixer_device", "pulse"},
+             {"voice_mixer_element", "Master"},
+             {"voice_piper_executable", "/opt/xwalk/piper-tts/venv/bin/piper"},
+             {"voice_active_car_gpt_maximum_output_tokens", "16384"},
+             {"voice_active_car_gpt_continuous_conversation", "false"},
+             {"voice_active_car_gpt_conversation_idle_timeout_ms", "300000"},
+             {"voice_active_car_gpt_conversation_maximum_rounds", "100"},
+             {"app_control_port", "65535"}}};
 
         for (const ValidOverride& validOverride : validOverrides)
         {

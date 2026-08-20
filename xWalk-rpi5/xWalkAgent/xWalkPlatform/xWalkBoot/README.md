@@ -114,6 +114,11 @@ PiCar-X configuration file:
 | `hardware_spi_bits_per_word` | `8` |
 | `voice_vosk_library` | `/usr/lib/xwalk/libvosk.so` |
 | `voice_vosk_model` | `/usr/share/xwalk/models/vosk/vosk-model-small-en-us-0.15` |
+| `voice_vosk_endpoint_start_seconds` | `0.5`; fallback minimum observed utterance |
+| `voice_vosk_endpoint_end_seconds` | `1.0`; fallback trailing low-level PCM |
+| `voice_vosk_endpoint_max_seconds` | `15.0`; fallback utterance bound |
+| `voice_vosk_silence_peak_threshold` | `500`; signed-16 fallback peak threshold |
+| `voice_vosk_trace_transcript` | `false`; privacy-sensitive transcript diagnostic |
 | `voice_capture_device` | `default` |
 | `voice_playback_device` | `default` |
 | `voice_mixer_device` | `default` |
@@ -133,14 +138,26 @@ PiCar-X configuration file:
 | `voice_language_model_maximum_output_tokens` | `1024` |
 | `voice_language_model_timeout_ms` | `120000` |
 | `voice_active_car_gpt_endpoint` | Gemini OpenAI-compatible chat-completions URL |
-| `voice_active_car_gpt_model` | `gemini-3.7-flash` |
-| `voice_active_car_gpt_maximum_output_tokens` | `1024` |
+| `voice_active_car_gpt_model` | `gemini-3.6-flash` |
+| `voice_active_car_gpt_maximum_output_tokens` | `256` |
 | `voice_active_car_gpt_piper_model` | `/usr/share/xwalk/models/piper/en_GB-alan-medium.onnx` |
+| `voice_active_car_gpt_with_image` | `false`; permanent text-only policy |
+| `voice_active_car_gpt_continuous_conversation` | `true` |
+| `voice_active_car_gpt_conversation_idle_timeout_ms` | `30000` |
+| `voice_active_car_gpt_conversation_maximum_rounds` | `10` |
+| `voice_active_car_gpt_conversation_maximum_misses` | `3` |
+| `voice_active_car_gpt_sleep_phrases` | `goodbye jarvis,go to sleep,stop listening` |
+| `voice_active_car_gpt_sleep_acknowledgement` | Short spoken return-to-wake acknowledgement |
 | `voice_ollama_model_manifest` | empty; provision the local manifest path |
 | `camera_connection` | `csi` |
 | `camera_csi_executable` | `rpicam-still` |
 | `camera_csi_device` | `/dev/media0` |
 | `camera_usb_executable` | `ffmpeg` |
+
+The tracked voice settings use portable `default` ALSA selections, `PCM`, and
+`piper`. Raspberry Pi runtime generation applies its overridable USB microphone,
+PulseAudio `Master`, and Piper executable selections only to the generated
+`build-rpi/runtime/picar-x.d/voice.conf` copy.
 | `camera_usb_device` | `/dev/video0` |
 | `camera_output` | `/tmp/xwalk-voice-image.jpg` |
 | `camera_width` | `640` |
@@ -192,7 +209,7 @@ The dedicated `voice-chat` composition preserves example 19 with local Ollama,
 Piper, and a 20-message history. The `voice-active-car` mode preserves the
 Rolly profile from `example/voice_active_car.py`, uses OpenAI `gpt-4o-mini`,
 and reads its credential from `OPENAI_API_KEY`. Example 21's
-`voice-active-car-gpt` mode uses Gemini `gemini-3.7-flash`, reads
+`voice-active-car-gpt` mode uses Gemini `gemini-3.6-flash`, reads
 `GEMINI_API_KEY`, and uses Piper `en_GB-alan-medium`. Supported generic provider
 names are `ollama`, `openai`,
 `chatgpt`, `gemini`, `grok`, `xai`, `claude`, `anthropic`, and

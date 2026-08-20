@@ -73,6 +73,9 @@ namespace xwalk::hal
             /** @brief Owned non-empty ALSA capture device name. */
             string microphoneDeviceName{};
 
+            /** @brief Validated fallback endpoint and privacy-sensitive trace settings. */
+            XWalkSpeechEndpointConfiguration endpointConfiguration{};
+
             /** @brief Atomic stop request observed between bounded capture reads. */
             atomicboolean cancellationRequested{false};
 
@@ -102,6 +105,21 @@ namespace xwalk::hal
              */
             static void validateOperations(const XWalkSpeechToTextAlsaOperations& backendOperations,
                                            stringview deviceName);
+
+            /**
+             * @brief Validates ordered, non-zero fallback endpoint settings.
+             * @param[in] configuration Endpoint timing, PCM threshold, and trace policy.
+             * @throws std::out_of_range If a duration or threshold is outside its supported range.
+             */
+            static void validateEndpointConfiguration(const XWalkSpeechEndpointConfiguration& configuration);
+
+            /**
+             * @brief Classifies one signed-sixteen little-endian PCM period as low level.
+             * @param[in] pcmData Non-empty complete mono PCM period.
+             * @param[in] peakThreshold Inclusive absolute sample-magnitude threshold.
+             * @return `true` when every sample is at or below the configured threshold.
+             */
+            static boolean periodIsLowLevel(const bytevector& pcmData, uint32 peakThreshold);
 
             /**
              * @brief Converts one callback context into its required adapter.
@@ -212,7 +230,8 @@ namespace xwalk::hal
              */
             XWalkSpeechToTextAlsa(stringview deviceName,
                                   contextpointer recognizerContext,
-                                  const XWalkSpeechToTextAlsaOperations& recognizerOperations);
+                                  const XWalkSpeechToTextAlsaOperations& recognizerOperations,
+                                  const XWalkSpeechEndpointConfiguration& endpointSettings = {});
 
             /**
              * @brief Constructs an adapter with injected capture and recognition operations.
@@ -224,7 +243,8 @@ namespace xwalk::hal
              */
             XWalkSpeechToTextAlsa(contextpointer context,
                                   const XWalkSpeechToTextAlsaOperations& backendOperations,
-                                  stringview deviceName);
+                                  stringview deviceName,
+                                  const XWalkSpeechEndpointConfiguration& endpointSettings = {});
 
             /**
              * @brief Requests cancellation without releasing non-owning backend state.

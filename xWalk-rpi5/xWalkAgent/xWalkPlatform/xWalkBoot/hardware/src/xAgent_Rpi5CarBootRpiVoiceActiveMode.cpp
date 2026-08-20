@@ -3,8 +3,9 @@
  * @brief       Composes shared Raspberry Pi voice-active vehicle services.
  *
  * @details
- * Loads speech, model, audio, status-LED, camera, and credential-environment
- * selections before publishing one profile-specific service graph.
+ * Loads speech, model, audio, status-LED, and credential-environment selections
+ * before publishing one profile-specific service graph. Camera services are
+ * composed only for image-enabled non-Jarvis profiles.
  *
  * @project     xWalk Firmware
  * @module      xWalkBoot RPi
@@ -114,7 +115,8 @@ namespace xwalk::agent
                 config.get("voice_active_car_gpt_api_key_environment", XWalkVoiceActiveCarGpt::API_KEY_ENVIRONMENT);
             modelEndpoint = config.get("voice_active_car_gpt_endpoint", XWalkVoiceActiveCarGpt::MODEL_ENDPOINT);
             modelName = config.get("voice_active_car_gpt_model", XWalkVoiceActiveCarGpt::MODEL_NAME);
-            maximumOutputTokensText = config.get("voice_active_car_gpt_maximum_output_tokens", "1024");
+            maximumOutputTokensText = config.get("voice_active_car_gpt_maximum_output_tokens",
+                                                 std::to_string(XWalkVoiceActiveCarGpt::MAXIMUM_OUTPUT_TOKENS));
         }
         else
         {
@@ -144,8 +146,20 @@ namespace xwalk::agent
         const hal::XWalkLanguageModelHttpDialect modelDialect =
             hal::XWalkLanguageModelHttp::dialectFromString(modelProvider);
 
+        hal::XWalkSpeechEndpointConfiguration endpointConfiguration{};
+        endpointConfiguration.minimumSpeechMilliseconds = parseSeconds(
+            config.get("voice_vosk_endpoint_start_seconds", "0.5"), "voice_vosk_endpoint_start_seconds", 30'000U);
+        endpointConfiguration.trailingSilenceMilliseconds = parseSeconds(
+            config.get("voice_vosk_endpoint_end_seconds", "1.0"), "voice_vosk_endpoint_end_seconds", 30'000U);
+        endpointConfiguration.maximumUtteranceMilliseconds = parseSeconds(
+            config.get("voice_vosk_endpoint_max_seconds", "15.0"), "voice_vosk_endpoint_max_seconds", 30'000U);
+        endpointConfiguration.silencePeakThreshold = parseUnsigned(
+            config.get("voice_vosk_silence_peak_threshold", "500"), "voice_vosk_silence_peak_threshold", 32'767U);
+        endpointConfiguration.traceTranscript =
+            parseBoolean(config.get("voice_vosk_trace_transcript", "false"), "voice_vosk_trace_transcript");
         hal::XWalkSpeechRecognizerVosk recognizer(voskLibrary, voskModel);
-        hal::XWalkSpeechToTextAlsa speechToTextBackend(captureDevice, &recognizer, recognizer.operations());
+        hal::XWalkSpeechToTextAlsa speechToTextBackend(
+            captureDevice, &recognizer, recognizer.operations(), endpointConfiguration);
         hal::XWalkSpeechToText speechToText(&speechToTextBackend, speechToTextBackend.callbacks());
         hal::XWalkAudioAlsa audioBackend(playbackDevice, mixerDevice, mixerElement);
         hal::XWalkTextToSpeechEspeak espeak(espeakExecutable, espeakVoice);
@@ -175,6 +189,51 @@ namespace xwalk::agent
         {
             assistantConfiguration = XWalkVoiceActiveCar::assistantConfiguration();
         }
+        XWalkVoiceActiveCarConfiguration voiceConfiguration{};
+        if (jarvisProfile)
+        {
+            voiceConfiguration = XWalkVoiceActiveCarGpt::carConfiguration();
+            const agent::boolean configuredWithImage = parseBoolean(
+                config.get("voice_active_car_gpt_with_image", XWalkVoiceActiveCarGpt::WITH_IMAGE ? "true" : "false"),
+                "voice_active_car_gpt_with_image");
+            if (configuredWithImage)
+            {
+                XWALK_RPIAGENT_ERROR(XWALK_INVAL, "voice_active_car_gpt_with_image must remain false");
+            }
+            voiceConfiguration.withImage = configuredWithImage;
+            voiceConfiguration.continuousConversationEnabled =
+                parseBoolean(config.get("voice_active_car_gpt_continuous_conversation",
+                                        XWalkVoiceActiveCarGpt::CONTINUOUS_CONVERSATION ? "true" : "false"),
+                             "voice_active_car_gpt_continuous_conversation");
+            voiceConfiguration.conversationIdleTimeoutMs =
+                parseUnsigned(config.get("voice_active_car_gpt_conversation_idle_timeout_ms",
+                                         std::to_string(XWalkVoiceActiveCarGpt::CONVERSATION_IDLE_TIMEOUT_MS)),
+                              "voice_active_car_gpt_conversation_idle_timeout_ms",
+                              300'000U);
+            voiceConfiguration.conversationMaximumRounds =
+                parseUnsigned(config.get("voice_active_car_gpt_conversation_maximum_rounds",
+                                         std::to_string(XWalkVoiceActiveCarGpt::CONVERSATION_MAXIMUM_ROUNDS)),
+                              "voice_active_car_gpt_conversation_maximum_rounds",
+                              100U);
+            voiceConfiguration.conversationMaximumMisses =
+                parseUnsigned(config.get("voice_active_car_gpt_conversation_maximum_misses",
+                                         std::to_string(XWalkVoiceActiveCarGpt::CONVERSATION_MAXIMUM_MISSES)),
+                              "voice_active_car_gpt_conversation_maximum_misses",
+                              10U);
+            voiceConfiguration.sleepPhrases =
+                parsePhraseList(config.get("voice_active_car_gpt_sleep_phrases", XWalkVoiceActiveCarGpt::SLEEP_PHRASES),
+                                "voice_active_car_gpt_sleep_phrases");
+            voiceConfiguration.sleepAcknowledgement =
+                config.get("voice_active_car_gpt_sleep_acknowledgement", XWalkVoiceActiveCarGpt::SLEEP_ACKNOWLEDGEMENT);
+        }
+        else if (mode == XWALK_BOOT_GPT_CAR_REQ)
+        {
+            voiceConfiguration = XWalkGptCar::carConfiguration();
+        }
+        else
+        {
+            voiceConfiguration = XWalkVoiceActiveCar::carConfiguration();
+        }
         hal::XWalkVoiceAssistant voiceAssistant(speechToText, languageModel, textToSpeech, assistantConfiguration);
 
         hal::XWalkMusicAlsa musicBackend(audioBackend, nullptr, hal::XWalkMusicSndFileDecoder::operations());
@@ -192,6 +251,18 @@ namespace xwalk::agent
         hal::XWalkGpioLinux ledBackend(gpioPath.c_str(), chipName, chipLabel, parameters.minLines);
         hal::XWalkGpio ledGpio(&ledBackend, *parameters.gpioOps, config.get("hardware_status_led_pin", "LED"));
         hal::XWalkLed statusLed(ledGpio);
+        XWalkBootServices services{};
+        services.picarx = &picarx;
+        services.voiceAssistant = &voiceAssistant;
+        services.selfDrive = &selfDrive;
+        services.music = &music;
+        services.voiceStatusLed = &statusLed;
+        services.voiceActiveCarConfiguration = &voiceConfiguration;
+        if (jarvisProfile || (voiceConfiguration.withImage == false))
+        {
+            return parameters.callback(parameters.appContext, services);
+        }
+
         const hal::XWalkCameraConnection cameraConnection =
             hal::XWalkCamera::connectionFromString(config.get("camera_connection", "csi"));
         const agent::boolean csiSelected =
@@ -207,12 +278,6 @@ namespace xwalk::agent
             parseUnsigned(config.get("camera_timeout_ms", "5000"), "camera_timeout_ms", 300'000U);
         hal::XWalkCamera camera(&cameraBackend, cameraBackend.callback(), cameraConfiguration);
         XWalkCameraCapture cameraCapture(camera, config.get("camera_output", "/tmp/xwalk-voice-image.jpg"));
-        XWalkBootServices services{};
-        services.picarx = &picarx;
-        services.voiceAssistant = &voiceAssistant;
-        services.selfDrive = &selfDrive;
-        services.music = &music;
-        services.voiceStatusLed = &statusLed;
         services.cameraCapture = &cameraCapture;
         return parameters.callback(parameters.appContext, services);
     }

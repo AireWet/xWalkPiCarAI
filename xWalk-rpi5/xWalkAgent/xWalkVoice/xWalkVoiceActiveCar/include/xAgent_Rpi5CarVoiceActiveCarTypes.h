@@ -22,6 +22,7 @@ namespace xwalk::agent
     using voiceactivecaroutputcallback = void (*)(agent::contextpointer, agent::stringview);
     using voiceactivecarcontinuecallback = agent::boolean (*)(agent::contextpointer);
     using voiceactivecardelaycallback = void (*)(agent::contextpointer, agent::uint32);
+    using voiceactivecarclockcallback = agent::uint64 (*)(agent::contextpointer) noexcept;
     using voiceactivecarimagecallback = agent::string (*)(agent::contextpointer);
     /**
      * @brief Reads one typed prompt for a keyboard-input voice-car profile.
@@ -51,11 +52,12 @@ namespace xwalk::agent
 
     struct XWalkVoiceActiveCarCallbacks
     {
-            voiceactivecaroutputcallback output{nullptr};           /**< Writes one status line. */
-            voiceactivecarcontinuecallback shouldContinue{nullptr}; /**< Controls foreground rounds. */
-            voiceactivecardelaycallback delay{nullptr};             /**< Performs bounded LED timing. */
-            voiceactivecarimagecallback captureImage{nullptr};      /**< Returns an optional image path. */
-            voiceactivecarinputcallback input{nullptr};             /**< Reads one keyboard prompt when selected. */
+            voiceactivecaroutputcallback output{nullptr};               /**< Writes one status line. */
+            voiceactivecarcontinuecallback shouldContinue{nullptr};     /**< Controls foreground rounds. */
+            voiceactivecardelaycallback delay{nullptr};                 /**< Performs bounded LED timing. */
+            voiceactivecarclockcallback monotonicMilliseconds{nullptr}; /**< Reads session idle time. */
+            voiceactivecarimagecallback captureImage{nullptr};          /**< Returns an optional image path. */
+            voiceactivecarinputcallback input{nullptr};                 /**< Reads one keyboard prompt when selected. */
     };
 
     struct XWalkVoiceActiveCarConfiguration
@@ -68,7 +70,13 @@ namespace xwalk::agent
             agent::string answerOnWake{};           /**< Optional response spoken after wake detection. */
             XWalkVoiceActiveCarInputMode inputMode{XWalkVoiceActiveCarInputMode::Voice};
             XWalkVoiceActiveCarResponseFormat responseFormat{XWalkVoiceActiveCarResponseFormat::ActionLines};
-            agent::boolean sensorEnabled{true}; /**< Enables the ultrasonic autonomous prompt. */
+            agent::boolean sensorEnabled{true};                  /**< Enables the ultrasonic autonomous prompt. */
+            agent::boolean continuousConversationEnabled{false}; /**< Keeps bounded follow-up rounds awake. */
+            agent::uint32 conversationIdleTimeoutMs{30'000U};    /**< Active-session idle deadline. */
+            agent::uint32 conversationMaximumRounds{10U};        /**< Successful rounds before wake reset. */
+            agent::uint32 conversationMaximumMisses{3U};         /**< Empty recognitions before wake reset. */
+            agent::stringvector sleepPhrases{};                  /**< Trimmed case-insensitive exit phrases. */
+            agent::string sleepAcknowledgement{};                /**< Optional speech after an explicit exit. */
     };
 
     struct XWalkVoiceActiveCarResponse

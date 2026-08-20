@@ -69,7 +69,36 @@ namespace xwalk::hal
         Endpoint = 1U,
 
         /** @brief Recognition was cancelled and no transcript should be returned. */
-        Cancelled = 2U
+        Cancelled = 2U,
+
+        /** @brief Vosk produced non-empty partial text but has not accepted an endpoint. */
+        SpeechObserved = 3U
+    };
+
+    /**
+     * @struct XWalkSpeechEndpointConfiguration
+     * @brief Configures the bounded fallback used when Vosk lacks endpoint timing setters.
+     *
+     * @details Native Vosk endpoint acceptance remains authoritative. The fallback
+     * arms only after the recognizer reports partial text and then observes bounded
+     * low-level PCM. All durations remain subordinate to the public listen timeout.
+     */
+    struct XWalkSpeechEndpointConfiguration
+    {
+            /** @brief Minimum observed utterance duration before fallback endpointing, in milliseconds. */
+            uint32 minimumSpeechMilliseconds{500U};
+
+            /** @brief Required consecutive low-level PCM after observed speech, in milliseconds. */
+            uint32 trailingSilenceMilliseconds{1'000U};
+
+            /** @brief Maximum observed utterance duration before fallback finalization, in milliseconds. */
+            uint32 maximumUtteranceMilliseconds{15'000U};
+
+            /** @brief Inclusive signed-sixteen peak magnitude classified as low-level PCM. */
+            uint32 silencePeakThreshold{500U};
+
+            /** @brief Enables privacy-sensitive transcript trace output when explicitly configured. */
+            boolean traceTranscript{false};
     };
 
     /**

@@ -76,11 +76,12 @@ namespace xwalk::hal
         api.recognizerNew = loadFunction<voskrecognizernewfunction>(libraryHandle, "vosk_recognizer_new");
         api.acceptWaveform = loadFunction<voskacceptwaveformfunction>(libraryHandle, "vosk_recognizer_accept_waveform");
         api.result = loadFunction<voskresultfunction>(libraryHandle, "vosk_recognizer_result");
+        api.partialResult = loadFunction<voskpartialresultfunction>(libraryHandle, "vosk_recognizer_partial_result");
         api.finalResult = loadFunction<voskfinalresultfunction>(libraryHandle, "vosk_recognizer_final_result");
         api.recognizerFree = loadFunction<voskrecognizerfreefunction>(libraryHandle, "vosk_recognizer_free");
         if ((api.modelNew == nullptr) || (api.modelFree == nullptr) || (api.recognizerNew == nullptr) ||
-            (api.acceptWaveform == nullptr) || (api.result == nullptr) || (api.finalResult == nullptr) ||
-            (api.recognizerFree == nullptr))
+            (api.acceptWaveform == nullptr) || (api.result == nullptr) || (api.partialResult == nullptr) ||
+            (api.finalResult == nullptr) || (api.recognizerFree == nullptr))
         {
             static_cast<void>(::dlclose(libraryHandle));
             libraryHandle = nullptr;
@@ -292,7 +293,19 @@ namespace xwalk::hal
         {
             return XWalkSpeechRecognitionFeedStatus::Cancelled;
         }
-        return (result > 0) ? XWalkSpeechRecognitionFeedStatus::Endpoint : XWalkSpeechRecognitionFeedStatus::Listening;
+        if (result > 0)
+        {
+            return XWalkSpeechRecognitionFeedStatus::Endpoint;
+        }
+        const cstring partialJson = self.api.partialResult(session);
+        if (partialJson == nullptr)
+        {
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Vosk streaming partial result is unavailable");
+        }
+        const string partialText = extractJsonValue(partialJson, "partial");
+        const hal::boolean partialTextAvailable = static_cast<hal::boolean>(partialText.empty() == false);
+        return partialTextAvailable ? XWalkSpeechRecognitionFeedStatus::SpeechObserved
+                                    : XWalkSpeechRecognitionFeedStatus::Listening;
     }
 
     /**
@@ -369,12 +382,24 @@ namespace xwalk::hal
      */
     string XWalkSpeechRecognizerVosk::extractText(stringview jsonResult)
     {
-        const size keyPosition = jsonResult.find("\"text\"");
+        return extractJsonValue(jsonResult, "text");
+    }
+
+    /**
+     * @brief Extracts one unescaped named string from Vosk JSON.
+     * @param[in] jsonResult JSON object returned by the Vosk C API.
+     * @param[in] key Non-empty member name whose string value is requested.
+     * @return Unescaped member value, or an empty string when absent or malformed.
+     */
+    string XWalkSpeechRecognizerVosk::extractJsonValue(stringview jsonResult, stringview key)
+    {
+        const string quotedKey = string{"\""} + string(key) + "\"";
+        const size keyPosition = jsonResult.find(quotedKey);
         if (keyPosition == string::npos)
         {
             return {};
         }
-        const size colonPosition = jsonResult.find(':', keyPosition + 6U);
+        const size colonPosition = jsonResult.find(':', keyPosition + quotedKey.size());
         const size quotePosition = jsonResult.find('"', colonPosition + 1U);
         if ((colonPosition == string::npos) || (quotePosition == string::npos))
         {

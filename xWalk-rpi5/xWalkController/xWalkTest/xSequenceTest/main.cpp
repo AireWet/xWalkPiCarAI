@@ -24,6 +24,7 @@
 #include "xCliTestConfig.h"
 
 #include "xHal_Rpi5CarLinuxHeaders.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 #include "xHal_Rpi5CarTypes.h"
 
 #include <filesystem>
@@ -87,7 +88,11 @@ namespace
         ASSERT_GE(childProcess, 0) << "fork failed for CLI sequence test";
         if (childProcess == 0)
         {
-            ::_exit(function());
+            const int status = function();
+#if defined(XWALK_GCC_COVERAGE)
+            __gcov_dump();
+#endif
+            ::_exit(status);
         }
         int childStatus{};
         const pid_t completedProcess = ::waitpid(childProcess, &childStatus, 0);
@@ -116,7 +121,11 @@ namespace
         ASSERT_GE(childProcess, 0) << "fork failed for CLI sequence test";
         if (childProcess == 0)
         {
-            ::_exit(function(static_cast<int>(arguments.size()), argumentPointers.data()));
+            const int status = function(static_cast<int>(arguments.size()), argumentPointers.data());
+#if defined(XWALK_GCC_COVERAGE)
+            __gcov_dump();
+#endif
+            ::_exit(status);
         }
         int childStatus{};
         const pid_t completedProcess = ::waitpid(childProcess, &childStatus, 0);

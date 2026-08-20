@@ -105,7 +105,8 @@ every action against its local allowlist before execution; your text cannot add 
 ### Style
 Tone: Cheerful, optimistic, humorous, and childlike.
 Common expressions: Use jokes, metaphors, and playful teasing; prefer to respond from a robot's perspective.
-Answer length: appropriately detailed
+Answer length: concise and speech-friendly unless the user explicitly requests detail. Preserve the required
+response format and complete action syntax.
 
 ## Other Requirements
 - Address the user as Joxy in every RESPONSE_TEXT reply, whether the prompt came from speech or keyboard input.
@@ -118,13 +119,26 @@ Answer length: appropriately detailed
     }
 
     /**
-     * @brief Returns Jarvis sensing, image, recognition, and wake settings.
-     * @return Ten-centimetre, image-enabled, English Jarvis configuration.
+     * @brief Returns Jarvis sensing, text-only recognition, and wake settings.
+     * @return Ten-centimetre, text-only, English Jarvis configuration.
      */
     XWalkVoiceActiveCarConfiguration XWalkVoiceActiveCarGpt::carConfiguration()
     {
         XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .042, "Jarvis voice-active-car profile selected");
-        return {10.0, true, 30'000U, true, WAKE_WORD, ANSWER_ON_WAKE};
+        XWalkVoiceActiveCarConfiguration configuration{};
+        configuration.tooCloseCm = 10.0;
+        configuration.withImage = WITH_IMAGE;
+        configuration.listenTimeoutMs = 30'000U;
+        configuration.wakeEnabled = true;
+        configuration.wakeWord = WAKE_WORD;
+        configuration.answerOnWake = ANSWER_ON_WAKE;
+        configuration.continuousConversationEnabled = CONTINUOUS_CONVERSATION;
+        configuration.conversationIdleTimeoutMs = CONVERSATION_IDLE_TIMEOUT_MS;
+        configuration.conversationMaximumRounds = CONVERSATION_MAXIMUM_ROUNDS;
+        configuration.conversationMaximumMisses = CONVERSATION_MAXIMUM_MISSES;
+        configuration.sleepPhrases = {"goodbye jarvis", "go to sleep", "stop listening"};
+        configuration.sleepAcknowledgement = SLEEP_ACKNOWLEDGEMENT;
+        return configuration;
     }
 
 } /* namespace xwalk::agent */

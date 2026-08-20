@@ -238,7 +238,8 @@ namespace xwalk::hal
      *
      * @details
      * Comment lines beginning with `#` and malformed lines without `=` are ignored.
-     * ASCII spaces are removed from a matched value for Robot HAT compatibility.
+     * ASCII spaces are removed from an unquoted matched value for Robot HAT
+     * compatibility. Surrounding double quotes preserve internal spaces.
      *
      * @param[in] name
      * Non-empty key without leading or trailing whitespace that must not contain
@@ -278,7 +279,16 @@ namespace xwalk::hal
             if (targetOptionMatched)
             {
                 result = trim(stringview(line).substr(separator + 1U));
-                result.erase(std::remove(result.begin(), result.end(), ' '), result.end());
+                const hal::boolean quoted = static_cast<hal::boolean>(
+                    (result.size() >= 2U) && (result.front() == '"') && (result.back() == '"'));
+                if (quoted)
+                {
+                    result = result.substr(1U, result.size() - 2U);
+                }
+                else
+                {
+                    result.erase(std::remove(result.begin(), result.end(), ' '), result.end());
+                }
             }
         }
         const string ownedName(name);

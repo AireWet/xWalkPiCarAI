@@ -20,24 +20,29 @@ namespace
 {
     void testVoiceActiveCar(xwalk::agent::test::ControllerCommandTestContext& context)
     {
-        context.state->operationQueryLimit = 10U;
-        context.state->recognitionTranscripts = {"hey rolly", "tell me a joke"};
-        context.state->modelResponses = {"Wheels ready!\nACTIONS: stop"};
+        context.state->operationQueryLimit = 5U;
+        context.state->recognitionTranscripts = {
+            "hey rolly", "tell me a joke", "must require wake", "hey rolly", "tell me another joke"};
+        context.state->modelResponses = {"Wheels ready!\nACTIONS: stop", "Still ready!\nACTIONS: stop"};
         const ctrl::uint32 writes = context.state->i2cWriteCount;
         xwalk::agent::test::XWalkControllerSequence sequence(*context.voiceActiveController);
         assert(sequence.run({{"voice-active-car", "start"}, {"voice-active-car", "stop"}}) == 0);
         assert(context.state->recognitionStopCount > 0U);
-        assert(context.state->recognitionTranscriptIndex == 2U);
-        assert(context.state->modelPrompts.size() == 1U);
+        assert(context.state->recognitionTranscriptIndex == 5U);
+        assert(context.state->modelPrompts.size() == 2U);
         assert(context.state->modelPrompts.front() == "tell me a joke");
+        assert(context.state->modelPrompts.back() == "tell me another joke");
         const ctrl::filesystempath configuredImage =
             ctrl::filesystempath(XWALK_VOICE_ACTIVE_CAR_CONFIG_DIRECTORY) / "voice-active-car.jpg";
-        assert(context.state->modelImagePaths.front() == configuredImage.string());
+        assert(context.state->modelImagePaths ==
+               ctrl::stringvector({configuredImage.string(), configuredImage.string()}));
         assert(xwalk::hal::isReadableRegularFile(configuredImage));
-        assert(context.state->spokenText.size() == 3U);
+        assert(context.state->spokenText.size() == 5U);
         assert(context.state->spokenText[0U] == "Hi, I'm Rolly. Wake me up with: hey rolly");
         assert(context.state->spokenText[1U] == "Hi there");
         assert(context.state->spokenText[2U] == "Wheels ready!");
+        assert(context.state->spokenText[3U] == "Hi there");
+        assert(context.state->spokenText[4U] == "Still ready!");
         assert(context.state->i2cWriteCount > writes);
         assert(context.motors->left().speed() == 0.0);
         assert(xwalk::agent::test::containsOrderedEvents(context.state->eventLog,

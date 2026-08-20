@@ -31,6 +31,8 @@
 #include "xHal_Rpi5CarConfigStore.h"
 
 #include "xHal_Rpi5CarTrace.h"
+#include <charconv>
+#include <cmath>
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -195,6 +197,98 @@ namespace xwalk::agent
             result = (result * 10U) + digit;
         }
         return result;
+    }
+
+    /**
+     * @brief Parses one strict lowercase deployment boolean.
+     * @param[in] value Exact `true` or `false` text.
+     * @param[in] optionName Configuration key included in failures.
+     * @return Parsed boolean.
+     * @throws std::invalid_argument If the value is not a supported boolean.
+     */
+    agent::boolean XWalkBootRpi::parseBoolean(agent::stringview value, agent::stringview optionName)
+    {
+        if (value == "true")
+        {
+            return true;
+        }
+        if (value == "false")
+        {
+            return false;
+        }
+        const std::string exceptionMessage = std::string(optionName).append(" must be true or false");
+        XWALK_RPIAGENT_ERROR(XWALK_INVAL, exceptionMessage);
+    }
+
+    /**
+     * @brief Parses finite positive seconds and converts them to milliseconds.
+     * @param[in] value Decimal seconds without surrounding whitespace.
+     * @param[in] optionName Configuration key included in failures.
+     * @param[in] maximumMilliseconds Inclusive converted upper bound.
+     * @return Rounded-up duration in milliseconds.
+     * @throws std::invalid_argument If the value is malformed or not positive.
+     * @throws std::out_of_range If the converted duration exceeds the bound.
+     */
+    agent::uint32
+    XWalkBootRpi::parseSeconds(agent::stringview value, agent::stringview optionName, agent::uint32 maximumMilliseconds)
+    {
+        agent::float64 seconds{};
+        const char* const begin = value.data();
+        const char* const end = begin + value.size();
+        const std::from_chars_result result = std::from_chars(begin, end, seconds);
+        const agent::boolean invalid =
+            static_cast<agent::boolean>(value.empty() || (result.ec != std::errc{}) || (result.ptr != end) ||
+                                        !std::isfinite(seconds) || (seconds <= 0.0));
+        if (invalid)
+        {
+            const std::string exceptionMessage = std::string(optionName).append(" must be finite positive seconds");
+            XWALK_RPIAGENT_ERROR(XWALK_INVAL, exceptionMessage);
+        }
+        const agent::float64 milliseconds = std::ceil(seconds * 1000.0);
+        if (milliseconds > static_cast<agent::float64>(maximumMilliseconds))
+        {
+            const std::string exceptionMessage = std::string(optionName).append(" exceeds its range");
+            XWALK_RPIAGENT_ERROR(XWALK_RANGE, exceptionMessage);
+        }
+        return static_cast<agent::uint32>(milliseconds);
+    }
+
+    /**
+     * @brief Parses a comma-separated list of trimmed non-empty phrases.
+     * @param[in] value Comma-separated phrase text.
+     * @param[in] optionName Configuration key included in failures.
+     * @return Trimmed phrases in source order.
+     * @throws std::invalid_argument If the list or one phrase is empty.
+     */
+    agent::stringvector XWalkBootRpi::parsePhraseList(agent::stringview value, agent::stringview optionName)
+    {
+        agent::stringvector phrases;
+        agent::size offset{};
+        while (offset <= value.size())
+        {
+            const agent::size comma = value.find(',', offset);
+            const agent::size end = comma == agent::stringview::npos ? value.size() : comma;
+            agent::string phrase(value.substr(offset, end - offset));
+            const agent::size first = phrase.find_first_not_of(" \t\r\n");
+            const agent::size last = phrase.find_last_not_of(" \t\r\n");
+            if ((first == agent::string::npos) || (last == agent::string::npos))
+            {
+                const std::string exceptionMessage = std::string(optionName).append(" contains an empty phrase");
+                XWALK_RPIAGENT_ERROR(XWALK_INVAL, exceptionMessage);
+            }
+            phrases.emplace_back(phrase.substr(first, (last - first) + 1U));
+            if (comma == agent::stringview::npos)
+            {
+                break;
+            }
+            offset = comma + 1U;
+        }
+        if (phrases.empty())
+        {
+            const std::string exceptionMessage = std::string(optionName).append(" must not be empty");
+            XWALK_RPIAGENT_ERROR(XWALK_INVAL, exceptionMessage);
+        }
+        return phrases;
     }
 
     /******************************************************************************

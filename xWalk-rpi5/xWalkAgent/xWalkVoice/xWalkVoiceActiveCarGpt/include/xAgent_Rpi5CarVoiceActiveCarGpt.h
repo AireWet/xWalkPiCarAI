@@ -4,7 +4,7 @@
  *
  * @details
  * Defines the Jarvis identity, Gemini model, Piper voice, wake behavior,
- * proximity threshold, camera setting, and filtered assistant action prompt.
+ * proximity threshold, text-only policy, session limits, and filtered prompt.
  *
  * @project     xWalk Firmware
  * @module      xWalkVoiceActiveCarGpt
@@ -64,12 +64,29 @@ namespace xwalk::agent
             /** @brief British male Piper model path used for spoken Jarvis replies. */
             static constexpr agent::cstring SPEECH_VOICE = "/usr/share/xwalk/models/piper/en_GB-alan-medium.onnx";
             /** @brief Stable Gemini language-model name used by the profile default. */
-            static constexpr agent::cstring MODEL_NAME = "gemini-3.7-flash";
+            static constexpr agent::cstring MODEL_NAME = "gemini-3.6-flash";
             /** @brief Gemini OpenAI-compatible endpoint used when deployment does not override it. */
             static constexpr agent::cstring MODEL_ENDPOINT =
                 "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
             /** @brief Environment variable that exclusively supplies the Gemini credential. */
             static constexpr agent::cstring API_KEY_ENVIRONMENT = "GEMINI_API_KEY";
+            /** @brief Maximum Gemini tokens retained for concise spoken output. */
+            static constexpr agent::uint32 MAXIMUM_OUTPUT_TOKENS = 256U;
+            /** @brief Permanent text-only image policy for Jarvis. */
+            static constexpr agent::boolean WITH_IMAGE = false;
+            /** @brief Enables bounded wake-free follow-up requests by default. */
+            static constexpr agent::boolean CONTINUOUS_CONVERSATION = true;
+            /** @brief Active conversation idle timeout in milliseconds. */
+            static constexpr agent::uint32 CONVERSATION_IDLE_TIMEOUT_MS = 30'000U;
+            /** @brief Maximum successful requests in one active conversation. */
+            static constexpr agent::uint32 CONVERSATION_MAXIMUM_ROUNDS = 10U;
+            /** @brief Maximum consecutive recognition misses in one conversation. */
+            static constexpr agent::uint32 CONVERSATION_MAXIMUM_MISSES = 3U;
+            /** @brief Comma-separated default phrases that return Jarvis to wake mode. */
+            static constexpr agent::cstring SLEEP_PHRASES = "goodbye jarvis,go to sleep,stop listening";
+            /** @brief Default acknowledgement spoken after an explicit sleep phrase. */
+            static constexpr agent::cstring SLEEP_ACKNOWLEDGEMENT =
+                "Going to sleep. Say hey Jarvis when you need me, Joxy.";
             /** @brief Configured case-insensitive wake phrase. */
             static constexpr agent::cstring WAKE_WORD = "hey jarvis";
             /** @brief Response spoken when the Jarvis wake phrase is detected. */
@@ -82,8 +99,8 @@ namespace xwalk::agent
             static hal::XWalkVoiceAssistantConfiguration assistantConfiguration();
 
             /**
-             * @brief Returns Jarvis sensing, image, recognition, and wake settings.
-             * @return Ten-centimetre, image-enabled, English Jarvis configuration.
+             * @brief Returns Jarvis sensing, text-only recognition, and wake settings.
+             * @return Text-only, continuous, bounded English Jarvis configuration.
              */
             static XWalkVoiceActiveCarConfiguration carConfiguration();
     };

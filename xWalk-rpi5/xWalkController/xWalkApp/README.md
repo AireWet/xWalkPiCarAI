@@ -393,7 +393,7 @@ Rolly and Jarvis profiles. Each accepts only `start` or `stop`. The
 `voice_active_car.py` Rolly profile requires `hey rolly`, answers `Hi there`,
 uses image input and OpenAI `gpt-4o-mini`, and reads its credential exclusively
 from `OPENAI_API_KEY`. The Jarvis profile requires `hey jarvis`, answers
-`Systems online. Ready when you are, Joxy.`, uses Gemini `gemini-3.7-flash` with `GEMINI_API_KEY`, and
+`Systems online. Ready when you are, Joxy.`, uses Gemini `gemini-3.6-flash` with `GEMINI_API_KEY`, and
 speaks through Piper `en_GB-alan-medium`. The RPi graph adds Music, SelfDrive,
 the Robot HAT status LED, and still-image capture. Set
 `camera_connection` to `csi` for the Raspberry Pi camera connector or `usb` for

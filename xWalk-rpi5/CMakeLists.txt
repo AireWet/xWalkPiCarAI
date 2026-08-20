@@ -31,7 +31,9 @@ function(xwalk_read_rpi_default default_name)
         message(FATAL_ERROR
             "${XWALK_RPI_DEFAULTS_FILE} must define ${default_name} exactly once")
     endif()
-    string(REGEX REPLACE "^[^=]+=" "" default_value "${default_entry}")
+    string(FIND "${default_entry}" "=" default_separator)
+    math(EXPR default_value_offset "${default_separator} + 1")
+    string(SUBSTRING "${default_entry}" ${default_value_offset} -1 default_value)
     set(${default_name} "${default_value}" PARENT_SCOPE)
 endfunction()
 
@@ -41,6 +43,10 @@ xwalk_read_rpi_default(XWALK_DEFAULT_RPI_GPIO_DEVICE)
 xwalk_read_rpi_default(XWALK_DEFAULT_RPI_I2C_DEVICE)
 xwalk_read_rpi_default(XWALK_DEFAULT_RPI_SPI_DEVICE)
 xwalk_read_rpi_default(XWALK_DEFAULT_RPI_CAMERA)
+xwalk_read_rpi_default(XWALK_DEFAULT_RPI_VOICE_CAPTURE_DEVICE)
+xwalk_read_rpi_default(XWALK_DEFAULT_RPI_VOICE_MIXER_DEVICE)
+xwalk_read_rpi_default(XWALK_DEFAULT_RPI_VOICE_MIXER_ELEMENT)
+xwalk_read_rpi_default(XWALK_DEFAULT_RPI_PIPER_EXECUTABLE)
 
 set(XWALK_RPI_PROFILE "${XWALK_DEFAULT_RPI_PROFILE}" CACHE STRING
     "Explicit Robot HAT profile used by the opt-in Raspberry Pi provisioner")
@@ -56,6 +62,14 @@ set(XWALK_RPI_SPI_DEVICE "${XWALK_DEFAULT_RPI_SPI_DEVICE}" CACHE FILEPATH
 set(XWALK_RPI_CAMERA "${XWALK_DEFAULT_RPI_CAMERA}" CACHE STRING
     "Camera connection used by the opt-in Raspberry Pi provisioner")
 set_property(CACHE XWALK_RPI_CAMERA PROPERTY STRINGS csi usb)
+set(XWALK_RPI_VOICE_CAPTURE_DEVICE "${XWALK_DEFAULT_RPI_VOICE_CAPTURE_DEVICE}" CACHE STRING
+    "ALSA microphone selected in the generated Raspberry Pi runtime")
+set(XWALK_RPI_VOICE_MIXER_DEVICE "${XWALK_DEFAULT_RPI_VOICE_MIXER_DEVICE}" CACHE STRING
+    "ALSA mixer selected in the generated Raspberry Pi runtime")
+set(XWALK_RPI_VOICE_MIXER_ELEMENT "${XWALK_DEFAULT_RPI_VOICE_MIXER_ELEMENT}" CACHE STRING
+    "ALSA mixer element selected in the generated Raspberry Pi runtime")
+set(XWALK_RPI_PIPER_EXECUTABLE "${XWALK_DEFAULT_RPI_PIPER_EXECUTABLE}" CACHE FILEPATH
+    "Piper executable selected in the generated Raspberry Pi runtime")
 option(XWALK_RPI_WITH_VOSK "Install repository-controlled Vosk assets while provisioning" ON)
 option(XWALK_RPI_WITH_OLLAMA "Install and configure the user-local Ollama runtime while provisioning" ON)
 
@@ -139,6 +153,10 @@ if(XWALK_BUILD_RPI)
             --i2c-device "${XWALK_RPI_I2C_DEVICE}"
             --spi-device "${XWALK_RPI_SPI_DEVICE}"
             --camera "${XWALK_RPI_CAMERA}"
+            --voice-capture-device "${XWALK_RPI_VOICE_CAPTURE_DEVICE}"
+            --voice-mixer-device "${XWALK_RPI_VOICE_MIXER_DEVICE}"
+            --voice-mixer-element "${XWALK_RPI_VOICE_MIXER_ELEMENT}"
+            --piper-executable "${XWALK_RPI_PIPER_EXECUTABLE}"
             --initialize-only
         RESULT_VARIABLE XWALK_RPI_RUNTIME_GENERATION_RESULT
         OUTPUT_VARIABLE XWALK_RPI_RUNTIME_GENERATION_OUTPUT

@@ -46,6 +46,7 @@ namespace xwalk::agent::test
             ::ctrl::string backgroundMusicFile{};          /**< Last streamed-music path. */
             ::ctrl::stringvector spokenText{};             /**< Text reaching the simulated speech HAL. */
             ::ctrl::stringvector recognitionTranscripts{}; /**< Scripted recognition results. */
+            ::ctrl::uint32vector recognitionDurationsMs{}; /**< Simulated time consumed by each recognition. */
             ::ctrl::size recognitionTranscriptIndex{};     /**< Next scripted recognition result. */
             ::ctrl::uint32 recognitionStopCount{};         /**< Speech-recognition stop calls. */
             ::ctrl::uint32 speakerPrimeCount{};            /**< Board speaker-prime calls. */

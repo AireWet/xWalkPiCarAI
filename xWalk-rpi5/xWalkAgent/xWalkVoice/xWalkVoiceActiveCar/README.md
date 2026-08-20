@@ -21,6 +21,19 @@ trigger, image-enabled rounds, English recognition setting, OpenAI
 response parser, and preset-action dispatch. The OpenAI credential is read
 only from `OPENAI_API_KEY` by the Raspberry Pi composition.
 
+The shared coordinator also supports opt-in bounded continuous conversation.
+A wake phrase opens the session, follow-up prompts are accepted without another
+wake phrase, and the existing language-model object retains its configured
+history. Idle time, successful-round count, and consecutive recognition misses
+bound the session. A trimmed case-insensitive sleep phrase ends the session
+before model, camera, or action processing. Every session exit, cancellation,
+and terminal error stops vehicle output. Profiles that leave continuous mode
+disabled retain the original wake-before-every-request behavior.
+
+Image attachment is a profile setting. Disabled profiles do not call the image
+callback; the Raspberry Pi composition also avoids constructing the still-camera
+provider, eliminating camera startup and capture timeout from text-only rounds.
+
 The module-local `config/voice-active-car.jpg` is the deterministic host image.
 Its directory is selected by `XWALK_VOICE_ACTIVE_CAR_CONFIG_DIRECTORY`; tests
 load and validate that JPEG instead of referring to `/tmp`. Physical camera

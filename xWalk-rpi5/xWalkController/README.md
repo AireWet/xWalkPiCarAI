@@ -41,9 +41,10 @@ prompts and OpenAI `gpt-4o`; its credential comes only from `OPENAI_API_KEY`.
 The interactive `treasure-hunt` command ports example 20 with six random color
 targets, Pico2Wave prompts, bounded keyboard driving, and OpenCV detection.
 The `voice-active-car-gpt start|stop` command adapts example 21 as Jarvis with
-the `hey jarvis` wake phrase, Gemini `gemini-3.7-flash`, the British male Piper
-voice `en_GB-alan-medium`, spoken speaker replies, image input, sensor triggers,
-and locally filtered actions.
+the `hey jarvis` wake phrase, Gemini `gemini-3.6-flash`, the British male Piper
+voice `en_GB-alan-medium`, spoken speaker replies, sensor triggers, and locally
+filtered actions. Jarvis is permanently text-only after speech
+transcription; Rolly, GPT-car, and vision commands retain camera input.
 The `voice-active-car start|stop` command ports `voice_active_car.py` with the
 Rolly profile, `hey rolly` wake phrase, image input, ultrasonic safety trigger,
 OpenAI `gpt-4o-mini`, and `OPENAI_API_KEY` credential boundary.
@@ -108,6 +109,12 @@ Configure the Raspberry Pi release:
 cd /repo/joxjoh24/xWalkPiCarAI
 cmake --fresh -S xWalk-rpi5 --preset rpi-release
 ```
+
+The generated runtime selects the USB microphone, PulseAudio `Master`, and the
+configured Piper executable without changing the portable tracked defaults.
+Use the `XWALK_RPI_VOICE_CAPTURE_DEVICE`, `XWALK_RPI_VOICE_MIXER_DEVICE`,
+`XWALK_RPI_VOICE_MIXER_ELEMENT`, and `XWALK_RPI_PIPER_EXECUTABLE` CMake cache
+values when a Raspberry Pi deployment uses different audio devices or paths.
 
 Build and list the hardware tests:
 

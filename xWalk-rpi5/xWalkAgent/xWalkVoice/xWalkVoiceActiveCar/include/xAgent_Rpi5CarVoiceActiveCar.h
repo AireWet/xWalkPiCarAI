@@ -50,12 +50,32 @@ namespace xwalk::agent
             agent::contextpointer callbackContext{nullptr};
             XWalkVoiceActiveCarCallbacks callbacks{};
             XWalkVoiceActiveCarConfiguration configuration{};
-            /** @brief True after wake recognition until one ordinary model round completes. */
+            /** @brief True while ordinary input may proceed without a new wake phrase. */
             agent::boolean wakeDetectedValue{};
+            /** @brief True while bounded wake-free follow-up recognition is active. */
+            agent::boolean conversationActiveValue{};
+            /** @brief Successful model rounds completed in the active conversation. */
+            agent::uint32 conversationRoundCount{};
+            /** @brief Consecutive empty recognitions observed in the active conversation. */
+            agent::uint32 conversationMissCount{};
+            /** @brief Absolute monotonic deadline for the next active-session request. */
+            agent::uint64 conversationDeadlineMs{};
 
         protected:
             static void validate(const XWalkVoiceActiveCarCallbacks& backendCallbacks,
                                  const XWalkVoiceActiveCarConfiguration& carConfiguration);
+            /** @brief Trims surrounding ASCII whitespace from one text view. */
+            static agent::string trimText(agent::stringview text);
+            /** @brief Returns a trimmed lowercase phrase for case-insensitive policy matching. */
+            static agent::string normalizePhrase(agent::stringview text);
+            /** @brief Reports whether one prompt exactly matches a configured sleep phrase. */
+            agent::boolean isSleepPhrase(agent::stringview text) const;
+            /** @brief Starts one bounded wake-free follow-up conversation. */
+            void startConversation();
+            /** @brief Returns to wake mode and stops any active vehicle output. */
+            void endConversation(agent::boolean acknowledge);
+            /** @brief Returns the current bounded recognition timeout or zero after idle expiry. */
+            agent::uint32 conversationListenTimeout();
             void blink(agent::uint32 count, agent::uint32 toggleDelayMs, agent::uint32 pauseMs);
             /**
              * @brief Queues parsed model actions for serialized worker execution.
@@ -109,7 +129,7 @@ namespace xwalk::agent
             /**
              * @brief Runs sensor-aware voice rounds until cancellation.
              * @return Zero after normal cancellation; one after action-worker failure.
-             * @note Wake-enabled profiles require their phrase before each ordinary model round.
+             * @note Continuous profiles retain wake state only within configured session bounds.
              */
             agent::int32 run();
             /** @brief Stops voice, action, vehicle, and LED activity. */

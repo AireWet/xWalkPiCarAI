@@ -49,6 +49,41 @@ namespace
         requireTestCondition(!backend.endpointFinalized);
     }
 
+    /** @brief Verifies observed Vosk speech plus trailing low-level PCM triggers bounded fallback completion. */
+    void testTrailingSilenceFallback()
+    {
+        TestStreamingBackend backend;
+        backend.speechAfterFeed = 1U;
+        backend.lowLevelAfterRead = 2U;
+        XWalkSpeechEndpointConfiguration endpointConfiguration;
+        endpointConfiguration.minimumSpeechMilliseconds = 64U;
+        endpointConfiguration.trailingSilenceMilliseconds = 128U;
+        endpointConfiguration.maximumUtteranceMilliseconds = 1'000U;
+        XWalkSpeechToTextAlsa adapter(&backend, streamingOperations(), "test-mic", endpointConfiguration);
+        XWalkSpeechToText speech(&adapter, adapter.callbacks());
+        requireTestCondition(speech.listen(1'000U) == "recognized microphone");
+        requireTestCondition(backend.readCount == 3U);
+        requireTestCondition(backend.feedCount == 3U);
+        requireTestCondition(!backend.endpointFinalized);
+    }
+
+    /** @brief Verifies quiet initial PCM never arms fallback endpointing without recognizer-observed speech. */
+    void testQuietInitialInputDoesNotEndpoint()
+    {
+        TestStreamingBackend backend;
+        backend.lowLevelAfterRead = 1U;
+        XWalkSpeechEndpointConfiguration endpointConfiguration;
+        endpointConfiguration.minimumSpeechMilliseconds = 64U;
+        endpointConfiguration.trailingSilenceMilliseconds = 64U;
+        endpointConfiguration.maximumUtteranceMilliseconds = 1'000U;
+        XWalkSpeechToTextAlsa adapter(&backend, streamingOperations(), "test-mic", endpointConfiguration);
+        XWalkSpeechToText speech(&adapter, adapter.callbacks());
+        requireTestCondition(speech.listen(128U) == "recognized microphone");
+        requireTestCondition(backend.readCount == 2U);
+        requireTestCondition(backend.feedCount == 2U);
+        requireTestCondition(!backend.endpointFinalized);
+    }
+
     /** @brief Verifies that a finalized silent session preserves an empty transcript. */
     void testSilenceReturnsEmpty()
     {
@@ -142,6 +177,20 @@ namespace
             {
                 XWalkSpeechToTextAlsa adapter(&backend, incomplete, "test-mic");
             });
+        XWalkSpeechEndpointConfiguration invalidEndpoint;
+        invalidEndpoint.silencePeakThreshold = 0U;
+        expectFailure(
+            [&]()
+            {
+                XWalkSpeechToTextAlsa adapter(&backend, streamingOperations(), "test-mic", invalidEndpoint);
+            });
+        invalidEndpoint.silencePeakThreshold = 500U;
+        invalidEndpoint.trailingSilenceMilliseconds = 16'000U;
+        expectFailure(
+            [&]()
+            {
+                XWalkSpeechToTextAlsa adapter(&backend, streamingOperations(), "test-mic", invalidEndpoint);
+            });
         expectFailure(
             [&]()
             {
@@ -155,6 +204,8 @@ XWalkHal::int32 main()
 {
     testIncrementalEndpoint();
     testTimeoutFinalizesPartial();
+    testTrailingSilenceFallback();
+    testQuietInitialInputDoesNotEndpoint();
     testSilenceReturnsEmpty();
     testCaptureRecovery();
     testRecoveryFailureIsBounded();

@@ -90,9 +90,19 @@ coordinator lifetime.
 recognition session for each bounded listen request. It captures 16 kHz mono
 signed-16 PCM in reads of no more than 1,024 frames and feeds every completed
 period immediately to the selected recognizer. Vosk endpoint acceptance after
-speech and trailing silence ends the listen and returns the accepted result;
-the requested timeout is a hard upper bound that finalizes any partial
-utterance. PCM is not accumulated for the duration of a streaming listen.
+speech and trailing silence ends the listen and returns the accepted result.
+The deployed Vosk 0.3.45 C API has no endpoint-timing setter, so the adapter
+also provides a bounded fallback. The fallback arms only after Vosk returns a
+non-empty partial transcript, then applies configured minimum-speech,
+trailing-low-level, and maximum-utterance periods. Quiet initial input cannot
+arm it. The requested timeout remains the hard upper bound and finalizes any
+partial utterance. PCM is not accumulated for the duration of a streaming
+listen.
+
+Normal traces report session start, endpoint source, hard-timeout finalization,
+empty recognition, and transcript length. Transcript contents remain private
+unless `voice_vosk_trace_transcript = true` is explicitly selected for local
+diagnosis. Do not enable content tracing in shared or production environments.
 
 Cancellation is observed between bounded ALSA reads and by the Vosk provider.
 Scope-bound guards close the capture handle and release the recognition session
@@ -155,7 +165,9 @@ Reusable core callback state and functions live in
 The host simulation and core tests use a generated XML catalogue. For example,
 `--trace RPI.363.enable` saves the enabled state, and a later no-flag run loads
 it automatically. Enabled records are written to the terminal and log. Speech
-text, transcripts, captured PCM, and credentials are never included.
+text and transcripts are excluded by default; captured PCM and credentials are
+always excluded. Transcript content is emitted only through the explicit
+privacy-sensitive diagnostic setting described above.
 
 ## Safe host simulation
 

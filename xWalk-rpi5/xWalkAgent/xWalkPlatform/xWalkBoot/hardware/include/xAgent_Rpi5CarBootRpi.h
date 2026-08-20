@@ -82,6 +82,13 @@ namespace xwalk::agent
             /** @brief Parses one bounded unsigned decimal deployment value. */
             static agent::uint32
             parseUnsigned(agent::stringview value, agent::stringview optionName, agent::uint32 maximum);
+            /** @brief Parses one strict lowercase deployment boolean. */
+            static agent::boolean parseBoolean(agent::stringview value, agent::stringview optionName);
+            /** @brief Parses finite positive seconds and converts them to milliseconds. */
+            static agent::uint32
+            parseSeconds(agent::stringview value, agent::stringview optionName, agent::uint32 maximumMilliseconds);
+            /** @brief Parses a comma-separated list of trimmed non-empty phrases. */
+            static agent::stringvector parsePhraseList(agent::stringview value, agent::stringview optionName);
             /** @brief Applies fail-safe automatic or explicit Robot HAT selection. */
             static hal::XWalkDeviceInformation selectBoard(const hal::XWalkDeviceInformation& detectedInformation,
                                                            agent::stringview requestedBoard);

@@ -36,14 +36,21 @@ int main()
            xwalk::agent::string::npos);
     assert(assistant.welcome == "Hi, I'm Jarvis. Wake me up with: hey jarvis");
     assert(car.tooCloseCm == 10.0);
-    assert(car.withImage);
+    assert(!car.withImage);
+    assert(xwalk::agent::XWalkVoiceActiveCarGpt::MAXIMUM_OUTPUT_TOKENS == 256U);
     assert(car.listenTimeoutMs == 30'000U);
     assert(car.wakeEnabled);
     assert(car.wakeWord == "hey jarvis");
     assert(xwalk::agent::XWalkVoiceActiveCar::matchesWakePhrase("noise HEY JARVIS trailing", car.wakeWord));
     assert(car.answerOnWake == "Systems online. Ready when you are, Joxy.");
+    assert(car.continuousConversationEnabled);
+    assert(car.conversationIdleTimeoutMs == 30'000U);
+    assert(car.conversationMaximumRounds == 10U);
+    assert(car.conversationMaximumMisses == 3U);
+    assert(car.sleepPhrases == xwalk::agent::stringvector({"goodbye jarvis", "go to sleep", "stop listening"}));
+    assert(assistant.instructions.find("concise and speech-friendly") != xwalk::agent::string::npos);
     assert(xwalk::agent::string(xwalk::agent::XWalkVoiceActiveCarGpt::NAME) == "Jarvis");
-    assert(xwalk::agent::string(xwalk::agent::XWalkVoiceActiveCarGpt::MODEL_NAME) == "gemini-3.7-flash");
+    assert(xwalk::agent::string(xwalk::agent::XWalkVoiceActiveCarGpt::MODEL_NAME) == "gemini-3.6-flash");
     assert(xwalk::agent::string(xwalk::agent::XWalkVoiceActiveCarGpt::API_KEY_ENVIRONMENT) == "GEMINI_API_KEY");
     assert(xwalk::agent::string(xwalk::agent::XWalkVoiceActiveCarGpt::MODEL_ENDPOINT) ==
            "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions");

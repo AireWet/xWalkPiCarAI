@@ -13,26 +13,12 @@
 
 #include "xAgent_Rpi5CarVoiceActiveCar.h"
 
+#include "xAgent_Rpi5CarPicarxSafetyGuard.h"
+
 #include "xHal_Rpi5CarCommonFunctions.h"
 
 #include "xHal_Rpi5CarTrace.h"
 #include <cctype>
-
-namespace
-{
-
-    agent::string trim(agent::stringview text)
-    {
-        const agent::size first = text.find_first_not_of(" \t\r\n");
-        if (first == agent::string::npos)
-        {
-            return {};
-        }
-        const agent::size last = text.find_last_not_of(" \t\r\n");
-        return agent::string(text.substr(first, (last - first) + 1U));
-    }
-
-} /* namespace */
 
 namespace xwalk::agent
 {
@@ -53,6 +39,7 @@ namespace xwalk::agent
 
     agent::int32 XWalkVoiceActiveCar::run()
     {
+        XWalkPicarxSafetyGuard safetyGuard(*picarxObject);
         selfDriveObject->start();
         ledObject->off();
         assistantObject->start();
@@ -66,10 +53,21 @@ namespace xwalk::agent
             {
                 break;
             }
+            if (conversationActiveValue)
+            {
+                const agent::uint32 activeListenTimeout = conversationListenTimeout();
+                if (activeListenTimeout == 0U)
+                {
+                    endConversation(false);
+                    continue;
+                }
+            }
             agent::string prompt;
+            agent::boolean ordinaryPrompt{true};
             if (configuration.sensorEnabled)
             {
                 prompt = sensorPrompt();
+                ordinaryPrompt = static_cast<agent::boolean>(prompt.empty());
             }
             agent::string imagePath;
             const agent::boolean promptEmpty = static_cast<agent::boolean>(prompt.empty());
@@ -82,11 +80,29 @@ namespace xwalk::agent
                 }
                 else
                 {
-                    prompt = assistantObject->listen(configuration.listenTimeoutMs);
+                    const agent::uint32 listenTimeout = conversationListenTimeout();
+                    if (listenTimeout == 0U)
+                    {
+                        endConversation(false);
+                        continue;
+                    }
+                    prompt = assistantObject->listen(listenTimeout);
                 }
                 const agent::boolean receivedPromptEmpty = static_cast<agent::boolean>(prompt.empty());
                 if (receivedPromptEmpty)
                 {
+                    if (conversationActiveValue)
+                    {
+                        ++conversationMissCount;
+                        const agent::boolean retryLimitReached = static_cast<agent::boolean>(
+                            conversationMissCount >= configuration.conversationMaximumMisses);
+                        const agent::boolean idleExpired =
+                            static_cast<agent::boolean>(conversationListenTimeout() == 0U);
+                        if (retryLimitReached || idleExpired)
+                        {
+                            endConversation(false);
+                        }
+                    }
                     continue;
                 }
                 if (configuration.wakeEnabled && !wakeDetectedValue)
@@ -95,12 +111,24 @@ namespace xwalk::agent
                     if (wakePhraseMatched)
                     {
                         wakeDetectedValue = true;
+                        if (configuration.continuousConversationEnabled)
+                        {
+                            startConversation();
+                        }
                         ledObject->on();
                         assistantObject->say(configuration.answerOnWake);
                         ledObject->off();
                         XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .011,
                                                   "Voice-active-car wake phrase accepted and acknowledged");
                     }
+                    continue;
+                }
+                conversationMissCount = 0U;
+                const agent::boolean sleepRequested =
+                    static_cast<agent::boolean>(conversationActiveValue && isSleepPhrase(prompt));
+                if (sleepRequested)
+                {
+                    endConversation(true);
                     continue;
                 }
                 if (configuration.withImage && (callbacks.captureImage != nullptr))
@@ -128,7 +156,25 @@ namespace xwalk::agent
             }
             XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .013, "Voice-active-car assistant round completed");
             ledObject->off();
-            wakeDetectedValue = !configuration.wakeEnabled;
+            if (conversationActiveValue && ordinaryPrompt)
+            {
+                ++conversationRoundCount;
+                const agent::boolean roundLimitReached =
+                    static_cast<agent::boolean>(conversationRoundCount >= configuration.conversationMaximumRounds);
+                if (roundLimitReached)
+                {
+                    endConversation(false);
+                }
+                else
+                {
+                    const agent::uint64 currentMilliseconds = callbacks.monotonicMilliseconds(callbackContext);
+                    conversationDeadlineMs = currentMilliseconds + configuration.conversationIdleTimeoutMs;
+                }
+            }
+            else if (ordinaryPrompt)
+            {
+                wakeDetectedValue = !configuration.wakeEnabled;
+            }
         }
         stop();
         return 0;
@@ -141,6 +187,10 @@ namespace xwalk::agent
         picarxObject->close();
         ledObject->off();
         wakeDetectedValue = !configuration.wakeEnabled;
+        conversationActiveValue = false;
+        conversationRoundCount = 0U;
+        conversationMissCount = 0U;
+        conversationDeadlineMs = 0U;
     }
 
     XWalkVoiceActiveCarResponse XWalkVoiceActiveCar::parseResponse(agent::stringview response)
@@ -148,10 +198,10 @@ namespace xwalk::agent
         constexpr agent::stringview delimiter{"ACTIONS: "};
         const agent::size actionStart = response.find(delimiter);
         XWalkVoiceActiveCarResponse result;
-        result.text = trim(response.substr(0U, actionStart));
+        result.text = trimText(response.substr(0U, actionStart));
         if (actionStart != agent::string::npos)
         {
-            agent::string actions = trim(response.substr(actionStart + delimiter.size()));
+            agent::string actions = trimText(response.substr(actionStart + delimiter.size()));
             const agent::boolean actionParsingRequested{true};
             while (actionParsingRequested)
             {
@@ -161,7 +211,7 @@ namespace xwalk::agent
                     break;
                 }
                 const agent::size separator = actions.find(", ");
-                result.actions.push_back(trim(actions.substr(0U, separator)));
+                result.actions.push_back(trimText(actions.substr(0U, separator)));
                 if (separator == agent::string::npos)
                 {
                     actions.clear();
@@ -320,7 +370,7 @@ namespace xwalk::agent
         const agent::boolean responseEmpty = static_cast<agent::boolean>(result.text.empty() && result.actions.empty());
         if (responseEmpty)
         {
-            result.text = trim(response);
+            result.text = trimText(response);
         }
         return result;
     }
@@ -452,6 +502,115 @@ namespace xwalk::agent
         return normalizedText.find(normalizedWakeWord) != agent::string::npos;
     }
 
+    /**
+     * @brief Trims surrounding ASCII whitespace from one text view.
+     * @param[in] text Text retained only for this synchronous call.
+     * @return Owned trimmed text, or an empty string when no non-whitespace character exists.
+     */
+    agent::string XWalkVoiceActiveCar::trimText(agent::stringview text)
+    {
+        const agent::size first = text.find_first_not_of(" \t\r\n");
+        if (first == agent::string::npos)
+        {
+            return {};
+        }
+        const agent::size last = text.find_last_not_of(" \t\r\n");
+        return agent::string(text.substr(first, (last - first) + 1U));
+    }
+
+    /**
+     * @brief Normalizes one policy phrase for exact case-insensitive comparison.
+     * @param[in] text Phrase retained only for this synchronous call.
+     * @return Owned trimmed lowercase phrase.
+     */
+    agent::string XWalkVoiceActiveCar::normalizePhrase(agent::stringview text)
+    {
+        agent::string normalized = trimText(text);
+        for (char& value : normalized)
+        {
+            value = static_cast<char>(std::tolower(static_cast<unsigned char>(value)));
+        }
+        return normalized;
+    }
+
+    /**
+     * @brief Checks one prompt against every configured sleep phrase.
+     * @param[in] text Recognized prompt retained only for this synchronous call.
+     * @return `true` for an exact trimmed case-insensitive sleep-phrase match.
+     */
+    agent::boolean XWalkVoiceActiveCar::isSleepPhrase(agent::stringview text) const
+    {
+        const agent::string normalizedText = normalizePhrase(text);
+        for (const agent::string& phrase : configuration.sleepPhrases)
+        {
+            const agent::boolean phraseMatched = static_cast<agent::boolean>(normalizedText == normalizePhrase(phrase));
+            if (phraseMatched)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @brief Starts one bounded continuous conversation after wake recognition.
+     * @post Follow-up prompts are accepted until an idle, round, miss, sleep, or shutdown boundary.
+     */
+    void XWalkVoiceActiveCar::startConversation()
+    {
+        conversationActiveValue = true;
+        conversationRoundCount = 0U;
+        conversationMissCount = 0U;
+        const agent::uint64 currentMilliseconds = callbacks.monotonicMilliseconds(callbackContext);
+        conversationDeadlineMs = currentMilliseconds + configuration.conversationIdleTimeoutMs;
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .088, "Voice-active-car continuous conversation started");
+    }
+
+    /**
+     * @brief Returns to wake mode and stops vehicle movement.
+     * @param[in] acknowledge `true` to speak the configured explicit-sleep acknowledgement.
+     * @post Continuous-session counters are cleared and later ordinary input requires the wake phrase.
+     */
+    void XWalkVoiceActiveCar::endConversation(agent::boolean acknowledge)
+    {
+        picarxObject->stop();
+        conversationActiveValue = false;
+        conversationRoundCount = 0U;
+        conversationMissCount = 0U;
+        conversationDeadlineMs = 0U;
+        wakeDetectedValue = !configuration.wakeEnabled;
+        ledObject->off();
+        const agent::boolean acknowledgementAvailable =
+            static_cast<agent::boolean>(acknowledge && !configuration.sleepAcknowledgement.empty());
+        if (acknowledgementAvailable)
+        {
+            assistantObject->say(configuration.sleepAcknowledgement);
+        }
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .089, "Voice-active-car continuous conversation ended safely");
+    }
+
+    /**
+     * @brief Bounds one recognition request by the active conversation deadline.
+     * @return Non-zero listen timeout in milliseconds, or zero after idle expiry.
+     */
+    agent::uint32 XWalkVoiceActiveCar::conversationListenTimeout()
+    {
+        if (conversationActiveValue == false)
+        {
+            return configuration.listenTimeoutMs;
+        }
+        const agent::uint64 currentMilliseconds = callbacks.monotonicMilliseconds(callbackContext);
+        if (currentMilliseconds >= conversationDeadlineMs)
+        {
+            XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .090, "Voice-active-car conversation idle timeout reached");
+            return 0U;
+        }
+        const agent::uint64 remainingMilliseconds = conversationDeadlineMs - currentMilliseconds;
+        const agent::uint64 configuredTimeout = configuration.listenTimeoutMs;
+        const agent::uint64 boundedTimeout = std::min(remainingMilliseconds, configuredTimeout);
+        return static_cast<agent::uint32>(boundedTimeout);
+    }
+
     void XWalkVoiceActiveCar::validate(const XWalkVoiceActiveCarCallbacks& backendCallbacks,
                                        const XWalkVoiceActiveCarConfiguration& carConfiguration)
     {
@@ -464,6 +623,36 @@ namespace xwalk::agent
             (backendCallbacks.input == nullptr))
         {
             XWALK_RPIAGENT_ERROR(XWALK_INVAL, "Voice-active-car keyboard input callback is required");
+        }
+        const agent::boolean continuousConfigurationInvalid = static_cast<agent::boolean>(
+            carConfiguration.continuousConversationEnabled &&
+            ((!carConfiguration.wakeEnabled) || (backendCallbacks.monotonicMilliseconds == nullptr) ||
+             (carConfiguration.conversationIdleTimeoutMs == 0U) ||
+             (carConfiguration.conversationIdleTimeoutMs > XHAL_RPI5CAR_SPEECH_TO_TEXT_MAXIMUM_TIMEOUT_MS) ||
+             (carConfiguration.conversationMaximumRounds == 0U) ||
+             (carConfiguration.conversationMaximumRounds > 100U) ||
+             (carConfiguration.conversationMaximumMisses == 0U) || (carConfiguration.conversationMaximumMisses > 10U) ||
+             carConfiguration.sleepPhrases.empty()));
+        if (continuousConfigurationInvalid)
+        {
+            XWALK_RPIAGENT_ERROR(XWALK_RANGE, "Voice-active-car conversation configuration is outside its range");
+        }
+        for (agent::size index{}; index < carConfiguration.sleepPhrases.size(); ++index)
+        {
+            const agent::string normalizedPhrase = normalizePhrase(carConfiguration.sleepPhrases[index]);
+            if (normalizedPhrase.empty())
+            {
+                XWALK_RPIAGENT_ERROR(XWALK_INVAL, "Voice-active-car sleep phrases must not be empty");
+            }
+            for (agent::size prior{}; prior < index; ++prior)
+            {
+                const agent::boolean duplicatePhrase = static_cast<agent::boolean>(
+                    normalizedPhrase == normalizePhrase(carConfiguration.sleepPhrases[prior]));
+                if (duplicatePhrase)
+                {
+                    XWALK_RPIAGENT_ERROR(XWALK_INVAL, "Voice-active-car sleep phrases must be unique");
+                }
+            }
         }
         if ((carConfiguration.tooCloseCm <= 1.0) || (carConfiguration.listenTimeoutMs == 0U) ||
             (carConfiguration.listenTimeoutMs > XHAL_RPI5CAR_SPEECH_TO_TEXT_MAXIMUM_TIMEOUT_MS))

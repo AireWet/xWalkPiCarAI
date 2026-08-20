@@ -767,6 +767,10 @@ retaining normal compiler warnings and compilation checks.
   the same file.
 - Keep file permission and ownership policy outside `XWalkConfigStore`. Do not
   construct `sudo chmod` or `sudo chown` shell commands from application input.
+- Preserve `XWalkConfigStore`'s Robot HAT compatibility rule that removes ASCII
+  spaces from unquoted values. Use surrounding double quotes for deployment
+  values whose internal spaces are significant; retrieval removes those quotes
+  and retains the enclosed spaces.
 - Use `XWalkConfig` for section-aware files and retain `XWalkConfigStore` for
   the flat key-value format. Provide
   both classes through the combined `xWalkConfig` module, but keep their headers,
@@ -966,8 +970,10 @@ retaining normal compiler warnings and compilation checks.
   load models, invoke providers, access a network, or produce audible output.
 - Emit GPT coordinator lifecycle and completed-operation records through xWalk
   trace macros. Persist trace selector changes in XML and load them on the next
-  no-argument run. Never log transcript or speech text, captured PCM, credentials,
-  provider requests, callback bodies, cancellation cleanup, or destructors.
+  no-argument run. Keep transcript and speech content behind an explicit
+  privacy-sensitive deployment setting that defaults to disabled. Never log
+  captured PCM, credentials, provider requests, callback bodies, cancellation
+  cleanup, or destructors.
 - Create `XWalkBoardControl` and the speech backend in `main()`. Pass board
   control by reference, store only a non-owning pointer, and inject speech output
   through a non-null synchronous callback with an optional non-owning context.
@@ -1036,6 +1042,11 @@ retaining normal compiler warnings and compilation checks.
   to one bounded streaming recognition session, and treat the coordinator's
   listen timeout as a hard upper bound. Release both capture and recognition
   resources on every completion, cancellation, and error path.
+- Prefer native Vosk endpoint acceptance. When the deployed C API has no endpoint
+  timing setters, arm the bounded trailing-silence fallback only after a non-empty
+  Vosk partial transcript so quiet initial input cannot create an utterance. Keep
+  fallback timing and signed-16 peak threshold finite, positive, ordered, and
+  deployment-configurable without accumulating the full recording.
 - Inject one complete recognizer operation table into the ALSA adapter. The
   application selects one local or remote provider and owns its model, process
   or HTTP transport, credentials, language policy, and provider-specific data.
@@ -1643,12 +1654,16 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
   reset, channels zero through eleven in ascending order, the 10-degree and
   zero-degree commands with 100 ms delays, and the cancellable idle loop.
   Physical verification requires explicit Robot HAT safety confirmation.
-- Keep `voice-active-car-gpt` as the example-21 Buddy profile over the shared
-  sensor/action coordinator. Preserve the ten-centimetre trigger, image input,
-  `hey buddy` wake phrase, `Hi there` wake answer, full hardware and response
-  instructions, `gpt-4o-mini`, and Piper `en_US-ryan-low`. Read the OpenAI
-  credential only from `OPENAI_API_KEY`, and require a new wake phrase before
-  every ordinary model round.
+- Keep `voice-active-car-gpt` as the example-21 Jarvis profile over the shared
+  sensor/action coordinator. Preserve the ten-centimetre trigger, `hey jarvis`
+  wake phrase, Jarvis wake acknowledgement, filtered action instructions,
+  Gemini `gemini-3.6-flash`, and Piper `en_GB-alan-medium`. Read the Gemini
+  credential only from `GEMINI_API_KEY`. Keep this profile permanently text-only:
+  do not read camera configuration, construct camera services, install an image
+  callback, or attach an image path. Preserve concise 256-token spoken responses
+  and a bounded continuous session with configured idle, round, miss, and
+  sleep-phrase exits. Sleep phrases must bypass the model and action parser;
+  every session-ending path must stop vehicle output.
 - Keep `voice-active-car` as the canonical `voice_active_car.py` Rolly profile
   over the shared sensor/action coordinator. Preserve the ten-centimetre
   trigger, image input, `hey rolly` wake phrase, `Hi there` wake response,
