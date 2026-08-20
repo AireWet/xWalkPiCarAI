@@ -112,14 +112,16 @@ namespace xwalk::agent
             static agent::boolean isActionSupported(agent::stringview action) noexcept;
             /** @brief Invokes the application-owned delay operation and records its status. */
             agent::boolean delay(agent::uint32 durationMs);
+            /** @brief Delays active movement while refreshing the motor watchdog at bounded intervals. */
+            agent::boolean delayWhileMoving(agent::uint32 durationMs);
             /** @brief Runs the background status and action-queue loop. */
             void actionLoop() noexcept;
             /** @brief Executes the thinking pose without restoring the centered pose. */
             void keepThink();
             /** @brief Drives forward briefly and then stops. */
-            void forward();
+            agent::boolean forward();
             /** @brief Drives backward briefly and then stops. */
-            void backward();
+            agent::boolean backward();
             /** @brief Alternates the steering servo to imitate waving hands. */
             void waveHands();
             /** @brief Alternates steering and camera pan to imitate resistance. */

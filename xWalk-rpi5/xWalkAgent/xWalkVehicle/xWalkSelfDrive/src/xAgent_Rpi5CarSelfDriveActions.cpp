@@ -86,11 +86,12 @@ namespace xwalk::agent
      * @post
      * Both drive motors are stopped.
      */
-    void XWalkSelfDrive::forward()
+    agent::boolean XWalkSelfDrive::forward()
     {
         picarxObject->forward(PRESET_DRIVE_SPEED_PERCENT);
-        delay(PRESET_DRIVE_DURATION_MS);
+        const agent::boolean completed = delayWhileMoving(PRESET_DRIVE_DURATION_MS);
         picarxObject->stop();
+        return completed;
     }
 
     /**
@@ -99,11 +100,12 @@ namespace xwalk::agent
      * @post
      * Both drive motors are stopped.
      */
-    void XWalkSelfDrive::backward()
+    agent::boolean XWalkSelfDrive::backward()
     {
         picarxObject->backward(PRESET_DRIVE_SPEED_PERCENT);
-        delay(PRESET_DRIVE_DURATION_MS);
+        const agent::boolean completed = delayWhileMoving(PRESET_DRIVE_DURATION_MS);
         picarxObject->stop();
+        return completed;
     }
 
     /**
@@ -241,11 +243,11 @@ namespace xwalk::agent
         }
         else if (action == "forward")
         {
-            forward();
+            return forward();
         }
         else if (action == "backward")
         {
-            backward();
+            return backward();
         }
         else if (action == "stop")
         {

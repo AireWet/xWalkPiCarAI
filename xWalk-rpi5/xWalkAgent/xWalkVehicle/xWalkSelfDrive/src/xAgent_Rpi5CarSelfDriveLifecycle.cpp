@@ -179,6 +179,37 @@ namespace xwalk::agent
     }
 
     /**
+     * @brief Keeps one intentional movement inside the motor watchdog deadline.
+     * @param[in] durationMs Total requested movement duration in milliseconds.
+     * @return `true` after the complete duration; otherwise `false` after fail-safe shutdown.
+     */
+    agent::boolean XWalkSelfDrive::delayWhileMoving(agent::uint32 durationMs)
+    {
+        constexpr agent::uint32 heartbeatIntervalMs{100U};
+        agent::uint32 remainingMs = durationMs;
+        while (remainingMs > 0U)
+        {
+            const agent::uint32 sliceMs = (remainingMs < heartbeatIntervalMs) ? remainingMs : heartbeatIntervalMs;
+            if (delay(sliceMs) == false)
+            {
+                return false;
+            }
+            const agent::boolean heartbeatRefreshed = picarxObject->refreshMotorWatchdog();
+            if (heartbeatRefreshed == false)
+            {
+                operationFailedValue.store(true);
+                runningValue.store(false);
+                static_cast<void>(picarxObject->emergencyStop());
+                stateChanged.notify_all();
+                XWALK_RPIAGENT_WARNING(XWALK_RUNTIME, "Self-drive motor watchdog refresh failed");
+                return false;
+            }
+            remainingMs -= sliceMs;
+        }
+        return true;
+    }
+
+    /**
      * @brief Replaces the optional application cancellation query.
      * @param[in,out] context Optional non-owning context that must outlive later
      * action execution.

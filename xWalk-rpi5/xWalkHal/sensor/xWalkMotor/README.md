@@ -85,8 +85,10 @@ through 100.0 percent. Paired commands validate both values before changing eith
 
 Paired motors start disarmed. Call `arm()` only after configuration and shutdown handling are ready. Movement
 and electrically active dual-PWM braking are rejected while disarmed. Every non-zero movement or brake command
-starts or refreshes a configurable watchdog deadline; `heartbeat()` refreshes an active command. Expiry stops
-both channels and disarms the controller. Invalid commands do not refresh the deadline. Tests can inject a fake
+starts or refreshes a configurable watchdog deadline; `heartbeat()` refreshes an active command and reports
+disarmed use through the ordinary exception boundary. Coordinators that must remain non-throwing use
+`heartbeatSafely()` and handle its Boolean status. Expiry stops both channels and disarms the controller.
+Invalid commands do not refresh the deadline. Tests can inject a fake
 clock and disable the background worker, while deployment keeps the non-blocking condition-variable worker
 enabled. The optional pre-thread-start callback is an injectable test boundary; production leaves it null.
 It permits deterministic startup-failure coverage without exhausting process resources or creating a thread.

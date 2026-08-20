@@ -220,6 +220,9 @@ namespace xwalk::hal
             /** @brief Refreshes the watchdog deadline while armed. */
             void heartbeat();
 
+            /** @brief Attempts to refresh the watchdog without throwing when movement is disarmed. */
+            boolean heartbeatSafely() noexcept;
+
             /** @brief Deterministically checks and enforces the current timeout. */
             boolean checkWatchdog() noexcept;
 

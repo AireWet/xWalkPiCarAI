@@ -85,16 +85,26 @@ namespace xwalk::hal
 
     void XWalkMotors::heartbeat()
     {
+        const boolean refreshed = heartbeatSafely();
+        if (refreshed == false)
+        {
+            XWALK_HAL_ERROR(XWALK_LOGIC, "motor heartbeat requires explicit arming");
+        }
+    }
+
+    boolean XWalkMotors::heartbeatSafely() noexcept
+    {
         const std::lock_guard<std::mutex> lock(safetyMutex);
         if (armedValue == false)
         {
-            XWALK_HAL_ERROR(XWALK_LOGIC, "motor heartbeat requires explicit arming");
+            return false;
         }
         if (commandActiveValue)
         {
             refreshWatchdogUnlocked();
         }
         watchdogCondition.notify_all();
+        return true;
     }
 
     boolean XWalkMotors::checkWatchdog() noexcept

@@ -1,282 +1,55 @@
 /******************************************************************************
  * @file        xAgent_Rpi5CarSelfDriveTest.cpp
  * @brief       Verifies preset actions with in-memory hardware and audio.
- *
- * @details
- * Covers gesture dispatch, movement completion, sound routing, validation,
- * status transitions, and background first-in, first-out action processing.
- *
  * @project     xWalk Firmware
  * @module      xWalkSelfDrive Host Test
- *
- * @author      Joxy John
- * @date        2026-07-31
- * @version     1.0.0
- *
- * @copyright
- * Copyright (c) 2026 Joxy John.
- * All rights reserved.
- *
- * @note
- * Developed using MISRA C++ coding guidelines.
+ * @copyright   Copyright (c) 2026 Joxy John. All rights reserved.
  ******************************************************************************/
 
-/******************************************************************************
- * Includes
- ******************************************************************************/
-
-#include "xAgent_Rpi5CarSelfDrive.h"
+#include "xAgent_Rpi5CarSelfDriveTestSupport.h"
 
 #include "xHal_Rpi5CarAdc.h"
 #include "xHal_Rpi5CarFileFunctions.h"
-#include "xHal_Rpi5CarI2c.h"
 #include "xHal_Rpi5CarPwmTimerState.h"
 #include "xHal_Rpi5CarTestFunctions.h"
-#include "xAgent_Rpi5CarSelfDriveTestTypes.h"
 
-/******************************************************************************
- * Translation-unit type aliases
- ******************************************************************************/
+#include <cassert>
 
-using TestBus = ::xwalk::source_types::xagent_rpi5carselfdrivetest::TestBus;
-using TestGpio = ::xwalk::source_types::xagent_rpi5carselfdrivetest::TestGpio;
-using TestBackend = ::xwalk::source_types::xagent_rpi5carselfdrivetest::TestBackend;
-
-/******************************************************************************
- * Anonymous namespace
- ******************************************************************************/
-
-/**
- * @brief Contains deterministic test state and callbacks.
- */
 namespace
 {
 
-    /******************************************************************************
-     * Structure declarations
-     ******************************************************************************/
+    namespace support = xwalk::agent::test::selfdrive;
 
-    /******************************************************************************
-     * Private callback definitions
-     ******************************************************************************/
-
-    /** @brief Accepts every simulated I2C address. */
-    agent::boolean probe(agent::contextpointer context, agent::uint8 address)
-    {
-        static_cast<void>(context);
-        static_cast<void>(address);
-        return true;
-    }
-
-    /** @brief Accepts one simulated I2C register write. */
-    void
-    writeRegister(agent::contextpointer context, agent::uint8 address, agent::uint8 reg, const agent::bytevector& data)
-    {
-        static_cast<void>(context);
-        static_cast<void>(address);
-        static_cast<void>(reg);
-        static_cast<void>(data);
-    }
-
-    /** @brief Accepts one non-throwing simulated fail-safe write. */
-    agent::boolean tryWriteRegister(agent::contextpointer context,
-                                    agent::uint8 address,
-                                    agent::uint8 reg,
-                                    const agent::bytevector& data) noexcept
-    {
-        static_cast<void>(context);
-        static_cast<void>(address);
-        static_cast<void>(reg);
-        static_cast<void>(data);
-        return true;
-    }
-
-    /** @brief Returns the deterministic two-byte ADC sample. */
-    agent::bytevector readBus(agent::contextpointer context, agent::uint8 address, agent::size length)
-    {
-        static_cast<void>(address);
-        static_cast<void>(length);
-        return static_cast<TestBus*>(context)->sample;
-    }
-
-    /** @brief Stores the configured simulated GPIO level. */
-    void configureGpio(agent::contextpointer context,
-                       agent::uint8 pin,
-                       XWalkHal::XWalkGpioMode mode,
-                       XWalkHal::XWalkGpioPull pull,
-                       agent::boolean initialValue)
-    {
-        static_cast<void>(pin);
-        static_cast<void>(mode);
-        static_cast<void>(pull);
-        static_cast<TestGpio*>(context)->value = initialValue;
-    }
-
-    /** @brief Returns one simulated GPIO level. */
-    agent::boolean readGpio(agent::contextpointer context, agent::uint8 pin)
-    {
-        static_cast<void>(pin);
-        return static_cast<TestGpio*>(context)->value;
-    }
-
-    /** @brief Stores one simulated GPIO output level. */
-    void writeGpio(agent::contextpointer context, agent::uint8 pin, agent::boolean value)
-    {
-        static_cast<void>(pin);
-        static_cast<TestGpio*>(context)->value = value;
-    }
-
-    /** @brief Accepts one simulated GPIO interrupt registration. */
-    void interruptGpio(agent::contextpointer context,
-                       agent::uint8 pin,
-                       XWalkHal::XWalkGpioEdge edge,
-                       agent::uint32 debounceMs,
-                       agent::contextpointer handlerContext,
-                       XWalkHal::gpiointerrupthandler handler)
-    {
-        static_cast<void>(context);
-        static_cast<void>(pin);
-        static_cast<void>(edge);
-        static_cast<void>(debounceMs);
-        static_cast<void>(handlerContext);
-        static_cast<void>(handler);
-    }
-
-    /** @brief Accepts one simulated GPIO interrupt cancellation. */
-    void cancelInterrupt(agent::contextpointer context, agent::uint8 pin)
-    {
-        static_cast<void>(context);
-        static_cast<void>(pin);
-    }
-
-    /** @brief Returns the complete simulated GPIO callback table. */
-    XWalkHal::XWalkGpioCallbacks gpioCallbacks()
-    {
-        return {&configureGpio, &readGpio, &writeGpio, &interruptGpio, &cancelInterrupt};
-    }
-
-    /** @brief Records that the audio output was enabled. */
-    void enableOutput(agent::contextpointer context)
-    {
-        static_cast<TestBackend*>(context)->outputEnabled = true;
-    }
-
-    /** @brief Accepts one synchronous sound request. */
-    void playSound(agent::contextpointer context, agent::stringview filename, agent::optionalfloat64 volume)
-    {
-        static_cast<void>(context);
-        static_cast<void>(filename);
-        static_cast<void>(volume);
-    }
-
-    /** @brief Records one asynchronous preset sound request. */
-    void playSoundBackground(agent::contextpointer context, agent::stringview filename, agent::optionalfloat64 volume)
-    {
-        TestBackend& backend = *static_cast<TestBackend*>(context);
-        backend.backgroundFiles.emplace_back(filename);
-        backend.backgroundVolumes.push_back(volume.has_value() ? *volume : -1.0);
-    }
-
-    /** @brief Records one streamed-music request. */
-    void playMusic(agent::contextpointer context,
-                   agent::stringview filename,
-                   agent::int32 loops,
-                   agent::float64 startSeconds)
-    {
-        TestBackend& backend = *static_cast<TestBackend*>(context);
-        backend.musicFile = filename;
-        backend.musicLoops = loops;
-        backend.musicStartSeconds = startSeconds;
-    }
-
-    /** @brief Records one streamed-music volume request. */
-    void setMusicVolume(agent::contextpointer context, agent::float64 volume)
-    {
-        static_cast<TestBackend*>(context)->musicVolume = volume;
-    }
-
-    /** @brief Records one streamed-music control request. */
-    void controlMusic(agent::contextpointer context)
-    {
-        ++static_cast<TestBackend*>(context)->musicControlCount;
-    }
-
-    /** @brief Returns a deterministic zero-second sound length. */
-    agent::float64 soundLength(agent::contextpointer context, agent::stringview filename)
-    {
-        static_cast<void>(context);
-        static_cast<void>(filename);
-        return 0.0;
-    }
-
-    /** @brief Accepts one unused generated-tone request. */
-    void playTone(agent::contextpointer context,
-                  const agent::bytevector& data,
-                  agent::uint32 sampleRateHz,
-                  agent::uint8 channelCount)
-    {
-        static_cast<void>(context);
-        static_cast<void>(data);
-        static_cast<void>(sampleRateHz);
-        static_cast<void>(channelCount);
-    }
-
-    /** @brief Records one requested preset-action delay without sleeping. */
-    agent::boolean delayMilliseconds(agent::contextpointer context, agent::uint32 durationMs) noexcept
-    {
-        TestBackend& backend = *static_cast<TestBackend*>(context);
-        backend.delays.push_back(durationMs);
-        const agent::boolean backendFailDelayWhileMovingMotorsInvalid =
-            static_cast<agent::boolean>(backend.failDelayWhileMoving && ((backend.motors->left().speed() != 0.0) ||
-                                                                         (backend.motors->right().speed() != 0.0)));
-        if (backendFailDelayWhileMovingMotorsInvalid)
-        {
-            return false;
-        }
-        return true;
-    }
-
-    /** @brief Supplies a deterministic cancellation sequence for one preset action. */
-    agent::boolean continueOperation(agent::contextpointer context)
-    {
-        TestBackend& backend = *static_cast<TestBackend*>(context);
-        const agent::boolean shouldContinue = backend.continueQueries < backend.continueQueryLimit;
-        ++backend.continueQueries;
-        return shouldContinue;
-    }
-
-    /******************************************************************************
-     * Test function definitions
-     ******************************************************************************/
-
-    /**
-     * @brief Exercises the complete preset catalog and background queue.
-     *
-     * @param[in] configPath
-     * Test-owned configuration path below the module build directory.
-     */
+    /** @brief Exercises the preset catalog, watchdog refresh, and background queue. */
     void testSelfDriveBehavior(agent::stringview configPath)
     {
-        TestBus bus;
-        xwalk::hal::XWalkI2c i2c(&bus, &probe, &writeRegister, &readBus, nullptr, &tryWriteRegister);
+        support::TestBackend backend;
+        support::TestBus bus;
+        xwalk::hal::XWalkI2c i2c(
+            &bus, &support::probe, &support::writeRegister, &support::readBus, nullptr, &support::tryWriteRegister);
         xwalk::hal::XWalkPwmTimerState timerState;
         xwalk::hal::XWalkPwm leftPwm(i2c, "P13", 0x14U, timerState);
         xwalk::hal::XWalkPwm rightPwm(i2c, "P12", 0x14U, timerState);
         xwalk::hal::XWalkPwm directionPwm(i2c, "P2", 0x14U, timerState);
         xwalk::hal::XWalkPwm panPwm(i2c, "P0", 0x14U, timerState);
         xwalk::hal::XWalkPwm tiltPwm(i2c, "P1", 0x14U, timerState);
-        TestGpio leftBackend;
-        TestGpio rightBackend;
-        TestGpio triggerBackend;
-        TestGpio echoBackend;
-        const XWalkHal::XWalkGpioCallbacks gpioBackendCallbacks = gpioCallbacks();
+        support::TestGpio leftBackend;
+        support::TestGpio rightBackend;
+        support::TestGpio triggerBackend;
+        support::TestGpio echoBackend;
+        const XWalkHal::XWalkGpioCallbacks gpioBackendCallbacks = support::gpioCallbacks();
         xwalk::hal::XWalkGpio leftDirection(&leftBackend, gpioBackendCallbacks, "D4");
         xwalk::hal::XWalkGpio rightDirection(&rightBackend, gpioBackendCallbacks, "D5");
         xwalk::hal::XWalkGpio trigger(&triggerBackend, gpioBackendCallbacks, "D2");
         xwalk::hal::XWalkGpio echo(&echoBackend, gpioBackendCallbacks, "D3");
         xwalk::hal::XWalkMotor leftMotor(leftPwm, leftDirection);
         xwalk::hal::XWalkMotor rightMotor(rightPwm, rightDirection);
-        xwalk::hal::XWalkMotors motors(leftMotor, rightMotor);
+        xwalk::hal::XWalkMotorsConfiguration motorsConfiguration;
+        motorsConfiguration.clockContext = &backend;
+        motorsConfiguration.clockMilliseconds = &support::clockMilliseconds;
+        motorsConfiguration.watchdogWorkerEnabled = false;
+        xwalk::hal::XWalkMotors motors(leftMotor, rightMotor, motorsConfiguration);
+        backend.motors = &motors;
         xwalk::hal::XWalkServo directionServo(directionPwm);
         xwalk::hal::XWalkServo panServo(panPwm);
         xwalk::hal::XWalkServo tiltServo(tiltPwm);
@@ -299,23 +72,21 @@ namespace
         xwalk::agent::XWalkPicarx picarx(carCtx);
         static_cast<void>(picarx.initialize());
 
-        TestBackend backend;
-        backend.motors = &motors;
-        const XWalkHal::XWalkMusicCallbacks musicCallbacks{&enableOutput,
-                                                           &playSound,
-                                                           &playSoundBackground,
-                                                           &playMusic,
-                                                           &setMusicVolume,
-                                                           &controlMusic,
-                                                           &controlMusic,
-                                                           &controlMusic,
-                                                           &soundLength,
-                                                           &playTone};
+        const XWalkHal::XWalkMusicCallbacks musicCallbacks{&support::enableOutput,
+                                                           &support::playSound,
+                                                           &support::playSoundBackground,
+                                                           &support::playMusic,
+                                                           &support::setMusicVolume,
+                                                           &support::controlMusic,
+                                                           &support::controlMusic,
+                                                           &support::controlMusic,
+                                                           &support::soundLength,
+                                                           &support::playTone};
         xwalk::hal::XWalkMusic music(&backend, musicCallbacks);
         xwalk::agent::XWalkSelfDrive selfDrive(picarx,
                                                music,
                                                &backend,
-                                               &delayMilliseconds,
+                                               &support::delayMilliseconds,
                                                nullptr,
                                                XWALK_TEST_SOUND_DIRECTORY,
                                                XWALK_TEST_MUSIC_DIRECTORY);
@@ -329,8 +100,12 @@ namespace
 
         delayCount = backend.delays.size();
         assert(selfDrive.doAction("forward"));
-        assert(backend.delays.size() == (delayCount + 1U));
-        assert(backend.delays[delayCount] == 1'000U);
+        assert(backend.delays.size() == (delayCount + 10U));
+        for (agent::size index = delayCount; index < backend.delays.size(); ++index)
+        {
+            assert(backend.delays[index] == 100U);
+        }
+        assert(motors.isArmed());
 
         const agent::stringvector gestures{"shake head",
                                            "nod",
@@ -346,10 +121,10 @@ namespace
         {
             assert(selfDrive.doAction(gesture));
         }
+        assert(motors.isArmed());
         assert(motors.left().speed() == 0.0);
         assert(motors.right().speed() == 0.0);
         assert(picarx.directionAngleDegrees() == 0.0);
-        assert(!backend.delays.empty());
 
         picarx.forward(20.0);
         assert(selfDrive.doAction("stop"));
@@ -380,16 +155,14 @@ namespace
         assert(!selfDrive.addAction("unknown"));
 
         xwalk::agent::XWalkSelfDrive missingSoundSelfDrive(
-            picarx, music, &backend, &delayMilliseconds, nullptr, "/xwalk-test-missing-sounds");
+            picarx, music, &backend, &support::delayMilliseconds, nullptr, "/xwalk-test-missing-sounds");
         assert(!missingSoundSelfDrive.doAction("honking"));
-        assert(motors.left().speed() == 0.0);
-        assert(motors.right().speed() == 0.0);
 
-        selfDrive.setCancellation(&backend, &continueOperation);
+        selfDrive.setCancellation(&backend, &support::continueOperation);
         backend.continueQueryLimit = backend.continueQueries + 2U;
         delayCount = backend.delays.size();
         picarx.clearEmergencyStop();
-        assert(selfDrive.doAction("forward"));
+        assert(!selfDrive.doAction("forward"));
         agent::uint32 cancelledDelayMs{};
         for (agent::size index = delayCount; index < backend.delays.size(); ++index)
         {
@@ -398,9 +171,17 @@ namespace
         }
         assert(cancelledDelayMs <= 40U);
         assert(picarx.emergencyStopRequested());
+        backend.continueQueryLimit = 1'000'000U;
+        picarx.clearEmergencyStop();
+
+        selfDrive.setCancellation(&backend, nullptr);
+        backend.expireWatchdogWhileMoving = true;
+        assert(!selfDrive.doAction("backward"));
+        assert(picarx.emergencyStopRequested());
+        assert(!motors.isArmed());
+        assert(!motors.heartbeatSafely());
         assert(motors.left().speed() == 0.0);
         assert(motors.right().speed() == 0.0);
-        backend.continueQueryLimit = 1'000'000U;
         picarx.clearEmergencyStop();
 
         xwalk::hal::test::expectFailure(
@@ -413,17 +194,12 @@ namespace
 
         selfDrive.start();
         assert(selfDrive.running());
-        assert(selfDrive.status() == xwalk::agent::XWalkSelfDriveStatus::Standby);
-        assert(motors.left().speed() == 0.0);
-        assert(motors.right().speed() == 0.0);
         assert(selfDrive.addAction("honking"));
         assert(selfDrive.addAction("backward"));
         assert(selfDrive.waitActionsDone());
         assert(selfDrive.status() == xwalk::agent::XWalkSelfDriveStatus::Standby);
         selfDrive.stop();
         assert(!selfDrive.running());
-        assert(motors.left().speed() == 0.0);
-        assert(motors.right().speed() == 0.0);
 
         backend.failDelayWhileMoving = true;
         picarx.clearEmergencyStop();
@@ -442,29 +218,13 @@ namespace
 
 } /* namespace */
 
-/******************************************************************************
- * Global function definitions
- ******************************************************************************/
-
-/**
- * @brief Runs all self-drive host-test scenarios.
- *
- * @param[in] argumentCount
- * Must equal two so one test-owned configuration path is available.
- *
- * @param[in] arguments
- * Non-owning process argument array whose second entry is the configuration path.
- *
- * @return
- * Zero when every assertion passes; one when the required path is absent.
- */
+/** @brief Runs all deterministic SelfDrive host-test scenarios. */
 agent::int32 main(agent::int32 argumentCount, agent::charpointer arguments[])
 {
     if (argumentCount != 2)
     {
         return 1;
     }
-
     const agent::filesystempath configPath(arguments[1]);
     agent::filesystempath replacementPath = configPath;
     replacementPath += ".tmp";

@@ -156,6 +156,15 @@ namespace xwalk::agent
     }
 
     /**
+     * @brief Attempts to refresh the active motor watchdog.
+     * @return `true` while motor movement remains armed; otherwise `false`.
+     */
+    agent::boolean XWalkPicarx::refreshMotorWatchdog() noexcept
+    {
+        return motorsObject->heartbeatSafely();
+    }
+
+    /**
      * @brief Latches actuator suppression and makes a non-throwing paired motor
      * stop attempt.
      * @return `true` when every motor PWM output accepted zero percent; otherwise

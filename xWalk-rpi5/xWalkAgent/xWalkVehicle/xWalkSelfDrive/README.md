@@ -18,6 +18,8 @@ platform and hardware ownership outside the module.
 - rejects unknown queued actions without executing or storing them;
 - optionally checks a controlling-thread cancellation callback during delays in slices no longer than 20
   milliseconds; and
+- divides each one-second forward or backward action into 100-millisecond intervals that refresh the motor
+  watchdog without weakening its configured timeout;
 - reports a worker delay failure as a Boolean completion status and lets ordinary synchronous failures escape
   after command-scope actuator cleanup has run.
 
@@ -47,7 +49,9 @@ starting movement. Cancellation latches the shared PiCar-X emergency stop, attem
 and suppresses later actuator commands in the current action. The application command boundary owns the
 non-throwing safety guard that performs the same cleanup during normal return and stack cleanup. The worker
 delay callback returns `false` on failure; this performs emergency shutdown and makes `waitActionsDone()`
-return `false` to the controlling thread. No exception-handling statement is required. Call direct action
+return `false` to the controlling thread. A failed movement heartbeat follows the same stopped and disarmed
+status path, preventing a later queued action from reaching a disarmed motor command. No exception-handling
+statement is required. Call direct action
 methods and queue-control methods from one controlling context.
 
 ## Layout
@@ -60,7 +64,9 @@ methods and queue-control methods from one controlling context.
 | `src/*Gestures.cpp` | Ordered steering, camera, and motor gesture sequences |
 | `src/*Lifecycle.cpp` | Dependency validation and worker ownership |
 | `src/*Worker.cpp` | Status transitions and first-in, first-out action processing |
-| `test/src/*Test.cpp` | In-memory gesture, sound, validation, and queue tests |
+| `test/include/*TestSupport.h` | Reusable deterministic fake state and callback declarations |
+| `test/src/*TestSupport.cpp` | Deterministic callback and fake-clock implementations |
+| `test/src/*Test.cpp` | In-memory gesture, watchdog, sound, validation, and queue tests |
 
 Use `XWALK_SELF_DRIVE_BUILD_HOST_TESTS=ON` for standalone host verification. Use
 `XWALK_SELF_DRIVE_BUILD_HARDWARE_TESTS=ON` only to compile the module and its Linux/RPi dependencies; the

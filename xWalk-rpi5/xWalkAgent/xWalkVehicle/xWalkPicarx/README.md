@@ -18,6 +18,7 @@ dependencies.
 - limits the final applied motor PWM magnitude to no more than 20 percent until the calibration workflow
   records successful raised-wheel motor-direction, steering-center, and motor-balance checks;
 - provides latched emergency actuator suppression and scope-bound non-throwing paired-motor shutdown;
+- exposes a non-throwing motor-watchdog refresh for bounded movement coordinators;
 - reduces the inside wheel according to the current steering angle while using the HAL's logical motor
   direction;
 - exposes raw grayscale data, threshold classification, cliff detection, and ultrasonic distance in
@@ -51,7 +52,7 @@ persisted values are rejected during construction.
 | `include/xAgent_Rpi5CarPicarxConfiguration.h` | Build-time config-path declaration and fallback |
 | `include/xAgent_Rpi5CarPicarxSafetyGuard.h` | Scope-bound emergency-stop contract |
 | `src/*Lifecycle.cpp` | Dependency binding and persisted configuration loading |
-| `src/*Drive.cpp` | Motor scaling, steering, stop, reset, and close behavior |
+| `src/*Drive.cpp` | Motor scaling, steering, watchdog refresh, stop, reset, and close behavior |
 | `src/*SafetyGuard.cpp` | Command-scope emergency-stop cleanup |
 | `src/*Calibration.cpp` | Servo and motor calibration persistence |
 | `src/*Sensing.cpp` | Grayscale, cliff, and ultrasonic delegation |

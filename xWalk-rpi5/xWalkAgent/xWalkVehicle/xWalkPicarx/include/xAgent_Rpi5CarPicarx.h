@@ -208,6 +208,8 @@ namespace xwalk::agent
             void backward(agent::float64 speedPercent);
             /** @brief Stops both drive motors. */
             void stop();
+            /** @brief Attempts to refresh the active motor watchdog without throwing. */
+            agent::boolean refreshMotorWatchdog() noexcept;
             /** @brief Latches actuator suppression and makes a non-throwing paired motor stop attempt. */
             agent::boolean emergencyStop() noexcept;
             /** @brief Clears the emergency latch before a new application-controlled operation. */
