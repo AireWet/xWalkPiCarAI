@@ -180,4 +180,8 @@
       name="XWALK_CNTRL_CALIBRATE_REJ"
       number="0x221F"
       message="XWalkCalibrateCommandRej" />
+  <signal
+      name="XWALK_CNTRL_VIDEO_STREAM_REJ"
+      number="0x2220"
+      message="XWalkVideoStreamCommandRej" />
 </xwalk-signals>

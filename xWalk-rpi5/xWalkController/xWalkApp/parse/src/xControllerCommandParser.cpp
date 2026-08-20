@@ -121,6 +121,10 @@ namespace xwalk::ctrl
         {
             command = XWALK_CNTRL_VIDEO_CAR_REQ;
         }
+        else if (arguments[0U] == "video-stream")
+        {
+            command = XWALK_CNTRL_VIDEO_STREAM_REQ;
+        }
         else if (arguments[0U] == "app-control")
         {
             command = XWALK_CNTRL_APP_CONTROL_REQ;

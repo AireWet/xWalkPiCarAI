@@ -129,7 +129,7 @@ Use the central runtime suite name to select one HAL module. For example:
 | xWalkAudio | `TEST_SUITE_XWALK_AUDIO` | Injected ALSA ownership, host simulation, and recovery behavior |
 | xWalkBoardControl | `TEST_SUITE_XWALK_BOARD_CONTROL` | Board services, safe simulation, and trace persistence |
 | xWalkBuzzer | `TEST_SUITE_XWALK_BUZZER` | Active/passive behavior, safe simulation, and trace persistence |
-| xWalkCamera | `TEST_SUITE_XWALK_CAMERA` | Capture validation, safe simulation, and trace persistence |
+| xWalkCamera | `TEST_SUITE_XWALK_CAMERA` | Still/stream capture validation, safe simulation, and traces |
 | xWalkConfig | `TEST_SUITE_XWALK_CONFIG` | Section/store persistence, trace selectors, and safe simulation |
 | xWalkGpio | `TEST_SUITE_XWALK_GPIO` | Linux-backend GPIO simulation, pin mapping, polarity, and interrupts |
 | xWalkGPT | `TEST_SUITE_XWALK_GPT` | Speech coordination, safe simulation, and trace persistence |

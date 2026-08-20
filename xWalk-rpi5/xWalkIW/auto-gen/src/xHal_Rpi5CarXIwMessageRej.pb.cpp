@@ -743,10 +743,26 @@ struct XWalkCalibrateCommandRejDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 XWalkCalibrateCommandRejDefaultTypeInternal _XWalkCalibrateCommandRej_default_instance_;
+PROTOBUF_CONSTEXPR XWalkVideoStreamCommandRej::XWalkVideoStreamCommandRej(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.data_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.responding_)*/false
+  , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct XWalkVideoStreamCommandRejDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR XWalkVideoStreamCommandRejDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~XWalkVideoStreamCommandRejDefaultTypeInternal() {}
+  union {
+    XWalkVideoStreamCommandRej _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 XWalkVideoStreamCommandRejDefaultTypeInternal _XWalkVideoStreamCommandRej_default_instance_;
 }  // namespace v1
 }  // namespace iw
 }  // namespace xwalk
-static ::_pb::Metadata file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[45];
+static ::_pb::Metadata file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[46];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_xHal_5fRpi5CarXIwMessageRej_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_xHal_5fRpi5CarXIwMessageRej_2eproto = nullptr;
 
@@ -1201,6 +1217,16 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCalibrateCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCalibrateCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCalibrateCommandRej, _impl_.detail_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVideoStreamCommandRej, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVideoStreamCommandRej, _impl_.data_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVideoStreamCommandRej, _impl_.responding_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVideoStreamCommandRej, _impl_.reason_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVideoStreamCommandRej, _impl_.detail_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::xwalk::iw::v1::XWalkI2cRejPayload)},
@@ -1248,6 +1274,7 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 420, -1, -1, sizeof(::xwalk::iw::v1::XWalkVoicePromptCarCommandRej)},
   { 430, -1, -1, sizeof(::xwalk::iw::v1::XWalkStorytellingRobotCommandRej)},
   { 440, -1, -1, sizeof(::xwalk::iw::v1::XWalkCalibrateCommandRej)},
+  { 450, -1, -1, sizeof(::xwalk::iw::v1::XWalkVideoStreamCommandRej)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -1296,6 +1323,7 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::xwalk::iw::v1::_XWalkVoicePromptCarCommandRej_default_instance_._instance,
   &::xwalk::iw::v1::_XWalkStorytellingRobotCommandRej_default_instance_._instance,
   &::xwalk::iw::v1::_XWalkCalibrateCommandRej_default_instance_._instance,
+  &::xwalk::iw::v1::_XWalkVideoStreamCommandRej_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_xHal_5fRpi5CarXIwMessageRej_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -1412,17 +1440,19 @@ const char descriptor_table_protodef_xHal_5fRpi5CarXIwMessageRej_2eproto[] PROTO
   "sponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail"
   "\030\004 \001(\t:\005\210\265\030\236D\"c\n\030XWalkCalibrateCommandRe"
   "j\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006r"
-  "eason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\237Db\006prot"
-  "o3"
+  "eason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\237D\"e\n\032XW"
+  "alkVideoStreamCommandRej\022\014\n\004data\030\001 \001(\014\022\022"
+  "\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006de"
+  "tail\030\004 \001(\t:\005\210\265\030\240Db\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_deps[1] = {
   &::descriptor_table_xHal_5fRpi5CarXIwMessageReq_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto = {
-    false, false, 4562, descriptor_table_protodef_xHal_5fRpi5CarXIwMessageRej_2eproto,
+    false, false, 4665, descriptor_table_protodef_xHal_5fRpi5CarXIwMessageRej_2eproto,
     "xHal_Rpi5CarXIwMessageRej.proto",
-    &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once, descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_deps, 1, 45,
+    &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once, descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_deps, 1, 46,
     schemas, file_default_instances, TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets,
     file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto, file_level_enum_descriptors_xHal_5fRpi5CarXIwMessageRej_2eproto,
     file_level_service_descriptors_xHal_5fRpi5CarXIwMessageRej_2eproto,
@@ -15297,6 +15327,314 @@ void XWalkCalibrateCommandRej::InternalSwap(XWalkCalibrateCommandRej* other) {
       file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[44]);
 }
 
+// ===================================================================
+
+class XWalkVideoStreamCommandRej::_Internal {
+ public:
+};
+
+XWalkVideoStreamCommandRej::XWalkVideoStreamCommandRej(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:xwalk.iw.v1.XWalkVideoStreamCommandRej)
+}
+XWalkVideoStreamCommandRej::XWalkVideoStreamCommandRej(const XWalkVideoStreamCommandRej& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  XWalkVideoStreamCommandRej* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.data_){}
+    , decltype(_impl_.detail_){}
+    , decltype(_impl_.responding_){}
+    , decltype(_impl_.reason_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.data_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.data_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_data().empty()) {
+    _this->_impl_.data_.Set(from._internal_data(),
+      _this->GetArenaForAllocation());
+  }
+  _impl_.detail_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.detail_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_detail().empty()) {
+    _this->_impl_.detail_.Set(from._internal_detail(),
+      _this->GetArenaForAllocation());
+  }
+  ::memcpy(&_impl_.responding_, &from._impl_.responding_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+  // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkVideoStreamCommandRej)
+}
+
+inline void XWalkVideoStreamCommandRej::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.data_){}
+    , decltype(_impl_.detail_){}
+    , decltype(_impl_.responding_){false}
+    , decltype(_impl_.reason_){0u}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.data_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.data_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.detail_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.detail_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+XWalkVideoStreamCommandRej::~XWalkVideoStreamCommandRej() {
+  // @@protoc_insertion_point(destructor:xwalk.iw.v1.XWalkVideoStreamCommandRej)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void XWalkVideoStreamCommandRej::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.data_.Destroy();
+  _impl_.detail_.Destroy();
+}
+
+void XWalkVideoStreamCommandRej::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void XWalkVideoStreamCommandRej::Clear() {
+// @@protoc_insertion_point(message_clear_start:xwalk.iw.v1.XWalkVideoStreamCommandRej)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.data_.ClearToEmpty();
+  _impl_.detail_.ClearToEmpty();
+  ::memset(&_impl_.responding_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.reason_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* XWalkVideoStreamCommandRej::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // bytes data = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_data();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool responding = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.responding_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // uint32 reason = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _impl_.reason_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string detail = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+          auto str = _internal_mutable_detail();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkVideoStreamCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* XWalkVideoStreamCommandRej::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:xwalk.iw.v1.XWalkVideoStreamCommandRej)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // bytes data = 1;
+  if (!this->_internal_data().empty()) {
+    target = stream->WriteBytesMaybeAliased(
+        1, this->_internal_data(), target);
+  }
+
+  // bool responding = 2;
+  if (this->_internal_responding() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(2, this->_internal_responding(), target);
+  }
+
+  // uint32 reason = 3;
+  if (this->_internal_reason() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(3, this->_internal_reason(), target);
+  }
+
+  // string detail = 4;
+  if (!this->_internal_detail().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_detail().data(), static_cast<int>(this->_internal_detail().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "xwalk.iw.v1.XWalkVideoStreamCommandRej.detail");
+    target = stream->WriteStringMaybeAliased(
+        4, this->_internal_detail(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:xwalk.iw.v1.XWalkVideoStreamCommandRej)
+  return target;
+}
+
+size_t XWalkVideoStreamCommandRej::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:xwalk.iw.v1.XWalkVideoStreamCommandRej)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // bytes data = 1;
+  if (!this->_internal_data().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
+        this->_internal_data());
+  }
+
+  // string detail = 4;
+  if (!this->_internal_detail().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_detail());
+  }
+
+  // bool responding = 2;
+  if (this->_internal_responding() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // uint32 reason = 3;
+  if (this->_internal_reason() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData XWalkVideoStreamCommandRej::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    XWalkVideoStreamCommandRej::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*XWalkVideoStreamCommandRej::GetClassData() const { return &_class_data_; }
+
+
+void XWalkVideoStreamCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<XWalkVideoStreamCommandRej*>(&to_msg);
+  auto& from = static_cast<const XWalkVideoStreamCommandRej&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:xwalk.iw.v1.XWalkVideoStreamCommandRej)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_data().empty()) {
+    _this->_internal_set_data(from._internal_data());
+  }
+  if (!from._internal_detail().empty()) {
+    _this->_internal_set_detail(from._internal_detail());
+  }
+  if (from._internal_responding() != 0) {
+    _this->_internal_set_responding(from._internal_responding());
+  }
+  if (from._internal_reason() != 0) {
+    _this->_internal_set_reason(from._internal_reason());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void XWalkVideoStreamCommandRej::CopyFrom(const XWalkVideoStreamCommandRej& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:xwalk.iw.v1.XWalkVideoStreamCommandRej)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool XWalkVideoStreamCommandRej::IsInitialized() const {
+  return true;
+}
+
+void XWalkVideoStreamCommandRej::InternalSwap(XWalkVideoStreamCommandRej* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.data_, lhs_arena,
+      &other->_impl_.data_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.detail_, lhs_arena,
+      &other->_impl_.detail_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(XWalkVideoStreamCommandRej, _impl_.reason_)
+      + sizeof(XWalkVideoStreamCommandRej::_impl_.reason_)
+      - PROTOBUF_FIELD_OFFSET(XWalkVideoStreamCommandRej, _impl_.responding_)>(
+          reinterpret_cast<char*>(&_impl_.responding_),
+          reinterpret_cast<char*>(&other->_impl_.responding_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata XWalkVideoStreamCommandRej::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[45]);
+}
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace v1
 }  // namespace iw
@@ -15481,6 +15819,10 @@ Arena::CreateMaybeMessage< ::xwalk::iw::v1::XWalkStorytellingRobotCommandRej >(A
 template<> PROTOBUF_NOINLINE ::xwalk::iw::v1::XWalkCalibrateCommandRej*
 Arena::CreateMaybeMessage< ::xwalk::iw::v1::XWalkCalibrateCommandRej >(Arena* arena) {
   return Arena::CreateMessageInternal< ::xwalk::iw::v1::XWalkCalibrateCommandRej >(arena);
+}
+template<> PROTOBUF_NOINLINE ::xwalk::iw::v1::XWalkVideoStreamCommandRej*
+Arena::CreateMaybeMessage< ::xwalk::iw::v1::XWalkVideoStreamCommandRej >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::xwalk::iw::v1::XWalkVideoStreamCommandRej >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

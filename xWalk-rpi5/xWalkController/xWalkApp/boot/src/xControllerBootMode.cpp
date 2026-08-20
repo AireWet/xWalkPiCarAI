@@ -76,6 +76,10 @@ namespace xwalk::ctrl
             {
                 return XWALK_BOOT_VIDEO_CAR_REQ;
             }
+            if (commandArguments[0U] == "video-stream")
+            {
+                return XWALK_BOOT_VIDEO_STREAMING_REQ;
+            }
             if (commandArguments[0U] == "app-control")
             {
                 return XWALK_BOOT_APP_CONTROL_REQ;

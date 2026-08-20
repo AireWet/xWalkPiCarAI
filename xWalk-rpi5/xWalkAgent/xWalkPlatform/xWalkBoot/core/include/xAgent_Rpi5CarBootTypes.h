@@ -36,6 +36,7 @@
 #include "xAgent_Rpi5CarTreasureHunt.h"
 #include "xAgent_Rpi5CarVideoRecording.h"
 #include "xAgent_Rpi5CarVideoCar.h"
+#include "xAgent_Rpi5CarVideoStreaming.h"
 #include "xAgent_Rpi5CarAppControl.h"
 #include "xAgent_Rpi5CarSoundBackgroundMusic.h"
 #include "xAgent_Rpi5CarSelfDrive.h"
@@ -102,6 +103,8 @@
 #define XWALK_BOOT_SERVO_ZEROING_REQ (::agent::uint8{22U})
 /** @brief Selects only one configured Linux SPI device. */
 #define XWALK_BOOT_SPI_TRANSFER_REQ (::agent::uint8{23U})
+/** @brief Selects camera-only MJPEG HTTP streaming. */
+#define XWALK_BOOT_VIDEO_STREAMING_REQ (::agent::uint8{24U})
 
 /******************************************************************************
  * Namespace declarations
@@ -160,6 +163,8 @@ namespace xwalk::agent
             XWalkVideoRecording* videoRecording{nullptr};
             /** @brief Optional interactive camera-assisted driving Agent. */
             XWalkVideoCar* videoCar{nullptr};
+            /** @brief Optional foreground MJPEG video-streaming Agent. */
+            XWalkVideoStreaming* videoStreaming{nullptr};
             /** @brief Optional mobile-app vehicle-control Agent. */
             XWalkAppControl* appControl{nullptr};
             /** @brief Optional interactive sound-and-music Agent. */

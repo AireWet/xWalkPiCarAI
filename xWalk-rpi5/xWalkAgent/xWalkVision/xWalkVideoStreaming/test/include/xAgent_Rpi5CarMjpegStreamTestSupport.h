@@ -11,9 +11,40 @@
 
 #include "xAgent_Rpi5CarMjpegStream.h"
 #include "xAgent_Rpi5CarMjpegHttpServer.h"
+#include "xAgent_Rpi5CarVideoStreaming.h"
 
 namespace xwalk::agent::test::mjpeg_stream
 {
+
+    /**
+     * @struct XWalkVideoStreamingTestState
+     * @brief Retains deterministic fake-camera state shared by streaming tests.
+     */
+    struct XWalkVideoStreamingTestState
+    {
+            /** @brief True while the fake camera is started. */
+            agent::boolean cameraStarted{};
+            /** @brief Selects whether the next fake capture succeeds. */
+            agent::boolean captureAvailable{true};
+            /** @brief Number of fake frames captured since construction. */
+            agent::uint32 capturedFrames{};
+            /** @brief Fake monotonic clock value in milliseconds. */
+            agent::uint64 nowMilliseconds{};
+    };
+
+    /** @brief Marks the fake HAL camera in `context` as started. */
+    agent::boolean startVideoCamera(agent::contextpointer context,
+                                    const hal::XWalkCameraStreamConfiguration& configuration);
+    /** @brief Marks the fake camera in `context` as stopped. */
+    void stopVideoCamera(agent::contextpointer context) noexcept;
+    /** @brief Produces one deterministic JPEG-like fake HAL frame when enabled. */
+    agent::boolean captureVideoFrame(agent::contextpointer context,
+                                     const hal::XWalkCameraStreamConfiguration& configuration,
+                                     agent::bytevector& jpeg);
+    /** @brief Returns the fake monotonic millisecond clock from `context`. */
+    agent::uint64 videoClock(agent::contextpointer context) noexcept;
+    /** @brief Creates the complete fake HAL camera callback table. */
+    hal::XWalkCameraStreamCallbacks videoStreamingCallbacks() noexcept;
 
     /** @brief Creates one minimal marker-bearing JPEG-like bounded test payload. */
     agent::bytevector jpegFrame(agent::uint8 marker, agent::size payloadBytes);

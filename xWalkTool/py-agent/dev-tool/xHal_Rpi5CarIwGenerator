@@ -84,6 +84,7 @@ REQUEST_MESSAGE_NAMES = (
     "XWalkVoicePromptCarCommandRequest",
     "XWalkStorytellingRobotCommandRequest",
     "XWalkCalibrateCommandRequest",
+    "XWalkVideoStreamCommandRequest",
 )
 TRANSACTION_REQUEST_NAMES = tuple(
     message_name for message_name in REQUEST_MESSAGE_NAMES if "Request" in message_name
@@ -134,6 +135,7 @@ SERVICE_RPC_NAMES = (
             "BullFight",
             "TreasureHunt",
             "VideoCar",
+            "VideoStream",
             "Camera",
         ),
     ),

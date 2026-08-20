@@ -24,7 +24,6 @@
 // @note
 // Developed using MISRA C++ coding guidelines.
 // ****************************************************************************
-//
 #ifndef GRPC_xHal_5fRpi5CarXIwGrpc_2eproto__INCLUDED
 #define GRPC_xHal_5fRpi5CarXIwGrpc_2eproto__INCLUDED
 
@@ -1671,6 +1670,14 @@ class XWalkCtrlVisionService final {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::xwalk::iw::v1::XWalkVideoCarCommandCfm>>(PrepareAsyncVideoCarRaw(context, request, cq));
     }
     // @@ Handles the video car request.
+    virtual ::grpc::Status VideoStream(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest& request, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>> AsyncVideoStream(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>>(AsyncVideoStreamRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>> PrepareAsyncVideoStream(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>>(PrepareAsyncVideoStreamRaw(context, request, cq));
+    }
+    // @@ Handles the video stream request.
     virtual ::grpc::Status Camera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::xwalk::iw::v1::XWalkCameraCommandCfm* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::xwalk::iw::v1::XWalkCameraCommandCfm>> AsyncCamera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::xwalk::iw::v1::XWalkCameraCommandCfm>>(AsyncCameraRaw(context, request, cq));
@@ -1700,6 +1707,9 @@ class XWalkCtrlVisionService final {
       virtual void VideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* request, ::xwalk::iw::v1::XWalkVideoCarCommandCfm* response, std::function<void(::grpc::Status)>) = 0;
       virtual void VideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* request, ::xwalk::iw::v1::XWalkVideoCarCommandCfm* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       // @@ Handles the video car request.
+      virtual void VideoStream(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* request, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void VideoStream(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* request, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // @@ Handles the video stream request.
       virtual void Camera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest* request, ::xwalk::iw::v1::XWalkCameraCommandCfm* response, std::function<void(::grpc::Status)>) = 0;
       virtual void Camera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest* request, ::xwalk::iw::v1::XWalkCameraCommandCfm* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       // @@ Handles the camera request.
@@ -1720,6 +1730,8 @@ class XWalkCtrlVisionService final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::xwalk::iw::v1::XWalkTreasureHuntCommandCfm>* PrepareAsyncTreasureHuntRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::xwalk::iw::v1::XWalkVideoCarCommandCfm>* AsyncVideoCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::xwalk::iw::v1::XWalkVideoCarCommandCfm>* PrepareAsyncVideoCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>* AsyncVideoStreamRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>* PrepareAsyncVideoStreamRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::xwalk::iw::v1::XWalkCameraCommandCfm>* AsyncCameraRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::xwalk::iw::v1::XWalkCameraCommandCfm>* PrepareAsyncCameraRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
@@ -1768,6 +1780,13 @@ class XWalkCtrlVisionService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::xwalk::iw::v1::XWalkVideoCarCommandCfm>> PrepareAsyncVideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::xwalk::iw::v1::XWalkVideoCarCommandCfm>>(PrepareAsyncVideoCarRaw(context, request, cq));
     }
+    ::grpc::Status VideoStream(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest& request, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>> AsyncVideoStream(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>>(AsyncVideoStreamRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>> PrepareAsyncVideoStream(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>>(PrepareAsyncVideoStreamRaw(context, request, cq));
+    }
     ::grpc::Status Camera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::xwalk::iw::v1::XWalkCameraCommandCfm* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::xwalk::iw::v1::XWalkCameraCommandCfm>> AsyncCamera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::xwalk::iw::v1::XWalkCameraCommandCfm>>(AsyncCameraRaw(context, request, cq));
@@ -1790,6 +1809,8 @@ class XWalkCtrlVisionService final {
       void TreasureHunt(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest* request, ::xwalk::iw::v1::XWalkTreasureHuntCommandCfm* response, ::grpc::ClientUnaryReactor* reactor) override;
       void VideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* request, ::xwalk::iw::v1::XWalkVideoCarCommandCfm* response, std::function<void(::grpc::Status)>) override;
       void VideoCar(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* request, ::xwalk::iw::v1::XWalkVideoCarCommandCfm* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void VideoStream(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* request, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* response, std::function<void(::grpc::Status)>) override;
+      void VideoStream(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* request, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* response, ::grpc::ClientUnaryReactor* reactor) override;
       void Camera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest* request, ::xwalk::iw::v1::XWalkCameraCommandCfm* response, std::function<void(::grpc::Status)>) override;
       void Camera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest* request, ::xwalk::iw::v1::XWalkCameraCommandCfm* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
@@ -1815,6 +1836,8 @@ class XWalkCtrlVisionService final {
     ::grpc::ClientAsyncResponseReader< ::xwalk::iw::v1::XWalkTreasureHuntCommandCfm>* PrepareAsyncTreasureHuntRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkTreasureHuntCommandRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::xwalk::iw::v1::XWalkVideoCarCommandCfm>* AsyncVideoCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::xwalk::iw::v1::XWalkVideoCarCommandCfm>* PrepareAsyncVideoCarRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>* AsyncVideoStreamRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>* PrepareAsyncVideoStreamRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::xwalk::iw::v1::XWalkCameraCommandCfm>* AsyncCameraRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::xwalk::iw::v1::XWalkCameraCommandCfm>* PrepareAsyncCameraRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_ComputerVision_;
@@ -1823,6 +1846,7 @@ class XWalkCtrlVisionService final {
     const ::grpc::internal::RpcMethod rpcmethod_BullFight_;
     const ::grpc::internal::RpcMethod rpcmethod_TreasureHunt_;
     const ::grpc::internal::RpcMethod rpcmethod_VideoCar_;
+    const ::grpc::internal::RpcMethod rpcmethod_VideoStream_;
     const ::grpc::internal::RpcMethod rpcmethod_Camera_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
@@ -1843,6 +1867,8 @@ class XWalkCtrlVisionService final {
     // @@ Handles the treasure hunt request.
     virtual ::grpc::Status VideoCar(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* request, ::xwalk::iw::v1::XWalkVideoCarCommandCfm* response);
     // @@ Handles the video car request.
+    virtual ::grpc::Status VideoStream(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* request, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* response);
+    // @@ Handles the video stream request.
     virtual ::grpc::Status Camera(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest* request, ::xwalk::iw::v1::XWalkCameraCommandCfm* response);
     // @@ Handles the camera request.
   };
@@ -1967,12 +1993,32 @@ class XWalkCtrlVisionService final {
     }
   };
   template <class BaseClass>
+  class WithAsyncMethod_VideoStream : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_VideoStream() {
+      ::grpc::Service::MarkMethodAsync(6);
+    }
+    ~WithAsyncMethod_VideoStream() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VideoStream(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* /*request*/, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestVideoStream(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithAsyncMethod_Camera : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_Camera() {
-      ::grpc::Service::MarkMethodAsync(6);
+      ::grpc::Service::MarkMethodAsync(7);
     }
     ~WithAsyncMethod_Camera() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1983,10 +2029,10 @@ class XWalkCtrlVisionService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestCamera(::grpc::ServerContext* context, ::xwalk::iw::v1::XWalkCameraCommandRequest* request, ::grpc::ServerAsyncResponseWriter< ::xwalk::iw::v1::XWalkCameraCommandCfm>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_ComputerVision<WithAsyncMethod_RecordVideo<WithAsyncMethod_StareAtYou<WithAsyncMethod_BullFight<WithAsyncMethod_TreasureHunt<WithAsyncMethod_VideoCar<WithAsyncMethod_Camera<Service > > > > > > > AsyncService;
+  typedef WithAsyncMethod_ComputerVision<WithAsyncMethod_RecordVideo<WithAsyncMethod_StareAtYou<WithAsyncMethod_BullFight<WithAsyncMethod_TreasureHunt<WithAsyncMethod_VideoCar<WithAsyncMethod_VideoStream<WithAsyncMethod_Camera<Service > > > > > > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_ComputerVision : public BaseClass {
    private:
@@ -2150,18 +2196,45 @@ class XWalkCtrlVisionService final {
       ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* /*request*/, ::xwalk::iw::v1::XWalkVideoCarCommandCfm* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithCallbackMethod_VideoStream : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_VideoStream() {
+      ::grpc::Service::MarkMethodCallback(6,
+          new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkVideoStreamCommandRequest, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* request, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* response) { return this->VideoStream(context, request, response); }));}
+    void SetMessageAllocatorFor_VideoStream(
+        ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkVideoStreamCommandRequest, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkVideoStreamCommandRequest, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_VideoStream() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VideoStream(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* /*request*/, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* VideoStream(
+      ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* /*request*/, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithCallbackMethod_Camera : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_Camera() {
-      ::grpc::Service::MarkMethodCallback(6,
+      ::grpc::Service::MarkMethodCallback(7,
           new ::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkCameraCommandRequest, ::xwalk::iw::v1::XWalkCameraCommandCfm>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest* request, ::xwalk::iw::v1::XWalkCameraCommandCfm* response) { return this->Camera(context, request, response); }));}
     void SetMessageAllocatorFor_Camera(
         ::grpc::MessageAllocator< ::xwalk::iw::v1::XWalkCameraCommandRequest, ::xwalk::iw::v1::XWalkCameraCommandCfm>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(7);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::xwalk::iw::v1::XWalkCameraCommandRequest, ::xwalk::iw::v1::XWalkCameraCommandCfm>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2176,7 +2249,7 @@ class XWalkCtrlVisionService final {
     virtual ::grpc::ServerUnaryReactor* Camera(
       ::grpc::CallbackServerContext* /*context*/, const ::xwalk::iw::v1::XWalkCameraCommandRequest* /*request*/, ::xwalk::iw::v1::XWalkCameraCommandCfm* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_ComputerVision<WithCallbackMethod_RecordVideo<WithCallbackMethod_StareAtYou<WithCallbackMethod_BullFight<WithCallbackMethod_TreasureHunt<WithCallbackMethod_VideoCar<WithCallbackMethod_Camera<Service > > > > > > > CallbackService;
+  typedef WithCallbackMethod_ComputerVision<WithCallbackMethod_RecordVideo<WithCallbackMethod_StareAtYou<WithCallbackMethod_BullFight<WithCallbackMethod_TreasureHunt<WithCallbackMethod_VideoCar<WithCallbackMethod_VideoStream<WithCallbackMethod_Camera<Service > > > > > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_ComputerVision : public BaseClass {
@@ -2281,12 +2354,29 @@ class XWalkCtrlVisionService final {
     }
   };
   template <class BaseClass>
+  class WithGenericMethod_VideoStream : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_VideoStream() {
+      ::grpc::Service::MarkMethodGeneric(6);
+    }
+    ~WithGenericMethod_VideoStream() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VideoStream(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* /*request*/, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
   class WithGenericMethod_Camera : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_Camera() {
-      ::grpc::Service::MarkMethodGeneric(6);
+      ::grpc::Service::MarkMethodGeneric(7);
     }
     ~WithGenericMethod_Camera() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2418,12 +2508,32 @@ class XWalkCtrlVisionService final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_VideoStream : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_VideoStream() {
+      ::grpc::Service::MarkMethodRaw(6);
+    }
+    ~WithRawMethod_VideoStream() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VideoStream(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* /*request*/, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestVideoStream(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawMethod_Camera : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_Camera() {
-      ::grpc::Service::MarkMethodRaw(6);
+      ::grpc::Service::MarkMethodRaw(7);
     }
     ~WithRawMethod_Camera() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2434,7 +2544,7 @@ class XWalkCtrlVisionService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestCamera(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2570,12 +2680,34 @@ class XWalkCtrlVisionService final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithRawCallbackMethod_VideoStream : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_VideoStream() {
+      ::grpc::Service::MarkMethodRawCallback(6,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->VideoStream(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_VideoStream() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status VideoStream(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* /*request*/, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* VideoStream(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_Camera : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_Camera() {
-      ::grpc::Service::MarkMethodRawCallback(6,
+      ::grpc::Service::MarkMethodRawCallback(7,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Camera(context, request, response); }));
@@ -2754,12 +2886,39 @@ class XWalkCtrlVisionService final {
     virtual ::grpc::Status StreamedVideoCar(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkVideoCarCommandRequest,::xwalk::iw::v1::XWalkVideoCarCommandCfm>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
+  class WithStreamedUnaryMethod_VideoStream : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_VideoStream() {
+      ::grpc::Service::MarkMethodStreamed(6,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::xwalk::iw::v1::XWalkVideoStreamCommandRequest, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::xwalk::iw::v1::XWalkVideoStreamCommandRequest, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>* streamer) {
+                       return this->StreamedVideoStream(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_VideoStream() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status VideoStream(::grpc::ServerContext* /*context*/, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* /*request*/, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedVideoStream(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkVideoStreamCommandRequest,::xwalk::iw::v1::XWalkVideoStreamCommandCfm>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
   class WithStreamedUnaryMethod_Camera : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_Camera() {
-      ::grpc::Service::MarkMethodStreamed(6,
+      ::grpc::Service::MarkMethodStreamed(7,
         new ::grpc::internal::StreamedUnaryHandler<
           ::xwalk::iw::v1::XWalkCameraCommandRequest, ::xwalk::iw::v1::XWalkCameraCommandCfm>(
             [this](::grpc::ServerContext* context,
@@ -2780,9 +2939,9 @@ class XWalkCtrlVisionService final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedCamera(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::xwalk::iw::v1::XWalkCameraCommandRequest,::xwalk::iw::v1::XWalkCameraCommandCfm>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_ComputerVision<WithStreamedUnaryMethod_RecordVideo<WithStreamedUnaryMethod_StareAtYou<WithStreamedUnaryMethod_BullFight<WithStreamedUnaryMethod_TreasureHunt<WithStreamedUnaryMethod_VideoCar<WithStreamedUnaryMethod_Camera<Service > > > > > > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_ComputerVision<WithStreamedUnaryMethod_RecordVideo<WithStreamedUnaryMethod_StareAtYou<WithStreamedUnaryMethod_BullFight<WithStreamedUnaryMethod_TreasureHunt<WithStreamedUnaryMethod_VideoCar<WithStreamedUnaryMethod_VideoStream<WithStreamedUnaryMethod_Camera<Service > > > > > > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_ComputerVision<WithStreamedUnaryMethod_RecordVideo<WithStreamedUnaryMethod_StareAtYou<WithStreamedUnaryMethod_BullFight<WithStreamedUnaryMethod_TreasureHunt<WithStreamedUnaryMethod_VideoCar<WithStreamedUnaryMethod_Camera<Service > > > > > > > StreamedService;
+  typedef WithStreamedUnaryMethod_ComputerVision<WithStreamedUnaryMethod_RecordVideo<WithStreamedUnaryMethod_StareAtYou<WithStreamedUnaryMethod_BullFight<WithStreamedUnaryMethod_TreasureHunt<WithStreamedUnaryMethod_VideoCar<WithStreamedUnaryMethod_VideoStream<WithStreamedUnaryMethod_Camera<Service > > > > > > > > StreamedService;
 };
 
 // *

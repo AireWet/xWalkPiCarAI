@@ -1,7 +1,7 @@
 # xWalkCamera
 
-`xWalkCamera` provides bounded synchronous JPEG capture through a device-free
-core and an optional Linux backend.
+`xWalkCamera` provides bounded synchronous JPEG capture and encoded live-frame
+capture through a device-free core and optional Linux backends.
 
 The core stores a non-owning callback context, validates width, height, timeout,
 and destination path, and owns no camera, process, or filesystem resource.
@@ -11,9 +11,13 @@ and destination path, and owns no camera, process, or filesystem resource.
 ```text
 xWalkCamera/
 ├── core/include/
-├── core/src/xHal_Rpi5CarCamera.cpp
+├── core/src/
+│   ├── xHal_Rpi5CarCamera.cpp
+│   └── xHal_Rpi5CarCameraStream.cpp
 ├── hardware/include/
-├── hardware/src/xHal_Rpi5CarCameraLinux.cpp
+├── hardware/src/
+│   ├── xHal_Rpi5CarCameraLinux.cpp
+│   └── xHal_Rpi5CarCameraStreamOpenCv.cpp
 ├── hardware/test/src/xHal_Rpi5CarCameraHardwareTest.cpp
 ├── simulation/
 │   ├── config/xHal_Rpi5CarCameraTraceConfig.py
@@ -35,6 +39,11 @@ The Linux backend supports two deployment-selected connections:
 | --- | --- | --- |
 | `csi` | `rpicam-still` for the Raspberry Pi Camera Serial Interface | Camera selected by rpicam |
 | `usb` | `ffmpeg` using Video4Linux2 | `/dev/video0` |
+
+`XWalkCameraStream` validates and forwards camera start, stop, and JPEG-frame
+capture through caller-owned callbacks. The optional `XWalkCameraStreamOpenCv`
+backend supports V4L2 devices, GStreamer pipelines, and automatic OpenCV source
+selection. It owns the camera handle while Agent owns MJPEG transport policy.
 
 CSI is the Raspberry Pi camera connector. DSI is the display connector and is
 not used for camera capture. Both providers are executed directly without a

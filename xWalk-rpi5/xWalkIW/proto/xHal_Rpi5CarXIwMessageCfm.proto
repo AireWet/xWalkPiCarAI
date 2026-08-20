@@ -752,3 +752,19 @@ message XWalkCalibrateCommandCfm
     bool flag = 3; //@@ Indicates whether the request completed successfully.
     string message = 4; //@@ Human-readable confirmation message.
 }
+
+/**
+ * @brief Confirms successful handling of XWalkVideoStreamCommandRequest.
+ *
+ * @details
+ * Reports the standardized confirmation state for the video-stream request.
+ */
+message XWalkVideoStreamCommandCfm
+{
+    option (xwalkSignal) = 0x2120;
+
+    bytes data = 1; //@@ Bytes returned with the response in transport order.
+    bool responding = 2; //@@ Indicates whether the streaming service responded.
+    bool flag = 3; //@@ Indicates whether streaming completed successfully.
+    string message = 4; //@@ Human-readable confirmation message.
+}

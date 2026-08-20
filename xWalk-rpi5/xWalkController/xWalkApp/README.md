@@ -137,6 +137,7 @@ The following table lists every command group and action name accepted by the CL
 | `treasure-hunt` | Interactive keys | Spoken random-color driving game |
 | `record-video` | Interactive keys | Timestamped AVI start, pause, and stop |
 | `video-car` | Interactive keys | Drive with camera acquisition and photos |
+| `video-stream` | No arguments | Serve loopback MJPEG until cancellation |
 | `app-control` | `start`, `stop` | Explicitly configured mobile-app control |
 | `sound-background-music` | Interactive keys | Foreground horn, background horn, and music toggle |
 | `self-drive` | See the complete preset-action list below | None |
@@ -305,6 +306,9 @@ Vilib's web preview server.
 speed controls, `w`/`s` direction changes, `a`/`d` steering, `f` stop, and `t`
 photo capture. Enter `x` to stop the motors, close the camera, and exit. The
 OpenCV provider does not start Vilib's web server.
+
+`video-stream` delegates to `xWalkVideoStreaming`, opens only the configured
+camera and loopback HTTP listener, and stops on SIGINT or SIGTERM.
 
 `app-control start` delegates the SunFounder A-Q state to `xWalkAppControl`.
 It publishes speed, grayscale, and ultrasonic telemetry; consumes drive and

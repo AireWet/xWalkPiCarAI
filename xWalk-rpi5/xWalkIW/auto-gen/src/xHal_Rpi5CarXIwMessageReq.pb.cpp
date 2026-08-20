@@ -648,10 +648,21 @@ struct XWalkCalibrateCommandRequestDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 XWalkCalibrateCommandRequestDefaultTypeInternal _XWalkCalibrateCommandRequest_default_instance_;
+PROTOBUF_CONSTEXPR XWalkVideoStreamCommandRequest::XWalkVideoStreamCommandRequest(
+    ::_pbi::ConstantInitialized) {}
+struct XWalkVideoStreamCommandRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR XWalkVideoStreamCommandRequestDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~XWalkVideoStreamCommandRequestDefaultTypeInternal() {}
+  union {
+    XWalkVideoStreamCommandRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 XWalkVideoStreamCommandRequestDefaultTypeInternal _XWalkVideoStreamCommandRequest_default_instance_;
 }  // namespace v1
 }  // namespace iw
 }  // namespace xwalk
-static ::_pb::Metadata file_level_metadata_xHal_5fRpi5CarXIwMessageReq_2eproto[48];
+static ::_pb::Metadata file_level_metadata_xHal_5fRpi5CarXIwMessageReq_2eproto[49];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_xHal_5fRpi5CarXIwMessageReq_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_xHal_5fRpi5CarXIwMessageReq_2eproto = nullptr;
 
@@ -1011,6 +1022,12 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageReq_2eproto::offsets[] PROTOB
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCalibrateCommandRequest, _impl_.request_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVideoStreamCommandRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::xwalk::iw::v1::XWalkI2cRequestPayload)},
@@ -1061,6 +1078,7 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 334, -1, -1, sizeof(::xwalk::iw::v1::XWalkVoicePromptCarCommandRequest)},
   { 341, -1, -1, sizeof(::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest)},
   { 348, -1, -1, sizeof(::xwalk::iw::v1::XWalkCalibrateCommandRequest)},
+  { 355, -1, -1, sizeof(::xwalk::iw::v1::XWalkVideoStreamCommandRequest)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -1112,6 +1130,7 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::xwalk::iw::v1::_XWalkVoicePromptCarCommandRequest_default_instance_._instance,
   &::xwalk::iw::v1::_XWalkStorytellingRobotCommandRequest_default_instance_._instance,
   &::xwalk::iw::v1::_XWalkCalibrateCommandRequest_default_instance_._instance,
+  &::xwalk::iw::v1::_XWalkVideoStreamCommandRequest_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_xHal_5fRpi5CarXIwMessageReq_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -1219,9 +1238,10 @@ const char descriptor_table_protodef_xHal_5fRpi5CarXIwMessageReq_2eproto[] PROTO
   "equest\030\001 \001(\0132\".xwalk.iw.v1.XWalkLifecycl"
   "eRequest:\005\210\265\030\236@\"\\\n\034XWalkCalibrateCommand"
   "Request\0225\n\007request\030\001 \001(\0132$.xwalk.iw.v1.X"
-  "WalkCalibrationRequest:\005\210\265\030\237@:6\n\013xwalkSi"
-  "gnal\022\037.google.protobuf.MessageOptions\030\321\206"
-  "\003 \001(\rb\006proto3"
+  "WalkCalibrationRequest:\005\210\265\030\237@\"\'\n\036XWalkVi"
+  "deoStreamCommandRequest:\005\210\265\030\240@:6\n\013xwalkS"
+  "ignal\022\037.google.protobuf.MessageOptions\030\321"
+  "\206\003 \001(\rb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_xHal_5fRpi5CarXIwMessageReq_2eproto_deps[2] = {
   &::descriptor_table_google_2fprotobuf_2fdescriptor_2eproto,
@@ -1229,9 +1249,9 @@ static const ::_pbi::DescriptorTable* const descriptor_table_xHal_5fRpi5CarXIwMe
 };
 static ::_pbi::once_flag descriptor_table_xHal_5fRpi5CarXIwMessageReq_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_xHal_5fRpi5CarXIwMessageReq_2eproto = {
-    false, false, 4253, descriptor_table_protodef_xHal_5fRpi5CarXIwMessageReq_2eproto,
+    false, false, 4294, descriptor_table_protodef_xHal_5fRpi5CarXIwMessageReq_2eproto,
     "xHal_Rpi5CarXIwMessageReq.proto",
-    &descriptor_table_xHal_5fRpi5CarXIwMessageReq_2eproto_once, descriptor_table_xHal_5fRpi5CarXIwMessageReq_2eproto_deps, 2, 48,
+    &descriptor_table_xHal_5fRpi5CarXIwMessageReq_2eproto_once, descriptor_table_xHal_5fRpi5CarXIwMessageReq_2eproto_deps, 2, 49,
     schemas, file_default_instances, TableStruct_xHal_5fRpi5CarXIwMessageReq_2eproto::offsets,
     file_level_metadata_xHal_5fRpi5CarXIwMessageReq_2eproto, file_level_enum_descriptors_xHal_5fRpi5CarXIwMessageReq_2eproto,
     file_level_service_descriptors_xHal_5fRpi5CarXIwMessageReq_2eproto,
@@ -9493,6 +9513,46 @@ void XWalkCalibrateCommandRequest::InternalSwap(XWalkCalibrateCommandRequest* ot
       &descriptor_table_xHal_5fRpi5CarXIwMessageReq_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageReq_2eproto_once,
       file_level_metadata_xHal_5fRpi5CarXIwMessageReq_2eproto[47]);
 }
+
+// ===================================================================
+
+class XWalkVideoStreamCommandRequest::_Internal {
+ public:
+};
+
+XWalkVideoStreamCommandRequest::XWalkVideoStreamCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  // @@protoc_insertion_point(arena_constructor:xwalk.iw.v1.XWalkVideoStreamCommandRequest)
+}
+XWalkVideoStreamCommandRequest::XWalkVideoStreamCommandRequest(const XWalkVideoStreamCommandRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  XWalkVideoStreamCommandRequest* const _this = this; (void)_this;
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkVideoStreamCommandRequest)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData XWalkVideoStreamCommandRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*XWalkVideoStreamCommandRequest::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata XWalkVideoStreamCommandRequest::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_xHal_5fRpi5CarXIwMessageReq_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageReq_2eproto_once,
+      file_level_metadata_xHal_5fRpi5CarXIwMessageReq_2eproto[48]);
+}
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::MessageOptions,
     ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< uint32_t >, 13, false>
   xwalkSignal(kXwalkSignalFieldNumber, 0u, nullptr);
@@ -9693,6 +9753,10 @@ Arena::CreateMaybeMessage< ::xwalk::iw::v1::XWalkStorytellingRobotCommandRequest
 template<> PROTOBUF_NOINLINE ::xwalk::iw::v1::XWalkCalibrateCommandRequest*
 Arena::CreateMaybeMessage< ::xwalk::iw::v1::XWalkCalibrateCommandRequest >(Arena* arena) {
   return Arena::CreateMessageInternal< ::xwalk::iw::v1::XWalkCalibrateCommandRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::xwalk::iw::v1::XWalkVideoStreamCommandRequest*
+Arena::CreateMaybeMessage< ::xwalk::iw::v1::XWalkVideoStreamCommandRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::xwalk::iw::v1::XWalkVideoStreamCommandRequest >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

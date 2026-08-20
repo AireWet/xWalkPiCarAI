@@ -446,6 +446,7 @@ static const char* XWalkCtrlVisionService_method_names[] = {
   "/xwalk.iw.v1.XWalkCtrlVisionService/BullFight",
   "/xwalk.iw.v1.XWalkCtrlVisionService/TreasureHunt",
   "/xwalk.iw.v1.XWalkCtrlVisionService/VideoCar",
+  "/xwalk.iw.v1.XWalkCtrlVisionService/VideoStream",
   "/xwalk.iw.v1.XWalkCtrlVisionService/Camera",
 };
 
@@ -462,7 +463,8 @@ XWalkCtrlVisionService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterfa
   , rpcmethod_BullFight_(XWalkCtrlVisionService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_TreasureHunt_(XWalkCtrlVisionService_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_VideoCar_(XWalkCtrlVisionService_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_Camera_(XWalkCtrlVisionService_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_VideoStream_(XWalkCtrlVisionService_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Camera_(XWalkCtrlVisionService_method_names[7], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status XWalkCtrlVisionService::Stub::ComputerVision(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkComputerVisionCommandRequest& request, ::xwalk::iw::v1::XWalkComputerVisionCommandCfm* response) {
@@ -603,6 +605,29 @@ void XWalkCtrlVisionService::Stub::async::VideoCar(::grpc::ClientContext* contex
   return result;
 }
 
+::grpc::Status XWalkCtrlVisionService::Stub::VideoStream(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest& request, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkVideoStreamCommandRequest, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_VideoStream_, context, request, response);
+}
+
+void XWalkCtrlVisionService::Stub::async::VideoStream(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* request, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::xwalk::iw::v1::XWalkVideoStreamCommandRequest, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_VideoStream_, context, request, response, std::move(f));
+}
+
+void XWalkCtrlVisionService::Stub::async::VideoStream(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* request, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_VideoStream_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>* XWalkCtrlVisionService::Stub::PrepareAsyncVideoStreamRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::xwalk::iw::v1::XWalkVideoStreamCommandCfm, ::xwalk::iw::v1::XWalkVideoStreamCommandRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_VideoStream_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::xwalk::iw::v1::XWalkVideoStreamCommandCfm>* XWalkCtrlVisionService::Stub::AsyncVideoStreamRaw(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncVideoStreamRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 ::grpc::Status XWalkCtrlVisionService::Stub::Camera(::grpc::ClientContext* context, const ::xwalk::iw::v1::XWalkCameraCommandRequest& request, ::xwalk::iw::v1::XWalkCameraCommandCfm* response) {
   return ::grpc::internal::BlockingUnaryCall< ::xwalk::iw::v1::XWalkCameraCommandRequest, ::xwalk::iw::v1::XWalkCameraCommandCfm, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Camera_, context, request, response);
 }
@@ -690,6 +715,16 @@ XWalkCtrlVisionService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       XWalkCtrlVisionService_method_names[6],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< XWalkCtrlVisionService::Service, ::xwalk::iw::v1::XWalkVideoStreamCommandRequest, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](XWalkCtrlVisionService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* req,
+             ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* resp) {
+               return service->VideoStream(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      XWalkCtrlVisionService_method_names[7],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< XWalkCtrlVisionService::Service, ::xwalk::iw::v1::XWalkCameraCommandRequest, ::xwalk::iw::v1::XWalkCameraCommandCfm, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](XWalkCtrlVisionService::Service* service,
              ::grpc::ServerContext* ctx,
@@ -738,6 +773,13 @@ XWalkCtrlVisionService::Service::~Service() {
 }
 
 ::grpc::Status XWalkCtrlVisionService::Service::VideoCar(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkVideoCarCommandRequest* request, ::xwalk::iw::v1::XWalkVideoCarCommandCfm* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status XWalkCtrlVisionService::Service::VideoStream(::grpc::ServerContext* context, const ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* request, ::xwalk::iw::v1::XWalkVideoStreamCommandCfm* response) {
   (void) context;
   (void) request;
   (void) response;

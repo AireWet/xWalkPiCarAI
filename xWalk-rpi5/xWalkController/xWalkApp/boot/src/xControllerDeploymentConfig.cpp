@@ -25,7 +25,7 @@ using ConfigDefault = ::xwalk::source_types::xcontrollerdeploymentconfig::Config
 namespace
 {
 
-    constexpr std::array<ConfigDefault, 38U> knownConfiguration{
+    constexpr std::array<ConfigDefault, 48U> knownConfiguration{
         {{"deployment_config_version", "1"},
          {"hardware_board", "robot_hat_v4"},
          {"hardware_i2c_device", "/dev/i2c-1"},
@@ -58,6 +58,16 @@ namespace
          {"video_recording_camera_device", "/dev/video0"},
          {"video_recording_fps", "20"},
          {"video_recording_read_timeout_ms", "1000"},
+         {"video_stream_camera_backend", "v4l2"},
+         {"video_stream_camera_device", "/dev/video0"},
+         {"video_stream_width", "640"},
+         {"video_stream_height", "480"},
+         {"video_stream_jpeg_quality", "80"},
+         {"video_stream_read_timeout_ms", "1000"},
+         {"video_stream_bind_address", "127.0.0.1"},
+         {"video_stream_port", "8080"},
+         {"video_stream_maximum_clients", "4"},
+         {"video_stream_queue_capacity", "2"},
          {"voice_language_model_provider", "ollama"},
          {"voice_language_model_endpoint", "http://127.0.0.1:11434/api/chat"},
          {"voice_language_model_api_key_environment", ""},
@@ -267,7 +277,7 @@ namespace xwalk::ctrl
 
         const ::ctrl::string connection = value(store, "camera_connection");
         appendCheck(report, (connection == "csi") || (connection == "usb"), "Still-camera connection", connection);
-        for (const ::ctrl::cstring prefix : {"computer_vision", "video_recording"})
+        for (const ::ctrl::cstring prefix : {"computer_vision", "video_recording", "video_stream"})
         {
             const ::ctrl::string backendKey = ::ctrl::string(prefix) + "_camera_backend";
             const ::ctrl::string deviceKey = ::ctrl::string(prefix) + "_camera_device";
@@ -276,8 +286,11 @@ namespace xwalk::ctrl
             const ::ctrl::boolean sourceValid =
                 backend == "gstreamer" ? !device.empty()
                                        : ((backend == "automatic") || ::ctrl::filesystempath(device).is_absolute());
+            const ::ctrl::boolean streamingBackend = ::ctrl::stringview(prefix) == "video_stream";
+            const ::ctrl::boolean streamingBackendValid = (streamingBackend == false) || (backend == "v4l2") ||
+                                                          (backend == "gstreamer") || (backend == "automatic");
             appendCheck(report,
-                        validCameraBackend(backend) && sourceValid,
+                        validCameraBackend(backend) && sourceValid && streamingBackendValid,
                         backendKey,
                         "supported backend with compatible source");
         }
@@ -287,8 +300,25 @@ namespace xwalk::ctrl
                     "Vision resolution",
                     "bounded width and height");
         appendCheck(report,
+                    parseUnsigned(value(store, "video_stream_width"), 16U, 7'680U) &&
+                        parseUnsigned(value(store, "video_stream_height"), 16U, 4'320U),
+                    "Streaming resolution",
+                    "bounded width and height");
+        appendCheck(report,
+                    parseUnsigned(value(store, "video_stream_jpeg_quality"), 1U, 100U),
+                    "Streaming JPEG quality",
+                    "range 1 through 100");
+        appendCheck(report,
+                    value(store, "video_stream_bind_address") == "127.0.0.1" &&
+                        parseUnsigned(value(store, "video_stream_port"), 1U, 65'535U) &&
+                        parseUnsigned(value(store, "video_stream_maximum_clients"), 1U, 32U) &&
+                        parseUnsigned(value(store, "video_stream_queue_capacity"), 1U, 16U),
+                    "Streaming listener",
+                    "loopback address and bounded listener settings");
+        appendCheck(report,
                     parseUnsigned(value(store, "computer_vision_read_timeout_ms"), 1U, 60'000U) &&
-                        parseUnsigned(value(store, "video_recording_read_timeout_ms"), 1U, 60'000U),
+                        parseUnsigned(value(store, "video_recording_read_timeout_ms"), 1U, 60'000U) &&
+                        parseUnsigned(value(store, "video_stream_read_timeout_ms"), 1U, 60'000U),
                     "Camera read timeouts",
                     "range 1 through 60000 ms");
         appendCheck(report,

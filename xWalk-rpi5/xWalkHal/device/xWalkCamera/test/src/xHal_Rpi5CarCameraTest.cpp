@@ -31,8 +31,10 @@
  */
 namespace
 {
+    using xwalk::hal::test::camera::CameraStreamTestState;
     using xwalk::hal::test::camera::CameraTestState;
     using xwalk::hal::test::camera::captureImage;
+    using xwalk::hal::test::camera::streamCallbacks;
 
     /** @brief Verifies successful capture forwarding and connection parsing. */
     void testCapture()
@@ -91,6 +93,40 @@ namespace
             });
     }
 
+    /** @brief Verifies encoded-camera lifecycle, capture, and validation. */
+    void testStream()
+    {
+        CameraStreamTestState state;
+        xwalk::hal::XWalkCameraStream stream(&state, streamCallbacks());
+        XWalkHal::bytevector jpeg;
+        const XWalkHal::boolean captureBeforeStart = stream.capture(jpeg);
+        assert(captureBeforeStart == false);
+        assert(jpeg.empty());
+        const XWalkHal::boolean streamStarted = stream.start();
+        assert(streamStarted);
+        assert(stream.started());
+        const XWalkHal::boolean frameCaptured = stream.capture(jpeg);
+        assert(frameCaptured);
+        assert(state.captureCount == 1U);
+        assert(jpeg.size() == 5U);
+        stream.stop();
+        assert(stream.started() == false);
+        assert(state.started == false);
+
+        xwalk::hal::test::expectFailure(
+            [&state]()
+            {
+                const xwalk::hal::XWalkCameraStream streamValue(&state, {});
+            });
+        xwalk::hal::test::expectFailure(
+            [&state]()
+            {
+                xwalk::hal::XWalkCameraStreamConfiguration configuration;
+                configuration.jpegQuality = 0U;
+                const xwalk::hal::XWalkCameraStream streamValue(&state, streamCallbacks(), configuration);
+            });
+    }
+
     /** @brief Verifies persistent Camera trace-selector parsing and application. */
     void testTraceSelection()
     {
@@ -124,6 +160,7 @@ XWalkHal::int32 main()
     XWALK_HAL_TRACE_UID0(RPI .222, "xWalkCamera host tests started");
     testCapture();
     testValidation();
+    testStream();
     testTraceSelection();
     XWALK_HAL_TRACE_UID0(RPI .223, "xWalkCamera host tests completed");
     return 0;

@@ -15,6 +15,11 @@ per-client frame queues are bounded. Queue saturation drops the oldest frame
 for that client. Header, idle, and slow-client deadlines use caller-provided
 monotonic time.
 
+`XWalkVideoStreaming` connects a caller-owned HAL `XWalkCameraStream` to that
+transport. Raspberry Pi composition supplies the HAL
+`XWalkCameraStreamOpenCv` backend, and the foreground Controller command pumps
+capture and networking until SIGINT or SIGTERM requests shutdown.
+
 The default bind is `127.0.0.1`. A non-loopback bind requires explicit
 `allowExternalBind`, a non-empty secret-store reference, and a caller-provided
 bearer-token authentication callback. The reference is not a credential and
@@ -48,4 +53,17 @@ curl --fail http://127.0.0.1:8080/health
 
 ```bash
 ffplay http://127.0.0.1:8080/stream
+```
+
+Run the integrated Raspberry Pi command with:
+
+```bash
+build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control video-stream
+```
+
+Open `http://127.0.0.1:8080/stream` on the Pi desktop. Forward the same
+loopback-only stream to an SSH client with:
+
+```bash
+ssh -L 8080:127.0.0.1:8080 <pi-user>@<pi-address>
 ```

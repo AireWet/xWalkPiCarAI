@@ -95,6 +95,10 @@ namespace xwalk::agent
             agent::int32 runComputerVision(const xAgentContext& parameters);
             /** @brief Runs the camera-only video-recording mode. */
             agent::int32 runVideoRecording(const xAgentContext& parameters);
+            /** @brief Runs camera-only MJPEG HTTP streaming. */
+            agent::int32 runVideoStreaming(const xAgentContext& parameters);
+            /** @brief Returns monotonic milliseconds for the stream transport. */
+            static agent::uint64 videoStreamClock(agent::contextpointer context) noexcept;
             /** @brief Runs the isolated SPI-transfer mode. */
             agent::int32 runSpiTransfer(const xAgentContext& parameters);
             /** @brief Composes the Robot HAT graph used by actuator modes. */

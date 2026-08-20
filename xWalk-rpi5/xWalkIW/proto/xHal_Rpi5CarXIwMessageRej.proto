@@ -752,3 +752,19 @@ message XWalkCalibrateCommandRej
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
 }
+
+/**
+ * @brief Rejects XWalkVideoStreamCommandRequest with diagnostic detail.
+ *
+ * @details
+ * Reports the standardized rejection state for the video-stream request.
+ */
+message XWalkVideoStreamCommandRej
+{
+    option (xwalkSignal) = 0x2220;
+
+    bytes data = 1; //@@ Bytes returned with the rejection in transport order.
+    bool responding = 2; //@@ Indicates whether the streaming service responded.
+    uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
+    string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+}

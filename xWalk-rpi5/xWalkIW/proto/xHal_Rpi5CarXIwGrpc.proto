@@ -79,6 +79,7 @@ service XWalkCtrlVisionService
     rpc BullFight(XWalkBullFightCommandRequest) returns (XWalkBullFightCommandCfm); //@@ Handles the bull fight request.
     rpc TreasureHunt(XWalkTreasureHuntCommandRequest) returns (XWalkTreasureHuntCommandCfm); //@@ Handles the treasure hunt request.
     rpc VideoCar(XWalkVideoCarCommandRequest) returns (XWalkVideoCarCommandCfm); //@@ Handles the video car request.
+    rpc VideoStream(XWalkVideoStreamCommandRequest) returns (XWalkVideoStreamCommandCfm); //@@ Handles the video stream request.
     rpc Camera(XWalkCameraCommandRequest) returns (XWalkCameraCommandCfm); //@@ Handles the camera request.
 }
 

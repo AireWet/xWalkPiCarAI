@@ -97,3 +97,5 @@
 #define XWALK_CNTRL_STORYTELLING_ROBOT_REQ (::ctrl::uint16{0x201EU})
 /** @brief Requests vehicle calibration. */
 #define XWALK_CNTRL_CALIBRATE_REQ (::ctrl::uint16{0x201FU})
+/** @brief Requests foreground MJPEG camera streaming. */
+#define XWALK_CNTRL_VIDEO_STREAM_REQ (::ctrl::uint16{0x2020U})

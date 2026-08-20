@@ -37,6 +37,7 @@
 #include "xAgent_Rpi5CarTreasureHunt.h"
 #include "xAgent_Rpi5CarVideoRecording.h"
 #include "xAgent_Rpi5CarVideoCar.h"
+#include "xAgent_Rpi5CarVideoStreaming.h"
 #include "xAgent_Rpi5CarAppControl.h"
 #include "xAgent_Rpi5CarSoundBackgroundMusic.h"
 #include "xAgent_Rpi5CarGrayscaleCalibration.h"
@@ -118,6 +119,8 @@ namespace xwalk::ctrl
             agent::XWalkVideoRecording* videoRecordingObject{nullptr};
             /** @brief Nullable non-owning interactive video-car pointer. */
             agent::XWalkVideoCar* videoCarObject{nullptr};
+            /** @brief Nullable non-owning foreground video-streaming pointer. */
+            agent::XWalkVideoStreaming* videoStreamingObject{nullptr};
             /** @brief Nullable non-owning mobile-app control pointer. */
             agent::XWalkAppControl* appControlObject{nullptr};
             /** @brief Nullable non-owning sound-background-music pointer. */
@@ -185,6 +188,8 @@ namespace xwalk::ctrl
             ::ctrl::int32 XWALK_handlerVideoRecording(const XWalkNoArgumentRequest& request);
             /** @brief Runs interactive driving ported from `11.video_car.py`. */
             ::ctrl::int32 XWALK_handlerVideoCar(const XWalkNoArgumentRequest& request);
+            /** @brief Runs foreground MJPEG video streaming until cancellation. */
+            ::ctrl::int32 XWALK_handlerVideoStreaming(const XWalkNoArgumentRequest& request);
             /** @brief Runs mobile-app control ported from `12.app_control.py`. */
             ::ctrl::int32 XWALK_handlerAppControl(const XWalkLifecycleRequest& request);
             /** @brief Runs interactive audio ported from example 13. */
@@ -354,6 +359,11 @@ namespace xwalk::ctrl
             /** @brief Constructs a CLI containing interactive video-car control. */
             XWalkController(agent::XWalkPicarx& picarx,
                             agent::XWalkVideoCar& videoCar,
+                            ::ctrl::contextpointer context,
+                            const XWalkControllerCallbacks& backendCallbacks);
+
+            /** @brief Constructs a CLI containing foreground MJPEG video streaming. */
+            XWalkController(agent::XWalkVideoStreaming& videoStreaming,
                             ::ctrl::contextpointer context,
                             const XWalkControllerCallbacks& backendCallbacks);
 

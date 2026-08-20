@@ -18,6 +18,48 @@
 namespace xwalk::agent::test::mjpeg_stream
 {
 
+    agent::boolean startVideoCamera(agent::contextpointer context,
+                                    const hal::XWalkCameraStreamConfiguration& configuration)
+    {
+        static_cast<void>(configuration);
+        XWalkVideoStreamingTestState& state = *static_cast<XWalkVideoStreamingTestState*>(context);
+        state.cameraStarted = true;
+        return true;
+    }
+
+    void stopVideoCamera(agent::contextpointer context) noexcept
+    {
+        XWalkVideoStreamingTestState& state = *static_cast<XWalkVideoStreamingTestState*>(context);
+        state.cameraStarted = false;
+    }
+
+    agent::boolean captureVideoFrame(agent::contextpointer context,
+                                     const hal::XWalkCameraStreamConfiguration& configuration,
+                                     agent::bytevector& jpeg)
+    {
+        static_cast<void>(configuration);
+        XWalkVideoStreamingTestState& state = *static_cast<XWalkVideoStreamingTestState*>(context);
+        if (state.captureAvailable == false)
+        {
+            return false;
+        }
+        ++state.capturedFrames;
+        jpeg = jpegFrame(0x45U, 32U);
+        return true;
+    }
+
+    agent::uint64 videoClock(agent::contextpointer context) noexcept
+    {
+        XWalkVideoStreamingTestState& state = *static_cast<XWalkVideoStreamingTestState*>(context);
+        ++state.nowMilliseconds;
+        return state.nowMilliseconds;
+    }
+
+    hal::XWalkCameraStreamCallbacks videoStreamingCallbacks() noexcept
+    {
+        return {&startVideoCamera, &stopVideoCamera, &captureVideoFrame};
+    }
+
     agent::bytevector jpegFrame(agent::uint8 marker, agent::size payloadBytes)
     {
         const agent::size size = payloadBytes < 5U ? 5U : payloadBytes;

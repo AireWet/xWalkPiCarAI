@@ -106,7 +106,7 @@ message XWalkControllerCommandRequest
 {
     option (xwalkSignal) = 0x2083;
 
-    uint32 command = 1; //@@ Stable Controller command signal in range `0x2000` through `0x201F`.
+    uint32 command = 1; //@@ Stable Controller command signal in range `0x2000` through `0x2020`.
     repeated string arguments = 2; //@@ Original arguments consumed by command-specific request parsing.
 }
 
@@ -656,4 +656,15 @@ message XWalkCalibrateCommandRequest
 {
     option (xwalkSignal) = 0x201F;
     XWalkCalibrationRequest request = 1; //@@ Nested request payload for the command.
+}
+
+/**
+ * @brief Requests foreground Controller MJPEG video streaming.
+ *
+ * @details
+ * Starts the configured camera and HTTP stream until the operation is cancelled.
+ */
+message XWalkVideoStreamCommandRequest
+{
+    option (xwalkSignal) = 0x2020;
 }

@@ -182,6 +182,9 @@ extern XWalkUnknownCommandRequestDefaultTypeInternal _XWalkUnknownCommandRequest
 class XWalkVideoCarCommandRequest;
 struct XWalkVideoCarCommandRequestDefaultTypeInternal;
 extern XWalkVideoCarCommandRequestDefaultTypeInternal _XWalkVideoCarCommandRequest_default_instance_;
+class XWalkVideoStreamCommandRequest;
+struct XWalkVideoStreamCommandRequestDefaultTypeInternal;
+extern XWalkVideoStreamCommandRequestDefaultTypeInternal _XWalkVideoStreamCommandRequest_default_instance_;
 class XWalkVoiceActiveCarCommandRequest;
 struct XWalkVoiceActiveCarCommandRequestDefaultTypeInternal;
 extern XWalkVoiceActiveCarCommandRequestDefaultTypeInternal _XWalkVoiceActiveCarCommandRequest_default_instance_;
@@ -242,6 +245,7 @@ template<> ::xwalk::iw::v1::XWalkTurnCommandRequest* Arena::CreateMaybeMessage<:
 template<> ::xwalk::iw::v1::XWalkTurnRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkTurnRequest>(Arena*);
 template<> ::xwalk::iw::v1::XWalkUnknownCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkUnknownCommandRequest>(Arena*);
 template<> ::xwalk::iw::v1::XWalkVideoCarCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkVideoCarCommandRequest>(Arena*);
+template<> ::xwalk::iw::v1::XWalkVideoStreamCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkVideoStreamCommandRequest>(Arena*);
 template<> ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkVoiceActiveCarCommandRequest>(Arena*);
 template<> ::xwalk::iw::v1::XWalkVoiceChatCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkVoiceChatCommandRequest>(Arena*);
 template<> ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkVoiceControlledCarCommandRequest>(Arena*);
@@ -7539,6 +7543,124 @@ class XWalkCalibrateCommandRequest final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_xHal_5fRpi5CarXIwMessageReq_2eproto;
 };
+// -------------------------------------------------------------------
+
+class XWalkVideoStreamCommandRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkVideoStreamCommandRequest) */ {
+ public:
+  inline XWalkVideoStreamCommandRequest() : XWalkVideoStreamCommandRequest(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR XWalkVideoStreamCommandRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkVideoStreamCommandRequest(const XWalkVideoStreamCommandRequest& from);
+  XWalkVideoStreamCommandRequest(XWalkVideoStreamCommandRequest&& from) noexcept
+    : XWalkVideoStreamCommandRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkVideoStreamCommandRequest& operator=(const XWalkVideoStreamCommandRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkVideoStreamCommandRequest& operator=(XWalkVideoStreamCommandRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkVideoStreamCommandRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkVideoStreamCommandRequest* internal_default_instance() {
+    return reinterpret_cast<const XWalkVideoStreamCommandRequest*>(
+               &_XWalkVideoStreamCommandRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    48;
+
+  friend void swap(XWalkVideoStreamCommandRequest& a, XWalkVideoStreamCommandRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkVideoStreamCommandRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkVideoStreamCommandRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkVideoStreamCommandRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkVideoStreamCommandRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const XWalkVideoStreamCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const XWalkVideoStreamCommandRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkVideoStreamCommandRequest";
+  }
+  protected:
+  explicit XWalkVideoStreamCommandRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkVideoStreamCommandRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessageReq_2eproto;
+};
 // ===================================================================
 
 static const int kXwalkSignalFieldNumber = 50001;
@@ -10870,9 +10992,15 @@ inline void XWalkCalibrateCommandRequest::set_allocated_request(::xwalk::iw::v1:
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkCalibrateCommandRequest.request)
 }
 
+// -------------------------------------------------------------------
+
+// XWalkVideoStreamCommandRequest
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

@@ -79,6 +79,7 @@ energizes them. The separate movement demo retains its existing sequence.
 | Vision | `vision/xControllerTreasureHuntHandler.cpp` | Treasure-hunt behavior |
 | Vision | `vision/xControllerVideoRecordingHandler.cpp` | Video recording |
 | Vision | `vision/xControllerVideoCarHandler.cpp` | Camera-assisted driving |
+| Vision | `vision/xControllerVideoStreamingHandler.cpp` | Foreground MJPEG streaming |
 | Vision | `vision/xControllerCameraHandler.cpp` | Camera-servo control |
 | Voice | `voice/xControllerVoiceActiveCarHandler.cpp` | Voice-active car |
 | Voice | `voice/xControllerGptCarHandler.cpp` | GPT car |

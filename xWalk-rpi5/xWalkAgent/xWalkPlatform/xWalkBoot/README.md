@@ -33,6 +33,7 @@ Boot modes are intentionally bounded:
 | `TreasureHunt` | Base PiCar-X, OpenCV color detection, Pico2Wave, and spoken color game |
 | `VideoRecording` | OpenCV camera and continuous AVI recording only |
 | `VideoCar` | Base PiCar-X graph, OpenCV camera, and interactive driving |
+| `VideoStreaming` | OpenCV camera and loopback MJPEG HTTP streaming |
 | `AppControl` | Base PiCar-X, explicit WebSocket transport, camera, and sound |
 | `SoundBackgroundMusic` | Shared ALSA music graph and interactive example 13 Agent |
 | `LineTracking` | Base plus `XWalkLineTracking` |
@@ -156,6 +157,16 @@ PiCar-X configuration file:
 | `video_recording_camera_device` | `/dev/video0` |
 | `video_recording_directory` | `/tmp/xwalk-videos` |
 | `video_recording_fps` | `20` |
+| `video_stream_camera_backend` | `v4l2` |
+| `video_stream_camera_device` | `/dev/video0` |
+| `video_stream_width` | `640` |
+| `video_stream_height` | `480` |
+| `video_stream_jpeg_quality` | `80` |
+| `video_stream_read_timeout_ms` | `1000` |
+| `video_stream_bind_address` | `127.0.0.1` |
+| `video_stream_port` | `8080` |
+| `video_stream_maximum_clients` | `4` |
+| `video_stream_queue_capacity` | `2` |
 | `text_vision_width` | `1280` |
 | `text_vision_height` | `720` |
 | `local_voice_chatbot_maximum_messages` | `20` |

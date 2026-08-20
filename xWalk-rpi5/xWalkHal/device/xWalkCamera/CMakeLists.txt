@@ -4,6 +4,7 @@ project(xWalkCamera LANGUAGES CXX)
 option(XWALK_CAMERA_BUILD_HOST_TESTS "Build xWalkCamera host tests" OFF)
 option(XWALK_CAMERA_BUILD_HARDWARE_TESTS "Build xWalkCamera hardware test" OFF)
 option(XWALK_CAMERA_BUILD_LINUX_BACKEND "Build the xWalkCamera Linux backend" OFF)
+option(XWALK_CAMERA_BUILD_OPENCV_BACKEND "Build OpenCV encoded camera streaming" OFF)
 
 set(XWALK_CAMERA_HARDWARE_CONNECTION "usb" CACHE STRING
     "Physical camera connection used by the opt-in hardware test")
@@ -14,7 +15,8 @@ set(XWALK_CAMERA_HARDWARE_DEVICE "/dev/video0" CACHE STRING
 set(XWALK_CAMERA_HARDWARE_OUTPUT "/tmp/xwalk-camera-hardware-test.jpg" CACHE STRING
     "JPEG destination used by the opt-in hardware test")
 
-if((XWALK_CAMERA_BUILD_HARDWARE_TESTS OR XWALK_CAMERA_BUILD_LINUX_BACKEND)
+if((XWALK_CAMERA_BUILD_HARDWARE_TESTS OR XWALK_CAMERA_BUILD_LINUX_BACKEND OR
+    XWALK_CAMERA_BUILD_OPENCV_BACKEND)
     AND NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     message(FATAL_ERROR "xWalkCamera Linux capture requires Linux process support")
 endif()
@@ -29,7 +31,9 @@ if(NOT TARGET xWalkTrace)
         ${CMAKE_CURRENT_BINARY_DIR}/xWalkTrace)
 endif()
 
-add_library(xWalkCamera STATIC core/src/xHal_Rpi5CarCamera.cpp)
+add_library(xWalkCamera STATIC
+    core/src/xHal_Rpi5CarCamera.cpp
+    core/src/xHal_Rpi5CarCameraStream.cpp)
 add_library(xWalk::Camera ALIAS xWalkCamera)
 target_include_directories(xWalkCamera PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/core/include)
 target_compile_features(xWalkCamera PUBLIC cxx_std_17)
@@ -38,6 +42,22 @@ target_link_libraries(xWalkCamera PUBLIC xWalkLibraryCommon PRIVATE xWalkTrace)
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkCamera PRIVATE
         -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
+endif()
+
+if(XWALK_CAMERA_BUILD_OPENCV_BACKEND)
+    find_package(OpenCV REQUIRED COMPONENTS core imgcodecs videoio)
+    add_library(xWalkCameraStreamOpenCv STATIC
+        hardware/src/xHal_Rpi5CarCameraStreamOpenCv.cpp)
+    add_library(xWalk::CameraStreamOpenCv ALIAS xWalkCameraStreamOpenCv)
+    target_include_directories(xWalkCameraStreamOpenCv PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/hardware/include)
+    target_compile_features(xWalkCameraStreamOpenCv PUBLIC cxx_std_17)
+    target_link_libraries(xWalkCameraStreamOpenCv PUBLIC xWalkCamera ${OpenCV_LIBS})
+    target_link_libraries(xWalkCameraStreamOpenCv PRIVATE xWalkTrace)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(xWalkCameraStreamOpenCv PRIVATE
+            -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
+    endif()
 endif()
 
 if(XWALK_CAMERA_BUILD_HOST_TESTS OR XWALK_CAMERA_BUILD_HARDWARE_TESTS)

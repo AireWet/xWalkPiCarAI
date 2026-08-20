@@ -168,6 +168,11 @@ if(NOT TARGET xWalkVideoCar)
         ${CMAKE_CURRENT_BINARY_DIR}/xWalkVideoCar)
 endif()
 
+if(NOT TARGET xWalkVideoStreaming)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkAgent/xWalkVision/xWalkVideoStreaming
+        ${CMAKE_CURRENT_BINARY_DIR}/xWalkVideoStreaming)
+endif()
+
 if(NOT TARGET xWalkAppControl)
     set(XWALK_APP_CONTROL_BUILD_WEBSOCKET_BACKEND OFF CACHE BOOL
         "Controller app transport dependency setting" FORCE)
@@ -276,6 +281,7 @@ add_library(xWalkController STATIC
     ../xWalkHandler/src/vision/xControllerTreasureHuntHandler.cpp
     ../xWalkHandler/src/vision/xControllerVideoCarHandler.cpp
     ../xWalkHandler/src/vision/xControllerVideoRecordingHandler.cpp
+    ../xWalkHandler/src/vision/xControllerVideoStreamingHandler.cpp
     ../xWalkHandler/src/voice/xControllerGptCarHandler.cpp
     ../xWalkHandler/src/voice/xControllerOnlineLlmTestHandler.cpp
     ../xWalkHandler/src/voice/xControllerStorytellingRobotHandler.cpp
@@ -314,6 +320,7 @@ target_link_libraries(xWalkController PUBLIC
     xWalkTreasureHunt
     xWalkVideoRecording
     xWalkVideoCar
+    xWalkVideoStreaming
     xWalkAppControl
     xWalkSoundBackgroundMusic
     xWalkLineTracking

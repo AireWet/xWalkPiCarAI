@@ -59,6 +59,47 @@ $XWALK_PICARX_CLI record-video
 $XWALK_PICARX_CLI video-car
 ```
 
+## Live video streaming
+
+Check the connected camera and start the loopback-only MJPEG stream:
+
+```bash
+v4l2-ctl --list-devices
+rpicam-hello --list-cameras
+$XWALK_PICARX_CLI video-stream
+```
+
+Leave the command running. On the Raspberry Pi desktop, open:
+
+```text
+http://127.0.0.1:8080/stream
+```
+
+For remote viewing, run this on the other computer and keep it connected:
+
+```bash
+ssh -L 8080:127.0.0.1:8080 <pi-user>@<pi-address>
+```
+
+For example, if the Raspberry Pi username is `alice` and its IP address is
+`192.168.1.50`:
+
+```bash
+ssh -L 8080:127.0.0.1:8080 alice@192.168.1.50
+```
+
+Then open `http://127.0.0.1:8080/stream` on that computer.
+
+Check the stream or open it in a terminal media player:
+
+```bash
+curl --fail http://127.0.0.1:8080/health
+ffplay http://127.0.0.1:8080/stream
+```
+
+Streaming defaults are in `xWalkConfig/picar-x.d/vision.conf`. Keep the listener
+on `127.0.0.1`, use SSH forwarding for remote access, and stop with `Ctrl+C`.
+
 ## Assisted and autonomous driving
 
 Start an activity:

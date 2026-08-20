@@ -273,7 +273,7 @@ namespace
     /** @brief Verifies every specialized Controller command boot-mode selection. */
     TEST(XWalkAppGroup, ControllerBootModes)
     {
-        const ctrl::fixedarray<BootModeTestCase, 23U> bootModeCases{
+        const ctrl::fixedarray<BootModeTestCase, 24U> bootModeCases{
             {{"line-track", XWALK_BOOT_LINE_TRACKING_REQ},
              {"computer-vision", XWALK_BOOT_COMPUTER_VISION_REQ},
              {"stare-at-you", XWALK_BOOT_FACE_TRACKING_REQ},
@@ -281,6 +281,7 @@ namespace
              {"treasure-hunt", XWALK_BOOT_TREASURE_HUNT_REQ},
              {"record-video", XWALK_BOOT_VIDEO_RECORDING_REQ},
              {"video-car", XWALK_BOOT_VIDEO_CAR_REQ},
+             {"video-stream", XWALK_BOOT_VIDEO_STREAMING_REQ},
              {"app-control", XWALK_BOOT_APP_CONTROL_REQ},
              {"sound-background-music", XWALK_BOOT_SOUND_BACKGROUND_MUSIC_REQ},
              {"doctor", XWALK_BOOT_DOCTOR_REQ},
@@ -392,7 +393,7 @@ namespace
     /** @brief Maps every supported top-level spelling to one typed command. */
     TEST(XWalkAppGroup, ControllerCommandRequests)
     {
-        const ctrl::fixedarray<CommandTestCase, 34U> commandCases{
+        const ctrl::fixedarray<CommandTestCase, 35U> commandCases{
             {{"-h", XWALK_CNTRL_HELP_REQ},
              {"--help", XWALK_CNTRL_HELP_REQ},
              {"help", XWALK_CNTRL_HELP_REQ},
@@ -412,6 +413,7 @@ namespace
              {"bull-fight", XWALK_CNTRL_BULL_FIGHT_REQ},
              {"treasure-hunt", XWALK_CNTRL_TREASURE_HUNT_REQ},
              {"video-car", XWALK_CNTRL_VIDEO_CAR_REQ},
+             {"video-stream", XWALK_CNTRL_VIDEO_STREAM_REQ},
              {"app-control", XWALK_CNTRL_APP_CONTROL_REQ},
              {"turn", XWALK_CNTRL_TURN_REQ},
              {"cam", XWALK_CNTRL_CAMERA_REQ},

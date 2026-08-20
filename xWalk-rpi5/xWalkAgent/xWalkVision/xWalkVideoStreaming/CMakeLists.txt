@@ -9,15 +9,28 @@ if(NOT TARGET xWalkLibraryCommon)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkLibrary/common
         ${CMAKE_CURRENT_BINARY_DIR}/common)
 endif()
+if(NOT TARGET xWalkTrace)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkTrace
+        ${CMAKE_CURRENT_BINARY_DIR}/xWalkTrace)
+endif()
+if(NOT TARGET xWalkCamera)
+    set(XWALK_CAMERA_BUILD_HOST_TESTS OFF CACHE BOOL
+        "Video-streaming camera dependency setting" FORCE)
+    set(XWALK_CAMERA_BUILD_HARDWARE_TESTS OFF CACHE BOOL
+        "Video-streaming camera dependency setting" FORCE)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/device/xWalkCamera
+        ${CMAKE_CURRENT_BINARY_DIR}/xWalkCamera)
+endif()
 
 add_library(xWalkVideoStreaming STATIC
     src/xAgent_Rpi5CarMjpegStream.cpp
-    src/xAgent_Rpi5CarMjpegHttpServer.cpp)
+    src/xAgent_Rpi5CarMjpegHttpServer.cpp
+    src/xAgent_Rpi5CarVideoStreaming.cpp)
 add_library(xWalk::VideoStreaming ALIAS xWalkVideoStreaming)
 target_include_directories(xWalkVideoStreaming PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkVideoStreaming PUBLIC cxx_std_17)
-target_link_libraries(xWalkVideoStreaming PUBLIC xWalkLibraryCommon)
+target_link_libraries(xWalkVideoStreaming PUBLIC xWalkLibraryCommon xWalkCamera)
 target_link_libraries(xWalkVideoStreaming PRIVATE xWalkTrace)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

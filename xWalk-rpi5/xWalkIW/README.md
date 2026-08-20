@@ -94,14 +94,14 @@ Separate request, confirmation, and rejection XML registries map every message
 to its stable signal. I2C retains `0x1081`, `0x1082`, and `0x1083`. Shared
 Controller DTO confirmations use `0x2183` through `0x218E`,
 and their rejections use `0x2283` through `0x228E`. Command confirmations use
-`0x2100` through `0x211F`, and command rejections use `0x2200` through
-`0x221F`.
+`0x2100` through `0x2120`, and command rejections use `0x2200` through
+`0x2220`.
 
 The Controller enumeration values preserve the C++ declaration order. The
 command field remains an unsigned integer because the Controller source owns
 those signals as `XWALK_CNTRL_*_REQ` macros rather than a C++ enum. The macros
 and their command-specific request messages share the contiguous signal range
-`0x2000` through `0x201F`.
+`0x2000` through `0x2020`.
 
 ### Controller services
 
@@ -120,13 +120,18 @@ Controller handlers and Agent modules.
 | `XWalkCtrlPlatformService` | Unknown commands, help, and diagnostics |
 
 Together the command services expose one unary RPC for every command-specific
-message in the `0x2000` through `0x201F` range. Command method names match the
+message in the `0x2000` through `0x2020` range. Command method names match the
 message names without the `XWalk` prefix or `CommandRequest` suffix.
 
 Successful Controller dispatch returns the command-specific `Cfm` message.
 Invalid input, unavailable services, and execution failures return a non-OK
 gRPC status with the matching `Rej` message available for structured details.
 Runtime service objects are not serialized into the public transport contract.
+
+The Vision service includes `VideoStream`, which accepts
+`XWalkVideoStreamCommandRequest` (`0x2020`) and returns
+`XWalkVideoStreamCommandCfm` (`0x2120`). Structured rejection uses
+`XWalkVideoStreamCommandRej` (`0x2220`).
 
 Proto3 optional presence is retained for fields whose C++ defaults are not the
 scalar wire defaults. A protocol adapter must apply the documented C++ defaults

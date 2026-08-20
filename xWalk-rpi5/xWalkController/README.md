@@ -23,6 +23,8 @@ The camera-only `record-video` command ports example 9 with interactive
 start, pause, continue, stop, and timestamped AVI persistence.
 The `video-car` command ports example 11 with interactive speed, direction,
 steering, stopping, and timestamped photo capture.
+The `video-stream` command opens the configured OpenCV camera and serves a
+bounded multi-client MJPEG stream on the configured loopback listener.
 The `app-control start|stop` command ports example 12 with app telemetry,
 joysticks, camera servos, voice movement, assisted driving, horn, and vision.
 The interactive `sound-background-music` command ports example 13 with

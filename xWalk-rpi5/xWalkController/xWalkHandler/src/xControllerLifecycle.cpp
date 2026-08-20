@@ -111,6 +111,21 @@ namespace xwalk::ctrl
         validateCallbacks(callbacks);
     }
 
+    /**
+     * @brief Constructs a CLI containing foreground MJPEG video streaming.
+     * @param[in,out] videoStreaming Coordinator that must outlive this controller.
+     * @param[in,out] context Optional non-owning backend context that must outlive this controller.
+     * @param[in] backendCallbacks Complete controller callback table copied by this object.
+     * @throws std::invalid_argument If a required callback is null.
+     */
+    XWalkController::XWalkController(agent::XWalkVideoStreaming& videoStreaming,
+                                     ::ctrl::contextpointer context,
+                                     const XWalkControllerCallbacks& backendCallbacks)
+        : videoStreamingObject(&videoStreaming), callbackContext(context), callbacks(backendCallbacks)
+    {
+        validateCallbacks(callbacks);
+    }
+
     XWalkController::XWalkController(agent::XWalkPicarx& picarx,
                                      agent::XWalkVideoCar& videoCar,
                                      ::ctrl::contextpointer context,

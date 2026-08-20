@@ -14,6 +14,26 @@
 namespace xwalk::agent::test::mjpeg_stream
 {
 
+    TEST(XWalkVideoStreaming, CoordinatesCameraAndHttpLifecycle)
+    {
+        XWalkVideoStreamingTestState state;
+        XWalkMjpegHttpConfiguration configuration;
+        configuration.stream.port = availableLoopbackPort();
+        ASSERT_NE(configuration.stream.port, 0U);
+        hal::XWalkCameraStream camera(&state, videoStreamingCallbacks());
+        XWalkVideoStreaming streaming(camera, &videoClock, configuration);
+        EXPECT_TRUE(streaming.start());
+        EXPECT_TRUE(streaming.started());
+        EXPECT_EQ(streaming.port(), configuration.stream.port);
+        EXPECT_TRUE(streaming.step());
+        EXPECT_EQ(state.capturedFrames, 1U);
+        state.captureAvailable = false;
+        EXPECT_FALSE(streaming.step());
+        streaming.stop();
+        EXPECT_FALSE(streaming.started());
+        EXPECT_FALSE(state.cameraStarted);
+    }
+
     TEST(XWalkMjpegStream, ValidatesConfigurationAndIdempotentLifecycle)
     {
         XWalkMjpegStreamState state;

@@ -171,6 +171,9 @@ extern XWalkUnknownCommandRejDefaultTypeInternal _XWalkUnknownCommandRej_default
 class XWalkVideoCarCommandRej;
 struct XWalkVideoCarCommandRejDefaultTypeInternal;
 extern XWalkVideoCarCommandRejDefaultTypeInternal _XWalkVideoCarCommandRej_default_instance_;
+class XWalkVideoStreamCommandRej;
+struct XWalkVideoStreamCommandRejDefaultTypeInternal;
+extern XWalkVideoStreamCommandRejDefaultTypeInternal _XWalkVideoStreamCommandRej_default_instance_;
 class XWalkVoiceActiveCarCommandRej;
 struct XWalkVoiceActiveCarCommandRejDefaultTypeInternal;
 extern XWalkVoiceActiveCarCommandRejDefaultTypeInternal _XWalkVoiceActiveCarCommandRej_default_instance_;
@@ -228,6 +231,7 @@ template<> ::xwalk::iw::v1::XWalkTurnCommandRej* Arena::CreateMaybeMessage<::xwa
 template<> ::xwalk::iw::v1::XWalkTurnRej* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkTurnRej>(Arena*);
 template<> ::xwalk::iw::v1::XWalkUnknownCommandRej* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkUnknownCommandRej>(Arena*);
 template<> ::xwalk::iw::v1::XWalkVideoCarCommandRej* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkVideoCarCommandRej>(Arena*);
+template<> ::xwalk::iw::v1::XWalkVideoStreamCommandRej* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkVideoStreamCommandRej>(Arena*);
 template<> ::xwalk::iw::v1::XWalkVoiceActiveCarCommandRej* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkVoiceActiveCarCommandRej>(Arena*);
 template<> ::xwalk::iw::v1::XWalkVoiceChatCommandRej* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkVoiceChatCommandRej>(Arena*);
 template<> ::xwalk::iw::v1::XWalkVoiceControlledCarCommandRej* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkVoiceControlledCarCommandRej>(Arena*);
@@ -8832,6 +8836,197 @@ class XWalkCalibrateCommandRej final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto;
 };
+// -------------------------------------------------------------------
+
+class XWalkVideoStreamCommandRej final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkVideoStreamCommandRej) */ {
+ public:
+  inline XWalkVideoStreamCommandRej() : XWalkVideoStreamCommandRej(nullptr) {}
+  ~XWalkVideoStreamCommandRej() override;
+  explicit PROTOBUF_CONSTEXPR XWalkVideoStreamCommandRej(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkVideoStreamCommandRej(const XWalkVideoStreamCommandRej& from);
+  XWalkVideoStreamCommandRej(XWalkVideoStreamCommandRej&& from) noexcept
+    : XWalkVideoStreamCommandRej() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkVideoStreamCommandRej& operator=(const XWalkVideoStreamCommandRej& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkVideoStreamCommandRej& operator=(XWalkVideoStreamCommandRej&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkVideoStreamCommandRej& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkVideoStreamCommandRej* internal_default_instance() {
+    return reinterpret_cast<const XWalkVideoStreamCommandRej*>(
+               &_XWalkVideoStreamCommandRej_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    45;
+
+  friend void swap(XWalkVideoStreamCommandRej& a, XWalkVideoStreamCommandRej& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkVideoStreamCommandRej* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkVideoStreamCommandRej* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkVideoStreamCommandRej* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkVideoStreamCommandRej>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkVideoStreamCommandRej& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkVideoStreamCommandRej& from) {
+    XWalkVideoStreamCommandRej::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkVideoStreamCommandRej* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkVideoStreamCommandRej";
+  }
+  protected:
+  explicit XWalkVideoStreamCommandRej(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kDataFieldNumber = 1,
+    kDetailFieldNumber = 4,
+    kRespondingFieldNumber = 2,
+    kReasonFieldNumber = 3,
+  };
+  // bytes data = 1;
+  void clear_data();
+  const std::string& data() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_data(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_data();
+  PROTOBUF_NODISCARD std::string* release_data();
+  void set_allocated_data(std::string* data);
+  private:
+  const std::string& _internal_data() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_data(const std::string& value);
+  std::string* _internal_mutable_data();
+  public:
+
+  // string detail = 4;
+  void clear_detail();
+  const std::string& detail() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_detail(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_detail();
+  PROTOBUF_NODISCARD std::string* release_detail();
+  void set_allocated_detail(std::string* detail);
+  private:
+  const std::string& _internal_detail() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_detail(const std::string& value);
+  std::string* _internal_mutable_detail();
+  public:
+
+  // bool responding = 2;
+  void clear_responding();
+  bool responding() const;
+  void set_responding(bool value);
+  private:
+  bool _internal_responding() const;
+  void _internal_set_responding(bool value);
+  public:
+
+  // uint32 reason = 3;
+  void clear_reason();
+  uint32_t reason() const;
+  void set_reason(uint32_t value);
+  private:
+  uint32_t _internal_reason() const;
+  void _internal_set_reason(uint32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkVideoStreamCommandRej)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr data_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
+    bool responding_;
+    uint32_t reason_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto;
+};
 // ===================================================================
 
 
@@ -15319,9 +15514,155 @@ inline void XWalkCalibrateCommandRej::set_allocated_detail(std::string* detail) 
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkCalibrateCommandRej.detail)
 }
 
+// -------------------------------------------------------------------
+
+// XWalkVideoStreamCommandRej
+
+// bytes data = 1;
+inline void XWalkVideoStreamCommandRej::clear_data() {
+  _impl_.data_.ClearToEmpty();
+}
+inline const std::string& XWalkVideoStreamCommandRej::data() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkVideoStreamCommandRej.data)
+  return _internal_data();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void XWalkVideoStreamCommandRej::set_data(ArgT0&& arg0, ArgT... args) {
+
+ _impl_.data_.SetBytes(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkVideoStreamCommandRej.data)
+}
+inline std::string* XWalkVideoStreamCommandRej::mutable_data() {
+  std::string* _s = _internal_mutable_data();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkVideoStreamCommandRej.data)
+  return _s;
+}
+inline const std::string& XWalkVideoStreamCommandRej::_internal_data() const {
+  return _impl_.data_.Get();
+}
+inline void XWalkVideoStreamCommandRej::_internal_set_data(const std::string& value) {
+
+  _impl_.data_.Set(value, GetArenaForAllocation());
+}
+inline std::string* XWalkVideoStreamCommandRej::_internal_mutable_data() {
+
+  return _impl_.data_.Mutable(GetArenaForAllocation());
+}
+inline std::string* XWalkVideoStreamCommandRej::release_data() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkVideoStreamCommandRej.data)
+  return _impl_.data_.Release();
+}
+inline void XWalkVideoStreamCommandRej::set_allocated_data(std::string* data) {
+  if (data != nullptr) {
+
+  } else {
+
+  }
+  _impl_.data_.SetAllocated(data, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.data_.IsDefault()) {
+    _impl_.data_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkVideoStreamCommandRej.data)
+}
+
+// bool responding = 2;
+inline void XWalkVideoStreamCommandRej::clear_responding() {
+  _impl_.responding_ = false;
+}
+inline bool XWalkVideoStreamCommandRej::_internal_responding() const {
+  return _impl_.responding_;
+}
+inline bool XWalkVideoStreamCommandRej::responding() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkVideoStreamCommandRej.responding)
+  return _internal_responding();
+}
+inline void XWalkVideoStreamCommandRej::_internal_set_responding(bool value) {
+
+  _impl_.responding_ = value;
+}
+inline void XWalkVideoStreamCommandRej::set_responding(bool value) {
+  _internal_set_responding(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkVideoStreamCommandRej.responding)
+}
+
+// uint32 reason = 3;
+inline void XWalkVideoStreamCommandRej::clear_reason() {
+  _impl_.reason_ = 0u;
+}
+inline uint32_t XWalkVideoStreamCommandRej::_internal_reason() const {
+  return _impl_.reason_;
+}
+inline uint32_t XWalkVideoStreamCommandRej::reason() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkVideoStreamCommandRej.reason)
+  return _internal_reason();
+}
+inline void XWalkVideoStreamCommandRej::_internal_set_reason(uint32_t value) {
+
+  _impl_.reason_ = value;
+}
+inline void XWalkVideoStreamCommandRej::set_reason(uint32_t value) {
+  _internal_set_reason(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkVideoStreamCommandRej.reason)
+}
+
+// string detail = 4;
+inline void XWalkVideoStreamCommandRej::clear_detail() {
+  _impl_.detail_.ClearToEmpty();
+}
+inline const std::string& XWalkVideoStreamCommandRej::detail() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkVideoStreamCommandRej.detail)
+  return _internal_detail();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void XWalkVideoStreamCommandRej::set_detail(ArgT0&& arg0, ArgT... args) {
+
+ _impl_.detail_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkVideoStreamCommandRej.detail)
+}
+inline std::string* XWalkVideoStreamCommandRej::mutable_detail() {
+  std::string* _s = _internal_mutable_detail();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkVideoStreamCommandRej.detail)
+  return _s;
+}
+inline const std::string& XWalkVideoStreamCommandRej::_internal_detail() const {
+  return _impl_.detail_.Get();
+}
+inline void XWalkVideoStreamCommandRej::_internal_set_detail(const std::string& value) {
+
+  _impl_.detail_.Set(value, GetArenaForAllocation());
+}
+inline std::string* XWalkVideoStreamCommandRej::_internal_mutable_detail() {
+
+  return _impl_.detail_.Mutable(GetArenaForAllocation());
+}
+inline std::string* XWalkVideoStreamCommandRej::release_detail() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkVideoStreamCommandRej.detail)
+  return _impl_.detail_.Release();
+}
+inline void XWalkVideoStreamCommandRej::set_allocated_detail(std::string* detail) {
+  if (detail != nullptr) {
+
+  } else {
+
+  }
+  _impl_.detail_.SetAllocated(detail, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.detail_.IsDefault()) {
+    _impl_.detail_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkVideoStreamCommandRej.detail)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

@@ -192,4 +192,8 @@
       name="XWALK_CNTRL_CALIBRATE_REQ"
       number="0x201F"
       message="XWalkCalibrateCommandRequest" />
+  <signal
+      name="XWALK_CNTRL_VIDEO_STREAM_REQ"
+      number="0x2020"
+      message="XWalkVideoStreamCommandRequest" />
 </xwalk-signals>

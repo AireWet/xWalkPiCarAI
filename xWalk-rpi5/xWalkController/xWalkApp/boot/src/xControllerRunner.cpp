@@ -121,6 +121,12 @@ namespace xwalk::ctrl
             return XWALK_runControllerCommand(cli, commandArguments);
         }
 
+        if (services.videoStreaming != nullptr)
+        {
+            XWalkController cli(*services.videoStreaming, &applicationContext, callbacks);
+            return XWALK_runControllerCommand(cli, commandArguments);
+        }
+
         if (services.soundBackgroundMusic != nullptr)
         {
             XWalkController cli(*services.soundBackgroundMusic, &applicationContext, callbacks);

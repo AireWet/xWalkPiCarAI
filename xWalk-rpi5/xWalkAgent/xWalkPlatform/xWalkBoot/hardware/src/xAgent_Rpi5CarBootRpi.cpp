@@ -82,6 +82,7 @@ namespace xwalk::agent
             case XWALK_BOOT_ONLINE_LLM_TEST_REQ:
             case XWALK_BOOT_SERVO_ZEROING_REQ:
             case XWALK_BOOT_SPI_TRANSFER_REQ:
+            case XWALK_BOOT_VIDEO_STREAMING_REQ:
                 break;
             default:
                 XWALK_RPIAGENT_ERROR(XWALK_INVAL, "xWalkBoot mode is invalid");
@@ -237,6 +238,10 @@ namespace xwalk::agent
         else if (selectedMode == XWALK_BOOT_VIDEO_RECORDING_REQ)
         {
             return runVideoRecording(configuredParameters);
+        }
+        else if (selectedMode == XWALK_BOOT_VIDEO_STREAMING_REQ)
+        {
+            return runVideoStreaming(configuredParameters);
         }
         else if (selectedMode == XWALK_BOOT_SPI_TRANSFER_REQ)
         {

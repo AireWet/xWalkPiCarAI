@@ -22,6 +22,8 @@ if(XWALK_BOOT_BUILD_RPI_BACKEND)
         "Boot requires the Ollama provider" FORCE)
     set(XWALK_CAMERA_BUILD_LINUX_BACKEND ON CACHE BOOL
         "Boot requires Linux camera capture" FORCE)
+    set(XWALK_CAMERA_BUILD_OPENCV_BACKEND ON CACHE BOOL
+        "Boot requires OpenCV encoded camera streaming" FORCE)
 endif()
 
 if(XWALK_BOOT_BUILD_RPI_BACKEND AND NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -93,6 +95,11 @@ endif()
 if(NOT TARGET xWalkVideoCar)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkVision/xWalkVideoCar
         ${CMAKE_CURRENT_BINARY_DIR}/xWalkVideoCar)
+endif()
+
+if(NOT TARGET xWalkVideoStreaming)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkVision/xWalkVideoStreaming
+        ${CMAKE_CURRENT_BINARY_DIR}/xWalkVideoStreaming)
 endif()
 
 if(NOT TARGET xWalkAppControl)
@@ -204,7 +211,7 @@ target_link_libraries(xWalkBoot PUBLIC
 target_link_libraries(xWalkBoot PUBLIC xWalkServoZeroing)
 target_link_libraries(xWalkBoot PUBLIC
     xWalkComputerVision xWalkFaceTracking xWalkBullFight xWalkTreasureHunt
-    xWalkVideoRecording xWalkVideoCar xWalkAppControl
+    xWalkVideoRecording xWalkVideoCar xWalkVideoStreaming xWalkAppControl
     xWalkSoundBackgroundMusic xWalkSpiTransfer)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -254,6 +261,7 @@ if(XWALK_BOOT_BUILD_RPI_BACKEND)
         NOT TARGET xWalkCameraLinux OR NOT TARGET xWalkSpiLinux OR
         NOT TARGET xWalkComputerVisionOpenCv OR
         NOT TARGET xWalkVideoRecordingOpenCv OR
+        NOT TARGET xWalkCameraStreamOpenCv OR
         NOT TARGET xWalkAppControlWebSocket)
         message(FATAL_ERROR "xWalkBoot Raspberry Pi dependencies are incomplete")
     endif()
@@ -284,6 +292,7 @@ if(XWALK_BOOT_BUILD_RPI_BACKEND)
         hardware/src/xAgent_Rpi5CarBootRpiVehicleMode.cpp
         hardware/src/xAgent_Rpi5CarBootRpiVideoCar.cpp
         hardware/src/xAgent_Rpi5CarBootRpiVideoRecording.cpp
+        hardware/src/xAgent_Rpi5CarBootRpiVideoStreaming.cpp
         hardware/src/xAgent_Rpi5CarBootRpiVoiceActiveCar.cpp
         hardware/src/xAgent_Rpi5CarBootRpiVoiceActiveCarGpt.cpp
         hardware/src/xAgent_Rpi5CarBootRpiVoiceActiveMode.cpp
@@ -311,7 +320,8 @@ target_link_libraries(xWalkBootRpi PRIVATE xWalkTrace)
             xWalkLanguageModelOllama
             xWalkCameraLinux
             xWalkComputerVisionOpenCv
-            xWalkVideoRecordingOpenCv)
+            xWalkVideoRecordingOpenCv
+            xWalkCameraStreamOpenCv)
     target_link_libraries(xWalkBootRpi PRIVATE xWalkAppControlWebSocket)
     target_link_libraries(xWalkBootRpi PRIVATE xWalkSpiLinux)
     target_link_libraries(xWalkBootRpi PRIVATE ${CMAKE_DL_LIBS})
