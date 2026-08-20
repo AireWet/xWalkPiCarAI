@@ -61,6 +61,7 @@ the sibling `xWalkAgent` aggregate and are imported through CMake targets.
 | --- | --- |
 | `CMakeLists.txt` | CLI aggregate options and Agent dependency composition |
 | [`GEMINI_CONFIGURATION.md`](GEMINI_CONFIGURATION.md) | Gemini credential and voice-profile setup |
+| [`LICENSE_INSTALLATION.md`](LICENSE_INSTALLATION.md) | Encrypted licence installation and runtime loading |
 | `xWalkConfig/picar-x.conf` | Machine-independent manifest template and provider selection |
 | `xWalkConfig/picar-x.d/` | Functional settings and separate AI-provider profiles |
 | `PICARX_COMMAND_CHEAT_SHEET.md` | Copyable PiCar-X Controller command reference |
