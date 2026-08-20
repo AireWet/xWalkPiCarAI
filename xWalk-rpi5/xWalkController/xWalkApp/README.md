@@ -144,7 +144,7 @@ The following table lists every command group and action name accepted by the CL
 | `sound` | `play`, `volume`, `music`, `stop` | File or volume according to the selected action |
 | `voice-chat` | `start`, `stop` | Start runs until SIGINT or SIGTERM |
 | `voice-active-car` | `start`, `stop` | Base sensor-aware voice-car behavior |
-| `voice-active-car-gpt` | `start`, `stop` | Gemini-backed Jarvis profile |
+| `voice-active-car-gpt` | `start`, `stop` | Local-Ollama Jarvis profile |
 | `gpt-car` | `start`, `stop` | Optional `--keyboard` and `--no-img` source flags |
 | `voice-controlled-car` | `start`, `stop` | “Hey robot” movement-command loop |
 | `voice-prompt-car` | `start`, `stop` | Spoken four-movement demonstration |
@@ -393,7 +393,7 @@ Rolly and Jarvis profiles. Each accepts only `start` or `stop`. The
 `voice_active_car.py` Rolly profile requires `hey rolly`, answers `Hi there`,
 uses image input and OpenAI `gpt-4o-mini`, and reads its credential exclusively
 from `OPENAI_API_KEY`. The Jarvis profile requires `hey jarvis`, answers
-`Systems online. Ready when you are, Joxy.`, uses Gemini `gemini-3.6-flash` with `GEMINI_API_KEY`, and
+`Systems online. Ready when you are, Joxy.`, uses local Ollama `llama3.2:3b` without an API key, and
 speaks through Piper `en_GB-alan-medium`. The RPi graph adds Music, SelfDrive,
 the Robot HAT status LED, and still-image capture. Set
 `camera_connection` to `csi` for the Raspberry Pi camera connector or `usb` for

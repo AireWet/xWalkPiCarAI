@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file        xAgent_Rpi5CarBootRpiVoiceActiveCarGpt.cpp
- * @brief       Selects the Raspberry Pi Gemini-backed Jarvis voice-car profile.
+ * @brief       Selects the Raspberry Pi provider-neutral Jarvis voice-car profile.
  * @details     Delegates to the shared configured voice-active composition.
  * @project     xWalk Firmware
  * @module      xWalkBoot RPi
@@ -20,7 +20,7 @@ namespace xwalk::agent
 {
 
     /**
-     * @brief Runs the configured Gemini-backed Jarvis voice-active-car profile.
+     * @brief Runs the configured provider-neutral Jarvis voice-active-car profile.
      * @param[in] parameters Non-owning application, vehicle, configuration, and
      * GPIO dependencies valid through the synchronous dispatch.
      * @return Status returned by the configured application callback.

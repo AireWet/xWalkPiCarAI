@@ -220,6 +220,9 @@ namespace xwalk::hal
         validateText(model);
         const boolean httpEndpoint = endpoint.substr(0U, 7U) == "http://";
         const boolean httpsEndpoint = endpoint.substr(0U, 8U) == "https://";
+        const boolean loopbackEndpoint = (endpoint.substr(0U, 17U) == "http://127.0.0.1:") ||
+                                         (endpoint.substr(0U, 17U) == "http://localhost:") ||
+                                         (endpoint.substr(0U, 13U) == "http://[::1]:");
         const stringview chatSuffix = (dialect == XWalkLanguageModelHttpDialect::Ollama)
                                           ? stringview{"/api/chat"}
                                           : stringview{"/chat/completions"};
@@ -243,6 +246,12 @@ namespace xwalk::hal
         if (secureEndpointConfigurationInvalid)
         {
             XWALK_HAL_ERROR(XWALK_INVAL, "OpenAI-compatible providers require HTTPS and a non-empty API key");
+        }
+        const hal::boolean ollamaEndpointUnsafe =
+            static_cast<hal::boolean>((dialect == XWalkLanguageModelHttpDialect::Ollama) && !loopbackEndpoint);
+        if (ollamaEndpointUnsafe)
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "Ollama requires an HTTP loopback endpoint");
         }
         const hal::boolean ollamaCredentialConfigured =
             static_cast<hal::boolean>((dialect == XWalkLanguageModelHttpDialect::Ollama) && !apiKey.empty());

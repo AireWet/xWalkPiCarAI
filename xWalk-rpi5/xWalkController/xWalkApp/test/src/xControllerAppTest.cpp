@@ -601,7 +601,14 @@ namespace
                   repositoryEffective.end());
         EXPECT_NE(std::find(repositoryEffective.begin(),
                             repositoryEffective.end(),
-                            "voice_active_car_gpt_model = gemini-3.6-flash"),
+                            "voice_active_car_gpt_model = llama3.2:3b"),
+                  repositoryEffective.end());
+        EXPECT_NE(
+            std::find(repositoryEffective.begin(), repositoryEffective.end(), "voice_active_car_gpt_provider = ollama"),
+            repositoryEffective.end());
+        EXPECT_NE(std::find(repositoryEffective.begin(),
+                            repositoryEffective.end(),
+                            "voice_active_car_gpt_endpoint = http://127.0.0.1:11434/api/chat"),
                   repositoryEffective.end());
         EXPECT_NE(std::find(repositoryEffective.begin(),
                             repositoryEffective.end(),
@@ -658,7 +665,7 @@ namespace
     /** @brief Rejects boundary violations for every deployment value family. */
     TEST(XWalkAppGroup, DeploymentConfigurationRejectsUnsafeBoundaries)
     {
-        const ctrl::fixedarray<InvalidOverride, 47U> invalidOverrides{
+        const ctrl::fixedarray<InvalidOverride, 57U> invalidOverrides{
             {{"deployment_config_version", "2"},
              {"hardware_board", "unknown"},
              {"hardware_i2c_device", "i2c-1"},
@@ -690,12 +697,16 @@ namespace
              {"voice_vosk_endpoint_max_seconds", "0"},
              {"voice_vosk_silence_peak_threshold", "0"},
              {"voice_vosk_trace_transcript", "yes"},
-             {"voice_active_car_gpt_api_key_environment", ""},
+             {"voice_active_car_gpt_provider", "unknown"},
              {"voice_active_car_gpt_endpoint",
               "http://generativelanguage.googleapis.com/v1beta/openai/chat/completions"},
              {"voice_active_car_gpt_model", ""},
              {"voice_active_car_gpt_maximum_output_tokens", "0"},
              {"voice_active_car_gpt_maximum_output_tokens", "16385"},
+             {"voice_active_car_gpt_timeout_ms", "0"},
+             {"voice_active_car_gpt_timeout_ms", "300001"},
+             {"voice_active_car_gpt_maximum_messages", "0"},
+             {"voice_active_car_gpt_maximum_messages", "201"},
              {"voice_active_car_gpt_with_image", "true"},
              {"voice_active_car_gpt_with_image", "1"},
              {"voice_active_car_gpt_continuous_conversation", "yes"},
@@ -706,6 +717,12 @@ namespace
              {"voice_active_car_gpt_conversation_maximum_misses", "0"},
              {"voice_active_car_gpt_sleep_phrases", "goodbye jarvis,  ,stop listening"},
              {"voice_active_car_gpt_sleep_phrases", "\"Goodbye Jarvis,goodbye jarvis\""},
+             {"voice_active_car_gpt_web_search_enabled", "yes"},
+             {"voice_active_car_gpt_web_search_endpoint", "http://192.168.1.2:8080/search"},
+             {"voice_active_car_gpt_web_search_maximum_results", "0"},
+             {"voice_active_car_gpt_web_search_maximum_results", "11"},
+             {"voice_active_car_gpt_web_search_timeout_ms", "0"},
+             {"voice_active_car_gpt_web_search_maximum_response_bytes", "1023"},
              {"app_control_port", "0"}}};
 
         for (const InvalidOverride& invalidOverride : invalidOverrides)

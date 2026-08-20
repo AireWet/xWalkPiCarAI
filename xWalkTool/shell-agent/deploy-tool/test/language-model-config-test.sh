@@ -66,6 +66,14 @@ if grep -ERq '^voice_language_model_model[[:space:]]*=' "$configuration_director
 fi
 
 service_environment="$repository_root/xWalkTool/shell-agent/deploy-tool/systemd/xwalk-service.conf"
+ollama_service="$repository_root/xWalkTool/shell-agent/deploy-tool/systemd/ollama.service"
+jarvis_service="$repository_root/xWalkTool/shell-agent/deploy-tool/systemd/xwalk-jarvis.service"
+grep -Fq 'ExecStart=%h/.local/bin/ollama serve' "$ollama_service"
+grep -Fq 'Environment="OLLAMA_HOST=127.0.0.1:11434"' "$ollama_service"
+grep -Fq 'Restart=on-failure' "$ollama_service"
+grep -Fq 'Requires=ollama.service' "$jarvis_service"
+grep -Fq 'After=ollama.service sound.target' "$jarvis_service"
+grep -Fq 'voice-active-car-gpt start' "$jarvis_service"
 if grep -Eq '^(OPENAI|GEMINI|XAI|ANTHROPIC|XWALK_AI|OLLAMA)_(API_KEY|MODEL)=' \
     "$service_environment"; then
     echo "Tracked service configuration bypasses the encrypted licence loader." >&2

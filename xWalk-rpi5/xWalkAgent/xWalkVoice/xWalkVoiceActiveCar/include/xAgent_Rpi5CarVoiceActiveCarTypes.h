@@ -15,6 +15,7 @@
 #define XAGENT_RPI5CAR_VOICE_ACTIVE_CAR_TYPES_H
 
 #include "xHal_Rpi5CarTypes.h"
+#include "xHal_Rpi5CarWebSearchTypes.h"
 
 namespace xwalk::agent
 {
@@ -24,6 +25,7 @@ namespace xwalk::agent
     using voiceactivecardelaycallback = void (*)(agent::contextpointer, agent::uint32);
     using voiceactivecarclockcallback = agent::uint64 (*)(agent::contextpointer) noexcept;
     using voiceactivecarimagecallback = agent::string (*)(agent::contextpointer);
+    using voiceactivecarsearchcallback = hal::XWalkWebSearchResponse (*)(agent::contextpointer, agent::stringview);
     /**
      * @brief Reads one typed prompt for a keyboard-input voice-car profile.
      * @param[in,out] context Non-owning application context that outlives the coordinator.
@@ -58,6 +60,8 @@ namespace xwalk::agent
             voiceactivecarclockcallback monotonicMilliseconds{nullptr}; /**< Reads session idle time. */
             voiceactivecarimagecallback captureImage{nullptr};          /**< Returns an optional image path. */
             voiceactivecarinputcallback input{nullptr};                 /**< Reads one keyboard prompt when selected. */
+            agent::contextpointer webSearchContext{nullptr};            /**< Optional non-owning search client. */
+            voiceactivecarsearchcallback webSearch{nullptr};            /**< Retrieves bounded untrusted references. */
     };
 
     struct XWalkVoiceActiveCarConfiguration
@@ -77,6 +81,7 @@ namespace xwalk::agent
             agent::uint32 conversationMaximumMisses{3U};         /**< Empty recognitions before wake reset. */
             agent::stringvector sleepPhrases{};                  /**< Trimmed case-insensitive exit phrases. */
             agent::string sleepAcknowledgement{};                /**< Optional speech after an explicit exit. */
+            agent::boolean webSearchEnabled{false};              /**< Enables bounded current-information retrieval. */
     };
 
     struct XWalkVoiceActiveCarResponse

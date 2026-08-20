@@ -28,7 +28,60 @@
 #include "xHal_Rpi5CarLanguageModelOllama.h"
 
 #include "xHal_Rpi5CarTrace.h"
+#include <algorithm>
+#include <cctype>
+#include <chrono>
 #include <curl/curl.h>
+#include <thread>
+
+namespace
+{
+    constexpr xwalk::hal::size MAXIMUM_PROVIDER_ERROR_CHARACTERS{256U};
+
+    xwalk::hal::string sanitizedProviderError(xwalk::hal::stringview response,
+                                              xwalk::hal::stringview authorizationHeader)
+    {
+        xwalk::hal::string normalized(response.substr(0U, MAXIMUM_PROVIDER_ERROR_CHARACTERS));
+        std::transform(normalized.begin(),
+                       normalized.end(),
+                       normalized.begin(),
+                       [](char character)
+                       {
+                           const unsigned char byte = static_cast<unsigned char>(character);
+                           return std::isprint(byte) != 0 ? character : ' ';
+                       });
+        const xwalk::hal::size credentialStart = authorizationHeader.find(' ');
+        const xwalk::hal::stringview credential = credentialStart == xwalk::hal::stringview::npos
+                                                      ? xwalk::hal::stringview{}
+                                                      : authorizationHeader.substr(credentialStart + 1U);
+        if (!credential.empty())
+        {
+            xwalk::hal::size offset = normalized.find(credential);
+            while (offset != xwalk::hal::string::npos)
+            {
+                normalized.replace(offset, credential.size(), "[redacted]");
+                offset = normalized.find(credential, offset + 10U);
+            }
+        }
+        xwalk::hal::string lowercase(normalized);
+        std::transform(lowercase.begin(),
+                       lowercase.end(),
+                       lowercase.begin(),
+                       [](char character)
+                       {
+                           return static_cast<char>(std::tolower(static_cast<unsigned char>(character)));
+                       });
+        constexpr xwalk::hal::stringview protectedMarkers[]{"authorization", "api_key", "api key", "password"};
+        for (const xwalk::hal::stringview marker : protectedMarkers)
+        {
+            if (lowercase.find(marker) != xwalk::hal::string::npos)
+            {
+                return "[provider detail redacted]";
+            }
+        }
+        return normalized;
+    }
+} // namespace
 
 /******************************************************************************
  * Namespace definitions
@@ -78,7 +131,7 @@ namespace xwalk::hal
         static const CURLcode initialization = ::curl_global_init(CURL_GLOBAL_DEFAULT);
         if (initialization != CURLE_OK)
         {
-            XWALK_HAL_ERROR(XWALK_RUNTIME, "Ollama libcurl initialization failed");
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Language-model HTTP initialization failed");
         }
         XWalkLanguageModelOllamaResponseState responseState{{}, maximumResponseBytes};
         responseState.response.reserve(maximumResponseBytes);
@@ -86,13 +139,13 @@ namespace xwalk::hal
         CURL* request = ::curl_easy_init();
         if (request == nullptr)
         {
-            XWALK_HAL_ERROR(XWALK_RUNTIME, "Ollama libcurl request allocation failed");
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Language-model HTTP request allocation failed");
         }
         curl_slist* headers = ::curl_slist_append(nullptr, "Content-Type: application/json");
         if (headers == nullptr)
         {
             ::curl_easy_cleanup(request);
-            XWALK_HAL_ERROR(XWALK_RUNTIME, "Ollama libcurl header allocation failed");
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Language-model HTTP header allocation failed");
         }
         const string authorizationHeaderCopy{authorizationHeader};
         const hal::boolean authorizationHeaderCopyAvailable =
@@ -143,20 +196,58 @@ namespace xwalk::hal
         {
             ::curl_slist_free_all(headers);
             ::curl_easy_cleanup(request);
-            XWALK_HAL_ERROR(XWALK_RUNTIME, "Ollama libcurl option configuration failed");
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Language-model HTTP option configuration failed");
         }
-        const CURLcode transferResult = ::curl_easy_perform(request);
+        CURLcode transferResult{CURLE_OK};
         long statusCode{};
-        const CURLcode statusResult = ::curl_easy_getinfo(request, CURLINFO_RESPONSE_CODE, &statusCode);
+        CURLcode statusResult{CURLE_OK};
+        constexpr uint32 maximumAttempts{3U};
+        for (uint32 attempt = 0U; attempt < maximumAttempts; ++attempt)
+        {
+            responseState.response.clear();
+            transferResult = ::curl_easy_perform(request);
+            statusResult = ::curl_easy_getinfo(request, CURLINFO_RESPONSE_CODE, &statusCode);
+            const hal::boolean requestSuccessful =
+                static_cast<hal::boolean>((transferResult == CURLE_OK) && (statusResult == CURLE_OK) &&
+                                          (statusCode >= 200L) && (statusCode < 300L));
+            if (requestSuccessful)
+            {
+                break;
+            }
+            const hal::boolean transientStatus = static_cast<hal::boolean>(
+                (statusCode == 429L) || (statusCode == 502L) || (statusCode == 503L) || (statusCode == 504L));
+            if (!transientStatus || ((attempt + 1U) >= maximumAttempts))
+            {
+                break;
+            }
+            curl_off_t retryAfterSeconds{};
+            const CURLcode retryResult = ::curl_easy_getinfo(request, CURLINFO_RETRY_AFTER, &retryAfterSeconds);
+            const uint32 exponentialDelayMs = 250U << attempt;
+            const uint32 retryAfterMs = (retryResult == CURLE_OK) && (retryAfterSeconds > 0) && (retryAfterSeconds <= 5)
+                                            ? static_cast<uint32>(retryAfterSeconds) * 1'000U
+                                            : 0U;
+            const uint32 delayMs = std::max(exponentialDelayMs, retryAfterMs);
+            std::this_thread::sleep_for(std::chrono::milliseconds(delayMs));
+        }
         ::curl_slist_free_all(headers);
         ::curl_easy_cleanup(request);
         if (transferResult != CURLE_OK)
         {
-            XWALK_HAL_ERROR(XWALK_RUNTIME, "Ollama HTTP request failed");
+            const string message =
+                string("Language-model HTTP transfer failed: ") + ::curl_easy_strerror(transferResult);
+            XWALK_HAL_ERROR(XWALK_RUNTIME, message);
         }
         if ((statusResult != CURLE_OK) || (statusCode < 200L) || (statusCode >= 300L))
         {
-            XWALK_HAL_ERROR(XWALK_RUNTIME, "Ollama HTTP status is unsuccessful");
+            const string detail = sanitizedProviderError(responseState.response, authorizationHeaderCopy);
+            string message = statusCode == 404L
+                                 ? string("Language-model model or endpoint is missing (HTTP 404)")
+                                 : string("Language-model HTTP status is unsuccessful: ") + std::to_string(statusCode);
+            if (!detail.empty())
+            {
+                message += string("; provider detail: ") + detail;
+            }
+            XWALK_HAL_ERROR(XWALK_RUNTIME, message);
         }
         return responseState.response;
     }

@@ -215,8 +215,10 @@ if ! readelf -d "$local_bin/rpicam-still" | grep -Fq "$local_lib"; then
     exit 1
 fi
 
-curl --fail --location --proto '=https' --tlsv1.2 "$ollama_archive_url" --output "$archive_path"
-tar -xzf "$archive_path" -C "$local_prefix"
+if [ ! -x "$local_bin/ollama" ]; then
+    curl --fail --location --proto '=https' --tlsv1.2 "$ollama_archive_url" --output "$archive_path"
+    tar -xzf "$archive_path" -C "$local_prefix"
+fi
 if [ ! -x "$local_bin/ollama" ]; then
     echo "The official Ollama archive did not install $local_bin/ollama." >&2
     exit 1
@@ -225,24 +227,8 @@ fi
 service_directory="$runtime_home/.config/systemd/user"
 mkdir -p "$service_directory" "$local_share/ollama/models"
 service_file="$service_directory/ollama.service"
-temporary_service="$(mktemp "$service_directory/.ollama.service.XXXXXX")"
-cat > "$temporary_service" <<EOF
-[Unit]
-Description=Ollama user-local model service
-After=network-online.target
-
-[Service]
-ExecStart=%h/.local/bin/ollama serve
-Environment="PATH=%h/.local/bin:/usr/bin:/bin"
-Environment="OLLAMA_MODELS=%h/.local/share/ollama/models"
-Restart=on-failure
-RestartSec=3
-
-[Install]
-WantedBy=default.target
-EOF
-chmod 0644 "$temporary_service"
-mv -- "$temporary_service" "$service_file"
+install -m 0644 "$script_directory/systemd/ollama.service" "$service_file"
+install -m 0644 "$script_directory/systemd/xwalk-jarvis.service" "$service_directory/xwalk-jarvis.service"
 systemctl --user daemon-reload
 systemctl --user enable --now ollama.service
 
@@ -260,7 +246,9 @@ if [ "$service_ready" != "true" ]; then
     echo "The Ollama user service did not become ready within 30 seconds." >&2
     exit 1
 fi
-OLLAMA_MODELS="$local_share/ollama/models" "$local_bin/ollama" pull llama3.2:3b
+if [ ! -r "$local_share/ollama/models/manifests/registry.ollama.ai/library/llama3.2/3b" ]; then
+    OLLAMA_HOST=127.0.0.1:11434 OLLAMA_MODELS="$local_share/ollama/models" "$local_bin/ollama" pull llama3.2:3b
+fi
 ollama_manifest="$(find "$local_share/ollama/models/manifests" -type f \
     -path '*/registry.ollama.ai/library/llama3.2/3b' -print -quit)"
 if [ -z "$ollama_manifest" ] || [ ! -r "$ollama_manifest" ]; then

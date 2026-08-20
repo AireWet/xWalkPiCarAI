@@ -31,7 +31,7 @@
         "  sound <operation>        Play audio, set volume, play music, or stop audio.",
         "  voice-chat <start|stop>  Run the local voice chatbot or request shutdown.",
         "  voice-active-car <start|stop> Run the sensor-aware base voice car.",
-        "  voice-active-car-gpt <start|stop> Run the Gemini-backed Jarvis voice car.",
+        "  voice-active-car-gpt <start|stop> Run the provider-neutral Jarvis voice car.",
         "  gpt-car <start|stop>     Run the upstream GPT PiCar-X assistant.",
         "  voice-controlled-car <start|stop> Run wake-word movement control.",
         "  voice-prompt-car <start|stop> Run the spoken movement demonstration.",

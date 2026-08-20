@@ -16,9 +16,11 @@
 #include "xAgent_Rpi5CarPicarxSafetyGuard.h"
 
 #include "xHal_Rpi5CarCommonFunctions.h"
+#include "xHal_Rpi5CarWebSearch.h"
 
 #include "xHal_Rpi5CarTrace.h"
 #include <cctype>
+#include <exception>
 
 namespace xwalk::agent
 {
@@ -138,8 +140,67 @@ namespace xwalk::agent
             }
             blink(1U, 100U, 0U);
             selfDriveObject->setStatus(XWalkSelfDriveStatus::Think);
-            const XWalkVoiceActiveCarResponse response =
-                parseConfiguredResponse(assistantObject->think(prompt, imagePath));
+            agent::boolean retrievalUsed{false};
+            if (ordinaryPrompt && configuration.webSearchEnabled && hal::XWalkWebSearch::shouldSearch(prompt))
+            {
+                try
+                {
+                    const hal::XWalkWebSearchResponse search = callbacks.webSearch(callbacks.webSearchContext, prompt);
+                    retrievalUsed = static_cast<agent::boolean>(!search.referenceText.empty());
+                    if (retrievalUsed)
+                    {
+                        prompt += search.referenceText;
+                        for (agent::size index = 0U; index < search.sourceUrls.size(); ++index)
+                        {
+                            callbacks.output(callbackContext,
+                                             agent::string("Web source: ") + search.sourceNames[index] + " " +
+                                                 search.sourceUrls[index]);
+                        }
+                    }
+                }
+                catch (const std::exception&)
+                {
+                    callbacks.output(callbackContext, "Current information could not be retrieved.");
+                    prompt += "\n\nCurrent web information was requested but retrieval failed. Clearly identify any "
+                              "answer as local model knowledge and do not invent current facts or sources.";
+                    XWALK_RPIAGENT_WARNING(XWALK_RUNTIME,
+                                           "Voice-active-car web retrieval failed; continuing with local knowledge");
+                }
+            }
+            XWalkVoiceActiveCarResponse response{};
+            try
+            {
+                response = parseConfiguredResponse(assistantObject->think(prompt, imagePath));
+            }
+            catch (const std::exception&)
+            {
+                picarxObject->stop();
+                conversationActiveValue = false;
+                conversationRoundCount = 0U;
+                conversationMissCount = 0U;
+                conversationDeadlineMs = 0U;
+                wakeDetectedValue = !configuration.wakeEnabled;
+                ledObject->off();
+                constexpr agent::stringview recoveryText =
+                    "The language model is unavailable. Please check the local service and try again.";
+                callbacks.output(callbackContext, recoveryText);
+                XWALK_RPIAGENT_WARNING(XWALK_RUNTIME,
+                                       "Voice-active-car language-model request failed; returning to wake mode");
+                try
+                {
+                    assistantObject->say(recoveryText);
+                }
+                catch (...)
+                {
+                    XWALK_RPIAGENT_WARNING(XWALK_RUNTIME,
+                                           "Voice-active-car could not speak the model failure acknowledgement");
+                }
+                continue;
+            }
+            if (retrievalUsed)
+            {
+                response.actions = {"stop"};
+            }
             XWALK_RPIAGENT_TRACE_UID2(RPIAGENT .012,
                                       "Voice-active-car parsed %llu action request(s) and %llu response character(s)",
                                       static_cast<unsigned long long>(response.actions.size()),
@@ -623,6 +684,11 @@ namespace xwalk::agent
             (backendCallbacks.input == nullptr))
         {
             XWALK_RPIAGENT_ERROR(XWALK_INVAL, "Voice-active-car keyboard input callback is required");
+        }
+        if (carConfiguration.webSearchEnabled &&
+            ((backendCallbacks.webSearch == nullptr) || (backendCallbacks.webSearchContext == nullptr)))
+        {
+            XWALK_RPIAGENT_ERROR(XWALK_INVAL, "Voice-active-car enabled web search requires a live callback");
         }
         const agent::boolean continuousConfigurationInvalid = static_cast<agent::boolean>(
             carConfiguration.continuousConversationEnabled &&

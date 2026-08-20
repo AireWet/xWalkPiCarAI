@@ -281,6 +281,11 @@ namespace xwalk::ctrl
             }
             xwalk::agent::XWalkVoiceActiveCarCallbacks configuredCallbacks = voiceCallbacks;
             configuredCallbacks.captureImage = imageCallback;
+            if (voiceActiveCarGptRequested && (services.webSearch != nullptr))
+            {
+                configuredCallbacks.webSearchContext = services.webSearch;
+                configuredCallbacks.webSearch = &xwalk::hal::XWalkWebSearch::searchCallback;
+            }
             xwalk::agent::XWalkVoiceActiveCar voiceActiveCar(*services.picarx,
                                                              *services.selfDrive,
                                                              *services.voiceAssistant,

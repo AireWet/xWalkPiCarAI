@@ -166,8 +166,9 @@ the configured resource directory; use `--resource-directory PATH` to override i
 ## Voice and model features
 
 These commands require the speech, camera, model, or network services described
-by the selected configuration. Jarvis uses `GEMINI_API_KEY`; the remaining
-online OpenAI profiles use `OPENAI_API_KEY`.
+by the selected configuration. Jarvis defaults to local Ollama and needs no API
+key. Optional Gemini uses `GEMINI_API_KEY`; online OpenAI profiles use
+`OPENAI_API_KEY`.
 
 ```bash
 $XWALK_PICARX_CLI voice-chat start

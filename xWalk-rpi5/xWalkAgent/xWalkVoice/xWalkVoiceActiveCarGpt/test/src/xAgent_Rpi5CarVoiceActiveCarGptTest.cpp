@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file        xAgent_Rpi5CarVoiceActiveCarGptTest.cpp
- * @brief       Verifies the Gemini-backed Jarvis voice-active-car profile.
+ * @brief       Verifies the provider-neutral Jarvis voice-active-car profile.
  * @project     xWalk Firmware
  * @module      xWalkVoiceActiveCarGpt Host Test
  * @author      Joxy John
@@ -47,13 +47,19 @@ int main()
     assert(car.conversationIdleTimeoutMs == 30'000U);
     assert(car.conversationMaximumRounds == 10U);
     assert(car.conversationMaximumMisses == 3U);
+    assert(!car.webSearchEnabled);
     assert(car.sleepPhrases == xwalk::agent::stringvector({"goodbye jarvis", "go to sleep", "stop listening"}));
     assert(assistant.instructions.find("concise and speech-friendly") != xwalk::agent::string::npos);
     assert(xwalk::agent::string(xwalk::agent::XWalkVoiceActiveCarGpt::NAME) == "Jarvis");
-    assert(xwalk::agent::string(xwalk::agent::XWalkVoiceActiveCarGpt::MODEL_NAME) == "gemini-3.6-flash");
-    assert(xwalk::agent::string(xwalk::agent::XWalkVoiceActiveCarGpt::API_KEY_ENVIRONMENT) == "GEMINI_API_KEY");
+    assert(xwalk::agent::string(xwalk::agent::XWalkVoiceActiveCarGpt::MODEL_PROVIDER) == "ollama");
+    assert(xwalk::agent::string(xwalk::agent::XWalkVoiceActiveCarGpt::MODEL_NAME) == "llama3.2:3b");
+    assert(xwalk::agent::string(xwalk::agent::XWalkVoiceActiveCarGpt::API_KEY_ENVIRONMENT).empty());
     assert(xwalk::agent::string(xwalk::agent::XWalkVoiceActiveCarGpt::MODEL_ENDPOINT) ==
-           "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions");
+           "http://127.0.0.1:11434/api/chat");
+    assert(xwalk::agent::XWalkVoiceActiveCarGpt::MODEL_TIMEOUT_MS == 120'000U);
+    assert(xwalk::agent::XWalkVoiceActiveCarGpt::MAXIMUM_MESSAGES == 20U);
+    assert(xwalk::agent::XWalkVoiceActiveCarGpt::WEB_SEARCH_MAXIMUM_RESULTS == 3U);
+    assert(xwalk::agent::XWalkVoiceActiveCarGpt::WEB_SEARCH_TIMEOUT_MS == 5'000U);
     assert(xwalk::agent::string(xwalk::agent::XWalkVoiceActiveCarGpt::SPEECH_VOICE) ==
            "/usr/share/xwalk/models/piper/en_GB-alan-medium.onnx");
     return 0;

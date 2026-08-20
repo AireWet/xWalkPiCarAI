@@ -22,6 +22,7 @@ state have been confirmed.
 | `aarch64-dependency-audit.sh` | Validate an ARM64 sysroot and dependency architecture. |
 | `debian/` | Debian package metadata. |
 | `systemd/` | Installed xWalk service unit and defaults. |
+| `searxng/` | Optional loopback-only SearXNG compose and JSON settings. |
 | `udev/` | Device-access rule template. |
 | `tmpfiles/` | Runtime-directory configuration. |
 | `test/` | Host-safe tests and fixtures; no physical hardware is accessed. |
@@ -98,10 +99,37 @@ build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control doctor
 ```
 
 To regenerate the runtime configuration later and ensure the existing Ollama
-user service is enabled and running, use:
+user service is enabled and running, use the following command. This target-side
+check records one second of microphone input to `/dev/null`, verifies the
+configured PulseAudio mixer element, and checks the Vosk and Piper assets
+without moving the vehicle:
 
 ```bash
 xWalkTool/shell-agent/deploy-tool/configure-rpi-runtime.sh
+```
+
+The tracked service binds Ollama only to `127.0.0.1:11434`, restarts after an
+unexpected failure with a three-second delay, and reuses an installed
+`llama3.2:3b` model. Inspect it without exposing the service publicly:
+
+```bash
+systemctl --user daemon-reload
+systemctl --user enable --now ollama
+systemctl --user status ollama --no-pager
+journalctl --user -u ollama --no-pager
+curl http://127.0.0.1:11434/api/tags
+ollama list
+```
+
+For a service-managed Jarvis session, stop any separately configured system
+controller instance, then enable the user service. Its `Requires=` and `After=`
+ordering starts the same user manager's Ollama unit first:
+
+```bash
+systemctl --user enable --now xwalk-jarvis
+systemctl --user status xwalk-jarvis --no-pager
+journalctl --user -u xwalk-jarvis --no-pager
+systemctl --user stop xwalk-jarvis
 ```
 
 ## Audit an ARM64 sysroot

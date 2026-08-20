@@ -257,7 +257,7 @@ if(XWALK_BOOT_BUILD_RPI_BACKEND)
         NOT TARGET xWalkTextToSpeechEspeak OR
         NOT TARGET xWalkTextToSpeechPiper OR
         NOT TARGET xWalkTextToSpeechPico2Wave OR
-        NOT TARGET xWalkLanguageModelOllama OR
+        NOT TARGET xWalkLanguageModelOllama OR NOT TARGET xWalkWebSearch OR
         NOT TARGET xWalkCameraLinux OR NOT TARGET xWalkSpiLinux OR
         NOT TARGET xWalkComputerVisionOpenCv OR
         NOT TARGET xWalkVideoRecordingOpenCv OR
@@ -318,6 +318,7 @@ target_link_libraries(xWalkBootRpi PRIVATE xWalkTrace)
             xWalkTextToSpeechPiper
             xWalkTextToSpeechPico2Wave
             xWalkLanguageModelOllama
+            xWalkWebSearch
             xWalkCameraLinux
             xWalkComputerVisionOpenCv
             xWalkVideoRecordingOpenCv

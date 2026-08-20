@@ -50,6 +50,7 @@
 #include "xAgent_Rpi5CarGptCar.h"
 #include "xAgent_Rpi5CarServoZeroing.h"
 #include "xWalk_Rpi5CarAgentConfigType.h"
+#include "xHal_Rpi5CarWebSearch.h"
 
 /******************************************************************************
  * Boot request definitions
@@ -85,7 +86,7 @@
 #define XWALK_BOOT_VOICE_CHAT_REQ (::agent::uint8{13U})
 /** @brief Selects the base voice-active-car composition. */
 #define XWALK_BOOT_VOICE_ACTIVE_CAR_REQ (::agent::uint8{14U})
-/** @brief Selects the Gemini-backed Jarvis voice-active-car profile. */
+/** @brief Selects the provider-neutral Jarvis voice-active-car profile. */
 #define XWALK_BOOT_VOICE_ACTIVE_CAR_GPT_REQ (::agent::uint8{15U})
 /** @brief Selects the upstream GPT PiCar-X assistant profile. */
 #define XWALK_BOOT_GPT_CAR_REQ (::agent::uint8{16U})
@@ -177,6 +178,8 @@ namespace xwalk::agent
             hal::XWalkTextToSpeech* textToSpeech{nullptr};
             /** @brief Optional boot-owned language model for text-vision talk. */
             hal::XWalkLanguageModel* languageModel{nullptr};
+            /** @brief Optional boot-owned local web-search client for Jarvis. */
+            hal::XWalkWebSearch* webSearch{nullptr};
     };
 
 } /* namespace xwalk::agent */

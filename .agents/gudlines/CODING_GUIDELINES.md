@@ -218,6 +218,7 @@ xWalk-rpi5/xWalkHal/interface/xWalkConfig/ section-aware and flat key-value conf
 xWalk-rpi5/xWalkHal/layer1/xWalkGPT/    speech coordination plus Linux Vosk and Espeak providers
 xWalk-rpi5/xWalkHal/sensor/xWalkLed/    GPIO and three-channel PWM LED control
 xWalk-rpi5/xWalkHal/interface/xWalkLanguageModel/ provider-neutral conversation and prompting control
+xWalk-rpi5/xWalkHal/interface/xWalkWebSearch/ bounded loopback SearXNG retrieval and sanitization
 xWalk-rpi5/xWalkHal/layer1/xWalkMusic/  music theory, PCM tone, and injected audio control
 xWalk-rpi5/xWalkHal/layer1/xWalkRobot/  coordinated multi-servo robot control
 xWalk-rpi5/xWalkHal/layer1/xWalkSpeaker/ bounded asynchronous audio-file playback control

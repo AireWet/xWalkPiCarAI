@@ -32,6 +32,10 @@ if(NOT TARGET xWalkLed)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/sensor/xWalkLed
         ${CMAKE_CURRENT_BINARY_DIR}/xWalkLed)
 endif()
+if(NOT TARGET xWalkWebSearch)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal/interface/xWalkWebSearch
+        ${CMAKE_CURRENT_BINARY_DIR}/xWalkWebSearch)
+endif()
 
 add_library(xWalkVoiceActiveCar STATIC
     src/xAgent_Rpi5CarVoiceActiveCar.cpp
@@ -40,7 +44,7 @@ target_link_libraries(xWalkVoiceActiveCar PRIVATE xWalkTrace)
 add_library(xWalk::VoiceActiveCar ALIAS xWalkVoiceActiveCar)
 target_include_directories(xWalkVoiceActiveCar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(xWalkVoiceActiveCar PUBLIC cxx_std_17)
-target_link_libraries(xWalkVoiceActiveCar PUBLIC xWalkSelfDrive xWalkVoiceAssistant xWalkLed)
+target_link_libraries(xWalkVoiceActiveCar PUBLIC xWalkSelfDrive xWalkVoiceAssistant xWalkLed xWalkWebSearch)
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(xWalkVoiceActiveCar PRIVATE
         -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)

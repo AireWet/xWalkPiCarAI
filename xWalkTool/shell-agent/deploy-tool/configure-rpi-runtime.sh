@@ -65,6 +65,47 @@ if [ "$generate_only" = "true" ]; then
     exit 0
 fi
 
+configuration_value() {
+    local key="$1"
+    awk -F= -v requested_key="$key" '
+        {
+            name = $1
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", name)
+            if (name == requested_key) {
+                value = substr($0, index($0, "=") + 1)
+                gsub(/^[[:space:]]+|[[:space:]]+$/, "", value)
+                print value
+                exit
+            }
+        }
+    ' "$build_directory/runtime/picar-x.d/voice.conf"
+}
+
+vosk_library="$(configuration_value voice_vosk_library)"
+vosk_model="$(configuration_value voice_vosk_model)"
+capture_device="$(configuration_value voice_capture_device)"
+mixer_device="$(configuration_value voice_mixer_device)"
+mixer_element="$(configuration_value voice_mixer_element)"
+piper_executable="$(configuration_value voice_piper_executable)"
+piper_playback_executable="$(configuration_value voice_piper_playback_executable)"
+piper_model="$build_directory/runtime/picar-x.d/ai/features.conf"
+piper_model="$(awk -F= '$1 ~ /^[[:space:]]*voice_active_car_gpt_piper_model[[:space:]]*$/ {
+    value = substr($0, index($0, "=") + 1)
+    gsub(/^[[:space:]]+|[[:space:]]+$/, "", value)
+    print value
+    exit
+}' "$piper_model")"
+
+test -r "$vosk_library"
+test -d "$vosk_model" && test -r "$vosk_model"
+test -x "$piper_executable"
+test -r "$piper_model" && test -r "$piper_model.json"
+command -v "$piper_playback_executable" >/dev/null
+command -v arecord >/dev/null
+command -v amixer >/dev/null
+arecord -D "$capture_device" --dump-hw-params -d 1 -f S16_LE -r 16000 -c 1 /dev/null >/dev/null 2>&1
+amixer -D "$mixer_device" scontrols | grep -Fq "'$mixer_element'"
+
 ollama_executable="$runtime_home/.local/bin/ollama"
 if [ ! -x "$ollama_executable" ]; then
     echo "The user-local Ollama executable is missing: $ollama_executable" >&2
@@ -74,7 +115,8 @@ fi
 systemctl --user daemon-reload
 systemctl --user enable --now ollama.service
 systemctl --user --no-pager status ollama.service
-"$ollama_executable" list
+curl --fail --silent --show-error http://127.0.0.1:11434/api/tags >/dev/null
+OLLAMA_HOST=127.0.0.1:11434 "$ollama_executable" list | grep -Fq 'llama3.2:3b'
 
 echo "Runtime configuration and the Ollama user service are ready."
 echo "Validate with: $build_directory/cmake/xWalkController/xWalkApp/xwalk-picarx-control --validate-config"

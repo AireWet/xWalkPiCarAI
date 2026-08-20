@@ -26,7 +26,7 @@ using ConfigDefault = ::xwalk::source_types::xcontrollerdeploymentconfig::Config
 namespace
 {
 
-    constexpr std::array<ConfigDefault, 70U> knownConfiguration{
+    constexpr std::array<ConfigDefault, 78U> knownConfiguration{
         {{"deployment_config_version", "1"},
          {"hardware_board", "robot_hat_v4"},
          {"hardware_i2c_device", "/dev/i2c-1"},
@@ -83,10 +83,13 @@ namespace
          {"voice_vosk_endpoint_max_seconds", "15.0"},
          {"voice_vosk_silence_peak_threshold", "500"},
          {"voice_vosk_trace_transcript", "false"},
-         {"voice_active_car_gpt_api_key_environment", "GEMINI_API_KEY"},
-         {"voice_active_car_gpt_endpoint", "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"},
-         {"voice_active_car_gpt_model", "gemini-3.6-flash"},
+         {"voice_active_car_gpt_provider", "ollama"},
+         {"voice_active_car_gpt_api_key_environment", ""},
+         {"voice_active_car_gpt_endpoint", "http://127.0.0.1:11434/api/chat"},
+         {"voice_active_car_gpt_model", "llama3.2:3b"},
+         {"voice_active_car_gpt_timeout_ms", "120000"},
          {"voice_active_car_gpt_maximum_output_tokens", "256"},
+         {"voice_active_car_gpt_maximum_messages", "20"},
          {"voice_active_car_gpt_piper_model", "/usr/share/xwalk/models/piper/en_GB-alan-medium.onnx"},
          {"voice_active_car_gpt_with_image", "false"},
          {"voice_active_car_gpt_continuous_conversation", "true"},
@@ -95,6 +98,11 @@ namespace
          {"voice_active_car_gpt_conversation_maximum_misses", "3"},
          {"voice_active_car_gpt_sleep_phrases", "goodbye jarvis,go to sleep,stop listening"},
          {"voice_active_car_gpt_sleep_acknowledgement", "Going to sleep. Say hey Jarvis when you need me, Joxy."},
+         {"voice_active_car_gpt_web_search_enabled", "true"},
+         {"voice_active_car_gpt_web_search_endpoint", "http://127.0.0.1:8080/search"},
+         {"voice_active_car_gpt_web_search_maximum_results", "3"},
+         {"voice_active_car_gpt_web_search_timeout_ms", "5000"},
+         {"voice_active_car_gpt_web_search_maximum_response_bytes", "262144"},
          {"app_control_bind_address", "127.0.0.1"},
          {"app_control_port", "8765"}}};
 
@@ -474,14 +482,37 @@ namespace xwalk::ctrl
                     "Jarvis spoken-output token bound",
                     "range 1 through 16384 tokens");
         const ::ctrl::string jarvisEnvironment = value(store, "voice_active_car_gpt_api_key_environment");
+        const ::ctrl::string jarvisProvider = value(store, "voice_active_car_gpt_provider");
         const ::ctrl::string jarvisEndpoint = value(store, "voice_active_car_gpt_endpoint");
         const ::ctrl::string jarvisModel = value(store, "voice_active_car_gpt_model");
         const ::ctrl::boolean jarvisEndpointHttps = jarvisEndpoint.rfind("https://", 0U) == 0U;
+        const ::ctrl::boolean jarvisOllama = jarvisProvider == "ollama";
+        const ::ctrl::boolean jarvisGemini = jarvisProvider == "gemini";
+        const ::ctrl::boolean jarvisCloud = jarvisGemini || (jarvisProvider == "openai") ||
+                                            (jarvisProvider == "chatgpt") || (jarvisProvider == "grok") ||
+                                            (jarvisProvider == "xai") || (jarvisProvider == "claude") ||
+                                            (jarvisProvider == "anthropic") || (jarvisProvider == "openai_compatible");
+        const ::ctrl::boolean jarvisLoopback = (jarvisEndpoint.rfind("http://127.0.0.1:", 0U) == 0U) ||
+                                               (jarvisEndpoint.rfind("http://localhost:", 0U) == 0U) ||
+                                               (jarvisEndpoint.rfind("http://[::1]:", 0U) == 0U);
+        const ::ctrl::boolean jarvisEndpointSuffix =
+            jarvisOllama
+                ? (jarvisEndpoint.size() >= 9U && jarvisEndpoint.substr(jarvisEndpoint.size() - 9U) == "/api/chat")
+                : (jarvisEndpoint.size() >= 17U &&
+                   jarvisEndpoint.substr(jarvisEndpoint.size() - 17U) == "/chat/completions");
         appendCheck(report,
-                    validEnvironmentName(jarvisEnvironment) && !jarvisModel.empty() && validEndpoint(jarvisEndpoint) &&
-                        jarvisEndpointHttps,
-                    "Jarvis Gemini provider",
-                    "non-empty model and environment name with an HTTPS endpoint");
+                    (jarvisOllama || jarvisCloud) && !jarvisModel.empty() && validEndpoint(jarvisEndpoint) &&
+                        jarvisEndpointSuffix &&
+                        ((jarvisOllama && jarvisLoopback && jarvisEnvironment.empty()) ||
+                         (jarvisCloud && jarvisEndpointHttps && validEnvironmentName(jarvisEnvironment) &&
+                          (!jarvisGemini || (jarvisEnvironment == "GEMINI_API_KEY")))),
+                    "Jarvis language-model provider",
+                    "loopback credential-free Ollama or credentialed HTTPS Gemini");
+        appendCheck(report,
+                    parseUnsigned(value(store, "voice_active_car_gpt_timeout_ms"), 1U, 300'000U) &&
+                        parseUnsigned(value(store, "voice_active_car_gpt_maximum_messages"), 1U, 200U),
+                    "Jarvis model bounds",
+                    "timeout 1-300000 ms and retained messages 1-200");
         appendCheck(report,
                     validBoolean(value(store, "voice_active_car_gpt_with_image")) &&
                         (value(store, "voice_active_car_gpt_with_image") == "false") &&
@@ -501,6 +532,21 @@ namespace xwalk::ctrl
                     validPhraseList(value(store, "voice_active_car_gpt_sleep_phrases")),
                     "Jarvis sleep phrases",
                     "comma-separated trimmed non-empty phrases");
+        const ::ctrl::string searchEndpoint = value(store, "voice_active_car_gpt_web_search_endpoint");
+        const ::ctrl::boolean searchLoopback = (searchEndpoint.rfind("http://127.0.0.1:", 0U) == 0U) ||
+                                               (searchEndpoint.rfind("http://localhost:", 0U) == 0U) ||
+                                               (searchEndpoint.rfind("http://[::1]:", 0U) == 0U);
+        const ::ctrl::boolean searchSuffix =
+            searchEndpoint.size() >= 7U && searchEndpoint.substr(searchEndpoint.size() - 7U) == "/search";
+        appendCheck(report,
+                    validBoolean(value(store, "voice_active_car_gpt_web_search_enabled")) && searchLoopback &&
+                        searchSuffix &&
+                        parseUnsigned(value(store, "voice_active_car_gpt_web_search_maximum_results"), 1U, 10U) &&
+                        parseUnsigned(value(store, "voice_active_car_gpt_web_search_timeout_ms"), 1U, 30'000U) &&
+                        parseUnsigned(
+                            value(store, "voice_active_car_gpt_web_search_maximum_response_bytes"), 1'024U, 1'048'576U),
+                    "Jarvis local web retrieval",
+                    "strict gate, loopback /search endpoint, and bounded result, timeout, and response limits");
         appendCheck(report,
                     parseUnsigned(value(store, "app_control_port"), 1U, 65'535U),
                     "App-control port",

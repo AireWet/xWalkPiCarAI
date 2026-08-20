@@ -30,7 +30,7 @@ install -m 0600 xWalkTool/shell-agent/env-tool/license/xWalkLicense.cfg "$HOME/x
 nano "$HOME/xWalkLicense.cfg"
 ```
 
-For the Gemini-backed Jarvis profile, populate every model field:
+For the optional Gemini Jarvis provider, populate every model field:
 
 ```ini
 [models]

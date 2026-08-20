@@ -41,6 +41,7 @@
 #include "xHal_Rpi5CarTextToSpeechAlsa.h"
 #include "xHal_Rpi5CarTextToSpeechEspeak.h"
 #include "xHal_Rpi5CarTextToSpeechPiper.h"
+#include "xHal_Rpi5CarWebSearch.h"
 
 #include "xHal_Rpi5CarTrace.h"
 #include <cstdlib>
@@ -98,12 +99,15 @@ namespace xwalk::agent
             apiEnvironmentConfigured ? std::getenv(modelApiKeyEnvironment.c_str()) : nullptr;
         agent::string modelApiKey = configuredApiKey == nullptr ? agent::string{} : agent::string(configuredApiKey);
         agent::string maximumOutputTokensText = config.get("voice_language_model_maximum_output_tokens", "1024");
+        agent::string modelTimeoutText = config.get("voice_language_model_timeout_ms", "120000");
+        agent::string maximumMessagesText = "20";
 
         agent::string profileApiKeyEnvironment;
         const agent::boolean rollyProfile = static_cast<agent::boolean>(mode == XWALK_BOOT_VOICE_ACTIVE_CAR_REQ);
         const agent::boolean jarvisProfile = static_cast<agent::boolean>(mode == XWALK_BOOT_VOICE_ACTIVE_CAR_GPT_REQ);
         if (rollyProfile)
         {
+            modelProvider = "openai";
             profileApiKeyEnvironment = config.get("voice_active_car_api_key_environment", "OPENAI_API_KEY");
             modelEndpoint = config.get("voice_active_car_endpoint", XWalkVoiceActiveCar::MODEL_ENDPOINT);
             modelName = config.get("voice_active_car_model", XWalkVoiceActiveCar::MODEL_NAME);
@@ -111,40 +115,50 @@ namespace xwalk::agent
         }
         else if (jarvisProfile)
         {
+            modelProvider = config.get("voice_active_car_gpt_provider", XWalkVoiceActiveCarGpt::MODEL_PROVIDER);
             profileApiKeyEnvironment =
                 config.get("voice_active_car_gpt_api_key_environment", XWalkVoiceActiveCarGpt::API_KEY_ENVIRONMENT);
             modelEndpoint = config.get("voice_active_car_gpt_endpoint", XWalkVoiceActiveCarGpt::MODEL_ENDPOINT);
             modelName = config.get("voice_active_car_gpt_model", XWalkVoiceActiveCarGpt::MODEL_NAME);
             maximumOutputTokensText = config.get("voice_active_car_gpt_maximum_output_tokens",
                                                  std::to_string(XWalkVoiceActiveCarGpt::MAXIMUM_OUTPUT_TOKENS));
+            modelTimeoutText =
+                config.get("voice_active_car_gpt_timeout_ms", std::to_string(XWalkVoiceActiveCarGpt::MODEL_TIMEOUT_MS));
+            maximumMessagesText = config.get("voice_active_car_gpt_maximum_messages",
+                                             std::to_string(XWalkVoiceActiveCarGpt::MAXIMUM_MESSAGES));
         }
         else
         {
+            modelProvider = "openai";
             profileApiKeyEnvironment = config.get("gpt_car_api_key_environment", "OPENAI_API_KEY");
             modelEndpoint = config.get("gpt_car_endpoint", XWalkGptCar::MODEL_ENDPOINT);
             modelName = config.get("gpt_car_model", XWalkGptCar::MODEL_NAME);
             maximumOutputTokensText = config.get("gpt_car_maximum_output_tokens", "1024");
         }
-        const agent::cstring profileApiKey = std::getenv(profileApiKeyEnvironment.c_str());
-        const agent::boolean profileApiKeyMissing =
-            static_cast<agent::boolean>((profileApiKey == nullptr) || (profileApiKey[0U] == '\0'));
+        const hal::XWalkLanguageModelHttpDialect modelDialect =
+            hal::XWalkLanguageModelHttp::dialectFromString(modelProvider);
+        const agent::boolean credentialRequired =
+            static_cast<agent::boolean>(modelDialect == hal::XWalkLanguageModelHttpDialect::OpenAiChatCompletions);
+        const agent::cstring profileApiKey =
+            profileApiKeyEnvironment.empty() ? nullptr : std::getenv(profileApiKeyEnvironment.c_str());
+        const agent::boolean profileApiKeyMissing = static_cast<agent::boolean>(
+            credentialRequired && ((profileApiKey == nullptr) || (profileApiKey[0U] == '\0')));
         if (profileApiKeyMissing)
         {
             const std::string exceptionMessage =
                 std::string(profileApiKeyEnvironment).append(" must be set for the selected voice-active mode");
             XWALK_RPIAGENT_ERROR(XWALK_RUNTIME, exceptionMessage);
         }
-        modelProvider = "openai";
-        modelApiKey = profileApiKey;
+        modelApiKey = profileApiKey == nullptr ? agent::string{} : agent::string(profileApiKey);
 
         const agent::uint32 maximumOutputTokens = parseUnsigned(maximumOutputTokensText,
                                                                 "voice_language_model_maximum_output_tokens",
                                                                 XHAL_RPI5CAR_LANGUAGE_MODEL_HTTP_MAXIMUM_OUTPUT_TOKENS);
-        const agent::uint32 modelTimeoutMs = parseUnsigned(config.get("voice_language_model_timeout_ms", "120000"),
-                                                           "voice_language_model_timeout_ms",
-                                                           XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_TIMEOUT_MS);
-        const hal::XWalkLanguageModelHttpDialect modelDialect =
-            hal::XWalkLanguageModelHttp::dialectFromString(modelProvider);
+        const agent::uint32 modelTimeoutMs = parseUnsigned(
+            modelTimeoutText, "voice_language_model_timeout_ms", XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_TIMEOUT_MS);
+        const agent::uint32 maximumMessages = parseUnsigned(maximumMessagesText,
+                                                            "voice_active_car_gpt_maximum_messages",
+                                                            XHAL_RPI5CAR_LANGUAGE_MODEL_OLLAMA_MAXIMUM_MESSAGES);
 
         hal::XWalkSpeechEndpointConfiguration endpointConfiguration{};
         endpointConfiguration.minimumSpeechMilliseconds = parseSeconds(
@@ -176,6 +190,7 @@ namespace xwalk::agent
         hal::XWalkLanguageModelHttp modelBackend(
             modelDialect, modelEndpoint, modelName, modelApiKey, modelTimeoutMs, maximumOutputTokens);
         hal::XWalkLanguageModel languageModel(&modelBackend, modelBackend.callbacks());
+        languageModel.setMaximumMessages(maximumMessages);
         hal::XWalkVoiceAssistantConfiguration assistantConfiguration{};
         if (jarvisProfile)
         {
@@ -225,6 +240,10 @@ namespace xwalk::agent
                                 "voice_active_car_gpt_sleep_phrases");
             voiceConfiguration.sleepAcknowledgement =
                 config.get("voice_active_car_gpt_sleep_acknowledgement", XWalkVoiceActiveCarGpt::SLEEP_ACKNOWLEDGEMENT);
+            voiceConfiguration.webSearchEnabled =
+                parseBoolean(config.get("voice_active_car_gpt_web_search_enabled",
+                                        XWalkVoiceActiveCarGpt::WEB_SEARCH_ENABLED ? "true" : "false"),
+                             "voice_active_car_gpt_web_search_enabled");
         }
         else if (mode == XWALK_BOOT_GPT_CAR_REQ)
         {
@@ -258,7 +277,35 @@ namespace xwalk::agent
         services.music = &music;
         services.voiceStatusLed = &statusLed;
         services.voiceActiveCarConfiguration = &voiceConfiguration;
-        if (jarvisProfile || (voiceConfiguration.withImage == false))
+        if (jarvisProfile)
+        {
+            if (voiceConfiguration.webSearchEnabled)
+            {
+                hal::XWalkWebSearchConfiguration webSearchConfiguration{};
+                webSearchConfiguration.endpoint =
+                    config.get("voice_active_car_gpt_web_search_endpoint", XWalkVoiceActiveCarGpt::WEB_SEARCH_ENDPOINT);
+                webSearchConfiguration.maximumResults =
+                    parseUnsigned(config.get("voice_active_car_gpt_web_search_maximum_results",
+                                             std::to_string(XWalkVoiceActiveCarGpt::WEB_SEARCH_MAXIMUM_RESULTS)),
+                                  "voice_active_car_gpt_web_search_maximum_results",
+                                  10U);
+                webSearchConfiguration.timeoutMs =
+                    parseUnsigned(config.get("voice_active_car_gpt_web_search_timeout_ms",
+                                             std::to_string(XWalkVoiceActiveCarGpt::WEB_SEARCH_TIMEOUT_MS)),
+                                  "voice_active_car_gpt_web_search_timeout_ms",
+                                  30'000U);
+                webSearchConfiguration.maximumResponseBytes =
+                    parseUnsigned(config.get("voice_active_car_gpt_web_search_maximum_response_bytes",
+                                             std::to_string(XWalkVoiceActiveCarGpt::WEB_SEARCH_MAXIMUM_RESPONSE_BYTES)),
+                                  "voice_active_car_gpt_web_search_maximum_response_bytes",
+                                  1'048'576U);
+                hal::XWalkWebSearch webSearch(webSearchConfiguration);
+                services.webSearch = &webSearch;
+                return parameters.callback(parameters.appContext, services);
+            }
+            return parameters.callback(parameters.appContext, services);
+        }
+        if (voiceConfiguration.withImage == false)
         {
             return parameters.callback(parameters.appContext, services);
         }

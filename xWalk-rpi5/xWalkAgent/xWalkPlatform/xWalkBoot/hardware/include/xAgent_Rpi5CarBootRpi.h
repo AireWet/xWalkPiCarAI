@@ -144,7 +144,7 @@ namespace xwalk::agent
             agent::int32 runVoiceChat(const xAgentContext& parameters);
             /** @brief Runs the Rolly voice-active-car profile. */
             agent::int32 runVoiceActiveCar(const xAgentContext& parameters);
-            /** @brief Runs the Gemini-backed Jarvis voice-active-car profile. */
+            /** @brief Runs the provider-neutral Jarvis voice-active-car profile. */
             agent::int32 runVoiceActiveCarGpt(const xAgentContext& parameters);
             /** @brief Runs the GPT-car profile. */
             agent::int32 runGptCar(const xAgentContext& parameters);

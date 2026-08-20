@@ -41,7 +41,7 @@ Boot modes are intentionally bounded:
 | `Sound` | Base plus ALSA Music |
 | `VoiceChat` | Base plus Vosk, Piper, local Ollama, and VoiceAssistant |
 | `VoiceActiveCar` | Base voice graph plus Music, SelfDrive, status LED, and still camera |
-| `VoiceActiveCarGpt` | VoiceActiveCar graph plus the Gemini-backed Jarvis profile |
+| `VoiceActiveCarGpt` | VoiceActiveCar graph plus the provider-neutral Jarvis profile |
 | `GptCar` | VoiceActiveCar graph plus the upstream JSON GPT-car profile |
 | `VoiceControlledCar` | Base plus Vosk, ALSA capture, and speech recognition |
 | `VoicePromptCar` | Base plus Espeak, ALSA playback, and speaker control |
@@ -209,8 +209,9 @@ The dedicated `voice-chat` composition preserves example 19 with local Ollama,
 Piper, and a 20-message history. The `voice-active-car` mode preserves the
 Rolly profile from `example/voice_active_car.py`, uses OpenAI `gpt-4o-mini`,
 and reads its credential from `OPENAI_API_KEY`. Example 21's
-`voice-active-car-gpt` mode uses Gemini `gemini-3.6-flash`, reads
-`GEMINI_API_KEY`, and uses Piper `en_GB-alan-medium`. Supported generic provider
+`voice-active-car-gpt` mode defaults to credential-free local Ollama
+`llama3.2:3b` and uses Piper `en_GB-alan-medium`. Gemini remains selectable
+with its HTTPS endpoint and `GEMINI_API_KEY`. Supported generic provider
 names are `ollama`, `openai`,
 `chatgpt`, `gemini`, `grok`, `xai`, `claude`, `anthropic`, and
 `openai_compatible`. Cloud
@@ -281,7 +282,7 @@ The Raspberry Pi hardware files have one composition responsibility:
 | `BootRpiOnlineLlmTest.cpp` | Environment-authenticated online model |
 | `BootRpiVoiceActiveMode.cpp` | Shared speech, model, camera, LED, and action graph |
 | `BootRpiVoiceActiveCar.cpp` | Rolly profile selection |
-| `BootRpiVoiceActiveCarGpt.cpp` | Gemini-backed Jarvis profile selection |
+| `BootRpiVoiceActiveCarGpt.cpp` | Provider-neutral Jarvis profile selection |
 | `BootRpiGptCar.cpp` | GPT-car profile selection |
 
 ## Host verification

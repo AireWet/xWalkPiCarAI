@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file        xAgent_Rpi5CarVoiceActiveCarGpt.h
- * @brief       Declares the Gemini-backed Jarvis voice-car profile.
+ * @brief       Declares the provider-neutral Jarvis voice-car profile.
  *
  * @details
  * Defines the Jarvis identity, Gemini model, Piper voice, wake behavior,
@@ -47,7 +47,7 @@ namespace xwalk::agent
 
     /**
      * @class XWalkVoiceActiveCarGpt
-     * @brief Supplies immutable Gemini-backed Jarvis profile defaults.
+     * @brief Supplies immutable provider-neutral Jarvis profile defaults.
      *
      * @details
      * Owns no hardware, credential, provider, or mutable conversation state. The
@@ -63,14 +63,19 @@ namespace xwalk::agent
             static constexpr agent::cstring SPEECH_LANGUAGE = "en-us";
             /** @brief British male Piper model path used for spoken Jarvis replies. */
             static constexpr agent::cstring SPEECH_VOICE = "/usr/share/xwalk/models/piper/en_GB-alan-medium.onnx";
-            /** @brief Stable Gemini language-model name used by the profile default. */
-            static constexpr agent::cstring MODEL_NAME = "gemini-3.6-flash";
-            /** @brief Gemini OpenAI-compatible endpoint used when deployment does not override it. */
-            static constexpr agent::cstring MODEL_ENDPOINT =
-                "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
-            /** @brief Environment variable that exclusively supplies the Gemini credential. */
-            static constexpr agent::cstring API_KEY_ENVIRONMENT = "GEMINI_API_KEY";
-            /** @brief Maximum Gemini tokens retained for concise spoken output. */
+            /** @brief Default local provider selected for credential-free Jarvis operation. */
+            static constexpr agent::cstring MODEL_PROVIDER = "ollama";
+            /** @brief Stable local language-model name used by the profile default. */
+            static constexpr agent::cstring MODEL_NAME = "llama3.2:3b";
+            /** @brief Loopback Ollama chat endpoint used when deployment does not override it. */
+            static constexpr agent::cstring MODEL_ENDPOINT = "http://127.0.0.1:11434/api/chat";
+            /** @brief Empty credential environment used by the local Ollama default. */
+            static constexpr agent::cstring API_KEY_ENVIRONMENT = "";
+            /** @brief Maximum provider request duration in milliseconds. */
+            static constexpr agent::uint32 MODEL_TIMEOUT_MS = 120'000U;
+            /** @brief Maximum retained conversation messages. */
+            static constexpr agent::uint32 MAXIMUM_MESSAGES = 20U;
+            /** @brief Maximum model tokens retained for concise spoken output. */
             static constexpr agent::uint32 MAXIMUM_OUTPUT_TOKENS = 256U;
             /** @brief Permanent text-only image policy for Jarvis. */
             static constexpr agent::boolean WITH_IMAGE = false;
@@ -87,6 +92,16 @@ namespace xwalk::agent
             /** @brief Default acknowledgement spoken after an explicit sleep phrase. */
             static constexpr agent::cstring SLEEP_ACKNOWLEDGEMENT =
                 "Going to sleep. Say hey Jarvis when you need me, Joxy.";
+            /** @brief Enables optional bounded local SearXNG retrieval by default. */
+            static constexpr agent::boolean WEB_SEARCH_ENABLED = true;
+            /** @brief Loopback-only SearXNG JSON endpoint. */
+            static constexpr agent::cstring WEB_SEARCH_ENDPOINT = "http://127.0.0.1:8080/search";
+            /** @brief Maximum accepted references per search. */
+            static constexpr agent::uint32 WEB_SEARCH_MAXIMUM_RESULTS = 3U;
+            /** @brief Maximum local search duration in milliseconds. */
+            static constexpr agent::uint32 WEB_SEARCH_TIMEOUT_MS = 5'000U;
+            /** @brief Maximum accepted SearXNG JSON response size. */
+            static constexpr agent::size WEB_SEARCH_MAXIMUM_RESPONSE_BYTES = 262'144U;
             /** @brief Configured case-insensitive wake phrase. */
             static constexpr agent::cstring WAKE_WORD = "hey jarvis";
             /** @brief Response spoken when the Jarvis wake phrase is detected. */

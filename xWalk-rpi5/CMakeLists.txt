@@ -375,6 +375,7 @@ add_subdirectory(xWalkHal/interface/xWalkAudio)
 add_subdirectory(xWalkHal/interface/xWalkConfig)
 add_subdirectory(xWalkHal/interface/xWalkUtils)
 add_subdirectory(xWalkHal/interface/xWalkLanguageModel)
+add_subdirectory(xWalkHal/interface/xWalkWebSearch)
 add_subdirectory(xWalkHal/device/xWalkPwm)
 add_subdirectory(xWalkHal/device/xWalkAdc)
 add_subdirectory(xWalkHal/device/xWalkServo)
@@ -487,6 +488,7 @@ target_link_libraries(xWalkHal INTERFACE
     xWalkI2c
     xWalkIW
     xWalkLanguageModel
+    xWalkWebSearch
     xWalkLed
     xWalkLineTracker
     xWalkMotor
