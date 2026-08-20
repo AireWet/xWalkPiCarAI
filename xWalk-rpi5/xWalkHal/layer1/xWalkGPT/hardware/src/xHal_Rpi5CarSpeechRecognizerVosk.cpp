@@ -75,10 +75,12 @@ namespace xwalk::hal
         api.modelFree = loadFunction<voskmodelfreefunction>(libraryHandle, "vosk_model_free");
         api.recognizerNew = loadFunction<voskrecognizernewfunction>(libraryHandle, "vosk_recognizer_new");
         api.acceptWaveform = loadFunction<voskacceptwaveformfunction>(libraryHandle, "vosk_recognizer_accept_waveform");
+        api.result = loadFunction<voskresultfunction>(libraryHandle, "vosk_recognizer_result");
         api.finalResult = loadFunction<voskfinalresultfunction>(libraryHandle, "vosk_recognizer_final_result");
         api.recognizerFree = loadFunction<voskrecognizerfreefunction>(libraryHandle, "vosk_recognizer_free");
         if ((api.modelNew == nullptr) || (api.modelFree == nullptr) || (api.recognizerNew == nullptr) ||
-            (api.acceptWaveform == nullptr) || (api.finalResult == nullptr) || (api.recognizerFree == nullptr))
+            (api.acceptWaveform == nullptr) || (api.result == nullptr) || (api.finalResult == nullptr) ||
+            (api.recognizerFree == nullptr))
         {
             static_cast<void>(::dlclose(libraryHandle));
             libraryHandle = nullptr;
@@ -126,6 +128,10 @@ namespace xwalk::hal
         XWalkSpeechToTextAlsaOperations result{};
         result.recognizerReady = &ready;
         result.recognizePcm = &recognizePcm;
+        result.startRecognition = &startRecognition;
+        result.feedRecognition = &feedRecognition;
+        result.finishRecognition = &finishRecognition;
+        result.releaseRecognition = &releaseRecognition;
         result.recognizeFile = &recognizeFile;
         result.cancelRecognition = &cancel;
         return result;
@@ -227,6 +233,109 @@ namespace xwalk::hal
             return {};
         }
         return result;
+    }
+
+    /**
+     * @brief Creates one streaming Vosk recognizer for a microphone listen.
+     * @param[in,out] context Non-null provider context.
+     * @param[in] sampleRateHz Positive PCM sample rate in Hertz.
+     * @param[in] channelCount Required mono channel count.
+     * @return Newly owned recognizer handle, or null when Vosk creation fails.
+     */
+    speechrecognitionsession
+    XWalkSpeechRecognizerVosk::startRecognition(contextpointer context, uint32 sampleRateHz, uint8 channelCount)
+    {
+        XWalkSpeechRecognizerVosk& self = provider(context);
+        const hal::boolean formatInvalid = static_cast<hal::boolean>((sampleRateHz == 0U) || (channelCount != 1U));
+        if (formatInvalid)
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "Vosk streaming recognition requires positive-rate mono PCM");
+        }
+        self.cancellationRequested.store(false);
+        return self.api.recognizerNew(self.modelHandle, static_cast<float>(sampleRateHz));
+    }
+
+    /**
+     * @brief Feeds one PCM period and reports Vosk endpoint acceptance.
+     * @param[in,out] context Non-null provider context.
+     * @param[in,out] session Non-null streaming Vosk recognizer.
+     * @param[in] pcmData Non-empty signed-sixteen PCM bytes.
+     * @return Listening, endpoint, or cancellation status.
+     */
+    XWalkSpeechRecognitionFeedStatus XWalkSpeechRecognizerVosk::feedRecognition(contextpointer context,
+                                                                                speechrecognitionsession session,
+                                                                                const bytevector& pcmData)
+    {
+        XWalkSpeechRecognizerVosk& self = provider(context);
+        const hal::boolean sessionPcmInvalid = static_cast<hal::boolean>((session == nullptr) || pcmData.empty());
+        if (sessionPcmInvalid)
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "Vosk streaming feed requires a session and PCM period");
+        }
+        const hal::boolean pcmDataTooLarge =
+            static_cast<hal::boolean>(pcmData.size() > static_cast<size>(std::numeric_limits<int32>::max()));
+        if (pcmDataTooLarge)
+        {
+            XWALK_HAL_ERROR(XWALK_RANGE, "Vosk streaming PCM exceeds the C API byte-count range");
+        }
+        if (self.cancellationRequested.load())
+        {
+            return XWalkSpeechRecognitionFeedStatus::Cancelled;
+        }
+        const cstring pcmBytes = reinterpret_cast<cstring>(pcmData.data());
+        const int32 result = self.api.acceptWaveform(session, pcmBytes, static_cast<int32>(pcmData.size()));
+        if (result < 0)
+        {
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Vosk streaming PCM ingestion failed");
+        }
+        if (self.cancellationRequested.load())
+        {
+            return XWalkSpeechRecognitionFeedStatus::Cancelled;
+        }
+        return (result > 0) ? XWalkSpeechRecognitionFeedStatus::Endpoint : XWalkSpeechRecognitionFeedStatus::Listening;
+    }
+
+    /**
+     * @brief Retrieves the final transcript for an endpoint or hard timeout.
+     * @param[in,out] context Non-null provider context.
+     * @param[in,out] session Non-null streaming Vosk recognizer.
+     * @param[in] endpointDetected Selects accepted-endpoint rather than timeout finalization.
+     * @return Owned transcript, which may be empty for silence or cancellation.
+     */
+    string XWalkSpeechRecognizerVosk::finishRecognition(contextpointer context,
+                                                        speechrecognitionsession session,
+                                                        boolean endpointDetected)
+    {
+        XWalkSpeechRecognizerVosk& self = provider(context);
+        if (session == nullptr)
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "Vosk streaming finalization requires a session");
+        }
+        if (self.cancellationRequested.exchange(false))
+        {
+            return {};
+        }
+        const cstring finalJson = endpointDetected ? self.api.result(session) : self.api.finalResult(session);
+        if (finalJson == nullptr)
+        {
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Vosk streaming final result is unavailable");
+        }
+        return extractText(finalJson);
+    }
+
+    /**
+     * @brief Releases one Vosk streaming recognizer.
+     * @param[in,out] context Nullable provider context retained for callback symmetry.
+     * @param[in,out] session Non-null recognizer handle to release.
+     */
+    void XWalkSpeechRecognizerVosk::releaseRecognition(contextpointer context,
+                                                       speechrecognitionsession session) noexcept
+    {
+        if ((context != nullptr) && (session != nullptr))
+        {
+            XWalkSpeechRecognizerVosk& self = *static_cast<XWalkSpeechRecognizerVosk*>(context);
+            self.api.recognizerFree(session);
+        }
     }
 
     /**

@@ -428,8 +428,19 @@ namespace xwalk::agent
      */
     agent::boolean XWalkVoiceActiveCar::isWakePhrase(agent::stringview text) const
     {
+        return matchesWakePhrase(text, configuration.wakeWord);
+    }
+
+    /**
+     * @brief Checks a transcript for a wake phrase without case sensitivity.
+     * @param[in] text Recognized transcript retained only for this call.
+     * @param[in] wakePhrase Non-empty configured wake phrase.
+     * @return `true` when the complete wake phrase occurs within the transcript.
+     */
+    agent::boolean XWalkVoiceActiveCar::matchesWakePhrase(agent::stringview text, agent::stringview wakePhrase)
+    {
         agent::string normalizedText(text);
-        agent::string normalizedWakeWord(configuration.wakeWord);
+        agent::string normalizedWakeWord(wakePhrase);
         for (char& value : normalizedText)
         {
             value = static_cast<char>(std::tolower(static_cast<unsigned char>(value)));

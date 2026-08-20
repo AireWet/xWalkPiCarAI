@@ -38,6 +38,8 @@ xWalkGPT/
 │   └── xHal_Rpi5CarTextToSpeechLifecycle.cpp
 ├── hardware/
 │   ├── include/
+│   │   ├── xHal_Rpi5CarSpeechCaptureGuard.h
+│   │   ├── xHal_Rpi5CarSpeechRecognitionGuard.h
 │   │   ├── xHal_Rpi5CarSpeechRecognizerVosk.h
 │   │   ├── xHal_Rpi5CarSpeechRecognizerVoskTypes.h
 │   │   ├── xHal_Rpi5CarVoskRecognizerGuard.h
@@ -49,6 +51,8 @@ xWalkGPT/
 │   │   ├── xHal_Rpi5CarTextToSpeechAlsa.h
 │   │   └── xHal_Rpi5CarTextToSpeechAlsaTypes.h
 │   ├── src/
+│   │   ├── xHal_Rpi5CarSpeechCaptureGuard.cpp
+│   │   ├── xHal_Rpi5CarSpeechRecognitionGuard.cpp
 │   │   ├── xHal_Rpi5CarSpeechRecognizerVosk.cpp
 │   │   ├── xHal_Rpi5CarVoskRecognizerGuard.cpp
 │   │   ├── xHal_Rpi5CarSpeechToTextAlsa.cpp
@@ -82,10 +86,19 @@ reference and backend state through documented non-owning context pointers.
 The application must keep every referenced object alive for the complete
 coordinator lifetime.
 
-`XWalkSpeechToTextAlsa` owns one ALSA capture handle for each bounded listen
-request. It captures 16 kHz mono signed-16 PCM in reads of no more than 1,024
-frames, closes the handle before recognition, and forwards PCM or an audio-file
-path to one injected recognizer. The recognizer owns its model, process or HTTP
+`XWalkSpeechToTextAlsa` owns one ALSA capture handle and one streaming
+recognition session for each bounded listen request. It captures 16 kHz mono
+signed-16 PCM in reads of no more than 1,024 frames and feeds every completed
+period immediately to the selected recognizer. Vosk endpoint acceptance after
+speech and trailing silence ends the listen and returns the accepted result;
+the requested timeout is a hard upper bound that finalizes any partial
+utterance. PCM is not accumulated for the duration of a streaming listen.
+
+Cancellation is observed between bounded ALSA reads and by the Vosk provider.
+Scope-bound guards close the capture handle and release the recognition session
+on normal completion, cancellation, and thrown error paths. The recognizer
+still exposes compatible whole-buffer PCM and audio-file operations for callers
+outside the streaming microphone path. It owns its model, process or HTTP
 transport, credentials, language policy, and provider-specific conversion.
 
 The recognition context remains non-owning and must outlive the adapter. The
@@ -118,9 +131,8 @@ runtimes under `../../../xWalkLibrary/{aarch64,x86_64}` and one shared small US 
 deployments may override both paths. The Espeak provider requires `espeak-ng`
 executable, and the Pico2Wave provider requires `pico2wave` from
 `libttspico-utils` plus a WAV playback executable. None of these providers uses
-a shell. A scope-bound Vosk recognizer guard
-releases each recognizer during normal return and stack cleanup without
-exception interception.
+a shell. Scope-bound capture and recognition guards release each per-listen
+resource during normal return and stack cleanup without exception interception.
 
 ## Host build and test
 

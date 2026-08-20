@@ -14,6 +14,12 @@ Robot HAT status LED, and the shared SelfDrive actions. `GEMINI_API_KEY`
 exclusively supplies the credential; the key is never accepted through CLI
 arguments, committed configuration, or diagnostics.
 
+Both the `hey jarvis` wake listen and the following request use incremental
+Vosk recognition. Each listen returns after Vosk accepts an utterance endpoint
+following trailing silence; the existing 30-second setting remains a hard
+safety upper bound and finalizes speech that continues until that limit. No new
+runtime configuration is required for this behavior.
+
 Jarvis may return only the exact locally allowlisted actions for bounded
 directions, horn and engine sounds, expression gestures, and background-music
 start or stop. Unsupported action names are rejected by `XWalkSelfDrive`.

@@ -38,6 +38,49 @@ namespace
         return "microphone capture received";
     }
 
+    XWalkHal::speechrecognitionsession
+    startRecognition(XWalkHal::contextpointer context, XWalkHal::uint32 rate, XWalkHal::uint8 channels)
+    {
+        static XWalkHal::uint8 sessionToken{1U};
+        static_cast<void>(context);
+        if ((rate != 16'000U) || (channels != 1U))
+        {
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Speech hardware test received an invalid streaming format");
+        }
+        return &sessionToken;
+    }
+
+    XWalkHal::XWalkSpeechRecognitionFeedStatus feedRecognition(XWalkHal::contextpointer context,
+                                                               XWalkHal::speechrecognitionsession session,
+                                                               const XWalkHal::bytevector& pcm)
+    {
+        static_cast<void>(context);
+        if ((session == nullptr) || pcm.empty())
+        {
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Speech hardware test received invalid streaming PCM");
+        }
+        return XWalkHal::XWalkSpeechRecognitionFeedStatus::Listening;
+    }
+
+    XWalkHal::string finishRecognition(XWalkHal::contextpointer context,
+                                       XWalkHal::speechrecognitionsession session,
+                                       XWalkHal::boolean endpointDetected)
+    {
+        static_cast<void>(context);
+        static_cast<void>(endpointDetected);
+        if (session == nullptr)
+        {
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Speech hardware test recognition session is invalid");
+        }
+        return "microphone capture received";
+    }
+
+    void releaseRecognition(XWalkHal::contextpointer context, XWalkHal::speechrecognitionsession session)
+    {
+        static_cast<void>(context);
+        static_cast<void>(session);
+    }
+
     XWalkHal::string recognizeFile(XWalkHal::contextpointer context, XWalkHal::stringview path)
     {
         static_cast<void>(context);
@@ -68,6 +111,10 @@ XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer argume
     XWalkHal::XWalkSpeechToTextAlsaOperations recognizer{};
     recognizer.recognizerReady = &ready;
     recognizer.recognizePcm = &recognizePcm;
+    recognizer.startRecognition = &startRecognition;
+    recognizer.feedRecognition = &feedRecognition;
+    recognizer.finishRecognition = &finishRecognition;
+    recognizer.releaseRecognition = &releaseRecognition;
     recognizer.recognizeFile = &recognizeFile;
     recognizer.cancelRecognition = &cancel;
     XWalkHal::XWalkSpeechToTextAlsa adapter(argumentValues[1], nullptr, recognizer);

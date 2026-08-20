@@ -40,6 +40,7 @@ int main()
     assert(car.listenTimeoutMs == 30'000U);
     assert(car.wakeEnabled);
     assert(car.wakeWord == "hey jarvis");
+    assert(xwalk::agent::XWalkVoiceActiveCar::matchesWakePhrase("noise HEY JARVIS trailing", car.wakeWord));
     assert(car.answerOnWake == "Systems online. Ready when you are, Joxy.");
     assert(xwalk::agent::string(xwalk::agent::XWalkVoiceActiveCarGpt::NAME) == "Jarvis");
     assert(xwalk::agent::string(xwalk::agent::XWalkVoiceActiveCarGpt::MODEL_NAME) == "gemini-3.7-flash");

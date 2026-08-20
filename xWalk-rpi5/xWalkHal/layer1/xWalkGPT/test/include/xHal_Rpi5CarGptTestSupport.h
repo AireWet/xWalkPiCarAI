@@ -11,6 +11,8 @@
 #ifndef XHAL_RPI5CAR_GPT_TEST_SUPPORT_H
 #define XHAL_RPI5CAR_GPT_TEST_SUPPORT_H
 #include "xHal_Rpi5CarSpeechToText.h"
+#include "xHal_Rpi5CarSpeechToTextAlsa.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 #include "xHal_Rpi5CarTextToSpeech.h"
 namespace xwalk::hal::test::gpt
 {
@@ -30,6 +32,29 @@ namespace xwalk::hal::test::gpt
             boolean failListen{};
             boolean failFile{};
             boolean failStop{};
+    };
+    /** @brief Records incremental capture and streaming-recognition behavior. */
+    struct TestStreamingBackend
+    {
+            uint8 captureToken{1U};
+            uint8 sessionToken{2U};
+            size capturedFrames{};
+            size recognizedBytes{};
+            uint32 readCount{};
+            uint32 closeCount{};
+            uint32 recoveryCount{};
+            uint32 startCount{};
+            uint32 feedCount{};
+            uint32 finishCount{};
+            uint32 releaseCount{};
+            uint32 cancelCount{};
+            uint32 endpointAfterFeed{};
+            boolean endpointFinalized{};
+            boolean failFirstRead{};
+            boolean alwaysFailRead{};
+            boolean delayRead{};
+            boolean silentResult{};
+            atomicboolean readStarted{false};
     };
     /** @brief Retains the current simulated GPIO state. */
     struct TestGpioBackend
@@ -60,6 +85,22 @@ namespace xwalk::hal::test::gpt
     string transcribeFile(contextpointer context, stringview filePath);
     void stop(contextpointer context);
     XWalkSpeechToTextCallbacks recognitionCallbacks();
+    speechcapturehandle
+    openStreamingCapture(contextpointer context, stringview device, uint32 rate, uint8 channels, uint32 period);
+    int32 readStreamingCapture(contextpointer context, speechcapturehandle handle, bytevector& data, size frames);
+    boolean recoverStreamingCapture(contextpointer context, speechcapturehandle handle, int32 error);
+    void closeStreamingCapture(contextpointer context, speechcapturehandle handle);
+    boolean streamingRecognizerReady(contextpointer context);
+    string recognizeWholePcm(contextpointer context, const bytevector& pcm, uint32 rate, uint8 channels);
+    speechrecognitionsession startStreamingRecognition(contextpointer context, uint32 rate, uint8 channels);
+    XWalkSpeechRecognitionFeedStatus
+    feedStreamingRecognition(contextpointer context, speechrecognitionsession session, const bytevector& pcm);
+    string
+    finishStreamingRecognition(contextpointer context, speechrecognitionsession session, boolean endpointDetected);
+    void releaseStreamingRecognition(contextpointer context, speechrecognitionsession session);
+    string recognizeStreamingFile(contextpointer context, stringview path);
+    void cancelStreamingRecognition(contextpointer context);
+    XWalkSpeechToTextAlsaOperations streamingOperations();
     void configureGpio(contextpointer context, uint8 pin, XWalkGpioMode mode, XWalkGpioPull pull, boolean initialValue);
     boolean readGpio(contextpointer context, uint8 pin);
     void writeGpio(contextpointer context, uint8 pin, boolean value);

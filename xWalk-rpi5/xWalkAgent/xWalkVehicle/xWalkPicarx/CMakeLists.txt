@@ -16,8 +16,8 @@ if(XWALK_PICARX_BUILD_HARDWARE_TESTS AND NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     message(FATAL_ERROR "xWalkPicarx hardware tests require Linux I2C and GPIO support")
 endif()
 
-set(XWALK_HAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal CACHE PATH
-    "Path to the xWalk HAL source tree")
+set(XWALK_PICARX_HAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal CACHE PATH
+    "Path to the xWalk HAL source tree used by xWalkPicarx")
 set(XWALK_ADC_BUILD_HOST_TESTS OFF CACHE BOOL "Agent dependency setting" FORCE)
 set(XWALK_CONFIG_BUILD_HOST_TESTS OFF CACHE BOOL "Agent dependency setting" FORCE)
 set(XWALK_GPIO_BUILD_HOST_TESTS OFF CACHE BOOL "Agent dependency setting" FORCE)
@@ -41,26 +41,32 @@ if(XWALK_PICARX_BUILD_HARDWARE_TESTS)
 endif()
 
 if(NOT TARGET xWalkConfig)
-    add_subdirectory(${XWALK_HAL_ROOT}/xWalkConfig ${CMAKE_CURRENT_BINARY_DIR}/xWalkConfig)
+    add_subdirectory(${XWALK_PICARX_HAL_ROOT}/interface/xWalkConfig
+        ${CMAKE_CURRENT_BINARY_DIR}/xWalkConfig)
 endif()
 if(NOT TARGET xWalkTrace)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkTrace
         ${CMAKE_CURRENT_BINARY_DIR}/xWalkTrace)
 endif()
 if(NOT TARGET xWalkLineTracker)
-    add_subdirectory(${XWALK_HAL_ROOT}/xWalkLineTracker ${CMAKE_CURRENT_BINARY_DIR}/xWalkLineTracker)
+    add_subdirectory(${XWALK_PICARX_HAL_ROOT}/sensor/xWalkLineTracker
+        ${CMAKE_CURRENT_BINARY_DIR}/xWalkLineTracker)
 endif()
 if(NOT TARGET xWalkMotor)
-    add_subdirectory(${XWALK_HAL_ROOT}/xWalkMotor ${CMAKE_CURRENT_BINARY_DIR}/xWalkMotor)
+    add_subdirectory(${XWALK_PICARX_HAL_ROOT}/sensor/xWalkMotor
+        ${CMAKE_CURRENT_BINARY_DIR}/xWalkMotor)
 endif()
 if(NOT TARGET xWalkServo)
-    add_subdirectory(${XWALK_HAL_ROOT}/xWalkServo ${CMAKE_CURRENT_BINARY_DIR}/xWalkServo)
+    add_subdirectory(${XWALK_PICARX_HAL_ROOT}/device/xWalkServo
+        ${CMAKE_CURRENT_BINARY_DIR}/xWalkServo)
 endif()
 if(NOT TARGET xWalkUltrasonic)
-    add_subdirectory(${XWALK_HAL_ROOT}/xWalkUltrasonic ${CMAKE_CURRENT_BINARY_DIR}/xWalkUltrasonic)
+    add_subdirectory(${XWALK_PICARX_HAL_ROOT}/device/xWalkUltrasonic
+        ${CMAKE_CURRENT_BINARY_DIR}/xWalkUltrasonic)
 endif()
 if(XWALK_PICARX_BUILD_HARDWARE_TESTS AND NOT TARGET xWalkBoardControl)
-    add_subdirectory(${XWALK_HAL_ROOT}/xWalkBoardControl ${CMAKE_CURRENT_BINARY_DIR}/xWalkBoardControl)
+    add_subdirectory(${XWALK_PICARX_HAL_ROOT}/layer1/xWalkBoardControl
+        ${CMAKE_CURRENT_BINARY_DIR}/xWalkBoardControl)
 endif()
 
 add_library(xWalkPicarx STATIC

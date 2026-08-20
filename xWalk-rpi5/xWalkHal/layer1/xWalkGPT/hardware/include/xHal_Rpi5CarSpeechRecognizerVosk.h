@@ -84,6 +84,17 @@ namespace xwalk::hal
             /** @brief Recognizes one complete signed sixteen-bit PCM payload. */
             static string
             recognizePcm(contextpointer context, const bytevector& pcmData, uint32 sampleRateHz, uint8 channelCount);
+            /** @brief Creates one per-listen streaming Vosk recognizer. */
+            static speechrecognitionsession
+            startRecognition(contextpointer context, uint32 sampleRateHz, uint8 channelCount);
+            /** @brief Feeds one microphone PCM period and reports Vosk endpoint acceptance. */
+            static XWalkSpeechRecognitionFeedStatus
+            feedRecognition(contextpointer context, speechrecognitionsession session, const bytevector& pcmData);
+            /** @brief Retrieves an endpoint result or timeout final result from one session. */
+            static string
+            finishRecognition(contextpointer context, speechrecognitionsession session, boolean endpointDetected);
+            /** @brief Releases one Vosk streaming session without throwing. */
+            static void releaseRecognition(contextpointer context, speechrecognitionsession session) noexcept;
             /** @brief Rejects unsupported direct file transcription explicitly. */
             static string recognizeFile(contextpointer context, stringview filePath);
             /** @brief Requests cancellation of the next or current recognition boundary. */

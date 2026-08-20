@@ -59,7 +59,8 @@ opening a device, contacting a model, or writing a file.
 
 One round performs these operations:
 
-1. Check speech-backend readiness and listen for bounded input.
+1. Check speech-backend readiness and listen until its recognizer reports an
+   utterance endpoint or the configured hard timeout is reached.
 2. Preserve silence as an empty result without prompting or speaking.
 3. Submit non-empty recognized or caller-supplied text to the language model.
 4. Optionally parse the final response and speak a non-empty parsed response.
@@ -68,6 +69,10 @@ One round performs these operations:
 Wake-word detection, keyboard polling, image capture, continuous loops,
 streaming tokens, and scheduling remain application or backend responsibilities.
 Calls require external serialization and may block in injected backends.
+The completed Vosk/ALSA backend feeds microphone periods incrementally and
+normally returns after speech followed by recognizer-detected trailing silence;
+it does not claim real-time latency. The configured listen duration remains a
+safety upper bound for initial silence or speech continuing without an endpoint.
 
 ## Host build and test
 

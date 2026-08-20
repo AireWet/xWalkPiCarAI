@@ -53,6 +53,25 @@ namespace xwalk::hal
      */
     using speechcapturehandle = contextpointer;
 
+    /** @brief Opaque streaming-recognition session owned by the speech adapter. */
+    using speechrecognitionsession = contextpointer;
+
+    /**
+     * @enum XWalkSpeechRecognitionFeedStatus
+     * @brief Describes the result of feeding one PCM period to a streaming recognizer.
+     */
+    enum class XWalkSpeechRecognitionFeedStatus : uint8
+    {
+        /** @brief Recognition needs another captured PCM period. */
+        Listening = 0U,
+
+        /** @brief The recognizer accepted a complete utterance endpoint. */
+        Endpoint = 1U,
+
+        /** @brief Recognition was cancelled and no transcript should be returned. */
+        Cancelled = 2U
+    };
+
     /**
      * @brief Opens and configures one interleaved signed-16 capture stream.
      *
@@ -114,6 +133,47 @@ namespace xwalk::hal
     using speechrecognizerpcmcallback = string (*)(contextpointer, const bytevector&, uint32, uint8);
 
     /**
+     * @brief Creates one streaming recognizer for bounded microphone capture.
+     *
+     * @param[in,out] context Nullable non-owning recognizer context.
+     * @param[in] sampleRateHz Positive PCM sample rate in Hertz.
+     * @param[in] channelCount Required mono channel count.
+     * @return Newly owned non-null recognition session, or null when creation fails.
+     */
+    using speechrecognizerstartcallback = speechrecognitionsession (*)(contextpointer, uint32, uint8);
+
+    /**
+     * @brief Feeds one complete signed-sixteen PCM period to a recognition session.
+     *
+     * @param[in,out] context Nullable non-owning recognizer context.
+     * @param[in,out] session Non-null session returned by the start operation.
+     * @param[in] pcmData One non-empty, complete PCM period.
+     * @return Current recognition status, including an accepted utterance endpoint.
+     */
+    using speechrecognizerfeedcallback = XWalkSpeechRecognitionFeedStatus (*)(contextpointer,
+                                                                              speechrecognitionsession,
+                                                                              const bytevector&);
+
+    /**
+     * @brief Finalizes one streaming session and retrieves its transcript.
+     *
+     * @param[in,out] context Nullable non-owning recognizer context.
+     * @param[in,out] session Non-null active recognition session.
+     * @param[in] endpointDetected `true` when feed accepted an utterance endpoint; otherwise this is timeout
+     * finalization.
+     * @return Owned final transcript, which may be empty for silence.
+     */
+    using speechrecognizerfinishcallback = string (*)(contextpointer, speechrecognitionsession, boolean);
+
+    /**
+     * @brief Releases one streaming recognition session without throwing.
+     *
+     * @param[in,out] context Nullable non-owning recognizer context.
+     * @param[in,out] session Non-null owned session released by this call.
+     */
+    using speechrecognizerreleasecallback = void (*)(contextpointer, speechrecognitionsession);
+
+    /**
      * @brief Transcribes one recognizer-supported audio file.
      *
      * @param[in,out] context Nullable non-owning recognizer context.
@@ -161,6 +221,18 @@ namespace xwalk::hal
 
             /** @brief Recognizes the complete bounded PCM capture. */
             speechrecognizerpcmcallback recognizePcm{nullptr};
+
+            /** @brief Creates one streaming microphone-recognition session. */
+            speechrecognizerstartcallback startRecognition{nullptr};
+
+            /** @brief Feeds one captured PCM period to the active session. */
+            speechrecognizerfeedcallback feedRecognition{nullptr};
+
+            /** @brief Finalizes the active session and returns its transcript. */
+            speechrecognizerfinishcallback finishRecognition{nullptr};
+
+            /** @brief Releases the active streaming session without throwing. */
+            speechrecognizerreleasecallback releaseRecognition{nullptr};
 
             /** @brief Transcribes one application-selected audio file. */
             speechrecognizerfilecallback recognizeFile{nullptr};

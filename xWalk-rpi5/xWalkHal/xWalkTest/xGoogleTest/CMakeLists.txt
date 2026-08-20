@@ -876,6 +876,7 @@ target_sources(xGoogleTestSpeechToText PRIVATE
 foreach(XWALK_GPT_TEST_TARGET IN ITEMS xGoogleTestSpeechToText xGoogleTestTextToSpeech)
     target_include_directories(${XWALK_GPT_TEST_TARGET} PRIVATE
         ${XWALK_HAL_SOURCE_DIRECTORY}/layer1/xWalkGPT/test/include
+        ${XWALK_HAL_SOURCE_DIRECTORY}/layer1/xWalkGPT/hardware/include
         ${XWALK_HAL_SOURCE_DIRECTORY}/layer1/xWalkGPT/simulation/include)
     target_compile_definitions(${XWALK_GPT_TEST_TARGET} PRIVATE
         XWALK_GPT_SIMULATION_TRACE_CONFIG_PATH="${XWALK_GOOGLE_TEST_GPT_TRACE_CONFIG_PATH}"
@@ -886,6 +887,8 @@ endforeach()
 xwalk_add_legacy_test_source(xGoogleTestSpeechToTextAlsa xWalkSpeechToTextAlsaLegacyMain
     ${XWALK_HAL_SOURCE_DIRECTORY}/layer1/xWalkGPT/hardware/test/src/xHal_Rpi5CarSpeechToTextAlsaTest.cpp
     xWalkSpeechToTextAlsa)
+target_include_directories(xGoogleTestSpeechToTextAlsa PRIVATE
+    ${XWALK_HAL_SOURCE_DIRECTORY}/layer1/xWalkGPT/test/include)
 xwalk_add_legacy_test_source(xGoogleTestTextToSpeechAlsa xWalkTextToSpeechAlsaLegacyMain
     ${XWALK_HAL_SOURCE_DIRECTORY}/layer1/xWalkGPT/hardware/test/src/xHal_Rpi5CarTextToSpeechAlsaTest.cpp
     xWalkTextToSpeechAlsa)

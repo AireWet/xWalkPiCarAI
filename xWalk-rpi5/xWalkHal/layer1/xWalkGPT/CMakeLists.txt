@@ -74,6 +74,8 @@ target_link_libraries(xWalkGPT PUBLIC xWalkBoardControl xWalkLibraryCommon PRIVA
 if(XWALK_GPT_NEEDS_STT_ALSA)
     find_package(ALSA REQUIRED)
     add_library(xWalkSpeechToTextAlsa STATIC
+        hardware/src/xHal_Rpi5CarSpeechCaptureGuard.cpp
+        hardware/src/xHal_Rpi5CarSpeechRecognitionGuard.cpp
         hardware/src/xHal_Rpi5CarSpeechToTextAlsa.cpp
         hardware/src/xHal_Rpi5CarSpeechToTextAlsaSystem.cpp)
 target_link_libraries(xWalkSpeechToTextAlsa PRIVATE xWalkTrace)
@@ -188,7 +190,8 @@ if(XWALK_GPT_BUILD_HOST_TESTS)
         test/src/xHal_Rpi5CarSpeechToTextTest.cpp
         test/src/xHal_Rpi5CarGptTestSupport.cpp
         simulation/src/xHal_Rpi5CarGptSimulationArguments.cpp)
-    target_include_directories(xWalkSpeechToTextTest PRIVATE test/include simulation/include)
+    target_include_directories(xWalkSpeechToTextTest PRIVATE
+        test/include simulation/include hardware/include)
     target_compile_definitions(xWalkSpeechToTextTest PRIVATE ${XWALK_GPT_TEST_DEFINITIONS})
     target_link_libraries(xWalkSpeechToTextTest PRIVATE xWalkGPT xWalkTrace)
     add_dependencies(xWalkSpeechToTextTest xWalkGptTestTraceConfig)
@@ -198,7 +201,7 @@ if(XWALK_GPT_BUILD_HOST_TESTS)
     add_executable(xWalkTextToSpeechTest
         test/src/xHal_Rpi5CarTextToSpeechTest.cpp
         test/src/xHal_Rpi5CarGptTestSupport.cpp)
-    target_include_directories(xWalkTextToSpeechTest PRIVATE test/include)
+    target_include_directories(xWalkTextToSpeechTest PRIVATE test/include hardware/include)
     target_compile_definitions(xWalkTextToSpeechTest PRIVATE ${XWALK_GPT_TEST_DEFINITIONS})
     target_link_libraries(xWalkTextToSpeechTest PRIVATE xWalkGPT xWalkTrace)
     add_dependencies(xWalkTextToSpeechTest xWalkGptTestTraceConfig)
@@ -206,10 +209,11 @@ if(XWALK_GPT_BUILD_HOST_TESTS)
     set_tests_properties(xWalkTextToSpeechHostTest PROPERTIES LABELS "host")
 
     add_executable(xWalkSpeechToTextAlsaTest
-        hardware/test/src/xHal_Rpi5CarSpeechToTextAlsaTest.cpp)
+        hardware/test/src/xHal_Rpi5CarSpeechToTextAlsaTest.cpp
+        test/src/xHal_Rpi5CarGptTestSupport.cpp)
     target_include_directories(xWalkSpeechToTextAlsaTest PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/hardware/test/include)
-    target_link_libraries(xWalkSpeechToTextAlsaTest PRIVATE xWalkSpeechToTextAlsa)
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
+    target_link_libraries(xWalkSpeechToTextAlsaTest PRIVATE xWalkSpeechToTextAlsa xWalkTrace)
     add_test(NAME xWalkSpeechToTextAlsaHostTest COMMAND xWalkSpeechToTextAlsaTest)
     set_tests_properties(xWalkSpeechToTextAlsaHostTest PROPERTIES LABELS "host")
 
@@ -217,7 +221,7 @@ if(XWALK_GPT_BUILD_HOST_TESTS)
         hardware/test/src/xHal_Rpi5CarTextToSpeechAlsaTest.cpp)
     target_include_directories(xWalkTextToSpeechAlsaTest PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/hardware/test/include)
-    target_link_libraries(xWalkTextToSpeechAlsaTest PRIVATE xWalkTextToSpeechAlsa)
+    target_link_libraries(xWalkTextToSpeechAlsaTest PRIVATE xWalkTextToSpeechAlsa xWalkTrace)
     add_test(NAME xWalkTextToSpeechAlsaHostTest COMMAND xWalkTextToSpeechAlsaTest)
     set_tests_properties(xWalkTextToSpeechAlsaHostTest PROPERTIES LABELS "host")
 endif()

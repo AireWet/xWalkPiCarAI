@@ -3,8 +3,8 @@
  * @brief       Declares bounded ALSA capture and recognition adaptation.
  *
  * @details
- * Owns each ALSA capture handle for one synchronous listen operation and routes
- * captured PCM or audio files to a caller-owned recognition backend.
+ * Owns each ALSA capture and streaming recognition session for one synchronous
+ * listen operation and routes audio files to a caller-owned recognition backend.
  *
  * @project     xWalk Firmware
  * @module      xWalkGPT Speech-to-Text ALSA Backend
@@ -47,7 +47,7 @@ namespace xwalk::hal
 
     /**
      * @class XWalkSpeechToTextAlsa
-     * @brief Captures bounded ALSA microphone PCM and dispatches recognition.
+     * @brief Captures bounded ALSA microphone PCM and streams it to recognition.
      *
      * @details
      * Owns the configured microphone name, copies a complete operation table, and
@@ -121,7 +121,7 @@ namespace xwalk::hal
             static boolean readyCallback(contextpointer context);
 
             /**
-             * @brief Captures bounded microphone PCM and dispatches recognition.
+             * @brief Streams bounded microphone PCM until an endpoint or hard timeout.
              *
              * @param[in,out] context Non-null pointer to a live adapter.
              * @param[in] timeoutMs Capture interval from 1 through 300,000 milliseconds.

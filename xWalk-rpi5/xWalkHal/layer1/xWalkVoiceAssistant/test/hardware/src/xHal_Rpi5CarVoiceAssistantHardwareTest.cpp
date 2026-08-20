@@ -172,6 +172,51 @@ namespace
         return static_cast<SmokeProviders*>(context)->prompt;
     }
 
+    /** @brief Starts one prompt-backed streaming recognition session. */
+    XWalkHal::speechrecognitionsession
+    startRecognition(XWalkHal::contextpointer context, XWalkHal::uint32 sampleRateHz, XWalkHal::uint8 channelCount)
+    {
+        const hal::boolean formatInvalid = static_cast<hal::boolean>((sampleRateHz != 16'000U) || (channelCount != 1U));
+        if (formatInvalid)
+        {
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Voice-assistant smoke streaming PCM format is invalid");
+        }
+        return context;
+    }
+
+    /** @brief Treats the first captured period as one complete approved prompt. */
+    XWalkHal::XWalkSpeechRecognitionFeedStatus feedRecognition(XWalkHal::contextpointer context,
+                                                               XWalkHal::speechrecognitionsession session,
+                                                               const XWalkHal::bytevector& pcmData)
+    {
+        const hal::boolean periodInvalid = static_cast<hal::boolean>((session != context) || pcmData.empty());
+        if (periodInvalid)
+        {
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Voice-assistant smoke streaming PCM period is invalid");
+        }
+        return XWalkHal::XWalkSpeechRecognitionFeedStatus::Endpoint;
+    }
+
+    /** @brief Returns the deployment-approved prompt after endpoint finalization. */
+    XWalkHal::string finishRecognition(XWalkHal::contextpointer context,
+                                       XWalkHal::speechrecognitionsession session,
+                                       XWalkHal::boolean endpointDetected)
+    {
+        const hal::boolean finalizationInvalid = static_cast<hal::boolean>((session != context) || !endpointDetected);
+        if (finalizationInvalid)
+        {
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Voice-assistant smoke streaming finalization is invalid");
+        }
+        return static_cast<SmokeProviders*>(context)->prompt;
+    }
+
+    /** @brief Releases the context-backed prompt session. */
+    void releaseRecognition(XWalkHal::contextpointer context, XWalkHal::speechrecognitionsession session)
+    {
+        static_cast<void>(context);
+        static_cast<void>(session);
+    }
+
     /** @brief Returns silence for the unused file-recognition path. */
     XWalkHal::string recognizeFile(XWalkHal::contextpointer context, XWalkHal::stringview filePath)
     {
@@ -251,6 +296,10 @@ XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer argume
     XWalkHal::XWalkSpeechToTextAlsaOperations recognizerOperations{};
     recognizerOperations.recognizerReady = &recognizerReady;
     recognizerOperations.recognizePcm = &recognizePcm;
+    recognizerOperations.startRecognition = &startRecognition;
+    recognizerOperations.feedRecognition = &feedRecognition;
+    recognizerOperations.finishRecognition = &finishRecognition;
+    recognizerOperations.releaseRecognition = &releaseRecognition;
     recognizerOperations.recognizeFile = &recognizeFile;
     recognizerOperations.cancelRecognition = &cancelRecognition;
     XWalkHal::XWalkSpeechToTextAlsa speechBackend(argumentValues[1], &providers, recognizerOperations);

@@ -211,6 +211,40 @@ namespace
         return "where am I";
     }
 
+    /** @brief Starts one in-memory streaming recognition session. */
+    XWalkHal::speechrecognitionsession
+    startRecognition(XWalkHal::contextpointer context, XWalkHal::uint32 sampleRateHz, XWalkHal::uint8 channelCount)
+    {
+        xwalk::hal::test::requireTestCondition(sampleRateHz == 16'000U && channelCount == 1U);
+        return context;
+    }
+
+    /** @brief Accepts one period as a complete simulated utterance. */
+    XWalkHal::XWalkSpeechRecognitionFeedStatus feedRecognition(XWalkHal::contextpointer context,
+                                                               XWalkHal::speechrecognitionsession session,
+                                                               const XWalkHal::bytevector& pcmData)
+    {
+        xwalk::hal::test::requireTestCondition(session == context && !pcmData.empty());
+        return XWalkHal::XWalkSpeechRecognitionFeedStatus::Endpoint;
+    }
+
+    /** @brief Returns the deterministic transcript after endpoint finalization. */
+    XWalkHal::string finishRecognition(XWalkHal::contextpointer context,
+                                       XWalkHal::speechrecognitionsession session,
+                                       XWalkHal::boolean endpointDetected)
+    {
+        TestBackends& state = *static_cast<TestBackends*>(context);
+        xwalk::hal::test::requireTestCondition(session == context && endpointDetected);
+        ++state.recognitionCount;
+        return "where am I";
+    }
+
+    /** @brief Releases the context-backed simulated recognition session. */
+    void releaseRecognition(XWalkHal::contextpointer context, XWalkHal::speechrecognitionsession session)
+    {
+        xwalk::hal::test::requireTestCondition(session == context);
+    }
+
     /** @brief Returns silence for the unused file-recognition path. */
     XWalkHal::string recognizeFile(XWalkHal::contextpointer context, XWalkHal::stringview filePath)
     {
@@ -228,14 +262,20 @@ namespace
     /** @brief Returns complete injected capture and recognition operations. */
     XWalkHal::XWalkSpeechToTextAlsaOperations speechOperations()
     {
-        return {&openCapture,
-                &readCapture,
-                &recoverCapture,
-                &closeCapture,
-                &recognizerReady,
-                &recognizePcm,
-                &recognizeFile,
-                &cancelRecognition};
+        XWalkHal::XWalkSpeechToTextAlsaOperations result{};
+        result.openCapture = &openCapture;
+        result.readCapture = &readCapture;
+        result.recoverCapture = &recoverCapture;
+        result.closeCapture = &closeCapture;
+        result.recognizerReady = &recognizerReady;
+        result.recognizePcm = &recognizePcm;
+        result.startRecognition = &startRecognition;
+        result.feedRecognition = &feedRecognition;
+        result.finishRecognition = &finishRecognition;
+        result.releaseRecognition = &releaseRecognition;
+        result.recognizeFile = &recognizeFile;
+        result.cancelRecognition = &cancelRecognition;
+        return result;
     }
 
     /** @brief Records one Ollama request and returns a final assistant response. */
@@ -376,7 +416,7 @@ namespace
         assistant.stop();
 
         xwalk::hal::test::requireTestCondition(state.primeCount == 1U);
-        xwalk::hal::test::requireTestCondition(state.recognitionCount == 1U && state.capturedBytes == 3'200U);
+        xwalk::hal::test::requireTestCondition(state.recognitionCount == 1U && state.capturedBytes == 2'048U);
         xwalk::hal::test::requireTestCondition(state.modelCount == 1U);
         xwalk::hal::test::requireTestCondition(state.modelRequest.find("where am I") != XWalkHal::string::npos);
         xwalk::hal::test::requireTestCondition(state.modelRequest.find("Answer briefly.") != XWalkHal::string::npos);

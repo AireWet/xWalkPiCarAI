@@ -9,8 +9,8 @@ if(XWALK_SELF_DRIVE_BUILD_HARDWARE_TESTS AND NOT CMAKE_SYSTEM_NAME STREQUAL "Lin
     message(FATAL_ERROR "xWalkSelfDrive RPi mode requires Linux support")
 endif()
 
-set(XWALK_HAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal CACHE PATH
-    "Path to the xWalk HAL source tree")
+set(XWALK_SELF_DRIVE_HAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../xWalkHal CACHE PATH
+    "Path to the xWalk HAL source tree used by xWalkSelfDrive")
 
 if(NOT TARGET xWalkPicarx)
     set(XWALK_PICARX_BUILD_HOST_TESTS OFF CACHE BOOL "Self-drive dependency setting" FORCE)
@@ -21,7 +21,8 @@ endif()
 
 if(NOT TARGET xWalkMusic)
     set(XWALK_MUSIC_BUILD_HOST_TESTS OFF CACHE BOOL "Self-drive dependency setting" FORCE)
-    add_subdirectory(${XWALK_HAL_ROOT}/xWalkMusic ${CMAKE_CURRENT_BINARY_DIR}/xWalkMusic)
+    add_subdirectory(${XWALK_SELF_DRIVE_HAL_ROOT}/layer1/xWalkMusic
+        ${CMAKE_CURRENT_BINARY_DIR}/xWalkMusic)
 endif()
 
 add_library(xWalkSelfDrive STATIC

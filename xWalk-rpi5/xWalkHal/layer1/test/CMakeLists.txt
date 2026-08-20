@@ -26,6 +26,7 @@ target_include_directories(xWalkLayer1GroupTest PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkBoardControl/test/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkRobot/test/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkGPT/test/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkGPT/hardware/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkVoiceAssistant/test/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../../interface/xWalkLanguageModel/test/include)
 target_compile_features(xWalkLayer1GroupTest PRIVATE cxx_std_17)

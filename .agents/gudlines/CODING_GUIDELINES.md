@@ -1032,8 +1032,10 @@ retaining normal compiler warnings and compilation checks.
   tasks. Listening and transcription callbacks may block and must not be called
   from interrupt context unless a backend explicitly proves that use safe.
 - Keep real microphone ownership in `XWalkSpeechToTextAlsa`. Capture 16 kHz mono
-  signed-16 PCM, limit one ALSA read to 1,024 frames, apply the coordinator's
-  bounded listen timeout, and close the capture handle before recognition.
+  signed-16 PCM, limit one ALSA read to 1,024 frames, feed each completed period
+  to one bounded streaming recognition session, and treat the coordinator's
+  listen timeout as a hard upper bound. Release both capture and recognition
+  resources on every completion, cancellation, and error path.
 - Inject one complete recognizer operation table into the ALSA adapter. The
   application selects one local or remote provider and owns its model, process
   or HTTP transport, credentials, language policy, and provider-specific data.

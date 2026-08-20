@@ -99,6 +99,14 @@ namespace xwalk::agent
             static XWalkVoiceActiveCarConfiguration carConfiguration();
 
             /**
+             * @brief Checks a transcript for a wake phrase without case sensitivity.
+             * @param[in] text Recognized transcript retained only for this call.
+             * @param[in] wakePhrase Non-empty configured wake phrase.
+             * @return `true` when the complete wake phrase occurs within the transcript.
+             */
+            static agent::boolean matchesWakePhrase(agent::stringview text, agent::stringview wakePhrase);
+
+            /**
              * @brief Runs sensor-aware voice rounds until cancellation.
              * @return Zero after normal cancellation; one after action-worker failure.
              * @note Wake-enabled profiles require their phrase before each ordinary model round.

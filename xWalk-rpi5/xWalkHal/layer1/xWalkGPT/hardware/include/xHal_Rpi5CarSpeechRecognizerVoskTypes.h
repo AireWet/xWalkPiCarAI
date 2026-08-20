@@ -57,6 +57,8 @@ namespace xwalk::hal
     using voskrecognizernewfunction = voskrecognizerhandle (*)(voskmodelhandle model, float sampleRateHz);
     /** @brief Accepts signed sixteen-bit PCM bytes into one recognizer. */
     using voskacceptwaveformfunction = int32 (*)(voskrecognizerhandle recognizer, cstring pcmData, int32 byteCount);
+    /** @brief Returns recognizer-owned endpoint JSON text after accepted speech. */
+    using voskresultfunction = cstring (*)(voskrecognizerhandle recognizer);
     /** @brief Returns recognizer-owned final JSON text. */
     using voskfinalresultfunction = cstring (*)(voskrecognizerhandle recognizer);
     /** @brief Releases one non-null recognizer handle. */
@@ -80,6 +82,8 @@ namespace xwalk::hal
             voskrecognizernewfunction recognizerNew{nullptr};
             /** @brief Non-null PCM ingestion function. */
             voskacceptwaveformfunction acceptWaveform{nullptr};
+            /** @brief Non-null accepted-endpoint result function. */
+            voskresultfunction result{nullptr};
             /** @brief Non-null final-result function. */
             voskfinalresultfunction finalResult{nullptr};
             /** @brief Non-null recognizer-destruction function. */

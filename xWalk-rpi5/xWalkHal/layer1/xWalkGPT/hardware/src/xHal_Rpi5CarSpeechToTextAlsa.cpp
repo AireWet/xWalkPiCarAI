@@ -12,6 +12,9 @@
 
 #include "xHal_Rpi5CarSpeechToTextAlsa.h"
 
+#include "xHal_Rpi5CarSpeechCaptureGuard.h"
+#include "xHal_Rpi5CarSpeechRecognitionGuard.h"
+
 #include "xHal_Rpi5CarTrace.h"
 /**
  * @namespace xwalk::hal
@@ -110,6 +113,8 @@ namespace xwalk::hal
             (backendOperations.recoverCapture == nullptr) || (backendOperations.closeCapture == nullptr);
         const boolean recognizerMissing =
             (backendOperations.recognizerReady == nullptr) || (backendOperations.recognizePcm == nullptr) ||
+            (backendOperations.startRecognition == nullptr) || (backendOperations.feedRecognition == nullptr) ||
+            (backendOperations.finishRecognition == nullptr) || (backendOperations.releaseRecognition == nullptr) ||
             (backendOperations.recognizeFile == nullptr) || (backendOperations.cancelRecognition == nullptr);
         const hal::boolean speechConfigurationInvalid =
             static_cast<hal::boolean>(captureMissing || recognizerMissing || deviceName.empty());
@@ -152,8 +157,7 @@ namespace xwalk::hal
      *
      * @param[in,out] context Non-null pointer to a live adapter.
      * @param[in] timeoutMs Capture interval from 1 through 300,000 milliseconds.
-     * @return Owned transcript, or an empty string after cancellation or empty
-     * capture.
+     * @return Owned transcript after an endpoint or hard timeout, or an empty string after cancellation or silence.
      * @throws std::runtime_error If capture open, data validation, or recovery
      * fails.
      */
@@ -170,15 +174,23 @@ namespace xwalk::hal
         {
             XWALK_HAL_ERROR(XWALK_RUNTIME, "Speech ALSA microphone could not be opened");
         }
+        XWalkSpeechCaptureGuard captureGuard(self.operationContext, capture, self.operations.closeCapture);
+        speechrecognitionsession session = self.operations.startRecognition(self.operationContext,
+                                                                            XHAL_RPI5CAR_SPEECH_CAPTURE_SAMPLE_RATE_HZ,
+                                                                            XHAL_RPI5CAR_SPEECH_CAPTURE_CHANNEL_COUNT);
+        if (session == nullptr)
+        {
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Speech streaming recognizer could not be started");
+        }
+        XWalkSpeechRecognitionGuard recognitionGuard(
+            self.operationContext, session, self.operations.releaseRecognition);
         const uint64 sampleRate = XHAL_RPI5CAR_SPEECH_CAPTURE_SAMPLE_RATE_HZ;
         const uint64 requestedMilliseconds = timeoutMs;
         const uint64 requestedFrameProduct = sampleRate * requestedMilliseconds;
         const uint64 maximumFrames = (requestedFrameProduct + 999U) / 1'000U;
-        bytevector capturedPcm{};
-        const uint64 maximumBytes = maximumFrames * XHAL_RPI5CAR_SPEECH_CAPTURE_SAMPLE_BYTES;
-        capturedPcm.reserve(static_cast<size>(maximumBytes));
         uint64 capturedFrames{};
         uint32 recoveryCount{};
+        boolean endpointDetected{false};
         const hal::boolean processingLoopRequested{true};
         while (processingLoopRequested)
         {
@@ -201,11 +213,32 @@ namespace xwalk::hal
                     static_cast<hal::boolean>((completedFrames > readFrames) || (periodData.size() != expectedBytes));
                 if (completedFramesReadFramesPeriodDataInvalid)
                 {
-                    self.operations.closeCapture(self.operationContext, capture);
                     XWALK_HAL_ERROR(XWALK_RUNTIME, "Speech ALSA capture returned malformed PCM");
                 }
-                capturedPcm.insert(capturedPcm.end(), periodData.begin(), periodData.end());
                 capturedFrames += completedFrames;
+                const hal::boolean cancellationObserved = self.cancellationRequested.load();
+                if (cancellationObserved)
+                {
+                    break;
+                }
+                const XWalkSpeechRecognitionFeedStatus feedStatus =
+                    self.operations.feedRecognition(self.operationContext, session, periodData);
+                if (feedStatus == XWalkSpeechRecognitionFeedStatus::Endpoint)
+                {
+                    endpointDetected = true;
+                    break;
+                }
+                if (feedStatus == XWalkSpeechRecognitionFeedStatus::Cancelled)
+                {
+                    self.cancellationRequested.store(true);
+                    break;
+                }
+                const hal::boolean feedStatusInvalid =
+                    static_cast<hal::boolean>(feedStatus != XWalkSpeechRecognitionFeedStatus::Listening);
+                if (feedStatusInvalid)
+                {
+                    XWALK_HAL_ERROR(XWALK_RUNTIME, "Speech streaming recognizer returned an invalid status");
+                }
             }
             else
             {
@@ -215,22 +248,16 @@ namespace xwalk::hal
                     !self.operations.recoverCapture(self.operationContext, capture, result));
                 if (resultInvalid)
                 {
-                    self.operations.closeCapture(self.operationContext, capture);
                     XWALK_HAL_ERROR(XWALK_RUNTIME, "Speech ALSA capture recovery failed");
                 }
             }
         }
-        self.operations.closeCapture(self.operationContext, capture);
-        const hal::boolean selfCancellationRequestedCapturedPcmInvalid =
-            static_cast<hal::boolean>(self.cancellationRequested.load() || capturedPcm.empty());
-        if (selfCancellationRequestedCapturedPcmInvalid)
+        const hal::boolean recognitionCancelled = self.cancellationRequested.load();
+        if (recognitionCancelled)
         {
             return {};
         }
-        return self.operations.recognizePcm(self.operationContext,
-                                            capturedPcm,
-                                            XHAL_RPI5CAR_SPEECH_CAPTURE_SAMPLE_RATE_HZ,
-                                            XHAL_RPI5CAR_SPEECH_CAPTURE_CHANNEL_COUNT);
+        return self.operations.finishRecognition(self.operationContext, session, endpointDetected);
     }
 
     /**
