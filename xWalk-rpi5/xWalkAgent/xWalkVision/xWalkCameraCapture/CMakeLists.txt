@@ -26,7 +26,10 @@ endif()
 if(XWALK_CAMERA_CAPTURE_BUILD_HOST_TESTS)
     include(CTest)
     add_executable(xWalkCameraCaptureTest
-        test/src/xAgent_Rpi5CarCameraCaptureTest.cpp)
+        test/src/xAgent_Rpi5CarCameraCaptureTest.cpp
+        test/src/xAgent_Rpi5CarCameraCaptureTestSupport.cpp)
+    target_include_directories(xWalkCameraCaptureTest PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_link_libraries(xWalkCameraCaptureTest PRIVATE xWalkCameraCapture)
     add_test(NAME xWalkCameraCaptureHostTest COMMAND xWalkCameraCaptureTest)
     set_tests_properties(xWalkCameraCaptureHostTest PROPERTIES LABELS "host")

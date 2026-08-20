@@ -34,22 +34,40 @@ namespace xwalk::agent
     /** @brief Captures one image and returns its owned destination path. */
     agent::string XWalkCameraCapture::capture()
     {
-        agent::string capturedPath = cameraObject->capture(outputPathValue);
-        if (!capturedPath.empty())
-        {
-            XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .020, "Voice image capture completed");
-        }
-        return capturedPath;
+        static_cast<void>(cameraObject->capture(outputPathValue));
+        return completedCapture();
     }
 
-    /** @brief Adapts this object to a voice-active image callback. */
+    /**
+     * @brief Reports successful capture and returns the configured path.
+     * @return Owned configured image destination.
+     */
+    agent::string XWalkCameraCapture::completedCapture() const
+    {
+        XWALK_RPIAGENT_TRACE_UID0(RPIAGENT .020, "Voice image capture completed");
+        return outputPathValue;
+    }
+
+    /**
+     * @brief Adapts this object to a voice-active image callback.
+     * @param[in,out] context Non-null pointer to a live capture Agent.
+     * @return Captured image path, or an empty string when the optional backend
+     * capture fails.
+     */
     agent::string XWalkCameraCapture::captureImage(agent::contextpointer context)
     {
         if (context == nullptr)
         {
             XWALK_RPIAGENT_ERROR(XWALK_INVAL, "Camera capture Agent context must not be null");
         }
-        return static_cast<XWalkCameraCapture*>(context)->capture();
+        XWalkCameraCapture& captureAgent = *static_cast<XWalkCameraCapture*>(context);
+        const agent::boolean imageCaptured = captureAgent.cameraObject->tryCapture(captureAgent.outputPathValue);
+        if (imageCaptured == false)
+        {
+            XWALK_RPIAGENT_WARNING(XWALK_RUNTIME, "Voice request is continuing without a camera image");
+            return {};
+        }
+        return captureAgent.completedCapture();
     }
 
 } /* namespace xwalk::agent */

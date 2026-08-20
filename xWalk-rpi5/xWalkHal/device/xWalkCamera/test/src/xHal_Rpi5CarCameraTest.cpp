@@ -43,8 +43,10 @@ namespace
         xwalk::hal::XWalkCamera camera(&state, &captureImage);
         const XWalkHal::string result = camera.capture("image.jpg");
         assert(result == "image.jpg");
-        assert(state.captureCount == 1U);
-        assert(state.outputPath == "image.jpg");
+        const XWalkHal::boolean optionalCapture = camera.tryCapture("optional-image.jpg");
+        xwalk::hal::test::requireTestCondition(optionalCapture);
+        assert(state.captureCount == 2U);
+        assert(state.outputPath == "optional-image.jpg");
         assert(state.configuration.widthPixels == 640U);
         assert(state.configuration.heightPixels == 480U);
         assert(state.configuration.timeoutMs == 5'000U);
@@ -81,6 +83,8 @@ namespace
                 static_cast<void>(camera.capture("invalid\npath.jpg"));
             });
         state.result = false;
+        const XWalkHal::boolean optionalCapture = camera.tryCapture("optional-failed.jpg");
+        xwalk::hal::test::requireTestCondition(optionalCapture == false);
         xwalk::hal::test::expectFailure(
             [&]()
             {

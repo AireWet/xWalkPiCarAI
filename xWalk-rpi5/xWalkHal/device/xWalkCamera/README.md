@@ -5,6 +5,8 @@ capture through a device-free core and optional Linux backends.
 
 The core stores a non-owning callback context, validates width, height, timeout,
 and destination path, and owns no camera, process, or filesystem resource.
+`capture()` treats a backend failure as a required-operation error, while
+`tryCapture()` returns `false` for callers that explicitly permit no image.
 
 ## Directory layout
 

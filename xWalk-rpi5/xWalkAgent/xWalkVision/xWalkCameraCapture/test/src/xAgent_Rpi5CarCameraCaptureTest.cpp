@@ -12,28 +12,21 @@
  ******************************************************************************/
 
 #include "xAgent_Rpi5CarCameraCapture.h"
-
-#include <cassert>
-
-namespace
-{
-
-    agent::boolean capture(agent::contextpointer context,
-                           agent::stringview outputPath,
-                           const xwalk::hal::XWalkCameraConfiguration& configuration)
-    {
-        static_cast<void>(context);
-        static_cast<void>(configuration);
-        return outputPath == "voice-image.jpg";
-    }
-
-} /* namespace */
+#include "xAgent_Rpi5CarCameraCaptureTestSupport.h"
+#include "xHal_Rpi5CarTestFunctions.h"
 
 int main()
 {
-    xwalk::hal::XWalkCamera camera(nullptr, &capture);
+    xwalk::agent::test::camera::CameraCaptureTestState state;
+    xwalk::hal::XWalkCamera camera(&state, &xwalk::agent::test::camera::capture);
     xwalk::agent::XWalkCameraCapture cameraCapture(camera, "voice-image.jpg");
-    assert(cameraCapture.capture() == "voice-image.jpg");
-    assert(xwalk::agent::XWalkCameraCapture::captureImage(&cameraCapture) == "voice-image.jpg");
+    const agent::string requiredPath = cameraCapture.capture();
+    xwalk::hal::test::requireTestCondition(requiredPath == "voice-image.jpg");
+    const agent::string optionalPath = xwalk::agent::XWalkCameraCapture::captureImage(&cameraCapture);
+    xwalk::hal::test::requireTestCondition(optionalPath == "voice-image.jpg");
+    state.result = false;
+    const agent::string unavailablePath = xwalk::agent::XWalkCameraCapture::captureImage(&cameraCapture);
+    xwalk::hal::test::requireTestCondition(unavailablePath.empty());
+    xwalk::hal::test::requireTestCondition(state.captureCount == 3U);
     return 0;
 }

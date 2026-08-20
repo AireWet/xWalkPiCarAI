@@ -53,6 +53,10 @@ namespace xwalk::agent
             /** @brief Owned non-empty JPEG destination path. */
             agent::string outputPathValue{};
 
+        protected:
+            /** @brief Reports successful capture and returns the configured path. */
+            agent::string completedCapture() const;
+
         public:
             /**
              * @brief Binds one camera and one reusable output path.
@@ -75,7 +79,8 @@ namespace xwalk::agent
             /**
              * @brief Adapts this object to a voice-active image callback.
              * @param[in,out] context Non-null pointer to a live capture Agent.
-             * @return Captured image path.
+             * @return Captured image path, or an empty string when the optional
+             * backend capture fails.
              */
             static agent::string captureImage(agent::contextpointer context);
     };

@@ -90,6 +90,16 @@ namespace xwalk::hal
             string capture(stringview outputPath);
 
             /**
+             * @brief Attempts one JPEG capture for a caller that permits no image.
+             * @param[in] outputPath Non-empty single-line destination path.
+             * @return `true` after successful capture; otherwise `false` when the
+             * backend cannot produce an image.
+             * @throws std::invalid_argument If the output path is empty or contains
+             * a line terminator.
+             */
+            boolean tryCapture(stringview outputPath);
+
+            /**
              * @brief Converts a deployment connection name to its typed value.
              * @param[in] connection Exact lowercase `csi` or `usb` text.
              * @return Parsed physical connection.

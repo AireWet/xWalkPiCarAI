@@ -65,6 +65,24 @@ namespace xwalk::hal
     /** @brief Captures one JPEG image at a caller-selected destination. */
     string XWalkCamera::capture(stringview outputPath)
     {
+        const hal::boolean imageCaptured = tryCapture(outputPath);
+        if (imageCaptured == false)
+        {
+            XWALK_HAL_ERROR(XWALK_RUNTIME, "Camera backend failed to capture an image");
+        }
+        return string(outputPath);
+    }
+
+    /**
+     * @brief Attempts one JPEG capture for a caller that permits no image.
+     * @param[in] outputPath Non-empty single-line destination path.
+     * @return `true` after successful capture; otherwise `false` when the backend
+     * cannot produce an image.
+     * @throws std::invalid_argument If the output path is empty or contains a line
+     * terminator.
+     */
+    boolean XWalkCamera::tryCapture(stringview outputPath)
+    {
         const hal::boolean outputPathNRInvalid =
             static_cast<hal::boolean>(outputPath.empty() || (outputPath.find('\n') != stringview::npos) ||
                                       (outputPath.find('\r') != stringview::npos));
@@ -75,13 +93,13 @@ namespace xwalk::hal
         const hal::boolean imageCaptured = captureCallback(backendContext, outputPath, configurationValue);
         if (imageCaptured == false)
         {
-            XWALK_HAL_ERROR(XWALK_RUNTIME, "Camera backend failed to capture an image");
+            return false;
         }
         XWALK_HAL_TRACE_UID2(RPI .213,
                              "Camera capture completed at %u by %u pixels",
                              configurationValue.widthPixels,
                              configurationValue.heightPixels);
-        return string(outputPath);
+        return true;
     }
 
     /** @brief Converts a deployment connection name to its typed value. */
