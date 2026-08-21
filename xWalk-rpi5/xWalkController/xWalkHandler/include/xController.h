@@ -159,7 +159,7 @@ namespace xwalk::ctrl
 
             /** @brief Validates that every required callback is non-null. */
             static void validateCallbacks(const XWalkControllerCallbacks& backendCallbacks);
-            /** @brief Reports whether the active command may continue and latches emergency stop otherwise. */
+            /** @brief Reports whether the active command may continue and stops an attached vehicle otherwise. */
             ::ctrl::boolean operationMayContinue();
             /** @brief Performs a cancellable delay using bounded application-owned slices. */
             ::ctrl::boolean delayWhileOperationRequested(::ctrl::uint32 durationMs);

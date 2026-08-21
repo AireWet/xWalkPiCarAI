@@ -375,7 +375,8 @@ if(XWALK_CONTROLLER_BUILD_HOST_TESTS)
         boot/src/xControllerBootMode.cpp
         boot/src/xControllerRunner.cpp
         test/src/xControllerParsingTest.cpp
-        test/src/xControllerAppTest.cpp)
+        test/src/xControllerAppTest.cpp
+        test/src/xControllerAppTestSupport.cpp)
     target_include_directories(xWalkAppTest PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
     target_compile_features(xWalkAppTest PRIVATE cxx_std_17)

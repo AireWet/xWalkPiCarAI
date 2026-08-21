@@ -18,7 +18,8 @@ monotonic time.
 `XWalkVideoStreaming` connects a caller-owned HAL `XWalkCameraStream` to that
 transport. Raspberry Pi composition supplies the HAL
 `XWalkCameraStreamOpenCv` backend, and the foreground Controller command pumps
-capture and networking until SIGINT or SIGTERM requests shutdown.
+capture and networking until SIGINT or SIGTERM requests graceful shutdown. The
+camera-only cancellation path does not require a PiCar-X emergency-stop target.
 
 The deployed CSI profile selects `libcamera` with source `csi`. The HAL builds
 a fixed `libcamerasrc` GStreamer pipeline with NV12 source caps and validated

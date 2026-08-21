@@ -42,7 +42,8 @@ namespace xwalk::ctrl
      ******************************************************************************/
 
     /**
-     * @brief Reports whether the active command may continue and latches emergency stop otherwise.
+     * @brief Reports whether the active command may continue and stops an attached vehicle otherwise.
+     * @details Camera-only and other isolated commands cancel without requiring a PiCar-X dependency.
      * @return `true` while the application permits another bounded step; otherwise `false`.
      */
     ::ctrl::boolean XWalkController::operationMayContinue()
@@ -53,7 +54,10 @@ namespace xwalk::ctrl
         {
             return true;
         }
-        static_cast<void>(picarxObject->emergencyStop());
+        if (picarxObject != nullptr)
+        {
+            static_cast<void>(picarxObject->emergencyStop());
+        }
         return false;
     }
 

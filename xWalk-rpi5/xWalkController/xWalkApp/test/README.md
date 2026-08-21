@@ -17,6 +17,7 @@ formatter declared by `xControllerParsing.h`.
 | `XWalkAppGroup.ApplicationOperationRequest` | Verifies operation reset and signal-stop transitions |
 | `XWalkAppGroup.ControllerBootModes` | Verifies every command mapping and Base fallback |
 | `XWalkAppGroup.ControllerRunnerDoctor` | Verifies boot-service dispatch through the Doctor path |
+| `XWalkAppGroup.VideoStreamingCancellationWithoutVehicle` | Stops camera-only streaming without a vehicle backend |
 | `XWalkAppGroup.Help` | Accepts generated help without a hardware backend |
 | `XWalkAppGroup.TraceConfiguration` | Applies global, module, and tag selectors without hardware |
 | `XWalkAppGroup.InvalidDeploymentConfiguration` | Rejects a relative deployment-configuration path |

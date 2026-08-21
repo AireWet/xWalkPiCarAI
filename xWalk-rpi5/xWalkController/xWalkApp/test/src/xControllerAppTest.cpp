@@ -34,8 +34,12 @@
 #include "xControllerCommands.h"
 #include "xControllerPicarxCommands.h"
 #include "xControllerRunner.h"
+#include "xControllerAppTestSupport.h"
 
 #include "xHal_Rpi5CarTypes.h"
+#include "xHal_Rpi5CarCameraStream.h"
+
+#include "xAgent_Rpi5CarVideoStreaming.h"
 
 #include <algorithm>
 #include <csignal>
@@ -362,6 +366,33 @@ namespace
         std::cout.rdbuf(previousOutput);
         EXPECT_EQ(status, 3);
         EXPECT_EQ(output.str().find("PiCar-X backend unavailable"), ctrl::string::npos);
+    }
+
+    /** @brief Verifies camera-only cancellation stops cleanly without a PiCar-X emergency-stop target. */
+    TEST(XWalkAppGroup, VideoStreamingCancellationWithoutVehicle)
+    {
+        xwalk::ctrl::test::app::CameraOnlyStreamingTestState state;
+        xwalk::hal::XWalkCameraStream camera(&state, xwalk::ctrl::test::app::cameraOnlyStreamingCallbacks());
+        xwalk::agent::XWalkMjpegHttpConfiguration configuration;
+        xwalk::agent::XWalkVideoStreaming streaming(
+            camera, &xwalk::ctrl::test::app::cameraOnlyStreamingClock, configuration);
+        xwalk::ctrl::XWalkControllerApplicationContext applicationContext;
+        const xwalk::ctrl::XWalkControllerCallbacks callbacks{&xwalk::ctrl::XWALK_outputLine,
+                                                              &xwalk::ctrl::XWALK_inputLine,
+                                                              &xwalk::ctrl::XWALK_delayMilliseconds,
+                                                              &xwalk::ctrl::XWALK_monotonicMilliseconds,
+                                                              &xwalk::ctrl::XWALK_continueOperation,
+                                                              &xwalk::ctrl::XWALK_performSound};
+        xwalk::ctrl::test::app::CameraOnlyControllerProbe controller(streaming, &applicationContext, callbacks);
+
+        xwalk::ctrl::XWALK_resetOperationRequest();
+        xwalk::ctrl::XWALK_requestOperationStop(0);
+        const ctrl::boolean operationContinues = controller.operationMayContinueForTest();
+        xwalk::ctrl::XWALK_resetOperationRequest();
+
+        EXPECT_FALSE(operationContinues);
+        EXPECT_FALSE(state.cameraStarted);
+        EXPECT_EQ(state.stopCount, 0U);
     }
 
     /** @brief Verifies the PiCar-X router rejects an empty request before hardware access. */
