@@ -104,11 +104,6 @@ namespace xwalk::ctrl
             return controller.XWALK_handlerVideoCar(
                 XWALK_parseNoArgumentRequest(request.arguments, "video-car accepts no arguments"));
         }
-        else if (request.command == XWALK_CNTRL_VIDEO_STREAM_REQ)
-        {
-            return controller.XWALK_handlerVideoStreaming(
-                XWALK_parseNoArgumentRequest(request.arguments, "video-stream accepts no arguments"));
-        }
         else if (request.command == XWALK_CNTRL_APP_CONTROL_REQ)
         {
             return controller.XWALK_handlerAppControl(

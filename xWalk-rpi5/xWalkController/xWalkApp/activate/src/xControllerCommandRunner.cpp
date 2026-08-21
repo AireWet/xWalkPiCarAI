@@ -90,6 +90,11 @@ namespace xwalk::ctrl
             return controller.XWALK_handlerVideoRecording(
                 XWALK_parseNoArgumentRequest(request.arguments, "record-video accepts no arguments"));
         }
+        else if (request.command == XWALK_CNTRL_VIDEO_STREAM_REQ)
+        {
+            return controller.XWALK_handlerVideoStreaming(
+                XWALK_parseNoArgumentRequest(request.arguments, "video-stream accepts no arguments"));
+        }
         else if (request.command == XWALK_CNTRL_SOUND_BACKGROUND_MUSIC_REQ)
         {
             return controller.XWALK_handlerSoundBackgroundMusic(

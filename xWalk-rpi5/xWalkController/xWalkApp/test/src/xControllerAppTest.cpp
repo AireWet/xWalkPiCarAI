@@ -319,6 +319,28 @@ namespace
         EXPECT_EQ(xwalk::ctrl::XWALK_runController(&bootContext, services), 0);
     }
 
+    /** @brief Verifies video streaming dispatch does not require a PiCar-X vehicle backend. */
+    TEST(XWalkAppGroup, VideoStreamingDispatchBeforePicarxRequirement)
+    {
+        const ctrl::stringvector doctorLines{"[PASS] camera-only dispatch test"};
+        xwalk::ctrl::XWalkControllerApplicationContext applicationContext;
+        const xwalk::ctrl::XWalkControllerCallbacks callbacks{&xwalk::ctrl::XWALK_outputLine,
+                                                              &xwalk::ctrl::XWALK_inputLine,
+                                                              &xwalk::ctrl::XWALK_delayMilliseconds,
+                                                              &xwalk::ctrl::XWALK_monotonicMilliseconds,
+                                                              &xwalk::ctrl::XWALK_continueOperation,
+                                                              &xwalk::ctrl::XWALK_performSound};
+        xwalk::ctrl::XWalkController controller(doctorLines, &applicationContext, callbacks);
+        std::ostringstream output;
+        std::streambuf* const previousOutput = std::cout.rdbuf(output.rdbuf());
+
+        const ctrl::int32 status = xwalk::ctrl::XWALK_runControllerCommand(controller, {"video-stream"});
+
+        std::cout.rdbuf(previousOutput);
+        EXPECT_EQ(status, 3);
+        EXPECT_EQ(output.str().find("PiCar-X backend unavailable"), ctrl::string::npos);
+    }
+
     /** @brief Verifies the PiCar-X router rejects an empty request before hardware access. */
     TEST(XWalkAppGroup, PicarxRouterValidation)
     {
