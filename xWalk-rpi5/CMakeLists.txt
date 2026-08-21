@@ -53,6 +53,29 @@ set(XWALK_RPI_PROFILE "${XWALK_DEFAULT_RPI_PROFILE}" CACHE STRING
 set_property(CACHE XWALK_RPI_PROFILE PROPERTY STRINGS robot_hat_v4 robot_hat_v5)
 set(XWALK_RPI_RUNTIME_USER "${XWALK_DEFAULT_RPI_RUNTIME_USER}" CACHE STRING
     "Operating-system account used by the opt-in Raspberry Pi provisioner")
+set(XWALK_RPI_LOCAL_PREFIX "" CACHE PATH
+    "User-local Raspberry Pi camera and application dependency prefix")
+if(NOT XWALK_RPI_LOCAL_PREFIX)
+    execute_process(
+        COMMAND getent passwd "${XWALK_RPI_RUNTIME_USER}"
+        RESULT_VARIABLE XWALK_RPI_ACCOUNT_RESULT
+        OUTPUT_VARIABLE XWALK_RPI_ACCOUNT_ENTRY
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if(XWALK_RPI_ACCOUNT_RESULT EQUAL 0)
+        string(REPLACE ":" ";" XWALK_RPI_ACCOUNT_FIELDS "${XWALK_RPI_ACCOUNT_ENTRY}")
+        list(GET XWALK_RPI_ACCOUNT_FIELDS 5 XWALK_RPI_RUNTIME_HOME)
+    else()
+        set(XWALK_RPI_RUNTIME_HOME "/home/${XWALK_RPI_RUNTIME_USER}")
+    endif()
+    set(XWALK_RPI_LOCAL_PREFIX "${XWALK_RPI_RUNTIME_HOME}/.local" CACHE PATH
+        "User-local Raspberry Pi camera and application dependency prefix" FORCE)
+endif()
+set(XWALK_RPI_CAMERA_LIBRARY_DIRECTORY
+    "${XWALK_RPI_LOCAL_PREFIX}/lib/aarch64-linux-gnu" CACHE PATH
+    "User-local Raspberry Pi camera library directory" FORCE)
+set(XWALK_RPI_GSTREAMER_PLUGIN_DIRECTORY
+    "${XWALK_RPI_CAMERA_LIBRARY_DIRECTORY}/gstreamer-1.0" CACHE PATH
+    "User-local Raspberry Pi GStreamer plugin directory" FORCE)
 set(XWALK_RPI_GPIO_DEVICE "${XWALK_DEFAULT_RPI_GPIO_DEVICE}" CACHE FILEPATH
     "Explicit GPIO device used by the opt-in Raspberry Pi provisioner")
 set(XWALK_RPI_I2C_DEVICE "${XWALK_DEFAULT_RPI_I2C_DEVICE}" CACHE FILEPATH
@@ -72,6 +95,85 @@ set(XWALK_RPI_PIPER_EXECUTABLE "${XWALK_DEFAULT_RPI_PIPER_EXECUTABLE}" CACHE FIL
     "Piper executable selected in the generated Raspberry Pi runtime")
 option(XWALK_RPI_WITH_VOSK "Install repository-controlled Vosk assets while provisioning" ON)
 option(XWALK_RPI_WITH_OLLAMA "Install and configure the user-local Ollama runtime while provisioning" ON)
+
+if(XWALK_BUILD_RPI AND NOT CMAKE_CROSSCOMPILING AND
+    CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)$" AND
+    XWALK_RPI_CAMERA STREQUAL "csi")
+    set(XWALK_RPI_LIBCAMERA_PLUGIN
+        "${XWALK_RPI_GSTREAMER_PLUGIN_DIRECTORY}/libgstlibcamera.so")
+    if(NOT EXISTS "${XWALK_RPI_LIBCAMERA_PLUGIN}")
+        message(FATAL_ERROR
+            "The CSI backend requires ${XWALK_RPI_LIBCAMERA_PLUGIN}. "
+            "Run setup-rpi-local.sh --apply or select a valid XWALK_RPI_LOCAL_PREFIX.")
+    endif()
+    find_program(XWALK_RPI_GST_INSPECT_EXECUTABLE NAMES gst-inspect-1.0)
+    find_program(XWALK_RPI_LDD_EXECUTABLE NAMES ldd)
+    if(NOT XWALK_RPI_GST_INSPECT_EXECUTABLE OR NOT XWALK_RPI_LDD_EXECUTABLE)
+        message(FATAL_ERROR
+            "The CSI backend requires gst-inspect-1.0 and ldd for camera runtime validation")
+    endif()
+    string(RANDOM LENGTH 16 ALPHABET 0123456789abcdef XWALK_RPI_GSTREAMER_REGISTRY_ID)
+    set(XWALK_RPI_GSTREAMER_REGISTRY
+        "${CMAKE_BINARY_DIR}/.xwalk-gstreamer-registry-${XWALK_RPI_GSTREAMER_REGISTRY_ID}.bin")
+    execute_process(
+        COMMAND "${CMAKE_COMMAND}" -E env
+            "GST_PLUGIN_PATH_1_0=${XWALK_RPI_GSTREAMER_PLUGIN_DIRECTORY}"
+            "GST_REGISTRY_1_0=${XWALK_RPI_GSTREAMER_REGISTRY}"
+            "${XWALK_RPI_GST_INSPECT_EXECUTABLE}" libcamerasrc
+        RESULT_VARIABLE XWALK_RPI_LIBCAMERA_INSPECT_RESULT
+        OUTPUT_VARIABLE XWALK_RPI_LIBCAMERA_INSPECT_OUTPUT
+        ERROR_VARIABLE XWALK_RPI_LIBCAMERA_INSPECT_ERROR)
+    file(REMOVE "${XWALK_RPI_GSTREAMER_REGISTRY}")
+    string(FIND "${XWALK_RPI_LIBCAMERA_INSPECT_OUTPUT}"
+        "${XWALK_RPI_LIBCAMERA_PLUGIN}" XWALK_RPI_LIBCAMERA_PLUGIN_POSITION)
+    if(NOT XWALK_RPI_LIBCAMERA_INSPECT_RESULT EQUAL 0 OR
+        XWALK_RPI_LIBCAMERA_PLUGIN_POSITION EQUAL -1)
+        message(FATAL_ERROR
+            "GStreamer did not select the configured user-local libcamerasrc plugin.\n"
+            "${XWALK_RPI_LIBCAMERA_INSPECT_OUTPUT}${XWALK_RPI_LIBCAMERA_INSPECT_ERROR}")
+    endif()
+    foreach(XWALK_RPI_GSTREAMER_ELEMENT videoconvert appsink)
+        execute_process(
+            COMMAND "${XWALK_RPI_GST_INSPECT_EXECUTABLE}" "${XWALK_RPI_GSTREAMER_ELEMENT}"
+            RESULT_VARIABLE XWALK_RPI_GSTREAMER_ELEMENT_RESULT
+            OUTPUT_QUIET ERROR_QUIET)
+        if(NOT XWALK_RPI_GSTREAMER_ELEMENT_RESULT EQUAL 0)
+            message(FATAL_ERROR
+                "The CSI backend requires the GStreamer element ${XWALK_RPI_GSTREAMER_ELEMENT}")
+        endif()
+    endforeach()
+    execute_process(
+        COMMAND "${XWALK_RPI_LDD_EXECUTABLE}" "${XWALK_RPI_LIBCAMERA_PLUGIN}"
+        RESULT_VARIABLE XWALK_RPI_CAMERA_DEPENDENCY_RESULT
+        OUTPUT_VARIABLE XWALK_RPI_CAMERA_DEPENDENCIES
+        ERROR_VARIABLE XWALK_RPI_CAMERA_DEPENDENCY_ERROR)
+    if(NOT XWALK_RPI_CAMERA_DEPENDENCY_RESULT EQUAL 0)
+        message(FATAL_ERROR
+            "Unable to inspect ${XWALK_RPI_LIBCAMERA_PLUGIN}.\n"
+            "${XWALK_RPI_CAMERA_DEPENDENCY_ERROR}")
+    endif()
+    string(REPLACE "\n" ";" XWALK_RPI_CAMERA_DEPENDENCY_LINES
+        "${XWALK_RPI_CAMERA_DEPENDENCIES}")
+    foreach(XWALK_RPI_CAMERA_LIBRARY libcamera.so libcamera-base.so libpisp.so)
+        set(XWALK_RPI_CAMERA_LIBRARY_MATCHED OFF)
+        foreach(XWALK_RPI_CAMERA_DEPENDENCY_LINE IN LISTS XWALK_RPI_CAMERA_DEPENDENCY_LINES)
+            string(FIND "${XWALK_RPI_CAMERA_DEPENDENCY_LINE}"
+                "${XWALK_RPI_CAMERA_LIBRARY}" XWALK_RPI_CAMERA_LIBRARY_NAME_POSITION)
+            string(FIND "${XWALK_RPI_CAMERA_DEPENDENCY_LINE}"
+                "${XWALK_RPI_CAMERA_LIBRARY_DIRECTORY}/" XWALK_RPI_CAMERA_LIBRARY_PATH_POSITION)
+            if(NOT XWALK_RPI_CAMERA_LIBRARY_NAME_POSITION EQUAL -1 AND
+                NOT XWALK_RPI_CAMERA_LIBRARY_PATH_POSITION EQUAL -1)
+                set(XWALK_RPI_CAMERA_LIBRARY_MATCHED ON)
+            endif()
+        endforeach()
+        if(NOT XWALK_RPI_CAMERA_LIBRARY_MATCHED)
+            message(FATAL_ERROR
+                "${XWALK_RPI_LIBCAMERA_PLUGIN} must resolve ${XWALK_RPI_CAMERA_LIBRARY} "
+                "from ${XWALK_RPI_CAMERA_LIBRARY_DIRECTORY}")
+        endif()
+    endforeach()
+    message(STATUS "RPi CSI GStreamer plugin: ${XWALK_RPI_LIBCAMERA_PLUGIN}")
+endif()
 
 set(XWALK_RPI_RUNTIME_ROOT "${CMAKE_BINARY_DIR}/../runtime")
 set(XWALK_RPI_RUNTIME_CONFIG_FILE "${XWALK_RPI_RUNTIME_ROOT}/picar-x.conf")
@@ -148,6 +250,7 @@ if(XWALK_BUILD_RPI)
             "${XWALK_WORKSPACE_ROOT}/xWalkTool/shell-agent/deploy-tool/generate-rpi-runtime.sh"
             --build-directory "${CMAKE_BINARY_DIR}/.."
             --runtime-user "${XWALK_RPI_RUNTIME_USER}"
+            --local-prefix "${XWALK_RPI_LOCAL_PREFIX}"
             --profile "${XWALK_RPI_PROFILE}"
             --gpio-device "${XWALK_RPI_GPIO_DEVICE}"
             --i2c-device "${XWALK_RPI_I2C_DEVICE}"
@@ -445,6 +548,7 @@ if(XWALK_BUILD_RPI)
             COMMAND
                 "${XWALK_WORKSPACE_ROOT}/xWalkTool/shell-agent/deploy-tool/setup-rpi-local.sh"
                 --runtime-user "${XWALK_RPI_RUNTIME_USER}"
+                --local-prefix "${XWALK_RPI_LOCAL_PREFIX}"
                 --profile "${XWALK_RPI_PROFILE}"
                 --gpio-device "${XWALK_RPI_GPIO_DEVICE}"
                 --i2c-device "${XWALK_RPI_I2C_DEVICE}"

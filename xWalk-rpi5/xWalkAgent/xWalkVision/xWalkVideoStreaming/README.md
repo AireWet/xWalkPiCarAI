@@ -21,9 +21,10 @@ transport. Raspberry Pi composition supplies the HAL
 capture and networking until SIGINT or SIGTERM requests shutdown.
 
 The deployed CSI profile selects `libcamera` with source `csi`. The HAL builds
-a fixed `libcamerasrc` GStreamer pipeline from validated dimensions and passes
-it directly to OpenCV; configuration cannot inject pipeline text. A USB camera
-can instead select `v4l2` with an exact `/dev/videoN` source.
+a fixed `libcamerasrc` GStreamer pipeline with NV12 source caps and validated
+dimensions, then passes it directly to OpenCV; configuration cannot inject
+pipeline text. A USB camera can instead select `v4l2` with an exact
+`/dev/videoN` source.
 
 The default bind is `127.0.0.1`. A non-loopback bind requires explicit
 `allowExternalBind`, a non-empty secret-store reference, and a caller-provided

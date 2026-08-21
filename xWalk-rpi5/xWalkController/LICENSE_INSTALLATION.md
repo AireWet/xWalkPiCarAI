@@ -122,7 +122,7 @@ cmake --build build-rpi/cmake --parallel
 Validate the deployed configuration, then run the bounded hardware preflight:
 
 ```bash
-build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control --deployment-config="$PWD/build-rpi/runtime/picar-x.conf" --validate-config
+build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control --validate-config
 build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control doctor
 ```
 

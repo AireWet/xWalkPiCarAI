@@ -405,6 +405,14 @@ if(XWALK_CONTROLLER_BUILD_RPI_TESTS)
     target_compile_definitions(xwalk-picarx-control PRIVATE
         XWALK_PICARX_CONFIG_FILE="${XWALK_PICARX_CONFIG_FILE}"
         XWALK_RUNTIME_DATA_DIRECTORY="${XWALK_RUNTIME_DATA_DIRECTORY}")
+    if(XWALK_RPI_CAMERA STREQUAL "csi")
+        if(NOT XWALK_RPI_GSTREAMER_PLUGIN_DIRECTORY)
+            message(FATAL_ERROR
+                "The RPi CSI application requires XWALK_RPI_GSTREAMER_PLUGIN_DIRECTORY")
+        endif()
+        target_compile_definitions(xwalk-picarx-control PRIVATE
+            XWALK_GSTREAMER_PLUGIN_DIRECTORY="${XWALK_RPI_GSTREAMER_PLUGIN_DIRECTORY}")
+    endif()
     target_link_libraries(xwalk-picarx-control PRIVATE
         xWalkController
         xWalkBootRpi

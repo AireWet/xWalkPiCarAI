@@ -15,7 +15,7 @@ state have been confirmed.
 |---|---|
 | `setup-rpi-local.sh` | Build pinned camera and Ollama runtimes below the current user's `${HOME}/.local`. |
 | `configure-rpi-runtime.sh` | Generate build-local configuration, start user Ollama, and list local models. |
-| `generate-rpi-runtime.sh` | Generate ignored build-local configuration and the `build-rpi/xwalk` launcher. |
+| `generate-rpi-runtime.sh` | Generate ignored build-local Raspberry Pi configuration. |
 | `rpi-defaults.conf` | Own the shared CMake and deployment-script Raspberry Pi defaults. |
 | `setup-rpi.sh` | Assess, validate, preview, or apply Raspberry Pi host provisioning. |
 | `provision-hardware.sh` | Record a verified Robot HAT and exact device identities in a writable configuration. |
@@ -82,7 +82,7 @@ xWalkTool/shell-agent/deploy-tool/setup-rpi-local.sh --dry-run
 ```
 
 On the target Pi, apply it as the non-root runtime user. It builds the official
-Raspberry Pi libcamera fork and rpicam-apps into `${HOME}/.local`, installs an
+Raspberry Pi libcamera fork and rpicam-apps into `${HOME}/.local` by default, installs an
 Ollama user service and `llama3.2:3b`, adds the runtime user to `video` and
 `render`, and generates ignored files below `build-rpi`. It never installs an
 xWalk package or camera build under `/usr` or `/usr/local`:
@@ -91,8 +91,15 @@ xWalk package or camera build under `/usr` or `/usr/local`:
 xWalkTool/shell-agent/deploy-tool/setup-rpi-local.sh --apply
 ```
 
+Use `--local-prefix /absolute/prefix` when the camera stack is installed outside
+`${HOME}/.local`. The Raspberry Pi CMake configure records the same prefix in
+`XWALK_RPI_LOCAL_PREFIX` and validates the CSI plugin and its matching
+libraries. CMake compiles the required GStreamer plugin directory into the
+Raspberry Pi executable. The plugin's validated runpath selects the matching
+libraries, so users do not export camera environment variables manually.
+
 Log out and back in or reboot after group changes. Then test the camera with
-`${HOME}/.local/bin/rpicam-still --list-cameras` and run the build-local CLI:
+`${HOME}/.local/bin/rpicam-still --list-cameras` and run the build-local executable:
 
 ```bash
 build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control doctor

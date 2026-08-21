@@ -61,71 +61,48 @@ $XWALK_PICARX_CLI video-car
 
 ## Live video streaming
 
-For a Raspberry Pi CSI camera, verify libcamera, the GStreamer source plugin,
-and the effective xWalk stream configuration:
+For a CSI camera, verify the camera stack and xWalk configuration:
 
 ```bash
 rpicam-hello --list-cameras
 rpicam-hello --nopreview --timeout 1000
-gst-inspect-1.0 libcamerasrc
+xWalkTool/shell-agent/deploy-tool/setup-rpi-local.sh --check
 $XWALK_PICARX_CLI --print-effective-config | rg '^video_stream_'
 ```
 
-The CSI configuration must report `video_stream_camera_backend = libcamera`,
-`video_stream_camera_device = csi`, and
-`video_stream_bind_address = 127.0.0.1`. Do not select an RP1 CFE
-`/dev/videoN` pipeline node for a CSI camera.
+The output must select `libcamera`, `csi`, and `127.0.0.1`. An RP1 CFE
+`/dev/videoN` node is not a CSI camera source. For a USB camera using `v4l2`,
+find its exact device with `v4l2-ctl --list-devices`.
 
-For an ordinary USB webcam configured with the `v4l2` backend, identify its
-exact Video4Linux2 device separately:
-
-```bash
-v4l2-ctl --list-devices
-```
-
-Start the loopback-only MJPEG server on the Raspberry Pi and leave it running:
+Start the loopback-only MJPEG server on the Raspberry Pi. Leave this command
+running until you stop it with `Ctrl+C`:
 
 ```bash
 $XWALK_PICARX_CLI video-stream
 ```
 
-The command must remain active until `Ctrl+C`. In another Raspberry Pi terminal,
-check the health endpoint and collect a five-second MJPEG sample:
+In another Raspberry Pi terminal, check and play the stream:
 
 ```bash
 curl --fail http://127.0.0.1:8080/health
-curl --fail --max-time 5 http://127.0.0.1:8080/stream --output /tmp/xwalk-stream-sample.mjpeg
-ffplay /tmp/xwalk-stream-sample.mjpeg
-```
-
-For live playback on the Raspberry Pi itself, use:
-
-```bash
 ffplay http://127.0.0.1:8080/stream
 ```
 
-For workstation access, keep this SSH tunnel running in one workstation
-terminal:
-
-```bash
-ssh -N -L 8080:127.0.0.1:8080 <pi-user>@<pi-address>
-```
-
-For the current `xwalk` Raspberry Pi at `192.168.1.156`, the command is:
+For workstation playback, keep an SSH tunnel running in one workstation
+terminal. The current Raspberry Pi command is:
 
 ```bash
 ssh -N -L 8080:127.0.0.1:8080 xwalk@192.168.1.156
 ```
 
-Then verify and play the forwarded stream from another workstation terminal:
+Then play the forwarded stream from another workstation terminal:
 
 ```bash
-curl --fail http://127.0.0.1:8080/health
 ffplay http://127.0.0.1:8080/stream
 ```
 
 Streaming defaults are in `xWalkConfig/picar-x.d/vision.conf`. Keep the listener
-on `127.0.0.1`, use SSH forwarding for remote access, and stop with `Ctrl+C`.
+on `127.0.0.1` and use SSH forwarding for remote access.
 
 ## Assisted and autonomous driving
 

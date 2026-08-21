@@ -4,6 +4,7 @@ set -eu
 
 usage() {
     echo "Usage: $0 [--runtime-user USER] [hardware options] [--dry-run|--check|--apply]"
+    echo "  [--local-prefix DIRECTORY]"
     echo "  Builds pinned camera components, installs user Ollama, and generates build-rpi runtime files."
 }
 
@@ -13,6 +14,7 @@ script_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 
 mode="dry-run"
 runtime_user="$XWALK_DEFAULT_RPI_RUNTIME_USER"
+local_prefix=""
 profile="$XWALK_DEFAULT_RPI_PROFILE"
 gpio_device="$XWALK_DEFAULT_RPI_GPIO_DEVICE"
 i2c_device="$XWALK_DEFAULT_RPI_I2C_DEVICE"
@@ -21,6 +23,7 @@ camera="$XWALK_DEFAULT_RPI_CAMERA"
 while [ "$#" -gt 0 ]; do
     case "$1" in
         --runtime-user) runtime_user="${2-}"; shift 2 ;;
+        --local-prefix) local_prefix="${2-}"; shift 2 ;;
         --profile) profile="${2-}"; shift 2 ;;
         --gpio-device) gpio_device="${2-}"; shift 2 ;;
         --i2c-device) i2c_device="${2-}"; shift 2 ;;
@@ -69,10 +72,18 @@ if [ "$mode" != "dry-run" ]; then
     esac
 fi
 
-local_prefix="$runtime_home/.local"
+if [ -z "$local_prefix" ]; then
+    local_prefix="$runtime_home/.local"
+fi
+case "$local_prefix" in
+    /*) ;;
+    *) echo "--local-prefix must be an absolute path." >&2; exit 2 ;;
+esac
 local_bin="$local_prefix/bin"
 local_lib="$local_prefix/lib/aarch64-linux-gnu"
 local_share="$local_prefix/share"
+local_plugin_directory="$local_lib/gstreamer-1.0"
+local_camera_plugin="$local_plugin_directory/libgstlibcamera.so"
 libcamera_commit="6c1dd9d55573010f710c9e190a73e7e76f0d9432"
 rpicam_version="v1.12.0"
 ollama_archive_url="https://ollama.com/download/ollama-linux-arm64.tgz"
@@ -100,12 +111,50 @@ if [ "${#missing_commands[@]}" -ne 0 ]; then
     exit 2
 fi
 
+verify_local_camera_runtime() {
+    if [ ! -r "$local_camera_plugin" ]; then
+        echo "The user-local libcamera GStreamer plugin is missing: $local_camera_plugin" >&2
+        return 1
+    fi
+    plugin_dependencies="$(ldd "$local_camera_plugin")"
+    for camera_library in libcamera.so libcamera-base.so libpisp.so; do
+        dependency_line="$(printf '%s\n' "$plugin_dependencies" | grep -F "$camera_library" || true)"
+        if [ -z "$dependency_line" ] || ! printf '%s\n' "$dependency_line" | grep -Fq "$local_lib/"; then
+            echo "$local_camera_plugin does not resolve $camera_library from $local_lib." >&2
+            return 1
+        fi
+    done
+    registry_file="$(mktemp "$runtime_home/.xwalk-gstreamer-registry.XXXXXX.bin")"
+    if ! plugin_information="$(GST_PLUGIN_PATH_1_0="$local_plugin_directory" \
+        GST_REGISTRY_1_0="$registry_file" gst-inspect-1.0 libcamerasrc 2>&1)"; then
+        rm -f -- "$registry_file"
+        echo "The user-local libcamera GStreamer source could not be inspected." >&2
+        printf '%s\n' "$plugin_information" >&2
+        return 1
+    fi
+    selected_plugin="$(printf '%s\n' "$plugin_information" | awk '$1 == "Filename" { print $2; exit }')"
+    if [ "$selected_plugin" != "$local_camera_plugin" ]; then
+        rm -f -- "$registry_file"
+        echo "GStreamer selected $selected_plugin instead of $local_camera_plugin." >&2
+        return 1
+    fi
+    for required_element in videoconvert appsink; do
+        if ! GST_PLUGIN_PATH_1_0="$local_plugin_directory" GST_REGISTRY_1_0="$registry_file" \
+            gst-inspect-1.0 "$required_element" >/dev/null 2>&1; then
+            rm -f -- "$registry_file"
+            echo "The required GStreamer element is unavailable: $required_element" >&2
+            return 1
+        fi
+    done
+    rm -f -- "$registry_file"
+}
+
 if [ "$mode" = "dry-run" ]; then
     echo "  camera action: build pinned sources into $local_prefix with bundled libpisp"
     echo "  verification: reject build-directory and /usr/local camera dependencies"
     echo "  Ollama action: install ARM64 distribution and a user systemd service"
     echo "  model action: pull llama3.2:3b into $local_share/ollama/models"
-    echo "  configuration action: generate $workspace_root/build-rpi/runtime and build-rpi/xwalk"
+    echo "  configuration action: generate $workspace_root/build-rpi/runtime"
     echo "  access action: add $runtime_user to video and render"
     exit 0
 fi
@@ -134,13 +183,10 @@ if [ "$mode" = "check" ]; then
         echo "rpicam-still is not resolving libcamera from $local_lib." >&2
         exit 1
     fi
-    if ! GST_PLUGIN_PATH="$local_lib/gstreamer-1.0:${GST_PLUGIN_PATH-}" \
-        gst-inspect-1.0 libcamerasrc >/dev/null 2>&1; then
-        echo "The user-local libcamera GStreamer source is unavailable." >&2
-        exit 1
-    fi
+    verify_local_camera_runtime
     "$script_directory/generate-rpi-runtime.sh" \
         --runtime-user "$runtime_user" \
+        --local-prefix "$local_prefix" \
         --profile "$profile" \
         --gpio-device "$gpio_device" \
         --i2c-device "$i2c_device" \
@@ -219,11 +265,7 @@ if ! readelf -d "$local_bin/rpicam-still" | grep -Fq "$local_lib"; then
     echo "rpicam-still does not contain the required user-local runtime search path." >&2
     exit 1
 fi
-if ! GST_PLUGIN_PATH="$local_lib/gstreamer-1.0:${GST_PLUGIN_PATH-}" \
-    gst-inspect-1.0 libcamerasrc >/dev/null 2>&1; then
-    echo "The user-local libcamera GStreamer source was not installed." >&2
-    exit 1
-fi
+verify_local_camera_runtime
 
 if [ ! -x "$local_bin/ollama" ]; then
     curl --fail --location --proto '=https' --tlsv1.2 "$ollama_archive_url" --output "$archive_path"
@@ -274,6 +316,7 @@ done
 
 "$script_directory/generate-rpi-runtime.sh" \
     --runtime-user "$runtime_user" \
+    --local-prefix "$local_prefix" \
     --profile "$profile" \
     --gpio-device "$gpio_device" \
     --i2c-device "$i2c_device" \

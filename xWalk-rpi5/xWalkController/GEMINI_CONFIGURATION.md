@@ -145,7 +145,7 @@ the documented Gemini HTTPS endpoint, and set
 ```bash
 cmake --fresh -S xWalk-rpi5 --preset rpi-release
 cmake --build build-rpi/cmake --parallel
-build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control --deployment-config="$PWD/build-rpi/runtime/picar-x.conf" --validate-config
+build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control --validate-config
 build-rpi/cmake/xWalkController/xWalkApp/xwalk-picarx-control doctor
 ```
 

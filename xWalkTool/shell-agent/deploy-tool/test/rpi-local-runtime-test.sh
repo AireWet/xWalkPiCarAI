@@ -13,6 +13,8 @@ trap cleanup EXIT HUP INT TERM
 build_directory="$test_directory/build-rpi"
 runtime_home="$(getent passwd "$(id -un)" | awk -F: 'NR == 1 { print $6 }')"
 manifest="$runtime_home/.local/share/ollama/models/manifests/registry.ollama.ai/library/llama3.2/3b"
+mkdir -p "$build_directory"
+touch "$build_directory/xwalk"
 "$configuration_script" \
     --build-directory "$build_directory" \
     --runtime-user "$(id -un)" \
@@ -25,7 +27,6 @@ hardware="$build_directory/runtime/picar-x.d/hardware.conf"
 voice="$build_directory/runtime/picar-x.d/voice.conf"
 features="$build_directory/runtime/picar-x.d/ai/features.conf"
 ollama="$build_directory/runtime/picar-x.d/ai/providers/ollama.conf"
-launcher="$build_directory/xwalk"
 
 test -f "$configuration"
 grep -Fxq "camera_connection = csi" "$vision"
@@ -63,18 +64,22 @@ grep -Fxq "voice_language_model_endpoint = http://127.0.0.1:11434/api/chat" "$ol
 grep -Fxq "voice_language_model_model = llama3.2:3b" "$ollama"
 grep -Fxq "voice_ollama_model = llama3.2:3b" "$ollama"
 grep -Fxq "voice_ollama_model_manifest = $manifest" "$ollama"
-grep -Fq "export PATH=\"\$runtime_home/.local/bin:\${PATH-}\"" "$launcher"
-grep -Fq "export GST_PLUGIN_PATH=\"\$runtime_home/.local/lib/aarch64-linux-gnu/gstreamer-1.0:\${GST_PLUGIN_PATH-}\"" \
-    "$launcher"
-grep -Fq "exec \"\$executable\" --deployment-config=\"\$configuration\" --resource-directory=\"\$resources\" \"\$@\"" \
-    "$launcher"
-bash -n "$launcher"
+test ! -e "$build_directory/xwalk"
+
+runtime_checksum="$(find "$build_directory/runtime" -type f -exec sha256sum {} + | sort | sha256sum)"
+"$script_directory/../generate-rpi-runtime.sh" \
+    --build-directory "$build_directory" \
+    --runtime-user "$(id -un)" \
+    --ollama-manifest "$manifest" \
+    --initialize-only >/dev/null
+test "$runtime_checksum" = "$(find "$build_directory/runtime" -type f -exec sha256sum {} + | sort | sha256sum)"
 
 source_checksum="$(find "$script_directory/../../../../xWalk-rpi5/xWalkController/xWalkConfig" -type f \
     -exec sha256sum {} + | sort | sha256sum)"
 "$script_directory/../generate-rpi-runtime.sh" \
     --build-directory "$build_directory" \
     --runtime-user "$(id -un)" \
+    --local-prefix "$test_directory/operator-prefix" \
     --profile robot_hat_v5 \
     --gpio-device /dev/gpiochip7 \
     --i2c-device /dev/i2c-3 \
@@ -88,6 +93,7 @@ grep -Fxq "hardware_spi_device = /dev/spidev2.1" "$hardware"
 grep -Fxq "camera_connection = usb" "$vision"
 grep -Fxq "video_stream_camera_backend = v4l2" "$vision"
 grep -Fxq "video_stream_camera_device = /dev/video0" "$vision"
+test ! -e "$build_directory/xwalk"
 test "$source_checksum" = "$(find "$script_directory/../../../../xWalk-rpi5/xWalkController/xWalkConfig" \
     -type f -exec sha256sum {} + | sort | sha256sum)"
 

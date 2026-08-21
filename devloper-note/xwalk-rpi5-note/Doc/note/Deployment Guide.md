@@ -342,7 +342,17 @@ video_stream_bind_address = 127.0.0.1
 ```
 
 The HAL constructs a fixed `libcamerasrc` GStreamer pipeline from validated
-width and height values. OpenCV must include GStreamer support, and GStreamer
-must provide `libcamerasrc` and `videoconvert`. Configuration does not accept
+width and height values and requires NV12 output from the PiSP-backed source.
+OpenCV must include GStreamer support, and GStreamer must provide
+`libcamerasrc`, `videoconvert`, and `appsink`. Configuration does not accept
 pipeline text. USB deployments remain supported with `v4l2` and an exact
 `/dev/videoN` device.
+
+For a native ARM64 Raspberry Pi CSI build, CMake derives the user-local camera
+prefix from the configured runtime account and defaults it to that account's
+`${HOME}/.local`. It verifies the selected `libgstlibcamera.so`, its user-local
+libcamera and libpisp dependencies, and the required GStreamer elements. CMake
+compiles the configured plugin directory into the Raspberry Pi executable,
+which prepends it to GStreamer's plugin search path before camera startup. The
+validated plugin runpath selects the matching libraries without manual
+environment-variable prefixes.

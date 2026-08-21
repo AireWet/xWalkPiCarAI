@@ -4,6 +4,7 @@ set -eu
 
 usage() {
     echo "Usage: $0 [--build-directory DIRECTORY] [--runtime-user USER] [hardware options]"
+    echo "  [--local-prefix DIRECTORY]"
     echo "  [--profile robot_hat_v4|robot_hat_v5] [--gpio-device /dev/gpiochipN]"
     echo "  [--i2c-device /dev/i2c-N] [--spi-device /dev/spidevN.N] [--camera csi|usb]"
     echo "  [--voice-capture-device DEVICE] [--voice-mixer-device DEVICE]"
@@ -17,6 +18,7 @@ script_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 workspace_root="$(CDPATH='' cd -- "$script_directory/../../.." && pwd)"
 build_directory="$workspace_root/build-rpi"
 runtime_user="$XWALK_DEFAULT_RPI_RUNTIME_USER"
+local_prefix=""
 profile="$XWALK_DEFAULT_RPI_PROFILE"
 gpio_device="$XWALK_DEFAULT_RPI_GPIO_DEVICE"
 i2c_device="$XWALK_DEFAULT_RPI_I2C_DEVICE"
@@ -33,6 +35,7 @@ while [ "$#" -gt 0 ]; do
     case "$1" in
         --build-directory) build_directory="${2-}"; shift 2 ;;
         --runtime-user) runtime_user="${2-}"; shift 2 ;;
+        --local-prefix) local_prefix="${2-}"; shift 2 ;;
         --profile) profile="${2-}"; shift 2 ;;
         --gpio-device) gpio_device="${2-}"; shift 2 ;;
         --i2c-device) i2c_device="${2-}"; shift 2 ;;
@@ -97,9 +100,16 @@ if [ "$runtime_user" = "$(id -un)" ] && [ -n "${HOME-}" ] && [ "$HOME" != "$runt
     echo "HOME does not match the account database for $runtime_user." >&2
     exit 2
 fi
+if [ -z "$local_prefix" ]; then
+    local_prefix="$runtime_home/.local"
+fi
+case "$local_prefix" in
+    /*) ;;
+    *) echo "--local-prefix must be an absolute path." >&2; exit 2 ;;
+esac
 
 if [ -z "$ollama_manifest" ]; then
-    ollama_manifest="$runtime_home/.local/share/ollama/models/manifests/registry.ollama.ai/library/llama3.2/3b"
+    ollama_manifest="$local_prefix/share/ollama/models/manifests/registry.ollama.ai/library/llama3.2/3b"
 fi
 case "$ollama_manifest" in
     /*) ;;
@@ -109,6 +119,8 @@ esac
 source_configuration="$workspace_root/xWalk-rpi5/xWalkController/xWalkConfig"
 runtime_directory="$build_directory/runtime"
 mkdir -p "$build_directory"
+rm -f -- "$build_directory/xwalk"
+
 if [ "$initialize_only" = "true" ] && [ -f "$runtime_directory/picar-x.conf" ] && \
     [ -d "$runtime_directory/picar-x.d" ]; then
     echo "Preserved existing generated runtime configuration at $runtime_directory"
@@ -190,37 +202,4 @@ rm -rf -- "$runtime_directory"
 mv -- "$temporary_runtime" "$runtime_directory"
 trap - EXIT HUP INT TERM
 
-launcher="$build_directory/xwalk"
-temporary_launcher="$(mktemp "$build_directory/.xwalk.XXXXXX")"
-cat > "$temporary_launcher" <<'EOF'
-#!/usr/bin/env bash
-
-set -eu
-
-launcher_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
-workspace_root="$(CDPATH='' cd -- "$launcher_directory/.." && pwd)"
-runtime_user="@XWALK_RUNTIME_USER@"
-runtime_account=""
-runtime_home=""
-if runtime_account="$(getent passwd "$runtime_user")"; then
-    runtime_home="$(printf '%s\n' "$runtime_account" | awk -F: 'NR == 1 { print $6 }')"
-fi
-if [ -z "$runtime_home" ] || [ ! -d "$runtime_home" ]; then
-    echo "Unable to resolve the runtime home for $runtime_user." >&2
-    exit 2
-fi
-
-export PATH="$runtime_home/.local/bin:${PATH-}"
-export GST_PLUGIN_PATH="$runtime_home/.local/lib/aarch64-linux-gnu/gstreamer-1.0:${GST_PLUGIN_PATH-}"
-configuration="$launcher_directory/runtime/picar-x.conf"
-resources="$workspace_root/xWalk-rpi5/xWalkAudioResources"
-executable="$launcher_directory/cmake/xWalkController/xWalkApp/xwalk-picarx-control"
-
-exec "$executable" --deployment-config="$configuration" --resource-directory="$resources" "$@"
-EOF
-sed -i "s/@XWALK_RUNTIME_USER@/$runtime_user/g" "$temporary_launcher"
-chmod 0755 "$temporary_launcher"
-mv -- "$temporary_launcher" "$launcher"
-
 echo "Generated $runtime_directory/picar-x.conf and $runtime_directory/picar-x.d"
-echo "Generated $launcher"

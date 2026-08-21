@@ -178,9 +178,9 @@ namespace
             &libcameraProvider, libcameraProvider.callbacks(), libcameraConfiguration);
         xwalk::hal::test::requireTestCondition(libcameraStream.start());
         assert(libcameraState.apiPreference == cv::CAP_GSTREAMER);
-        assert(libcameraState.source ==
-               "libcamerasrc ! video/x-raw,width=640,height=480 ! videoconvert ! video/x-raw,format=BGR ! "
-               "appsink drop=true max-buffers=1 sync=false");
+        assert(libcameraState.source == "libcamerasrc ! video/x-raw,format=NV12,width=640,height=480 ! videoconvert ! "
+                                        "video/x-raw,format=BGR ! "
+                                        "appsink drop=true max-buffers=1 sync=false");
         assert(libcameraState.setCount == 1U);
         assert(libcameraState.readTimeoutMs == 1'000.0);
         XWalkHal::bytevector jpeg;

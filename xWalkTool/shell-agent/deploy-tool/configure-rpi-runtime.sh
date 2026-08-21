@@ -4,7 +4,7 @@ set -eu
 
 usage() {
     echo "Usage: $0 [--build-directory DIRECTORY] [--runtime-user USER]"
-    echo "  [--ollama-manifest FILE] [--generate-only]"
+    echo "  [--local-prefix DIRECTORY] [--ollama-manifest FILE] [--generate-only]"
 }
 
 script_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
@@ -13,6 +13,7 @@ script_directory="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 workspace_root="$(CDPATH='' cd -- "$script_directory/../../.." && pwd)"
 build_directory="$workspace_root/build-rpi"
 runtime_user="$XWALK_DEFAULT_RPI_RUNTIME_USER"
+local_prefix=""
 ollama_manifest=""
 generate_only="false"
 
@@ -20,6 +21,7 @@ while [ "$#" -gt 0 ]; do
     case "$1" in
         --build-directory) build_directory="${2-}"; shift 2 ;;
         --runtime-user) runtime_user="${2-}"; shift 2 ;;
+        --local-prefix) local_prefix="${2-}"; shift 2 ;;
         --ollama-manifest) ollama_manifest="${2-}"; shift 2 ;;
         --generate-only) generate_only="true"; shift ;;
         -h|--help) usage; exit 0 ;;
@@ -36,8 +38,15 @@ if [ "$runtime_user" = "$(id -un)" ] && [ -n "${HOME-}" ] && [ "$HOME" != "$runt
     echo "HOME does not match the account database for $runtime_user." >&2
     exit 2
 fi
+if [ -z "$local_prefix" ]; then
+    local_prefix="$runtime_home/.local"
+fi
+case "$local_prefix" in
+    /*) ;;
+    *) echo "--local-prefix must be an absolute path." >&2; exit 2 ;;
+esac
 
-models_directory="$runtime_home/.local/share/ollama/models"
+models_directory="$local_prefix/share/ollama/models"
 if [ -z "$ollama_manifest" ] && [ -d "$models_directory/manifests" ]; then
     ollama_manifest="$(find "$models_directory/manifests" -type f \
         -path '*/registry.ollama.ai/library/llama3.2/3b' -print -quit)"
@@ -59,6 +68,7 @@ fi
 "$script_directory/generate-rpi-runtime.sh" \
     --build-directory "$build_directory" \
     --runtime-user "$runtime_user" \
+    --local-prefix "$local_prefix" \
     --ollama-manifest "$ollama_manifest"
 
 if [ "$generate_only" = "true" ]; then
@@ -106,7 +116,7 @@ command -v amixer >/dev/null
 arecord -D "$capture_device" --dump-hw-params -d 1 -f S16_LE -r 16000 -c 1 /dev/null >/dev/null 2>&1
 amixer -D "$mixer_device" scontrols | grep -Fq "'$mixer_element'"
 
-ollama_executable="$runtime_home/.local/bin/ollama"
+ollama_executable="$local_prefix/bin/ollama"
 if [ ! -x "$ollama_executable" ]; then
     echo "The user-local Ollama executable is missing: $ollama_executable" >&2
     exit 1
@@ -119,5 +129,5 @@ curl --fail --silent --show-error http://127.0.0.1:11434/api/tags >/dev/null
 OLLAMA_HOST=127.0.0.1:11434 "$ollama_executable" list | grep -Fq 'llama3.2:3b'
 
 echo "Runtime configuration and the Ollama user service are ready."
-echo "Validate with: $build_directory/cmake/xWalkController/xWalkApp/xwalk-picarx-control --validate-config"
-echo "Run Doctor with: $build_directory/cmake/xWalkController/xWalkApp/xwalk-picarx-control doctor"
+echo "Validate with: $build_directory/xwalk --validate-config"
+echo "Run Doctor with: $build_directory/xwalk doctor"

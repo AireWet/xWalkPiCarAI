@@ -3,8 +3,9 @@
  * @brief       Provides the Raspberry Pi PiCar-X CLI entry point.
  *
  * @details
- * Parses process arguments, selects one xWalkBoot mode, and runs the CLI
- * through services owned for the complete command lifetime.
+ * Configures the CMake-selected GStreamer plugin directory, parses process
+ * arguments, selects one xWalkBoot mode, and runs the CLI through services
+ * owned for the complete command lifetime.
  *
  * @project     xWalk Firmware
  * @module      xWalkController Application
@@ -38,6 +39,7 @@
 #include "xHal_Rpi5CarLinuxHeaders.h"
 #include "xHal_Rpi5CarTrace.h"
 
+#include <cstdlib>
 #include <iostream>
 
 /******************************************************************************
@@ -45,7 +47,8 @@
  ******************************************************************************/
 
 /**
- * @brief Parses process arguments and performs one guarded RPi backend boot.
+ * @brief Configures the process runtime and performs one guarded RPi backend boot.
+ * @details Prepends the CMake-selected CSI plugin directory before any camera backend can initialize GStreamer.
  * @param[in] argumentCount Number of process arguments including the executable name.
  * @param[in] arguments Non-owning process argument array.
  * @return CLI or help status after successful completion.
@@ -53,6 +56,21 @@
  */
 ctrl::int32 main(ctrl::int32 argumentCount, ctrl::charpointer arguments[])
 {
+#if defined(XWALK_GSTREAMER_PLUGIN_DIRECTORY)
+    ctrl::string gstreamerPluginPath{XWALK_GSTREAMER_PLUGIN_DIRECTORY};
+    const auto* existingPluginPath = ::getenv("GST_PLUGIN_PATH_1_0");
+    if ((existingPluginPath != nullptr) && (existingPluginPath[0] != '\0'))
+    {
+        gstreamerPluginPath += ":";
+        gstreamerPluginPath += existingPluginPath;
+    }
+    if (::setenv("GST_PLUGIN_PATH_1_0", gstreamerPluginPath.c_str(), 1) != 0)
+    {
+        std::cerr << "Could not configure the GStreamer plugin search path" << std::endl;
+        return 2;
+    }
+#endif
+
     xwalk::ctrl::XWalkControllerApplicationArguments applicationArguments;
     const xwalk::ctrl::XWalkAppConfig defaultConfig{XWALK_PICARX_CONFIG_FILE, XWALK_RUNTIME_DATA_DIRECTORY};
 

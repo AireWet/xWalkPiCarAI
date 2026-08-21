@@ -123,7 +123,7 @@ namespace xwalk::hal
     /** @brief Builds the fixed libcamera GStreamer pipeline for validated dimensions. */
     string XWalkCameraStreamOpenCv::libcameraPipeline(const XWalkCameraStreamConfiguration& configuration)
     {
-        return "libcamerasrc ! video/x-raw,width=" + std::to_string(configuration.widthPixels) +
+        return "libcamerasrc ! video/x-raw,format=NV12,width=" + std::to_string(configuration.widthPixels) +
                ",height=" + std::to_string(configuration.heightPixels) +
                " ! videoconvert ! video/x-raw,format=BGR ! appsink drop=true max-buffers=1 sync=false";
     }

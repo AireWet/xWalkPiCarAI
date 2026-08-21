@@ -52,12 +52,14 @@ The `libcamera` selection constructs this pipeline internally from the already
 bounded numeric width and height settings:
 
 ```text
-libcamerasrc ! video/x-raw,width=<width>,height=<height> ! videoconvert ! video/x-raw,format=BGR ! appsink drop=true max-buffers=1 sync=false
+libcamerasrc ! video/x-raw,format=NV12,width=<width>,height=<height> ! videoconvert ! video/x-raw,format=BGR ! appsink drop=true max-buffers=1 sync=false
 ```
 
 Configuration cannot supply GStreamer elements or pipeline text. CSI streaming
 requires OpenCV with GStreamer support and the GStreamer `libcamerasrc` and
-`videoconvert` plugins. V4L2 streaming remains independent of libcamera.
+`videoconvert` plugins. The explicit NV12 source caps select an ISP-processed
+video stream instead of a raw Bayer stream. V4L2 streaming remains independent
+of libcamera.
 
 CSI is the Raspberry Pi camera connector. DSI is the display connector and is
 not used for camera capture. Both providers are executed directly without a
