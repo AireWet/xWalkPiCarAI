@@ -42,8 +42,8 @@ namespace xwalk::agent
     {
         hal::XWalkConfigStore& config = *parameters.config;
         hal::XWalkCameraStreamConfiguration cameraConfiguration;
-        cameraConfiguration.backend = config.get("video_stream_camera_backend", "v4l2");
-        cameraConfiguration.source = config.get("video_stream_camera_device", "/dev/video0");
+        cameraConfiguration.backend = config.get("video_stream_camera_backend", "libcamera");
+        cameraConfiguration.source = config.get("video_stream_camera_device", "csi");
         cameraConfiguration.widthPixels =
             parseUnsigned(config.get("video_stream_width", "640"), "video_stream_width", 7'680U);
         cameraConfiguration.heightPixels =

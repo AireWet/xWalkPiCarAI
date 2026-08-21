@@ -44,7 +44,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
 endif()
 
-if(XWALK_CAMERA_BUILD_OPENCV_BACKEND)
+if(XWALK_CAMERA_BUILD_OPENCV_BACKEND OR XWALK_CAMERA_BUILD_HOST_TESTS)
     find_package(OpenCV REQUIRED COMPONENTS core imgcodecs videoio)
     add_library(xWalkCameraStreamOpenCv STATIC
         hardware/src/xHal_Rpi5CarCameraStreamOpenCv.cpp)
@@ -90,7 +90,7 @@ if(XWALK_CAMERA_BUILD_HOST_TESTS)
     target_compile_definitions(xWalkCameraTest PRIVATE
         XWALK_CAMERA_SIMULATION_TRACE_CONFIG_PATH="${XWALK_CAMERA_TRACE_CONFIG}"
         XWALK_CAMERA_SIMULATION_TRACE_LOG_PATH="${XWALK_CAMERA_TEST_TRACE_LOG}")
-    target_link_libraries(xWalkCameraTest PRIVATE xWalkCamera xWalkTrace)
+    target_link_libraries(xWalkCameraTest PRIVATE xWalkCameraStreamOpenCv xWalkTrace)
     add_dependencies(xWalkCameraTest xWalkCameraTestTraceConfig)
     add_test(NAME xWalkCameraHostTest COMMAND xWalkCameraTest)
     set_tests_properties(xWalkCameraHostTest PROPERTIES LABELS "host")

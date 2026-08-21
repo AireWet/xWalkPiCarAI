@@ -24,12 +24,14 @@ namespace xwalk::agent::test::mjpeg_stream
     {
             /** @brief True while the fake camera is started. */
             agent::boolean cameraStarted{};
+            /** @brief Selects whether fake camera startup succeeds. */
+            agent::boolean startAvailable{true};
             /** @brief Selects whether the next fake capture succeeds. */
             agent::boolean captureAvailable{true};
+            /** @brief Number of fake camera stop operations. */
+            agent::uint32 stopCount{};
             /** @brief Number of fake frames captured since construction. */
             agent::uint32 capturedFrames{};
-            /** @brief Fake monotonic clock value in milliseconds. */
-            agent::uint64 nowMilliseconds{};
     };
 
     /** @brief Marks the fake HAL camera in `context` as started. */
@@ -41,7 +43,7 @@ namespace xwalk::agent::test::mjpeg_stream
     agent::boolean captureVideoFrame(agent::contextpointer context,
                                      const hal::XWalkCameraStreamConfiguration& configuration,
                                      agent::bytevector& jpeg);
-    /** @brief Returns the fake monotonic millisecond clock from `context`. */
+    /** @brief Returns a deterministic fake monotonic millisecond value. */
     agent::uint64 videoClock(agent::contextpointer context) noexcept;
     /** @brief Creates the complete fake HAL camera callback table. */
     hal::XWalkCameraStreamCallbacks videoStreamingCallbacks() noexcept;

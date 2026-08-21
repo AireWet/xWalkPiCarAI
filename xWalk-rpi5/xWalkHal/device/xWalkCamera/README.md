@@ -44,8 +44,20 @@ The Linux backend supports two deployment-selected connections:
 
 `XWalkCameraStream` validates and forwards camera start, stop, and JPEG-frame
 capture through caller-owned callbacks. The optional `XWalkCameraStreamOpenCv`
-backend supports V4L2 devices, GStreamer pipelines, and automatic OpenCV source
-selection. It owns the camera handle while Agent owns MJPEG transport policy.
+backend accepts either `v4l2` with an exact `/dev/videoN` source for an ordinary
+USB camera, or `libcamera` with the exact source `csi` for a Raspberry Pi CSI
+camera. It owns the camera handle while Agent owns MJPEG transport policy.
+
+The `libcamera` selection constructs this pipeline internally from the already
+bounded numeric width and height settings:
+
+```text
+libcamerasrc ! video/x-raw,width=<width>,height=<height> ! videoconvert ! video/x-raw,format=BGR ! appsink drop=true max-buffers=1 sync=false
+```
+
+Configuration cannot supply GStreamer elements or pipeline text. CSI streaming
+requires OpenCV with GStreamer support and the GStreamer `libcamerasrc` and
+`videoconvert` plugins. V4L2 streaming remains independent of libcamera.
 
 CSI is the Raspberry Pi camera connector. DSI is the display connector and is
 not used for camera capture. Both providers are executed directly without a
@@ -81,8 +93,10 @@ in the terminal and `build-camera-simulation/log/xWalkCameraSimulation.log`.
 
 ## Raspberry Pi verification
 
-Install `rpicam-apps` for CSI or `ffmpeg` for USB. Configure the selected
-hardware test, compile it, and list it before any approved physical execution:
+Install `rpicam-apps` for CSI still capture or `ffmpeg` for USB still capture.
+CSI streaming additionally requires OpenCV GStreamer support and
+`libcamerasrc`. Configure the selected hardware test, compile it, and list it
+before any approved physical execution:
 
 ```bash
 cmake -S xWalk-rpi5/xWalkHal/device/xWalkCamera -B xWalk-rpi5/xWalkHal/device/xWalkCamera/build-rpi -DXWALK_CAMERA_BUILD_HARDWARE_TESTS=ON

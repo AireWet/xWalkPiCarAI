@@ -7,6 +7,7 @@ zerodiv:*xWalk-rpi5/xWalkHal/interface/xWalkAudio/hardware/test/src/xHal_Rpi5Car
 throwInNoexceptFunction:*xWalk-rpi5/xWalkHal/layer1/xWalkGPT/hardware/src/xHal_Rpi5CarSpeechToTextAlsa.cpp
 throwInNoexceptFunction:*xWalk-rpi5/xWalkHal/layer1/xWalkGPT/hardware/src/xHal_Rpi5CarTextToSpeechAlsa.cpp
 throwInNoexceptFunction:*xWalk-rpi5/xWalkHal/simulation/xWalkRobotHat/src/xHal_Rpi5CarRobotHatSimulation.cpp
+throwInNoexceptFunction:*xWalk-rpi5/xWalkHal/device/xWalkCamera/hardware/src/xHal_Rpi5CarCameraStreamOpenCv.cpp
 throwInNoexceptFunction:*xWalk-rpi5/xWalkAgent/xWalkVision/xWalkComputerVision/hardware/src/xAgent_Rpi5CarComputerVisionOpenCv.cpp
 throwInNoexceptFunction:*xWalk-rpi5/xWalkAgent/xWalkVision/xWalkVideoRecording/hardware/src/xAgent_Rpi5CarVideoRecordingOpenCv.cpp
 throwInNoexceptFunction:*xWalk-rpi5/xWalkAgent/xWalkVision/xWalkRoadUserSafety/test/src/xAgent_Rpi5CarRoadUserSafetyTestSupport.cpp

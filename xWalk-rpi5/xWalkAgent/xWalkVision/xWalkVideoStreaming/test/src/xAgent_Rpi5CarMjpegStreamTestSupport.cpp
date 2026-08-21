@@ -23,14 +23,15 @@ namespace xwalk::agent::test::mjpeg_stream
     {
         static_cast<void>(configuration);
         XWalkVideoStreamingTestState& state = *static_cast<XWalkVideoStreamingTestState*>(context);
-        state.cameraStarted = true;
-        return true;
+        state.cameraStarted = state.startAvailable;
+        return state.startAvailable;
     }
 
     void stopVideoCamera(agent::contextpointer context) noexcept
     {
         XWalkVideoStreamingTestState& state = *static_cast<XWalkVideoStreamingTestState*>(context);
         state.cameraStarted = false;
+        ++state.stopCount;
     }
 
     agent::boolean captureVideoFrame(agent::contextpointer context,
@@ -50,9 +51,8 @@ namespace xwalk::agent::test::mjpeg_stream
 
     agent::uint64 videoClock(agent::contextpointer context) noexcept
     {
-        XWalkVideoStreamingTestState& state = *static_cast<XWalkVideoStreamingTestState*>(context);
-        ++state.nowMilliseconds;
-        return state.nowMilliseconds;
+        static_cast<void>(context);
+        return 1U;
     }
 
     hal::XWalkCameraStreamCallbacks videoStreamingCallbacks() noexcept

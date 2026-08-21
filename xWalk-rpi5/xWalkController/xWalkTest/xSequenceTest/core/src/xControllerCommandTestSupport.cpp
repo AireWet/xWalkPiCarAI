@@ -68,7 +68,7 @@ namespace
         static_cast<void>(data);
         ControllerCommandTestState& state = *static_cast<TestBus*>(context)->state;
         ++state.i2cWriteCount;
-        state.eventLog.emplace_back("hal.i2c.write");
+        state.recordEvent("hal.i2c.write");
     }
 
     ::ctrl::boolean tryWriteRegister(::ctrl::contextpointer context,
@@ -85,7 +85,7 @@ namespace
         static_cast<void>(address);
         static_cast<void>(length);
         TestBus& bus = *static_cast<TestBus*>(context);
-        bus.state->eventLog.emplace_back("hal.i2c.read");
+        bus.state->recordEvent("hal.i2c.read");
         return bus.sample;
     }
 
@@ -142,7 +142,7 @@ namespace
     void output(::ctrl::contextpointer context, ::ctrl::stringview line)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("controller.output");
+        state.recordEvent("controller.output");
         state.outputLines.emplace_back(line);
     }
 
@@ -150,7 +150,7 @@ namespace
     {
         static_cast<void>(prompt);
         xwalk::agent::test::ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("controller.input");
+        state.recordEvent("controller.input");
         const ::ctrl::boolean inputUnavailable =
             static_cast<::ctrl::boolean>(state.inputIndex >= state.inputLines.size());
         if (inputUnavailable)
@@ -165,7 +165,7 @@ namespace
     void delay(::ctrl::contextpointer context, ::ctrl::uint32 durationMs)
     {
         CallbackContext& callbackContext = *static_cast<CallbackContext*>(context);
-        callbackContext.state->eventLog.emplace_back("controller.delay");
+        callbackContext.state->recordEvent("controller.delay");
         callbackContext.state->delays.push_back(durationMs);
         callbackContext.state->monotonicMilliseconds += durationMs;
         callbackContext.state->leftSpeeds.push_back(callbackContext.motors->left().speed());
@@ -181,7 +181,7 @@ namespace
     ::ctrl::boolean startVision(::ctrl::contextpointer context)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("vision.start");
+        state.recordEvent("vision.start");
         state.visionStarted = true;
         return true;
     }
@@ -189,7 +189,7 @@ namespace
     void stopVision(::ctrl::contextpointer context) noexcept
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("vision.stop");
+        state.recordEvent("vision.stop");
         state.visionStarted = false;
         state.visionColor = xwalk::agent::XWalkComputerVisionColor::Close;
         state.visionFaceEnabled = false;
@@ -199,7 +199,7 @@ namespace
     ::ctrl::string captureVision(::ctrl::contextpointer context)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("vision.capture");
+        state.recordEvent("vision.capture");
         ++state.visionCaptureCount;
         return "/tmp/photo_2026-08-04-12-00-00.jpg";
     }
@@ -213,7 +213,7 @@ namespace
         static_cast<void>(type);
         static_cast<void>(port);
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("app.start");
+        state.recordEvent("app.start");
         state.appTransportStarted = true;
         return true;
     }
@@ -221,14 +221,14 @@ namespace
     void stopAppControl(::ctrl::contextpointer context) noexcept
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("app.stop");
+        state.recordEvent("app.stop");
         state.appTransportStarted = false;
     }
 
     xwalk::agent::XWalkAppControlInput pollAppControl(::ctrl::contextpointer context)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("app.poll");
+        state.recordEvent("app.poll");
         const ::ctrl::boolean appInputUnavailable =
             static_cast<::ctrl::boolean>(state.appInputIndex >= state.appInputs.size());
         if (appInputUnavailable)
@@ -244,35 +244,35 @@ namespace
     {
         static_cast<void>(telemetry);
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("app.publish");
+        state.recordEvent("app.publish");
         ++state.appPublishCount;
     }
 
     void setVisionColor(::ctrl::contextpointer context, xwalk::agent::XWalkComputerVisionColor color)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("vision.color");
+        state.recordEvent("vision.color");
         state.visionColor = color;
     }
 
     void setVisionFace(::ctrl::contextpointer context, ::ctrl::boolean enabled)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("vision.face");
+        state.recordEvent("vision.face");
         state.visionFaceEnabled = enabled;
     }
 
     void setVisionQr(::ctrl::contextpointer context, ::ctrl::boolean enabled)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("vision.qr");
+        state.recordEvent("vision.qr");
         state.visionQrEnabled = enabled;
     }
 
     xwalk::agent::XWalkComputerVisionObservation observeVision(::ctrl::contextpointer context)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("vision.observe");
+        state.recordEvent("vision.observe");
         ++state.visionObservationCount;
         xwalk::agent::XWalkComputerVisionObservation observation;
         if (state.visionColorVisible && (state.visionColor != xwalk::agent::XWalkComputerVisionColor::Close))
@@ -335,7 +335,7 @@ namespace
     ::ctrl::string beginVideo(::ctrl::contextpointer context, ::ctrl::stringview name)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("video.begin");
+        state.recordEvent("video.begin");
         state.videoRecording = true;
         return "/tmp/xwalk-videos/" + ::ctrl::string(name) + ".avi";
     }
@@ -343,21 +343,21 @@ namespace
     void pauseVideo(::ctrl::contextpointer context)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("video.pause");
+        state.recordEvent("video.pause");
         state.videoPaused = true;
     }
 
     void continueVideo(::ctrl::contextpointer context)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("video.continue");
+        state.recordEvent("video.continue");
         state.videoPaused = false;
     }
 
     void stopVideo(::ctrl::contextpointer context) noexcept
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("video.stop");
+        state.recordEvent("video.stop");
         state.videoRecording = false;
         state.videoPaused = false;
     }
@@ -391,7 +391,7 @@ namespace
     ::ctrl::boolean continueOperation(::ctrl::contextpointer context)
     {
         xwalk::agent::test::ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("controller.continue");
+        state.recordEvent("controller.continue");
         const ::ctrl::boolean result = state.operationQueries < state.operationQueryLimit;
         ++state.operationQueries;
         return result;
@@ -400,7 +400,7 @@ namespace
     void setServoZeroingAngle(::ctrl::contextpointer context, ::ctrl::uint8 servoId, ::ctrl::float64 angleDegrees)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("servo-zeroing.angle");
+        state.recordEvent("servo-zeroing.angle");
         state.servoZeroingIds.push_back(static_cast<::ctrl::uint32>(servoId));
         state.servoZeroingAngles.push_back(angleDegrees);
     }
@@ -408,7 +408,7 @@ namespace
     ::ctrl::boolean sound(::ctrl::contextpointer context, const xwalk::ctrl::XWalkSoundRequest& request)
     {
         xwalk::agent::test::ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("hal.sound");
+        state.recordEvent("hal.sound");
         state.soundOperation = request.operation;
         state.soundFile = request.filePath;
         state.soundVolume = request.volumePercent;
@@ -417,7 +417,7 @@ namespace
 
     ::ctrl::bytevector transferSpi(::ctrl::contextpointer context, const ::ctrl::bytevector& transmitData)
     {
-        static_cast<CallbackContext*>(context)->state->eventLog.emplace_back("hal.spi.transfer");
+        static_cast<CallbackContext*>(context)->state->recordEvent("hal.spi.transfer");
         ::ctrl::bytevector response;
         response.reserve(transmitData.size());
         for (const ::ctrl::uint8 value : transmitData)
@@ -436,7 +436,7 @@ namespace
     {
         static_cast<void>(volume);
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("hal.music.sound");
+        state.recordEvent("hal.music.sound");
         state.musicSoundFile = filename;
     }
 
@@ -446,7 +446,7 @@ namespace
                    ::ctrl::float64 startSeconds)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("hal.music.play");
+        state.recordEvent("hal.music.play");
         state.backgroundMusicFile = filename;
         static_cast<void>(loops);
         static_cast<void>(startSeconds);
@@ -455,13 +455,13 @@ namespace
     void setVolume(::ctrl::contextpointer context, ::ctrl::float64 volume)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("hal.music.volume");
+        state.recordEvent("hal.music.volume");
         state.soundVolume = volume;
     }
 
     void musicControl(::ctrl::contextpointer context)
     {
-        static_cast<CallbackContext*>(context)->state->eventLog.emplace_back("hal.music.control");
+        static_cast<CallbackContext*>(context)->state->recordEvent("hal.music.control");
     }
 
     ::ctrl::float64 soundLength(::ctrl::contextpointer context, ::ctrl::stringview filename)
@@ -486,7 +486,7 @@ namespace
     {
         static_cast<void>(durationMs);
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("hal.speaker.prime");
+        state.recordEvent("hal.speaker.prime");
         ++state.speakerPrimeCount;
     }
 
@@ -499,7 +499,7 @@ namespace
     ::ctrl::string recognizeSpeech(::ctrl::contextpointer context, ::ctrl::uint32 timeoutMs)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("hal.speech.listen");
+        state.recordEvent("hal.speech.listen");
         const ::ctrl::boolean recognitionTranscriptUnavailable =
             static_cast<::ctrl::boolean>(state.recognitionTranscriptIndex >= state.recognitionTranscripts.size());
         if (recognitionTranscriptUnavailable)
@@ -526,7 +526,7 @@ namespace
     void stopRecognition(::ctrl::contextpointer context)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("hal.speech.stop");
+        state.recordEvent("hal.speech.stop");
         ++state.recognitionStopCount;
     }
 
@@ -534,7 +534,7 @@ namespace
     {
         static_cast<void>(context);
         static_cast<void>(text);
-        static_cast<CallbackContext*>(context)->state->eventLog.emplace_back("hal.model.configure");
+        static_cast<CallbackContext*>(context)->state->recordEvent("hal.model.configure");
     }
 
     void setMaximumMessages(::ctrl::contextpointer context, ::ctrl::uint32 maximumMessages)
@@ -552,13 +552,13 @@ namespace
         static_cast<void>(role);
         static_cast<void>(content);
         static_cast<void>(imagePath);
-        static_cast<CallbackContext*>(context)->state->eventLog.emplace_back("hal.model.prompt");
+        static_cast<CallbackContext*>(context)->state->recordEvent("hal.model.prompt");
     }
 
     ::ctrl::string promptModel(::ctrl::contextpointer context, ::ctrl::stringview prompt, ::ctrl::stringview imagePath)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("hal.model.prompt");
+        state.recordEvent("hal.model.prompt");
         state.modelPrompts.emplace_back(prompt);
         state.modelImagePaths.emplace_back(imagePath);
         const ::ctrl::boolean modelResponseAvailable =
@@ -577,7 +577,7 @@ namespace
                                            const XWalkHal::XWalkCameraConfiguration& configuration)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("hal.camera.capture");
+        state.recordEvent("hal.camera.capture");
         state.cameraCapturePaths.emplace_back(outputPath);
         state.cameraWidthPixels = configuration.widthPixels;
         state.cameraHeightPixels = configuration.heightPixels;
@@ -598,7 +598,7 @@ namespace
         {
             XWALK_CTRL_ERROR(XWALK_RUNTIME, "Configured voice-active-car image is not a JPEG file");
         }
-        state.eventLog.emplace_back("hal.camera.capture");
+        state.recordEvent("hal.camera.capture");
         state.cameraCapturePaths.emplace_back(configuredImage.string());
         return state.cameraCapturePaths.back();
     }
@@ -606,7 +606,7 @@ namespace
     void speak(::ctrl::contextpointer context, ::ctrl::stringview text)
     {
         ControllerCommandTestState& state = *static_cast<CallbackContext*>(context)->state;
-        state.eventLog.emplace_back("hal.speech.speak");
+        state.recordEvent("hal.speech.speak");
         state.spokenText.emplace_back(text);
     }
 
@@ -614,6 +614,16 @@ namespace
 
 namespace xwalk::agent::test
 {
+
+    /**
+     * @brief Appends one event while serializing foreground and worker callbacks.
+     * @param[in] event Event name copied into the ordered event log.
+     */
+    void ControllerCommandTestState::recordEvent(::ctrl::stringview event)
+    {
+        ::ctrl::mutexlock lock(eventMutex);
+        eventLog.emplace_back(event);
+    }
 
     ::ctrl::int32 runControllerCommandHostTest(::ctrl::int32 argumentCount,
                                                ::ctrl::charpointer argumentValues[],

@@ -174,8 +174,8 @@ PulseAudio `Master`, and Piper executable selections only to the generated
 | `video_recording_camera_device` | `/dev/video0` |
 | `video_recording_directory` | `/tmp/xwalk-videos` |
 | `video_recording_fps` | `20` |
-| `video_stream_camera_backend` | `v4l2` |
-| `video_stream_camera_device` | `/dev/video0` |
+| `video_stream_camera_backend` | `libcamera` for CSI; `v4l2` remains available for USB |
+| `video_stream_camera_device` | `csi` for libcamera; exact `/dev/videoN` for V4L2 |
 | `video_stream_width` | `640` |
 | `video_stream_height` | `480` |
 | `video_stream_jpeg_quality` | `80` |
@@ -188,10 +188,10 @@ PulseAudio `Master`, and Piper executable selections only to the generated
 | `text_vision_height` | `720` |
 | `local_voice_chatbot_maximum_messages` | `20` |
 
-OpenCV source values are `v4l2`, `gstreamer`, `video_file`,
-`image_sequence`, and `automatic`. The source string is mandatory: path-based
-backends require an absolute path, while GStreamer receives a validated
-pipeline string directly through OpenCV without invoking a shell.
+Computer-vision and recording OpenCV source values are `v4l2`, `gstreamer`,
+`video_file`, `image_sequence`, and `automatic`. Streaming intentionally has a
+narrower interface: `libcamera` accepts only `csi` and constructs a fixed
+GStreamer pipeline internally, while `v4l2` accepts only `/dev/videoN`.
 
 `hardware_board` accepts `auto`, `robot_hat_v4`, or `robot_hat_v5`. The v4
 value is the explicit legacy selection because the current Device Tree detector

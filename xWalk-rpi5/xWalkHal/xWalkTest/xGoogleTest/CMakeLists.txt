@@ -743,14 +743,18 @@ add_custom_target(xGoogleTestCameraTraceConfig
 add_dependencies(xGoogleTestCameraTraceConfig xWalkTraceMetadata)
 target_sources(xGoogleTestCamera PRIVATE
     ${XWALK_HAL_SOURCE_DIRECTORY}/device/xWalkCamera/test/src/xHal_Rpi5CarCameraTestSupport.cpp
+    ${XWALK_HAL_SOURCE_DIRECTORY}/device/xWalkCamera/hardware/src/xHal_Rpi5CarCameraStreamOpenCv.cpp
     ${XWALK_HAL_SOURCE_DIRECTORY}/device/xWalkCamera/simulation/src/xHal_Rpi5CarCameraSimulationArguments.cpp)
+find_package(OpenCV REQUIRED COMPONENTS core imgcodecs videoio)
 target_include_directories(xGoogleTestCamera PRIVATE
     ${XWALK_HAL_SOURCE_DIRECTORY}/device/xWalkCamera/test/include
-    ${XWALK_HAL_SOURCE_DIRECTORY}/device/xWalkCamera/simulation/include)
+    ${XWALK_HAL_SOURCE_DIRECTORY}/device/xWalkCamera/simulation/include
+    ${XWALK_HAL_SOURCE_DIRECTORY}/device/xWalkCamera/hardware/include
+    ${OpenCV_INCLUDE_DIRS})
 target_compile_definitions(xGoogleTestCamera PRIVATE
     XWALK_CAMERA_SIMULATION_TRACE_CONFIG_PATH="${XWALK_GOOGLE_TEST_CAMERA_TRACE_CONFIG_PATH}"
     XWALK_CAMERA_SIMULATION_TRACE_LOG_PATH="${CMAKE_BINARY_DIR}/log/xWalkCameraTest.log")
-target_link_libraries(xGoogleTestCamera PRIVATE xWalkTrace)
+target_link_libraries(xGoogleTestCamera PRIVATE ${OpenCV_LIBS} xWalkTrace)
 add_dependencies(xGoogleTestCamera xGoogleTestCameraTraceConfig)
 xwalk_add_legacy_test_source(xGoogleTestUserButton xWalkUserButtonLegacyMain
     ${XWALK_HAL_SOURCE_DIRECTORY}/device/xWalkUserButton/test/src/xHal_Rpi5CarUserButtonTest.cpp
@@ -977,6 +981,7 @@ target_sources(xGoogleTest PRIVATE
 
 target_link_libraries(xGoogleTest PRIVATE
     GTest::gtest
+    ${OpenCV_LIBS}
     tinyxml2::tinyxml2
     yaml-cpp::yaml-cpp
     xWalkHal

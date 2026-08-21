@@ -154,6 +154,11 @@ if [ "$camera" = "csi" ]; then
     set_configuration_value "$temporary_runtime/picar-x.d/vision.conf" camera_csi_executable \
         "$runtime_home/.local/bin/rpicam-still"
     set_configuration_value "$temporary_runtime/picar-x.d/vision.conf" camera_csi_device /dev/media0
+    set_configuration_value "$temporary_runtime/picar-x.d/vision.conf" video_stream_camera_backend libcamera
+    set_configuration_value "$temporary_runtime/picar-x.d/vision.conf" video_stream_camera_device csi
+else
+    set_configuration_value "$temporary_runtime/picar-x.d/vision.conf" video_stream_camera_backend v4l2
+    set_configuration_value "$temporary_runtime/picar-x.d/vision.conf" video_stream_camera_device /dev/video0
 fi
 
 set_configuration_value "$temporary_runtime/picar-x.d/hardware.conf" hardware_board "$profile"
@@ -206,6 +211,7 @@ if [ -z "$runtime_home" ] || [ ! -d "$runtime_home" ]; then
 fi
 
 export PATH="$runtime_home/.local/bin:${PATH-}"
+export GST_PLUGIN_PATH="$runtime_home/.local/lib/aarch64-linux-gnu/gstreamer-1.0:${GST_PLUGIN_PATH-}"
 configuration="$launcher_directory/runtime/picar-x.conf"
 resources="$workspace_root/xWalk-rpi5/xWalkAudioResources"
 executable="$launcher_directory/cmake/xWalkController/xWalkApp/xwalk-picarx-control"

@@ -25,6 +25,12 @@ namespace xwalk::agent::test
     /** @brief Records observable controller, Agent, and HAL activity. */
     struct ControllerCommandTestState
     {
+            /**
+             * @brief Appends one event while serializing foreground and worker callbacks.
+             * @param[in] event Event name copied into the ordered event log.
+             */
+            void recordEvent(::ctrl::stringview event);
+
             ::ctrl::stringvector outputLines{};             /**< Controller output in call order. */
             ::ctrl::stringvector inputLines{};              /**< Calibration input in read order. */
             ::ctrl::size inputIndex{};                      /**< Next unread calibration input. */
@@ -73,6 +79,7 @@ namespace xwalk::agent::test
             ::ctrl::size appInputIndex{};                  /**< Next simulated app snapshot. */
             ::ctrl::boolean appTransportStarted{};         /**< Simulated WebSocket lifecycle. */
             ::ctrl::uint32 appPublishCount{};              /**< Published telemetry count. */
+            ::ctrl::mutexhandle eventMutex{};              /**< Serializes concurrent event-log appends. */
             ::ctrl::stringvector eventLog{};               /**< Ordered Controller, Agent, and HAL events. */
     };
 

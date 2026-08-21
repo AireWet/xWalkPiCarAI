@@ -29,9 +29,60 @@ namespace xwalk::agent::test::mjpeg_stream
         EXPECT_EQ(state.capturedFrames, 1U);
         state.captureAvailable = false;
         EXPECT_FALSE(streaming.step());
-        streaming.stop();
         EXPECT_FALSE(streaming.started());
         EXPECT_FALSE(state.cameraStarted);
+        EXPECT_EQ(state.stopCount, 1U);
+        streaming.stop();
+        EXPECT_EQ(state.stopCount, 1U);
+    }
+
+    TEST(XWalkVideoStreaming, CleansCameraStartupAndHttpListenerFailures)
+    {
+        XWalkVideoStreamingTestState startupFailureState;
+        startupFailureState.startAvailable = false;
+        XWalkMjpegHttpConfiguration startupFailureConfiguration;
+        startupFailureConfiguration.stream.port = availableLoopbackPort();
+        ASSERT_NE(startupFailureConfiguration.stream.port, 0U);
+        hal::XWalkCameraStream startupFailureCamera(&startupFailureState, videoStreamingCallbacks());
+        XWalkVideoStreaming startupFailureStreaming(startupFailureCamera, &videoClock, startupFailureConfiguration);
+        EXPECT_FALSE(startupFailureStreaming.start());
+        EXPECT_FALSE(startupFailureState.cameraStarted);
+        EXPECT_GE(startupFailureState.stopCount, 1U);
+
+        XWalkVideoStreamingTestState firstState;
+        XWalkVideoStreamingTestState collisionState;
+        XWalkMjpegHttpConfiguration collisionConfiguration;
+        collisionConfiguration.stream.port = availableLoopbackPort();
+        ASSERT_NE(collisionConfiguration.stream.port, 0U);
+        hal::XWalkCameraStream firstCamera(&firstState, videoStreamingCallbacks());
+        hal::XWalkCameraStream collisionCamera(&collisionState, videoStreamingCallbacks());
+        XWalkVideoStreaming firstStreaming(firstCamera, &videoClock, collisionConfiguration);
+        XWalkVideoStreaming collisionStreaming(collisionCamera, &videoClock, collisionConfiguration);
+        ASSERT_TRUE(firstStreaming.start());
+        EXPECT_FALSE(collisionStreaming.start());
+        EXPECT_FALSE(collisionState.cameraStarted);
+        EXPECT_EQ(collisionState.stopCount, 1U);
+        EXPECT_TRUE(firstStreaming.started());
+        firstStreaming.stop();
+    }
+
+    TEST(XWalkVideoStreaming, RunsUntilCancellationAndCleansOnDestruction)
+    {
+        XWalkVideoStreamingTestState state;
+        XWalkMjpegHttpConfiguration configuration;
+        configuration.stream.port = availableLoopbackPort();
+        ASSERT_NE(configuration.stream.port, 0U);
+        hal::XWalkCameraStream camera(&state, videoStreamingCallbacks());
+        {
+            XWalkVideoStreaming streaming(camera, &videoClock, configuration);
+            ASSERT_TRUE(streaming.start());
+            EXPECT_TRUE(streaming.step());
+            EXPECT_TRUE(streaming.step());
+            EXPECT_TRUE(streaming.started());
+            EXPECT_TRUE(state.cameraStarted);
+        }
+        EXPECT_FALSE(state.cameraStarted);
+        EXPECT_EQ(state.stopCount, 1U);
     }
 
     TEST(XWalkMjpegStream, ValidatesConfigurationAndIdempotentLifecycle)

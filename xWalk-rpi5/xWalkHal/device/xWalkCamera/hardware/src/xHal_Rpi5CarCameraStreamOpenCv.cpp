@@ -3,8 +3,8 @@
  * @brief       Implements OpenCV encoded camera streaming for Linux.
  *
  * @details
- * Opens a configured V4L2, GStreamer, or automatic OpenCV source and converts
- * each acquired frame into a bounded-quality JPEG byte vector.
+ * Opens either a validated V4L2 device or a fixed libcamera GStreamer pipeline
+ * and converts each acquired frame into a bounded-quality JPEG byte vector.
  *
  * @project     xWalk Firmware
  * @module      xWalkCamera OpenCV Backend
@@ -31,6 +31,8 @@
 
 #include <opencv2/imgcodecs.hpp>
 
+#include <string>
+
 /******************************************************************************
  * Namespace definitions
  ******************************************************************************/
@@ -41,6 +43,49 @@
  */
 namespace xwalk::hal
 {
+
+    /** @brief Reports whether the production OpenCV camera is open. */
+    static boolean systemIsOpened(contextpointer context, const cv::VideoCapture& camera) noexcept
+    {
+        static_cast<void>(context);
+        return static_cast<boolean>(camera.isOpened());
+    }
+
+    /** @brief Opens the production OpenCV camera source. */
+    static boolean systemOpen(contextpointer context, cv::VideoCapture& camera, stringview source, int apiPreference)
+    {
+        static_cast<void>(context);
+        return static_cast<boolean>(camera.open(string(source), apiPreference));
+    }
+
+    /** @brief Sets one production OpenCV camera property. */
+    static boolean systemSet(contextpointer context, cv::VideoCapture& camera, int property, float64 value)
+    {
+        static_cast<void>(context);
+        return static_cast<boolean>(camera.set(property, value));
+    }
+
+    /** @brief Reads one production OpenCV frame. */
+    static boolean systemRead(contextpointer context, cv::VideoCapture& camera, cv::Mat& frame)
+    {
+        static_cast<void>(context);
+        return static_cast<boolean>(camera.read(frame));
+    }
+
+    /** @brief JPEG-encodes one production OpenCV frame. */
+    static boolean systemEncode(contextpointer context, const cv::Mat& frame, uint32 jpegQuality, bytevector& jpeg)
+    {
+        static_cast<void>(context);
+        const std::vector<int> parameters{cv::IMWRITE_JPEG_QUALITY, static_cast<int>(jpegQuality)};
+        return static_cast<boolean>(cv::imencode(".jpg", frame, jpeg, parameters));
+    }
+
+    /** @brief Releases the production OpenCV camera. */
+    static void systemRelease(contextpointer context, cv::VideoCapture& camera) noexcept
+    {
+        static_cast<void>(context);
+        camera.release();
+    }
 
     /**
      * @brief Resolves a callback context to its owning backend.
@@ -55,6 +100,45 @@ namespace xwalk::hal
             XWALK_HAL_ERROR(XWALK_INVAL, "Camera-stream OpenCV context is null");
         }
         return *static_cast<XWalkCameraStreamOpenCv*>(context);
+    }
+
+    /** @brief Returns the production OpenCV operation table. */
+    XWalkCameraStreamOpenCvOperations XWalkCameraStreamOpenCv::systemOperations() noexcept
+    {
+        return {&systemIsOpened, &systemOpen, &systemSet, &systemRead, &systemEncode, &systemRelease};
+    }
+
+    /** @brief Validates a complete OpenCV operation table. */
+    void XWalkCameraStreamOpenCv::validateOperations(const XWalkCameraStreamOpenCvOperations& selectedOperations)
+    {
+        const boolean complete = (selectedOperations.isOpened != nullptr) && (selectedOperations.open != nullptr) &&
+                                 (selectedOperations.set != nullptr) && (selectedOperations.read != nullptr) &&
+                                 (selectedOperations.encode != nullptr) && (selectedOperations.release != nullptr);
+        if (complete == false)
+        {
+            XWALK_HAL_ERROR(XWALK_INVAL, "Camera-stream OpenCV operation table is incomplete");
+        }
+    }
+
+    /** @brief Builds the fixed libcamera GStreamer pipeline for validated dimensions. */
+    string XWalkCameraStreamOpenCv::libcameraPipeline(const XWalkCameraStreamConfiguration& configuration)
+    {
+        return "libcamerasrc ! video/x-raw,width=" + std::to_string(configuration.widthPixels) +
+               ",height=" + std::to_string(configuration.heightPixels) +
+               " ! videoconvert ! video/x-raw,format=BGR ! appsink drop=true max-buffers=1 sync=false";
+    }
+
+    /** @brief Creates an idle production OpenCV camera backend. */
+    XWalkCameraStreamOpenCv::XWalkCameraStreamOpenCv() : XWalkCameraStreamOpenCv(nullptr, systemOperations())
+    {
+    }
+
+    /** @brief Creates an idle backend with injectable operations. */
+    XWalkCameraStreamOpenCv::XWalkCameraStreamOpenCv(contextpointer selectedOperationContext,
+                                                     const XWalkCameraStreamOpenCvOperations& selectedOperations)
+        : operationContext(selectedOperationContext), operations(selectedOperations)
+    {
+        validateOperations(operations);
     }
 
     /**
@@ -76,28 +160,41 @@ namespace xwalk::hal
                                                  const XWalkCameraStreamConfiguration& configuration)
     {
         XWalkCameraStreamOpenCv& provider = backend(context);
-        const boolean cameraOpen = static_cast<boolean>(provider.camera.isOpened());
+        const boolean cameraOpen = provider.operations.isOpened(provider.operationContext, provider.camera);
         if (cameraOpen)
         {
             return true;
         }
-        int apiPreference = cv::CAP_ANY;
+        int apiPreference = cv::CAP_V4L2;
+        string source(configuration.source);
         if (configuration.backend == "v4l2")
         {
-            apiPreference = cv::CAP_V4L2;
+            source = configuration.source;
         }
-        else if (configuration.backend == "gstreamer")
+        else
         {
             apiPreference = cv::CAP_GSTREAMER;
+            source = libcameraPipeline(configuration);
         }
-        const boolean cameraOpened = provider.camera.open(configuration.source, apiPreference);
+        const boolean cameraOpened =
+            provider.operations.open(provider.operationContext, provider.camera, source, apiPreference);
         if (cameraOpened == false)
         {
+            provider.operations.release(provider.operationContext, provider.camera);
+            XWALK_HAL_ERROR(XWALK_EXCEPTION,
+                            "Failed to open camera-stream backend " + configuration.backend + " source " +
+                                configuration.source);
             return false;
         }
-        static_cast<void>(provider.camera.set(cv::CAP_PROP_FRAME_WIDTH, configuration.widthPixels));
-        static_cast<void>(provider.camera.set(cv::CAP_PROP_FRAME_HEIGHT, configuration.heightPixels));
-        static_cast<void>(provider.camera.set(cv::CAP_PROP_READ_TIMEOUT_MSEC, configuration.readTimeoutMs));
+        if (configuration.backend == "v4l2")
+        {
+            static_cast<void>(provider.operations.set(
+                provider.operationContext, provider.camera, cv::CAP_PROP_FRAME_WIDTH, configuration.widthPixels));
+            static_cast<void>(provider.operations.set(
+                provider.operationContext, provider.camera, cv::CAP_PROP_FRAME_HEIGHT, configuration.heightPixels));
+        }
+        static_cast<void>(provider.operations.set(
+            provider.operationContext, provider.camera, cv::CAP_PROP_READ_TIMEOUT_MSEC, configuration.readTimeoutMs));
         return true;
     }
 
@@ -110,10 +207,10 @@ namespace xwalk::hal
         if (context != nullptr)
         {
             XWalkCameraStreamOpenCv& provider = *static_cast<XWalkCameraStreamOpenCv*>(context);
-            const boolean cameraOpen = static_cast<boolean>(provider.camera.isOpened());
+            const boolean cameraOpen = provider.operations.isOpened(provider.operationContext, provider.camera);
             if (cameraOpen)
             {
-                provider.camera.release();
+                provider.operations.release(provider.operationContext, provider.camera);
             }
         }
     }
@@ -132,15 +229,27 @@ namespace xwalk::hal
     {
         XWalkCameraStreamOpenCv& provider = backend(context);
         cv::Mat frame;
-        const boolean frameRead = provider.camera.read(frame);
+        const boolean frameRead = provider.operations.read(provider.operationContext, provider.camera, frame);
         const boolean frameAvailable = static_cast<boolean>(frameRead && !frame.empty());
         if (frameAvailable == false)
         {
             jpeg.clear();
+            stopCamera(context);
+            XWALK_HAL_ERROR(XWALK_EXCEPTION,
+                            "Failed to read the first or next camera-stream frame from " + configuration.backend +
+                                " source " + configuration.source);
             return false;
         }
-        const std::vector<int> parameters{cv::IMWRITE_JPEG_QUALITY, static_cast<int>(configuration.jpegQuality)};
-        return static_cast<boolean>(cv::imencode(".jpg", frame, jpeg, parameters));
+        const boolean encoded =
+            provider.operations.encode(provider.operationContext, frame, configuration.jpegQuality, jpeg);
+        if ((encoded == false) || jpeg.empty())
+        {
+            jpeg.clear();
+            stopCamera(context);
+            XWALK_HAL_ERROR(XWALK_EXCEPTION, "Failed to JPEG-encode a camera-stream frame");
+            return false;
+        }
+        return true;
     }
 
     /**

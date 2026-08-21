@@ -27,6 +27,7 @@
 
 #include "xHal_Rpi5CarCameraStream.h"
 
+#include "xHal_Rpi5CarCamera.h"
 #include "xHal_Rpi5CarTrace.h"
 
 /******************************************************************************
@@ -57,14 +58,15 @@ namespace xwalk::hal
         {
             XWALK_HAL_ERROR(XWALK_INVAL, "Camera-stream callbacks must be complete");
         }
-        const boolean backendSupported = static_cast<boolean>(
-            (settings.backend == "v4l2") || (settings.backend == "gstreamer") || (settings.backend == "automatic"));
-        const boolean sourceInvalid =
-            static_cast<boolean>(settings.source.empty() || (settings.source.find('\n') != string::npos) ||
-                                 (settings.source.find('\r') != string::npos));
-        if ((backendSupported == false) || sourceInvalid)
+        const boolean v4l2SourceValid =
+            static_cast<boolean>((settings.backend == "v4l2") && validCameraSourceString(settings.source) &&
+                                 (settings.source != "csi") && (settings.source != "usb"));
+        const boolean libcameraSourceValid =
+            static_cast<boolean>((settings.backend == "libcamera") && (settings.source == "csi"));
+        const boolean sourceValid = static_cast<boolean>(v4l2SourceValid || libcameraSourceValid);
+        if (sourceValid == false)
         {
-            XWALK_HAL_ERROR(XWALK_INVAL, "Camera-stream source is invalid");
+            XWALK_HAL_ERROR(XWALK_INVAL, "Camera-stream backend requires libcamera with csi or v4l2 with /dev/videoN");
         }
         const boolean dimensionsInvalid =
             static_cast<boolean>((settings.widthPixels < 16U) || (settings.widthPixels > 7'680U) ||
@@ -111,6 +113,11 @@ namespace xwalk::hal
         if (startedValue == false)
         {
             startedValue = callbacks.start(backendContext, configuration);
+            if (startedValue == false)
+            {
+                callbacks.stop(backendContext);
+                XWALK_HAL_ERROR(XWALK_EXCEPTION, "Camera-stream backend startup failed and was stopped");
+            }
         }
         return startedValue;
     }
@@ -127,7 +134,14 @@ namespace xwalk::hal
             jpeg.clear();
             return false;
         }
-        return callbacks.capture(backendContext, configuration, jpeg);
+        const boolean captured = callbacks.capture(backendContext, configuration, jpeg);
+        if (captured == false)
+        {
+            callbacks.stop(backendContext);
+            startedValue = false;
+            XWALK_HAL_ERROR(XWALK_EXCEPTION, "Camera-stream frame capture failed and the backend was stopped");
+        }
+        return captured;
     }
 
     /**

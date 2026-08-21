@@ -20,6 +20,11 @@ transport. Raspberry Pi composition supplies the HAL
 `XWalkCameraStreamOpenCv` backend, and the foreground Controller command pumps
 capture and networking until SIGINT or SIGTERM requests shutdown.
 
+The deployed CSI profile selects `libcamera` with source `csi`. The HAL builds
+a fixed `libcamerasrc` GStreamer pipeline from validated dimensions and passes
+it directly to OpenCV; configuration cannot inject pipeline text. A USB camera
+can instead select `v4l2` with an exact `/dev/videoN` source.
+
 The default bind is `127.0.0.1`. A non-loopback bind requires explicit
 `allowExternalBind`, a non-empty secret-store reference, and a caller-provided
 bearer-token authentication callback. The reference is not a credential and
@@ -30,8 +35,10 @@ listener attempts to start.
 
 Camera loss clears every pending frame, rejects later publication, and prevents
 stale imagery from being replayed. Shutdown and repeated start/stop operations
-are deterministic and idempotent. Host tests also publish concurrently from two
-threads and verify that sequence order and the configured queue bound hold.
+are deterministic and idempotent. Camera startup, first-frame, and HTTP startup
+failures close every resource retained up to that point and emit trace errors.
+Host tests also publish concurrently from two threads and verify that sequence
+order and the configured queue bound hold.
 Socket tests bind only to loopback and cover endpoint responses, multipart
 boundaries, request limits, timeouts, client limits, port collision, camera
 loss, connected-client shutdown and repeated stop. Raspberry Pi networking and

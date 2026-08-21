@@ -87,7 +87,7 @@ echo "  rpicam-apps: $rpicam_version"
 echo "  CSI device: /dev/media0"
 echo "  no xWalk package or /usr installation will be performed"
 
-required_commands=(awk cmake curl find git ldd meson ninja pkg-config readelf tar)
+required_commands=(awk cmake curl find git gst-inspect-1.0 ldd meson ninja pkg-config readelf tar)
 missing_commands=()
 for command_name in "${required_commands[@]}"; do
     if ! command -v "$command_name" >/dev/null 2>&1; then
@@ -134,6 +134,11 @@ if [ "$mode" = "check" ]; then
         echo "rpicam-still is not resolving libcamera from $local_lib." >&2
         exit 1
     fi
+    if ! GST_PLUGIN_PATH="$local_lib/gstreamer-1.0:${GST_PLUGIN_PATH-}" \
+        gst-inspect-1.0 libcamerasrc >/dev/null 2>&1; then
+        echo "The user-local libcamera GStreamer source is unavailable." >&2
+        exit 1
+    fi
     "$script_directory/generate-rpi-runtime.sh" \
         --runtime-user "$runtime_user" \
         --profile "$profile" \
@@ -167,7 +172,7 @@ meson setup "$libcamera_build" "$libcamera_source" \
     -Dpipelines=rpi/pisp \
     -Dipas=rpi/pisp \
     -Dv4l2=enabled \
-    -Dgstreamer=disabled \
+    -Dgstreamer=enabled \
     -Dtest=false \
     -Dlc-compliance=disabled \
     -Dcam=disabled \
@@ -212,6 +217,11 @@ if ! printf '%s\n' "$camera_dependencies" | grep -F "$local_lib" | grep -Fq 'lib
 fi
 if ! readelf -d "$local_bin/rpicam-still" | grep -Fq "$local_lib"; then
     echo "rpicam-still does not contain the required user-local runtime search path." >&2
+    exit 1
+fi
+if ! GST_PLUGIN_PATH="$local_lib/gstreamer-1.0:${GST_PLUGIN_PATH-}" \
+    gst-inspect-1.0 libcamerasrc >/dev/null 2>&1; then
+    echo "The user-local libcamera GStreamer source was not installed." >&2
     exit 1
 fi
 

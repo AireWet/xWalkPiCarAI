@@ -51,9 +51,9 @@ namespace xwalk::hal
      */
     struct XWalkCameraStreamConfiguration
     {
-            /** @brief OpenCV backend name: `v4l2`, `gstreamer`, or `automatic`. */
+            /** @brief Camera provider name: `v4l2` for USB or `libcamera` for Raspberry Pi CSI. */
             string backend{"v4l2"};
-            /** @brief Non-empty camera device path or GStreamer pipeline. */
+            /** @brief Exact `/dev/videoN` USB path or the `csi` selector for libcamera. */
             string source{"/dev/video0"};
             /** @brief Requested frame width from 16 through 7,680 pixels. */
             uint32 widthPixels{640U};

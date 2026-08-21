@@ -61,36 +61,63 @@ $XWALK_PICARX_CLI video-car
 
 ## Live video streaming
 
-Check the connected camera and start the loopback-only MJPEG stream:
+For a Raspberry Pi CSI camera, verify libcamera, the GStreamer source plugin,
+and the effective xWalk stream configuration:
+
+```bash
+rpicam-hello --list-cameras
+rpicam-hello --nopreview --timeout 1000
+gst-inspect-1.0 libcamerasrc
+$XWALK_PICARX_CLI --print-effective-config | rg '^video_stream_'
+```
+
+The CSI configuration must report `video_stream_camera_backend = libcamera`,
+`video_stream_camera_device = csi`, and
+`video_stream_bind_address = 127.0.0.1`. Do not select an RP1 CFE
+`/dev/videoN` pipeline node for a CSI camera.
+
+For an ordinary USB webcam configured with the `v4l2` backend, identify its
+exact Video4Linux2 device separately:
 
 ```bash
 v4l2-ctl --list-devices
-rpicam-hello --list-cameras
+```
+
+Start the loopback-only MJPEG server on the Raspberry Pi and leave it running:
+
+```bash
 $XWALK_PICARX_CLI video-stream
 ```
 
-Leave the command running. On the Raspberry Pi desktop, open:
-
-```text
-http://127.0.0.1:8080/stream
-```
-
-For remote viewing, run this on the other computer and keep it connected:
+The command must remain active until `Ctrl+C`. In another Raspberry Pi terminal,
+check the health endpoint and collect a five-second MJPEG sample:
 
 ```bash
-ssh -L 8080:127.0.0.1:8080 <pi-user>@<pi-address>
+curl --fail http://127.0.0.1:8080/health
+curl --fail --max-time 5 http://127.0.0.1:8080/stream --output /tmp/xwalk-stream-sample.mjpeg
+ffplay /tmp/xwalk-stream-sample.mjpeg
 ```
 
-For example, if the Raspberry Pi username is `alice` and its IP address is
-`192.168.1.50`:
+For live playback on the Raspberry Pi itself, use:
 
 ```bash
-ssh -L 8080:127.0.0.1:8080 alice@192.168.1.50
+ffplay http://127.0.0.1:8080/stream
 ```
 
-Then open `http://127.0.0.1:8080/stream` on that computer.
+For workstation access, keep this SSH tunnel running in one workstation
+terminal:
 
-Check the stream or open it in a terminal media player:
+```bash
+ssh -N -L 8080:127.0.0.1:8080 <pi-user>@<pi-address>
+```
+
+For the current `xwalk` Raspberry Pi at `192.168.1.156`, the command is:
+
+```bash
+ssh -N -L 8080:127.0.0.1:8080 xwalk@192.168.1.156
+```
+
+Then verify and play the forwarded stream from another workstation terminal:
 
 ```bash
 curl --fail http://127.0.0.1:8080/health

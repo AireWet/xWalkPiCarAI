@@ -308,7 +308,11 @@ photo capture. Enter `x` to stop the motors, close the camera, and exit. The
 OpenCV provider does not start Vilib's web server.
 
 `video-stream` delegates to `xWalkVideoStreaming`, opens only the configured
-camera and loopback HTTP listener, and stops on SIGINT or SIGTERM.
+camera and loopback HTTP listener, and stops on SIGINT or SIGTERM. The Raspberry
+Pi CSI profile uses `video_stream_camera_backend = libcamera` and
+`video_stream_camera_device = csi`; USB cameras use `v4l2` and an exact
+`/dev/videoN` source. CSI streaming requires OpenCV GStreamer support and the
+GStreamer `libcamerasrc` plugin.
 
 `app-control start` delegates the SunFounder A-Q state to `xWalkAppControl`.
 It publishes speed, grayscale, and ultrasonic telemetry; consumes drive and

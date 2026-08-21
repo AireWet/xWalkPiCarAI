@@ -34,6 +34,8 @@ namespace
     using xwalk::hal::test::camera::CameraStreamTestState;
     using xwalk::hal::test::camera::CameraTestState;
     using xwalk::hal::test::camera::captureImage;
+    using xwalk::hal::test::camera::OpenCvCameraStreamTestState;
+    using xwalk::hal::test::camera::openCvOperations;
     using xwalk::hal::test::camera::streamCallbacks;
 
     /** @brief Verifies successful capture forwarding and connection parsing. */
@@ -129,6 +131,96 @@ namespace
                 configuration.jpegQuality = 0U;
                 const xwalk::hal::XWalkCameraStream streamValue(&state, streamCallbacks(), configuration);
             });
+        xwalk::hal::test::expectFailure(
+            [&state]()
+            {
+                xwalk::hal::XWalkCameraStreamConfiguration configuration;
+                configuration.backend = "gstreamer";
+                configuration.source = "libcamerasrc ! appsink";
+                const xwalk::hal::XWalkCameraStream streamValue(&state, streamCallbacks(), configuration);
+            });
+        xwalk::hal::test::expectFailure(
+            [&state]()
+            {
+                xwalk::hal::XWalkCameraStreamConfiguration configuration;
+                configuration.backend = "libcamera";
+                configuration.source = "libcamerasrc ! filesink location=/tmp/unsafe";
+                const xwalk::hal::XWalkCameraStream streamValue(&state, streamCallbacks(), configuration);
+            });
+        xwalk::hal::test::expectFailure(
+            [&state]()
+            {
+                xwalk::hal::XWalkCameraStreamConfiguration configuration;
+                configuration.backend = "v4l2";
+                configuration.source = "/dev/media0";
+                const xwalk::hal::XWalkCameraStream streamValue(&state, streamCallbacks(), configuration);
+            });
+        xwalk::hal::test::expectFailure(
+            [&state]()
+            {
+                xwalk::hal::XWalkCameraStreamConfiguration configuration;
+                configuration.backend = "libcamera";
+                configuration.source = "csi";
+                configuration.widthPixels = 0U;
+                const xwalk::hal::XWalkCameraStream streamValue(&state, streamCallbacks(), configuration);
+            });
+    }
+
+    /** @brief Verifies safe OpenCV backend selection, pipelines, and cleanup. */
+    void testOpenCvStreamBackend()
+    {
+        OpenCvCameraStreamTestState libcameraState;
+        xwalk::hal::XWalkCameraStreamOpenCv libcameraProvider(&libcameraState, openCvOperations());
+        xwalk::hal::XWalkCameraStreamConfiguration libcameraConfiguration;
+        libcameraConfiguration.backend = "libcamera";
+        libcameraConfiguration.source = "csi";
+        xwalk::hal::XWalkCameraStream libcameraStream(
+            &libcameraProvider, libcameraProvider.callbacks(), libcameraConfiguration);
+        xwalk::hal::test::requireTestCondition(libcameraStream.start());
+        assert(libcameraState.apiPreference == cv::CAP_GSTREAMER);
+        assert(libcameraState.source ==
+               "libcamerasrc ! video/x-raw,width=640,height=480 ! videoconvert ! video/x-raw,format=BGR ! "
+               "appsink drop=true max-buffers=1 sync=false");
+        assert(libcameraState.setCount == 1U);
+        assert(libcameraState.readTimeoutMs == 1'000.0);
+        XWalkHal::bytevector jpeg;
+        xwalk::hal::test::requireTestCondition(libcameraStream.capture(jpeg));
+        libcameraStream.stop();
+        assert(libcameraState.releaseCount == 1U);
+
+        OpenCvCameraStreamTestState v4l2State;
+        xwalk::hal::XWalkCameraStreamOpenCv v4l2Provider(&v4l2State, openCvOperations());
+        xwalk::hal::XWalkCameraStreamConfiguration v4l2Configuration;
+        v4l2Configuration.backend = "v4l2";
+        v4l2Configuration.source = "/dev/video12";
+        xwalk::hal::XWalkCameraStream v4l2Stream(&v4l2Provider, v4l2Provider.callbacks(), v4l2Configuration);
+        xwalk::hal::test::requireTestCondition(v4l2Stream.start());
+        assert(v4l2State.apiPreference == cv::CAP_V4L2);
+        assert(v4l2State.source == "/dev/video12");
+        assert(v4l2State.frameWidth == 640.0);
+        assert(v4l2State.frameHeight == 480.0);
+        assert(v4l2State.setCount == 3U);
+        v4l2Stream.stop();
+
+        OpenCvCameraStreamTestState startupFailureState;
+        startupFailureState.openResult = false;
+        xwalk::hal::XWalkCameraStreamOpenCv startupFailureProvider(&startupFailureState, openCvOperations());
+        xwalk::hal::XWalkCameraStream startupFailureStream(
+            &startupFailureProvider, startupFailureProvider.callbacks(), libcameraConfiguration);
+        xwalk::hal::test::requireTestCondition(startupFailureStream.start() == false);
+        assert(startupFailureState.opened == false);
+        assert(startupFailureState.releaseCount == 1U);
+
+        OpenCvCameraStreamTestState frameFailureState;
+        frameFailureState.readResult = false;
+        xwalk::hal::XWalkCameraStreamOpenCv frameFailureProvider(&frameFailureState, openCvOperations());
+        xwalk::hal::XWalkCameraStream frameFailureStream(
+            &frameFailureProvider, frameFailureProvider.callbacks(), libcameraConfiguration);
+        xwalk::hal::test::requireTestCondition(frameFailureStream.start());
+        xwalk::hal::test::requireTestCondition(frameFailureStream.capture(jpeg) == false);
+        xwalk::hal::test::requireTestCondition(frameFailureStream.started() == false);
+        assert(frameFailureState.opened == false);
+        assert(frameFailureState.releaseCount == 1U);
     }
 
     /** @brief Verifies persistent Camera trace-selector parsing and application. */
@@ -165,6 +257,7 @@ XWalkHal::int32 main()
     testCapture();
     testValidation();
     testStream();
+    testOpenCvStreamBackend();
     testTraceSelection();
     XWALK_HAL_TRACE_UID0(RPI .223, "xWalkCamera host tests completed");
     return 0;

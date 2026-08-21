@@ -145,12 +145,17 @@ namespace xwalk::agent
         const agent::boolean cameraStarted = callbacks.start(callbackContext);
         if (cameraStarted == false)
         {
+            callbacks.stop(callbackContext);
+            XWALK_RPIAGENT_ERROR(XWALK_EXCEPTION, "Video-streaming camera startup failed and was stopped");
             return false;
         }
         const XWalkMjpegHttpStatus serverStatus = startMjpegHttpServer(server, stream, configuration);
         if (serverStatus != XWalkMjpegHttpStatus::Ok)
         {
             callbacks.stop(callbackContext);
+            XWALK_RPIAGENT_ERROR(XWALK_EXCEPTION,
+                                 "Video-streaming HTTP listener startup failed with status %d; camera was stopped",
+                                 static_cast<int>(serverStatus));
             return false;
         }
         startedValue = true;
@@ -172,12 +177,25 @@ namespace xwalk::agent
         if (frameCaptured == false)
         {
             static_cast<void>(reportMjpegCameraLoss(stream));
+            stop();
+            XWALK_RPIAGENT_ERROR(XWALK_EXCEPTION, "Video-streaming frame capture failed; resources were stopped");
             return false;
         }
         const XWalkMjpegStreamStatus publishStatus = publishMjpegFrame(stream, jpeg);
         const agent::uint64 nowMilliseconds = callbacks.now(callbackContext);
         const XWalkMjpegHttpStatus pumpStatus = pumpMjpegHttpServer(server, nowMilliseconds);
-        return (publishStatus == XWalkMjpegStreamStatus::Ok) && (pumpStatus == XWalkMjpegHttpStatus::Ok);
+        const agent::boolean healthy = static_cast<agent::boolean>((publishStatus == XWalkMjpegStreamStatus::Ok) &&
+                                                                   (pumpStatus == XWalkMjpegHttpStatus::Ok));
+        if (healthy == false)
+        {
+            stop();
+            XWALK_RPIAGENT_ERROR(XWALK_EXCEPTION,
+                                 "Video-streaming HTTP iteration failed with publish status %d and pump status %d; "
+                                 "resources were stopped",
+                                 static_cast<int>(publishStatus),
+                                 static_cast<int>(pumpStatus));
+        }
+        return healthy;
     }
 
     /**

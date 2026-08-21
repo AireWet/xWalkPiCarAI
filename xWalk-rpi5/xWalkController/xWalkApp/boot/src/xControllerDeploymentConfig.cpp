@@ -59,8 +59,8 @@ namespace
          {"video_recording_camera_device", "/dev/video0"},
          {"video_recording_fps", "20"},
          {"video_recording_read_timeout_ms", "1000"},
-         {"video_stream_camera_backend", "v4l2"},
-         {"video_stream_camera_device", "/dev/video0"},
+         {"video_stream_camera_backend", "libcamera"},
+         {"video_stream_camera_device", "csi"},
          {"video_stream_width", "640"},
          {"video_stream_height", "480"},
          {"video_stream_jpeg_quality", "80"},
@@ -237,6 +237,12 @@ namespace
                (value == "image_sequence");
     }
 
+    ::ctrl::boolean validV4l2CameraDevice(::ctrl::stringview value) noexcept
+    {
+        constexpr ::ctrl::stringview prefix{"/dev/video"};
+        return (value.rfind(prefix, 0U) == 0U) && parseUnsigned(value.substr(prefix.size()), 0U, 1'024U);
+    }
+
     ::ctrl::boolean validProvider(::ctrl::stringview value) noexcept
     {
         return (value == "ollama") || (value == "openai") || (value == "chatgpt") || (value == "gemini") ||
@@ -382,16 +388,19 @@ namespace xwalk::ctrl
             const ::ctrl::string deviceKey = ::ctrl::string(prefix) + "_camera_device";
             const ::ctrl::string backend = value(store, backendKey);
             const ::ctrl::string device = value(store, deviceKey);
-            const ::ctrl::boolean sourceValid =
+            const ::ctrl::boolean streamingBackend = ::ctrl::stringview(prefix) == "video_stream";
+            const ::ctrl::boolean streamSelectionValid = ((backend == "libcamera") && (device == "csi")) ||
+                                                         ((backend == "v4l2") && validV4l2CameraDevice(device));
+            const ::ctrl::boolean otherSourceValid =
                 backend == "gstreamer" ? !device.empty()
                                        : ((backend == "automatic") || ::ctrl::filesystempath(device).is_absolute());
-            const ::ctrl::boolean streamingBackend = ::ctrl::stringview(prefix) == "video_stream";
-            const ::ctrl::boolean streamingBackendValid = (streamingBackend == false) || (backend == "v4l2") ||
-                                                          (backend == "gstreamer") || (backend == "automatic");
+            const ::ctrl::boolean selectionValid =
+                streamingBackend ? streamSelectionValid : (validCameraBackend(backend) && otherSourceValid);
             appendCheck(report,
-                        validCameraBackend(backend) && sourceValid && streamingBackendValid,
+                        selectionValid,
                         backendKey,
-                        "supported backend with compatible source");
+                        streamingBackend ? "libcamera/csi or v4l2 with /dev/videoN"
+                                         : "supported backend with compatible source");
         }
         appendCheck(report,
                     parseUnsigned(value(store, "computer_vision_width"), 16U, 7'680U) &&

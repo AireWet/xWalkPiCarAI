@@ -167,6 +167,10 @@ required_packages=(
     espeak-ng libttspico-utils curl ca-certificates
 )
 if [ "$camera" = "csi" ]; then
+    required_packages+=(
+        gstreamer1.0-tools gstreamer1.0-plugins-base
+        libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+    )
     runtime_home="$(getent passwd "$runtime_user" | awk -F: 'NR == 1 { print $6 }')"
     if [ ! -x "$runtime_home/.local/bin/rpicam-still" ]; then
         required_packages+=(rpicam-apps)

@@ -30,6 +30,7 @@
 
 #include "xHal_Rpi5CarCameraStream.h"
 
+#include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 
 /******************************************************************************
@@ -42,6 +43,17 @@
  */
 namespace xwalk::hal
 {
+
+    /** @brief OpenCV operations used by the camera-stream provider. */
+    struct XWalkCameraStreamOpenCvOperations
+    {
+            boolean (*isOpened)(contextpointer context, const cv::VideoCapture& camera) noexcept;
+            boolean (*open)(contextpointer context, cv::VideoCapture& camera, stringview source, int apiPreference);
+            boolean (*set)(contextpointer context, cv::VideoCapture& camera, int property, float64 value);
+            boolean (*read)(contextpointer context, cv::VideoCapture& camera, cv::Mat& frame);
+            boolean (*encode)(contextpointer context, const cv::Mat& frame, uint32 jpegQuality, bytevector& jpeg);
+            void (*release)(contextpointer context, cv::VideoCapture& camera) noexcept;
+    };
 
     /******************************************************************************
      * Class declarations
@@ -65,6 +77,12 @@ namespace xwalk::hal
             /** @brief OpenCV camera handle owned and released by this backend. */
             cv::VideoCapture camera{};
 
+            /** @brief Optional non-owning context forwarded to OpenCV operations. */
+            contextpointer operationContext{};
+
+            /** @brief Complete OpenCV operation table copied at construction. */
+            XWalkCameraStreamOpenCvOperations operations{};
+
         protected:
             /**************************************************************************
              * Protected member functions
@@ -77,6 +95,15 @@ namespace xwalk::hal
              * @throws std::invalid_argument If `context` is null.
              */
             static XWalkCameraStreamOpenCv& backend(contextpointer context);
+
+            /** @brief Returns the production OpenCV operation table. */
+            static XWalkCameraStreamOpenCvOperations systemOperations() noexcept;
+
+            /** @brief Validates a complete OpenCV operation table. */
+            static void validateOperations(const XWalkCameraStreamOpenCvOperations& selectedOperations);
+
+            /** @brief Builds the fixed libcamera GStreamer pipeline for validated dimensions. */
+            static string libcameraPipeline(const XWalkCameraStreamConfiguration& configuration);
 
             /**
              * @brief Opens and configures the selected OpenCV camera source.
@@ -110,7 +137,16 @@ namespace xwalk::hal
              **************************************************************************/
 
             /** @brief Creates an idle OpenCV camera backend without opening hardware. */
-            XWalkCameraStreamOpenCv() = default;
+            XWalkCameraStreamOpenCv();
+
+            /**
+             * @brief Creates an idle backend with injectable operations for host testing.
+             * @param[in] selectedOperationContext Nullable context forwarded without ownership.
+             * @param[in] selectedOperations Complete operation table copied by value.
+             * @throws std::invalid_argument If an operation callback is null.
+             */
+            XWalkCameraStreamOpenCv(contextpointer selectedOperationContext,
+                                    const XWalkCameraStreamOpenCvOperations& selectedOperations);
 
             /** @brief Releases the owned OpenCV camera when it remains open. */
             ~XWalkCameraStreamOpenCv() noexcept;

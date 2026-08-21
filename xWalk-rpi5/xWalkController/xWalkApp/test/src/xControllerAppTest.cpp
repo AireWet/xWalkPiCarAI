@@ -107,6 +107,29 @@ namespace
         return report;
     }
 
+    /** @brief Validates one paired video-stream backend and source selection. */
+    xwalk::ctrl::XWalkDeploymentConfigReport validateVideoStreamSelection(ctrl::stringview backend,
+                                                                          ctrl::stringview device)
+    {
+        const ctrl::filesystempath path =
+            ctrl::filesystempath("/tmp") /
+            ("xwalk-video-stream-selection-" + std::to_string(static_cast<unsigned long>(::getpid())) + ".conf");
+        {
+            std::ofstream output(path);
+            if (!output.is_open())
+            {
+                return {false, {"[FAIL] temporary configuration could not be opened"}};
+            }
+            output << "video_stream_camera_backend = " << backend << '\n';
+            output << "video_stream_camera_device = " << device << '\n';
+        }
+        const xwalk::ctrl::XWalkDeploymentConfigReport report =
+            xwalk::ctrl::XWALK_validateDeploymentConfig(path.string());
+        std::error_code removeError;
+        static_cast<void>(std::filesystem::remove(path, removeError));
+        return report;
+    }
+
     /******************************************************************************
      * Test function definitions
      ******************************************************************************/
@@ -619,6 +642,12 @@ namespace
                   repositoryEffective.end());
         EXPECT_NE(std::find(repositoryEffective.begin(),
                             repositoryEffective.end(),
+                            "video_stream_camera_backend = libcamera"),
+                  repositoryEffective.end());
+        EXPECT_NE(std::find(repositoryEffective.begin(), repositoryEffective.end(), "video_stream_camera_device = csi"),
+                  repositoryEffective.end());
+        EXPECT_NE(std::find(repositoryEffective.begin(),
+                            repositoryEffective.end(),
                             "voice_active_car_gpt_maximum_output_tokens = 256"),
                   repositoryEffective.end());
         EXPECT_NE(std::find(repositoryEffective.begin(),
@@ -797,6 +826,17 @@ namespace
                 validateDeploymentOverride(validOverride.name, validOverride.value);
             EXPECT_TRUE(report.valid) << validOverride.name << '=' << validOverride.value;
         }
+    }
+
+    /** @brief Accepts only safe paired video-stream backend and source selections. */
+    TEST(XWalkAppGroup, DeploymentConfigurationValidatesVideoStreamSelection)
+    {
+        EXPECT_TRUE(validateVideoStreamSelection("libcamera", "csi").valid);
+        EXPECT_TRUE(validateVideoStreamSelection("v4l2", "/dev/video12").valid);
+        EXPECT_FALSE(validateVideoStreamSelection("gstreamer", "libcamerasrc ! appsink").valid);
+        EXPECT_FALSE(validateVideoStreamSelection("automatic", "/dev/video0").valid);
+        EXPECT_FALSE(validateVideoStreamSelection("libcamera", "libcamerasrc ! filesink location=/tmp/frame").valid);
+        EXPECT_FALSE(validateVideoStreamSelection("v4l2", "/dev/media0").valid);
     }
 
     /**

@@ -7,8 +7,9 @@ peripheral must still be verified on the target. A source build is not proof tha
 ## Dependencies
 
 Required build and runtime components are a C++ compiler, CMake, Ninja, ALSA, libcurl, libsndfile, I2C tools,
-the Linux I2C/SPI/GPIO interfaces, Espeak NG, and `gpiod`. Camera commands use either `rpicam-apps` for CSI or
-`ffmpeg` for USB. The reviewed Vosk runtime and model are installed from
+the Linux I2C/SPI/GPIO interfaces, Espeak NG, and `gpiod`. Still-camera commands use either `rpicam-apps` for CSI
+or `ffmpeg` for USB. CSI live streaming also requires OpenCV GStreamer support and GStreamer's `libcamerasrc`
+plugin. The reviewed Vosk runtime and model are installed from
 `xWalkLibrary`; Ollama remains optional and is never installed unless its setup
 option is selected.
 
@@ -330,3 +331,18 @@ run `doctor`, calibrate left/right direction, balance and steering at the first-
 SIGTERM during controlled motion and confirm both motors electrically stop. Also verify restart, power loss,
 camera, audio, sensors, and the selected SPI peripheral. Until those target checks pass, call this repository
 host-tested and deployment-ready in source, not physically verified or plug-and-run.
+## Raspberry Pi CSI live streaming
+
+The deployed `video-stream` profile uses these loopback-only settings:
+
+```ini
+video_stream_camera_backend = libcamera
+video_stream_camera_device = csi
+video_stream_bind_address = 127.0.0.1
+```
+
+The HAL constructs a fixed `libcamerasrc` GStreamer pipeline from validated
+width and height values. OpenCV must include GStreamer support, and GStreamer
+must provide `libcamerasrc` and `videoconvert`. Configuration does not accept
+pipeline text. USB deployments remain supported with `v4l2` and an exact
+`/dev/videoN` device.
