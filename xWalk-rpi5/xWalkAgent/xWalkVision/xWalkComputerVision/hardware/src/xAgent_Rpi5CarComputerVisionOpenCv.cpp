@@ -87,8 +87,10 @@ namespace xwalk::agent
         {
             XWALK_RPIAGENT_ERROR(XWALK_RANGE, "Computer-vision dimensions are outside their range");
         }
-        if (!configurationValue.faceCascadePath.empty() &&
-            (faceCascade.load(configurationValue.faceCascadePath) == false))
+        const agent::boolean faceCascadeConfigured = !configurationValue.faceCascadePath.empty();
+        const agent::boolean faceCascadeLoaded =
+            !faceCascadeConfigured || faceCascade.load(configurationValue.faceCascadePath);
+        if (faceCascadeConfigured && (faceCascadeLoaded == false))
         {
             XWALK_RPIAGENT_ERROR(XWALK_RUNTIME, "Computer-vision face cascade could not be loaded");
         }
@@ -315,7 +317,8 @@ namespace xwalk::agent
     void XWalkComputerVisionOpenCv::switchFace(agent::contextpointer context, agent::boolean enabled)
     {
         XWalkComputerVisionOpenCv& backend = provider(context);
-        if (enabled && backend.faceCascade.empty())
+        const agent::boolean faceCascadeEmpty = backend.faceCascade.empty();
+        if (enabled && faceCascadeEmpty)
         {
             XWALK_RPIAGENT_ERROR(XWALK_LOGIC, "Computer-vision face detection requires a configured cascade");
         }

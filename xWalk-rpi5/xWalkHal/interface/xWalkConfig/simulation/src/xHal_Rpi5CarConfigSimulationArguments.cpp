@@ -133,7 +133,8 @@ namespace xwalk::hal::sim
             return false;
         }
         const stringview number = target.substr(prefix.size());
-        if (number.empty())
+        const boolean numberEmpty = number.empty();
+        if (numberEmpty)
         {
             return false;
         }
@@ -173,7 +174,8 @@ namespace xwalk::hal::sim
         }
         const size suffixLength = enableRequested ? enableSuffix.size() : disableSuffix.size();
         const stringview target = selector.substr(0U, selector.size() - suffixLength);
-        if (targetIsValid(target) == false)
+        const boolean targetValid = targetIsValid(target);
+        if (targetValid == false)
         {
             return;
         }

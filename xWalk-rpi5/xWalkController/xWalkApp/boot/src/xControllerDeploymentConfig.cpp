@@ -108,7 +108,8 @@ namespace
 
     ::ctrl::boolean parseUnsigned(::ctrl::stringview text, ::ctrl::uint32 minimum, ::ctrl::uint32 maximum) noexcept
     {
-        if (text.empty())
+        const ::ctrl::boolean textEmpty = text.empty();
+        if (textEmpty)
         {
             return false;
         }
@@ -177,16 +178,18 @@ namespace
 
     ::ctrl::boolean validPhraseList(::ctrl::stringview value) noexcept
     {
-        if (value.empty())
+        const ::ctrl::boolean valueEmpty = value.empty();
+        if (valueEmpty)
         {
             return false;
         }
         ::ctrl::stringvector normalizedPhrases;
         ::ctrl::size offset{};
-        while (offset <= value.size())
+        const ::ctrl::size valueSize = value.size();
+        while (offset <= valueSize)
         {
             const ::ctrl::size comma = value.find(',', offset);
-            const ::ctrl::size end = comma == ::ctrl::stringview::npos ? value.size() : comma;
+            const ::ctrl::size end = comma == ::ctrl::stringview::npos ? valueSize : comma;
             const ::ctrl::stringview phrase = value.substr(offset, end - offset);
             const ::ctrl::size first = phrase.find_first_not_of(" \t\r\n");
             const ::ctrl::size last = phrase.find_last_not_of(" \t\r\n");
@@ -223,7 +226,9 @@ namespace
 
     ::ctrl::boolean validGpioPin(::ctrl::stringview value) noexcept
     {
-        if ((value.size() >= 2U) && (value[0U] == 'D') && parseUnsigned(value.substr(1U), 0U, 16U))
+        const ::ctrl::boolean digitalPinValid =
+            (value.size() >= 2U) && (value[0U] == 'D') && parseUnsigned(value.substr(1U), 0U, 16U);
+        if (digitalPinValid)
         {
             return true;
         }

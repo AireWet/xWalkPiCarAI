@@ -55,7 +55,8 @@ namespace
                                                                const XWalkHal::bytevector& pcm)
     {
         static_cast<void>(context);
-        if ((session == nullptr) || pcm.empty())
+        const boolean pcmEmpty = pcm.empty();
+        if ((session == nullptr) || pcmEmpty)
         {
             XWALK_HAL_ERROR(XWALK_RUNTIME, "Speech hardware test received invalid streaming PCM");
         }

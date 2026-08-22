@@ -87,13 +87,15 @@ namespace xwalk::agent::test::mjpeg_stream
         address.sin_family = AF_INET;
         address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
         address.sin_port = 0U;
-        if (::bind(descriptor, reinterpret_cast<const sockaddr*>(&address), sizeof(address)) != 0)
+        const int bindResult = ::bind(descriptor, reinterpret_cast<const sockaddr*>(&address), sizeof(address));
+        if (bindResult != 0)
         {
             closeTestDescriptor(descriptor);
             return 0U;
         }
         socklen_t size = sizeof(address);
-        if (::getsockname(descriptor, reinterpret_cast<sockaddr*>(&address), &size) != 0)
+        const int socketNameResult = ::getsockname(descriptor, reinterpret_cast<sockaddr*>(&address), &size);
+        if (socketNameResult != 0)
         {
             closeTestDescriptor(descriptor);
             return 0U;
@@ -114,13 +116,15 @@ namespace xwalk::agent::test::mjpeg_stream
         address.sin_family = AF_INET;
         address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
         address.sin_port = htons(static_cast<in_port_t>(port));
-        if (::connect(descriptor, reinterpret_cast<const sockaddr*>(&address), sizeof(address)) != 0)
+        const int connectResult = ::connect(descriptor, reinterpret_cast<const sockaddr*>(&address), sizeof(address));
+        if (connectResult != 0)
         {
             closeTestDescriptor(descriptor);
             return -1;
         }
         const int flags = ::fcntl(descriptor, F_GETFL, 0);
-        if ((flags < 0) || (::fcntl(descriptor, F_SETFL, flags | O_NONBLOCK) != 0))
+        const int nonBlockingResult = flags < 0 ? -1 : ::fcntl(descriptor, F_SETFL, flags | O_NONBLOCK);
+        if ((flags < 0) || (nonBlockingResult != 0))
         {
             closeTestDescriptor(descriptor);
             return -1;
@@ -131,9 +135,10 @@ namespace xwalk::agent::test::mjpeg_stream
     agent::boolean sendRequest(int descriptor, agent::stringview request) noexcept
     {
         agent::size sent{};
-        while (sent < request.size())
+        const agent::size requestSize = request.size();
+        while (sent < requestSize)
         {
-            const ssize_t count = ::send(descriptor, request.data() + sent, request.size() - sent, MSG_NOSIGNAL);
+            const ssize_t count = ::send(descriptor, request.data() + sent, requestSize - sent, MSG_NOSIGNAL);
             if (count <= 0)
             {
                 return false;

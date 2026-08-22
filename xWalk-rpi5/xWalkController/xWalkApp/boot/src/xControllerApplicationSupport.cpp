@@ -80,7 +80,8 @@ namespace xwalk::ctrl
     {
         for (const ::ctrl::string& argument : applicationArguments.traceArguments)
         {
-            if (hal::XWalkTrace::applyGlobalTraceArgument(argument) == false)
+            const ::ctrl::boolean traceArgumentApplied = hal::XWalkTrace::applyGlobalTraceArgument(argument);
+            if (traceArgumentApplied == false)
             {
                 return false;
             }

@@ -27,6 +27,7 @@ syntaxError:*xWalk-rpi5/xWalkAgent/test/src/xAgent_Rpi5CarAgentGoogleTest.cpp
 syntaxError:*xWalk-rpi5/xWalkAgent/*/test/src/xAgent_Rpi5Car*GroupTest.cpp
 syntaxError:*xWalk-rpi5/xWalkHal/*/test/src/xHal_Rpi5Car*GroupTest.cpp
 syntaxError:*xWalk-rpi5/xWalkController/xWalkApp/test/src/*.cpp
+syntaxError:*xWalk-rpi5/xWalkController/xWalkScheduler/test/src/*.cpp
 syntaxError:*xWalk-rpi5/xWalkController/xWalkTest/xSequenceTest/main.cpp
 syntaxError:*xWalk-rpi5/xWalkController/xWalkTest/xGoogleTest/src/main.cpp
 syntaxError:*xWalk-rpi5/xWalkAgent/xWalkVision/xWalkComputerVision/hardware/test/src/xAgent_Rpi5CarComputerVisionOpenCvTest.cpp

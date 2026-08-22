@@ -39,105 +39,130 @@ int main()
     using xwalk::agent::test::doctor::requireAssessment;
 
     const XWalkDoctorRobotHatEvidence verifiedV4{false, true, true, true, true, true, 0x14U};
-    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", verifiedV4),
-                          XWalkDoctorResultStatus::Pass,
-                          "MCU response at 0x14",
-                          "complete Robot HAT v4 evidence did not pass") != 0)
+    const auto verifiedV4Assessment = XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", verifiedV4);
+    const agent::int32 verifiedV4Result = requireAssessment(verifiedV4Assessment,
+                                                            XWalkDoctorResultStatus::Pass,
+                                                            "MCU response at 0x14",
+                                                            "complete Robot HAT v4 evidence did not pass");
+    if (verifiedV4Result != 0)
     {
         return 1;
     }
     XWalkDoctorRobotHatEvidence incompleteV4 = verifiedV4;
     incompleteV4.gpioIdentityMatched = false;
-    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", incompleteV4),
-                          XWalkDoctorResultStatus::Warn,
-                          "evidence is incomplete",
-                          "mismatched v4 GPIO identity was not incomplete") != 0)
+    auto incompleteV4Assessment = XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", incompleteV4);
+    agent::int32 incompleteV4Result = requireAssessment(incompleteV4Assessment,
+                                                        XWalkDoctorResultStatus::Warn,
+                                                        "evidence is incomplete",
+                                                        "mismatched v4 GPIO identity was not incomplete");
+    if (incompleteV4Result != 0)
     {
         return 1;
     }
     incompleteV4 = verifiedV4;
     incompleteV4.mcuResponded = false;
-    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", incompleteV4),
-                          XWalkDoctorResultStatus::Warn,
-                          "evidence is incomplete",
-                          "missing v4 MCU response was not incomplete") != 0)
+    incompleteV4Assessment = XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", incompleteV4);
+    incompleteV4Result = requireAssessment(incompleteV4Assessment,
+                                           XWalkDoctorResultStatus::Warn,
+                                           "evidence is incomplete",
+                                           "missing v4 MCU response was not incomplete");
+    if (incompleteV4Result != 0)
     {
         return 1;
     }
     incompleteV4 = verifiedV4;
     incompleteV4.firmwareRead = false;
-    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", incompleteV4),
-                          XWalkDoctorResultStatus::Warn,
-                          "evidence is incomplete",
-                          "v4 firmware-read failure was not incomplete") != 0)
+    incompleteV4Assessment = XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", incompleteV4);
+    incompleteV4Result = requireAssessment(incompleteV4Assessment,
+                                           XWalkDoctorResultStatus::Warn,
+                                           "evidence is incomplete",
+                                           "v4 firmware-read failure was not incomplete");
+    if (incompleteV4Result != 0)
     {
         return 1;
     }
     incompleteV4 = verifiedV4;
     incompleteV4.batterySampleRead = false;
-    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", incompleteV4),
-                          XWalkDoctorResultStatus::Warn,
-                          "evidence is incomplete",
-                          "v4 battery-read failure was not incomplete") != 0)
+    incompleteV4Assessment = XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", incompleteV4);
+    incompleteV4Result = requireAssessment(incompleteV4Assessment,
+                                           XWalkDoctorResultStatus::Warn,
+                                           "evidence is incomplete",
+                                           "v4 battery-read failure was not incomplete");
+    if (incompleteV4Result != 0)
     {
         return 1;
     }
     XWalkDoctorRobotHatEvidence conflictingV4 = verifiedV4;
     conflictingV4.v5UuidDetected = true;
-    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", conflictingV4),
+    const auto conflictingV4Assessment = XWalkDoctorAssessment::assessRobotHat("robot_hat_v4", conflictingV4);
+    const agent::int32 conflictingV4Result =
+        requireAssessment(conflictingV4Assessment,
                           XWalkDoctorResultStatus::Fail,
                           "conflicts with detected Robot HAT v5 UUID",
-                          "conflicting Robot HAT v5 UUID did not fail v4 verification") != 0)
+                          "conflicting Robot HAT v5 UUID did not fail v4 verification");
+    if (conflictingV4Result != 0)
     {
         return 1;
     }
     const XWalkDoctorRobotHatEvidence verifiedV5{true, false, false, false, false, false, 0U};
-    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("robot_hat_v5", verifiedV5),
-                          XWalkDoctorResultStatus::Pass,
-                          "9daeea78-0000-076e-0032-582369ac3e02",
-                          "supported Robot HAT v5 UUID did not pass") != 0)
+    const auto verifiedV5Assessment = XWalkDoctorAssessment::assessRobotHat("robot_hat_v5", verifiedV5);
+    const agent::int32 verifiedV5Result = requireAssessment(verifiedV5Assessment,
+                                                            XWalkDoctorResultStatus::Pass,
+                                                            "9daeea78-0000-076e-0032-582369ac3e02",
+                                                            "supported Robot HAT v5 UUID did not pass");
+    if (verifiedV5Result != 0)
     {
         return 1;
     }
     const XWalkDoctorRobotHatEvidence missingV5{};
-    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("robot_hat_v5", missingV5),
-                          XWalkDoctorResultStatus::Fail,
-                          "requires Device Tree UUID",
-                          "Robot HAT v5 without its UUID did not fail") != 0)
+    const auto missingV5Assessment = XWalkDoctorAssessment::assessRobotHat("robot_hat_v5", missingV5);
+    const agent::int32 missingV5Result = requireAssessment(missingV5Assessment,
+                                                           XWalkDoctorResultStatus::Fail,
+                                                           "requires Device Tree UUID",
+                                                           "Robot HAT v5 without its UUID did not fail");
+    if (missingV5Result != 0)
     {
         return 1;
     }
-    if (requireAssessment(XWalkDoctorAssessment::assessRobotHat("auto", missingV5),
-                          XWalkDoctorResultStatus::Fail,
-                          "cannot select Robot HAT v4",
-                          "automatic selection inferred Robot HAT v4") != 0)
+    const auto automaticAssessment = XWalkDoctorAssessment::assessRobotHat("auto", missingV5);
+    const agent::int32 automaticResult = requireAssessment(automaticAssessment,
+                                                           XWalkDoctorResultStatus::Fail,
+                                                           "cannot select Robot HAT v4",
+                                                           "automatic selection inferred Robot HAT v4");
+    if (automaticResult != 0)
     {
         return 1;
     }
 
     const XWalkDoctorOperationState boundedState{true, true, false, false, false, false, false};
-    if (requireAssessment(XWalkDoctorAssessment::assessSafety(boundedState),
-                          XWalkDoctorResultStatus::Pass,
-                          "MCU reset completed",
-                          "successful bounded reset did not pass Safety") != 0)
+    const auto boundedAssessment = XWalkDoctorAssessment::assessSafety(boundedState);
+    const agent::int32 boundedResult = requireAssessment(boundedAssessment,
+                                                         XWalkDoctorResultStatus::Pass,
+                                                         "MCU reset completed",
+                                                         "successful bounded reset did not pass Safety");
+    if (boundedResult != 0)
     {
         return 1;
     }
     XWalkDoctorOperationState failedResetState = boundedState;
     failedResetState.resetCompleted = false;
-    if (requireAssessment(XWalkDoctorAssessment::assessSafety(failedResetState),
-                          XWalkDoctorResultStatus::Fail,
-                          "reset did not finish",
-                          "failed reset did not fail Safety") != 0)
+    const auto failedResetAssessment = XWalkDoctorAssessment::assessSafety(failedResetState);
+    const agent::int32 failedResetResult = requireAssessment(failedResetAssessment,
+                                                             XWalkDoctorResultStatus::Fail,
+                                                             "reset did not finish",
+                                                             "failed reset did not fail Safety");
+    if (failedResetResult != 0)
     {
         return 1;
     }
     XWalkDoctorOperationState violatedState = boundedState;
     violatedState.spiTransferActivated = true;
-    if (requireAssessment(XWalkDoctorAssessment::assessSafety(violatedState),
-                          XWalkDoctorResultStatus::Fail,
-                          "invariant violated",
-                          "prohibited Doctor operation did not fail Safety") != 0)
+    const auto violatedAssessment = XWalkDoctorAssessment::assessSafety(violatedState);
+    const agent::int32 violatedResult = requireAssessment(violatedAssessment,
+                                                          XWalkDoctorResultStatus::Fail,
+                                                          "invariant violated",
+                                                          "prohibited Doctor operation did not fail Safety");
+    if (violatedResult != 0)
     {
         return 1;
     }

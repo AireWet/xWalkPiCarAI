@@ -47,7 +47,8 @@ namespace
             return false;
         }
         const ::ctrl::stringview number = uid.substr(separator + 1U);
-        if (number.empty())
+        const ::ctrl::boolean numberEmpty = number.empty();
+        if (numberEmpty)
         {
             return false;
         }
@@ -64,7 +65,8 @@ namespace
     /** @brief Validates one canonical trace module token. */
     ::ctrl::boolean validTraceModule(::ctrl::stringview module) noexcept
     {
-        if (module.empty() || (module[0U] < 'A') || (module[0U] > 'Z'))
+        const ::ctrl::boolean moduleInvalid = module.empty() || (module[0U] < 'A') || (module[0U] > 'Z');
+        if (moduleInvalid)
         {
             return false;
         }
@@ -150,7 +152,8 @@ namespace xwalk::ctrl
             {
                 if (option == optionName)
                 {
-                    if (commandArguments.size() < 2U)
+                    const ::ctrl::boolean optionValueMissing = commandArguments.size() < 2U;
+                    if (optionValueMissing)
                     {
                         return false;
                     }
@@ -160,7 +163,8 @@ namespace xwalk::ctrl
                     break;
                 }
                 const ::ctrl::string assignmentPrefix = ::ctrl::string(optionName) + "=";
-                if (option.rfind(assignmentPrefix, 0U) == 0U)
+                const ::ctrl::boolean assignmentMatched = option.rfind(assignmentPrefix, 0U) == 0U;
+                if (assignmentMatched)
                 {
                     matchedOption = optionName;
                     value = option.substr(assignmentPrefix.size());
@@ -168,11 +172,13 @@ namespace xwalk::ctrl
                     break;
                 }
             }
-            if (matchedOption.empty())
+            const ::ctrl::boolean optionUnmatched = matchedOption.empty();
+            if (optionUnmatched)
             {
                 break;
             }
-            if (value.empty())
+            const ::ctrl::boolean optionValueEmpty = value.empty();
+            if (optionValueEmpty)
             {
                 return false;
             }

@@ -75,28 +75,32 @@ namespace
             const stringview option(arguments[index]);
             if (option == "--seed")
             {
-                if (!parseUnsigned(arguments[index + 1], options.seed))
+                const boolean seedValid = parseUnsigned(arguments[index + 1], options.seed);
+                if (!seedValid)
                 {
                     return false;
                 }
             }
             else if (option == "--iterations")
             {
-                if (!parseUnsigned(arguments[index + 1], options.iterations))
+                const boolean iterationsValid = parseUnsigned(arguments[index + 1], options.iterations);
+                if (!iterationsValid)
                 {
                     return false;
                 }
             }
             else if (option == "--logical-duration")
             {
-                if (!parseUnsigned(arguments[index + 1], options.logicalDuration))
+                const boolean durationValid = parseUnsigned(arguments[index + 1], options.logicalDuration);
+                if (!durationValid)
                 {
                     return false;
                 }
             }
             else if (option == "--fault-rate")
             {
-                if (!parseRate(arguments[index + 1], options.faultRate))
+                const boolean faultRateValid = parseRate(arguments[index + 1], options.faultRate);
+                if (!faultRateValid)
                 {
                     return false;
                 }
@@ -122,9 +126,11 @@ namespace
             return 0U;
         }
         uint64 count{};
-        while (::readdir(directory) != nullptr)
+        dirent* entry = ::readdir(directory);
+        while (entry != nullptr)
         {
             ++count;
+            entry = ::readdir(directory);
         }
         static_cast<void>(::closedir(directory));
         return count >= 2U ? count - 2U : 0U;
@@ -197,7 +203,8 @@ namespace
 int main(int argumentCount, char** arguments)
 {
     Options options;
-    if (!parseOptions(argumentCount, arguments, options))
+    const boolean optionsValid = parseOptions(argumentCount, arguments, options);
+    if (!optionsValid)
     {
         std::cerr << "usage: xWalkRobotHatSoakTest --seed N --iterations N "
                      "--logical-duration N --fault-rate 0..1 --report PATH\n";
@@ -210,7 +217,8 @@ int main(int argumentCount, char** arguments)
     configuration.i2cFailureInterval = 17U;
     configuration.cameraDelayTicks = 2U;
     XWalkLogicalModelState model;
-    if (initializeLogicalModel(model, configuration) != XWalkLogicalModelStatus::Ok)
+    XWalkLogicalModelStatus modelStatus = initializeLogicalModel(model, configuration);
+    if (modelStatus != XWalkLogicalModelStatus::Ok)
     {
         return 3;
     }
@@ -225,7 +233,8 @@ int main(int argumentCount, char** arguments)
     {
         if (!model.armed)
         {
-            if (initializeLogicalModel(model, configuration) != XWalkLogicalModelStatus::Ok)
+            modelStatus = initializeLogicalModel(model, configuration);
+            if (modelStatus != XWalkLogicalModelStatus::Ok)
             {
                 passed = false;
                 break;
@@ -233,7 +242,8 @@ int main(int argumentCount, char** arguments)
         }
         const float64 left = (randomUnit(randomState) * 200.0) - 100.0;
         const float64 right = (randomUnit(randomState) * 200.0) - 100.0;
-        if (commandLogicalMotors(model, left, right) != XWalkLogicalModelStatus::Ok)
+        const XWalkLogicalModelStatus motorStatus = commandLogicalMotors(model, left, right);
+        if (motorStatus != XWalkLogicalModelStatus::Ok)
         {
             passed = false;
             break;
@@ -252,10 +262,14 @@ int main(int argumentCount, char** arguments)
                 break;
             }
         }
-        else if (advanceLogicalModel(model, ticksPerIteration) != XWalkLogicalModelStatus::Ok)
+        else
         {
-            passed = false;
-            break;
+            const XWalkLogicalModelStatus advanceStatus = advanceLogicalModel(model, ticksPerIteration);
+            if (advanceStatus != XWalkLogicalModelStatus::Ok)
+            {
+                passed = false;
+                break;
+            }
         }
         maximumEvents = std::max<uint64>(maximumEvents, static_cast<uint64>(model.eventCount));
         if ((model.eventCount > XWALK_LOGICAL_MODEL_MAXIMUM_EVENTS) ||
@@ -271,7 +285,8 @@ int main(int argumentCount, char** arguments)
     passed = passed && !model.armed && (model.commandedLeftSpeed == 0.0) && (model.commandedRightSpeed == 0.0) &&
              (final.residentBytes <= baseline.residentBytes + MEMORY_TOLERANCE_BYTES) &&
              (final.descriptors <= baseline.descriptors) && (final.threads <= baseline.threads);
-    if (!writeReport(options, baseline, final, faults, safeStops, maximumEvents, passed))
+    const boolean reportWritten = writeReport(options, baseline, final, faults, safeStops, maximumEvents, passed);
+    if (!reportWritten)
     {
         return 4;
     }

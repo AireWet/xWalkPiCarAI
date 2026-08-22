@@ -28,7 +28,7 @@
  * Includes
  ******************************************************************************/
 
-#include "xAgent_Rpi5CarBootTypes.h"
+#include "xHal_Rpi5CarTypes.h"
 
 /******************************************************************************
  * Namespace declarations
@@ -50,7 +50,7 @@ namespace xwalk::ctrl
      * @param[in] commandArguments Complete command arguments excluding the executable name.
      * @return Command-specific Agent boot mode, or Base when no specialized service is required.
      */
-    agent::uint8 XWALK_selectBootMode(const ::ctrl::stringvector& commandArguments) noexcept;
+    ::ctrl::uint8 XWALK_selectBootMode(const ::ctrl::stringvector& commandArguments) noexcept;
 
 } /* namespace xwalk::ctrl */
 

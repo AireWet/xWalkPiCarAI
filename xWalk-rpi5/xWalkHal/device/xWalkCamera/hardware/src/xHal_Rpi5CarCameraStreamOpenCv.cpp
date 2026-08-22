@@ -242,7 +242,8 @@ namespace xwalk::hal
         }
         const boolean encoded =
             provider.operations.encode(provider.operationContext, frame, configuration.jpegQuality, jpeg);
-        if ((encoded == false) || jpeg.empty())
+        const boolean jpegEmpty = jpeg.empty();
+        if ((encoded == false) || jpegEmpty)
         {
             jpeg.clear();
             stopCamera(context);

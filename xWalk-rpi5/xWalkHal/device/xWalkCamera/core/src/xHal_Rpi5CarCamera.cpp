@@ -21,8 +21,10 @@ namespace xwalk::hal
     boolean validCameraSourceString(stringview source) noexcept
     {
         constexpr size MAXIMUM_SOURCE_BYTES{256U};
-        if (source.empty() || (source.size() > MAXIMUM_SOURCE_BYTES) || (source.find('\0') != stringview::npos) ||
-            (source.find('\r') != stringview::npos) || (source.find('\n') != stringview::npos))
+        const boolean sourceInvalid =
+            source.empty() || (source.size() > MAXIMUM_SOURCE_BYTES) || (source.find('\0') != stringview::npos) ||
+            (source.find('\r') != stringview::npos) || (source.find('\n') != stringview::npos);
+        if (sourceInvalid)
         {
             return false;
         }
@@ -31,7 +33,9 @@ namespace xwalk::hal
             return true;
         }
         constexpr stringview DEVICE_PREFIX{"/dev/video"};
-        if ((source.size() <= DEVICE_PREFIX.size()) || (source.substr(0U, DEVICE_PREFIX.size()) != DEVICE_PREFIX))
+        const boolean deviceSourceInvalid =
+            (source.size() <= DEVICE_PREFIX.size()) || (source.substr(0U, DEVICE_PREFIX.size()) != DEVICE_PREFIX);
+        if (deviceSourceInvalid)
         {
             return false;
         }

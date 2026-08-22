@@ -27,7 +27,9 @@ namespace
     /** @brief Decodes one exact JSON trace state into a Boolean value. */
     xwalk::hal::boolean jsonTraceState(json_object* value, xwalk::hal::boolean& enabled)
     {
-        if ((value == nullptr) || (json_object_get_type(value) != json_type_string))
+        const xwalk::hal::boolean valueInvalid =
+            (value == nullptr) || (json_object_get_type(value) != json_type_string);
+        if (valueInvalid)
         {
             return false;
         }
@@ -58,7 +60,9 @@ namespace xwalk::hal
     boolean XWalkTrace::setTraceEnabled(stringview uid, boolean enabled)
     {
         const auto trace = traceSourceLocations.find(string(uid));
-        if ((isValidUid(uid) == false) || (trace == traceSourceLocations.end()))
+        const boolean uidValid = isValidUid(uid);
+        const auto traceEnd = traceSourceLocations.end();
+        if ((uidValid == false) || (trace == traceEnd))
         {
             traceConfigurationErrorValue = "Unknown trace ID: " + string(uid);
             return false;
@@ -75,7 +79,8 @@ namespace xwalk::hal
         const string prefix = string(module) + ".";
         for (const auto& trace : traceSourceLocations)
         {
-            if (trace.first.rfind(prefix, 0U) == 0U)
+            const boolean prefixMatched = trace.first.rfind(prefix, 0U) == 0U;
+            if (prefixMatched)
             {
                 moduleKnown = true;
                 break;
@@ -88,9 +93,11 @@ namespace xwalk::hal
         }
         moduleEnabledValues[string(module)] = enabled;
         auto trace = traceEnabledValues.begin();
-        while (trace != traceEnabledValues.end())
+        boolean tracesRemain = trace != traceEnabledValues.end();
+        while (tracesRemain)
         {
-            if (trace->first.rfind(prefix, 0U) == 0U)
+            const boolean prefixMatched = trace->first.rfind(prefix, 0U) == 0U;
+            if (prefixMatched)
             {
                 trace = traceEnabledValues.erase(trace);
             }
@@ -98,6 +105,7 @@ namespace xwalk::hal
             {
                 ++trace;
             }
+            tracesRemain = trace != traceEnabledValues.end();
         }
         traceConfigurationErrorValue.clear();
         return true;
@@ -268,7 +276,8 @@ namespace xwalk::hal
             return false;
         }
         json_object* root = json_object_from_file(configurationPath.string().c_str());
-        if ((root == nullptr) || (json_object_get_type(root) != json_type_object))
+        const boolean rootInvalid = (root == nullptr) || (json_object_get_type(root) != json_type_object);
+        if (rootInvalid)
         {
             if (root != nullptr)
             {
@@ -289,7 +298,8 @@ namespace xwalk::hal
 
         stringvector selectors;
         json_object* allObject = nullptr;
-        if (json_object_object_get_ex(traceObject, "all", &allObject))
+        const boolean allObjectPresent = json_object_object_get_ex(traceObject, "all", &allObject);
+        if (allObjectPresent)
         {
             json_object* stateObject = nullptr;
             boolean enabled = false;
@@ -318,23 +328,28 @@ namespace xwalk::hal
             boolean moduleKnown = false;
             for (const auto& trace : traceSourceLocations)
             {
-                if (trace.first.rfind(prefix, 0U) == 0U)
+                const boolean prefixMatched = trace.first.rfind(prefix, 0U) == 0U;
+                if (prefixMatched)
                 {
                     moduleKnown = true;
                     break;
                 }
             }
-            if ((moduleKnown == false) || (json_object_get_type(moduleObject) != json_type_object))
+            const boolean moduleObjectInvalid =
+                (moduleKnown == false) || (json_object_get_type(moduleObject) != json_type_object);
+            if (moduleObjectInvalid)
             {
                 json_object_put(root);
                 traceConfigurationErrorValue = "Unknown trace module in JSON: " + module;
                 return false;
             }
             json_object* stateObject = nullptr;
-            if (json_object_object_get_ex(moduleObject, "state", &stateObject))
+            const boolean statePresent = json_object_object_get_ex(moduleObject, "state", &stateObject);
+            if (statePresent)
             {
                 boolean enabled = false;
-                if (jsonTraceState(stateObject, enabled) == false)
+                const boolean stateValid = jsonTraceState(stateObject, enabled);
+                if (stateValid == false)
                 {
                     json_object_put(root);
                     traceConfigurationErrorValue = "Trace JSON module state must be "
@@ -348,14 +363,17 @@ namespace xwalk::hal
 
         json_object_object_foreach(traceObject, tagModuleName, tagModuleObject)
         {
-            if (stringview(tagModuleName) == "all")
+            const boolean allModule = stringview(tagModuleName) == "all";
+            if (allModule)
             {
                 continue;
             }
             json_object* tagsObject = nullptr;
-            if (json_object_object_get_ex(tagModuleObject, "tags", &tagsObject))
+            const boolean tagsPresent = json_object_object_get_ex(tagModuleObject, "tags", &tagsObject);
+            if (tagsPresent)
             {
-                if (json_object_get_type(tagsObject) != json_type_object)
+                const boolean tagsObjectValid = json_object_get_type(tagsObject) == json_type_object;
+                if (tagsObjectValid == false)
                 {
                     json_object_put(root);
                     traceConfigurationErrorValue = "Trace JSON tags must be an object";
@@ -365,13 +383,17 @@ namespace xwalk::hal
                 {
                     const string uid = string(tagModuleName) + "." + numericId;
                     boolean enabled = false;
-                    if ((isValidUid(uid) == false) || (traceSourceLocations.find(uid) == traceSourceLocations.end()))
+                    const boolean uidValid = isValidUid(uid);
+                    const auto trace = traceSourceLocations.find(uid);
+                    const auto traceEnd = traceSourceLocations.end();
+                    if ((uidValid == false) || (trace == traceEnd))
                     {
                         json_object_put(root);
                         traceConfigurationErrorValue = "Unknown trace ID in JSON: " + uid;
                         return false;
                     }
-                    if (jsonTraceState(stateObject, enabled) == false)
+                    const boolean stateValid = jsonTraceState(stateObject, enabled);
+                    if (stateValid == false)
                     {
                         json_object_put(root);
                         traceConfigurationErrorValue = "Trace JSON tag state must be "

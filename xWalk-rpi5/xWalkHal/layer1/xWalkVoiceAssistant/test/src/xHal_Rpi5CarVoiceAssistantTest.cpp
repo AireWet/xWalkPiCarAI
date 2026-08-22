@@ -86,7 +86,9 @@ int main(int count, char* values[])
     xwalk::hal::XWalkTrace::configureGlobal(XWALK_VOICE_ASSISTANT_SIMULATION_TRACE_CONFIG_PATH,
                                             XWALK_VOICE_ASSISTANT_SIMULATION_TRACE_LOG_PATH);
     const xwalk::hal::sim::XWalkVoiceAssistantSimulationArguments arguments(count, values);
-    if (!arguments.valid() || !arguments.applyTraceUpdate())
+    const XWalkHal::boolean argumentsValid = arguments.valid();
+    const XWalkHal::boolean traceUpdateApplied = arguments.applyTraceUpdate();
+    if (!argumentsValid || !traceUpdateApplied)
     {
         return 2;
     }

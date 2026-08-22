@@ -88,21 +88,6 @@ namespace xwalk::ctrl
     XWalkControllerCommandRequest XWALK_parseControllerCommand(const ::ctrl::stringvector& arguments);
 
     /**
-     * @brief Runs the device-free host Controller application.
-     *
-     * @param[in] argumentCount Number of process arguments including the executable name.
-     * @param[in] arguments Non-owning process argument array.
-     *
-     * @return
-     * Zero for generated help, two for invalid global options, or three when a
-     * command requires unavailable hardware.
-     *
-     * @post
-     * No physical hardware backend has been constructed or accessed.
-     */
-    ::ctrl::int32 XWALK_runHostControllerApplication(::ctrl::int32 argumentCount, ::ctrl::charpointer arguments[]);
-
-    /**
      * @brief Executes one application command through a configured controller.
      *
      * @param[in,out] controller Controller whose non-owning dependencies and

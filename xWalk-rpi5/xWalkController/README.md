@@ -5,7 +5,8 @@ exported by `xHal_Rpi5CarTypes.h`. Agent coordinators remain under
 `xwalk::agent`, and hardware-specific types remain under `hal`.
 
 `xWalkController` is the standalone command-line application aggregate. It composes the sibling `xWalkAgent`
-coordinators with the `xWalkController` parser, command dispatcher, guarded boot, and Raspberry Pi executable.
+coordinators with the parser, process scheduler, child-owned guarded boot, command dispatcher, and Raspberry Pi
+executable. Every non-help production command executes only in its scheduler-owned child process.
 The `keyboard-control` command ports upstream interactive driving through the reusable
 `xWalkKeyboardControl` Agent and line-oriented terminal input.
 The `avoid-obstacles` command runs bounded `xWalkObstacleAvoidance` decisions in
@@ -66,7 +67,7 @@ the sibling `xWalkAgent` aggregate and are imported through CMake targets.
 | `xWalkConfig/picar-x.d/` | Functional settings and separate AI-provider profiles |
 | `xWalkHandler/` | Controller contract, implementation, and direct in-memory test |
 | `xWalkApp/` | Application build, includes, sources, generated help, and executable tests |
-| `xWalkScheduler/` | Documented scope for future bounded command scheduling |
+| `xWalkScheduler/` | Fixed-capacity Linux child-process scheduler, IPC, tests, and ownership documentation |
 | `xWalkTest/xGoogleTest/` | Independent CLI unit runner and strict grouped XML inventory |
 | `xWalkTest/xSequenceTest/` | Independent sequence runner and strict grouped XML inventory |
 

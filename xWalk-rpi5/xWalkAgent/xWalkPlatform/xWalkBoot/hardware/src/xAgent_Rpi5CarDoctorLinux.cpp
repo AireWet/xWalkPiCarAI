@@ -272,7 +272,8 @@ namespace xwalk::agent
         }
 
         hal::uint8 resetLine{};
-        if (!hal::XWalkGpio::tryResolvePin(resetPin, resetLine))
+        const agent::boolean resetPinResolved = hal::XWalkGpio::tryResolvePin(resetPin, resetLine);
+        if (!resetPinResolved)
         {
             appendResult(lines, false, "MCU reset", agent::string(resetPin) + " is not a supported Robot HAT pin");
             static_cast<void>(::close(descriptor));

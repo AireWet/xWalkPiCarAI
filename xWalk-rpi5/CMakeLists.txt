@@ -578,6 +578,8 @@ endif()
 add_library(xWalkHal INTERFACE)
 add_library(xWalk::Hal ALIAS xWalkHal)
 target_compile_features(xWalkHal INTERFACE cxx_std_17)
+target_include_directories(xWalkHal INTERFACE
+    ${XWALK_RPI5_ROOT}/xWalkHal/include)
 target_link_libraries(xWalkHal INTERFACE
     xWalkAdc
     xWalkAdxl345
@@ -658,6 +660,17 @@ if(BUILD_TESTING)
         COMMAND "${Python3_EXECUTABLE}"
             "${XWALK_WORKSPACE_ROOT}/xWalkTool/py-agent/dev-tool/test/test_xWalkCodeHealth.py")
     set_tests_properties(xWalkCodeHealthHostTest PROPERTIES
+        LABELS "host;tooling;network-free;quality")
+    add_test(NAME xWalkConditionCheckHostTest
+        COMMAND "${Python3_EXECUTABLE}"
+            "${XWALK_WORKSPACE_ROOT}/xWalkTool/py-agent/dev-tool/xWalkConditionCheck"
+            "${XWALK_WORKSPACE_ROOT}/xWalk-rpi5")
+    set_tests_properties(xWalkConditionCheckHostTest PROPERTIES
+        LABELS "host;tooling;network-free;quality")
+    add_test(NAME xWalkConditionCheckUnitHostTest
+        COMMAND "${Python3_EXECUTABLE}"
+            "${XWALK_WORKSPACE_ROOT}/xWalkTool/py-agent/dev-tool/test/test_xWalkConditionCheck.py")
+    set_tests_properties(xWalkConditionCheckUnitHostTest PROPERTIES
         LABELS "host;tooling;network-free;quality")
     add_test(NAME xWalkStylerHostTest
         COMMAND "${Python3_EXECUTABLE}"

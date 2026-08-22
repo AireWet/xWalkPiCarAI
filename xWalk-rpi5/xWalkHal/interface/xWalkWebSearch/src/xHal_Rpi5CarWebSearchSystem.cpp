@@ -80,14 +80,15 @@ namespace xwalk::hal
 
     size XWalkWebSearch::writeResponse(charpointer data, size itemSize, size itemCount, contextpointer userData)
     {
-        if ((data == nullptr) || (userData == nullptr) ||
-            ((itemCount != 0U) && (itemSize > (std::numeric_limits<size>::max() / itemCount))))
+        const size maximumSize = std::numeric_limits<size>::max();
+        if ((data == nullptr) || (userData == nullptr) || ((itemCount != 0U) && (itemSize > (maximumSize / itemCount))))
         {
             return 0U;
         }
         const size count = itemSize * itemCount;
         XWalkWebSearchResponseState& state = *static_cast<XWalkWebSearchResponseState*>(userData);
-        if ((state.response.size() > state.maximumBytes) || (count > (state.maximumBytes - state.response.size())))
+        const size responseSize = state.response.size();
+        if ((responseSize > state.maximumBytes) || (count > (state.maximumBytes - responseSize)))
         {
             return 0U;
         }

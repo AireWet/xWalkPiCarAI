@@ -58,7 +58,8 @@ namespace xwalk::hal
     uint8 XWalkGpio::resolvePin(stringview pinName)
     {
         uint8 pin{};
-        if (tryResolvePin(pinName, pin))
+        const boolean pinResolved = tryResolvePin(pinName, pin);
+        if (pinResolved)
         {
             return pin;
         }

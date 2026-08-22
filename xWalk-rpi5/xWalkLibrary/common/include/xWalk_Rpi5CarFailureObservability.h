@@ -88,12 +88,14 @@ namespace xwalk
         }
         const std::lock_guard<std::mutex> lock(observability.mutex);
         hal::uint64& counter = observability.counters[identifierIndex];
-        if (counter != std::numeric_limits<hal::uint64>::max())
+        const hal::uint64 maximumCounter = std::numeric_limits<hal::uint64>::max();
+        if (counter != maximumCounter)
         {
             ++counter;
         }
         hal::size index{};
-        if (observability.count < observability.events.size())
+        const hal::size eventCapacity = observability.events.size();
+        if (observability.count < eventCapacity)
         {
             index = (observability.start + observability.count) % observability.events.size();
             ++observability.count;
@@ -104,7 +106,8 @@ namespace xwalk
             observability.start = (observability.start + 1U) % observability.events.size();
         }
         observability.events[index] = {observability.nextSequence, timestamp, identifier, value};
-        if (observability.nextSequence != std::numeric_limits<hal::uint64>::max())
+        const hal::uint64 maximumSequence = std::numeric_limits<hal::uint64>::max();
+        if (observability.nextSequence != maximumSequence)
         {
             ++observability.nextSequence;
         }

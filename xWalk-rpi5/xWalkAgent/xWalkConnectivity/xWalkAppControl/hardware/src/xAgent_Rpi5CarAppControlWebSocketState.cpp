@@ -29,7 +29,9 @@ namespace
     bool jsonBoolean(json_object* root, const char* name, bool defaultValue) noexcept
     {
         json_object* value{nullptr};
-        if (!json_object_object_get_ex(root, name, &value) || (json_object_get_type(value) != json_type_boolean))
+        const agent::boolean valuePresent = json_object_object_get_ex(root, name, &value);
+        const agent::boolean valueInvalid = !valuePresent || (json_object_get_type(value) != json_type_boolean);
+        if (valueInvalid)
         {
             return defaultValue;
         }
@@ -39,8 +41,10 @@ namespace
     bool jsonPair(json_object* root, const char* name, double& first, double& second) noexcept
     {
         json_object* value{nullptr};
-        if (!json_object_object_get_ex(root, name, &value) || (json_object_get_type(value) != json_type_array) ||
-            (json_object_array_length(value) < 2U))
+        const agent::boolean valuePresent = json_object_object_get_ex(root, name, &value);
+        const agent::boolean valueInvalid =
+            !valuePresent || (json_object_get_type(value) != json_type_array) || (json_object_array_length(value) < 2U);
+        if (valueInvalid)
         {
             return false;
         }
@@ -100,7 +104,8 @@ namespace xwalk::agent
 
     void XWalkAppControlWebSocketState::parse(const agent::string& message)
     {
-        if (message.size() > 65'536U)
+        const agent::size messageSize = message.size();
+        if (messageSize > 65'536U)
         {
             return;
         }
@@ -113,8 +118,9 @@ namespace xwalk::agent
         const json_tokener_error parseError = json_tokener_get_error(tokener);
         json_tokener_free(tokener);
         JsonObject root(parsed, &json_object_put);
-        if ((parseError != json_tokener_success) || (root == nullptr) ||
-            (json_object_get_type(root.get()) != json_type_object))
+        const agent::boolean rootInvalid = (parseError != json_tokener_success) || (root == nullptr) ||
+                                           (json_object_get_type(root.get()) != json_type_object);
+        if (rootInvalid)
         {
             return;
         }
@@ -132,7 +138,9 @@ namespace xwalk::agent
         next.driveJoystickAvailable = false;
         next.cameraJoystickAvailable = false;
         json_object* speech{nullptr};
-        if (json_object_object_get_ex(root.get(), "J", &speech) && (json_object_get_type(speech) == json_type_string))
+        const agent::boolean speechPresent = json_object_object_get_ex(root.get(), "J", &speech);
+        const agent::boolean speechValid = speechPresent && (json_object_get_type(speech) == json_type_string);
+        if (speechValid)
         {
             next.spokenCommand = json_object_get_string(speech);
         }

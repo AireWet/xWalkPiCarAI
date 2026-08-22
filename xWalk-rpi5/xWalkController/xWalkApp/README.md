@@ -26,6 +26,17 @@ command-specific Controller and temporary Agent composition performed while the
 selected boot graph retains its services.
 `xControllerParsing.cpp` owns free functions that convert command text into
 typed requests and format stable Controller output values.
+Raspberry Pi process setup is selected by CMake from the platform sources under
+`cli/hardware`. CSI builds use `xControllerRpiCsi.cpp` to configure the
+GStreamer plugin environment, while other camera backends use the no-op
+`xControllerRpi.cpp`. The hardware `main()` contains no backend-selection
+preprocessor branch. `xControllerRpiApp.cpp` selects configuration, trace-only,
+help, or scheduled-command behavior through one action switch and passes one
+`XWalkRunArgs` aggregate across the scheduler boundary.
+The host and Raspberry Pi `main()` functions call the short
+`xWalkRunHostApplication` and `xWalkRunRpiApplication` CLI orchestration
+functions. Their command action reaches the common
+`CXX_sendCtrlSignal_LPP` wrapper and never calls a Controller handler directly.
 
 The standalone CLI build imports `xWalkPicarx`, `xWalkLineTracking`, `xWalkSelfDrive`, and
 `xWalkBoot` as adjacent Agent dependencies. Their host tests remain owned

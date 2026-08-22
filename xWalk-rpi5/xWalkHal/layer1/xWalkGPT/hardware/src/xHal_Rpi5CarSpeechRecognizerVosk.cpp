@@ -279,7 +279,8 @@ namespace xwalk::hal
         {
             XWALK_HAL_ERROR(XWALK_RANGE, "Vosk streaming PCM exceeds the C API byte-count range");
         }
-        if (self.cancellationRequested.load())
+        const boolean cancellationRequested = self.cancellationRequested.load();
+        if (cancellationRequested)
         {
             return XWalkSpeechRecognitionFeedStatus::Cancelled;
         }
@@ -289,7 +290,8 @@ namespace xwalk::hal
         {
             XWALK_HAL_ERROR(XWALK_RUNTIME, "Vosk streaming PCM ingestion failed");
         }
-        if (self.cancellationRequested.load())
+        const boolean cancellationRequested = self.cancellationRequested.load();
+        if (cancellationRequested)
         {
             return XWalkSpeechRecognitionFeedStatus::Cancelled;
         }
@@ -324,7 +326,8 @@ namespace xwalk::hal
         {
             XWALK_HAL_ERROR(XWALK_INVAL, "Vosk streaming finalization requires a session");
         }
-        if (self.cancellationRequested.exchange(false))
+        const boolean cancellationRequested = self.cancellationRequested.exchange(false);
+        if (cancellationRequested)
         {
             return {};
         }

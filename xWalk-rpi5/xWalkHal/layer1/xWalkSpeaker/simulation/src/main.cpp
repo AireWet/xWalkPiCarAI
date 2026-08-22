@@ -17,19 +17,22 @@ XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer argume
     xwalk::hal::XWalkTrace::configureGlobal(XWALK_SPEAKER_SIMULATION_TRACE_CONFIG_PATH,
                                             XWALK_SPEAKER_SIMULATION_TRACE_LOG_PATH);
     const xwalk::hal::sim::XWalkSpeakerSimulationArguments arguments(argumentCount, argumentValues);
-    if (arguments.valid() == false)
+    const XWalkHal::boolean argumentsValid = arguments.valid();
+    if (argumentsValid == false)
     {
         XWALK_HAL_ERROR(XWALK_EXCEPTION, "Invalid xWalkSpeaker simulation arguments");
         XWALK_HAL_WARNING(XWALK_INVAL, "Usage: %s [--help | --trace <selector>]", argumentValues[0]);
         return 2;
     }
-    if (arguments.helpRequested())
+    const XWalkHal::boolean helpRequested = arguments.helpRequested();
+    if (helpRequested)
     {
         XWALK_HAL_WARNING(XWALK_INVAL, "Usage: %s [--help | --trace <selector>]", argumentValues[0]);
         XWALK_HAL_WARNING(XWALK_LOGIC, "Trace selectors persist in XML and load on the next run");
         return 0;
     }
-    if (arguments.applyTraceUpdate() == false)
+    const XWalkHal::boolean traceUpdateApplied = arguments.applyTraceUpdate();
+    if (traceUpdateApplied == false)
     {
         XWALK_HAL_ERROR(XWALK_EXCEPTION, "The requested trace identifier is not present in the trace inventory");
         return 2;

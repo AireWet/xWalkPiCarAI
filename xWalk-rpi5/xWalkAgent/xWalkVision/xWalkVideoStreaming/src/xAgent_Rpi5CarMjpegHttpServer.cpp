@@ -32,7 +32,8 @@ namespace xwalk::agent
         /** @brief Saturating-increments one observability counter. */
         void incrementSaturated(agent::uint64& value) noexcept
         {
-            if (value != std::numeric_limits<agent::uint64>::max())
+            const agent::uint64 maximumValue = std::numeric_limits<agent::uint64>::max();
+            if (value != maximumValue)
             {
                 ++value;
             }
@@ -51,7 +52,8 @@ namespace xwalk::agent
             {
                 return true;
             }
-            if (address.size() > 15U)
+            const agent::size addressSize = address.size();
+            if (addressSize > 15U)
             {
                 return false;
             }
@@ -101,7 +103,8 @@ namespace xwalk::agent
                                  agent::size maximumBytes,
                                  agent::uint64 nowMilliseconds) noexcept
         {
-            if (output.size() > maximumBytes)
+            const agent::size outputSize = output.size();
+            if (outputSize > maximumBytes)
             {
                 return false;
             }
@@ -126,7 +129,8 @@ namespace xwalk::agent
                 nextSequence = server.stream->nextSequence;
                 for (const XWalkMjpegClientState& client : server.stream->clients)
                 {
-                    if (std::numeric_limits<agent::uint64>::max() - droppedFrames < client.droppedFrames)
+                    const agent::uint64 maximumDroppedFrames = std::numeric_limits<agent::uint64>::max();
+                    if (maximumDroppedFrames - droppedFrames < client.droppedFrames)
                     {
                         droppedFrames = std::numeric_limits<agent::uint64>::max();
                     }
@@ -182,7 +186,8 @@ namespace xwalk::agent
         /** @brief Authenticates external requests without retaining the credential. */
         agent::boolean requestAuthorized(const XWalkMjpegHttpServer& server, agent::stringview request) noexcept
         {
-            if (loopbackAddress(server.configuration.stream.bindAddress))
+            const agent::boolean loopback = loopbackAddress(server.configuration.stream.bindAddress);
+            if (loopback)
             {
                 return true;
             }
@@ -197,12 +202,14 @@ namespace xwalk::agent
         routeRequest(XWalkMjpegHttpServer& server, XWalkMjpegHttpClient& client, agent::uint64 nowMilliseconds) noexcept
         {
             XWalkMjpegHttpRequest parsed;
-            if (parseMjpegHttpRequest(client.request, server.configuration.maximumRequestBytes, parsed) !=
-                XWalkMjpegHttpParseStatus::Ok)
+            const XWalkMjpegHttpParseStatus parseStatus =
+                parseMjpegHttpRequest(client.request, server.configuration.maximumRequestBytes, parsed);
+            if (parseStatus != XWalkMjpegHttpParseStatus::Ok)
             {
                 return false;
             }
-            if (!requestAuthorized(server, client.request))
+            const agent::boolean authorized = requestAuthorized(server, client.request);
+            if (!authorized)
             {
                 client.mode = XWalkMjpegHttpClientMode::OneShotResponse;
                 return setOutput(client,
@@ -232,8 +239,10 @@ namespace xwalk::agent
             }
             if (parsed.path == "/stream")
             {
-                if (server.stream == nullptr ||
-                    addMjpegStreamClient(*server.stream, client.identifier) != XWalkMjpegStreamStatus::Ok)
+                const agent::boolean streamUnavailable =
+                    server.stream == nullptr ||
+                    addMjpegStreamClient(*server.stream, client.identifier) != XWalkMjpegStreamStatus::Ok;
+                if (streamUnavailable)
                 {
                     client.mode = XWalkMjpegHttpClientMode::OneShotResponse;
                     return setOutput(client,
@@ -283,9 +292,12 @@ namespace xwalk::agent
                 {
                     return;
                 }
-                if (!makeNonBlocking(descriptor) || server.clients.size() >= server.configuration.stream.maximumClients)
+                const agent::boolean descriptorReady = makeNonBlocking(descriptor);
+                const agent::size clientCount = server.clients.size();
+                const agent::boolean clientLimitReached = clientCount >= server.configuration.stream.maximumClients;
+                if (!descriptorReady || clientLimitReached)
                 {
-                    if (server.clients.size() >= server.configuration.stream.maximumClients)
+                    if (clientLimitReached)
                     {
                         incrementSaturated(server.rejectedClients);
                     }
@@ -330,7 +342,8 @@ namespace xwalk::agent
             }
             client.lastProgressMilliseconds = nowMilliseconds;
             const agent::size received = static_cast<agent::size>(count);
-            if (received > server.configuration.maximumRequestBytes - client.request.size())
+            const agent::size requestSize = client.request.size();
+            if (received > server.configuration.maximumRequestBytes - requestSize)
             {
                 incrementSaturated(server.invalidRequests);
                 client.mode = XWalkMjpegHttpClientMode::OneShotResponse;
@@ -341,11 +354,13 @@ namespace xwalk::agent
                     nowMilliseconds);
             }
             client.request.append(buffer, received);
-            if (client.request.find("\r\n\r\n") == agent::string::npos)
+            const agent::size headerEnd = client.request.find("\r\n\r\n");
+            if (headerEnd == agent::string::npos)
             {
                 return true;
             }
-            if (!routeRequest(server, client, nowMilliseconds))
+            const agent::boolean requestRouted = routeRequest(server, client, nowMilliseconds);
+            if (!requestRouted)
             {
                 incrementSaturated(server.invalidRequests);
                 client.mode = XWalkMjpegHttpClientMode::OneShotResponse;
@@ -362,7 +377,8 @@ namespace xwalk::agent
         agent::boolean
         writeClient(XWalkMjpegHttpServer& server, XWalkMjpegHttpClient& client, agent::uint64 nowMilliseconds) noexcept
         {
-            if (client.outputOffset >= client.pendingOutput.size())
+            const agent::size pendingOutputSize = client.pendingOutput.size();
+            if (client.outputOffset >= pendingOutputSize)
             {
                 client.pendingOutput.clear();
                 client.outputOffset = 0U;
@@ -386,7 +402,8 @@ namespace xwalk::agent
                     }
                 }
             }
-            if (client.pendingOutput.empty())
+            const agent::boolean pendingOutputEmpty = client.pendingOutput.empty();
+            if (pendingOutputEmpty)
             {
                 return true;
             }
@@ -409,7 +426,8 @@ namespace xwalk::agent
 
     XWalkMjpegHttpStatus validateMjpegHttpConfiguration(const XWalkMjpegHttpConfiguration& configuration) noexcept
     {
-        if ((validateMjpegStreamConfiguration(configuration.stream) != XWalkMjpegStreamStatus::Ok) ||
+        const agent::boolean configurationInvalid =
+            (validateMjpegStreamConfiguration(configuration.stream) != XWalkMjpegStreamStatus::Ok) ||
             (configuration.maximumRequestBytes < 64U) || (configuration.maximumRequestBytes > MAXIMUM_REQUEST_BYTES) ||
             (configuration.maximumPendingBytes < 1'024U) ||
             (configuration.maximumPendingBytes > MAXIMUM_PENDING_BYTES) ||
@@ -419,12 +437,14 @@ namespace xwalk::agent
             (configuration.idleTimeoutMilliseconds > MAXIMUM_TIMEOUT_MILLISECONDS) ||
             (configuration.slowClientTimeoutMilliseconds == 0U) ||
             (configuration.slowClientTimeoutMilliseconds > MAXIMUM_TIMEOUT_MILLISECONDS) ||
-            !validIpv4Address(configuration.stream.bindAddress))
+            !validIpv4Address(configuration.stream.bindAddress);
+        if (configurationInvalid)
         {
             return XWalkMjpegHttpStatus::InvalidConfiguration;
         }
-        if (!loopbackAddress(configuration.stream.bindAddress) &&
-            (configuration.authenticationReference.empty() || (configuration.authenticate == nullptr)))
+        const agent::boolean loopback = loopbackAddress(configuration.stream.bindAddress);
+        const agent::boolean authenticationReferenceEmpty = configuration.authenticationReference.empty();
+        if (!loopback && (authenticationReferenceEmpty || (configuration.authenticate == nullptr)))
         {
             return XWalkMjpegHttpStatus::InvalidConfiguration;
         }
@@ -435,14 +455,17 @@ namespace xwalk::agent
     parseMjpegHttpRequest(agent::stringview input, agent::size maximumBytes, XWalkMjpegHttpRequest& request) noexcept
     {
         request = {};
-        if (input.size() > maximumBytes)
+        const agent::size inputSize = input.size();
+        if (inputSize > maximumBytes)
         {
             return XWalkMjpegHttpParseStatus::TooLarge;
         }
-        if ((input.find('\0') != agent::stringview::npos) || (input.find("\r\n\r\n") == agent::stringview::npos))
+        const agent::size nullPosition = input.find('\0');
+        const agent::size headerEnd = input.find("\r\n\r\n");
+        if ((nullPosition != agent::stringview::npos) || (headerEnd == agent::stringview::npos))
         {
-            return input.find('\0') != agent::stringview::npos ? XWalkMjpegHttpParseStatus::Invalid
-                                                               : XWalkMjpegHttpParseStatus::Incomplete;
+            return nullPosition != agent::stringview::npos ? XWalkMjpegHttpParseStatus::Invalid
+                                                           : XWalkMjpegHttpParseStatus::Incomplete;
         }
         const agent::size lineEnd = input.find("\r\n");
         if (lineEnd == agent::stringview::npos)
@@ -452,14 +475,21 @@ namespace xwalk::agent
         const agent::stringview line = input.substr(0U, lineEnd);
         constexpr agent::stringview PREFIX{"GET "};
         constexpr agent::stringview SUFFIX{" HTTP/1.1"};
-        if ((line.size() <= PREFIX.size() + SUFFIX.size()) || (line.substr(0U, PREFIX.size()) != PREFIX) ||
-            (line.substr(line.size() - SUFFIX.size()) != SUFFIX))
+        const agent::size lineSize = line.size();
+        const agent::size prefixSize = PREFIX.size();
+        const agent::size suffixSize = SUFFIX.size();
+        const agent::boolean requestLineInvalid = (lineSize <= prefixSize + suffixSize) ||
+                                                  (line.substr(0U, prefixSize) != PREFIX) ||
+                                                  (line.substr(lineSize - suffixSize) != SUFFIX);
+        if (requestLineInvalid)
         {
             return XWalkMjpegHttpParseStatus::Invalid;
         }
         request.path = line.substr(PREFIX.size(), line.size() - PREFIX.size() - SUFFIX.size());
-        if (request.path.empty() || (request.path.front() != '/') ||
-            (request.path.find(' ') != agent::stringview::npos) || (request.path.find('\t') != agent::stringview::npos))
+        const agent::boolean requestPathInvalid = request.path.empty() || (request.path.front() != '/') ||
+                                                  (request.path.find(' ') != agent::stringview::npos) ||
+                                                  (request.path.find('\t') != agent::stringview::npos);
+        if (requestPathInvalid)
         {
             request = {};
             return XWalkMjpegHttpParseStatus::Invalid;
@@ -476,12 +506,14 @@ namespace xwalk::agent
         {
             return XWalkMjpegHttpStatus::Ok;
         }
-        if (validateMjpegHttpConfiguration(configuration) != XWalkMjpegHttpStatus::Ok)
+        const XWalkMjpegHttpStatus validationStatus = validateMjpegHttpConfiguration(configuration);
+        if (validationStatus != XWalkMjpegHttpStatus::Ok)
         {
             return XWalkMjpegHttpStatus::InvalidConfiguration;
         }
         int listener = ::socket(AF_INET, SOCK_STREAM, 0);
-        if (listener < 0 || !makeNonBlocking(listener))
+        const agent::boolean listenerReady = listener >= 0 && makeNonBlocking(listener);
+        if (!listenerReady)
         {
             closeDescriptor(listener);
             return XWalkMjpegHttpStatus::SocketFailure;
@@ -493,14 +525,18 @@ namespace xwalk::agent
         address.sin_port = htons(static_cast<in_port_t>(configuration.stream.port));
         const agent::string bindAddress =
             configuration.stream.bindAddress == "localhost" ? "127.0.0.1" : configuration.stream.bindAddress;
-        if ((::inet_pton(AF_INET, bindAddress.c_str(), &address.sin_addr) != 1) ||
-            (::bind(listener, reinterpret_cast<const sockaddr*>(&address), sizeof(address)) != 0) ||
-            (::listen(listener, static_cast<int>(configuration.stream.maximumClients)) != 0))
+        const int addressResult = ::inet_pton(AF_INET, bindAddress.c_str(), &address.sin_addr);
+        const int bindResult =
+            addressResult == 1 ? ::bind(listener, reinterpret_cast<const sockaddr*>(&address), sizeof(address)) : -1;
+        const int listenResult =
+            bindResult == 0 ? ::listen(listener, static_cast<int>(configuration.stream.maximumClients)) : -1;
+        if ((addressResult != 1) || (bindResult != 0) || (listenResult != 0))
         {
             closeDescriptor(listener);
             return XWalkMjpegHttpStatus::SocketFailure;
         }
-        if (startMjpegStream(stream, configuration.stream) != XWalkMjpegStreamStatus::Ok)
+        const XWalkMjpegStreamStatus streamStatus = startMjpegStream(stream, configuration.stream);
+        if (streamStatus != XWalkMjpegStreamStatus::Ok)
         {
             closeDescriptor(listener);
             return XWalkMjpegHttpStatus::InvalidConfiguration;
@@ -528,7 +564,8 @@ namespace xwalk::agent
         }
         acceptClients(server, nowMilliseconds);
         agent::size index = 0U;
-        while (index < server.clients.size())
+        agent::size clientCount = server.clients.size();
+        while (index < clientCount)
         {
             XWalkMjpegHttpClient& client = server.clients[index];
             agent::boolean keep = true;
@@ -566,6 +603,7 @@ namespace xwalk::agent
             {
                 ++index;
             }
+            clientCount = server.clients.size();
         }
         return XWalkMjpegHttpStatus::Ok;
     }
@@ -574,9 +612,11 @@ namespace xwalk::agent
     {
         const agent::boolean wasStarted = server.started;
         ::xwalk::XWalkFailureObservability* observability = server.configuration.observability;
-        while (!server.clients.empty())
+        agent::boolean clientsAvailable = !server.clients.empty();
+        while (clientsAvailable)
         {
             disconnectClient(server, server.clients.size() - 1U, 0U);
+            clientsAvailable = !server.clients.empty();
         }
         closeDescriptor(server.listener);
         if (server.stream != nullptr)
@@ -600,7 +640,9 @@ namespace xwalk::agent
         }
         sockaddr_in address{};
         socklen_t addressLength = sizeof(address);
-        if (::getsockname(server.listener, reinterpret_cast<sockaddr*>(&address), &addressLength) != 0)
+        const int socketNameResult =
+            ::getsockname(server.listener, reinterpret_cast<sockaddr*>(&address), &addressLength);
+        if (socketNameResult != 0)
         {
             return 0U;
         }

@@ -57,7 +57,8 @@ namespace xwalk::hal
         std::unique_ptr<void, decltype(rollbackOperation)> rollbackGuard(this, rollbackOperation);
         static_cast<void>(motorOne->initialize());
         static_cast<void>(motorTwo->initialize());
-        if (stopSafelyUnlocked() == false)
+        const boolean stoppedSafely = stopSafelyUnlocked();
+        if (stoppedSafely == false)
         {
             XWALK_HAL_ERROR(XWALK_RUNTIME, "motor arming could not establish zero output");
         }

@@ -190,7 +190,8 @@ namespace xwalk::agent
         while (remainingMs > 0U)
         {
             const agent::uint32 sliceMs = (remainingMs < heartbeatIntervalMs) ? remainingMs : heartbeatIntervalMs;
-            if (delay(sliceMs) == false)
+            const agent::boolean delayCompleted = delay(sliceMs);
+            if (delayCompleted == false)
             {
                 return false;
             }

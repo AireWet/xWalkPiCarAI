@@ -3,8 +3,8 @@
  * @brief       Implements the device-free host Controller application.
  *
  * @details
- * Processes global options, installs process callbacks, and executes the shared
- * Controller runner through the device-free xWalkBoot host stub.
+ * Processes global options, installs process callbacks, and submits the
+ * selected command to the device-free scheduler child.
  *
  * @project     xWalk Firmware
  * @module      xWalkController Application
@@ -29,9 +29,7 @@
 #include "xControllerApplicationSupport.h"
 #include "xControllerCommands.h"
 #include "xControllerDeploymentConfig.h"
-#include "xControllerRunner.h"
-
-#include "xAgent_Rpi5CarBootHostStub.h"
+#include "xControllerScheduledRunner.h"
 
 #include "xHal_Rpi5CarLinuxHeaders.h"
 #include "xHal_Rpi5CarTrace.h"
@@ -50,7 +48,7 @@ namespace xwalk::ctrl
 {
 
     /**
-     * @brief Runs the device-free host Controller application.
+     * @brief Runs the device-free host Controller application through the scheduler.
      *
      * @param[in] argumentCount Number of process arguments including the executable name.
      * @param[in] arguments Non-owning process argument array.
@@ -61,7 +59,7 @@ namespace xwalk::ctrl
      *
      * @post No physical hardware backend has been constructed or accessed.
      */
-    ::ctrl::int32 XWALK_runHostControllerApplication(::ctrl::int32 argumentCount, ::ctrl::charpointer arguments[])
+    ::ctrl::int32 xWalkRunHostApplication(::ctrl::int32 argumentCount, ::ctrl::charpointer arguments[])
     {
         XWalkControllerApplicationArguments applicationArguments;
         const XWalkAppConfig defaultConfig{{}, XWALK_RUNTIME_DATA_DIRECTORY};
@@ -132,11 +130,8 @@ namespace xwalk::ctrl
             std::cerr << "Could not prepare graceful cancellation handling\n";
             return 2;
         }
-        XWalkControllerBootContext bootContext{&commandArguments, applicationArguments.appConfig.resourceDirectory};
-        agent::XWalkBootServices hostServices{};
-        agent::XWalkBootHostStub boot(hostServices);
-        const agent::xAgentContext agentContext{&bootContext, &XWALK_runController};
-        return boot.run(agentContext);
+        XWalkRunArgs runArgs{&commandArguments, applicationArguments.appConfig.resourceDirectory, {}};
+        return XWALK_hostCmd(&runArgs);
     }
 
 } /* namespace xwalk::ctrl */

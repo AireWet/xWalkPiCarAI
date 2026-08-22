@@ -64,12 +64,14 @@ namespace xwalk::hal::sim
             return true;
         }
         const stringview prefix("RPI.");
-        if (target.substr(0U, prefix.size()) != prefix)
+        const stringview targetPrefix = target.substr(0U, prefix.size());
+        if (targetPrefix != prefix)
         {
             return false;
         }
         const stringview number = target.substr(prefix.size());
-        if (number.empty())
+        const boolean numberEmpty = number.empty();
+        if (numberEmpty)
         {
             return false;
         }
@@ -104,7 +106,8 @@ namespace xwalk::hal::sim
         }
         const size suffixLength = enabling ? enable.size() : disable.size();
         const stringview target = selector.substr(0U, selector.size() - suffixLength);
-        if (!targetIsValid(target))
+        const boolean targetValid = targetIsValid(target);
+        if (targetValid == false)
         {
             return;
         }

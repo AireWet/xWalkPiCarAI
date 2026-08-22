@@ -59,10 +59,10 @@ namespace xwalk::ctrl
      ******************************************************************************/
 
     /**
-     * @struct XWalkControllerBootContext
+     * @struct XWalkRunArgs
      * @brief Carries validated process arguments into one backend boot attempt.
      */
-    struct XWalkControllerBootContext
+    struct XWalkRunArgs
     {
             /**
              * @brief Non-owning command-argument pointer that remains valid until boot returns.
@@ -73,6 +73,11 @@ namespace xwalk::ctrl
              * @brief Absolute packaged-data directory selected before boot.
              */
             ::ctrl::string resourceDirectory{};
+
+            /**
+             * @brief Validated hardware configuration path opened only in the scheduler child.
+             */
+            ::ctrl::string configurationFilePath{};
     };
 
     /**

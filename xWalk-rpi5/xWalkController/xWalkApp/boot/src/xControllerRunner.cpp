@@ -60,7 +60,7 @@ namespace xwalk::ctrl
             return 2;
         }
         XWALK_CTRL_TRACE_UID0(CTRL .001, "Controller command execution started");
-        const XWalkControllerBootContext& bootContext = *static_cast<XWalkControllerBootContext*>(context);
+        const XWalkRunArgs& bootContext = *static_cast<XWalkRunArgs*>(context);
         const ::ctrl::stringvector& commandArguments = *bootContext.commandArguments;
         const XWalkControllerCallbacks callbacks{&XWALK_outputLine,
                                                  &XWALK_inputLine,

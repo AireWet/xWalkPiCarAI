@@ -506,7 +506,9 @@ namespace
         {
             return {};
         }
-        if (state.recognitionTranscriptIndex < state.recognitionDurationsMs.size())
+        const ::ctrl::boolean recognitionDurationAvailable =
+            state.recognitionTranscriptIndex < state.recognitionDurationsMs.size();
+        if (recognitionDurationAvailable)
         {
             state.monotonicMilliseconds +=
                 std::min(state.recognitionDurationsMs[state.recognitionTranscriptIndex], timeoutMs);

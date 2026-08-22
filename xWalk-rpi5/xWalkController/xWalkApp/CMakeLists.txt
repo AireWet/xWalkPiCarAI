@@ -10,6 +10,13 @@ if(NOT TARGET xWalkTrace)
         ${CMAKE_CURRENT_BINARY_DIR}/xWalkTrace)
 endif()
 
+if(NOT TARGET xWalkScheduler)
+    set(XWALK_SCHEDULER_BUILD_HOST_TESTS ${XWALK_CONTROLLER_BUILD_HOST_TESTS}
+        CACHE BOOL "Controller scheduler dependency setting" FORCE)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../xWalkScheduler
+        ${CMAKE_CURRENT_BINARY_DIR}/xWalkScheduler)
+endif()
+
 set(XWALK_CONTROLLER_HELP_JSON
     "${CMAKE_CURRENT_SOURCE_DIR}/activate/resources/help.json")
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
@@ -254,6 +261,8 @@ add_library(xWalkController STATIC
     parse/src/xControllerHelpRequest.cpp
     parse/src/xControllerParsing.cpp
     boot/src/xControllerDeploymentConfig.cpp
+    boot/src/xControllerScheduledRunner.cpp
+    boot/src/xWalk_handlerAppCli.cpp
     ../xWalkHandler/src/xControllerLifecycle.cpp
     ../xWalkHandler/src/calibration/xControllerCalibrationHandler.cpp
     ../xWalkHandler/src/calibration/xControllerCalibrationSupport.cpp
@@ -292,6 +301,7 @@ add_library(xWalkController STATIC
     ../xWalkHandler/src/voice/xControllerVoicePromptCarHandler.cpp
 )
 target_link_libraries(xWalkController PRIVATE xWalkTrace)
+target_link_libraries(xWalkController PUBLIC xWalkScheduler)
 add_library(xWalk::Controller ALIAS xWalkController)
 
 target_include_directories(xWalkController
@@ -300,6 +310,7 @@ target_include_directories(xWalkController
         ${CMAKE_CURRENT_SOURCE_DIR}/boot/include
         ${CMAKE_CURRENT_SOURCE_DIR}/parse/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkHandler/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xWalkScheduler/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../../xWalkLibrary/common/include
     PRIVATE ${XWALK_CONTROLLER_GENERATED_INCLUDE_DIRECTORY})
 target_compile_definitions(xWalkController PRIVATE
@@ -351,6 +362,7 @@ if(XWALK_CONTROLLER_BUILD_HOST_TESTS)
         boot/src/xControllerApplicationSupport.cpp
         boot/src/xControllerBootMode.cpp
         boot/src/xControllerRunner.cpp
+        boot/src/xControllerScheduledHostRunner.cpp
         cli/host/src/xControllerHostApplication.cpp
         cli/host/src/xControllerHostMain.cpp)
     target_compile_definitions(xwalk-picarx-control PRIVATE
@@ -374,6 +386,7 @@ if(XWALK_CONTROLLER_BUILD_HOST_TESTS)
         boot/src/xControllerApplicationSupport.cpp
         boot/src/xControllerBootMode.cpp
         boot/src/xControllerRunner.cpp
+        boot/src/xControllerScheduledHostRunner.cpp
         test/src/xControllerParsingTest.cpp
         test/src/xControllerAppTest.cpp
         test/src/xControllerAppTestSupport.cpp)
@@ -398,11 +411,22 @@ if(XWALK_CONTROLLER_BUILD_RPI_TESTS)
     if(NOT TARGET xWalkBootRpi)
         message(FATAL_ERROR "xWalkController RPi application requires xWalkBootRpi")
     endif()
+    set(XWALK_CONTROLLER_RPI_SOURCE
+        cli/hardware/src/xControllerRpi.cpp)
+    if(XWALK_RPI_CAMERA STREQUAL "csi")
+        set(XWALK_CONTROLLER_RPI_SOURCE
+            cli/hardware/src/xControllerRpiCsi.cpp)
+    endif()
     add_executable(xwalk-picarx-control
         boot/src/xControllerApplicationSupport.cpp
         boot/src/xControllerBootMode.cpp
         boot/src/xControllerRunner.cpp
+        boot/src/xControllerScheduledRpiRunner.cpp
+        ${XWALK_CONTROLLER_RPI_SOURCE}
+        cli/hardware/src/xControllerRpiApp.cpp
         cli/hardware/src/xControllerMain.cpp)
+    target_include_directories(xwalk-picarx-control PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/cli/hardware/include)
     target_compile_definitions(xwalk-picarx-control PRIVATE
         XWALK_PICARX_CONFIG_FILE="${XWALK_PICARX_CONFIG_FILE}"
         XWALK_RUNTIME_DATA_DIRECTORY="${XWALK_RUNTIME_DATA_DIRECTORY}")

@@ -23,17 +23,20 @@ namespace xwalk::hal::simulation
                          float64 firstValue = 0.0,
                          float64 secondValue = 0.0) noexcept
         {
-            if (state.eventCount < state.events.size())
+            const size eventCapacity = state.events.size();
+            const uint64 maximumDroppedEvents = std::numeric_limits<uint64>::max();
+            if (state.eventCount < eventCapacity)
             {
                 state.events[state.eventCount] = {
                     state.nextEventSequence, state.logicalTime, identifier, firstValue, secondValue};
                 ++state.eventCount;
             }
-            else if (state.droppedEvents != std::numeric_limits<uint64>::max())
+            else if (state.droppedEvents != maximumDroppedEvents)
             {
                 ++state.droppedEvents;
             }
-            if (state.nextEventSequence != std::numeric_limits<uint64>::max())
+            const uint64 maximumEventSequence = std::numeric_limits<uint64>::max();
+            if (state.nextEventSequence != maximumEventSequence)
             {
                 ++state.nextEventSequence;
             }
@@ -66,7 +69,8 @@ namespace xwalk::hal::simulation
     XWalkLogicalModelStatus
     validateLogicalModelConfiguration(const XWalkLogicalModelConfiguration& configuration) noexcept
     {
-        if (!positiveFinite(configuration.accelerationPerTick) || !positiveFinite(configuration.decelerationPerTick) ||
+        const boolean configurationInvalid =
+            !positiveFinite(configuration.accelerationPerTick) || !positiveFinite(configuration.decelerationPerTick) ||
             !std::isfinite(configuration.steeringMinimum) || !std::isfinite(configuration.steeringMaximum) ||
             !std::isfinite(configuration.servoCentre) || !positiveFinite(configuration.servoTravel) ||
             (configuration.steeringMinimum >= configuration.steeringMaximum) ||
@@ -79,7 +83,8 @@ namespace xwalk::hal::simulation
             (configuration.batteryWarningVoltage <= configuration.batteryCriticalVoltage) ||
             !std::isfinite(configuration.batteryReductionPerTick) || (configuration.batteryReductionPerTick < 0.0) ||
             (configuration.grayscaleSequence.size() > XWALK_LOGICAL_MODEL_MAXIMUM_SEQUENCE_VALUES) ||
-            (configuration.ultrasonicSequence.size() > XWALK_LOGICAL_MODEL_MAXIMUM_SEQUENCE_VALUES))
+            (configuration.ultrasonicSequence.size() > XWALK_LOGICAL_MODEL_MAXIMUM_SEQUENCE_VALUES);
+        if (configurationInvalid)
         {
             return XWalkLogicalModelStatus::InvalidConfiguration;
         }
@@ -92,7 +97,8 @@ namespace xwalk::hal::simulation
         }
         for (float64 distance : configuration.ultrasonicSequence)
         {
-            if (!std::isfinite(distance) || (distance < 0.0) || (distance > 500.0))
+            const boolean distanceInvalid = !std::isfinite(distance) || (distance < 0.0) || (distance > 500.0);
+            if (distanceInvalid)
             {
                 return XWalkLogicalModelStatus::InvalidConfiguration;
             }
@@ -104,7 +110,8 @@ namespace xwalk::hal::simulation
                                                    const XWalkLogicalModelConfiguration& configuration) noexcept
     {
         state = {};
-        if (validateLogicalModelConfiguration(configuration) != XWalkLogicalModelStatus::Ok)
+        const XWalkLogicalModelStatus validationStatus = validateLogicalModelConfiguration(configuration);
+        if (validationStatus != XWalkLogicalModelStatus::Ok)
         {
             return XWalkLogicalModelStatus::InvalidConfiguration;
         }
@@ -124,7 +131,8 @@ namespace xwalk::hal::simulation
         {
             return XWalkLogicalModelStatus::NotInitialized;
         }
-        if (!std::isfinite(leftSpeed) || !std::isfinite(rightSpeed))
+        const boolean speedInvalid = !std::isfinite(leftSpeed) || !std::isfinite(rightSpeed);
+        if (speedInvalid)
         {
             enterLogicalSafeState(state);
             return XWalkLogicalModelStatus::InvalidConfiguration;
@@ -143,7 +151,8 @@ namespace xwalk::hal::simulation
         }
         for (uint64 tick = 0U; tick < ticks; ++tick)
         {
-            if (state.logicalTime != std::numeric_limits<uint64>::max())
+            const uint64 maximumLogicalTime = std::numeric_limits<uint64>::max();
+            if (state.logicalTime != maximumLogicalTime)
             {
                 ++state.logicalTime;
             }
@@ -178,7 +187,8 @@ namespace xwalk::hal::simulation
         {
             return XWalkLogicalModelStatus::NotInitialized;
         }
-        if (!std::isfinite(angle))
+        const boolean angleFinite = std::isfinite(angle);
+        if (!angleFinite)
         {
             enterLogicalSafeState(state);
             return XWalkLogicalModelStatus::InvalidConfiguration;
@@ -196,7 +206,8 @@ namespace xwalk::hal::simulation
         {
             return XWalkLogicalModelStatus::NotInitialized;
         }
-        if (state.grayscaleIndex >= state.configuration.grayscaleSequence.size())
+        const size grayscaleCount = state.configuration.grayscaleSequence.size();
+        if (state.grayscaleIndex >= grayscaleCount)
         {
             sample = {};
             return XWalkLogicalModelStatus::EndOfSequence;
@@ -213,7 +224,8 @@ namespace xwalk::hal::simulation
         {
             return XWalkLogicalModelStatus::NotInitialized;
         }
-        if (state.ultrasonicIndex >= state.configuration.ultrasonicSequence.size())
+        const size ultrasonicCount = state.configuration.ultrasonicSequence.size();
+        if (state.ultrasonicIndex >= ultrasonicCount)
         {
             distanceCentimeters = 0.0;
             return XWalkLogicalModelStatus::EndOfSequence;
@@ -230,7 +242,8 @@ namespace xwalk::hal::simulation
         {
             return XWalkLogicalModelStatus::NotInitialized;
         }
-        if (std::numeric_limits<uint64>::max() - state.logicalTime < state.configuration.cameraDelayTicks)
+        const uint64 maximumLogicalTime = std::numeric_limits<uint64>::max();
+        if (maximumLogicalTime - state.logicalTime < state.configuration.cameraDelayTicks)
         {
             state.logicalTime = std::numeric_limits<uint64>::max();
         }
@@ -238,7 +251,8 @@ namespace xwalk::hal::simulation
         {
             state.logicalTime += state.configuration.cameraDelayTicks;
         }
-        if (!state.configuration.freezeCamera && (state.cameraFrameIdentifier != std::numeric_limits<uint64>::max()))
+        const uint64 maximumFrameIdentifier = std::numeric_limits<uint64>::max();
+        if (!state.configuration.freezeCamera && (state.cameraFrameIdentifier != maximumFrameIdentifier))
         {
             ++state.cameraFrameIdentifier;
         }
@@ -256,7 +270,8 @@ namespace xwalk::hal::simulation
         {
             return true;
         }
-        if (state.i2cOperationCount != std::numeric_limits<uint32>::max())
+        const uint32 maximumOperationCount = std::numeric_limits<uint32>::max();
+        if (state.i2cOperationCount != maximumOperationCount)
         {
             ++state.i2cOperationCount;
         }

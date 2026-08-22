@@ -25,19 +25,19 @@
  * Includes
  ******************************************************************************/
 
-#include "xControllerCommands.h"
+#include "xControllerScheduledRunner.h"
 
 /******************************************************************************
  * Global function definitions
  ******************************************************************************/
 
 /**
- * @brief Runs the shared Controller lifecycle with host-only module code.
+ * @brief Runs the shared Controller lifecycle through the host process scheduler.
  * @param[in] argumentCount Number of process arguments including the executable name.
  * @param[in] arguments Non-owning process argument array.
- * @return Controller application status returned by the host-only lifecycle.
+ * @return Controller application status returned by the scheduler-owned lifecycle.
  */
 ctrl::int32 main(ctrl::int32 argumentCount, ctrl::charpointer arguments[])
 {
-    return xwalk::ctrl::XWALK_runHostControllerApplication(argumentCount, arguments);
+    return xwalk::ctrl::xWalkRunHostApplication(argumentCount, arguments);
 }

@@ -55,12 +55,14 @@ namespace xwalk::agent
         const agent::boolean loopback = (configuration.bindAddress == "127.0.0.1") ||
                                         (configuration.bindAddress == "localhost") ||
                                         (configuration.bindAddress == "::1");
-        if (!validAddressText(configuration.bindAddress) || (!loopback && !configuration.allowExternalBind) ||
+        const agent::boolean configurationInvalid =
+            !validAddressText(configuration.bindAddress) || (!loopback && !configuration.allowExternalBind) ||
             (configuration.port == 0U) || (configuration.port > 65'535U) || (configuration.maximumClients == 0U) ||
             (configuration.maximumClients > MAXIMUM_CLIENTS) || (configuration.queueCapacity == 0U) ||
             (configuration.queueCapacity > MAXIMUM_QUEUE_CAPACITY) ||
             (configuration.maximumJpegBytes < MINIMUM_JPEG_BYTES) ||
-            (configuration.maximumJpegBytes > MAXIMUM_JPEG_BYTES))
+            (configuration.maximumJpegBytes > MAXIMUM_JPEG_BYTES);
+        if (configurationInvalid)
         {
             return XWalkMjpegStreamStatus::InvalidConfiguration;
         }
@@ -70,7 +72,8 @@ namespace xwalk::agent
     XWalkMjpegStreamStatus startMjpegStream(XWalkMjpegStreamState& state,
                                             const XWalkMjpegStreamConfiguration& configuration) noexcept
     {
-        if (validateMjpegStreamConfiguration(configuration) != XWalkMjpegStreamStatus::Ok)
+        const XWalkMjpegStreamStatus validationStatus = validateMjpegStreamConfiguration(configuration);
+        if (validationStatus != XWalkMjpegStreamStatus::Ok)
         {
             return XWalkMjpegStreamStatus::InvalidConfiguration;
         }
@@ -117,11 +120,14 @@ namespace xwalk::agent
         {
             return XWalkMjpegStreamStatus::ClientNotFound;
         }
-        if (findClient(state, clientIdentifier) != state.clients.end())
+        const auto existingClient = findClient(state, clientIdentifier);
+        const auto clientsEnd = state.clients.end();
+        if (existingClient != clientsEnd)
         {
             return XWalkMjpegStreamStatus::Ok;
         }
-        if (state.clients.size() >= state.configuration.maximumClients)
+        const agent::size clientCount = state.clients.size();
+        if (clientCount >= state.configuration.maximumClients)
         {
             return XWalkMjpegStreamStatus::ClientLimitReached;
         }
@@ -134,7 +140,8 @@ namespace xwalk::agent
     {
         const std::lock_guard<std::mutex> lock(state.mutex);
         const auto client = findClient(state, clientIdentifier);
-        if (client == state.clients.end())
+        const auto clientsEnd = state.clients.end();
+        if (client == clientsEnd)
         {
             return XWalkMjpegStreamStatus::ClientNotFound;
         }
@@ -153,8 +160,11 @@ namespace xwalk::agent
         {
             return XWalkMjpegStreamStatus::CameraUnavailable;
         }
-        if ((jpeg.size() < MINIMUM_JPEG_BYTES) || (jpeg.size() > state.configuration.maximumJpegBytes) ||
-            (jpeg[0U] != 0xFFU) || (jpeg[1U] != 0xD8U) || (jpeg[jpeg.size() - 2U] != 0xFFU) || (jpeg.back() != 0xD9U))
+        const agent::size jpegSize = jpeg.size();
+        const agent::boolean jpegInvalid =
+            (jpegSize < MINIMUM_JPEG_BYTES) || (jpegSize > state.configuration.maximumJpegBytes) ||
+            (jpeg[0U] != 0xFFU) || (jpeg[1U] != 0xD8U) || (jpeg[jpegSize - 2U] != 0xFFU) || (jpeg.back() != 0xD9U);
+        if (jpegInvalid)
         {
             return XWalkMjpegStreamStatus::InvalidFrame;
         }
@@ -162,7 +172,8 @@ namespace xwalk::agent
         ++state.nextSequence;
         for (XWalkMjpegClientState& client : state.clients)
         {
-            if (client.pending.size() >= state.configuration.queueCapacity)
+            const agent::size pendingCount = client.pending.size();
+            if (pendingCount >= state.configuration.queueCapacity)
             {
                 client.pending.pop_front();
                 ++client.droppedFrames;
@@ -179,11 +190,13 @@ namespace xwalk::agent
     {
         const std::lock_guard<std::mutex> lock(state.mutex);
         const auto client = findClient(state, clientIdentifier);
-        if (client == state.clients.end())
+        const auto clientsEnd = state.clients.end();
+        if (client == clientsEnd)
         {
             return XWalkMjpegStreamStatus::ClientNotFound;
         }
-        if (client->pending.empty())
+        const agent::boolean pendingEmpty = client->pending.empty();
+        if (pendingEmpty)
         {
             return XWalkMjpegStreamStatus::NoFrame;
         }

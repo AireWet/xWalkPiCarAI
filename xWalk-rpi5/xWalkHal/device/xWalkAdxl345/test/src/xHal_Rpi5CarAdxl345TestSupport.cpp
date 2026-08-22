@@ -24,13 +24,13 @@ namespace xwalk::hal::test::adxl345
         TestBus& bus = *static_cast<TestBus*>(context);
         bus.lastAddress = address;
         bus.lastRegister = reg;
-        if ((reg == XHAL_RPI5CAR_ADXL345_DATA_FORMAT_REGISTER) &&
-            (data == bytevector({XHAL_RPI5CAR_ADXL345_DATA_FORMAT_VALUE})))
+        const bytevector expectedFormat{XHAL_RPI5CAR_ADXL345_DATA_FORMAT_VALUE};
+        if ((reg == XHAL_RPI5CAR_ADXL345_DATA_FORMAT_REGISTER) && (data == expectedFormat))
         {
             ++bus.formatWriteCount;
         }
-        if ((reg == XHAL_RPI5CAR_ADXL345_POWER_CONTROL_REGISTER) &&
-            (data == bytevector({XHAL_RPI5CAR_ADXL345_MEASUREMENT_MODE_VALUE})))
+        const bytevector expectedPowerControl{XHAL_RPI5CAR_ADXL345_MEASUREMENT_MODE_VALUE};
+        if ((reg == XHAL_RPI5CAR_ADXL345_POWER_CONTROL_REGISTER) && (data == expectedPowerControl))
         {
             ++bus.powerWriteCount;
         }
@@ -51,7 +51,8 @@ namespace xwalk::hal::test::adxl345
         bus.lastRegister = reg;
         bus.lastLength = length;
         ++bus.registerReadCount;
-        if (bus.responseIndex >= bus.responses.size())
+        const size responseCount = bus.responses.size();
+        if (bus.responseIndex >= responseCount)
         {
             return {};
         }

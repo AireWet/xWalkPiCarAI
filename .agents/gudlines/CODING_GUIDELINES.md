@@ -421,14 +421,18 @@ transport values must not depend on platform POSIX signal numbers.
   `xControllerApplicationArguments.cpp` for host and Raspberry Pi application
   targets. Keep each other application command free function in its own
   responsibility-focused file in the appropriate `xWalkApp` group.
-  Evaluate every function, member-function, callback, and function-like macro
-  used by an `if` or `while` through a named Boolean variable before entering
-  the condition. This rule also applies to pure queries such as `empty()`,
+  Never place a function call, member-function call, callback invocation, or
+  function-like macro invocation directly in an `if` or `while` condition.
+  Evaluate the complete decision expression first and assign its result to a
+  clearly named Boolean variable before entering the control-flow statement.
+  This rule also applies to pure queries such as `empty()`,
   `size()`, `isfinite()`, and file-state predicates. Keep the `if` or `while`
   condition limited to variables, literals, casts, and operators. For a
   `while`, refresh the named condition at the top of every iteration so
   `continue` preserves condition re-evaluation. Use the owning layer's
   `boolean` alias and an explicit `== false` failure check where applicable.
+  Validate the complete project-owned source tree with
+  `python3 xWalkTool/py-agent/dev-tool/xWalkConditionCheck xWalk-rpi5`.
   Host `main()` delegates to the shared host application function. Raspberry Pi
   `main()` consumes the same parsed argument structure and retains only signal
   setup, resource validation, boot selection, and hardware composition.
@@ -1567,6 +1571,22 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
   objects rather than silently ignoring unsupported configuration.
 - Execute a command only when the CLI owns a complete safe composition. Return
   a distinct backend-unavailable status for optional services such as audio.
+- Route every non-help production Controller command through
+  `xWalkController/xWalkScheduler`. Use separate stable Controller, Agent, and
+  HAL mailbox IDs, create one scheduler child per registered mailbox, and keep
+  same-mailbox requests sequential while allowing separate mailboxes to run in
+  parallel. A `cxx_xWalk*Send_LPP` name identifies its destination module.
+  Keep the native scheduler signal, module interfaces, and tests independent of
+  Protobuf, gRPC, and server code; a future server is only a transport adapter.
+  Keep direct Controller command-runner calls limited to scheduler child
+  adapters and focused in-memory tests; application entry points must not invoke
+  a handler or xWalkBoot directly.
+- Fork the scheduler child before constructing xWalkBoot, Agent, HAL, listener,
+  camera, GPIO, I2C, SPI, audio, or motor resources. Open and release those
+  resources in the owning child. Use fixed-size pointer-free `SOCK_SEQPACKET`
+  messages, fixed-capacity FIFO and status tables, tracked positive PIDs,
+  bounded graceful shutdown, exact-PID `SIGTERM`, and `waitpid()` reaping. Do
+  not add a thread-based Controller handler dispatcher or process-name killing.
 - Enter RPI backend composition through one automatic `XWalkBootRpi` object.
   Pass one `xAgentContext` to every Boot `run*` interface, invoke its application
   callback at most once, consume a failed run attempt, and retain the stack-owned

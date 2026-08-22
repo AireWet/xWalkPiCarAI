@@ -1,6 +1,10 @@
 {
     "C_Cpp.intelliSenseCacheSize": 0,
     "C_Cpp.errorSquiggles": "enabled",
+    "files.associations": {
+        "*.h": "cpp"
+    },
+    "cmake.sourceDirectory": "${workspaceFolder}/xWalk-rpi5",
     "cmake.configureOnOpen": true,
     "cmake.useCMakePresets": "always",
     "github-actions.remote-name": "github-actions",

@@ -18,7 +18,8 @@ namespace xwalk::hal::sim
     void writeSimulationProperty(const filesystempath& path, stringview value, boolean appendNull)
     {
         outputfilestream file(path, FILE_OPEN_WRITE_TRUNCATE);
-        if (!file.is_open())
+        const boolean fileOpen = file.is_open();
+        if (!fileOpen)
         {
             XWALK_HAL_ERROR(XWALK_EXCEPTION, "Simulation property could not be opened");
         }

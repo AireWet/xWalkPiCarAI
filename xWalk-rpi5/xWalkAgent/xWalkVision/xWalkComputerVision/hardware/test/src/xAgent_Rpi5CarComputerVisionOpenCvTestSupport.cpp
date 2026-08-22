@@ -16,7 +16,8 @@ namespace xwalk::agent::test::computer_vision_opencv
         std::filesystem::create_directories(directory);
         video = directory / "one-frame.avi";
         cv::VideoWriter writer(video.string(), cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 10.0, cv::Size(32, 24));
-        if (!writer.isOpened())
+        const agent::boolean writerOpen = writer.isOpened();
+        if (!writerOpen)
         {
             XWALK_RPIAGENT_ERROR(XWALK_RUNTIME, "Recorded-video test fixture could not open its writer");
         }

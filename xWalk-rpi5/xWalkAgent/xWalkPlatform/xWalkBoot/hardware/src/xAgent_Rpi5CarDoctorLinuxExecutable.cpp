@@ -77,11 +77,13 @@ namespace xwalk::agent
             return false;
         }
         const agent::string owned(executable);
-        if (owned.front() == '/')
+        const char firstCharacter = owned.front();
+        if (firstCharacter == '/')
         {
             return executablePathAvailable(owned);
         }
-        if (owned.find('/') != agent::string::npos)
+        const agent::size separator = owned.find('/');
+        if (separator != agent::string::npos)
         {
             return false;
         }
@@ -89,15 +91,17 @@ namespace xwalk::agent
         if (pathEnvironment != nullptr)
         {
             const agent::string path(pathEnvironment);
+            const agent::size pathSize = path.size();
             agent::size start{};
-            while (start <= path.size())
+            while (start <= pathSize)
             {
                 const agent::size end = path.find(':', start);
-                const agent::size length = end == agent::string::npos ? path.size() - start : end - start;
+                const agent::size length = end == agent::string::npos ? pathSize - start : end - start;
                 if (length != 0U)
                 {
                     const agent::string candidate = path.substr(start, length) + "/" + owned;
-                    if (executablePathAvailable(candidate))
+                    const agent::boolean candidateAvailable = executablePathAvailable(candidate);
+                    if (candidateAvailable)
                     {
                         return true;
                     }

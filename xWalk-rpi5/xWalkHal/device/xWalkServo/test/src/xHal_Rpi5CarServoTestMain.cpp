@@ -138,7 +138,9 @@ XWalkHal::int32 main(XWalkHal::int32 argumentCount, XWalkHal::charpointer argume
     else if (argumentCount == 3)
     {
         const xwalk::hal::sim::XWalkServoSimulationArguments arguments(argumentCount, argumentValues);
-        if ((arguments.valid() == false) || (arguments.applyTraceUpdate() == false))
+        const XWalkHal::boolean argumentsValid = arguments.valid();
+        const XWalkHal::boolean traceUpdateApplied = arguments.applyTraceUpdate();
+        if ((argumentsValid == false) || (traceUpdateApplied == false))
         {
             result = 1;
         }

@@ -54,7 +54,8 @@ namespace
         const xwalk::hal::stringview credential = credentialStart == xwalk::hal::stringview::npos
                                                       ? xwalk::hal::stringview{}
                                                       : authorizationHeader.substr(credentialStart + 1U);
-        if (!credential.empty())
+        const xwalk::hal::boolean credentialAvailable = !credential.empty();
+        if (credentialAvailable)
         {
             xwalk::hal::size offset = normalized.find(credential);
             while (offset != xwalk::hal::string::npos)
@@ -74,7 +75,8 @@ namespace
         constexpr xwalk::hal::stringview protectedMarkers[]{"authorization", "api_key", "api key", "password"};
         for (const xwalk::hal::stringview marker : protectedMarkers)
         {
-            if (lowercase.find(marker) != xwalk::hal::string::npos)
+            const xwalk::hal::size markerPosition = lowercase.find(marker);
+            if (markerPosition != xwalk::hal::string::npos)
             {
                 return "[provider detail redacted]";
             }
@@ -243,7 +245,8 @@ namespace xwalk::hal
             string message = statusCode == 404L
                                  ? string("Language-model model or endpoint is missing (HTTP 404)")
                                  : string("Language-model HTTP status is unsuccessful: ") + std::to_string(statusCode);
-            if (!detail.empty())
+            const boolean detailAvailable = !detail.empty();
+            if (detailAvailable)
             {
                 message += string("; provider detail: ") + detail;
             }

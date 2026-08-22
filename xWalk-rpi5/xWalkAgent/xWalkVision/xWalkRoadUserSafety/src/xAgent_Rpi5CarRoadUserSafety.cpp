@@ -135,7 +135,8 @@ namespace xwalk::agent
         agent::uint32 acceptedCount{};
         for (const XWalkRoadUserDetection& detection : batch.detections)
         {
-            if (!validDetection(detection))
+            const agent::boolean detectionValid = validDetection(detection);
+            if (!detectionValid)
             {
                 return failSafe(XWalkRoadSafetyStatus::InvalidOutput);
             }

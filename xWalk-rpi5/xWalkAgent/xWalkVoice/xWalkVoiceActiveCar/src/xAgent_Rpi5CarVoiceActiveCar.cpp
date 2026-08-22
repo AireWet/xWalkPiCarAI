@@ -141,7 +141,9 @@ namespace xwalk::agent
             blink(1U, 100U, 0U);
             selfDriveObject->setStatus(XWalkSelfDriveStatus::Think);
             agent::boolean retrievalUsed{false};
-            if (ordinaryPrompt && configuration.webSearchEnabled && hal::XWalkWebSearch::shouldSearch(prompt))
+            const agent::boolean searchRequired =
+                ordinaryPrompt && configuration.webSearchEnabled && hal::XWalkWebSearch::shouldSearch(prompt);
+            if (searchRequired)
             {
                 try
                 {
@@ -706,7 +708,8 @@ namespace xwalk::agent
         for (agent::size index{}; index < carConfiguration.sleepPhrases.size(); ++index)
         {
             const agent::string normalizedPhrase = normalizePhrase(carConfiguration.sleepPhrases[index]);
-            if (normalizedPhrase.empty())
+            const agent::boolean normalizedPhraseEmpty = normalizedPhrase.empty();
+            if (normalizedPhraseEmpty)
             {
                 XWALK_RPIAGENT_ERROR(XWALK_INVAL, "Voice-active-car sleep phrases must not be empty");
             }

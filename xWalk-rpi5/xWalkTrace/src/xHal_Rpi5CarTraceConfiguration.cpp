@@ -35,7 +35,8 @@ namespace xwalk::hal
             return false;
         }
         const stringview number = uid.substr(separatorPosition + 1U);
-        if (number.empty())
+        const boolean numberEmpty = number.empty();
+        if (numberEmpty)
         {
             return false;
         }
@@ -61,17 +62,20 @@ namespace xwalk::hal
         startTime = steadyclock::now();
 
         const filesystempath logDirectory = logPath.parent_path();
-        if (logDirectory.empty() == false)
+        const boolean logDirectoryEmpty = logDirectory.empty();
+        if (logDirectoryEmpty == false)
         {
             static_cast<void>(createDirectories(logDirectory));
         }
-        if (logFile.is_open())
+        const boolean logFileOpen = logFile.is_open();
+        if (logFileOpen)
         {
             logFile.close();
         }
         logFile.clear();
         logFile.open(logPath, FILE_OPEN_WRITE_APPEND);
-        if (logFile.is_open() == false)
+        const boolean reopenedLogFileOpen = logFile.is_open();
+        if (reopenedLogFileOpen == false)
         {
             throw runtimeerror("Trace log file could not be opened for append");
         }

@@ -85,7 +85,8 @@ namespace xwalk::agent::test::road_user_safety
             cv::inRange(frame, cv::Scalar(0.0, 0.0, 150.0), cv::Scalar(90.0, 90.0, 255.0), personMask);
             std::vector<std::vector<cv::Point>> contours;
             cv::findContours(personMask, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-            if (contours.empty())
+            const boolean contoursEmpty = contours.empty();
+            if (contoursEmpty)
             {
                 return false;
             }
@@ -122,18 +123,22 @@ namespace xwalk::agent::test::road_user_safety
         {
             RecordedScenarioBackend& scenario = *static_cast<RecordedScenarioBackend*>(context);
             cv::Mat frame;
-            if (!scenario.capture.read(frame) || frame.empty())
+            const boolean frameRead = scenario.capture.read(frame);
+            const boolean frameEmpty = frame.empty();
+            if (!frameRead || frameEmpty)
             {
                 return {XWalkRoadSafetyStatus::EndOfStream, {}};
             }
             const uint32 frameIndex = recordedFrameIndex(frame);
             scenario.frameIndices.push_back(frameIndex);
-            if (!recordedLinePresent(frame))
+            const boolean linePresent = recordedLinePresent(frame);
+            if (!linePresent)
             {
                 return {XWalkRoadSafetyStatus::LineLost, {}};
             }
             XWalkRoadUserDetection person;
-            if (!recordedPersonDetection(scenario, frame, person))
+            const boolean personDetected = recordedPersonDetection(scenario, frame, person);
+            if (!personDetected)
             {
                 return {XWalkRoadSafetyStatus::Ok, {}};
             }
@@ -259,7 +264,8 @@ namespace xwalk::agent::test::road_user_safety
         }
         scenario.directory = temporaryDirectory / (string("xwalk-road-scenario-") + std::to_string(timestamp));
         scenario.videoPath = scenario.directory / "road-user-safety.avi";
-        if (!std::filesystem::create_directories(scenario.directory, error) || error)
+        const boolean directoryCreated = std::filesystem::create_directories(scenario.directory, error);
+        if (!directoryCreated || error)
         {
             return false;
         }
@@ -267,7 +273,8 @@ namespace xwalk::agent::test::road_user_safety
                                cv::VideoWriter::fourcc('M', 'J', 'P', 'G'),
                                10.0,
                                cv::Size(RECORDED_FRAME_WIDTH, RECORDED_FRAME_HEIGHT));
-        if (!writer.isOpened())
+        const boolean writerOpen = writer.isOpened();
+        if (!writerOpen)
         {
             return false;
         }
@@ -325,7 +332,8 @@ namespace xwalk::agent::test::road_user_safety
         }
         float64 previousPosition{-1.0};
         cv::Mat frame;
-        while (capture.read(frame) && !frame.empty())
+        boolean frameAvailable = capture.read(frame) && !frame.empty();
+        while (frameAvailable)
         {
             const float64 position = capture.get(cv::CAP_PROP_POS_FRAMES);
             if (position <= previousPosition)
@@ -351,6 +359,7 @@ namespace xwalk::agent::test::road_user_safety
                 summary.contentHash *= 1'099'511'628'211ULL;
             }
             ++summary.frameCount;
+            frameAvailable = capture.read(frame) && !frame.empty();
         }
         summary.cleanEndOfVideo = frame.empty();
         capture.release();

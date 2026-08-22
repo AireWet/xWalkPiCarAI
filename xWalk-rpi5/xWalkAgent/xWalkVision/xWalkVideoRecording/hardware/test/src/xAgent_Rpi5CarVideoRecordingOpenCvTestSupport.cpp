@@ -29,7 +29,8 @@ namespace xwalk::agent::test::video_recording_opencv
         std::filesystem::create_directories(directory);
         video = directory / "finite-source.avi";
         cv::VideoWriter writer(video.string(), cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 10.0, cv::Size(32, 24));
-        if (!writer.isOpened())
+        const agent::boolean writerOpen = writer.isOpened();
+        if (!writerOpen)
         {
             XWALK_RPIAGENT_ERROR(XWALK_RUNTIME, "Video-recording fixture could not open its writer");
         }

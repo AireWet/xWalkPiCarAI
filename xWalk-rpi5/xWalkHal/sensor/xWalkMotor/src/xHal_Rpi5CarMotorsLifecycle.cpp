@@ -166,7 +166,8 @@ namespace xwalk::hal
             commandActiveValue = false;
         }
         watchdogCondition.notify_all();
-        if (watchdogThread.joinable())
+        const boolean watchdogJoinable = watchdogThread.joinable();
+        if (watchdogJoinable)
         {
             watchdogThread.join();
         }

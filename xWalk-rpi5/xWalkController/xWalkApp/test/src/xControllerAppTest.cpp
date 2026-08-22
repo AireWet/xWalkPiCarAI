@@ -40,6 +40,7 @@
 #include "xHal_Rpi5CarCameraStream.h"
 
 #include "xAgent_Rpi5CarVideoStreaming.h"
+#include "xAgent_Rpi5CarBootTypes.h"
 
 #include <algorithm>
 #include <csignal>
@@ -98,7 +99,8 @@ namespace
              ctrl::string(name) + ".conf");
         {
             std::ofstream output(path);
-            if (!output.is_open())
+            const ctrl::boolean outputOpen = output.is_open();
+            if (!outputOpen)
             {
                 return {false, {"[FAIL] temporary configuration could not be opened"}};
             }
@@ -120,7 +122,8 @@ namespace
             ("xwalk-video-stream-selection-" + std::to_string(static_cast<unsigned long>(::getpid())) + ".conf");
         {
             std::ofstream output(path);
-            if (!output.is_open())
+            const ctrl::boolean outputOpen = output.is_open();
+            if (!outputOpen)
             {
                 return {false, {"[FAIL] temporary configuration could not be opened"}};
             }
@@ -154,7 +157,7 @@ namespace
     /** @brief Verifies the extracted application callback context defaults. */
     TEST(XWalkAppGroup, ApplicationSupportDefaults)
     {
-        const xwalk::ctrl::XWalkControllerBootContext bootContext;
+        const xwalk::ctrl::XWalkRunArgs bootContext;
         const xwalk::ctrl::XWalkControllerApplicationArguments applicationArguments;
         xwalk::ctrl::XWalkControllerApplicationContext applicationContext;
         const xwalk::ctrl::XWalkSoundRequest soundRequest;
@@ -241,18 +244,21 @@ namespace
         {
             static_cast<void>(::close(inputPipe[1]));
             static_cast<void>(::close(readyPipe[0]));
-            if (::dup2(inputPipe[0], STDIN_FILENO) < 0)
+            const ctrl::int32 duplicateResult = ::dup2(inputPipe[0], STDIN_FILENO);
+            if (duplicateResult < 0)
             {
                 ::_exit(2);
             }
             xwalk::ctrl::XWALK_resetOperationRequest();
-            if ((!xwalk::ctrl::XWALK_prepareOperationSignalHandling()) ||
-                (!xwalk::ctrl::XWALK_activateOperationSignalHandling()))
+            const ctrl::boolean signalHandlingPrepared = xwalk::ctrl::XWALK_prepareOperationSignalHandling();
+            const ctrl::boolean signalHandlingActivated = xwalk::ctrl::XWALK_activateOperationSignalHandling();
+            if ((!signalHandlingPrepared) || (!signalHandlingActivated))
             {
                 ::_exit(3);
             }
             const char ready{'1'};
-            if (::write(readyPipe[1], &ready, 1U) != 1)
+            const ssize_t writtenSize = ::write(readyPipe[1], &ready, 1U);
+            if (writtenSize != 1)
             {
                 ::_exit(4);
             }
@@ -339,7 +345,7 @@ namespace
     {
         const ctrl::stringvector commandArguments{"doctor"};
         const ctrl::stringvector doctorLines{"[PASS] host-only runner test"};
-        xwalk::ctrl::XWalkControllerBootContext bootContext{&commandArguments, {}};
+        xwalk::ctrl::XWalkRunArgs bootContext{&commandArguments, {}};
         xwalk::agent::XWalkBootServices services;
         services.doctorLines = &doctorLines;
 

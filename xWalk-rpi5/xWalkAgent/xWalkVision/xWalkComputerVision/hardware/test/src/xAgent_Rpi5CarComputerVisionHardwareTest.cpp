@@ -80,7 +80,8 @@ int main(int argumentCount, char* arguments[])
     callbacks.delay = &delay;
     callbacks.continueOperation = &continueOperation;
     xwalk::agent::XWalkComputerVision vision(&provider, callbacks);
-    if (!vision.start())
+    const agent::boolean visionStarted = vision.start();
+    if (!visionStarted)
     {
         return 1;
     }
@@ -94,8 +95,8 @@ int main(int argumentCount, char* arguments[])
         return 1;
     }
     const xwalk::agent::XWalkComputerVisionResult photograph = vision.handleKey("q");
-    if (photograph.event != xwalk::agent::XWalkComputerVisionEvent::PhotoCaptured ||
-        !xwalk::hal::filesystemEntryExists(photograph.photoPath))
+    const agent::boolean photographExists = xwalk::hal::filesystemEntryExists(photograph.photoPath);
+    if ((photograph.event != xwalk::agent::XWalkComputerVisionEvent::PhotoCaptured) || !photographExists)
     {
         vision.stop();
         return 1;

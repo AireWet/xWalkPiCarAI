@@ -25,7 +25,8 @@ namespace xwalk::hal::test::userbutton
     {
         TestBackend& backend = *static_cast<TestBackend*>(context);
         static_cast<void>(pin);
-        if (backend.failReads.load())
+        const boolean readsFail = backend.failReads.load();
+        if (readsFail)
         {
             XWALK_HAL_ERROR(XWALK_RUNTIME, "Simulated user-button GPIO failure");
         }

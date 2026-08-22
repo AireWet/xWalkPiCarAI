@@ -264,10 +264,11 @@ namespace xwalk::agent
     {
         agent::stringvector phrases;
         agent::size offset{};
-        while (offset <= value.size())
+        const agent::size valueSize = value.size();
+        while (offset <= valueSize)
         {
             const agent::size comma = value.find(',', offset);
-            const agent::size end = comma == agent::stringview::npos ? value.size() : comma;
+            const agent::size end = comma == agent::stringview::npos ? valueSize : comma;
             agent::string phrase(value.substr(offset, end - offset));
             const agent::size first = phrase.find_first_not_of(" \t\r\n");
             const agent::size last = phrase.find_last_not_of(" \t\r\n");
@@ -283,7 +284,8 @@ namespace xwalk::agent
             }
             offset = comma + 1U;
         }
-        if (phrases.empty())
+        const agent::boolean phrasesEmpty = phrases.empty();
+        if (phrasesEmpty)
         {
             const std::string exceptionMessage = std::string(optionName).append(" must not be empty");
             XWALK_RPIAGENT_ERROR(XWALK_INVAL, exceptionMessage);

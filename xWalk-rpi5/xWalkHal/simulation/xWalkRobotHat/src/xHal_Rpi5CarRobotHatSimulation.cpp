@@ -81,7 +81,8 @@ namespace xwalk::hal::simulation
 
     void XWalkRobotHatSimulation::setAdcValue(uint8 channel, uint16 value)
     {
-        if (channel >= adcValuesValue.size())
+        const size adcChannelCount = adcValuesValue.size();
+        if (channel >= adcChannelCount)
         {
             XWALK_HAL_ERROR(XWALK_RANGE, "simulated ADC channel must be between zero and seven");
         }
@@ -105,7 +106,8 @@ namespace xwalk::hal::simulation
     {
         constexpr float64 maximumBatteryVoltage{9.9};
         constexpr float64 maximumAdcCount{4095.0};
-        if (!std::isfinite(voltage))
+        const boolean voltageFinite = std::isfinite(voltage);
+        if (!voltageFinite)
         {
             XWALK_HAL_ERROR(XWALK_INVAL, "simulated battery voltage must be finite");
         }
@@ -119,7 +121,8 @@ namespace xwalk::hal::simulation
 
     void XWalkRobotHatSimulation::setUltrasonicDistance(float64 distanceCentimeters)
     {
-        if (!std::isfinite(distanceCentimeters))
+        const boolean distanceFinite = std::isfinite(distanceCentimeters);
+        if (!distanceFinite)
         {
             XWALK_HAL_ERROR(XWALK_INVAL, "simulated ultrasonic distance must be finite");
         }
@@ -155,7 +158,8 @@ namespace xwalk::hal::simulation
     {
         for (const bytevector& frame : frames)
         {
-            if (frame.empty())
+            const boolean frameEmpty = frame.empty();
+            if (frameEmpty)
             {
                 XWALK_HAL_ERROR(XWALK_INVAL, "simulated camera frames must not be empty");
             }
@@ -174,7 +178,8 @@ namespace xwalk::hal::simulation
             record(XWalkRobotHatOperation::CameraCapture, 0U, 0U, false);
             XWALK_HAL_ERROR(XWALK_RUNTIME, "injected or unavailable simulated camera frame");
         }
-        if (nextCameraFrameValue >= cameraFramesValue.size())
+        const size cameraFrameCount = cameraFramesValue.size();
+        if (nextCameraFrameValue >= cameraFrameCount)
         {
             frame.clear();
             record(XWalkRobotHatOperation::CameraCapture, 0U, 0U, true, {}, "end-of-sequence");
@@ -256,7 +261,8 @@ namespace xwalk::hal::simulation
         {
             XWALK_HAL_ERROR(XWALK_RUNTIME, "injected Robot HAT I2C write failure");
         }
-        if (simulation.presentAddressesValue.count(address) == 0U)
+        const size addressCount = simulation.presentAddressesValue.count(address);
+        if (addressCount == 0U)
         {
             XWALK_HAL_ERROR(XWALK_RUNTIME, "simulated Robot HAT I2C device is unavailable");
         }
@@ -293,14 +299,16 @@ namespace xwalk::hal::simulation
         XWalkRobotHatSimulation& simulation = from(context);
         const std::lock_guard<std::mutex> lock(simulation.mutexValue);
         const boolean failed = simulation.consumeFailure(XWalkRobotHatOperation::I2cRead, address);
-        if (failed || (simulation.presentAddressesValue.count(address) == 0U))
+        const size addressCount = simulation.presentAddressesValue.count(address);
+        if (failed || (addressCount == 0U))
         {
             simulation.record(XWalkRobotHatOperation::I2cRead, address, static_cast<uint32>(length), false);
             XWALK_HAL_ERROR(XWALK_RUNTIME, "injected or unavailable Robot HAT I2C read");
         }
         bytevector result(length, 0U);
         const auto command = simulation.adcCommandValue.find(address);
-        if ((command != simulation.adcCommandValue.end()) && (length >= 2U))
+        const auto commandsEnd = simulation.adcCommandValue.end();
+        if ((command != commandsEnd) && (length >= 2U))
         {
             const uint8 channel = static_cast<uint8>(7U - (command->second & 0x07U));
             const uint16 value = simulation.adcValuesValue[channel];
@@ -326,7 +334,9 @@ namespace xwalk::hal::simulation
         {
             const uint8 current = static_cast<uint8>(reg + static_cast<uint8>(index));
             const auto value = simulation.registersValue.find(registerKey(address, current));
-            if ((value != simulation.registersValue.end()) && !value->second.empty())
+            const auto registerValuesEnd = simulation.registersValue.end();
+            const boolean registerValueAvailable = value != registerValuesEnd && !value->second.empty();
+            if (registerValueAvailable)
             {
                 result[index] = value->second[0U];
             }
