@@ -279,8 +279,8 @@ namespace xwalk::hal
         {
             XWALK_HAL_ERROR(XWALK_RANGE, "Vosk streaming PCM exceeds the C API byte-count range");
         }
-        const boolean cancellationRequested = self.cancellationRequested.load();
-        if (cancellationRequested)
+        const boolean cancellationRequestedBeforeFeed = self.cancellationRequested.load();
+        if (cancellationRequestedBeforeFeed)
         {
             return XWalkSpeechRecognitionFeedStatus::Cancelled;
         }
@@ -290,8 +290,8 @@ namespace xwalk::hal
         {
             XWALK_HAL_ERROR(XWALK_RUNTIME, "Vosk streaming PCM ingestion failed");
         }
-        const boolean cancellationRequested = self.cancellationRequested.load();
-        if (cancellationRequested)
+        const boolean cancellationRequestedAfterFeed = self.cancellationRequested.load();
+        if (cancellationRequestedAfterFeed)
         {
             return XWalkSpeechRecognitionFeedStatus::Cancelled;
         }
