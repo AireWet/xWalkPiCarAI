@@ -1,4 +1,4 @@
-# xWalk licence installation
+# xWalk Licence Installation
 
 The Controller loads AI model selections from an authenticated encrypted licence. Provider credentials remain
 separate in the runtime user's mode-`0600` `$HOME/.netrc` file.
@@ -60,7 +60,8 @@ Protect the file before loading the environment:
 chmod 600 "$HOME/.netrc"
 ```
 
-See [Gemini Jarvis configuration](GEMINI_CONFIGURATION.md) for the voice model and Controller configuration.
+See [Jarvis and Gemini configuration](Jarvis%20and%20Gemini%20Configuration.md) for the voice model and
+Controller configuration.
 
 ## Generate the encrypted licence
 

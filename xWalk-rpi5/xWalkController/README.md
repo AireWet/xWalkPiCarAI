@@ -62,15 +62,24 @@ the sibling `xWalkAgent` aggregate and are imported through CMake targets.
 | Path | Responsibility |
 | --- | --- |
 | `CMakeLists.txt` | CLI aggregate options and Agent dependency composition |
-| [`GEMINI_CONFIGURATION.md`](GEMINI_CONFIGURATION.md) | Local Jarvis and optional Gemini setup |
-| [`LICENSE_INSTALLATION.md`](LICENSE_INSTALLATION.md) | Encrypted licence installation and runtime loading |
 | `xWalkConfig/picar-x.conf` | Machine-independent manifest template and provider selection |
 | `xWalkConfig/picar-x.d/` | Functional settings and separate AI-provider profiles |
-| `PICARX_COMMAND_CHEAT_SHEET.md` | Copyable PiCar-X Controller command reference |
 | `xWalkHandler/` | Controller contract, implementation, and direct in-memory test |
 | `xWalkApp/` | Application build, includes, sources, generated help, and executable tests |
+| `xWalkScheduler/` | Documented scope for future bounded command scheduling |
 | `xWalkTest/xGoogleTest/` | Independent CLI unit runner and strict grouped XML inventory |
 | `xWalkTest/xSequenceTest/` | Independent sequence runner and strict grouped XML inventory |
+
+## Developer notes
+
+- [Jarvis and Gemini configuration][jarvis-gemini-note]
+- [xWalk licence installation][licence-installation-note]
+- [PiCar-X Controller command reference][controller-command-reference]
+
+[jarvis-gemini-note]: ../../devloper-note/xwalk-rpi5-note/Doc/note/Jarvis%20and%20Gemini%20Configuration.md
+[licence-installation-note]: ../../devloper-note/xwalk-rpi5-note/Doc/note/xWalk%20Licence%20Installation.md
+[controller-command-reference]:
+  ../../devloper-note/xwalk-rpi5-note/Doc/note/PiCar-X%20Controller%20Command%20Reference.md
 
 ## Host verification
 

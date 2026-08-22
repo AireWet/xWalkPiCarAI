@@ -1,4 +1,4 @@
-# PiCar-X Controller Command Cheat Sheet
+# PiCar-X Controller Command Reference
 
 This quick reference lists the commands provided by `xwalk-picarx-control`.
 Run the setup block once in each terminal before using the examples.
@@ -31,7 +31,7 @@ $XWALK_PICARX_CLI --trace CTRL.024.enable doctor
 
 Use `--deployment-config PATH` to select a different deployment configuration.
 The Raspberry Pi build and provisioning sequence is documented in the
-[Controller README](README.md#raspberry-pi-compilation-and-test-discovery).
+[Controller README](../../../../xWalk-rpi5/xWalkController/README.md#raspberry-pi-compilation-and-test-discovery).
 
 ## Basic driving
 

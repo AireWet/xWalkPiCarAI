@@ -76,6 +76,12 @@ notes.
   application tests, and Raspberry Pi composition.
 - [Controller command flow](Doc/note/Controller%20Command%20Flow.md): Mermaid traces from every CLI
   command through boot selection, typed handlers, Agent and HAL services, and final endpoints.
+- [PiCar-X Controller command reference](Doc/note/PiCar-X%20Controller%20Command%20Reference.md): copyable
+  commands for preflight, driving, sensing, media, voice, calibration, and SPI diagnostics.
+- [Jarvis and Gemini configuration](Doc/note/Jarvis%20and%20Gemini%20Configuration.md): local Ollama, optional
+  Gemini credentials, Piper voice setup, configuration, validation, and safe startup.
+- [xWalk licence installation](Doc/note/xWalk%20Licence%20Installation.md): encrypted model configuration,
+  credential loading, Controller validation, safe startup, and troubleshooting.
 - [xWalkBoot](../../xWalk-rpi5/xWalkAgent/xWalkPlatform/xWalkBoot/README.md): host stub and RPi process hardware
   ownership.
 - [xWalkLineTracking](../../xWalk-rpi5/xWalkAgent/xWalkVehicle/xWalkLineTracking/README.md): bounded line

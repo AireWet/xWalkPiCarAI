@@ -1,4 +1,4 @@
-# Local Jarvis and optional Gemini configuration
+# Local Jarvis and Optional Gemini Configuration
 
 ## 1. Start local Ollama
 
