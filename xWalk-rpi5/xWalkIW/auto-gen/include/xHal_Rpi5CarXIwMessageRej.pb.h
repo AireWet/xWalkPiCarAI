@@ -31,6 +31,7 @@
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/unknown_field_set.h>
 #include "xHal_Rpi5CarXIwMessageReq.pb.h"
+#include "xHal_Rpi5CarXIwSignal.pb.h"
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_xHal_5fRpi5CarXIwMessageRej_2eproto
@@ -156,6 +157,9 @@ extern XWalkStorytellingRobotCommandRejDefaultTypeInternal _XWalkStorytellingRob
 class XWalkTextVisionTalkCommandRej;
 struct XWalkTextVisionTalkCommandRejDefaultTypeInternal;
 extern XWalkTextVisionTalkCommandRejDefaultTypeInternal _XWalkTextVisionTalkCommandRej_default_instance_;
+class XWalkTraceRej;
+struct XWalkTraceRejDefaultTypeInternal;
+extern XWalkTraceRejDefaultTypeInternal _XWalkTraceRej_default_instance_;
 class XWalkTreasureHuntCommandRej;
 struct XWalkTreasureHuntCommandRejDefaultTypeInternal;
 extern XWalkTreasureHuntCommandRejDefaultTypeInternal _XWalkTreasureHuntCommandRej_default_instance_;
@@ -226,6 +230,7 @@ template<> ::xwalk::iw::v1::XWalkSpiRej* Arena::CreateMaybeMessage<::xwalk::iw::
 template<> ::xwalk::iw::v1::XWalkStareAtYouCommandRej* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkStareAtYouCommandRej>(Arena*);
 template<> ::xwalk::iw::v1::XWalkStorytellingRobotCommandRej* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkStorytellingRobotCommandRej>(Arena*);
 template<> ::xwalk::iw::v1::XWalkTextVisionTalkCommandRej* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkTextVisionTalkCommandRej>(Arena*);
+template<> ::xwalk::iw::v1::XWalkTraceRej* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkTraceRej>(Arena*);
 template<> ::xwalk::iw::v1::XWalkTreasureHuntCommandRej* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkTreasureHuntCommandRej>(Arena*);
 template<> ::xwalk::iw::v1::XWalkTurnCommandRej* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkTurnCommandRej>(Arena*);
 template<> ::xwalk::iw::v1::XWalkTurnRej* Arena::CreateMaybeMessage<::xwalk::iw::v1::XWalkTurnRej>(Arena*);
@@ -242,6 +247,181 @@ namespace iw {
 namespace v1 {
 
 // ===================================================================
+
+class XWalkTraceRej final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkTraceRej) */ {
+ public:
+  inline XWalkTraceRej() : XWalkTraceRej(nullptr) {}
+  ~XWalkTraceRej() override;
+  explicit PROTOBUF_CONSTEXPR XWalkTraceRej(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  XWalkTraceRej(const XWalkTraceRej& from);
+  XWalkTraceRej(XWalkTraceRej&& from) noexcept
+    : XWalkTraceRej() {
+    *this = ::std::move(from);
+  }
+
+  inline XWalkTraceRej& operator=(const XWalkTraceRej& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline XWalkTraceRej& operator=(XWalkTraceRej&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const XWalkTraceRej& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const XWalkTraceRej* internal_default_instance() {
+    return reinterpret_cast<const XWalkTraceRej*>(
+               &_XWalkTraceRej_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    0;
+
+  friend void swap(XWalkTraceRej& a, XWalkTraceRej& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(XWalkTraceRej* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(XWalkTraceRej* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  XWalkTraceRej* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XWalkTraceRej>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const XWalkTraceRej& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const XWalkTraceRej& from) {
+    XWalkTraceRej::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(XWalkTraceRej* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "xwalk.iw.v1.XWalkTraceRej";
+  }
+  protected:
+  explicit XWalkTraceRej(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kMessageFieldNumber = 2,
+    kSeverityFieldNumber = 1,
+    kErrorSignalFieldNumber = 3,
+  };
+  // string message = 2;
+  void clear_message();
+  const std::string& message() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_message(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_message();
+  PROTOBUF_NODISCARD std::string* release_message();
+  void set_allocated_message(std::string* message);
+  private:
+  const std::string& _internal_message() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_message(const std::string& value);
+  std::string* _internal_mutable_message();
+  public:
+
+  // .xwalk.iw.v1.XWalkTraceSeverity severity = 1;
+  void clear_severity();
+  ::xwalk::iw::v1::XWalkTraceSeverity severity() const;
+  void set_severity(::xwalk::iw::v1::XWalkTraceSeverity value);
+  private:
+  ::xwalk::iw::v1::XWalkTraceSeverity _internal_severity() const;
+  void _internal_set_severity(::xwalk::iw::v1::XWalkTraceSeverity value);
+  public:
+
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 3;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkTraceRej)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr message_;
+    int severity_;
+    int error_signal_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto;
+};
+// -------------------------------------------------------------------
 
 class XWalkI2cRejPayload final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:xwalk.iw.v1.XWalkI2cRejPayload) */ {
@@ -291,7 +471,7 @@ class XWalkI2cRejPayload final :
                &_XWalkI2cRejPayload_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    0;
+    1;
 
   friend void swap(XWalkI2cRejPayload& a, XWalkI2cRejPayload& b) {
     a.Swap(&b);
@@ -368,6 +548,7 @@ class XWalkI2cRejPayload final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -415,6 +596,15 @@ class XWalkI2cRejPayload final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkI2cRejPayload)
  private:
   class _Internal;
@@ -427,6 +617,7 @@ class XWalkI2cRejPayload final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -482,7 +673,7 @@ class XWalkControllerCommandRej final :
                &_XWalkControllerCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    1;
+    2;
 
   friend void swap(XWalkControllerCommandRej& a, XWalkControllerCommandRej& b) {
     a.Swap(&b);
@@ -559,6 +750,7 @@ class XWalkControllerCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -606,6 +798,15 @@ class XWalkControllerCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkControllerCommandRej)
  private:
   class _Internal;
@@ -618,6 +819,7 @@ class XWalkControllerCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -673,7 +875,7 @@ class XWalkNoArgumentRej final :
                &_XWalkNoArgumentRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    3;
 
   friend void swap(XWalkNoArgumentRej& a, XWalkNoArgumentRej& b) {
     a.Swap(&b);
@@ -750,6 +952,7 @@ class XWalkNoArgumentRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -797,6 +1000,15 @@ class XWalkNoArgumentRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkNoArgumentRej)
  private:
   class _Internal;
@@ -809,6 +1021,7 @@ class XWalkNoArgumentRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -864,7 +1077,7 @@ class XWalkLifecycleRej final :
                &_XWalkLifecycleRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(XWalkLifecycleRej& a, XWalkLifecycleRej& b) {
     a.Swap(&b);
@@ -941,6 +1154,7 @@ class XWalkLifecycleRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -988,6 +1202,15 @@ class XWalkLifecycleRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkLifecycleRej)
  private:
   class _Internal;
@@ -1000,6 +1223,7 @@ class XWalkLifecycleRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1055,7 +1279,7 @@ class XWalkMoveRej final :
                &_XWalkMoveRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(XWalkMoveRej& a, XWalkMoveRej& b) {
     a.Swap(&b);
@@ -1132,6 +1356,7 @@ class XWalkMoveRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -1179,6 +1404,15 @@ class XWalkMoveRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkMoveRej)
  private:
   class _Internal;
@@ -1191,6 +1425,7 @@ class XWalkMoveRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1246,7 +1481,7 @@ class XWalkTurnRej final :
                &_XWalkTurnRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(XWalkTurnRej& a, XWalkTurnRej& b) {
     a.Swap(&b);
@@ -1323,6 +1558,7 @@ class XWalkTurnRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -1370,6 +1606,15 @@ class XWalkTurnRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkTurnRej)
  private:
   class _Internal;
@@ -1382,6 +1627,7 @@ class XWalkTurnRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1437,7 +1683,7 @@ class XWalkCameraRej final :
                &_XWalkCameraRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   friend void swap(XWalkCameraRej& a, XWalkCameraRej& b) {
     a.Swap(&b);
@@ -1514,6 +1760,7 @@ class XWalkCameraRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -1561,6 +1808,15 @@ class XWalkCameraRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkCameraRej)
  private:
   class _Internal;
@@ -1573,6 +1829,7 @@ class XWalkCameraRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1628,7 +1885,7 @@ class XWalkSensorRej final :
                &_XWalkSensorRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(XWalkSensorRej& a, XWalkSensorRej& b) {
     a.Swap(&b);
@@ -1705,6 +1962,7 @@ class XWalkSensorRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -1752,6 +2010,15 @@ class XWalkSensorRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSensorRej)
  private:
   class _Internal;
@@ -1764,6 +2031,7 @@ class XWalkSensorRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1819,7 +2087,7 @@ class XWalkSelfDriveRej final :
                &_XWalkSelfDriveRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    9;
 
   friend void swap(XWalkSelfDriveRej& a, XWalkSelfDriveRej& b) {
     a.Swap(&b);
@@ -1896,6 +2164,7 @@ class XWalkSelfDriveRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -1943,6 +2212,15 @@ class XWalkSelfDriveRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSelfDriveRej)
  private:
   class _Internal;
@@ -1955,6 +2233,7 @@ class XWalkSelfDriveRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2010,7 +2289,7 @@ class XWalkSpiRej final :
                &_XWalkSpiRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    10;
 
   friend void swap(XWalkSpiRej& a, XWalkSpiRej& b) {
     a.Swap(&b);
@@ -2087,6 +2366,7 @@ class XWalkSpiRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -2134,6 +2414,15 @@ class XWalkSpiRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSpiRej)
  private:
   class _Internal;
@@ -2146,6 +2435,7 @@ class XWalkSpiRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2201,7 +2491,7 @@ class XWalkGptCarRej final :
                &_XWalkGptCarRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    11;
 
   friend void swap(XWalkGptCarRej& a, XWalkGptCarRej& b) {
     a.Swap(&b);
@@ -2278,6 +2568,7 @@ class XWalkGptCarRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -2325,6 +2616,15 @@ class XWalkGptCarRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkGptCarRej)
  private:
   class _Internal;
@@ -2337,6 +2637,7 @@ class XWalkGptCarRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2392,7 +2693,7 @@ class XWalkCalibrationRej final :
                &_XWalkCalibrationRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    12;
 
   friend void swap(XWalkCalibrationRej& a, XWalkCalibrationRej& b) {
     a.Swap(&b);
@@ -2469,6 +2770,7 @@ class XWalkCalibrationRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -2516,6 +2818,15 @@ class XWalkCalibrationRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkCalibrationRej)
  private:
   class _Internal;
@@ -2528,6 +2839,7 @@ class XWalkCalibrationRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2583,7 +2895,7 @@ class XWalkSoundRej final :
                &_XWalkSoundRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    13;
 
   friend void swap(XWalkSoundRej& a, XWalkSoundRej& b) {
     a.Swap(&b);
@@ -2660,6 +2972,7 @@ class XWalkSoundRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -2707,6 +3020,15 @@ class XWalkSoundRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSoundRej)
  private:
   class _Internal;
@@ -2719,6 +3041,7 @@ class XWalkSoundRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2774,7 +3097,7 @@ class XWalkUnknownCommandRej final :
                &_XWalkUnknownCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    14;
 
   friend void swap(XWalkUnknownCommandRej& a, XWalkUnknownCommandRej& b) {
     a.Swap(&b);
@@ -2851,6 +3174,7 @@ class XWalkUnknownCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -2898,6 +3222,15 @@ class XWalkUnknownCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkUnknownCommandRej)
  private:
   class _Internal;
@@ -2910,6 +3243,7 @@ class XWalkUnknownCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2965,7 +3299,7 @@ class XWalkHelpCommandRej final :
                &_XWalkHelpCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    15;
 
   friend void swap(XWalkHelpCommandRej& a, XWalkHelpCommandRej& b) {
     a.Swap(&b);
@@ -3042,6 +3376,7 @@ class XWalkHelpCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -3089,6 +3424,15 @@ class XWalkHelpCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkHelpCommandRej)
  private:
   class _Internal;
@@ -3101,6 +3445,7 @@ class XWalkHelpCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -3156,7 +3501,7 @@ class XWalkSpiCommandRej final :
                &_XWalkSpiCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    16;
 
   friend void swap(XWalkSpiCommandRej& a, XWalkSpiCommandRej& b) {
     a.Swap(&b);
@@ -3233,6 +3578,7 @@ class XWalkSpiCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -3280,6 +3626,15 @@ class XWalkSpiCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSpiCommandRej)
  private:
   class _Internal;
@@ -3292,6 +3647,7 @@ class XWalkSpiCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -3347,7 +3703,7 @@ class XWalkDoctorCommandRej final :
                &_XWalkDoctorCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    17;
 
   friend void swap(XWalkDoctorCommandRej& a, XWalkDoctorCommandRej& b) {
     a.Swap(&b);
@@ -3424,6 +3780,7 @@ class XWalkDoctorCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -3471,6 +3828,15 @@ class XWalkDoctorCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkDoctorCommandRej)
  private:
   class _Internal;
@@ -3483,6 +3849,7 @@ class XWalkDoctorCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -3538,7 +3905,7 @@ class XWalkServoZeroingCommandRej final :
                &_XWalkServoZeroingCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    18;
 
   friend void swap(XWalkServoZeroingCommandRej& a, XWalkServoZeroingCommandRej& b) {
     a.Swap(&b);
@@ -3615,6 +3982,7 @@ class XWalkServoZeroingCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -3662,6 +4030,15 @@ class XWalkServoZeroingCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkServoZeroingCommandRej)
  private:
   class _Internal;
@@ -3674,6 +4051,7 @@ class XWalkServoZeroingCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -3729,7 +4107,7 @@ class XWalkComputerVisionCommandRej final :
                &_XWalkComputerVisionCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    19;
 
   friend void swap(XWalkComputerVisionCommandRej& a, XWalkComputerVisionCommandRej& b) {
     a.Swap(&b);
@@ -3806,6 +4184,7 @@ class XWalkComputerVisionCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -3853,6 +4232,15 @@ class XWalkComputerVisionCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkComputerVisionCommandRej)
  private:
   class _Internal;
@@ -3865,6 +4253,7 @@ class XWalkComputerVisionCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -3920,7 +4309,7 @@ class XWalkRecordVideoCommandRej final :
                &_XWalkRecordVideoCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    20;
 
   friend void swap(XWalkRecordVideoCommandRej& a, XWalkRecordVideoCommandRej& b) {
     a.Swap(&b);
@@ -3997,6 +4386,7 @@ class XWalkRecordVideoCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -4044,6 +4434,15 @@ class XWalkRecordVideoCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkRecordVideoCommandRej)
  private:
   class _Internal;
@@ -4056,6 +4455,7 @@ class XWalkRecordVideoCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -4111,7 +4511,7 @@ class XWalkSoundBackgroundMusicCommandRej final :
                &_XWalkSoundBackgroundMusicCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    21;
 
   friend void swap(XWalkSoundBackgroundMusicCommandRej& a, XWalkSoundBackgroundMusicCommandRej& b) {
     a.Swap(&b);
@@ -4188,6 +4588,7 @@ class XWalkSoundBackgroundMusicCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -4235,6 +4636,15 @@ class XWalkSoundBackgroundMusicCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSoundBackgroundMusicCommandRej)
  private:
   class _Internal;
@@ -4247,6 +4657,7 @@ class XWalkSoundBackgroundMusicCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -4302,7 +4713,7 @@ class XWalkTextVisionTalkCommandRej final :
                &_XWalkTextVisionTalkCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    21;
+    22;
 
   friend void swap(XWalkTextVisionTalkCommandRej& a, XWalkTextVisionTalkCommandRej& b) {
     a.Swap(&b);
@@ -4379,6 +4790,7 @@ class XWalkTextVisionTalkCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -4426,6 +4838,15 @@ class XWalkTextVisionTalkCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkTextVisionTalkCommandRej)
  private:
   class _Internal;
@@ -4438,6 +4859,7 @@ class XWalkTextVisionTalkCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -4493,7 +4915,7 @@ class XWalkOnlineLlmTestCommandRej final :
                &_XWalkOnlineLlmTestCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    22;
+    23;
 
   friend void swap(XWalkOnlineLlmTestCommandRej& a, XWalkOnlineLlmTestCommandRej& b) {
     a.Swap(&b);
@@ -4570,6 +4992,7 @@ class XWalkOnlineLlmTestCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -4617,6 +5040,15 @@ class XWalkOnlineLlmTestCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkOnlineLlmTestCommandRej)
  private:
   class _Internal;
@@ -4629,6 +5061,7 @@ class XWalkOnlineLlmTestCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -4684,7 +5117,7 @@ class XWalkMoveCommandRej final :
                &_XWalkMoveCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    23;
+    24;
 
   friend void swap(XWalkMoveCommandRej& a, XWalkMoveCommandRej& b) {
     a.Swap(&b);
@@ -4761,6 +5194,7 @@ class XWalkMoveCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -4808,6 +5242,15 @@ class XWalkMoveCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkMoveCommandRej)
  private:
   class _Internal;
@@ -4820,6 +5263,7 @@ class XWalkMoveCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -4875,7 +5319,7 @@ class XWalkKeyboardControlCommandRej final :
                &_XWalkKeyboardControlCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    24;
+    25;
 
   friend void swap(XWalkKeyboardControlCommandRej& a, XWalkKeyboardControlCommandRej& b) {
     a.Swap(&b);
@@ -4952,6 +5396,7 @@ class XWalkKeyboardControlCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -4999,6 +5444,15 @@ class XWalkKeyboardControlCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkKeyboardControlCommandRej)
  private:
   class _Internal;
@@ -5011,6 +5465,7 @@ class XWalkKeyboardControlCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -5066,7 +5521,7 @@ class XWalkAvoidObstaclesCommandRej final :
                &_XWalkAvoidObstaclesCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    25;
+    26;
 
   friend void swap(XWalkAvoidObstaclesCommandRej& a, XWalkAvoidObstaclesCommandRej& b) {
     a.Swap(&b);
@@ -5143,6 +5598,7 @@ class XWalkAvoidObstaclesCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -5190,6 +5646,15 @@ class XWalkAvoidObstaclesCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkAvoidObstaclesCommandRej)
  private:
   class _Internal;
@@ -5202,6 +5667,7 @@ class XWalkAvoidObstaclesCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -5257,7 +5723,7 @@ class XWalkCliffDetectionCommandRej final :
                &_XWalkCliffDetectionCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    26;
+    27;
 
   friend void swap(XWalkCliffDetectionCommandRej& a, XWalkCliffDetectionCommandRej& b) {
     a.Swap(&b);
@@ -5334,6 +5800,7 @@ class XWalkCliffDetectionCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -5381,6 +5848,15 @@ class XWalkCliffDetectionCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkCliffDetectionCommandRej)
  private:
   class _Internal;
@@ -5393,6 +5869,7 @@ class XWalkCliffDetectionCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -5448,7 +5925,7 @@ class XWalkStareAtYouCommandRej final :
                &_XWalkStareAtYouCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    27;
+    28;
 
   friend void swap(XWalkStareAtYouCommandRej& a, XWalkStareAtYouCommandRej& b) {
     a.Swap(&b);
@@ -5525,6 +6002,7 @@ class XWalkStareAtYouCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -5572,6 +6050,15 @@ class XWalkStareAtYouCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkStareAtYouCommandRej)
  private:
   class _Internal;
@@ -5584,6 +6071,7 @@ class XWalkStareAtYouCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -5639,7 +6127,7 @@ class XWalkBullFightCommandRej final :
                &_XWalkBullFightCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    28;
+    29;
 
   friend void swap(XWalkBullFightCommandRej& a, XWalkBullFightCommandRej& b) {
     a.Swap(&b);
@@ -5716,6 +6204,7 @@ class XWalkBullFightCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -5763,6 +6252,15 @@ class XWalkBullFightCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkBullFightCommandRej)
  private:
   class _Internal;
@@ -5775,6 +6273,7 @@ class XWalkBullFightCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -5830,7 +6329,7 @@ class XWalkTreasureHuntCommandRej final :
                &_XWalkTreasureHuntCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    29;
+    30;
 
   friend void swap(XWalkTreasureHuntCommandRej& a, XWalkTreasureHuntCommandRej& b) {
     a.Swap(&b);
@@ -5907,6 +6406,7 @@ class XWalkTreasureHuntCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -5954,6 +6454,15 @@ class XWalkTreasureHuntCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkTreasureHuntCommandRej)
  private:
   class _Internal;
@@ -5966,6 +6475,7 @@ class XWalkTreasureHuntCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -6021,7 +6531,7 @@ class XWalkVideoCarCommandRej final :
                &_XWalkVideoCarCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    30;
+    31;
 
   friend void swap(XWalkVideoCarCommandRej& a, XWalkVideoCarCommandRej& b) {
     a.Swap(&b);
@@ -6098,6 +6608,7 @@ class XWalkVideoCarCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -6145,6 +6656,15 @@ class XWalkVideoCarCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkVideoCarCommandRej)
  private:
   class _Internal;
@@ -6157,6 +6677,7 @@ class XWalkVideoCarCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -6212,7 +6733,7 @@ class XWalkAppControlCommandRej final :
                &_XWalkAppControlCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    31;
+    32;
 
   friend void swap(XWalkAppControlCommandRej& a, XWalkAppControlCommandRej& b) {
     a.Swap(&b);
@@ -6289,6 +6810,7 @@ class XWalkAppControlCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -6336,6 +6858,15 @@ class XWalkAppControlCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkAppControlCommandRej)
  private:
   class _Internal;
@@ -6348,6 +6879,7 @@ class XWalkAppControlCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -6403,7 +6935,7 @@ class XWalkTurnCommandRej final :
                &_XWalkTurnCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    32;
+    33;
 
   friend void swap(XWalkTurnCommandRej& a, XWalkTurnCommandRej& b) {
     a.Swap(&b);
@@ -6480,6 +7012,7 @@ class XWalkTurnCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -6527,6 +7060,15 @@ class XWalkTurnCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkTurnCommandRej)
  private:
   class _Internal;
@@ -6539,6 +7081,7 @@ class XWalkTurnCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -6594,7 +7137,7 @@ class XWalkCameraCommandRej final :
                &_XWalkCameraCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    33;
+    34;
 
   friend void swap(XWalkCameraCommandRej& a, XWalkCameraCommandRej& b) {
     a.Swap(&b);
@@ -6671,6 +7214,7 @@ class XWalkCameraCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -6718,6 +7262,15 @@ class XWalkCameraCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkCameraCommandRej)
  private:
   class _Internal;
@@ -6730,6 +7283,7 @@ class XWalkCameraCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -6785,7 +7339,7 @@ class XWalkSensorCommandRej final :
                &_XWalkSensorCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    34;
+    35;
 
   friend void swap(XWalkSensorCommandRej& a, XWalkSensorCommandRej& b) {
     a.Swap(&b);
@@ -6862,6 +7416,7 @@ class XWalkSensorCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -6909,6 +7464,15 @@ class XWalkSensorCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSensorCommandRej)
  private:
   class _Internal;
@@ -6921,6 +7485,7 @@ class XWalkSensorCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -6976,7 +7541,7 @@ class XWalkLineTrackCommandRej final :
                &_XWalkLineTrackCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    35;
+    36;
 
   friend void swap(XWalkLineTrackCommandRej& a, XWalkLineTrackCommandRej& b) {
     a.Swap(&b);
@@ -7053,6 +7618,7 @@ class XWalkLineTrackCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -7100,6 +7666,15 @@ class XWalkLineTrackCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkLineTrackCommandRej)
  private:
   class _Internal;
@@ -7112,6 +7687,7 @@ class XWalkLineTrackCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -7167,7 +7743,7 @@ class XWalkSelfDriveCommandRej final :
                &_XWalkSelfDriveCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    36;
+    37;
 
   friend void swap(XWalkSelfDriveCommandRej& a, XWalkSelfDriveCommandRej& b) {
     a.Swap(&b);
@@ -7244,6 +7820,7 @@ class XWalkSelfDriveCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -7291,6 +7868,15 @@ class XWalkSelfDriveCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSelfDriveCommandRej)
  private:
   class _Internal;
@@ -7303,6 +7889,7 @@ class XWalkSelfDriveCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -7358,7 +7945,7 @@ class XWalkSoundCommandRej final :
                &_XWalkSoundCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    37;
+    38;
 
   friend void swap(XWalkSoundCommandRej& a, XWalkSoundCommandRej& b) {
     a.Swap(&b);
@@ -7435,6 +8022,7 @@ class XWalkSoundCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -7482,6 +8070,15 @@ class XWalkSoundCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkSoundCommandRej)
  private:
   class _Internal;
@@ -7494,6 +8091,7 @@ class XWalkSoundCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -7549,7 +8147,7 @@ class XWalkVoiceChatCommandRej final :
                &_XWalkVoiceChatCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    38;
+    39;
 
   friend void swap(XWalkVoiceChatCommandRej& a, XWalkVoiceChatCommandRej& b) {
     a.Swap(&b);
@@ -7626,6 +8224,7 @@ class XWalkVoiceChatCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -7673,6 +8272,15 @@ class XWalkVoiceChatCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkVoiceChatCommandRej)
  private:
   class _Internal;
@@ -7685,6 +8293,7 @@ class XWalkVoiceChatCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -7740,7 +8349,7 @@ class XWalkVoiceActiveCarCommandRej final :
                &_XWalkVoiceActiveCarCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    39;
+    40;
 
   friend void swap(XWalkVoiceActiveCarCommandRej& a, XWalkVoiceActiveCarCommandRej& b) {
     a.Swap(&b);
@@ -7817,6 +8426,7 @@ class XWalkVoiceActiveCarCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -7864,6 +8474,15 @@ class XWalkVoiceActiveCarCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkVoiceActiveCarCommandRej)
  private:
   class _Internal;
@@ -7876,6 +8495,7 @@ class XWalkVoiceActiveCarCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -7931,7 +8551,7 @@ class XWalkGptCarCommandRej final :
                &_XWalkGptCarCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    40;
+    41;
 
   friend void swap(XWalkGptCarCommandRej& a, XWalkGptCarCommandRej& b) {
     a.Swap(&b);
@@ -8008,6 +8628,7 @@ class XWalkGptCarCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -8055,6 +8676,15 @@ class XWalkGptCarCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkGptCarCommandRej)
  private:
   class _Internal;
@@ -8067,6 +8697,7 @@ class XWalkGptCarCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -8122,7 +8753,7 @@ class XWalkVoiceControlledCarCommandRej final :
                &_XWalkVoiceControlledCarCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    41;
+    42;
 
   friend void swap(XWalkVoiceControlledCarCommandRej& a, XWalkVoiceControlledCarCommandRej& b) {
     a.Swap(&b);
@@ -8199,6 +8830,7 @@ class XWalkVoiceControlledCarCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -8246,6 +8878,15 @@ class XWalkVoiceControlledCarCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkVoiceControlledCarCommandRej)
  private:
   class _Internal;
@@ -8258,6 +8899,7 @@ class XWalkVoiceControlledCarCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -8313,7 +8955,7 @@ class XWalkVoicePromptCarCommandRej final :
                &_XWalkVoicePromptCarCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    42;
+    43;
 
   friend void swap(XWalkVoicePromptCarCommandRej& a, XWalkVoicePromptCarCommandRej& b) {
     a.Swap(&b);
@@ -8390,6 +9032,7 @@ class XWalkVoicePromptCarCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -8437,6 +9080,15 @@ class XWalkVoicePromptCarCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkVoicePromptCarCommandRej)
  private:
   class _Internal;
@@ -8449,6 +9101,7 @@ class XWalkVoicePromptCarCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -8504,7 +9157,7 @@ class XWalkStorytellingRobotCommandRej final :
                &_XWalkStorytellingRobotCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    43;
+    44;
 
   friend void swap(XWalkStorytellingRobotCommandRej& a, XWalkStorytellingRobotCommandRej& b) {
     a.Swap(&b);
@@ -8581,6 +9234,7 @@ class XWalkStorytellingRobotCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -8628,6 +9282,15 @@ class XWalkStorytellingRobotCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkStorytellingRobotCommandRej)
  private:
   class _Internal;
@@ -8640,6 +9303,7 @@ class XWalkStorytellingRobotCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -8695,7 +9359,7 @@ class XWalkCalibrateCommandRej final :
                &_XWalkCalibrateCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    44;
+    45;
 
   friend void swap(XWalkCalibrateCommandRej& a, XWalkCalibrateCommandRej& b) {
     a.Swap(&b);
@@ -8772,6 +9436,7 @@ class XWalkCalibrateCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -8819,6 +9484,15 @@ class XWalkCalibrateCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkCalibrateCommandRej)
  private:
   class _Internal;
@@ -8831,6 +9505,7 @@ class XWalkCalibrateCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -8886,7 +9561,7 @@ class XWalkVideoStreamCommandRej final :
                &_XWalkVideoStreamCommandRej_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    45;
+    46;
 
   friend void swap(XWalkVideoStreamCommandRej& a, XWalkVideoStreamCommandRej& b) {
     a.Swap(&b);
@@ -8963,6 +9638,7 @@ class XWalkVideoStreamCommandRej final :
     kDetailFieldNumber = 4,
     kRespondingFieldNumber = 2,
     kReasonFieldNumber = 3,
+    kErrorSignalFieldNumber = 5,
   };
   // bytes data = 1;
   void clear_data();
@@ -9010,6 +9686,15 @@ class XWalkVideoStreamCommandRej final :
   void _internal_set_reason(uint32_t value);
   public:
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  void clear_error_signal();
+  ::xwalk::iw::v1::XWalkErrorSignalNumber error_signal() const;
+  void set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  private:
+  ::xwalk::iw::v1::XWalkErrorSignalNumber _internal_error_signal() const;
+  void _internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value);
+  public:
+
   // @@protoc_insertion_point(class_scope:xwalk.iw.v1.XWalkVideoStreamCommandRej)
  private:
   class _Internal;
@@ -9022,6 +9707,7 @@ class XWalkVideoStreamCommandRej final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
     bool responding_;
     uint32_t reason_;
+    int error_signal_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -9036,6 +9722,100 @@ class XWalkVideoStreamCommandRej final :
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
+// XWalkTraceRej
+
+// .xwalk.iw.v1.XWalkTraceSeverity severity = 1;
+inline void XWalkTraceRej::clear_severity() {
+  _impl_.severity_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkTraceSeverity XWalkTraceRej::_internal_severity() const {
+  return static_cast< ::xwalk::iw::v1::XWalkTraceSeverity >(_impl_.severity_);
+}
+inline ::xwalk::iw::v1::XWalkTraceSeverity XWalkTraceRej::severity() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkTraceRej.severity)
+  return _internal_severity();
+}
+inline void XWalkTraceRej::_internal_set_severity(::xwalk::iw::v1::XWalkTraceSeverity value) {
+
+  _impl_.severity_ = value;
+}
+inline void XWalkTraceRej::set_severity(::xwalk::iw::v1::XWalkTraceSeverity value) {
+  _internal_set_severity(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkTraceRej.severity)
+}
+
+// string message = 2;
+inline void XWalkTraceRej::clear_message() {
+  _impl_.message_.ClearToEmpty();
+}
+inline const std::string& XWalkTraceRej::message() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkTraceRej.message)
+  return _internal_message();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void XWalkTraceRej::set_message(ArgT0&& arg0, ArgT... args) {
+
+ _impl_.message_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkTraceRej.message)
+}
+inline std::string* XWalkTraceRej::mutable_message() {
+  std::string* _s = _internal_mutable_message();
+  // @@protoc_insertion_point(field_mutable:xwalk.iw.v1.XWalkTraceRej.message)
+  return _s;
+}
+inline const std::string& XWalkTraceRej::_internal_message() const {
+  return _impl_.message_.Get();
+}
+inline void XWalkTraceRej::_internal_set_message(const std::string& value) {
+
+  _impl_.message_.Set(value, GetArenaForAllocation());
+}
+inline std::string* XWalkTraceRej::_internal_mutable_message() {
+
+  return _impl_.message_.Mutable(GetArenaForAllocation());
+}
+inline std::string* XWalkTraceRej::release_message() {
+  // @@protoc_insertion_point(field_release:xwalk.iw.v1.XWalkTraceRej.message)
+  return _impl_.message_.Release();
+}
+inline void XWalkTraceRej::set_allocated_message(std::string* message) {
+  if (message != nullptr) {
+
+  } else {
+
+  }
+  _impl_.message_.SetAllocated(message, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.message_.IsDefault()) {
+    _impl_.message_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkTraceRej.message)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 3;
+inline void XWalkTraceRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkTraceRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkTraceRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkTraceRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkTraceRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkTraceRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkTraceRej.error_signal)
+}
+
+// -------------------------------------------------------------------
+
 // XWalkI2cRejPayload
 
 // bytes data = 1;
@@ -9176,6 +9956,26 @@ inline void XWalkI2cRejPayload::set_allocated_detail(std::string* detail) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkI2cRejPayload.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkI2cRejPayload::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkI2cRejPayload::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkI2cRejPayload::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkI2cRejPayload.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkI2cRejPayload::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkI2cRejPayload::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkI2cRejPayload.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -9322,6 +10122,26 @@ inline void XWalkControllerCommandRej::set_allocated_detail(std::string* detail)
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkControllerCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkControllerCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkControllerCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkControllerCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkControllerCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkControllerCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkControllerCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkControllerCommandRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkNoArgumentRej
@@ -9464,6 +10284,26 @@ inline void XWalkNoArgumentRej::set_allocated_detail(std::string* detail) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkNoArgumentRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkNoArgumentRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkNoArgumentRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkNoArgumentRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkNoArgumentRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkNoArgumentRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkNoArgumentRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkNoArgumentRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -9610,6 +10450,26 @@ inline void XWalkLifecycleRej::set_allocated_detail(std::string* detail) {
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkLifecycleRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkLifecycleRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkLifecycleRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkLifecycleRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkLifecycleRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkLifecycleRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkLifecycleRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkLifecycleRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkMoveRej
@@ -9752,6 +10612,26 @@ inline void XWalkMoveRej::set_allocated_detail(std::string* detail) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkMoveRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkMoveRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkMoveRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkMoveRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkMoveRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkMoveRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkMoveRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkMoveRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -9898,6 +10778,26 @@ inline void XWalkTurnRej::set_allocated_detail(std::string* detail) {
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkTurnRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkTurnRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkTurnRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkTurnRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkTurnRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkTurnRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkTurnRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkTurnRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkCameraRej
@@ -10040,6 +10940,26 @@ inline void XWalkCameraRej::set_allocated_detail(std::string* detail) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkCameraRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkCameraRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkCameraRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkCameraRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkCameraRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkCameraRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkCameraRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkCameraRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -10186,6 +11106,26 @@ inline void XWalkSensorRej::set_allocated_detail(std::string* detail) {
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkSensorRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkSensorRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSensorRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSensorRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSensorRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkSensorRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkSensorRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkSensorRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkSelfDriveRej
@@ -10328,6 +11268,26 @@ inline void XWalkSelfDriveRej::set_allocated_detail(std::string* detail) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkSelfDriveRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkSelfDriveRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSelfDriveRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSelfDriveRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSelfDriveRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkSelfDriveRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkSelfDriveRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkSelfDriveRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -10474,6 +11434,26 @@ inline void XWalkSpiRej::set_allocated_detail(std::string* detail) {
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkSpiRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkSpiRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSpiRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSpiRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSpiRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkSpiRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkSpiRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkSpiRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkGptCarRej
@@ -10616,6 +11596,26 @@ inline void XWalkGptCarRej::set_allocated_detail(std::string* detail) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkGptCarRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkGptCarRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkGptCarRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkGptCarRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkGptCarRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkGptCarRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkGptCarRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkGptCarRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -10762,6 +11762,26 @@ inline void XWalkCalibrationRej::set_allocated_detail(std::string* detail) {
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkCalibrationRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkCalibrationRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkCalibrationRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkCalibrationRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkCalibrationRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkCalibrationRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkCalibrationRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkCalibrationRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkSoundRej
@@ -10904,6 +11924,26 @@ inline void XWalkSoundRej::set_allocated_detail(std::string* detail) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkSoundRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkSoundRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSoundRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSoundRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSoundRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkSoundRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkSoundRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkSoundRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -11050,6 +12090,26 @@ inline void XWalkUnknownCommandRej::set_allocated_detail(std::string* detail) {
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkUnknownCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkUnknownCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkUnknownCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkUnknownCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkUnknownCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkUnknownCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkUnknownCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkUnknownCommandRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkHelpCommandRej
@@ -11192,6 +12252,26 @@ inline void XWalkHelpCommandRej::set_allocated_detail(std::string* detail) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkHelpCommandRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkHelpCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkHelpCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkHelpCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkHelpCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkHelpCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkHelpCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkHelpCommandRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -11338,6 +12418,26 @@ inline void XWalkSpiCommandRej::set_allocated_detail(std::string* detail) {
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkSpiCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkSpiCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSpiCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSpiCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSpiCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkSpiCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkSpiCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkSpiCommandRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkDoctorCommandRej
@@ -11480,6 +12580,26 @@ inline void XWalkDoctorCommandRej::set_allocated_detail(std::string* detail) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkDoctorCommandRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkDoctorCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkDoctorCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkDoctorCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkDoctorCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkDoctorCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkDoctorCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkDoctorCommandRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -11626,6 +12746,26 @@ inline void XWalkServoZeroingCommandRej::set_allocated_detail(std::string* detai
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkServoZeroingCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkServoZeroingCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkServoZeroingCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkServoZeroingCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkServoZeroingCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkServoZeroingCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkServoZeroingCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkServoZeroingCommandRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkComputerVisionCommandRej
@@ -11768,6 +12908,26 @@ inline void XWalkComputerVisionCommandRej::set_allocated_detail(std::string* det
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkComputerVisionCommandRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkComputerVisionCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkComputerVisionCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkComputerVisionCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkComputerVisionCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkComputerVisionCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkComputerVisionCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkComputerVisionCommandRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -11914,6 +13074,26 @@ inline void XWalkRecordVideoCommandRej::set_allocated_detail(std::string* detail
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkRecordVideoCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkRecordVideoCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkRecordVideoCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkRecordVideoCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkRecordVideoCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkRecordVideoCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkRecordVideoCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkRecordVideoCommandRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkSoundBackgroundMusicCommandRej
@@ -12056,6 +13236,26 @@ inline void XWalkSoundBackgroundMusicCommandRej::set_allocated_detail(std::strin
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkSoundBackgroundMusicCommandRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkSoundBackgroundMusicCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSoundBackgroundMusicCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSoundBackgroundMusicCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSoundBackgroundMusicCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkSoundBackgroundMusicCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkSoundBackgroundMusicCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkSoundBackgroundMusicCommandRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -12202,6 +13402,26 @@ inline void XWalkTextVisionTalkCommandRej::set_allocated_detail(std::string* det
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkTextVisionTalkCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkTextVisionTalkCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkTextVisionTalkCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkTextVisionTalkCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkTextVisionTalkCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkTextVisionTalkCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkTextVisionTalkCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkTextVisionTalkCommandRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkOnlineLlmTestCommandRej
@@ -12344,6 +13564,26 @@ inline void XWalkOnlineLlmTestCommandRej::set_allocated_detail(std::string* deta
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkOnlineLlmTestCommandRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkOnlineLlmTestCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkOnlineLlmTestCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkOnlineLlmTestCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkOnlineLlmTestCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkOnlineLlmTestCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkOnlineLlmTestCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkOnlineLlmTestCommandRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -12490,6 +13730,26 @@ inline void XWalkMoveCommandRej::set_allocated_detail(std::string* detail) {
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkMoveCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkMoveCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkMoveCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkMoveCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkMoveCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkMoveCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkMoveCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkMoveCommandRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkKeyboardControlCommandRej
@@ -12632,6 +13892,26 @@ inline void XWalkKeyboardControlCommandRej::set_allocated_detail(std::string* de
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkKeyboardControlCommandRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkKeyboardControlCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkKeyboardControlCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkKeyboardControlCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkKeyboardControlCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkKeyboardControlCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkKeyboardControlCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkKeyboardControlCommandRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -12778,6 +14058,26 @@ inline void XWalkAvoidObstaclesCommandRej::set_allocated_detail(std::string* det
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkAvoidObstaclesCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkAvoidObstaclesCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkAvoidObstaclesCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkAvoidObstaclesCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkAvoidObstaclesCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkAvoidObstaclesCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkAvoidObstaclesCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkAvoidObstaclesCommandRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkCliffDetectionCommandRej
@@ -12920,6 +14220,26 @@ inline void XWalkCliffDetectionCommandRej::set_allocated_detail(std::string* det
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkCliffDetectionCommandRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkCliffDetectionCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkCliffDetectionCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkCliffDetectionCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkCliffDetectionCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkCliffDetectionCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkCliffDetectionCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkCliffDetectionCommandRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -13066,6 +14386,26 @@ inline void XWalkStareAtYouCommandRej::set_allocated_detail(std::string* detail)
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkStareAtYouCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkStareAtYouCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkStareAtYouCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkStareAtYouCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkStareAtYouCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkStareAtYouCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkStareAtYouCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkStareAtYouCommandRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkBullFightCommandRej
@@ -13208,6 +14548,26 @@ inline void XWalkBullFightCommandRej::set_allocated_detail(std::string* detail) 
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkBullFightCommandRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkBullFightCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkBullFightCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkBullFightCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkBullFightCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkBullFightCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkBullFightCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkBullFightCommandRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -13354,6 +14714,26 @@ inline void XWalkTreasureHuntCommandRej::set_allocated_detail(std::string* detai
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkTreasureHuntCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkTreasureHuntCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkTreasureHuntCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkTreasureHuntCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkTreasureHuntCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkTreasureHuntCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkTreasureHuntCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkTreasureHuntCommandRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkVideoCarCommandRej
@@ -13496,6 +14876,26 @@ inline void XWalkVideoCarCommandRej::set_allocated_detail(std::string* detail) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkVideoCarCommandRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkVideoCarCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkVideoCarCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkVideoCarCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkVideoCarCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkVideoCarCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkVideoCarCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkVideoCarCommandRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -13642,6 +15042,26 @@ inline void XWalkAppControlCommandRej::set_allocated_detail(std::string* detail)
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkAppControlCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkAppControlCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkAppControlCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkAppControlCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkAppControlCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkAppControlCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkAppControlCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkAppControlCommandRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkTurnCommandRej
@@ -13784,6 +15204,26 @@ inline void XWalkTurnCommandRej::set_allocated_detail(std::string* detail) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkTurnCommandRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkTurnCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkTurnCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkTurnCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkTurnCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkTurnCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkTurnCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkTurnCommandRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -13930,6 +15370,26 @@ inline void XWalkCameraCommandRej::set_allocated_detail(std::string* detail) {
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkCameraCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkCameraCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkCameraCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkCameraCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkCameraCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkCameraCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkCameraCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkCameraCommandRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkSensorCommandRej
@@ -14072,6 +15532,26 @@ inline void XWalkSensorCommandRej::set_allocated_detail(std::string* detail) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkSensorCommandRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkSensorCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSensorCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSensorCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSensorCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkSensorCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkSensorCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkSensorCommandRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -14218,6 +15698,26 @@ inline void XWalkLineTrackCommandRej::set_allocated_detail(std::string* detail) 
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkLineTrackCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkLineTrackCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkLineTrackCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkLineTrackCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkLineTrackCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkLineTrackCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkLineTrackCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkLineTrackCommandRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkSelfDriveCommandRej
@@ -14360,6 +15860,26 @@ inline void XWalkSelfDriveCommandRej::set_allocated_detail(std::string* detail) 
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkSelfDriveCommandRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkSelfDriveCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSelfDriveCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSelfDriveCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSelfDriveCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkSelfDriveCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkSelfDriveCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkSelfDriveCommandRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -14506,6 +16026,26 @@ inline void XWalkSoundCommandRej::set_allocated_detail(std::string* detail) {
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkSoundCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkSoundCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSoundCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkSoundCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkSoundCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkSoundCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkSoundCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkSoundCommandRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkVoiceChatCommandRej
@@ -14648,6 +16188,26 @@ inline void XWalkVoiceChatCommandRej::set_allocated_detail(std::string* detail) 
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkVoiceChatCommandRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkVoiceChatCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkVoiceChatCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkVoiceChatCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkVoiceChatCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkVoiceChatCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkVoiceChatCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkVoiceChatCommandRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -14794,6 +16354,26 @@ inline void XWalkVoiceActiveCarCommandRej::set_allocated_detail(std::string* det
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkVoiceActiveCarCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkVoiceActiveCarCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkVoiceActiveCarCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkVoiceActiveCarCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkVoiceActiveCarCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkVoiceActiveCarCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkVoiceActiveCarCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkVoiceActiveCarCommandRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkGptCarCommandRej
@@ -14936,6 +16516,26 @@ inline void XWalkGptCarCommandRej::set_allocated_detail(std::string* detail) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkGptCarCommandRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkGptCarCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkGptCarCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkGptCarCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkGptCarCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkGptCarCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkGptCarCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkGptCarCommandRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -15082,6 +16682,26 @@ inline void XWalkVoiceControlledCarCommandRej::set_allocated_detail(std::string*
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkVoiceControlledCarCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkVoiceControlledCarCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkVoiceControlledCarCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkVoiceControlledCarCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkVoiceControlledCarCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkVoiceControlledCarCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkVoiceControlledCarCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkVoiceControlledCarCommandRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkVoicePromptCarCommandRej
@@ -15224,6 +16844,26 @@ inline void XWalkVoicePromptCarCommandRej::set_allocated_detail(std::string* det
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkVoicePromptCarCommandRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkVoicePromptCarCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkVoicePromptCarCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkVoicePromptCarCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkVoicePromptCarCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkVoicePromptCarCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkVoicePromptCarCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkVoicePromptCarCommandRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -15370,6 +17010,26 @@ inline void XWalkStorytellingRobotCommandRej::set_allocated_detail(std::string* 
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkStorytellingRobotCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkStorytellingRobotCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkStorytellingRobotCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkStorytellingRobotCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkStorytellingRobotCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkStorytellingRobotCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkStorytellingRobotCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkStorytellingRobotCommandRej.error_signal)
+}
+
 // -------------------------------------------------------------------
 
 // XWalkCalibrateCommandRej
@@ -15512,6 +17172,26 @@ inline void XWalkCalibrateCommandRej::set_allocated_detail(std::string* detail) 
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkCalibrateCommandRej.detail)
+}
+
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkCalibrateCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkCalibrateCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkCalibrateCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkCalibrateCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkCalibrateCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkCalibrateCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkCalibrateCommandRej.error_signal)
 }
 
 // -------------------------------------------------------------------
@@ -15658,9 +17338,31 @@ inline void XWalkVideoStreamCommandRej::set_allocated_detail(std::string* detail
   // @@protoc_insertion_point(field_set_allocated:xwalk.iw.v1.XWalkVideoStreamCommandRej.detail)
 }
 
+// .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+inline void XWalkVideoStreamCommandRej::clear_error_signal() {
+  _impl_.error_signal_ = 0;
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkVideoStreamCommandRej::_internal_error_signal() const {
+  return static_cast< ::xwalk::iw::v1::XWalkErrorSignalNumber >(_impl_.error_signal_);
+}
+inline ::xwalk::iw::v1::XWalkErrorSignalNumber XWalkVideoStreamCommandRej::error_signal() const {
+  // @@protoc_insertion_point(field_get:xwalk.iw.v1.XWalkVideoStreamCommandRej.error_signal)
+  return _internal_error_signal();
+}
+inline void XWalkVideoStreamCommandRej::_internal_set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+
+  _impl_.error_signal_ = value;
+}
+inline void XWalkVideoStreamCommandRej::set_error_signal(::xwalk::iw::v1::XWalkErrorSignalNumber value) {
+  _internal_set_error_signal(value);
+  // @@protoc_insertion_point(field_set:xwalk.iw.v1.XWalkVideoStreamCommandRej.error_signal)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

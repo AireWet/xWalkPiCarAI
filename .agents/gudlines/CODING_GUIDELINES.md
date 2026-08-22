@@ -357,6 +357,19 @@ tree. Regenerate them from reviewed schemas, never edit them by hand, and
 exclude them from handwritten-source coverage and static-analysis gates while
 retaining normal compiler warnings and compilation checks.
 
+Define every xWalkIW request, confirmation, and rejection signal through the
+typed `XWalkSignalNumber` Protobuf enumeration. Name its values
+`CXX_XWALK_<SHORT_NAME>_REQ`, `CXX_XWALK_<SHORT_NAME>_CFM`, or
+`CXX_XWALK_<SHORT_NAME>_REJ`, bind messages through the `(cxx_signal)` option,
+and keep each numeric value synchronized with the matching XML signal registry.
+Do not repeat numeric signal literals in message option declarations. A
+transport-only diagnostic that is not routed as a request counterpart, such as
+`XWalkTraceRej`, must omit `(cxx_signal)` and be validated separately from the
+request, confirmation, and rejection XML registries. Keep its
+`XWalkErrorSignalNumber` Protobuf selector values synchronized with the
+trace-owned C++ enumeration in `xHal_Rpi5CarErrorSignals.h`; these stable
+transport values must not depend on platform POSIX signal numbers.
+
 ## Files and naming
 
 - Name HAL headers and sources `xHal_Rpi5Car<Component>.h` and

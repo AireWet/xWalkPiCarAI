@@ -3,8 +3,9 @@
  * @brief       Defines public Protobuf request messages for xWalk interfaces.
  *
  * @details
- * Defines the I2C request payload and the Controller configuration and request
- * messages mirrored from `xWalkControllerConfigTypes.h`.
+ * Defines the encoded request envelope, I2C request payload, and Controller
+ * configuration and request messages mirrored from
+ * `xWalkControllerConfigTypes.h`.
  *
  * @project     xWalk Firmware
  * @module      xWalkIW
@@ -29,22 +30,55 @@ package xwalk.iw.v1;
 
 import "google/protobuf/descriptor.proto";
 import "xHal_Rpi5CarXIwEnum.proto";
+import "xHal_Rpi5CarXIwSignal.proto";
 
 /******************************************************************************
  * Message option declarations
  ******************************************************************************/
 
 /**
- * @brief Associates an xWalk protocol message with its stable signal number.
+ * @brief Associates an xWalk protocol message with its typed C++ signal.
  */
 extend google.protobuf.MessageOptions
 {
-    uint32 xwalkSignal = 50001; //@@ Stable xWalk signal number associated with the message.
+    XWalkSignalNumber cxx_signal = 50001; //@@ Typed xWalk signal associated with the message.
 }
 
 /******************************************************************************
  * Payload structure declarations
  ******************************************************************************/
+
+/**
+ * @brief Wraps one encoded xWalk request or configuration message.
+ *
+ * @details
+ * `sig_no` identifies the concrete message type through its `(cxx_signal)`
+ * option and request XML mapping. `payload` contains the complete Protobuf wire
+ * encoding of that message, including all of its request or configuration
+ * arguments. Receivers must validate the signal mapping before decoding.
+ */
+message XWalkSignal
+{
+    uint32 sig_no = 1; //@@ Stable signal number identifying the encoded message type.
+    bytes payload = 2; //@@ Protobuf wire bytes of the request or configuration message selected by `sig_no`.
+    XClientAddress client_address = 3; //@@ Address and routing identity of the client that emitted the signal.
+}
+
+/**
+ * @brief Identifies the client endpoint associated with one xWalk signal.
+ *
+ * @details
+ * Mirrors the C++ `xClientAddress` transport structure. Producers must limit
+ * `client_address` so it fits the destination `XWALK_CLIENT_ADDRESS_SIZE`
+ * character array, including its terminating null character.
+ */
+message XClientAddress
+{
+    uint32 mail_box_id = 1; //@@ Mailbox identifier assigned to the client endpoint.
+    string client_address = 2; //@@ Client address text without fixed-buffer padding or a null terminator.
+    uint32 xwalk_local_index = 3; //@@ Process-local xWalk client index used for routing.
+    uint32 module_type = 4; //@@ Numeric module type associated with the client.
+}
 
 /**
  * @brief Carries the superset of fields used by every public I2C request.
@@ -57,7 +91,7 @@ extend google.protobuf.MessageOptions
  */
 message XWalkI2cRequestPayload
 {
-    option (xwalkSignal) = 0x1081;
+    option (cxx_signal) = CXX_XWALK_I2C_REQ;
 
     uint32 address = 1; //@@ Target seven-bit I2C address.
     uint32 register_address = 2; //@@ Target I2C register address.
@@ -75,7 +109,7 @@ message XWalkI2cRequestPayload
  */
 message XWalkAppConfig
 {
-    option (xwalkSignal) = 0x2081;
+    option (cxx_signal) = CXX_XWALK_APP_CFG_REQ;
 
     string configuration_file_path = 1; //@@ Absolute deployment configuration selected for composition.
     string resource_directory = 2; //@@ Absolute resource directory selected for file-backed services.
@@ -89,7 +123,7 @@ message XWalkAppConfig
  */
 message XWalkControllerApplicationArguments
 {
-    option (xwalkSignal) = 0x2082;
+    option (cxx_signal) = CXX_XWALK_APP_ARGS_REQ;
 
     repeated string command_arguments = 1; //@@ Command arguments after application-global options are removed.
     XWalkAppConfig app_config = 2; //@@ Application configuration populated from global options.
@@ -104,7 +138,7 @@ message XWalkControllerApplicationArguments
  */
 message XWalkControllerCommandRequest
 {
-    option (xwalkSignal) = 0x2083;
+    option (cxx_signal) = CXX_XWALK_CTRL_CMD_REQ;
 
     uint32 command = 1; //@@ Stable Controller command signal in range `0x2000` through `0x2020`.
     repeated string arguments = 2; //@@ Original arguments consumed by command-specific request parsing.
@@ -118,7 +152,7 @@ message XWalkControllerCommandRequest
  */
 message XWalkNoArgumentRequest
 {
-    option (xwalkSignal) = 0x2084;
+    option (cxx_signal) = CXX_XWALK_NO_ARG_REQ;
 }
 
 /**
@@ -129,7 +163,7 @@ message XWalkNoArgumentRequest
  */
 message XWalkLifecycleRequest
 {
-    option (xwalkSignal) = 0x2085;
+    option (cxx_signal) = CXX_XWALK_LIFECYCLE_REQ;
 
     XWalkLifecycleAction action = 1; //@@ Lifecycle action selected at the application boundary.
 }
@@ -143,7 +177,7 @@ message XWalkLifecycleRequest
  */
 message XWalkMoveRequest
 {
-    option (xwalkSignal) = 0x2086;
+    option (cxx_signal) = CXX_XWALK_MOVE_REQ;
 
     XWalkMoveAction action = 1; //@@ Movement action selected at the application boundary.
     optional double speed_percent = 2; //@@ Requested motor power from zero through one hundred percent.
@@ -159,7 +193,7 @@ message XWalkMoveRequest
  */
 message XWalkTurnRequest
 {
-    option (xwalkSignal) = 0x2087;
+    option (cxx_signal) = CXX_XWALK_TURN_REQ;
 
     XWalkTurnDirection direction = 1; //@@ Direction selected at the application boundary.
     optional double angle_degrees = 2; //@@ Unsigned steering magnitude from zero through 30 degrees.
@@ -173,7 +207,7 @@ message XWalkTurnRequest
  */
 message XWalkCameraRequest
 {
-    option (xwalkSignal) = 0x2088;
+    option (cxx_signal) = CXX_XWALK_CAMERA_REQ;
 
     XWalkCameraAxis axis = 1; //@@ Camera axis selected at the application boundary.
     double angle_degrees = 2; //@@ Requested axis angle in degrees.
@@ -187,7 +221,7 @@ message XWalkCameraRequest
  */
 message XWalkSensorRequest
 {
-    option (xwalkSignal) = 0x2089;
+    option (cxx_signal) = CXX_XWALK_SENSOR_REQ;
 
     XWalkSensorType type = 1; //@@ Sensor report selected at the application boundary.
 }
@@ -200,7 +234,7 @@ message XWalkSensorRequest
  */
 message XWalkSelfDriveRequest
 {
-    option (xwalkSignal) = 0x208A;
+    option (cxx_signal) = CXX_XWALK_SELF_DRIVE_REQ;
 
     string action = 1; //@@ Canonical action text with words separated by spaces.
 }
@@ -213,7 +247,7 @@ message XWalkSelfDriveRequest
  */
 message XWalkSpiRequest
 {
-    option (xwalkSignal) = 0x208B;
+    option (cxx_signal) = CXX_XWALK_SPI_REQ;
 
     bytes transmit_data = 1; //@@ Non-empty transmit data containing at most 256 bytes.
 }
@@ -227,7 +261,7 @@ message XWalkSpiRequest
  */
 message XWalkGptCarRequest
 {
-    option (xwalkSignal) = 0x208C;
+    option (cxx_signal) = CXX_XWALK_GPT_CAR_REQ;
 
     XWalkLifecycleAction action = 1; //@@ Whether the GPT-car operation starts or stops.
     bool keyboard_input = 2; //@@ Whether prompts are read from the keyboard instead of speech.
@@ -242,7 +276,7 @@ message XWalkGptCarRequest
  */
 message XWalkCalibrationRequest
 {
-    option (xwalkSignal) = 0x208D;
+    option (cxx_signal) = CXX_XWALK_CALIBRATION_REQ;
 
     XWalkCalibrationMode mode = 1; //@@ Calibration workflow selected at the application boundary.
 }
@@ -256,7 +290,7 @@ message XWalkCalibrationRequest
  */
 message XWalkSoundRequest
 {
-    option (xwalkSignal) = 0x208E;
+    option (cxx_signal) = CXX_XWALK_SOUND_REQ;
 
     optional XWalkSoundOperation operation = 1; //@@ Requested sound action.
     string file_path = 2; //@@ File path for play or music, or empty text otherwise.
@@ -271,7 +305,7 @@ message XWalkSoundRequest
  */
 message XWalkServoCalibrationConfig
 {
-    option (xwalkSignal) = 0x208F;
+    option (cxx_signal) = CXX_XWALK_SERVO_CAL_CFG_REQ;
 
     string title = 1; //@@ Section title written before prompting.
     string prompt = 2; //@@ Input prompt including the supported range.
@@ -292,7 +326,7 @@ message XWalkServoCalibrationConfig
  */
 message XWalkUnknownCommandRequest
 {
-    option (xwalkSignal) = 0x2000;
+    option (cxx_signal) = CXX_XWALK_CMD_UNKNOWN_REQ;
 }
 
 /**
@@ -303,7 +337,7 @@ message XWalkUnknownCommandRequest
  */
 message XWalkHelpCommandRequest
 {
-    option (xwalkSignal) = 0x2001;
+    option (cxx_signal) = CXX_XWALK_CMD_HELP_REQ;
 }
 
 /**
@@ -314,7 +348,7 @@ message XWalkHelpCommandRequest
  */
 message XWalkSpiCommandRequest
 {
-    option (xwalkSignal) = 0x2002;
+    option (cxx_signal) = CXX_XWALK_CMD_SPI_REQ;
     XWalkSpiRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -326,7 +360,7 @@ message XWalkSpiCommandRequest
  */
 message XWalkDoctorCommandRequest
 {
-    option (xwalkSignal) = 0x2003;
+    option (cxx_signal) = CXX_XWALK_CMD_DOCTOR_REQ;
 }
 
 /**
@@ -337,7 +371,7 @@ message XWalkDoctorCommandRequest
  */
 message XWalkServoZeroingCommandRequest
 {
-    option (xwalkSignal) = 0x2004;
+    option (cxx_signal) = CXX_XWALK_CMD_SERVO_ZEROING_REQ;
 }
 
 /**
@@ -348,7 +382,7 @@ message XWalkServoZeroingCommandRequest
  */
 message XWalkComputerVisionCommandRequest
 {
-    option (xwalkSignal) = 0x2005;
+    option (cxx_signal) = CXX_XWALK_CMD_COMPUTER_VISION_REQ;
 }
 
 /**
@@ -359,7 +393,7 @@ message XWalkComputerVisionCommandRequest
  */
 message XWalkRecordVideoCommandRequest
 {
-    option (xwalkSignal) = 0x2006;
+    option (cxx_signal) = CXX_XWALK_CMD_RECORD_VIDEO_REQ;
 }
 
 /**
@@ -370,7 +404,7 @@ message XWalkRecordVideoCommandRequest
  */
 message XWalkSoundBackgroundMusicCommandRequest
 {
-    option (xwalkSignal) = 0x2007;
+    option (cxx_signal) = CXX_XWALK_CMD_SOUND_BACKGROUND_MUSIC_REQ;
 }
 
 /**
@@ -381,7 +415,7 @@ message XWalkSoundBackgroundMusicCommandRequest
  */
 message XWalkTextVisionTalkCommandRequest
 {
-    option (xwalkSignal) = 0x2008;
+    option (cxx_signal) = CXX_XWALK_CMD_TEXT_VISION_TALK_REQ;
     XWalkLifecycleRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -393,7 +427,7 @@ message XWalkTextVisionTalkCommandRequest
  */
 message XWalkOnlineLlmTestCommandRequest
 {
-    option (xwalkSignal) = 0x2009;
+    option (cxx_signal) = CXX_XWALK_CMD_ONLINE_LLM_TEST_REQ;
     XWalkLifecycleRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -405,7 +439,7 @@ message XWalkOnlineLlmTestCommandRequest
  */
 message XWalkMoveCommandRequest
 {
-    option (xwalkSignal) = 0x200A;
+    option (cxx_signal) = CXX_XWALK_CMD_MOVE_REQ;
     XWalkMoveRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -417,7 +451,7 @@ message XWalkMoveCommandRequest
  */
 message XWalkKeyboardControlCommandRequest
 {
-    option (xwalkSignal) = 0x200B;
+    option (cxx_signal) = CXX_XWALK_CMD_KEYBOARD_CONTROL_REQ;
 }
 
 /**
@@ -428,7 +462,7 @@ message XWalkKeyboardControlCommandRequest
  */
 message XWalkAvoidObstaclesCommandRequest
 {
-    option (xwalkSignal) = 0x200C;
+    option (cxx_signal) = CXX_XWALK_CMD_AVOID_OBSTACLES_REQ;
     XWalkLifecycleRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -440,7 +474,7 @@ message XWalkAvoidObstaclesCommandRequest
  */
 message XWalkCliffDetectionCommandRequest
 {
-    option (xwalkSignal) = 0x200D;
+    option (cxx_signal) = CXX_XWALK_CMD_CLIFF_DETECTION_REQ;
     XWalkLifecycleRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -452,7 +486,7 @@ message XWalkCliffDetectionCommandRequest
  */
 message XWalkStareAtYouCommandRequest
 {
-    option (xwalkSignal) = 0x200E;
+    option (cxx_signal) = CXX_XWALK_CMD_STARE_AT_YOU_REQ;
     XWalkLifecycleRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -464,7 +498,7 @@ message XWalkStareAtYouCommandRequest
  */
 message XWalkBullFightCommandRequest
 {
-    option (xwalkSignal) = 0x200F;
+    option (cxx_signal) = CXX_XWALK_CMD_BULL_FIGHT_REQ;
     XWalkLifecycleRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -476,7 +510,7 @@ message XWalkBullFightCommandRequest
  */
 message XWalkTreasureHuntCommandRequest
 {
-    option (xwalkSignal) = 0x2010;
+    option (cxx_signal) = CXX_XWALK_CMD_TREASURE_HUNT_REQ;
 }
 
 /**
@@ -487,7 +521,7 @@ message XWalkTreasureHuntCommandRequest
  */
 message XWalkVideoCarCommandRequest
 {
-    option (xwalkSignal) = 0x2011;
+    option (cxx_signal) = CXX_XWALK_CMD_VIDEO_CAR_REQ;
 }
 
 /**
@@ -498,7 +532,7 @@ message XWalkVideoCarCommandRequest
  */
 message XWalkAppControlCommandRequest
 {
-    option (xwalkSignal) = 0x2012;
+    option (cxx_signal) = CXX_XWALK_CMD_APP_CONTROL_REQ;
     XWalkLifecycleRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -510,7 +544,7 @@ message XWalkAppControlCommandRequest
  */
 message XWalkTurnCommandRequest
 {
-    option (xwalkSignal) = 0x2013;
+    option (cxx_signal) = CXX_XWALK_CMD_TURN_REQ;
     XWalkTurnRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -522,7 +556,7 @@ message XWalkTurnCommandRequest
  */
 message XWalkCameraCommandRequest
 {
-    option (xwalkSignal) = 0x2014;
+    option (cxx_signal) = CXX_XWALK_CMD_CAMERA_REQ;
     XWalkCameraRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -534,7 +568,7 @@ message XWalkCameraCommandRequest
  */
 message XWalkSensorCommandRequest
 {
-    option (xwalkSignal) = 0x2015;
+    option (cxx_signal) = CXX_XWALK_CMD_SENSOR_REQ;
     XWalkSensorRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -546,7 +580,7 @@ message XWalkSensorCommandRequest
  */
 message XWalkLineTrackCommandRequest
 {
-    option (xwalkSignal) = 0x2016;
+    option (cxx_signal) = CXX_XWALK_CMD_LINE_TRACK_REQ;
     XWalkLifecycleRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -558,7 +592,7 @@ message XWalkLineTrackCommandRequest
  */
 message XWalkSelfDriveCommandRequest
 {
-    option (xwalkSignal) = 0x2017;
+    option (cxx_signal) = CXX_XWALK_CMD_SELF_DRIVE_REQ;
     XWalkSelfDriveRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -570,7 +604,7 @@ message XWalkSelfDriveCommandRequest
  */
 message XWalkSoundCommandRequest
 {
-    option (xwalkSignal) = 0x2018;
+    option (cxx_signal) = CXX_XWALK_CMD_SOUND_REQ;
     XWalkSoundRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -582,7 +616,7 @@ message XWalkSoundCommandRequest
  */
 message XWalkVoiceChatCommandRequest
 {
-    option (xwalkSignal) = 0x2019;
+    option (cxx_signal) = CXX_XWALK_CMD_VOICE_CHAT_REQ;
     XWalkLifecycleRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -594,7 +628,7 @@ message XWalkVoiceChatCommandRequest
  */
 message XWalkVoiceActiveCarCommandRequest
 {
-    option (xwalkSignal) = 0x201A;
+    option (cxx_signal) = CXX_XWALK_CMD_VOICE_ACTIVE_CAR_REQ;
     XWalkLifecycleRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -606,7 +640,7 @@ message XWalkVoiceActiveCarCommandRequest
  */
 message XWalkGptCarCommandRequest
 {
-    option (xwalkSignal) = 0x201B;
+    option (cxx_signal) = CXX_XWALK_CMD_GPT_CAR_REQ;
     XWalkGptCarRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -618,7 +652,7 @@ message XWalkGptCarCommandRequest
  */
 message XWalkVoiceControlledCarCommandRequest
 {
-    option (xwalkSignal) = 0x201C;
+    option (cxx_signal) = CXX_XWALK_CMD_VOICE_CONTROLLED_CAR_REQ;
     XWalkLifecycleRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -630,7 +664,7 @@ message XWalkVoiceControlledCarCommandRequest
  */
 message XWalkVoicePromptCarCommandRequest
 {
-    option (xwalkSignal) = 0x201D;
+    option (cxx_signal) = CXX_XWALK_CMD_VOICE_PROMPT_CAR_REQ;
     XWalkLifecycleRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -642,7 +676,7 @@ message XWalkVoicePromptCarCommandRequest
  */
 message XWalkStorytellingRobotCommandRequest
 {
-    option (xwalkSignal) = 0x201E;
+    option (cxx_signal) = CXX_XWALK_CMD_STORYTELLING_ROBOT_REQ;
     XWalkLifecycleRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -654,7 +688,7 @@ message XWalkStorytellingRobotCommandRequest
  */
 message XWalkCalibrateCommandRequest
 {
-    option (xwalkSignal) = 0x201F;
+    option (cxx_signal) = CXX_XWALK_CMD_CALIBRATE_REQ;
     XWalkCalibrationRequest request = 1; //@@ Nested request payload for the command.
 }
 
@@ -666,5 +700,5 @@ message XWalkCalibrateCommandRequest
  */
 message XWalkVideoStreamCommandRequest
 {
-    option (xwalkSignal) = 0x2020;
+    option (cxx_signal) = CXX_XWALK_CMD_VIDEO_STREAM_REQ;
 }

@@ -72,6 +72,10 @@ operating-system signal. `XWALK_PIPE`, `XWALK_HANG`, and `XWALK_TRAP` are
 available only when the platform headers provide `SIGPIPE`, `SIGHUP`, and
 `SIGTRAP`, respectively.
 
+`XWalkErrorSignalNumber` assigns stable values `0` through `26` to the complete
+selector catalogue for transport through `XWalkTraceRej`. These values remain
+independent of the platform's numeric `SIG*` definitions.
+
 The legacy `XWALK_VERBOSE` name remains as a disabled no-op for source
 compatibility. Production normal diagnostics must use a registered UID macro.
 

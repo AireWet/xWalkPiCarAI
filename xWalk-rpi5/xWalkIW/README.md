@@ -3,9 +3,9 @@
 C++17 Protobuf definitions and gRPC services for xWalk I2C and Controller
 requests.
 
-The enum schema defines stable I2C and Controller selections. Separate request,
-confirmation, and rejection schemas define the I2C payloads and mirror the
-plain Controller types declared in
+The signal schema defines stable message and trace identifiers, while the enum
+schema defines I2C and Controller operation selections. Separate request,
+confirmation, and rejection schemas define the I2C payloads and mirror the plain Controller types declared in
 `../xWalkLibrary/common/include/xWalkControllerConfigTypes.h`. The service
 schema defines the typed Controller command RPCs.
 
@@ -21,6 +21,7 @@ xWalk-rpi5/xWalkIW/
 │   ├── xHal_Rpi5CarGrpcSigCfm.xml  Confirmation signal mapping
 │   └── xHal_Rpi5CarGrpcSigRej.xml  Rejection signal mapping
 ├── proto/
+│   ├── xHal_Rpi5CarXIwSignal.proto
 │   ├── xHal_Rpi5CarXIwEnum.proto
 │   ├── xHal_Rpi5CarXIwMessageReq.proto
 │   ├── xHal_Rpi5CarXIwMessageCfm.proto
@@ -36,13 +37,42 @@ must not be edited manually. CMake validates the source schemas on every build.
 
 ## Protocol contract
 
+### Request envelope
+
+`XWalkSignal` carries a `sig_no`, a byte payload, and the originating
+`XClientAddress`. The signal number must identify one concrete request or
+configuration message through that message's `(cxx_signal)` option and the
+request XML registry. The payload is the complete Protobuf wire encoding
+produced by serializing that concrete message, including all of its arguments.
+
+`XClientAddress` mirrors the C++ `xClientAddress` transport structure with a
+mailbox ID, client address text, process-local xWalk index, and numeric module
+type. A producer must ensure the address fits `XWALK_CLIENT_ADDRESS_SIZE` in
+the receiving C++ character array, including the terminating null character.
+
+The envelope does not have its own signal number. A receiver must reject an
+unknown or mismatched `sig_no` before parsing `payload` as the selected message
+type. An empty payload is valid only when the selected concrete message has no
+encoded fields, such as `XWalkNoArgumentRequest`.
+
+### Trace rejection message
+
+`XWalkTraceRej` transports the error or warning values exposed by the trace
+callback. Its `severity` is `XWALK_TRACE_SEVERITY_ERROR` or
+`XWALK_TRACE_SEVERITY_WARNING`, matching the corresponding public
+`XWalkTraceLevel` numeric value. Its `error_signal` mirrors the stable
+`xwalk::hal::XWalkErrorSignalNumber` selector value, while `message` contains
+the fully formatted callback text. Error selector values are independent of
+platform POSIX signal numbers. This transport-only diagnostic has no request
+signal binding.
+
 ### I2C messages
 
 | Category | Message | Fields | Signal |
 |---|---|---|---|
 | Request | `XWalkI2cRequestPayload` | Operation, address, register, length, data | `0x1081` |
 | Success | `XWalkI2cCfmPayload` | Data, responding, flag, message | `0x1082` |
-| Rejection | `XWalkI2cRejPayload` | Data, responding, reason, detail | `0x1083` |
+| Rejection | `XWalkI2cRejPayload` | Data, responding, reason, detail, error selector | `0x1083` |
 
 The schema uses package `xwalk.iw.v1` and proto3 defaults. Public request fields
 use address `1`, register address `2`, length `3`, data `4`, and operation `5`.
@@ -78,17 +108,21 @@ objects, or runtime state.
 | `XWalkServoCalibrationConfig` | `XWalkServoCalibrationConfig` | `0x208F` |
 
 The shared Controller DTO signals occupy the contiguous range `0x2081` through
-`0x208F`. Every message carries the same value through its `(xwalkSignal)`
-option and the request XML signal registry.
+`0x208F`. Every message carries the same value through its typed `(cxx_signal)`
+option and the request XML signal registry. Symbolic values follow the
+`CXX_XWALK_<SHORT_NAME>_REQ`, `CXX_XWALK_<SHORT_NAME>_CFM`, and
+`CXX_XWALK_<SHORT_NAME>_REJ` convention while preserving the existing numeric
+wire values.
 
 Every message whose name contains `Request` in
 `xHal_Rpi5CarXIwMessageReq.proto` has a dedicated acknowledgement in
 `xHal_Rpi5CarXIwMessageCfm.proto` and a dedicated rejection in
 `xHal_Rpi5CarXIwMessageRej.proto`. The counterpart name replaces `Request`
 with `Cfm` or `Rej`. Every confirmation carries a Boolean `flag` and a
-human-readable `message`. Every rejection carries a numeric `reason` and
-human-readable `detail`. Both counterpart categories also carry returned
-`data` and a `responding` state.
+human-readable `message`. Every rejection carries a numeric `reason`,
+human-readable `detail`, and stable `XWalkErrorSignalNumber` selector identifying
+the diagnostic category. Both counterpart categories also carry returned `data`
+and a `responding` state.
 
 Separate request, confirmation, and rejection XML registries map every message
 to its stable signal. I2C retains `0x1081`, `0x1082`, and `0x1083`. Shared

@@ -3,8 +3,8 @@
  * @brief       Defines public Protobuf rejection messages for xWalk interfaces.
  *
  * @details
- * Defines one rejection counterpart for every request message in
- * xHal_Rpi5CarXIwMessageReq.proto.
+ * Defines the trace diagnostic transport message and one rejection counterpart
+ * for every request message in xHal_Rpi5CarXIwMessageReq.proto.
  *
  * @project     xWalk Firmware
  * @module      xWalkIW
@@ -28,10 +28,25 @@ package xwalk.iw.v1;
  ******************************************************************************/
 
 import "xHal_Rpi5CarXIwMessageReq.proto";
+import "xHal_Rpi5CarXIwSignal.proto";
 
 /******************************************************************************
  * Rejection message declarations
  ******************************************************************************/
+
+/**
+ * @brief Carries an error or warning emitted through the trace callback.
+ *
+ * @details
+ * Carries the stable selector number, callback severity, and fully formatted
+ * diagnostic message. This transport-only message has no request signal binding.
+ */
+message XWalkTraceRej
+{
+    XWalkTraceSeverity severity = 1; //@@ Error or warning severity supplied to the trace callback.
+    string message = 2; //@@ Fully formatted diagnostic text supplied to the trace callback.
+    XWalkErrorSignalNumber error_signal = 3; //@@ Stable number identifying the public trace selector.
+}
 
 /**
  * @brief Rejects XWalkI2cRequestPayload with a reason and diagnostic detail.
@@ -41,12 +56,13 @@ import "xHal_Rpi5CarXIwMessageReq.proto";
  */
 message XWalkI2cRejPayload
 {
-    option (xwalkSignal) = 0x1083;
+    option (cxx_signal) = CXX_XWALK_I2C_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -57,12 +73,13 @@ message XWalkI2cRejPayload
  */
 message XWalkControllerCommandRej
 {
-    option (xwalkSignal) = 0x2283;
+    option (cxx_signal) = CXX_XWALK_CTRL_CMD_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -73,12 +90,13 @@ message XWalkControllerCommandRej
  */
 message XWalkNoArgumentRej
 {
-    option (xwalkSignal) = 0x2284;
+    option (cxx_signal) = CXX_XWALK_NO_ARG_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -89,12 +107,13 @@ message XWalkNoArgumentRej
  */
 message XWalkLifecycleRej
 {
-    option (xwalkSignal) = 0x2285;
+    option (cxx_signal) = CXX_XWALK_LIFECYCLE_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -105,12 +124,13 @@ message XWalkLifecycleRej
  */
 message XWalkMoveRej
 {
-    option (xwalkSignal) = 0x2286;
+    option (cxx_signal) = CXX_XWALK_MOVE_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -121,12 +141,13 @@ message XWalkMoveRej
  */
 message XWalkTurnRej
 {
-    option (xwalkSignal) = 0x2287;
+    option (cxx_signal) = CXX_XWALK_TURN_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -137,12 +158,13 @@ message XWalkTurnRej
  */
 message XWalkCameraRej
 {
-    option (xwalkSignal) = 0x2288;
+    option (cxx_signal) = CXX_XWALK_CAMERA_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -153,12 +175,13 @@ message XWalkCameraRej
  */
 message XWalkSensorRej
 {
-    option (xwalkSignal) = 0x2289;
+    option (cxx_signal) = CXX_XWALK_SENSOR_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -169,12 +192,13 @@ message XWalkSensorRej
  */
 message XWalkSelfDriveRej
 {
-    option (xwalkSignal) = 0x228A;
+    option (cxx_signal) = CXX_XWALK_SELF_DRIVE_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -185,12 +209,13 @@ message XWalkSelfDriveRej
  */
 message XWalkSpiRej
 {
-    option (xwalkSignal) = 0x228B;
+    option (cxx_signal) = CXX_XWALK_SPI_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -201,12 +226,13 @@ message XWalkSpiRej
  */
 message XWalkGptCarRej
 {
-    option (xwalkSignal) = 0x228C;
+    option (cxx_signal) = CXX_XWALK_GPT_CAR_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -217,12 +243,13 @@ message XWalkGptCarRej
  */
 message XWalkCalibrationRej
 {
-    option (xwalkSignal) = 0x228D;
+    option (cxx_signal) = CXX_XWALK_CALIBRATION_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -233,12 +260,13 @@ message XWalkCalibrationRej
  */
 message XWalkSoundRej
 {
-    option (xwalkSignal) = 0x228E;
+    option (cxx_signal) = CXX_XWALK_SOUND_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -249,12 +277,13 @@ message XWalkSoundRej
  */
 message XWalkUnknownCommandRej
 {
-    option (xwalkSignal) = 0x2200;
+    option (cxx_signal) = CXX_XWALK_CMD_UNKNOWN_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -265,12 +294,13 @@ message XWalkUnknownCommandRej
  */
 message XWalkHelpCommandRej
 {
-    option (xwalkSignal) = 0x2201;
+    option (cxx_signal) = CXX_XWALK_CMD_HELP_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -281,12 +311,13 @@ message XWalkHelpCommandRej
  */
 message XWalkSpiCommandRej
 {
-    option (xwalkSignal) = 0x2202;
+    option (cxx_signal) = CXX_XWALK_CMD_SPI_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -297,12 +328,13 @@ message XWalkSpiCommandRej
  */
 message XWalkDoctorCommandRej
 {
-    option (xwalkSignal) = 0x2203;
+    option (cxx_signal) = CXX_XWALK_CMD_DOCTOR_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -313,12 +345,13 @@ message XWalkDoctorCommandRej
  */
 message XWalkServoZeroingCommandRej
 {
-    option (xwalkSignal) = 0x2204;
+    option (cxx_signal) = CXX_XWALK_CMD_SERVO_ZEROING_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -329,12 +362,13 @@ message XWalkServoZeroingCommandRej
  */
 message XWalkComputerVisionCommandRej
 {
-    option (xwalkSignal) = 0x2205;
+    option (cxx_signal) = CXX_XWALK_CMD_COMPUTER_VISION_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -345,12 +379,13 @@ message XWalkComputerVisionCommandRej
  */
 message XWalkRecordVideoCommandRej
 {
-    option (xwalkSignal) = 0x2206;
+    option (cxx_signal) = CXX_XWALK_CMD_RECORD_VIDEO_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -361,12 +396,13 @@ message XWalkRecordVideoCommandRej
  */
 message XWalkSoundBackgroundMusicCommandRej
 {
-    option (xwalkSignal) = 0x2207;
+    option (cxx_signal) = CXX_XWALK_CMD_SOUND_BACKGROUND_MUSIC_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -377,12 +413,13 @@ message XWalkSoundBackgroundMusicCommandRej
  */
 message XWalkTextVisionTalkCommandRej
 {
-    option (xwalkSignal) = 0x2208;
+    option (cxx_signal) = CXX_XWALK_CMD_TEXT_VISION_TALK_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -393,12 +430,13 @@ message XWalkTextVisionTalkCommandRej
  */
 message XWalkOnlineLlmTestCommandRej
 {
-    option (xwalkSignal) = 0x2209;
+    option (cxx_signal) = CXX_XWALK_CMD_ONLINE_LLM_TEST_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -409,12 +447,13 @@ message XWalkOnlineLlmTestCommandRej
  */
 message XWalkMoveCommandRej
 {
-    option (xwalkSignal) = 0x220A;
+    option (cxx_signal) = CXX_XWALK_CMD_MOVE_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -425,12 +464,13 @@ message XWalkMoveCommandRej
  */
 message XWalkKeyboardControlCommandRej
 {
-    option (xwalkSignal) = 0x220B;
+    option (cxx_signal) = CXX_XWALK_CMD_KEYBOARD_CONTROL_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -441,12 +481,13 @@ message XWalkKeyboardControlCommandRej
  */
 message XWalkAvoidObstaclesCommandRej
 {
-    option (xwalkSignal) = 0x220C;
+    option (cxx_signal) = CXX_XWALK_CMD_AVOID_OBSTACLES_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -457,12 +498,13 @@ message XWalkAvoidObstaclesCommandRej
  */
 message XWalkCliffDetectionCommandRej
 {
-    option (xwalkSignal) = 0x220D;
+    option (cxx_signal) = CXX_XWALK_CMD_CLIFF_DETECTION_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -473,12 +515,13 @@ message XWalkCliffDetectionCommandRej
  */
 message XWalkStareAtYouCommandRej
 {
-    option (xwalkSignal) = 0x220E;
+    option (cxx_signal) = CXX_XWALK_CMD_STARE_AT_YOU_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -489,12 +532,13 @@ message XWalkStareAtYouCommandRej
  */
 message XWalkBullFightCommandRej
 {
-    option (xwalkSignal) = 0x220F;
+    option (cxx_signal) = CXX_XWALK_CMD_BULL_FIGHT_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -505,12 +549,13 @@ message XWalkBullFightCommandRej
  */
 message XWalkTreasureHuntCommandRej
 {
-    option (xwalkSignal) = 0x2210;
+    option (cxx_signal) = CXX_XWALK_CMD_TREASURE_HUNT_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -521,12 +566,13 @@ message XWalkTreasureHuntCommandRej
  */
 message XWalkVideoCarCommandRej
 {
-    option (xwalkSignal) = 0x2211;
+    option (cxx_signal) = CXX_XWALK_CMD_VIDEO_CAR_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -537,12 +583,13 @@ message XWalkVideoCarCommandRej
  */
 message XWalkAppControlCommandRej
 {
-    option (xwalkSignal) = 0x2212;
+    option (cxx_signal) = CXX_XWALK_CMD_APP_CONTROL_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -553,12 +600,13 @@ message XWalkAppControlCommandRej
  */
 message XWalkTurnCommandRej
 {
-    option (xwalkSignal) = 0x2213;
+    option (cxx_signal) = CXX_XWALK_CMD_TURN_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -569,12 +617,13 @@ message XWalkTurnCommandRej
  */
 message XWalkCameraCommandRej
 {
-    option (xwalkSignal) = 0x2214;
+    option (cxx_signal) = CXX_XWALK_CMD_CAMERA_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -585,12 +634,13 @@ message XWalkCameraCommandRej
  */
 message XWalkSensorCommandRej
 {
-    option (xwalkSignal) = 0x2215;
+    option (cxx_signal) = CXX_XWALK_CMD_SENSOR_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -601,12 +651,13 @@ message XWalkSensorCommandRej
  */
 message XWalkLineTrackCommandRej
 {
-    option (xwalkSignal) = 0x2216;
+    option (cxx_signal) = CXX_XWALK_CMD_LINE_TRACK_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -617,12 +668,13 @@ message XWalkLineTrackCommandRej
  */
 message XWalkSelfDriveCommandRej
 {
-    option (xwalkSignal) = 0x2217;
+    option (cxx_signal) = CXX_XWALK_CMD_SELF_DRIVE_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -633,12 +685,13 @@ message XWalkSelfDriveCommandRej
  */
 message XWalkSoundCommandRej
 {
-    option (xwalkSignal) = 0x2218;
+    option (cxx_signal) = CXX_XWALK_CMD_SOUND_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -649,12 +702,13 @@ message XWalkSoundCommandRej
  */
 message XWalkVoiceChatCommandRej
 {
-    option (xwalkSignal) = 0x2219;
+    option (cxx_signal) = CXX_XWALK_CMD_VOICE_CHAT_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -665,12 +719,13 @@ message XWalkVoiceChatCommandRej
  */
 message XWalkVoiceActiveCarCommandRej
 {
-    option (xwalkSignal) = 0x221A;
+    option (cxx_signal) = CXX_XWALK_CMD_VOICE_ACTIVE_CAR_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -681,12 +736,13 @@ message XWalkVoiceActiveCarCommandRej
  */
 message XWalkGptCarCommandRej
 {
-    option (xwalkSignal) = 0x221B;
+    option (cxx_signal) = CXX_XWALK_CMD_GPT_CAR_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -697,12 +753,13 @@ message XWalkGptCarCommandRej
  */
 message XWalkVoiceControlledCarCommandRej
 {
-    option (xwalkSignal) = 0x221C;
+    option (cxx_signal) = CXX_XWALK_CMD_VOICE_CONTROLLED_CAR_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -713,12 +770,13 @@ message XWalkVoiceControlledCarCommandRej
  */
 message XWalkVoicePromptCarCommandRej
 {
-    option (xwalkSignal) = 0x221D;
+    option (cxx_signal) = CXX_XWALK_CMD_VOICE_PROMPT_CAR_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -729,12 +787,13 @@ message XWalkVoicePromptCarCommandRej
  */
 message XWalkStorytellingRobotCommandRej
 {
-    option (xwalkSignal) = 0x221E;
+    option (cxx_signal) = CXX_XWALK_CMD_STORYTELLING_ROBOT_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -745,12 +804,13 @@ message XWalkStorytellingRobotCommandRej
  */
 message XWalkCalibrateCommandRej
 {
-    option (xwalkSignal) = 0x221F;
+    option (cxx_signal) = CXX_XWALK_CMD_CALIBRATE_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }
 
 /**
@@ -761,10 +821,11 @@ message XWalkCalibrateCommandRej
  */
 message XWalkVideoStreamCommandRej
 {
-    option (xwalkSignal) = 0x2220;
+    option (cxx_signal) = CXX_XWALK_CMD_VIDEO_STREAM_REJ;
 
     bytes data = 1; //@@ Bytes returned with the rejection in transport order.
     bool responding = 2; //@@ Indicates whether the streaming service responded.
     uint32 reason = 3; //@@ Stable numeric reason identifying why the request was rejected.
     string detail = 4; //@@ Human-readable diagnostic detail describing the rejection.
+    XWalkErrorSignalNumber error_signal = 5; //@@ Stable trace error selector identifying the rejection cause.
 }

@@ -1,9 +1,9 @@
 /******************************************************************************
  * @file        xHal_Rpi5CarXIwEnum.proto
- * @brief       Defines public Protobuf enumerations for xWalk interfaces.
+ * @brief       Defines public Protobuf operation enumerations for xWalk interfaces.
  *
  * @details
- * Defines stable I2C operation values and Controller request selections.
+ * Defines stable I2C operations and Controller request selections.
  *
  * @project     xWalk Firmware
  * @module      xWalkIW

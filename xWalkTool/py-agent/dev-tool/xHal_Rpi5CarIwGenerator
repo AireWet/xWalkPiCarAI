@@ -86,6 +86,9 @@ REQUEST_MESSAGE_NAMES = (
     "XWalkCalibrateCommandRequest",
     "XWalkVideoStreamCommandRequest",
 )
+REQUEST_ENVELOPE_NAME = "XWalkSignal"
+CLIENT_ADDRESS_MESSAGE_NAME = "XClientAddress"
+TRACE_REJECTION_MESSAGE_NAME = "XWalkTraceRej"
 TRANSACTION_REQUEST_NAMES = tuple(
     message_name for message_name in REQUEST_MESSAGE_NAMES if "Request" in message_name
 )
@@ -169,7 +172,12 @@ SERVICE_RPC_NAMES = (
         ("Unknown", "Help", "Doctor"),
     ),
 )
-ENUM_NAMES = (
+SIGNAL_ENUM_NAMES = (
+    "XWalkSignalNumber",
+    "XWalkTraceSeverity",
+    "XWalkErrorSignalNumber",
+)
+OPERATION_ENUM_NAMES = (
     "XWalkI2cOperation",
     "XWalkSoundOperation",
     "XWalkLifecycleAction",
@@ -189,6 +197,47 @@ CPP_SIGNAL_PATTERN = re.compile(
     re.MULTILINE,
 )
 SIGNAL_NUMBER_PATTERN = re.compile(r"^0x[0-9A-F]{4}$")
+CXX_SIGNAL_PATTERN = re.compile(
+    r"^\s+(CXX_XWALK_[A-Z0-9_]+_(?:REQ|CFM|REJ))\s*=\s*(0x[0-9A-F]{4});",
+    re.MULTILINE,
+)
+CPP_ERROR_SIGNAL_PATTERN = re.compile(
+    r"^\s+([A-Z][A-Za-z0-9]+)\s*=\s*([0-9]+)U,?$",
+    re.MULTILINE,
+)
+PROTO_ERROR_SIGNAL_PATTERN = re.compile(
+    r"^\s+(XWALK_ERROR_SIGNAL_[A-Z0-9_]+)\s*=\s*([0-9]+);",
+    re.MULTILINE,
+)
+ERROR_SIGNAL_BINDINGS = (
+    ("Unspecified", "XWALK_ERROR_SIGNAL_UNSPECIFIED"),
+    ("InvalidArgument", "XWALK_ERROR_SIGNAL_INVALID_ARGUMENT"),
+    ("OutOfRange", "XWALK_ERROR_SIGNAL_OUT_OF_RANGE"),
+    ("LengthError", "XWALK_ERROR_SIGNAL_LENGTH_ERROR"),
+    ("DomainError", "XWALK_ERROR_SIGNAL_DOMAIN_ERROR"),
+    ("LogicError", "XWALK_ERROR_SIGNAL_LOGIC_ERROR"),
+    ("RuntimeError", "XWALK_ERROR_SIGNAL_RUNTIME_ERROR"),
+    ("OverflowError", "XWALK_ERROR_SIGNAL_OVERFLOW_ERROR"),
+    ("UnderflowError", "XWALK_ERROR_SIGNAL_UNDERFLOW_ERROR"),
+    ("SystemError", "XWALK_ERROR_SIGNAL_SYSTEM_ERROR"),
+    ("BadAllocation", "XWALK_ERROR_SIGNAL_BAD_ALLOCATION"),
+    ("BadCast", "XWALK_ERROR_SIGNAL_BAD_CAST"),
+    ("BadTypeId", "XWALK_ERROR_SIGNAL_BAD_TYPE_ID"),
+    ("BadFunctionCall", "XWALK_ERROR_SIGNAL_BAD_FUNCTION_CALL"),
+    ("BadOptionalAccess", "XWALK_ERROR_SIGNAL_BAD_OPTIONAL_ACCESS"),
+    ("BadVariantAccess", "XWALK_ERROR_SIGNAL_BAD_VARIANT_ACCESS"),
+    ("BadWeakPointer", "XWALK_ERROR_SIGNAL_BAD_WEAK_POINTER"),
+    ("StandardException", "XWALK_ERROR_SIGNAL_STANDARD_EXCEPTION"),
+    ("Abort", "XWALK_ERROR_SIGNAL_ABORT"),
+    ("FloatingPoint", "XWALK_ERROR_SIGNAL_FLOATING_POINT"),
+    ("IllegalInstruction", "XWALK_ERROR_SIGNAL_ILLEGAL_INSTRUCTION"),
+    ("SegmentationFault", "XWALK_ERROR_SIGNAL_SEGMENTATION_FAULT"),
+    ("Termination", "XWALK_ERROR_SIGNAL_TERMINATION"),
+    ("Interrupt", "XWALK_ERROR_SIGNAL_INTERRUPT"),
+    ("BrokenPipe", "XWALK_ERROR_SIGNAL_BROKEN_PIPE"),
+    ("Hangup", "XWALK_ERROR_SIGNAL_HANGUP"),
+    ("Trap", "XWALK_ERROR_SIGNAL_TRAP"),
+)
 
 
 def run_command(command: list[str]) -> None:
@@ -328,23 +377,39 @@ def validate_schema_shape(
 def validate_signal_bindings(
     schema_text: str,
     entries: tuple[tuple[str, str, str], ...],
+    cxx_signals: dict[str, str],
 ) -> None:
     """Validate that XML signal entries match message options.
 
     Args:
         schema_text: Schema containing the mapped messages.
         entries: XML signal-name, number, and message tuples.
+        cxx_signals: Symbolic C++ signal names mapped to numeric values.
 
     Raises:
         ValueError: If a message lacks its mapped signal option.
     """
-    for _signal_name, signal_number, message_name in entries:
+    for signal_name, signal_number, message_name in entries:
         message_pattern = re.compile(
             rf"message\s+{message_name}\s*\{{.*?"
-            rf"option\s+\(xwalkSignal\)\s*=\s*{signal_number}\s*;",
+            rf"option\s+\(cxx_signal\)\s*=\s*"
+            rf"(CXX_XWALK_[A-Z0-9_]+_(?:REQ|CFM|REJ))\s*;",
             re.DOTALL,
         )
-        if message_pattern.search(schema_text) is None:
+        match = message_pattern.search(schema_text)
+        if match is None:
+            raise ValueError(
+                f"Protobuf message {message_name} lacks a symbolic cxx_signal"
+            )
+        cxx_signal = match.group(1)
+        expected_suffix = signal_name.rsplit("_", maxsplit=1)[-1]
+        if expected_suffix not in {"REQ", "CFM", "REJ"}:
+            expected_suffix = "REQ"
+        if not cxx_signal.endswith(f"_{expected_suffix}"):
+            raise ValueError(
+                f"Protobuf message {message_name} uses the wrong signal category"
+            )
+        if cxx_signals.get(cxx_signal) != signal_number:
             raise ValueError(
                 f"Protobuf message {message_name} is not bound to {signal_number}"
             )
@@ -386,7 +451,127 @@ def validate_response_fields(
                 )
 
 
+def validate_request_envelope(schema_text: str) -> None:
+    """Validate the signal-number and encoded-payload request envelope.
+
+    Args:
+        schema_text: Complete request schema.
+
+    Raises:
+        ValueError: If the envelope or either required field is missing.
+    """
+    match = re.search(
+        rf"message\s+{REQUEST_ENVELOPE_NAME}\s*\{{(.*?)\n\}}",
+        schema_text,
+        re.DOTALL,
+    )
+    if match is None:
+        raise ValueError(f"missing request envelope: {REQUEST_ENVELOPE_NAME}")
+    message_body = match.group(1)
+    required_fields = (
+        ("uint32 sig_no", 1),
+        ("bytes payload", 2),
+        (f"{CLIENT_ADDRESS_MESSAGE_NAME} client_address", 3),
+    )
+    for declaration, tag in required_fields:
+        if f"{declaration} = {tag};" not in message_body:
+            raise ValueError(
+                f"{REQUEST_ENVELOPE_NAME} is missing field {declaration} = {tag}"
+            )
+
+
+def validate_client_address(schema_text: str) -> None:
+    """Validate the client endpoint address transport message.
+
+    Args:
+        schema_text: Complete request schema.
+
+    Raises:
+        ValueError: If the message or one of its C++ mirror fields is missing.
+    """
+    match = re.search(
+        rf"message\s+{CLIENT_ADDRESS_MESSAGE_NAME}\s*\{{(.*?)\n\}}",
+        schema_text,
+        re.DOTALL,
+    )
+    if match is None:
+        raise ValueError(
+            f"missing client address message: {CLIENT_ADDRESS_MESSAGE_NAME}"
+        )
+    message_body = match.group(1)
+    required_fields = (
+        ("uint32 mail_box_id", 1),
+        ("string client_address", 2),
+        ("uint32 xwalk_local_index", 3),
+        ("uint32 module_type", 4),
+    )
+    for declaration, tag in required_fields:
+        if f"{declaration} = {tag};" not in message_body:
+            raise ValueError(
+                f"{CLIENT_ADDRESS_MESSAGE_NAME} is missing field "
+                f"{declaration} = {tag}"
+            )
+
+
+def validate_trace_rejection(schema_text: str) -> None:
+    """Validate the trace callback rejection transport message.
+
+    Args:
+        schema_text: Complete rejection schema.
+
+    Raises:
+        ValueError: If the message or either callback field is missing.
+    """
+    match = re.search(
+        rf"message\s+{TRACE_REJECTION_MESSAGE_NAME}\s*\{{(.*?)\n\}}",
+        schema_text,
+        re.DOTALL,
+    )
+    if match is None:
+        raise ValueError(
+            f"missing trace rejection message: {TRACE_REJECTION_MESSAGE_NAME}"
+        )
+    message_body = match.group(1)
+    required_fields = (
+        ("XWalkTraceSeverity severity", 1),
+        ("string message", 2),
+        ("XWalkErrorSignalNumber error_signal", 3),
+    )
+    for declaration, tag in required_fields:
+        if f"{declaration} = {tag};" not in message_body:
+            raise ValueError(
+                f"{TRACE_REJECTION_MESSAGE_NAME} is missing field "
+                f"{declaration} = {tag}"
+            )
+
+
+def validate_error_signal_numbers(signal_text: str, error_signal_text: str) -> None:
+    """Validate matching Protobuf and C++ trace error selector numbers.
+
+    Args:
+        signal_text: Complete Protobuf signal-enumeration schema.
+        error_signal_text: Complete trace error-selector header.
+
+    Raises:
+        ValueError: If names, order, or numeric values differ.
+    """
+    cpp_values = dict(CPP_ERROR_SIGNAL_PATTERN.findall(error_signal_text))
+    proto_values = dict(PROTO_ERROR_SIGNAL_PATTERN.findall(signal_text))
+    expected_cpp_names = tuple(binding[0] for binding in ERROR_SIGNAL_BINDINGS)
+    expected_proto_names = tuple(binding[1] for binding in ERROR_SIGNAL_BINDINGS)
+    if tuple(cpp_values) != expected_cpp_names:
+        raise ValueError("unexpected C++ trace error signal enumeration")
+    if tuple(proto_values) != expected_proto_names:
+        raise ValueError("unexpected Protobuf trace error signal enumeration")
+    for cpp_name, proto_name in ERROR_SIGNAL_BINDINGS:
+        if cpp_values[cpp_name] != proto_values[proto_name]:
+            raise ValueError(
+                f"trace error signal {cpp_name} does not match {proto_name}"
+            )
+
+
 def validate_inputs(
+    signal_proto: pathlib.Path,
     enum_proto: pathlib.Path,
     request_proto: pathlib.Path,
     confirm_proto: pathlib.Path,
@@ -396,10 +581,12 @@ def validate_inputs(
     confirm_xml: pathlib.Path,
     reject_xml: pathlib.Path,
     controller_command_header: pathlib.Path,
+    error_signal_header: pathlib.Path,
 ) -> None:
     """Validate the split message, service, XML, and C++ signal contracts.
 
     Args:
+        signal_proto: Proto3 message-signal and trace-enum schema.
         enum_proto: Proto3 operation-enum schema.
         request_proto: Proto3 request-message schema.
         confirm_proto: Proto3 confirmation-message schema.
@@ -409,29 +596,43 @@ def validate_inputs(
         confirm_xml: Confirmation signal registry.
         reject_xml: Rejection signal registry.
         controller_command_header: C++ Controller command signal constants.
+        error_signal_header: C++ trace error-selector number enumeration.
 
     Raises:
         OSError: If an input cannot be read.
         ValueError: If a schema or mapping is inconsistent.
         element_tree.ParseError: If an XML registry is malformed.
     """
+    signal_text = signal_proto.read_text(encoding="utf-8")
     enum_text = enum_proto.read_text(encoding="utf-8")
     request_text = request_proto.read_text(encoding="utf-8")
     confirm_text = confirm_proto.read_text(encoding="utf-8")
     reject_text = reject_proto.read_text(encoding="utf-8")
     service_text = service_proto.read_text(encoding="utf-8")
     controller_command_text = controller_command_header.read_text(encoding="utf-8")
+    error_signal_text = error_signal_header.read_text(encoding="utf-8")
 
-    enum_names = tuple(ENUM_PATTERN.findall(enum_text))
-    if enum_names != ENUM_NAMES:
-        raise ValueError(f"unexpected Protobuf enumerations: {enum_names}")
+    signal_enum_names = tuple(ENUM_PATTERN.findall(signal_text))
+    if signal_enum_names != SIGNAL_ENUM_NAMES:
+        raise ValueError(
+            f"unexpected Protobuf signal enumerations: {signal_enum_names}"
+        )
+    if MESSAGE_PATTERN.findall(signal_text):
+        raise ValueError("xHal_Rpi5CarXIwSignal.proto must contain only enumerations")
+    operation_enum_names = tuple(ENUM_PATTERN.findall(enum_text))
+    if operation_enum_names != OPERATION_ENUM_NAMES:
+        raise ValueError(
+            f"unexpected Protobuf operation enumerations: {operation_enum_names}"
+        )
     if MESSAGE_PATTERN.findall(enum_text):
         raise ValueError("xHal_Rpi5CarXIwEnum.proto must contain only enumerations")
+    cxx_signals = dict(CXX_SIGNAL_PATTERN.findall(signal_text))
+    validate_error_signal_numbers(signal_text, error_signal_text)
 
     validate_schema_shape(
         request_proto.name,
         request_text,
-        REQUEST_MESSAGE_NAMES,
+        (REQUEST_ENVELOPE_NAME, CLIENT_ADDRESS_MESSAGE_NAME, *REQUEST_MESSAGE_NAMES),
     )
     validate_schema_shape(
         confirm_proto.name,
@@ -441,7 +642,7 @@ def validate_inputs(
     validate_schema_shape(
         reject_proto.name,
         reject_text,
-        REJECT_MESSAGE_NAMES,
+        (TRACE_REJECTION_MESSAGE_NAME, *REJECT_MESSAGE_NAMES),
     )
 
     request_entries = read_signal_xml(request_xml, "req")
@@ -461,10 +662,15 @@ def validate_inputs(
         raise ValueError("duplicate xWalk signal numbers are configured")
     if len(set(all_signal_names)) != len(all_signal_names):
         raise ValueError("duplicate xWalk signal names are configured")
+    if set(cxx_signals.values()) != set(all_numbers):
+        raise ValueError("symbolic C++ signals do not match the XML signal numbers")
 
-    validate_signal_bindings(request_text, request_entries)
-    validate_signal_bindings(confirm_text, confirm_entries)
-    validate_signal_bindings(reject_text, reject_entries)
+    validate_signal_bindings(request_text, request_entries, cxx_signals)
+    validate_request_envelope(request_text)
+    validate_client_address(request_text)
+    validate_signal_bindings(confirm_text, confirm_entries, cxx_signals)
+    validate_signal_bindings(reject_text, reject_entries, cxx_signals)
+    validate_trace_rejection(reject_text)
     validate_response_fields(
         confirm_text,
         CONFIRM_MESSAGE_NAMES,
@@ -473,7 +679,11 @@ def validate_inputs(
     validate_response_fields(
         reject_text,
         REJECT_MESSAGE_NAMES,
-        (("uint32 reason", 3), ("string detail", 4)),
+        (
+            ("uint32 reason", 3),
+            ("string detail", 4),
+            ("XWalkErrorSignalNumber error_signal", 5),
+        ),
     )
 
     request_by_message = {entry[2]: entry for entry in request_entries}
@@ -546,6 +756,13 @@ def validate_inputs(
         raise ValueError("xHal_Rpi5CarXIwGrpc.proto lacks a split message import")
     if 'import "xHal_Rpi5CarXIwEnum.proto";' not in request_text:
         raise ValueError("request schema must import xHal_Rpi5CarXIwEnum.proto")
+    signal_import = 'import "xHal_Rpi5CarXIwSignal.proto";'
+    if signal_import not in request_text:
+        raise ValueError("request schema must import xHal_Rpi5CarXIwSignal.proto")
+    if signal_import not in confirm_text:
+        raise ValueError("confirmation schema must import the signal schema")
+    if signal_import not in reject_text:
+        raise ValueError("rejection schema must import the signal schema")
     if 'import "xHal_Rpi5CarXIwMessageReq.proto";' not in confirm_text:
         raise ValueError("confirmation schema must import the request schema")
     if 'import "xHal_Rpi5CarXIwMessageReq.proto";' not in reject_text:
@@ -553,6 +770,7 @@ def validate_inputs(
 
 
 def generate_grpc_cpp(
+    signal_proto_path: pathlib.Path,
     enum_proto_path: pathlib.Path,
     request_proto_path: pathlib.Path,
     confirm_proto_path: pathlib.Path,
@@ -566,6 +784,7 @@ def generate_grpc_cpp(
     """Generate and route C++ Protobuf and gRPC files.
 
     Args:
+        signal_proto_path: Source message-signal and trace-enum schema.
         enum_proto_path: Source operation-enum schema.
         request_proto_path: Source request-message schema.
         confirm_proto_path: Source confirmation-message schema.
@@ -587,6 +806,7 @@ def generate_grpc_cpp(
     source_directory = generated_directory / "src"
 
     source_paths = (
+        signal_proto_path,
         enum_proto_path,
         request_proto_path,
         confirm_proto_path,
@@ -632,6 +852,11 @@ def main() -> int:
     generated_directory = component_directory / "auto-gen"
     parser = argparse.ArgumentParser(
         description="Validate or generate the xWalkIW I2C and Controller schemas."
+    )
+    parser.add_argument(
+        "--signal-proto",
+        type=pathlib.Path,
+        default=component_directory / "proto" / "xHal_Rpi5CarXIwSignal.proto",
     )
     parser.add_argument(
         "--enum-proto",
@@ -685,6 +910,17 @@ def main() -> int:
             / "xControllerCommand.h"
         ),
     )
+    parser.add_argument(
+        "--error-signal-header",
+        type=pathlib.Path,
+        default=(
+            repository_directory
+            / "xWalk-rpi5"
+            / "xWalkTrace"
+            / "include"
+            / "xHal_Rpi5CarErrorSignals.h"
+        ),
+    )
     action_group = parser.add_mutually_exclusive_group(required=True)
     action_group.add_argument(
         "--check",
@@ -714,6 +950,7 @@ def main() -> int:
 
     try:
         validate_inputs(
+            arguments.signal_proto,
             arguments.enum_proto,
             arguments.request_proto,
             arguments.confirm_proto,
@@ -723,9 +960,11 @@ def main() -> int:
             arguments.confirm_xml,
             arguments.reject_xml,
             arguments.controller_command_header,
+            arguments.error_signal_header,
         )
         if arguments.generate_cpp:
             generate_grpc_cpp(
+                arguments.signal_proto,
                 arguments.enum_proto,
                 arguments.request_proto,
                 arguments.confirm_proto,

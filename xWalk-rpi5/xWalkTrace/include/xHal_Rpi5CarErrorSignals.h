@@ -1,10 +1,11 @@
 /******************************************************************************
  * @file        xHal_Rpi5CarErrorSignals.h
- * @brief       Defines public C++ error and operating-system signal selectors.
+ * @brief       Defines public C++ error numbers and trace signal selectors.
  *
  * @details
- * Maps stable short project names to namespace-backed standard exception types
- * and POSIX signal numbers used by xWalk trace macros.
+ * Defines stable transport numbers and maps short project names to
+ * namespace-backed standard exception types and POSIX signal numbers used by
+ * xWalk trace macros.
  *
  * @project     xWalk Firmware
  * @module      xWalkTrace
@@ -31,6 +32,160 @@
 #include "xHal_Rpi5CarTypes.h"
 
 #include <csignal>
+
+/******************************************************************************
+ * Enumeration declarations
+ ******************************************************************************/
+
+namespace xwalk::hal
+{
+
+    /**
+     * @brief Assigns stable transport numbers to public trace error selectors.
+     *
+     * @details
+     * Values are independent of platform POSIX signal numbers and mirror the
+     * `XWalkErrorSignalNumber` Protobuf enumeration used by `XWalkTraceRej`.
+     */
+    enum class XWalkErrorSignalNumber : uint32
+    {
+        /**
+         * @brief No error selector was supplied or recognized.
+         */
+        Unspecified = 0U,
+
+        /**
+         * @brief Selects an invalid-argument diagnostic.
+         */
+        InvalidArgument = 1U,
+
+        /**
+         * @brief Selects an out-of-range diagnostic.
+         */
+        OutOfRange = 2U,
+
+        /**
+         * @brief Selects a length-error diagnostic.
+         */
+        LengthError = 3U,
+
+        /**
+         * @brief Selects a domain-error diagnostic.
+         */
+        DomainError = 4U,
+
+        /**
+         * @brief Selects a logic-error diagnostic.
+         */
+        LogicError = 5U,
+
+        /**
+         * @brief Selects a runtime-error diagnostic.
+         */
+        RuntimeError = 6U,
+
+        /**
+         * @brief Selects an overflow-error diagnostic.
+         */
+        OverflowError = 7U,
+
+        /**
+         * @brief Selects an underflow-error diagnostic.
+         */
+        UnderflowError = 8U,
+
+        /**
+         * @brief Selects a system-error diagnostic.
+         */
+        SystemError = 9U,
+
+        /**
+         * @brief Selects an allocation-failure diagnostic.
+         */
+        BadAllocation = 10U,
+
+        /**
+         * @brief Selects a bad-cast diagnostic.
+         */
+        BadCast = 11U,
+
+        /**
+         * @brief Selects a bad-type-information diagnostic.
+         */
+        BadTypeId = 12U,
+
+        /**
+         * @brief Selects a bad-function-call diagnostic.
+         */
+        BadFunctionCall = 13U,
+
+        /**
+         * @brief Selects a bad-optional-access diagnostic.
+         */
+        BadOptionalAccess = 14U,
+
+        /**
+         * @brief Selects a bad-variant-access diagnostic.
+         */
+        BadVariantAccess = 15U,
+
+        /**
+         * @brief Selects a bad-weak-pointer diagnostic.
+         */
+        BadWeakPointer = 16U,
+
+        /**
+         * @brief Selects a generic standard-exception diagnostic.
+         */
+        StandardException = 17U,
+
+        /**
+         * @brief Selects a process-abort diagnostic.
+         */
+        Abort = 18U,
+
+        /**
+         * @brief Selects a floating-point-exception diagnostic.
+         */
+        FloatingPoint = 19U,
+
+        /**
+         * @brief Selects an illegal-instruction diagnostic.
+         */
+        IllegalInstruction = 20U,
+
+        /**
+         * @brief Selects a segmentation-fault diagnostic.
+         */
+        SegmentationFault = 21U,
+
+        /**
+         * @brief Selects a termination-request diagnostic.
+         */
+        Termination = 22U,
+
+        /**
+         * @brief Selects an interactive-interrupt diagnostic.
+         */
+        Interrupt = 23U,
+
+        /**
+         * @brief Selects a broken-pipe diagnostic.
+         */
+        BrokenPipe = 24U,
+
+        /**
+         * @brief Selects a terminal-hangup diagnostic.
+         */
+        Hangup = 25U,
+
+        /**
+         * @brief Selects a trace-or-breakpoint diagnostic.
+         */
+        Trap = 26U
+    };
+
+} /* namespace xwalk::hal */
 
 /******************************************************************************
  * C++ exception implementation

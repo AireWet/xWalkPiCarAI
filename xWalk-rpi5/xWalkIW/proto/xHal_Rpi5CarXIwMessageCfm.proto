@@ -28,6 +28,7 @@ package xwalk.iw.v1;
  ******************************************************************************/
 
 import "xHal_Rpi5CarXIwMessageReq.proto";
+import "xHal_Rpi5CarXIwSignal.proto";
 
 /******************************************************************************
  * Confirmation message declarations
@@ -41,7 +42,7 @@ import "xHal_Rpi5CarXIwMessageReq.proto";
  */
 message XWalkI2cCfmPayload
 {
-    option (xwalkSignal) = 0x1082;
+    option (cxx_signal) = CXX_XWALK_I2C_CFM;
 
     bytes data = 1; //@@ Bytes returned by a successful read operation in bus order.
     bool responding = 2; //@@ Indicates whether the addressed device responded to a probe.
@@ -57,7 +58,7 @@ message XWalkI2cCfmPayload
  */
 message XWalkControllerCommandCfm
 {
-    option (xwalkSignal) = 0x2183;
+    option (cxx_signal) = CXX_XWALK_CTRL_CMD_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -73,7 +74,7 @@ message XWalkControllerCommandCfm
  */
 message XWalkNoArgumentCfm
 {
-    option (xwalkSignal) = 0x2184;
+    option (cxx_signal) = CXX_XWALK_NO_ARG_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -89,7 +90,7 @@ message XWalkNoArgumentCfm
  */
 message XWalkLifecycleCfm
 {
-    option (xwalkSignal) = 0x2185;
+    option (cxx_signal) = CXX_XWALK_LIFECYCLE_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -105,7 +106,7 @@ message XWalkLifecycleCfm
  */
 message XWalkMoveCfm
 {
-    option (xwalkSignal) = 0x2186;
+    option (cxx_signal) = CXX_XWALK_MOVE_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -121,7 +122,7 @@ message XWalkMoveCfm
  */
 message XWalkTurnCfm
 {
-    option (xwalkSignal) = 0x2187;
+    option (cxx_signal) = CXX_XWALK_TURN_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -137,7 +138,7 @@ message XWalkTurnCfm
  */
 message XWalkCameraCfm
 {
-    option (xwalkSignal) = 0x2188;
+    option (cxx_signal) = CXX_XWALK_CAMERA_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -153,7 +154,7 @@ message XWalkCameraCfm
  */
 message XWalkSensorCfm
 {
-    option (xwalkSignal) = 0x2189;
+    option (cxx_signal) = CXX_XWALK_SENSOR_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -169,7 +170,7 @@ message XWalkSensorCfm
  */
 message XWalkSelfDriveCfm
 {
-    option (xwalkSignal) = 0x218A;
+    option (cxx_signal) = CXX_XWALK_SELF_DRIVE_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -185,7 +186,7 @@ message XWalkSelfDriveCfm
  */
 message XWalkSpiCfm
 {
-    option (xwalkSignal) = 0x218B;
+    option (cxx_signal) = CXX_XWALK_SPI_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -201,7 +202,7 @@ message XWalkSpiCfm
  */
 message XWalkGptCarCfm
 {
-    option (xwalkSignal) = 0x218C;
+    option (cxx_signal) = CXX_XWALK_GPT_CAR_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -217,7 +218,7 @@ message XWalkGptCarCfm
  */
 message XWalkCalibrationCfm
 {
-    option (xwalkSignal) = 0x218D;
+    option (cxx_signal) = CXX_XWALK_CALIBRATION_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -233,7 +234,7 @@ message XWalkCalibrationCfm
  */
 message XWalkSoundCfm
 {
-    option (xwalkSignal) = 0x218E;
+    option (cxx_signal) = CXX_XWALK_SOUND_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -249,7 +250,7 @@ message XWalkSoundCfm
  */
 message XWalkUnknownCommandCfm
 {
-    option (xwalkSignal) = 0x2100;
+    option (cxx_signal) = CXX_XWALK_CMD_UNKNOWN_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -265,7 +266,7 @@ message XWalkUnknownCommandCfm
  */
 message XWalkHelpCommandCfm
 {
-    option (xwalkSignal) = 0x2101;
+    option (cxx_signal) = CXX_XWALK_CMD_HELP_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -281,7 +282,7 @@ message XWalkHelpCommandCfm
  */
 message XWalkSpiCommandCfm
 {
-    option (xwalkSignal) = 0x2102;
+    option (cxx_signal) = CXX_XWALK_CMD_SPI_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -297,7 +298,7 @@ message XWalkSpiCommandCfm
  */
 message XWalkDoctorCommandCfm
 {
-    option (xwalkSignal) = 0x2103;
+    option (cxx_signal) = CXX_XWALK_CMD_DOCTOR_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -313,7 +314,7 @@ message XWalkDoctorCommandCfm
  */
 message XWalkServoZeroingCommandCfm
 {
-    option (xwalkSignal) = 0x2104;
+    option (cxx_signal) = CXX_XWALK_CMD_SERVO_ZEROING_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -329,7 +330,7 @@ message XWalkServoZeroingCommandCfm
  */
 message XWalkComputerVisionCommandCfm
 {
-    option (xwalkSignal) = 0x2105;
+    option (cxx_signal) = CXX_XWALK_CMD_COMPUTER_VISION_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -345,7 +346,7 @@ message XWalkComputerVisionCommandCfm
  */
 message XWalkRecordVideoCommandCfm
 {
-    option (xwalkSignal) = 0x2106;
+    option (cxx_signal) = CXX_XWALK_CMD_RECORD_VIDEO_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -361,7 +362,7 @@ message XWalkRecordVideoCommandCfm
  */
 message XWalkSoundBackgroundMusicCommandCfm
 {
-    option (xwalkSignal) = 0x2107;
+    option (cxx_signal) = CXX_XWALK_CMD_SOUND_BACKGROUND_MUSIC_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -377,7 +378,7 @@ message XWalkSoundBackgroundMusicCommandCfm
  */
 message XWalkTextVisionTalkCommandCfm
 {
-    option (xwalkSignal) = 0x2108;
+    option (cxx_signal) = CXX_XWALK_CMD_TEXT_VISION_TALK_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -393,7 +394,7 @@ message XWalkTextVisionTalkCommandCfm
  */
 message XWalkOnlineLlmTestCommandCfm
 {
-    option (xwalkSignal) = 0x2109;
+    option (cxx_signal) = CXX_XWALK_CMD_ONLINE_LLM_TEST_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -409,7 +410,7 @@ message XWalkOnlineLlmTestCommandCfm
  */
 message XWalkMoveCommandCfm
 {
-    option (xwalkSignal) = 0x210A;
+    option (cxx_signal) = CXX_XWALK_CMD_MOVE_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -425,7 +426,7 @@ message XWalkMoveCommandCfm
  */
 message XWalkKeyboardControlCommandCfm
 {
-    option (xwalkSignal) = 0x210B;
+    option (cxx_signal) = CXX_XWALK_CMD_KEYBOARD_CONTROL_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -441,7 +442,7 @@ message XWalkKeyboardControlCommandCfm
  */
 message XWalkAvoidObstaclesCommandCfm
 {
-    option (xwalkSignal) = 0x210C;
+    option (cxx_signal) = CXX_XWALK_CMD_AVOID_OBSTACLES_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -457,7 +458,7 @@ message XWalkAvoidObstaclesCommandCfm
  */
 message XWalkCliffDetectionCommandCfm
 {
-    option (xwalkSignal) = 0x210D;
+    option (cxx_signal) = CXX_XWALK_CMD_CLIFF_DETECTION_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -473,7 +474,7 @@ message XWalkCliffDetectionCommandCfm
  */
 message XWalkStareAtYouCommandCfm
 {
-    option (xwalkSignal) = 0x210E;
+    option (cxx_signal) = CXX_XWALK_CMD_STARE_AT_YOU_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -489,7 +490,7 @@ message XWalkStareAtYouCommandCfm
  */
 message XWalkBullFightCommandCfm
 {
-    option (xwalkSignal) = 0x210F;
+    option (cxx_signal) = CXX_XWALK_CMD_BULL_FIGHT_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -505,7 +506,7 @@ message XWalkBullFightCommandCfm
  */
 message XWalkTreasureHuntCommandCfm
 {
-    option (xwalkSignal) = 0x2110;
+    option (cxx_signal) = CXX_XWALK_CMD_TREASURE_HUNT_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -521,7 +522,7 @@ message XWalkTreasureHuntCommandCfm
  */
 message XWalkVideoCarCommandCfm
 {
-    option (xwalkSignal) = 0x2111;
+    option (cxx_signal) = CXX_XWALK_CMD_VIDEO_CAR_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -537,7 +538,7 @@ message XWalkVideoCarCommandCfm
  */
 message XWalkAppControlCommandCfm
 {
-    option (xwalkSignal) = 0x2112;
+    option (cxx_signal) = CXX_XWALK_CMD_APP_CONTROL_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -553,7 +554,7 @@ message XWalkAppControlCommandCfm
  */
 message XWalkTurnCommandCfm
 {
-    option (xwalkSignal) = 0x2113;
+    option (cxx_signal) = CXX_XWALK_CMD_TURN_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -569,7 +570,7 @@ message XWalkTurnCommandCfm
  */
 message XWalkCameraCommandCfm
 {
-    option (xwalkSignal) = 0x2114;
+    option (cxx_signal) = CXX_XWALK_CMD_CAMERA_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -585,7 +586,7 @@ message XWalkCameraCommandCfm
  */
 message XWalkSensorCommandCfm
 {
-    option (xwalkSignal) = 0x2115;
+    option (cxx_signal) = CXX_XWALK_CMD_SENSOR_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -601,7 +602,7 @@ message XWalkSensorCommandCfm
  */
 message XWalkLineTrackCommandCfm
 {
-    option (xwalkSignal) = 0x2116;
+    option (cxx_signal) = CXX_XWALK_CMD_LINE_TRACK_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -617,7 +618,7 @@ message XWalkLineTrackCommandCfm
  */
 message XWalkSelfDriveCommandCfm
 {
-    option (xwalkSignal) = 0x2117;
+    option (cxx_signal) = CXX_XWALK_CMD_SELF_DRIVE_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -633,7 +634,7 @@ message XWalkSelfDriveCommandCfm
  */
 message XWalkSoundCommandCfm
 {
-    option (xwalkSignal) = 0x2118;
+    option (cxx_signal) = CXX_XWALK_CMD_SOUND_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -649,7 +650,7 @@ message XWalkSoundCommandCfm
  */
 message XWalkVoiceChatCommandCfm
 {
-    option (xwalkSignal) = 0x2119;
+    option (cxx_signal) = CXX_XWALK_CMD_VOICE_CHAT_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -665,7 +666,7 @@ message XWalkVoiceChatCommandCfm
  */
 message XWalkVoiceActiveCarCommandCfm
 {
-    option (xwalkSignal) = 0x211A;
+    option (cxx_signal) = CXX_XWALK_CMD_VOICE_ACTIVE_CAR_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -681,7 +682,7 @@ message XWalkVoiceActiveCarCommandCfm
  */
 message XWalkGptCarCommandCfm
 {
-    option (xwalkSignal) = 0x211B;
+    option (cxx_signal) = CXX_XWALK_CMD_GPT_CAR_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -697,7 +698,7 @@ message XWalkGptCarCommandCfm
  */
 message XWalkVoiceControlledCarCommandCfm
 {
-    option (xwalkSignal) = 0x211C;
+    option (cxx_signal) = CXX_XWALK_CMD_VOICE_CONTROLLED_CAR_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -713,7 +714,7 @@ message XWalkVoiceControlledCarCommandCfm
  */
 message XWalkVoicePromptCarCommandCfm
 {
-    option (xwalkSignal) = 0x211D;
+    option (cxx_signal) = CXX_XWALK_CMD_VOICE_PROMPT_CAR_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -729,7 +730,7 @@ message XWalkVoicePromptCarCommandCfm
  */
 message XWalkStorytellingRobotCommandCfm
 {
-    option (xwalkSignal) = 0x211E;
+    option (cxx_signal) = CXX_XWALK_CMD_STORYTELLING_ROBOT_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -745,7 +746,7 @@ message XWalkStorytellingRobotCommandCfm
  */
 message XWalkCalibrateCommandCfm
 {
-    option (xwalkSignal) = 0x211F;
+    option (cxx_signal) = CXX_XWALK_CMD_CALIBRATE_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the addressed service or device responded.
@@ -761,7 +762,7 @@ message XWalkCalibrateCommandCfm
  */
 message XWalkVideoStreamCommandCfm
 {
-    option (xwalkSignal) = 0x2120;
+    option (cxx_signal) = CXX_XWALK_CMD_VIDEO_STREAM_CFM;
 
     bytes data = 1; //@@ Bytes returned with the response in transport order.
     bool responding = 2; //@@ Indicates whether the streaming service responded.

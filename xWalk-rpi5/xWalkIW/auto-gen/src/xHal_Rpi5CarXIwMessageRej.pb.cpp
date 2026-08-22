@@ -23,12 +23,28 @@ namespace _pbi = _pb::internal;
 namespace xwalk {
 namespace iw {
 namespace v1 {
+PROTOBUF_CONSTEXPR XWalkTraceRej::XWalkTraceRej(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.message_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.severity_)*/0
+  , /*decltype(_impl_.error_signal_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct XWalkTraceRejDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR XWalkTraceRejDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~XWalkTraceRejDefaultTypeInternal() {}
+  union {
+    XWalkTraceRej _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 XWalkTraceRejDefaultTypeInternal _XWalkTraceRej_default_instance_;
 PROTOBUF_CONSTEXPR XWalkI2cRejPayload::XWalkI2cRejPayload(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.data_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkI2cRejPayloadDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkI2cRejPayloadDefaultTypeInternal()
@@ -45,6 +61,7 @@ PROTOBUF_CONSTEXPR XWalkControllerCommandRej::XWalkControllerCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkControllerCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkControllerCommandRejDefaultTypeInternal()
@@ -61,6 +78,7 @@ PROTOBUF_CONSTEXPR XWalkNoArgumentRej::XWalkNoArgumentRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkNoArgumentRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkNoArgumentRejDefaultTypeInternal()
@@ -77,6 +95,7 @@ PROTOBUF_CONSTEXPR XWalkLifecycleRej::XWalkLifecycleRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkLifecycleRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkLifecycleRejDefaultTypeInternal()
@@ -93,6 +112,7 @@ PROTOBUF_CONSTEXPR XWalkMoveRej::XWalkMoveRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkMoveRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkMoveRejDefaultTypeInternal()
@@ -109,6 +129,7 @@ PROTOBUF_CONSTEXPR XWalkTurnRej::XWalkTurnRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkTurnRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkTurnRejDefaultTypeInternal()
@@ -125,6 +146,7 @@ PROTOBUF_CONSTEXPR XWalkCameraRej::XWalkCameraRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkCameraRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkCameraRejDefaultTypeInternal()
@@ -141,6 +163,7 @@ PROTOBUF_CONSTEXPR XWalkSensorRej::XWalkSensorRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkSensorRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkSensorRejDefaultTypeInternal()
@@ -157,6 +180,7 @@ PROTOBUF_CONSTEXPR XWalkSelfDriveRej::XWalkSelfDriveRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkSelfDriveRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkSelfDriveRejDefaultTypeInternal()
@@ -173,6 +197,7 @@ PROTOBUF_CONSTEXPR XWalkSpiRej::XWalkSpiRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkSpiRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkSpiRejDefaultTypeInternal()
@@ -189,6 +214,7 @@ PROTOBUF_CONSTEXPR XWalkGptCarRej::XWalkGptCarRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkGptCarRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkGptCarRejDefaultTypeInternal()
@@ -205,6 +231,7 @@ PROTOBUF_CONSTEXPR XWalkCalibrationRej::XWalkCalibrationRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkCalibrationRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkCalibrationRejDefaultTypeInternal()
@@ -221,6 +248,7 @@ PROTOBUF_CONSTEXPR XWalkSoundRej::XWalkSoundRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkSoundRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkSoundRejDefaultTypeInternal()
@@ -237,6 +265,7 @@ PROTOBUF_CONSTEXPR XWalkUnknownCommandRej::XWalkUnknownCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkUnknownCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkUnknownCommandRejDefaultTypeInternal()
@@ -253,6 +282,7 @@ PROTOBUF_CONSTEXPR XWalkHelpCommandRej::XWalkHelpCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkHelpCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkHelpCommandRejDefaultTypeInternal()
@@ -269,6 +299,7 @@ PROTOBUF_CONSTEXPR XWalkSpiCommandRej::XWalkSpiCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkSpiCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkSpiCommandRejDefaultTypeInternal()
@@ -285,6 +316,7 @@ PROTOBUF_CONSTEXPR XWalkDoctorCommandRej::XWalkDoctorCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkDoctorCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkDoctorCommandRejDefaultTypeInternal()
@@ -301,6 +333,7 @@ PROTOBUF_CONSTEXPR XWalkServoZeroingCommandRej::XWalkServoZeroingCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkServoZeroingCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkServoZeroingCommandRejDefaultTypeInternal()
@@ -317,6 +350,7 @@ PROTOBUF_CONSTEXPR XWalkComputerVisionCommandRej::XWalkComputerVisionCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkComputerVisionCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkComputerVisionCommandRejDefaultTypeInternal()
@@ -333,6 +367,7 @@ PROTOBUF_CONSTEXPR XWalkRecordVideoCommandRej::XWalkRecordVideoCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkRecordVideoCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkRecordVideoCommandRejDefaultTypeInternal()
@@ -349,6 +384,7 @@ PROTOBUF_CONSTEXPR XWalkSoundBackgroundMusicCommandRej::XWalkSoundBackgroundMusi
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkSoundBackgroundMusicCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkSoundBackgroundMusicCommandRejDefaultTypeInternal()
@@ -365,6 +401,7 @@ PROTOBUF_CONSTEXPR XWalkTextVisionTalkCommandRej::XWalkTextVisionTalkCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkTextVisionTalkCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkTextVisionTalkCommandRejDefaultTypeInternal()
@@ -381,6 +418,7 @@ PROTOBUF_CONSTEXPR XWalkOnlineLlmTestCommandRej::XWalkOnlineLlmTestCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkOnlineLlmTestCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkOnlineLlmTestCommandRejDefaultTypeInternal()
@@ -397,6 +435,7 @@ PROTOBUF_CONSTEXPR XWalkMoveCommandRej::XWalkMoveCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkMoveCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkMoveCommandRejDefaultTypeInternal()
@@ -413,6 +452,7 @@ PROTOBUF_CONSTEXPR XWalkKeyboardControlCommandRej::XWalkKeyboardControlCommandRe
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkKeyboardControlCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkKeyboardControlCommandRejDefaultTypeInternal()
@@ -429,6 +469,7 @@ PROTOBUF_CONSTEXPR XWalkAvoidObstaclesCommandRej::XWalkAvoidObstaclesCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkAvoidObstaclesCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkAvoidObstaclesCommandRejDefaultTypeInternal()
@@ -445,6 +486,7 @@ PROTOBUF_CONSTEXPR XWalkCliffDetectionCommandRej::XWalkCliffDetectionCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkCliffDetectionCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkCliffDetectionCommandRejDefaultTypeInternal()
@@ -461,6 +503,7 @@ PROTOBUF_CONSTEXPR XWalkStareAtYouCommandRej::XWalkStareAtYouCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkStareAtYouCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkStareAtYouCommandRejDefaultTypeInternal()
@@ -477,6 +520,7 @@ PROTOBUF_CONSTEXPR XWalkBullFightCommandRej::XWalkBullFightCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkBullFightCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkBullFightCommandRejDefaultTypeInternal()
@@ -493,6 +537,7 @@ PROTOBUF_CONSTEXPR XWalkTreasureHuntCommandRej::XWalkTreasureHuntCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkTreasureHuntCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkTreasureHuntCommandRejDefaultTypeInternal()
@@ -509,6 +554,7 @@ PROTOBUF_CONSTEXPR XWalkVideoCarCommandRej::XWalkVideoCarCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkVideoCarCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkVideoCarCommandRejDefaultTypeInternal()
@@ -525,6 +571,7 @@ PROTOBUF_CONSTEXPR XWalkAppControlCommandRej::XWalkAppControlCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkAppControlCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkAppControlCommandRejDefaultTypeInternal()
@@ -541,6 +588,7 @@ PROTOBUF_CONSTEXPR XWalkTurnCommandRej::XWalkTurnCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkTurnCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkTurnCommandRejDefaultTypeInternal()
@@ -557,6 +605,7 @@ PROTOBUF_CONSTEXPR XWalkCameraCommandRej::XWalkCameraCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkCameraCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkCameraCommandRejDefaultTypeInternal()
@@ -573,6 +622,7 @@ PROTOBUF_CONSTEXPR XWalkSensorCommandRej::XWalkSensorCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkSensorCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkSensorCommandRejDefaultTypeInternal()
@@ -589,6 +639,7 @@ PROTOBUF_CONSTEXPR XWalkLineTrackCommandRej::XWalkLineTrackCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkLineTrackCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkLineTrackCommandRejDefaultTypeInternal()
@@ -605,6 +656,7 @@ PROTOBUF_CONSTEXPR XWalkSelfDriveCommandRej::XWalkSelfDriveCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkSelfDriveCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkSelfDriveCommandRejDefaultTypeInternal()
@@ -621,6 +673,7 @@ PROTOBUF_CONSTEXPR XWalkSoundCommandRej::XWalkSoundCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkSoundCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkSoundCommandRejDefaultTypeInternal()
@@ -637,6 +690,7 @@ PROTOBUF_CONSTEXPR XWalkVoiceChatCommandRej::XWalkVoiceChatCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkVoiceChatCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkVoiceChatCommandRejDefaultTypeInternal()
@@ -653,6 +707,7 @@ PROTOBUF_CONSTEXPR XWalkVoiceActiveCarCommandRej::XWalkVoiceActiveCarCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkVoiceActiveCarCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkVoiceActiveCarCommandRejDefaultTypeInternal()
@@ -669,6 +724,7 @@ PROTOBUF_CONSTEXPR XWalkGptCarCommandRej::XWalkGptCarCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkGptCarCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkGptCarCommandRejDefaultTypeInternal()
@@ -685,6 +741,7 @@ PROTOBUF_CONSTEXPR XWalkVoiceControlledCarCommandRej::XWalkVoiceControlledCarCom
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkVoiceControlledCarCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkVoiceControlledCarCommandRejDefaultTypeInternal()
@@ -701,6 +758,7 @@ PROTOBUF_CONSTEXPR XWalkVoicePromptCarCommandRej::XWalkVoicePromptCarCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkVoicePromptCarCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkVoicePromptCarCommandRejDefaultTypeInternal()
@@ -717,6 +775,7 @@ PROTOBUF_CONSTEXPR XWalkStorytellingRobotCommandRej::XWalkStorytellingRobotComma
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkStorytellingRobotCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkStorytellingRobotCommandRejDefaultTypeInternal()
@@ -733,6 +792,7 @@ PROTOBUF_CONSTEXPR XWalkCalibrateCommandRej::XWalkCalibrateCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkCalibrateCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkCalibrateCommandRejDefaultTypeInternal()
@@ -749,6 +809,7 @@ PROTOBUF_CONSTEXPR XWalkVideoStreamCommandRej::XWalkVideoStreamCommandRej(
   , /*decltype(_impl_.detail_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.responding_)*/false
   , /*decltype(_impl_.reason_)*/0u
+  , /*decltype(_impl_.error_signal_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XWalkVideoStreamCommandRejDefaultTypeInternal {
   PROTOBUF_CONSTEXPR XWalkVideoStreamCommandRejDefaultTypeInternal()
@@ -762,11 +823,20 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORIT
 }  // namespace v1
 }  // namespace iw
 }  // namespace xwalk
-static ::_pb::Metadata file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[46];
+static ::_pb::Metadata file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[47];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_xHal_5fRpi5CarXIwMessageRej_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_xHal_5fRpi5CarXIwMessageRej_2eproto = nullptr;
 
 const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTraceRej, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTraceRej, _impl_.severity_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTraceRej, _impl_.message_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTraceRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkI2cRejPayload, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -777,6 +847,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkI2cRejPayload, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkI2cRejPayload, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkI2cRejPayload, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkI2cRejPayload, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkControllerCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -787,6 +858,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkControllerCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkControllerCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkControllerCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkControllerCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkNoArgumentRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -797,6 +869,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkNoArgumentRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkNoArgumentRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkNoArgumentRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkNoArgumentRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkLifecycleRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -807,6 +880,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkLifecycleRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkLifecycleRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkLifecycleRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkLifecycleRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkMoveRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -817,6 +891,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkMoveRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkMoveRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkMoveRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkMoveRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTurnRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -827,6 +902,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTurnRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTurnRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTurnRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTurnRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCameraRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -837,6 +913,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCameraRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCameraRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCameraRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCameraRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSensorRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -847,6 +924,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSensorRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSensorRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSensorRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSensorRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSelfDriveRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -857,6 +935,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSelfDriveRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSelfDriveRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSelfDriveRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSelfDriveRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSpiRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -867,6 +946,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSpiRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSpiRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSpiRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSpiRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkGptCarRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -877,6 +957,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkGptCarRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkGptCarRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkGptCarRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkGptCarRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCalibrationRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -887,6 +968,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCalibrationRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCalibrationRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCalibrationRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCalibrationRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSoundRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -897,6 +979,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSoundRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSoundRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSoundRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSoundRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkUnknownCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -907,6 +990,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkUnknownCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkUnknownCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkUnknownCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkUnknownCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkHelpCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -917,6 +1001,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkHelpCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkHelpCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkHelpCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkHelpCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSpiCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -927,6 +1012,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSpiCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSpiCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSpiCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSpiCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkDoctorCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -937,6 +1023,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkDoctorCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkDoctorCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkDoctorCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkDoctorCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkServoZeroingCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -947,6 +1034,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkServoZeroingCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkServoZeroingCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkServoZeroingCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkServoZeroingCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkComputerVisionCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -957,6 +1045,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkComputerVisionCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkComputerVisionCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkComputerVisionCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkComputerVisionCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkRecordVideoCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -967,6 +1056,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkRecordVideoCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkRecordVideoCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkRecordVideoCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkRecordVideoCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -977,6 +1067,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTextVisionTalkCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -987,6 +1078,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTextVisionTalkCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTextVisionTalkCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTextVisionTalkCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTextVisionTalkCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkOnlineLlmTestCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -997,6 +1089,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkOnlineLlmTestCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkOnlineLlmTestCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkOnlineLlmTestCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkOnlineLlmTestCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkMoveCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1007,6 +1100,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkMoveCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkMoveCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkMoveCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkMoveCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkKeyboardControlCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1017,6 +1111,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkKeyboardControlCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkKeyboardControlCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkKeyboardControlCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkKeyboardControlCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkAvoidObstaclesCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1027,6 +1122,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkAvoidObstaclesCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkAvoidObstaclesCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkAvoidObstaclesCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkAvoidObstaclesCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCliffDetectionCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1037,6 +1133,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCliffDetectionCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCliffDetectionCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCliffDetectionCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCliffDetectionCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkStareAtYouCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1047,6 +1144,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkStareAtYouCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkStareAtYouCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkStareAtYouCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkStareAtYouCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkBullFightCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1057,6 +1155,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkBullFightCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkBullFightCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkBullFightCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkBullFightCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTreasureHuntCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1067,6 +1166,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTreasureHuntCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTreasureHuntCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTreasureHuntCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTreasureHuntCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVideoCarCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1077,6 +1177,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVideoCarCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVideoCarCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVideoCarCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVideoCarCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkAppControlCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1087,6 +1188,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkAppControlCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkAppControlCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkAppControlCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkAppControlCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTurnCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1097,6 +1199,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTurnCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTurnCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTurnCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkTurnCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCameraCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1107,6 +1210,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCameraCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCameraCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCameraCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCameraCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSensorCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1117,6 +1221,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSensorCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSensorCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSensorCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSensorCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkLineTrackCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1127,6 +1232,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkLineTrackCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkLineTrackCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkLineTrackCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkLineTrackCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSelfDriveCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1137,6 +1243,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSelfDriveCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSelfDriveCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSelfDriveCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSelfDriveCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSoundCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1147,6 +1254,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSoundCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSoundCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSoundCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkSoundCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoiceChatCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1157,6 +1265,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoiceChatCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoiceChatCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoiceChatCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoiceChatCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoiceActiveCarCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1167,6 +1276,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoiceActiveCarCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoiceActiveCarCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoiceActiveCarCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoiceActiveCarCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkGptCarCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1177,6 +1287,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkGptCarCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkGptCarCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkGptCarCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkGptCarCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoiceControlledCarCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1187,6 +1298,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoiceControlledCarCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoiceControlledCarCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoiceControlledCarCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoiceControlledCarCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoicePromptCarCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1197,6 +1309,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoicePromptCarCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoicePromptCarCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoicePromptCarCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVoicePromptCarCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkStorytellingRobotCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1207,6 +1320,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkStorytellingRobotCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkStorytellingRobotCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkStorytellingRobotCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkStorytellingRobotCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCalibrateCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1217,6 +1331,7 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCalibrateCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCalibrateCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCalibrateCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkCalibrateCommandRej, _impl_.error_signal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVideoStreamCommandRej, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1227,57 +1342,60 @@ const uint32_t TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVideoStreamCommandRej, _impl_.responding_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVideoStreamCommandRej, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVideoStreamCommandRej, _impl_.detail_),
+  PROTOBUF_FIELD_OFFSET(::xwalk::iw::v1::XWalkVideoStreamCommandRej, _impl_.error_signal_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::xwalk::iw::v1::XWalkI2cRejPayload)},
-  { 10, -1, -1, sizeof(::xwalk::iw::v1::XWalkControllerCommandRej)},
-  { 20, -1, -1, sizeof(::xwalk::iw::v1::XWalkNoArgumentRej)},
-  { 30, -1, -1, sizeof(::xwalk::iw::v1::XWalkLifecycleRej)},
-  { 40, -1, -1, sizeof(::xwalk::iw::v1::XWalkMoveRej)},
-  { 50, -1, -1, sizeof(::xwalk::iw::v1::XWalkTurnRej)},
-  { 60, -1, -1, sizeof(::xwalk::iw::v1::XWalkCameraRej)},
-  { 70, -1, -1, sizeof(::xwalk::iw::v1::XWalkSensorRej)},
-  { 80, -1, -1, sizeof(::xwalk::iw::v1::XWalkSelfDriveRej)},
-  { 90, -1, -1, sizeof(::xwalk::iw::v1::XWalkSpiRej)},
-  { 100, -1, -1, sizeof(::xwalk::iw::v1::XWalkGptCarRej)},
-  { 110, -1, -1, sizeof(::xwalk::iw::v1::XWalkCalibrationRej)},
-  { 120, -1, -1, sizeof(::xwalk::iw::v1::XWalkSoundRej)},
-  { 130, -1, -1, sizeof(::xwalk::iw::v1::XWalkUnknownCommandRej)},
-  { 140, -1, -1, sizeof(::xwalk::iw::v1::XWalkHelpCommandRej)},
-  { 150, -1, -1, sizeof(::xwalk::iw::v1::XWalkSpiCommandRej)},
-  { 160, -1, -1, sizeof(::xwalk::iw::v1::XWalkDoctorCommandRej)},
-  { 170, -1, -1, sizeof(::xwalk::iw::v1::XWalkServoZeroingCommandRej)},
-  { 180, -1, -1, sizeof(::xwalk::iw::v1::XWalkComputerVisionCommandRej)},
-  { 190, -1, -1, sizeof(::xwalk::iw::v1::XWalkRecordVideoCommandRej)},
-  { 200, -1, -1, sizeof(::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRej)},
-  { 210, -1, -1, sizeof(::xwalk::iw::v1::XWalkTextVisionTalkCommandRej)},
-  { 220, -1, -1, sizeof(::xwalk::iw::v1::XWalkOnlineLlmTestCommandRej)},
-  { 230, -1, -1, sizeof(::xwalk::iw::v1::XWalkMoveCommandRej)},
-  { 240, -1, -1, sizeof(::xwalk::iw::v1::XWalkKeyboardControlCommandRej)},
-  { 250, -1, -1, sizeof(::xwalk::iw::v1::XWalkAvoidObstaclesCommandRej)},
-  { 260, -1, -1, sizeof(::xwalk::iw::v1::XWalkCliffDetectionCommandRej)},
-  { 270, -1, -1, sizeof(::xwalk::iw::v1::XWalkStareAtYouCommandRej)},
-  { 280, -1, -1, sizeof(::xwalk::iw::v1::XWalkBullFightCommandRej)},
-  { 290, -1, -1, sizeof(::xwalk::iw::v1::XWalkTreasureHuntCommandRej)},
-  { 300, -1, -1, sizeof(::xwalk::iw::v1::XWalkVideoCarCommandRej)},
-  { 310, -1, -1, sizeof(::xwalk::iw::v1::XWalkAppControlCommandRej)},
-  { 320, -1, -1, sizeof(::xwalk::iw::v1::XWalkTurnCommandRej)},
-  { 330, -1, -1, sizeof(::xwalk::iw::v1::XWalkCameraCommandRej)},
-  { 340, -1, -1, sizeof(::xwalk::iw::v1::XWalkSensorCommandRej)},
-  { 350, -1, -1, sizeof(::xwalk::iw::v1::XWalkLineTrackCommandRej)},
-  { 360, -1, -1, sizeof(::xwalk::iw::v1::XWalkSelfDriveCommandRej)},
-  { 370, -1, -1, sizeof(::xwalk::iw::v1::XWalkSoundCommandRej)},
-  { 380, -1, -1, sizeof(::xwalk::iw::v1::XWalkVoiceChatCommandRej)},
-  { 390, -1, -1, sizeof(::xwalk::iw::v1::XWalkVoiceActiveCarCommandRej)},
-  { 400, -1, -1, sizeof(::xwalk::iw::v1::XWalkGptCarCommandRej)},
-  { 410, -1, -1, sizeof(::xwalk::iw::v1::XWalkVoiceControlledCarCommandRej)},
-  { 420, -1, -1, sizeof(::xwalk::iw::v1::XWalkVoicePromptCarCommandRej)},
-  { 430, -1, -1, sizeof(::xwalk::iw::v1::XWalkStorytellingRobotCommandRej)},
-  { 440, -1, -1, sizeof(::xwalk::iw::v1::XWalkCalibrateCommandRej)},
-  { 450, -1, -1, sizeof(::xwalk::iw::v1::XWalkVideoStreamCommandRej)},
+  { 0, -1, -1, sizeof(::xwalk::iw::v1::XWalkTraceRej)},
+  { 9, -1, -1, sizeof(::xwalk::iw::v1::XWalkI2cRejPayload)},
+  { 20, -1, -1, sizeof(::xwalk::iw::v1::XWalkControllerCommandRej)},
+  { 31, -1, -1, sizeof(::xwalk::iw::v1::XWalkNoArgumentRej)},
+  { 42, -1, -1, sizeof(::xwalk::iw::v1::XWalkLifecycleRej)},
+  { 53, -1, -1, sizeof(::xwalk::iw::v1::XWalkMoveRej)},
+  { 64, -1, -1, sizeof(::xwalk::iw::v1::XWalkTurnRej)},
+  { 75, -1, -1, sizeof(::xwalk::iw::v1::XWalkCameraRej)},
+  { 86, -1, -1, sizeof(::xwalk::iw::v1::XWalkSensorRej)},
+  { 97, -1, -1, sizeof(::xwalk::iw::v1::XWalkSelfDriveRej)},
+  { 108, -1, -1, sizeof(::xwalk::iw::v1::XWalkSpiRej)},
+  { 119, -1, -1, sizeof(::xwalk::iw::v1::XWalkGptCarRej)},
+  { 130, -1, -1, sizeof(::xwalk::iw::v1::XWalkCalibrationRej)},
+  { 141, -1, -1, sizeof(::xwalk::iw::v1::XWalkSoundRej)},
+  { 152, -1, -1, sizeof(::xwalk::iw::v1::XWalkUnknownCommandRej)},
+  { 163, -1, -1, sizeof(::xwalk::iw::v1::XWalkHelpCommandRej)},
+  { 174, -1, -1, sizeof(::xwalk::iw::v1::XWalkSpiCommandRej)},
+  { 185, -1, -1, sizeof(::xwalk::iw::v1::XWalkDoctorCommandRej)},
+  { 196, -1, -1, sizeof(::xwalk::iw::v1::XWalkServoZeroingCommandRej)},
+  { 207, -1, -1, sizeof(::xwalk::iw::v1::XWalkComputerVisionCommandRej)},
+  { 218, -1, -1, sizeof(::xwalk::iw::v1::XWalkRecordVideoCommandRej)},
+  { 229, -1, -1, sizeof(::xwalk::iw::v1::XWalkSoundBackgroundMusicCommandRej)},
+  { 240, -1, -1, sizeof(::xwalk::iw::v1::XWalkTextVisionTalkCommandRej)},
+  { 251, -1, -1, sizeof(::xwalk::iw::v1::XWalkOnlineLlmTestCommandRej)},
+  { 262, -1, -1, sizeof(::xwalk::iw::v1::XWalkMoveCommandRej)},
+  { 273, -1, -1, sizeof(::xwalk::iw::v1::XWalkKeyboardControlCommandRej)},
+  { 284, -1, -1, sizeof(::xwalk::iw::v1::XWalkAvoidObstaclesCommandRej)},
+  { 295, -1, -1, sizeof(::xwalk::iw::v1::XWalkCliffDetectionCommandRej)},
+  { 306, -1, -1, sizeof(::xwalk::iw::v1::XWalkStareAtYouCommandRej)},
+  { 317, -1, -1, sizeof(::xwalk::iw::v1::XWalkBullFightCommandRej)},
+  { 328, -1, -1, sizeof(::xwalk::iw::v1::XWalkTreasureHuntCommandRej)},
+  { 339, -1, -1, sizeof(::xwalk::iw::v1::XWalkVideoCarCommandRej)},
+  { 350, -1, -1, sizeof(::xwalk::iw::v1::XWalkAppControlCommandRej)},
+  { 361, -1, -1, sizeof(::xwalk::iw::v1::XWalkTurnCommandRej)},
+  { 372, -1, -1, sizeof(::xwalk::iw::v1::XWalkCameraCommandRej)},
+  { 383, -1, -1, sizeof(::xwalk::iw::v1::XWalkSensorCommandRej)},
+  { 394, -1, -1, sizeof(::xwalk::iw::v1::XWalkLineTrackCommandRej)},
+  { 405, -1, -1, sizeof(::xwalk::iw::v1::XWalkSelfDriveCommandRej)},
+  { 416, -1, -1, sizeof(::xwalk::iw::v1::XWalkSoundCommandRej)},
+  { 427, -1, -1, sizeof(::xwalk::iw::v1::XWalkVoiceChatCommandRej)},
+  { 438, -1, -1, sizeof(::xwalk::iw::v1::XWalkVoiceActiveCarCommandRej)},
+  { 449, -1, -1, sizeof(::xwalk::iw::v1::XWalkGptCarCommandRej)},
+  { 460, -1, -1, sizeof(::xwalk::iw::v1::XWalkVoiceControlledCarCommandRej)},
+  { 471, -1, -1, sizeof(::xwalk::iw::v1::XWalkVoicePromptCarCommandRej)},
+  { 482, -1, -1, sizeof(::xwalk::iw::v1::XWalkStorytellingRobotCommandRej)},
+  { 493, -1, -1, sizeof(::xwalk::iw::v1::XWalkCalibrateCommandRej)},
+  { 504, -1, -1, sizeof(::xwalk::iw::v1::XWalkVideoStreamCommandRej)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
+  &::xwalk::iw::v1::_XWalkTraceRej_default_instance_._instance,
   &::xwalk::iw::v1::_XWalkI2cRejPayload_default_instance_._instance,
   &::xwalk::iw::v1::_XWalkControllerCommandRej_default_instance_._instance,
   &::xwalk::iw::v1::_XWalkNoArgumentRej_default_instance_._instance,
@@ -1328,131 +1446,205 @@ static const ::_pb::Message* const file_default_instances[] = {
 
 const char descriptor_table_protodef_xHal_5fRpi5CarXIwMessageRej_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\037xHal_Rpi5CarXIwMessageRej.proto\022\013xwalk"
-  ".iw.v1\032\037xHal_Rpi5CarXIwMessageReq.proto\""
-  "]\n\022XWalkI2cRejPayload\022\014\n\004data\030\001 \001(\014\022\022\n\nr"
-  "esponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detai"
-  "l\030\004 \001(\t:\005\210\265\030\203!\"d\n\031XWalkControllerCommand"
-  "Rej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n"
-  "\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\203E\"]\n\022"
-  "XWalkNoArgumentRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresp"
-  "onding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004"
-  " \001(\t:\005\210\265\030\204E\"\\\n\021XWalkLifecycleRej\022\014\n\004data"
-  "\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001"
-  "(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\205E\"W\n\014XWalkMoveRe"
-  "j\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006r"
-  "eason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\206E\"W\n\014XW"
-  "alkTurnRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002"
-  " \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265"
-  "\030\207E\"Y\n\016XWalkCameraRej\022\014\n\004data\030\001 \001(\014\022\022\n\nr"
-  "esponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detai"
-  "l\030\004 \001(\t:\005\210\265\030\210E\"Y\n\016XWalkSensorRej\022\014\n\004data"
-  "\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001"
-  "(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\211E\"\\\n\021XWalkSelfDr"
-  "iveRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010"
-  "\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\212E\""
-  "V\n\013XWalkSpiRej\022\014\n\004data\030\001 \001(\014\022\022\n\nrespondi"
-  "ng\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t"
-  ":\005\210\265\030\213E\"Y\n\016XWalkGptCarRej\022\014\n\004data\030\001 \001(\014\022"
-  "\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006d"
-  "etail\030\004 \001(\t:\005\210\265\030\214E\"^\n\023XWalkCalibrationRe"
-  "j\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006r"
-  "eason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\215E\"X\n\rXW"
-  "alkSoundRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030"
-  "\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210"
-  "\265\030\216E\"a\n\026XWalkUnknownCommandRej\022\014\n\004data\030\001"
-  " \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r"
-  "\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\200D\"^\n\023XWalkHelpComm"
-  "andRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010"
-  "\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\201D\""
-  "]\n\022XWalkSpiCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nr"
-  "esponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detai"
-  "l\030\004 \001(\t:\005\210\265\030\202D\"`\n\025XWalkDoctorCommandRej\022"
-  "\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006rea"
-  "son\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\203D\"f\n\033XWal"
-  "kServoZeroingCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n"
-  "\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006det"
-  "ail\030\004 \001(\t:\005\210\265\030\204D\"h\n\035XWalkComputerVisionC"
-  "ommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 "
-  "\001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030"
-  "\205D\"e\n\032XWalkRecordVideoCommandRej\022\014\n\004data"
-  "\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001"
-  "(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\206D\"n\n#XWalkSoundB"
-  "ackgroundMusicCommandRej\022\014\n\004data\030\001 \001(\014\022\022"
-  "\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006de"
-  "tail\030\004 \001(\t:\005\210\265\030\207D\"h\n\035XWalkTextVisionTalk"
-  "CommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002"
-  " \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265"
-  "\030\210D\"g\n\034XWalkOnlineLlmTestCommandRej\022\014\n\004d"
-  "ata\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030"
-  "\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\211D\"^\n\023XWalkMov"
-  "eCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030"
-  "\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210"
-  "\265\030\212D\"i\n\036XWalkKeyboardControlCommandRej\022\014"
+  ".iw.v1\032\037xHal_Rpi5CarXIwMessageReq.proto\032"
+  "\033xHal_Rpi5CarXIwSignal.proto\"\216\001\n\rXWalkTr"
+  "aceRej\0221\n\010severity\030\001 \001(\0162\037.xwalk.iw.v1.X"
+  "WalkTraceSeverity\022\017\n\007message\030\002 \001(\t\0229\n\014er"
+  "ror_signal\030\003 \001(\0162#.xwalk.iw.v1.XWalkErro"
+  "rSignalNumber\"\230\001\n\022XWalkI2cRejPayload\022\014\n\004"
+  "data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason"
+  "\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014error_signal\030\005"
+  " \001(\0162#.xwalk.iw.v1.XWalkErrorSignalNumbe"
+  "r:\005\210\265\030\203!\"\237\001\n\031XWalkControllerCommandRej\022\014"
   "\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reas"
-  "on\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\213D\"h\n\035XWalk"
-  "AvoidObstaclesCommandRej\022\014\n\004data\030\001 \001(\014\022\022"
-  "\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006de"
-  "tail\030\004 \001(\t:\005\210\265\030\214D\"h\n\035XWalkCliffDetection"
-  "CommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002"
-  " \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265"
-  "\030\215D\"d\n\031XWalkStareAtYouCommandRej\022\014\n\004data"
-  "\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001"
-  "(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\216D\"c\n\030XWalkBullFi"
-  "ghtCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nrespondin"
-  "g\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:"
-  "\005\210\265\030\217D\"f\n\033XWalkTreasureHuntCommandRej\022\014\n"
-  "\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reaso"
-  "n\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\220D\"b\n\027XWalkV"
-  "ideoCarCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nrespo"
-  "nding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 "
-  "\001(\t:\005\210\265\030\221D\"d\n\031XWalkAppControlCommandRej\022"
-  "\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006rea"
-  "son\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\222D\"^\n\023XWal"
-  "kTurnCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nrespond"
-  "ing\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001("
-  "\t:\005\210\265\030\223D\"`\n\025XWalkCameraCommandRej\022\014\n\004dat"
+  "on\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014error_signal"
+  "\030\005 \001(\0162#.xwalk.iw.v1.XWalkErrorSignalNum"
+  "ber:\005\210\265\030\203E\"\230\001\n\022XWalkNoArgumentRej\022\014\n\004dat"
   "a\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 "
-  "\001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\224D\"`\n\025XWalkSenso"
-  "rCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030"
-  "\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210"
-  "\265\030\225D\"c\n\030XWalkLineTrackCommandRej\022\014\n\004data"
-  "\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001"
-  "(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\226D\"c\n\030XWalkSelfDr"
-  "iveCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nrespondin"
-  "g\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:"
-  "\005\210\265\030\227D\"_\n\024XWalkSoundCommandRej\022\014\n\004data\030\001"
-  " \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r"
-  "\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\230D\"c\n\030XWalkVoiceCha"
-  "tCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030"
-  "\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210"
-  "\265\030\231D\"h\n\035XWalkVoiceActiveCarCommandRej\022\014\n"
-  "\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reaso"
-  "n\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\232D\"`\n\025XWalkG"
-  "ptCarCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nrespond"
-  "ing\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001("
-  "\t:\005\210\265\030\233D\"l\n!XWalkVoiceControlledCarComma"
-  "ndRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022"
-  "\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\234D\"h"
-  "\n\035XWalkVoicePromptCarCommandRej\022\014\n\004data\030"
-  "\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001("
-  "\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\235D\"k\n XWalkStoryte"
-  "llingRobotCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nre"
-  "sponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail"
-  "\030\004 \001(\t:\005\210\265\030\236D\"c\n\030XWalkCalibrateCommandRe"
-  "j\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006r"
-  "eason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t:\005\210\265\030\237D\"e\n\032XW"
-  "alkVideoStreamCommandRej\022\014\n\004data\030\001 \001(\014\022\022"
+  "\001(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001("
+  "\0162#.xwalk.iw.v1.XWalkErrorSignalNumber:\005"
+  "\210\265\030\204E\"\227\001\n\021XWalkLifecycleRej\022\014\n\004data\030\001 \001("
+  "\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n"
+  "\006detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.xw"
+  "alk.iw.v1.XWalkErrorSignalNumber:\005\210\265\030\205E\""
+  "\222\001\n\014XWalkMoveRej\022\014\n\004data\030\001 \001(\014\022\022\n\nrespon"
+  "ding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001"
+  "(\t\0229\n\014error_signal\030\005 \001(\0162#.xwalk.iw.v1.X"
+  "WalkErrorSignalNumber:\005\210\265\030\206E\"\222\001\n\014XWalkTu"
+  "rnRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022"
+  "\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014error"
+  "_signal\030\005 \001(\0162#.xwalk.iw.v1.XWalkErrorSi"
+  "gnalNumber:\005\210\265\030\207E\"\224\001\n\016XWalkCameraRej\022\014\n\004"
+  "data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason"
+  "\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014error_signal\030\005"
+  " \001(\0162#.xwalk.iw.v1.XWalkErrorSignalNumbe"
+  "r:\005\210\265\030\210E\"\224\001\n\016XWalkSensorRej\022\014\n\004data\030\001 \001("
+  "\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n"
+  "\006detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.xw"
+  "alk.iw.v1.XWalkErrorSignalNumber:\005\210\265\030\211E\""
+  "\227\001\n\021XWalkSelfDriveRej\022\014\n\004data\030\001 \001(\014\022\022\n\nr"
+  "esponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detai"
+  "l\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.xwalk.iw"
+  ".v1.XWalkErrorSignalNumber:\005\210\265\030\212E\"\221\001\n\013XW"
+  "alkSpiRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 "
+  "\001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014e"
+  "rror_signal\030\005 \001(\0162#.xwalk.iw.v1.XWalkErr"
+  "orSignalNumber:\005\210\265\030\213E\"\224\001\n\016XWalkGptCarRej"
+  "\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006re"
+  "ason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014error_sign"
+  "al\030\005 \001(\0162#.xwalk.iw.v1.XWalkErrorSignalN"
+  "umber:\005\210\265\030\214E\"\231\001\n\023XWalkCalibrationRej\022\014\n\004"
+  "data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason"
+  "\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014error_signal\030\005"
+  " \001(\0162#.xwalk.iw.v1.XWalkErrorSignalNumbe"
+  "r:\005\210\265\030\215E\"\223\001\n\rXWalkSoundRej\022\014\n\004data\030\001 \001(\014"
+  "\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006"
+  "detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.xwa"
+  "lk.iw.v1.XWalkErrorSignalNumber:\005\210\265\030\216E\"\234"
+  "\001\n\026XWalkUnknownCommandRej\022\014\n\004data\030\001 \001(\014\022"
+  "\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006d"
+  "etail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.xwal"
+  "k.iw.v1.XWalkErrorSignalNumber:\005\210\265\030\200D\"\231\001"
+  "\n\023XWalkHelpCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nr"
+  "esponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detai"
+  "l\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.xwalk.iw"
+  ".v1.XWalkErrorSignalNumber:\005\210\265\030\201D\"\230\001\n\022XW"
+  "alkSpiCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nrespon"
+  "ding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001"
+  "(\t\0229\n\014error_signal\030\005 \001(\0162#.xwalk.iw.v1.X"
+  "WalkErrorSignalNumber:\005\210\265\030\202D\"\233\001\n\025XWalkDo"
+  "ctorCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nrespondi"
+  "ng\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t"
+  "\0229\n\014error_signal\030\005 \001(\0162#.xwalk.iw.v1.XWa"
+  "lkErrorSignalNumber:\005\210\265\030\203D\"\241\001\n\033XWalkServ"
+  "oZeroingCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresp"
+  "onding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004"
+  " \001(\t\0229\n\014error_signal\030\005 \001(\0162#.xwalk.iw.v1"
+  ".XWalkErrorSignalNumber:\005\210\265\030\204D\"\243\001\n\035XWalk"
+  "ComputerVisionCommandRej\022\014\n\004data\030\001 \001(\014\022\022"
   "\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006de"
-  "tail\030\004 \001(\t:\005\210\265\030\240Db\006proto3"
+  "tail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.xwalk"
+  ".iw.v1.XWalkErrorSignalNumber:\005\210\265\030\205D\"\240\001\n"
+  "\032XWalkRecordVideoCommandRej\022\014\n\004data\030\001 \001("
+  "\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n"
+  "\006detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.xw"
+  "alk.iw.v1.XWalkErrorSignalNumber:\005\210\265\030\206D\""
+  "\251\001\n#XWalkSoundBackgroundMusicCommandRej\022"
+  "\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006rea"
+  "son\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014error_signa"
+  "l\030\005 \001(\0162#.xwalk.iw.v1.XWalkErrorSignalNu"
+  "mber:\005\210\265\030\207D\"\243\001\n\035XWalkTextVisionTalkComma"
+  "ndRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022"
+  "\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014error"
+  "_signal\030\005 \001(\0162#.xwalk.iw.v1.XWalkErrorSi"
+  "gnalNumber:\005\210\265\030\210D\"\242\001\n\034XWalkOnlineLlmTest"
+  "CommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002"
+  " \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014"
+  "error_signal\030\005 \001(\0162#.xwalk.iw.v1.XWalkEr"
+  "rorSignalNumber:\005\210\265\030\211D\"\231\001\n\023XWalkMoveComm"
+  "andRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010"
+  "\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014erro"
+  "r_signal\030\005 \001(\0162#.xwalk.iw.v1.XWalkErrorS"
+  "ignalNumber:\005\210\265\030\212D\"\244\001\n\036XWalkKeyboardCont"
+  "rolCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nrespondin"
+  "g\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t\022"
+  "9\n\014error_signal\030\005 \001(\0162#.xwalk.iw.v1.XWal"
+  "kErrorSignalNumber:\005\210\265\030\213D\"\243\001\n\035XWalkAvoid"
+  "ObstaclesCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nres"
+  "ponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030"
+  "\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.xwalk.iw.v"
+  "1.XWalkErrorSignalNumber:\005\210\265\030\214D\"\243\001\n\035XWal"
+  "kCliffDetectionCommandRej\022\014\n\004data\030\001 \001(\014\022"
+  "\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006d"
+  "etail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.xwal"
+  "k.iw.v1.XWalkErrorSignalNumber:\005\210\265\030\215D\"\237\001"
+  "\n\031XWalkStareAtYouCommandRej\022\014\n\004data\030\001 \001("
+  "\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n"
+  "\006detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.xw"
+  "alk.iw.v1.XWalkErrorSignalNumber:\005\210\265\030\216D\""
+  "\236\001\n\030XWalkBullFightCommandRej\022\014\n\004data\030\001 \001"
+  "(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016"
+  "\n\006detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.x"
+  "walk.iw.v1.XWalkErrorSignalNumber:\005\210\265\030\217D"
+  "\"\241\001\n\033XWalkTreasureHuntCommandRej\022\014\n\004data"
+  "\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001"
+  "(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\016"
+  "2#.xwalk.iw.v1.XWalkErrorSignalNumber:\005\210"
+  "\265\030\220D\"\235\001\n\027XWalkVideoCarCommandRej\022\014\n\004data"
+  "\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001"
+  "(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\016"
+  "2#.xwalk.iw.v1.XWalkErrorSignalNumber:\005\210"
+  "\265\030\221D\"\237\001\n\031XWalkAppControlCommandRej\022\014\n\004da"
+  "ta\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003"
+  " \001(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001"
+  "(\0162#.xwalk.iw.v1.XWalkErrorSignalNumber:"
+  "\005\210\265\030\222D\"\231\001\n\023XWalkTurnCommandRej\022\014\n\004data\030\001"
+  " \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r"
+  "\022\016\n\006detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#"
+  ".xwalk.iw.v1.XWalkErrorSignalNumber:\005\210\265\030"
+  "\223D\"\233\001\n\025XWalkCameraCommandRej\022\014\n\004data\030\001 \001"
+  "(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016"
+  "\n\006detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.x"
+  "walk.iw.v1.XWalkErrorSignalNumber:\005\210\265\030\224D"
+  "\"\233\001\n\025XWalkSensorCommandRej\022\014\n\004data\030\001 \001(\014"
+  "\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006"
+  "detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.xwa"
+  "lk.iw.v1.XWalkErrorSignalNumber:\005\210\265\030\225D\"\236"
+  "\001\n\030XWalkLineTrackCommandRej\022\014\n\004data\030\001 \001("
+  "\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n"
+  "\006detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.xw"
+  "alk.iw.v1.XWalkErrorSignalNumber:\005\210\265\030\226D\""
+  "\236\001\n\030XWalkSelfDriveCommandRej\022\014\n\004data\030\001 \001"
+  "(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016"
+  "\n\006detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.x"
+  "walk.iw.v1.XWalkErrorSignalNumber:\005\210\265\030\227D"
+  "\"\232\001\n\024XWalkSoundCommandRej\022\014\n\004data\030\001 \001(\014\022"
+  "\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006d"
+  "etail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.xwal"
+  "k.iw.v1.XWalkErrorSignalNumber:\005\210\265\030\230D\"\236\001"
+  "\n\030XWalkVoiceChatCommandRej\022\014\n\004data\030\001 \001(\014"
+  "\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006"
+  "detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.xwa"
+  "lk.iw.v1.XWalkErrorSignalNumber:\005\210\265\030\231D\"\243"
+  "\001\n\035XWalkVoiceActiveCarCommandRej\022\014\n\004data"
+  "\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001"
+  "(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\016"
+  "2#.xwalk.iw.v1.XWalkErrorSignalNumber:\005\210"
+  "\265\030\232D\"\233\001\n\025XWalkGptCarCommandRej\022\014\n\004data\030\001"
+  " \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r"
+  "\022\016\n\006detail\030\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#"
+  ".xwalk.iw.v1.XWalkErrorSignalNumber:\005\210\265\030"
+  "\233D\"\247\001\n!XWalkVoiceControlledCarCommandRej"
+  "\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010\022\016\n\006re"
+  "ason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014error_sign"
+  "al\030\005 \001(\0162#.xwalk.iw.v1.XWalkErrorSignalN"
+  "umber:\005\210\265\030\234D\"\243\001\n\035XWalkVoicePromptCarComm"
+  "andRej\022\014\n\004data\030\001 \001(\014\022\022\n\nresponding\030\002 \001(\010"
+  "\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001(\t\0229\n\014erro"
+  "r_signal\030\005 \001(\0162#.xwalk.iw.v1.XWalkErrorS"
+  "ignalNumber:\005\210\265\030\235D\"\246\001\n XWalkStorytelling"
+  "RobotCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nrespond"
+  "ing\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001("
+  "\t\0229\n\014error_signal\030\005 \001(\0162#.xwalk.iw.v1.XW"
+  "alkErrorSignalNumber:\005\210\265\030\236D\"\236\001\n\030XWalkCal"
+  "ibrateCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nrespon"
+  "ding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030\004 \001"
+  "(\t\0229\n\014error_signal\030\005 \001(\0162#.xwalk.iw.v1.X"
+  "WalkErrorSignalNumber:\005\210\265\030\237D\"\240\001\n\032XWalkVi"
+  "deoStreamCommandRej\022\014\n\004data\030\001 \001(\014\022\022\n\nres"
+  "ponding\030\002 \001(\010\022\016\n\006reason\030\003 \001(\r\022\016\n\006detail\030"
+  "\004 \001(\t\0229\n\014error_signal\030\005 \001(\0162#.xwalk.iw.v"
+  "1.XWalkErrorSignalNumber:\005\210\265\030\240Db\006proto3"
   ;
-static const ::_pbi::DescriptorTable* const descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_deps[1] = {
+static const ::_pbi::DescriptorTable* const descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_deps[2] = {
   &::descriptor_table_xHal_5fRpi5CarXIwMessageReq_2eproto,
+  &::descriptor_table_xHal_5fRpi5CarXIwSignal_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto = {
-    false, false, 4665, descriptor_table_protodef_xHal_5fRpi5CarXIwMessageRej_2eproto,
+    false, false, 7599, descriptor_table_protodef_xHal_5fRpi5CarXIwMessageRej_2eproto,
     "xHal_Rpi5CarXIwMessageRej.proto",
-    &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once, descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_deps, 1, 46,
+    &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once, descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_deps, 2, 47,
     schemas, file_default_instances, TableStruct_xHal_5fRpi5CarXIwMessageRej_2eproto::offsets,
     file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto, file_level_enum_descriptors_xHal_5fRpi5CarXIwMessageRej_2eproto,
     file_level_service_descriptors_xHal_5fRpi5CarXIwMessageRej_2eproto,
@@ -1466,6 +1658,275 @@ PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::_pbi::AddDescriptorsRunner dynamic_in
 namespace xwalk {
 namespace iw {
 namespace v1 {
+
+// ===================================================================
+
+class XWalkTraceRej::_Internal {
+ public:
+};
+
+XWalkTraceRej::XWalkTraceRej(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:xwalk.iw.v1.XWalkTraceRej)
+}
+XWalkTraceRej::XWalkTraceRej(const XWalkTraceRej& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  XWalkTraceRej* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.message_){}
+    , decltype(_impl_.severity_){}
+    , decltype(_impl_.error_signal_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.message_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.message_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_message().empty()) {
+    _this->_impl_.message_.Set(from._internal_message(),
+      _this->GetArenaForAllocation());
+  }
+  ::memcpy(&_impl_.severity_, &from._impl_.severity_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.severity_)) + sizeof(_impl_.error_signal_));
+  // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkTraceRej)
+}
+
+inline void XWalkTraceRej::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.message_){}
+    , decltype(_impl_.severity_){0}
+    , decltype(_impl_.error_signal_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.message_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.message_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+XWalkTraceRej::~XWalkTraceRej() {
+  // @@protoc_insertion_point(destructor:xwalk.iw.v1.XWalkTraceRej)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void XWalkTraceRej::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.message_.Destroy();
+}
+
+void XWalkTraceRej::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void XWalkTraceRej::Clear() {
+// @@protoc_insertion_point(message_clear_start:xwalk.iw.v1.XWalkTraceRej)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.message_.ClearToEmpty();
+  ::memset(&_impl_.severity_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.severity_)) + sizeof(_impl_.error_signal_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* XWalkTraceRej::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // .xwalk.iw.v1.XWalkTraceSeverity severity = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_severity(static_cast<::xwalk::iw::v1::XWalkTraceSeverity>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      // string message = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_message();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkTraceRej.message"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* XWalkTraceRej::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:xwalk.iw.v1.XWalkTraceRej)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .xwalk.iw.v1.XWalkTraceSeverity severity = 1;
+  if (this->_internal_severity() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      1, this->_internal_severity(), target);
+  }
+
+  // string message = 2;
+  if (!this->_internal_message().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_message().data(), static_cast<int>(this->_internal_message().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "xwalk.iw.v1.XWalkTraceRej.message");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_message(), target);
+  }
+
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 3;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      3, this->_internal_error_signal(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:xwalk.iw.v1.XWalkTraceRej)
+  return target;
+}
+
+size_t XWalkTraceRej::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:xwalk.iw.v1.XWalkTraceRej)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string message = 2;
+  if (!this->_internal_message().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_message());
+  }
+
+  // .xwalk.iw.v1.XWalkTraceSeverity severity = 1;
+  if (this->_internal_severity() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_severity());
+  }
+
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 3;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData XWalkTraceRej::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    XWalkTraceRej::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*XWalkTraceRej::GetClassData() const { return &_class_data_; }
+
+
+void XWalkTraceRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<XWalkTraceRej*>(&to_msg);
+  auto& from = static_cast<const XWalkTraceRej&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:xwalk.iw.v1.XWalkTraceRej)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_message().empty()) {
+    _this->_internal_set_message(from._internal_message());
+  }
+  if (from._internal_severity() != 0) {
+    _this->_internal_set_severity(from._internal_severity());
+  }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void XWalkTraceRej::CopyFrom(const XWalkTraceRej& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:xwalk.iw.v1.XWalkTraceRej)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool XWalkTraceRej::IsInitialized() const {
+  return true;
+}
+
+void XWalkTraceRej::InternalSwap(XWalkTraceRej* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.message_, lhs_arena,
+      &other->_impl_.message_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(XWalkTraceRej, _impl_.error_signal_)
+      + sizeof(XWalkTraceRej::_impl_.error_signal_)
+      - PROTOBUF_FIELD_OFFSET(XWalkTraceRej, _impl_.severity_)>(
+          reinterpret_cast<char*>(&_impl_.severity_),
+          reinterpret_cast<char*>(&other->_impl_.severity_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata XWalkTraceRej::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[0]);
+}
 
 // ===================================================================
 
@@ -1487,6 +1948,7 @@ XWalkI2cRejPayload::XWalkI2cRejPayload(const XWalkI2cRejPayload& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -1507,8 +1969,8 @@ XWalkI2cRejPayload::XWalkI2cRejPayload(const XWalkI2cRejPayload& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkI2cRejPayload)
 }
 
@@ -1521,6 +1983,7 @@ inline void XWalkI2cRejPayload::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -1561,8 +2024,8 @@ void XWalkI2cRejPayload::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1604,6 +2067,15 @@ const char* XWalkI2cRejPayload::_InternalParse(const char* ptr, ::_pbi::ParseCon
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkI2cRejPayload.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -1664,6 +2136,13 @@ uint8_t* XWalkI2cRejPayload::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1704,6 +2183,12 @@ size_t XWalkI2cRejPayload::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -1734,6 +2219,9 @@ void XWalkI2cRejPayload::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, con
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1762,8 +2250,8 @@ void XWalkI2cRejPayload::InternalSwap(XWalkI2cRejPayload* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkI2cRejPayload, _impl_.reason_)
-      + sizeof(XWalkI2cRejPayload::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkI2cRejPayload, _impl_.error_signal_)
+      + sizeof(XWalkI2cRejPayload::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkI2cRejPayload, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -1772,7 +2260,7 @@ void XWalkI2cRejPayload::InternalSwap(XWalkI2cRejPayload* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkI2cRejPayload::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[0]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[1]);
 }
 
 // ===================================================================
@@ -1795,6 +2283,7 @@ XWalkControllerCommandRej::XWalkControllerCommandRej(const XWalkControllerComman
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -1815,8 +2304,8 @@ XWalkControllerCommandRej::XWalkControllerCommandRej(const XWalkControllerComman
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkControllerCommandRej)
 }
 
@@ -1829,6 +2318,7 @@ inline void XWalkControllerCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -1869,8 +2359,8 @@ void XWalkControllerCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1912,6 +2402,15 @@ const char* XWalkControllerCommandRej::_InternalParse(const char* ptr, ::_pbi::P
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkControllerCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -1972,6 +2471,13 @@ uint8_t* XWalkControllerCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -2012,6 +2518,12 @@ size_t XWalkControllerCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -2042,6 +2554,9 @@ void XWalkControllerCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_m
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -2070,8 +2585,8 @@ void XWalkControllerCommandRej::InternalSwap(XWalkControllerCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkControllerCommandRej, _impl_.reason_)
-      + sizeof(XWalkControllerCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkControllerCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkControllerCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkControllerCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -2080,7 +2595,7 @@ void XWalkControllerCommandRej::InternalSwap(XWalkControllerCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkControllerCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[1]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[2]);
 }
 
 // ===================================================================
@@ -2103,6 +2618,7 @@ XWalkNoArgumentRej::XWalkNoArgumentRej(const XWalkNoArgumentRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -2123,8 +2639,8 @@ XWalkNoArgumentRej::XWalkNoArgumentRej(const XWalkNoArgumentRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkNoArgumentRej)
 }
 
@@ -2137,6 +2653,7 @@ inline void XWalkNoArgumentRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -2177,8 +2694,8 @@ void XWalkNoArgumentRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -2220,6 +2737,15 @@ const char* XWalkNoArgumentRej::_InternalParse(const char* ptr, ::_pbi::ParseCon
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkNoArgumentRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -2280,6 +2806,13 @@ uint8_t* XWalkNoArgumentRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -2320,6 +2853,12 @@ size_t XWalkNoArgumentRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -2350,6 +2889,9 @@ void XWalkNoArgumentRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, con
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -2378,8 +2920,8 @@ void XWalkNoArgumentRej::InternalSwap(XWalkNoArgumentRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkNoArgumentRej, _impl_.reason_)
-      + sizeof(XWalkNoArgumentRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkNoArgumentRej, _impl_.error_signal_)
+      + sizeof(XWalkNoArgumentRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkNoArgumentRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -2388,7 +2930,7 @@ void XWalkNoArgumentRej::InternalSwap(XWalkNoArgumentRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkNoArgumentRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[2]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[3]);
 }
 
 // ===================================================================
@@ -2411,6 +2953,7 @@ XWalkLifecycleRej::XWalkLifecycleRej(const XWalkLifecycleRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -2431,8 +2974,8 @@ XWalkLifecycleRej::XWalkLifecycleRej(const XWalkLifecycleRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkLifecycleRej)
 }
 
@@ -2445,6 +2988,7 @@ inline void XWalkLifecycleRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -2485,8 +3029,8 @@ void XWalkLifecycleRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -2528,6 +3072,15 @@ const char* XWalkLifecycleRej::_InternalParse(const char* ptr, ::_pbi::ParseCont
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkLifecycleRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -2588,6 +3141,13 @@ uint8_t* XWalkLifecycleRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -2628,6 +3188,12 @@ size_t XWalkLifecycleRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -2658,6 +3224,9 @@ void XWalkLifecycleRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, cons
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -2686,8 +3255,8 @@ void XWalkLifecycleRej::InternalSwap(XWalkLifecycleRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkLifecycleRej, _impl_.reason_)
-      + sizeof(XWalkLifecycleRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkLifecycleRej, _impl_.error_signal_)
+      + sizeof(XWalkLifecycleRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkLifecycleRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -2696,7 +3265,7 @@ void XWalkLifecycleRej::InternalSwap(XWalkLifecycleRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkLifecycleRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[3]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[4]);
 }
 
 // ===================================================================
@@ -2719,6 +3288,7 @@ XWalkMoveRej::XWalkMoveRej(const XWalkMoveRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -2739,8 +3309,8 @@ XWalkMoveRej::XWalkMoveRej(const XWalkMoveRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkMoveRej)
 }
 
@@ -2753,6 +3323,7 @@ inline void XWalkMoveRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -2793,8 +3364,8 @@ void XWalkMoveRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -2836,6 +3407,15 @@ const char* XWalkMoveRej::_InternalParse(const char* ptr, ::_pbi::ParseContext* 
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkMoveRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -2896,6 +3476,13 @@ uint8_t* XWalkMoveRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -2936,6 +3523,12 @@ size_t XWalkMoveRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -2966,6 +3559,9 @@ void XWalkMoveRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::P
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -2994,8 +3590,8 @@ void XWalkMoveRej::InternalSwap(XWalkMoveRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkMoveRej, _impl_.reason_)
-      + sizeof(XWalkMoveRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkMoveRej, _impl_.error_signal_)
+      + sizeof(XWalkMoveRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkMoveRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -3004,7 +3600,7 @@ void XWalkMoveRej::InternalSwap(XWalkMoveRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkMoveRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[4]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[5]);
 }
 
 // ===================================================================
@@ -3027,6 +3623,7 @@ XWalkTurnRej::XWalkTurnRej(const XWalkTurnRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -3047,8 +3644,8 @@ XWalkTurnRej::XWalkTurnRej(const XWalkTurnRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkTurnRej)
 }
 
@@ -3061,6 +3658,7 @@ inline void XWalkTurnRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -3101,8 +3699,8 @@ void XWalkTurnRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -3144,6 +3742,15 @@ const char* XWalkTurnRej::_InternalParse(const char* ptr, ::_pbi::ParseContext* 
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkTurnRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -3204,6 +3811,13 @@ uint8_t* XWalkTurnRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -3244,6 +3858,12 @@ size_t XWalkTurnRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -3274,6 +3894,9 @@ void XWalkTurnRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::P
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -3302,8 +3925,8 @@ void XWalkTurnRej::InternalSwap(XWalkTurnRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkTurnRej, _impl_.reason_)
-      + sizeof(XWalkTurnRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkTurnRej, _impl_.error_signal_)
+      + sizeof(XWalkTurnRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkTurnRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -3312,7 +3935,7 @@ void XWalkTurnRej::InternalSwap(XWalkTurnRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkTurnRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[5]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[6]);
 }
 
 // ===================================================================
@@ -3335,6 +3958,7 @@ XWalkCameraRej::XWalkCameraRej(const XWalkCameraRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -3355,8 +3979,8 @@ XWalkCameraRej::XWalkCameraRej(const XWalkCameraRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkCameraRej)
 }
 
@@ -3369,6 +3993,7 @@ inline void XWalkCameraRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -3409,8 +4034,8 @@ void XWalkCameraRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -3452,6 +4077,15 @@ const char* XWalkCameraRej::_InternalParse(const char* ptr, ::_pbi::ParseContext
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkCameraRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -3512,6 +4146,13 @@ uint8_t* XWalkCameraRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -3552,6 +4193,12 @@ size_t XWalkCameraRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -3582,6 +4229,9 @@ void XWalkCameraRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const :
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -3610,8 +4260,8 @@ void XWalkCameraRej::InternalSwap(XWalkCameraRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkCameraRej, _impl_.reason_)
-      + sizeof(XWalkCameraRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkCameraRej, _impl_.error_signal_)
+      + sizeof(XWalkCameraRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkCameraRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -3620,7 +4270,7 @@ void XWalkCameraRej::InternalSwap(XWalkCameraRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkCameraRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[6]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[7]);
 }
 
 // ===================================================================
@@ -3643,6 +4293,7 @@ XWalkSensorRej::XWalkSensorRej(const XWalkSensorRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -3663,8 +4314,8 @@ XWalkSensorRej::XWalkSensorRej(const XWalkSensorRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkSensorRej)
 }
 
@@ -3677,6 +4328,7 @@ inline void XWalkSensorRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -3717,8 +4369,8 @@ void XWalkSensorRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -3760,6 +4412,15 @@ const char* XWalkSensorRej::_InternalParse(const char* ptr, ::_pbi::ParseContext
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkSensorRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -3820,6 +4481,13 @@ uint8_t* XWalkSensorRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -3860,6 +4528,12 @@ size_t XWalkSensorRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -3890,6 +4564,9 @@ void XWalkSensorRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const :
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -3918,8 +4595,8 @@ void XWalkSensorRej::InternalSwap(XWalkSensorRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkSensorRej, _impl_.reason_)
-      + sizeof(XWalkSensorRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkSensorRej, _impl_.error_signal_)
+      + sizeof(XWalkSensorRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkSensorRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -3928,7 +4605,7 @@ void XWalkSensorRej::InternalSwap(XWalkSensorRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkSensorRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[7]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[8]);
 }
 
 // ===================================================================
@@ -3951,6 +4628,7 @@ XWalkSelfDriveRej::XWalkSelfDriveRej(const XWalkSelfDriveRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -3971,8 +4649,8 @@ XWalkSelfDriveRej::XWalkSelfDriveRej(const XWalkSelfDriveRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkSelfDriveRej)
 }
 
@@ -3985,6 +4663,7 @@ inline void XWalkSelfDriveRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -4025,8 +4704,8 @@ void XWalkSelfDriveRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -4068,6 +4747,15 @@ const char* XWalkSelfDriveRej::_InternalParse(const char* ptr, ::_pbi::ParseCont
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkSelfDriveRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -4128,6 +4816,13 @@ uint8_t* XWalkSelfDriveRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -4168,6 +4863,12 @@ size_t XWalkSelfDriveRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -4198,6 +4899,9 @@ void XWalkSelfDriveRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, cons
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -4226,8 +4930,8 @@ void XWalkSelfDriveRej::InternalSwap(XWalkSelfDriveRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkSelfDriveRej, _impl_.reason_)
-      + sizeof(XWalkSelfDriveRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkSelfDriveRej, _impl_.error_signal_)
+      + sizeof(XWalkSelfDriveRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkSelfDriveRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -4236,7 +4940,7 @@ void XWalkSelfDriveRej::InternalSwap(XWalkSelfDriveRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkSelfDriveRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[8]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[9]);
 }
 
 // ===================================================================
@@ -4259,6 +4963,7 @@ XWalkSpiRej::XWalkSpiRej(const XWalkSpiRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -4279,8 +4984,8 @@ XWalkSpiRej::XWalkSpiRej(const XWalkSpiRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkSpiRej)
 }
 
@@ -4293,6 +4998,7 @@ inline void XWalkSpiRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -4333,8 +5039,8 @@ void XWalkSpiRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -4376,6 +5082,15 @@ const char* XWalkSpiRej::_InternalParse(const char* ptr, ::_pbi::ParseContext* c
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkSpiRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -4436,6 +5151,13 @@ uint8_t* XWalkSpiRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -4476,6 +5198,12 @@ size_t XWalkSpiRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -4506,6 +5234,9 @@ void XWalkSpiRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PR
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -4534,8 +5265,8 @@ void XWalkSpiRej::InternalSwap(XWalkSpiRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkSpiRej, _impl_.reason_)
-      + sizeof(XWalkSpiRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkSpiRej, _impl_.error_signal_)
+      + sizeof(XWalkSpiRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkSpiRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -4544,7 +5275,7 @@ void XWalkSpiRej::InternalSwap(XWalkSpiRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkSpiRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[9]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[10]);
 }
 
 // ===================================================================
@@ -4567,6 +5298,7 @@ XWalkGptCarRej::XWalkGptCarRej(const XWalkGptCarRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -4587,8 +5319,8 @@ XWalkGptCarRej::XWalkGptCarRej(const XWalkGptCarRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkGptCarRej)
 }
 
@@ -4601,6 +5333,7 @@ inline void XWalkGptCarRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -4641,8 +5374,8 @@ void XWalkGptCarRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -4684,6 +5417,15 @@ const char* XWalkGptCarRej::_InternalParse(const char* ptr, ::_pbi::ParseContext
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkGptCarRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -4744,6 +5486,13 @@ uint8_t* XWalkGptCarRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -4784,6 +5533,12 @@ size_t XWalkGptCarRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -4814,6 +5569,9 @@ void XWalkGptCarRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const :
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -4842,8 +5600,8 @@ void XWalkGptCarRej::InternalSwap(XWalkGptCarRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkGptCarRej, _impl_.reason_)
-      + sizeof(XWalkGptCarRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkGptCarRej, _impl_.error_signal_)
+      + sizeof(XWalkGptCarRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkGptCarRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -4852,7 +5610,7 @@ void XWalkGptCarRej::InternalSwap(XWalkGptCarRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkGptCarRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[10]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[11]);
 }
 
 // ===================================================================
@@ -4875,6 +5633,7 @@ XWalkCalibrationRej::XWalkCalibrationRej(const XWalkCalibrationRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -4895,8 +5654,8 @@ XWalkCalibrationRej::XWalkCalibrationRej(const XWalkCalibrationRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkCalibrationRej)
 }
 
@@ -4909,6 +5668,7 @@ inline void XWalkCalibrationRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -4949,8 +5709,8 @@ void XWalkCalibrationRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -4992,6 +5752,15 @@ const char* XWalkCalibrationRej::_InternalParse(const char* ptr, ::_pbi::ParseCo
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkCalibrationRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -5052,6 +5821,13 @@ uint8_t* XWalkCalibrationRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -5092,6 +5868,12 @@ size_t XWalkCalibrationRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -5122,6 +5904,9 @@ void XWalkCalibrationRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, co
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -5150,8 +5935,8 @@ void XWalkCalibrationRej::InternalSwap(XWalkCalibrationRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkCalibrationRej, _impl_.reason_)
-      + sizeof(XWalkCalibrationRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkCalibrationRej, _impl_.error_signal_)
+      + sizeof(XWalkCalibrationRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkCalibrationRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -5160,7 +5945,7 @@ void XWalkCalibrationRej::InternalSwap(XWalkCalibrationRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkCalibrationRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[11]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[12]);
 }
 
 // ===================================================================
@@ -5183,6 +5968,7 @@ XWalkSoundRej::XWalkSoundRej(const XWalkSoundRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -5203,8 +5989,8 @@ XWalkSoundRej::XWalkSoundRej(const XWalkSoundRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkSoundRej)
 }
 
@@ -5217,6 +6003,7 @@ inline void XWalkSoundRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -5257,8 +6044,8 @@ void XWalkSoundRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -5300,6 +6087,15 @@ const char* XWalkSoundRej::_InternalParse(const char* ptr, ::_pbi::ParseContext*
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkSoundRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -5360,6 +6156,13 @@ uint8_t* XWalkSoundRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -5400,6 +6203,12 @@ size_t XWalkSoundRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -5430,6 +6239,9 @@ void XWalkSoundRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -5458,8 +6270,8 @@ void XWalkSoundRej::InternalSwap(XWalkSoundRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkSoundRej, _impl_.reason_)
-      + sizeof(XWalkSoundRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkSoundRej, _impl_.error_signal_)
+      + sizeof(XWalkSoundRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkSoundRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -5468,7 +6280,7 @@ void XWalkSoundRej::InternalSwap(XWalkSoundRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkSoundRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[12]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[13]);
 }
 
 // ===================================================================
@@ -5491,6 +6303,7 @@ XWalkUnknownCommandRej::XWalkUnknownCommandRej(const XWalkUnknownCommandRej& fro
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -5511,8 +6324,8 @@ XWalkUnknownCommandRej::XWalkUnknownCommandRej(const XWalkUnknownCommandRej& fro
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkUnknownCommandRej)
 }
 
@@ -5525,6 +6338,7 @@ inline void XWalkUnknownCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -5565,8 +6379,8 @@ void XWalkUnknownCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -5608,6 +6422,15 @@ const char* XWalkUnknownCommandRej::_InternalParse(const char* ptr, ::_pbi::Pars
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkUnknownCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -5668,6 +6491,13 @@ uint8_t* XWalkUnknownCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -5708,6 +6538,12 @@ size_t XWalkUnknownCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -5738,6 +6574,9 @@ void XWalkUnknownCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg,
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -5766,8 +6605,8 @@ void XWalkUnknownCommandRej::InternalSwap(XWalkUnknownCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkUnknownCommandRej, _impl_.reason_)
-      + sizeof(XWalkUnknownCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkUnknownCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkUnknownCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkUnknownCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -5776,7 +6615,7 @@ void XWalkUnknownCommandRej::InternalSwap(XWalkUnknownCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkUnknownCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[13]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[14]);
 }
 
 // ===================================================================
@@ -5799,6 +6638,7 @@ XWalkHelpCommandRej::XWalkHelpCommandRej(const XWalkHelpCommandRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -5819,8 +6659,8 @@ XWalkHelpCommandRej::XWalkHelpCommandRej(const XWalkHelpCommandRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkHelpCommandRej)
 }
 
@@ -5833,6 +6673,7 @@ inline void XWalkHelpCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -5873,8 +6714,8 @@ void XWalkHelpCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -5916,6 +6757,15 @@ const char* XWalkHelpCommandRej::_InternalParse(const char* ptr, ::_pbi::ParseCo
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkHelpCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -5976,6 +6826,13 @@ uint8_t* XWalkHelpCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -6016,6 +6873,12 @@ size_t XWalkHelpCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -6046,6 +6909,9 @@ void XWalkHelpCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, co
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -6074,8 +6940,8 @@ void XWalkHelpCommandRej::InternalSwap(XWalkHelpCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkHelpCommandRej, _impl_.reason_)
-      + sizeof(XWalkHelpCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkHelpCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkHelpCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkHelpCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -6084,7 +6950,7 @@ void XWalkHelpCommandRej::InternalSwap(XWalkHelpCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkHelpCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[14]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[15]);
 }
 
 // ===================================================================
@@ -6107,6 +6973,7 @@ XWalkSpiCommandRej::XWalkSpiCommandRej(const XWalkSpiCommandRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -6127,8 +6994,8 @@ XWalkSpiCommandRej::XWalkSpiCommandRej(const XWalkSpiCommandRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkSpiCommandRej)
 }
 
@@ -6141,6 +7008,7 @@ inline void XWalkSpiCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -6181,8 +7049,8 @@ void XWalkSpiCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -6224,6 +7092,15 @@ const char* XWalkSpiCommandRej::_InternalParse(const char* ptr, ::_pbi::ParseCon
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkSpiCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -6284,6 +7161,13 @@ uint8_t* XWalkSpiCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -6324,6 +7208,12 @@ size_t XWalkSpiCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -6354,6 +7244,9 @@ void XWalkSpiCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, con
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -6382,8 +7275,8 @@ void XWalkSpiCommandRej::InternalSwap(XWalkSpiCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkSpiCommandRej, _impl_.reason_)
-      + sizeof(XWalkSpiCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkSpiCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkSpiCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkSpiCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -6392,7 +7285,7 @@ void XWalkSpiCommandRej::InternalSwap(XWalkSpiCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkSpiCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[15]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[16]);
 }
 
 // ===================================================================
@@ -6415,6 +7308,7 @@ XWalkDoctorCommandRej::XWalkDoctorCommandRej(const XWalkDoctorCommandRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -6435,8 +7329,8 @@ XWalkDoctorCommandRej::XWalkDoctorCommandRej(const XWalkDoctorCommandRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkDoctorCommandRej)
 }
 
@@ -6449,6 +7343,7 @@ inline void XWalkDoctorCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -6489,8 +7384,8 @@ void XWalkDoctorCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -6532,6 +7427,15 @@ const char* XWalkDoctorCommandRej::_InternalParse(const char* ptr, ::_pbi::Parse
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkDoctorCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -6592,6 +7496,13 @@ uint8_t* XWalkDoctorCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -6632,6 +7543,12 @@ size_t XWalkDoctorCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -6662,6 +7579,9 @@ void XWalkDoctorCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, 
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -6690,8 +7610,8 @@ void XWalkDoctorCommandRej::InternalSwap(XWalkDoctorCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkDoctorCommandRej, _impl_.reason_)
-      + sizeof(XWalkDoctorCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkDoctorCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkDoctorCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkDoctorCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -6700,7 +7620,7 @@ void XWalkDoctorCommandRej::InternalSwap(XWalkDoctorCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkDoctorCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[16]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[17]);
 }
 
 // ===================================================================
@@ -6723,6 +7643,7 @@ XWalkServoZeroingCommandRej::XWalkServoZeroingCommandRej(const XWalkServoZeroing
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -6743,8 +7664,8 @@ XWalkServoZeroingCommandRej::XWalkServoZeroingCommandRej(const XWalkServoZeroing
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkServoZeroingCommandRej)
 }
 
@@ -6757,6 +7678,7 @@ inline void XWalkServoZeroingCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -6797,8 +7719,8 @@ void XWalkServoZeroingCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -6840,6 +7762,15 @@ const char* XWalkServoZeroingCommandRej::_InternalParse(const char* ptr, ::_pbi:
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkServoZeroingCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -6900,6 +7831,13 @@ uint8_t* XWalkServoZeroingCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -6940,6 +7878,12 @@ size_t XWalkServoZeroingCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -6970,6 +7914,9 @@ void XWalkServoZeroingCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -6998,8 +7945,8 @@ void XWalkServoZeroingCommandRej::InternalSwap(XWalkServoZeroingCommandRej* othe
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkServoZeroingCommandRej, _impl_.reason_)
-      + sizeof(XWalkServoZeroingCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkServoZeroingCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkServoZeroingCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkServoZeroingCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -7008,7 +7955,7 @@ void XWalkServoZeroingCommandRej::InternalSwap(XWalkServoZeroingCommandRej* othe
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkServoZeroingCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[17]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[18]);
 }
 
 // ===================================================================
@@ -7031,6 +7978,7 @@ XWalkComputerVisionCommandRej::XWalkComputerVisionCommandRej(const XWalkComputer
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -7051,8 +7999,8 @@ XWalkComputerVisionCommandRej::XWalkComputerVisionCommandRej(const XWalkComputer
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkComputerVisionCommandRej)
 }
 
@@ -7065,6 +8013,7 @@ inline void XWalkComputerVisionCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -7105,8 +8054,8 @@ void XWalkComputerVisionCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -7148,6 +8097,15 @@ const char* XWalkComputerVisionCommandRej::_InternalParse(const char* ptr, ::_pb
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkComputerVisionCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -7208,6 +8166,13 @@ uint8_t* XWalkComputerVisionCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -7248,6 +8213,12 @@ size_t XWalkComputerVisionCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -7278,6 +8249,9 @@ void XWalkComputerVisionCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& 
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -7306,8 +8280,8 @@ void XWalkComputerVisionCommandRej::InternalSwap(XWalkComputerVisionCommandRej* 
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkComputerVisionCommandRej, _impl_.reason_)
-      + sizeof(XWalkComputerVisionCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkComputerVisionCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkComputerVisionCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkComputerVisionCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -7316,7 +8290,7 @@ void XWalkComputerVisionCommandRej::InternalSwap(XWalkComputerVisionCommandRej* 
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkComputerVisionCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[18]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[19]);
 }
 
 // ===================================================================
@@ -7339,6 +8313,7 @@ XWalkRecordVideoCommandRej::XWalkRecordVideoCommandRej(const XWalkRecordVideoCom
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -7359,8 +8334,8 @@ XWalkRecordVideoCommandRej::XWalkRecordVideoCommandRej(const XWalkRecordVideoCom
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkRecordVideoCommandRej)
 }
 
@@ -7373,6 +8348,7 @@ inline void XWalkRecordVideoCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -7413,8 +8389,8 @@ void XWalkRecordVideoCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -7456,6 +8432,15 @@ const char* XWalkRecordVideoCommandRej::_InternalParse(const char* ptr, ::_pbi::
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkRecordVideoCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -7516,6 +8501,13 @@ uint8_t* XWalkRecordVideoCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -7556,6 +8548,12 @@ size_t XWalkRecordVideoCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -7586,6 +8584,9 @@ void XWalkRecordVideoCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -7614,8 +8615,8 @@ void XWalkRecordVideoCommandRej::InternalSwap(XWalkRecordVideoCommandRej* other)
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkRecordVideoCommandRej, _impl_.reason_)
-      + sizeof(XWalkRecordVideoCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkRecordVideoCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkRecordVideoCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkRecordVideoCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -7624,7 +8625,7 @@ void XWalkRecordVideoCommandRej::InternalSwap(XWalkRecordVideoCommandRej* other)
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkRecordVideoCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[19]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[20]);
 }
 
 // ===================================================================
@@ -7647,6 +8648,7 @@ XWalkSoundBackgroundMusicCommandRej::XWalkSoundBackgroundMusicCommandRej(const X
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -7667,8 +8669,8 @@ XWalkSoundBackgroundMusicCommandRej::XWalkSoundBackgroundMusicCommandRej(const X
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkSoundBackgroundMusicCommandRej)
 }
 
@@ -7681,6 +8683,7 @@ inline void XWalkSoundBackgroundMusicCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -7721,8 +8724,8 @@ void XWalkSoundBackgroundMusicCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -7764,6 +8767,15 @@ const char* XWalkSoundBackgroundMusicCommandRej::_InternalParse(const char* ptr,
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkSoundBackgroundMusicCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -7824,6 +8836,13 @@ uint8_t* XWalkSoundBackgroundMusicCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -7864,6 +8883,12 @@ size_t XWalkSoundBackgroundMusicCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -7894,6 +8919,9 @@ void XWalkSoundBackgroundMusicCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Mes
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -7922,8 +8950,8 @@ void XWalkSoundBackgroundMusicCommandRej::InternalSwap(XWalkSoundBackgroundMusic
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkSoundBackgroundMusicCommandRej, _impl_.reason_)
-      + sizeof(XWalkSoundBackgroundMusicCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkSoundBackgroundMusicCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkSoundBackgroundMusicCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkSoundBackgroundMusicCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -7932,7 +8960,7 @@ void XWalkSoundBackgroundMusicCommandRej::InternalSwap(XWalkSoundBackgroundMusic
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkSoundBackgroundMusicCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[20]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[21]);
 }
 
 // ===================================================================
@@ -7955,6 +8983,7 @@ XWalkTextVisionTalkCommandRej::XWalkTextVisionTalkCommandRej(const XWalkTextVisi
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -7975,8 +9004,8 @@ XWalkTextVisionTalkCommandRej::XWalkTextVisionTalkCommandRej(const XWalkTextVisi
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkTextVisionTalkCommandRej)
 }
 
@@ -7989,6 +9018,7 @@ inline void XWalkTextVisionTalkCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -8029,8 +9059,8 @@ void XWalkTextVisionTalkCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -8072,6 +9102,15 @@ const char* XWalkTextVisionTalkCommandRej::_InternalParse(const char* ptr, ::_pb
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkTextVisionTalkCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -8132,6 +9171,13 @@ uint8_t* XWalkTextVisionTalkCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -8172,6 +9218,12 @@ size_t XWalkTextVisionTalkCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -8202,6 +9254,9 @@ void XWalkTextVisionTalkCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& 
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -8230,8 +9285,8 @@ void XWalkTextVisionTalkCommandRej::InternalSwap(XWalkTextVisionTalkCommandRej* 
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkTextVisionTalkCommandRej, _impl_.reason_)
-      + sizeof(XWalkTextVisionTalkCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkTextVisionTalkCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkTextVisionTalkCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkTextVisionTalkCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -8240,7 +9295,7 @@ void XWalkTextVisionTalkCommandRej::InternalSwap(XWalkTextVisionTalkCommandRej* 
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkTextVisionTalkCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[21]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[22]);
 }
 
 // ===================================================================
@@ -8263,6 +9318,7 @@ XWalkOnlineLlmTestCommandRej::XWalkOnlineLlmTestCommandRej(const XWalkOnlineLlmT
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -8283,8 +9339,8 @@ XWalkOnlineLlmTestCommandRej::XWalkOnlineLlmTestCommandRej(const XWalkOnlineLlmT
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkOnlineLlmTestCommandRej)
 }
 
@@ -8297,6 +9353,7 @@ inline void XWalkOnlineLlmTestCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -8337,8 +9394,8 @@ void XWalkOnlineLlmTestCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -8380,6 +9437,15 @@ const char* XWalkOnlineLlmTestCommandRej::_InternalParse(const char* ptr, ::_pbi
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkOnlineLlmTestCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -8440,6 +9506,13 @@ uint8_t* XWalkOnlineLlmTestCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -8480,6 +9553,12 @@ size_t XWalkOnlineLlmTestCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -8510,6 +9589,9 @@ void XWalkOnlineLlmTestCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& t
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -8538,8 +9620,8 @@ void XWalkOnlineLlmTestCommandRej::InternalSwap(XWalkOnlineLlmTestCommandRej* ot
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkOnlineLlmTestCommandRej, _impl_.reason_)
-      + sizeof(XWalkOnlineLlmTestCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkOnlineLlmTestCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkOnlineLlmTestCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkOnlineLlmTestCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -8548,7 +9630,7 @@ void XWalkOnlineLlmTestCommandRej::InternalSwap(XWalkOnlineLlmTestCommandRej* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkOnlineLlmTestCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[22]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[23]);
 }
 
 // ===================================================================
@@ -8571,6 +9653,7 @@ XWalkMoveCommandRej::XWalkMoveCommandRej(const XWalkMoveCommandRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -8591,8 +9674,8 @@ XWalkMoveCommandRej::XWalkMoveCommandRej(const XWalkMoveCommandRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkMoveCommandRej)
 }
 
@@ -8605,6 +9688,7 @@ inline void XWalkMoveCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -8645,8 +9729,8 @@ void XWalkMoveCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -8688,6 +9772,15 @@ const char* XWalkMoveCommandRej::_InternalParse(const char* ptr, ::_pbi::ParseCo
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkMoveCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -8748,6 +9841,13 @@ uint8_t* XWalkMoveCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -8788,6 +9888,12 @@ size_t XWalkMoveCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -8818,6 +9924,9 @@ void XWalkMoveCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, co
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -8846,8 +9955,8 @@ void XWalkMoveCommandRej::InternalSwap(XWalkMoveCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkMoveCommandRej, _impl_.reason_)
-      + sizeof(XWalkMoveCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkMoveCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkMoveCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkMoveCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -8856,7 +9965,7 @@ void XWalkMoveCommandRej::InternalSwap(XWalkMoveCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkMoveCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[23]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[24]);
 }
 
 // ===================================================================
@@ -8879,6 +9988,7 @@ XWalkKeyboardControlCommandRej::XWalkKeyboardControlCommandRej(const XWalkKeyboa
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -8899,8 +10009,8 @@ XWalkKeyboardControlCommandRej::XWalkKeyboardControlCommandRej(const XWalkKeyboa
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkKeyboardControlCommandRej)
 }
 
@@ -8913,6 +10023,7 @@ inline void XWalkKeyboardControlCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -8953,8 +10064,8 @@ void XWalkKeyboardControlCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -8996,6 +10107,15 @@ const char* XWalkKeyboardControlCommandRej::_InternalParse(const char* ptr, ::_p
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkKeyboardControlCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -9056,6 +10176,13 @@ uint8_t* XWalkKeyboardControlCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -9096,6 +10223,12 @@ size_t XWalkKeyboardControlCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -9126,6 +10259,9 @@ void XWalkKeyboardControlCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message&
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -9154,8 +10290,8 @@ void XWalkKeyboardControlCommandRej::InternalSwap(XWalkKeyboardControlCommandRej
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkKeyboardControlCommandRej, _impl_.reason_)
-      + sizeof(XWalkKeyboardControlCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkKeyboardControlCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkKeyboardControlCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkKeyboardControlCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -9164,7 +10300,7 @@ void XWalkKeyboardControlCommandRej::InternalSwap(XWalkKeyboardControlCommandRej
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkKeyboardControlCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[24]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[25]);
 }
 
 // ===================================================================
@@ -9187,6 +10323,7 @@ XWalkAvoidObstaclesCommandRej::XWalkAvoidObstaclesCommandRej(const XWalkAvoidObs
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -9207,8 +10344,8 @@ XWalkAvoidObstaclesCommandRej::XWalkAvoidObstaclesCommandRej(const XWalkAvoidObs
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkAvoidObstaclesCommandRej)
 }
 
@@ -9221,6 +10358,7 @@ inline void XWalkAvoidObstaclesCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -9261,8 +10399,8 @@ void XWalkAvoidObstaclesCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -9304,6 +10442,15 @@ const char* XWalkAvoidObstaclesCommandRej::_InternalParse(const char* ptr, ::_pb
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkAvoidObstaclesCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -9364,6 +10511,13 @@ uint8_t* XWalkAvoidObstaclesCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -9404,6 +10558,12 @@ size_t XWalkAvoidObstaclesCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -9434,6 +10594,9 @@ void XWalkAvoidObstaclesCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& 
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -9462,8 +10625,8 @@ void XWalkAvoidObstaclesCommandRej::InternalSwap(XWalkAvoidObstaclesCommandRej* 
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkAvoidObstaclesCommandRej, _impl_.reason_)
-      + sizeof(XWalkAvoidObstaclesCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkAvoidObstaclesCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkAvoidObstaclesCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkAvoidObstaclesCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -9472,7 +10635,7 @@ void XWalkAvoidObstaclesCommandRej::InternalSwap(XWalkAvoidObstaclesCommandRej* 
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkAvoidObstaclesCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[25]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[26]);
 }
 
 // ===================================================================
@@ -9495,6 +10658,7 @@ XWalkCliffDetectionCommandRej::XWalkCliffDetectionCommandRej(const XWalkCliffDet
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -9515,8 +10679,8 @@ XWalkCliffDetectionCommandRej::XWalkCliffDetectionCommandRej(const XWalkCliffDet
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkCliffDetectionCommandRej)
 }
 
@@ -9529,6 +10693,7 @@ inline void XWalkCliffDetectionCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -9569,8 +10734,8 @@ void XWalkCliffDetectionCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -9612,6 +10777,15 @@ const char* XWalkCliffDetectionCommandRej::_InternalParse(const char* ptr, ::_pb
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkCliffDetectionCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -9672,6 +10846,13 @@ uint8_t* XWalkCliffDetectionCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -9712,6 +10893,12 @@ size_t XWalkCliffDetectionCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -9742,6 +10929,9 @@ void XWalkCliffDetectionCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& 
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -9770,8 +10960,8 @@ void XWalkCliffDetectionCommandRej::InternalSwap(XWalkCliffDetectionCommandRej* 
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkCliffDetectionCommandRej, _impl_.reason_)
-      + sizeof(XWalkCliffDetectionCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkCliffDetectionCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkCliffDetectionCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkCliffDetectionCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -9780,7 +10970,7 @@ void XWalkCliffDetectionCommandRej::InternalSwap(XWalkCliffDetectionCommandRej* 
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkCliffDetectionCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[26]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[27]);
 }
 
 // ===================================================================
@@ -9803,6 +10993,7 @@ XWalkStareAtYouCommandRej::XWalkStareAtYouCommandRej(const XWalkStareAtYouComman
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -9823,8 +11014,8 @@ XWalkStareAtYouCommandRej::XWalkStareAtYouCommandRej(const XWalkStareAtYouComman
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkStareAtYouCommandRej)
 }
 
@@ -9837,6 +11028,7 @@ inline void XWalkStareAtYouCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -9877,8 +11069,8 @@ void XWalkStareAtYouCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -9920,6 +11112,15 @@ const char* XWalkStareAtYouCommandRej::_InternalParse(const char* ptr, ::_pbi::P
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkStareAtYouCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -9980,6 +11181,13 @@ uint8_t* XWalkStareAtYouCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -10020,6 +11228,12 @@ size_t XWalkStareAtYouCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -10050,6 +11264,9 @@ void XWalkStareAtYouCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_m
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -10078,8 +11295,8 @@ void XWalkStareAtYouCommandRej::InternalSwap(XWalkStareAtYouCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkStareAtYouCommandRej, _impl_.reason_)
-      + sizeof(XWalkStareAtYouCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkStareAtYouCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkStareAtYouCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkStareAtYouCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -10088,7 +11305,7 @@ void XWalkStareAtYouCommandRej::InternalSwap(XWalkStareAtYouCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkStareAtYouCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[27]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[28]);
 }
 
 // ===================================================================
@@ -10111,6 +11328,7 @@ XWalkBullFightCommandRej::XWalkBullFightCommandRej(const XWalkBullFightCommandRe
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -10131,8 +11349,8 @@ XWalkBullFightCommandRej::XWalkBullFightCommandRej(const XWalkBullFightCommandRe
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkBullFightCommandRej)
 }
 
@@ -10145,6 +11363,7 @@ inline void XWalkBullFightCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -10185,8 +11404,8 @@ void XWalkBullFightCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -10228,6 +11447,15 @@ const char* XWalkBullFightCommandRej::_InternalParse(const char* ptr, ::_pbi::Pa
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkBullFightCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -10288,6 +11516,13 @@ uint8_t* XWalkBullFightCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -10328,6 +11563,12 @@ size_t XWalkBullFightCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -10358,6 +11599,9 @@ void XWalkBullFightCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_ms
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -10386,8 +11630,8 @@ void XWalkBullFightCommandRej::InternalSwap(XWalkBullFightCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkBullFightCommandRej, _impl_.reason_)
-      + sizeof(XWalkBullFightCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkBullFightCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkBullFightCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkBullFightCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -10396,7 +11640,7 @@ void XWalkBullFightCommandRej::InternalSwap(XWalkBullFightCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkBullFightCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[28]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[29]);
 }
 
 // ===================================================================
@@ -10419,6 +11663,7 @@ XWalkTreasureHuntCommandRej::XWalkTreasureHuntCommandRej(const XWalkTreasureHunt
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -10439,8 +11684,8 @@ XWalkTreasureHuntCommandRej::XWalkTreasureHuntCommandRej(const XWalkTreasureHunt
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkTreasureHuntCommandRej)
 }
 
@@ -10453,6 +11698,7 @@ inline void XWalkTreasureHuntCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -10493,8 +11739,8 @@ void XWalkTreasureHuntCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -10536,6 +11782,15 @@ const char* XWalkTreasureHuntCommandRej::_InternalParse(const char* ptr, ::_pbi:
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkTreasureHuntCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -10596,6 +11851,13 @@ uint8_t* XWalkTreasureHuntCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -10636,6 +11898,12 @@ size_t XWalkTreasureHuntCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -10666,6 +11934,9 @@ void XWalkTreasureHuntCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -10694,8 +11965,8 @@ void XWalkTreasureHuntCommandRej::InternalSwap(XWalkTreasureHuntCommandRej* othe
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkTreasureHuntCommandRej, _impl_.reason_)
-      + sizeof(XWalkTreasureHuntCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkTreasureHuntCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkTreasureHuntCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkTreasureHuntCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -10704,7 +11975,7 @@ void XWalkTreasureHuntCommandRej::InternalSwap(XWalkTreasureHuntCommandRej* othe
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkTreasureHuntCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[29]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[30]);
 }
 
 // ===================================================================
@@ -10727,6 +11998,7 @@ XWalkVideoCarCommandRej::XWalkVideoCarCommandRej(const XWalkVideoCarCommandRej& 
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -10747,8 +12019,8 @@ XWalkVideoCarCommandRej::XWalkVideoCarCommandRej(const XWalkVideoCarCommandRej& 
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkVideoCarCommandRej)
 }
 
@@ -10761,6 +12033,7 @@ inline void XWalkVideoCarCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -10801,8 +12074,8 @@ void XWalkVideoCarCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -10844,6 +12117,15 @@ const char* XWalkVideoCarCommandRej::_InternalParse(const char* ptr, ::_pbi::Par
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkVideoCarCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -10904,6 +12186,13 @@ uint8_t* XWalkVideoCarCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -10944,6 +12233,12 @@ size_t XWalkVideoCarCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -10974,6 +12269,9 @@ void XWalkVideoCarCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -11002,8 +12300,8 @@ void XWalkVideoCarCommandRej::InternalSwap(XWalkVideoCarCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkVideoCarCommandRej, _impl_.reason_)
-      + sizeof(XWalkVideoCarCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkVideoCarCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkVideoCarCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkVideoCarCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -11012,7 +12310,7 @@ void XWalkVideoCarCommandRej::InternalSwap(XWalkVideoCarCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkVideoCarCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[30]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[31]);
 }
 
 // ===================================================================
@@ -11035,6 +12333,7 @@ XWalkAppControlCommandRej::XWalkAppControlCommandRej(const XWalkAppControlComman
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -11055,8 +12354,8 @@ XWalkAppControlCommandRej::XWalkAppControlCommandRej(const XWalkAppControlComman
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkAppControlCommandRej)
 }
 
@@ -11069,6 +12368,7 @@ inline void XWalkAppControlCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -11109,8 +12409,8 @@ void XWalkAppControlCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -11152,6 +12452,15 @@ const char* XWalkAppControlCommandRej::_InternalParse(const char* ptr, ::_pbi::P
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkAppControlCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -11212,6 +12521,13 @@ uint8_t* XWalkAppControlCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -11252,6 +12568,12 @@ size_t XWalkAppControlCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -11282,6 +12604,9 @@ void XWalkAppControlCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_m
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -11310,8 +12635,8 @@ void XWalkAppControlCommandRej::InternalSwap(XWalkAppControlCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkAppControlCommandRej, _impl_.reason_)
-      + sizeof(XWalkAppControlCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkAppControlCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkAppControlCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkAppControlCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -11320,7 +12645,7 @@ void XWalkAppControlCommandRej::InternalSwap(XWalkAppControlCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkAppControlCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[31]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[32]);
 }
 
 // ===================================================================
@@ -11343,6 +12668,7 @@ XWalkTurnCommandRej::XWalkTurnCommandRej(const XWalkTurnCommandRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -11363,8 +12689,8 @@ XWalkTurnCommandRej::XWalkTurnCommandRej(const XWalkTurnCommandRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkTurnCommandRej)
 }
 
@@ -11377,6 +12703,7 @@ inline void XWalkTurnCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -11417,8 +12744,8 @@ void XWalkTurnCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -11460,6 +12787,15 @@ const char* XWalkTurnCommandRej::_InternalParse(const char* ptr, ::_pbi::ParseCo
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkTurnCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -11520,6 +12856,13 @@ uint8_t* XWalkTurnCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -11560,6 +12903,12 @@ size_t XWalkTurnCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -11590,6 +12939,9 @@ void XWalkTurnCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, co
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -11618,8 +12970,8 @@ void XWalkTurnCommandRej::InternalSwap(XWalkTurnCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkTurnCommandRej, _impl_.reason_)
-      + sizeof(XWalkTurnCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkTurnCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkTurnCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkTurnCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -11628,7 +12980,7 @@ void XWalkTurnCommandRej::InternalSwap(XWalkTurnCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkTurnCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[32]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[33]);
 }
 
 // ===================================================================
@@ -11651,6 +13003,7 @@ XWalkCameraCommandRej::XWalkCameraCommandRej(const XWalkCameraCommandRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -11671,8 +13024,8 @@ XWalkCameraCommandRej::XWalkCameraCommandRej(const XWalkCameraCommandRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkCameraCommandRej)
 }
 
@@ -11685,6 +13038,7 @@ inline void XWalkCameraCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -11725,8 +13079,8 @@ void XWalkCameraCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -11768,6 +13122,15 @@ const char* XWalkCameraCommandRej::_InternalParse(const char* ptr, ::_pbi::Parse
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkCameraCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -11828,6 +13191,13 @@ uint8_t* XWalkCameraCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -11868,6 +13238,12 @@ size_t XWalkCameraCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -11898,6 +13274,9 @@ void XWalkCameraCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, 
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -11926,8 +13305,8 @@ void XWalkCameraCommandRej::InternalSwap(XWalkCameraCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkCameraCommandRej, _impl_.reason_)
-      + sizeof(XWalkCameraCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkCameraCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkCameraCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkCameraCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -11936,7 +13315,7 @@ void XWalkCameraCommandRej::InternalSwap(XWalkCameraCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkCameraCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[33]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[34]);
 }
 
 // ===================================================================
@@ -11959,6 +13338,7 @@ XWalkSensorCommandRej::XWalkSensorCommandRej(const XWalkSensorCommandRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -11979,8 +13359,8 @@ XWalkSensorCommandRej::XWalkSensorCommandRej(const XWalkSensorCommandRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkSensorCommandRej)
 }
 
@@ -11993,6 +13373,7 @@ inline void XWalkSensorCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -12033,8 +13414,8 @@ void XWalkSensorCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -12076,6 +13457,15 @@ const char* XWalkSensorCommandRej::_InternalParse(const char* ptr, ::_pbi::Parse
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkSensorCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -12136,6 +13526,13 @@ uint8_t* XWalkSensorCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -12176,6 +13573,12 @@ size_t XWalkSensorCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -12206,6 +13609,9 @@ void XWalkSensorCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, 
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -12234,8 +13640,8 @@ void XWalkSensorCommandRej::InternalSwap(XWalkSensorCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkSensorCommandRej, _impl_.reason_)
-      + sizeof(XWalkSensorCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkSensorCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkSensorCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkSensorCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -12244,7 +13650,7 @@ void XWalkSensorCommandRej::InternalSwap(XWalkSensorCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkSensorCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[34]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[35]);
 }
 
 // ===================================================================
@@ -12267,6 +13673,7 @@ XWalkLineTrackCommandRej::XWalkLineTrackCommandRej(const XWalkLineTrackCommandRe
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -12287,8 +13694,8 @@ XWalkLineTrackCommandRej::XWalkLineTrackCommandRej(const XWalkLineTrackCommandRe
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkLineTrackCommandRej)
 }
 
@@ -12301,6 +13708,7 @@ inline void XWalkLineTrackCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -12341,8 +13749,8 @@ void XWalkLineTrackCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -12384,6 +13792,15 @@ const char* XWalkLineTrackCommandRej::_InternalParse(const char* ptr, ::_pbi::Pa
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkLineTrackCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -12444,6 +13861,13 @@ uint8_t* XWalkLineTrackCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -12484,6 +13908,12 @@ size_t XWalkLineTrackCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -12514,6 +13944,9 @@ void XWalkLineTrackCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_ms
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -12542,8 +13975,8 @@ void XWalkLineTrackCommandRej::InternalSwap(XWalkLineTrackCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkLineTrackCommandRej, _impl_.reason_)
-      + sizeof(XWalkLineTrackCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkLineTrackCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkLineTrackCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkLineTrackCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -12552,7 +13985,7 @@ void XWalkLineTrackCommandRej::InternalSwap(XWalkLineTrackCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkLineTrackCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[35]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[36]);
 }
 
 // ===================================================================
@@ -12575,6 +14008,7 @@ XWalkSelfDriveCommandRej::XWalkSelfDriveCommandRej(const XWalkSelfDriveCommandRe
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -12595,8 +14029,8 @@ XWalkSelfDriveCommandRej::XWalkSelfDriveCommandRej(const XWalkSelfDriveCommandRe
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkSelfDriveCommandRej)
 }
 
@@ -12609,6 +14043,7 @@ inline void XWalkSelfDriveCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -12649,8 +14084,8 @@ void XWalkSelfDriveCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -12692,6 +14127,15 @@ const char* XWalkSelfDriveCommandRej::_InternalParse(const char* ptr, ::_pbi::Pa
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkSelfDriveCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -12752,6 +14196,13 @@ uint8_t* XWalkSelfDriveCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -12792,6 +14243,12 @@ size_t XWalkSelfDriveCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -12822,6 +14279,9 @@ void XWalkSelfDriveCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_ms
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -12850,8 +14310,8 @@ void XWalkSelfDriveCommandRej::InternalSwap(XWalkSelfDriveCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkSelfDriveCommandRej, _impl_.reason_)
-      + sizeof(XWalkSelfDriveCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkSelfDriveCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkSelfDriveCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkSelfDriveCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -12860,7 +14320,7 @@ void XWalkSelfDriveCommandRej::InternalSwap(XWalkSelfDriveCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkSelfDriveCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[36]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[37]);
 }
 
 // ===================================================================
@@ -12883,6 +14343,7 @@ XWalkSoundCommandRej::XWalkSoundCommandRej(const XWalkSoundCommandRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -12903,8 +14364,8 @@ XWalkSoundCommandRej::XWalkSoundCommandRej(const XWalkSoundCommandRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkSoundCommandRej)
 }
 
@@ -12917,6 +14378,7 @@ inline void XWalkSoundCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -12957,8 +14419,8 @@ void XWalkSoundCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -13000,6 +14462,15 @@ const char* XWalkSoundCommandRej::_InternalParse(const char* ptr, ::_pbi::ParseC
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkSoundCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -13060,6 +14531,13 @@ uint8_t* XWalkSoundCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -13100,6 +14578,12 @@ size_t XWalkSoundCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -13130,6 +14614,9 @@ void XWalkSoundCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, c
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -13158,8 +14645,8 @@ void XWalkSoundCommandRej::InternalSwap(XWalkSoundCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkSoundCommandRej, _impl_.reason_)
-      + sizeof(XWalkSoundCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkSoundCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkSoundCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkSoundCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -13168,7 +14655,7 @@ void XWalkSoundCommandRej::InternalSwap(XWalkSoundCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkSoundCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[37]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[38]);
 }
 
 // ===================================================================
@@ -13191,6 +14678,7 @@ XWalkVoiceChatCommandRej::XWalkVoiceChatCommandRej(const XWalkVoiceChatCommandRe
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -13211,8 +14699,8 @@ XWalkVoiceChatCommandRej::XWalkVoiceChatCommandRej(const XWalkVoiceChatCommandRe
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkVoiceChatCommandRej)
 }
 
@@ -13225,6 +14713,7 @@ inline void XWalkVoiceChatCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -13265,8 +14754,8 @@ void XWalkVoiceChatCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -13308,6 +14797,15 @@ const char* XWalkVoiceChatCommandRej::_InternalParse(const char* ptr, ::_pbi::Pa
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkVoiceChatCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -13368,6 +14866,13 @@ uint8_t* XWalkVoiceChatCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -13408,6 +14913,12 @@ size_t XWalkVoiceChatCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -13438,6 +14949,9 @@ void XWalkVoiceChatCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_ms
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -13466,8 +14980,8 @@ void XWalkVoiceChatCommandRej::InternalSwap(XWalkVoiceChatCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkVoiceChatCommandRej, _impl_.reason_)
-      + sizeof(XWalkVoiceChatCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkVoiceChatCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkVoiceChatCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkVoiceChatCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -13476,7 +14990,7 @@ void XWalkVoiceChatCommandRej::InternalSwap(XWalkVoiceChatCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkVoiceChatCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[38]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[39]);
 }
 
 // ===================================================================
@@ -13499,6 +15013,7 @@ XWalkVoiceActiveCarCommandRej::XWalkVoiceActiveCarCommandRej(const XWalkVoiceAct
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -13519,8 +15034,8 @@ XWalkVoiceActiveCarCommandRej::XWalkVoiceActiveCarCommandRej(const XWalkVoiceAct
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkVoiceActiveCarCommandRej)
 }
 
@@ -13533,6 +15048,7 @@ inline void XWalkVoiceActiveCarCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -13573,8 +15089,8 @@ void XWalkVoiceActiveCarCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -13616,6 +15132,15 @@ const char* XWalkVoiceActiveCarCommandRej::_InternalParse(const char* ptr, ::_pb
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkVoiceActiveCarCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -13676,6 +15201,13 @@ uint8_t* XWalkVoiceActiveCarCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -13716,6 +15248,12 @@ size_t XWalkVoiceActiveCarCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -13746,6 +15284,9 @@ void XWalkVoiceActiveCarCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& 
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -13774,8 +15315,8 @@ void XWalkVoiceActiveCarCommandRej::InternalSwap(XWalkVoiceActiveCarCommandRej* 
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkVoiceActiveCarCommandRej, _impl_.reason_)
-      + sizeof(XWalkVoiceActiveCarCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkVoiceActiveCarCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkVoiceActiveCarCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkVoiceActiveCarCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -13784,7 +15325,7 @@ void XWalkVoiceActiveCarCommandRej::InternalSwap(XWalkVoiceActiveCarCommandRej* 
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkVoiceActiveCarCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[39]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[40]);
 }
 
 // ===================================================================
@@ -13807,6 +15348,7 @@ XWalkGptCarCommandRej::XWalkGptCarCommandRej(const XWalkGptCarCommandRej& from)
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -13827,8 +15369,8 @@ XWalkGptCarCommandRej::XWalkGptCarCommandRej(const XWalkGptCarCommandRej& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkGptCarCommandRej)
 }
 
@@ -13841,6 +15383,7 @@ inline void XWalkGptCarCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -13881,8 +15424,8 @@ void XWalkGptCarCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -13924,6 +15467,15 @@ const char* XWalkGptCarCommandRej::_InternalParse(const char* ptr, ::_pbi::Parse
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkGptCarCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -13984,6 +15536,13 @@ uint8_t* XWalkGptCarCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -14024,6 +15583,12 @@ size_t XWalkGptCarCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -14054,6 +15619,9 @@ void XWalkGptCarCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, 
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -14082,8 +15650,8 @@ void XWalkGptCarCommandRej::InternalSwap(XWalkGptCarCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkGptCarCommandRej, _impl_.reason_)
-      + sizeof(XWalkGptCarCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkGptCarCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkGptCarCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkGptCarCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -14092,7 +15660,7 @@ void XWalkGptCarCommandRej::InternalSwap(XWalkGptCarCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkGptCarCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[40]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[41]);
 }
 
 // ===================================================================
@@ -14115,6 +15683,7 @@ XWalkVoiceControlledCarCommandRej::XWalkVoiceControlledCarCommandRej(const XWalk
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -14135,8 +15704,8 @@ XWalkVoiceControlledCarCommandRej::XWalkVoiceControlledCarCommandRej(const XWalk
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkVoiceControlledCarCommandRej)
 }
 
@@ -14149,6 +15718,7 @@ inline void XWalkVoiceControlledCarCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -14189,8 +15759,8 @@ void XWalkVoiceControlledCarCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -14232,6 +15802,15 @@ const char* XWalkVoiceControlledCarCommandRej::_InternalParse(const char* ptr, :
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkVoiceControlledCarCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -14292,6 +15871,13 @@ uint8_t* XWalkVoiceControlledCarCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -14332,6 +15918,12 @@ size_t XWalkVoiceControlledCarCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -14362,6 +15954,9 @@ void XWalkVoiceControlledCarCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Messa
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -14390,8 +15985,8 @@ void XWalkVoiceControlledCarCommandRej::InternalSwap(XWalkVoiceControlledCarComm
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkVoiceControlledCarCommandRej, _impl_.reason_)
-      + sizeof(XWalkVoiceControlledCarCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkVoiceControlledCarCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkVoiceControlledCarCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkVoiceControlledCarCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -14400,7 +15995,7 @@ void XWalkVoiceControlledCarCommandRej::InternalSwap(XWalkVoiceControlledCarComm
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkVoiceControlledCarCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[41]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[42]);
 }
 
 // ===================================================================
@@ -14423,6 +16018,7 @@ XWalkVoicePromptCarCommandRej::XWalkVoicePromptCarCommandRej(const XWalkVoicePro
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -14443,8 +16039,8 @@ XWalkVoicePromptCarCommandRej::XWalkVoicePromptCarCommandRej(const XWalkVoicePro
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkVoicePromptCarCommandRej)
 }
 
@@ -14457,6 +16053,7 @@ inline void XWalkVoicePromptCarCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -14497,8 +16094,8 @@ void XWalkVoicePromptCarCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -14540,6 +16137,15 @@ const char* XWalkVoicePromptCarCommandRej::_InternalParse(const char* ptr, ::_pb
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkVoicePromptCarCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -14600,6 +16206,13 @@ uint8_t* XWalkVoicePromptCarCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -14640,6 +16253,12 @@ size_t XWalkVoicePromptCarCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -14670,6 +16289,9 @@ void XWalkVoicePromptCarCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& 
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -14698,8 +16320,8 @@ void XWalkVoicePromptCarCommandRej::InternalSwap(XWalkVoicePromptCarCommandRej* 
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkVoicePromptCarCommandRej, _impl_.reason_)
-      + sizeof(XWalkVoicePromptCarCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkVoicePromptCarCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkVoicePromptCarCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkVoicePromptCarCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -14708,7 +16330,7 @@ void XWalkVoicePromptCarCommandRej::InternalSwap(XWalkVoicePromptCarCommandRej* 
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkVoicePromptCarCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[42]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[43]);
 }
 
 // ===================================================================
@@ -14731,6 +16353,7 @@ XWalkStorytellingRobotCommandRej::XWalkStorytellingRobotCommandRej(const XWalkSt
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -14751,8 +16374,8 @@ XWalkStorytellingRobotCommandRej::XWalkStorytellingRobotCommandRej(const XWalkSt
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkStorytellingRobotCommandRej)
 }
 
@@ -14765,6 +16388,7 @@ inline void XWalkStorytellingRobotCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -14805,8 +16429,8 @@ void XWalkStorytellingRobotCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -14848,6 +16472,15 @@ const char* XWalkStorytellingRobotCommandRej::_InternalParse(const char* ptr, ::
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkStorytellingRobotCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -14908,6 +16541,13 @@ uint8_t* XWalkStorytellingRobotCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -14948,6 +16588,12 @@ size_t XWalkStorytellingRobotCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -14978,6 +16624,9 @@ void XWalkStorytellingRobotCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Messag
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -15006,8 +16655,8 @@ void XWalkStorytellingRobotCommandRej::InternalSwap(XWalkStorytellingRobotComman
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkStorytellingRobotCommandRej, _impl_.reason_)
-      + sizeof(XWalkStorytellingRobotCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkStorytellingRobotCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkStorytellingRobotCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkStorytellingRobotCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -15016,7 +16665,7 @@ void XWalkStorytellingRobotCommandRej::InternalSwap(XWalkStorytellingRobotComman
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkStorytellingRobotCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[43]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[44]);
 }
 
 // ===================================================================
@@ -15039,6 +16688,7 @@ XWalkCalibrateCommandRej::XWalkCalibrateCommandRej(const XWalkCalibrateCommandRe
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -15059,8 +16709,8 @@ XWalkCalibrateCommandRej::XWalkCalibrateCommandRej(const XWalkCalibrateCommandRe
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkCalibrateCommandRej)
 }
 
@@ -15073,6 +16723,7 @@ inline void XWalkCalibrateCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -15113,8 +16764,8 @@ void XWalkCalibrateCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -15156,6 +16807,15 @@ const char* XWalkCalibrateCommandRej::_InternalParse(const char* ptr, ::_pbi::Pa
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkCalibrateCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -15216,6 +16876,13 @@ uint8_t* XWalkCalibrateCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -15256,6 +16923,12 @@ size_t XWalkCalibrateCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -15286,6 +16959,9 @@ void XWalkCalibrateCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_ms
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -15314,8 +16990,8 @@ void XWalkCalibrateCommandRej::InternalSwap(XWalkCalibrateCommandRej* other) {
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkCalibrateCommandRej, _impl_.reason_)
-      + sizeof(XWalkCalibrateCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkCalibrateCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkCalibrateCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkCalibrateCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -15324,7 +17000,7 @@ void XWalkCalibrateCommandRej::InternalSwap(XWalkCalibrateCommandRej* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkCalibrateCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[44]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[45]);
 }
 
 // ===================================================================
@@ -15347,6 +17023,7 @@ XWalkVideoStreamCommandRej::XWalkVideoStreamCommandRej(const XWalkVideoStreamCom
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.error_signal_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -15367,8 +17044,8 @@ XWalkVideoStreamCommandRej::XWalkVideoStreamCommandRej(const XWalkVideoStreamCom
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.responding_, &from._impl_.responding_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.reason_) -
-    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.error_signal_) -
+    reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   // @@protoc_insertion_point(copy_constructor:xwalk.iw.v1.XWalkVideoStreamCommandRej)
 }
 
@@ -15381,6 +17058,7 @@ inline void XWalkVideoStreamCommandRej::SharedCtor(
     , decltype(_impl_.detail_){}
     , decltype(_impl_.responding_){false}
     , decltype(_impl_.reason_){0u}
+    , decltype(_impl_.error_signal_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.data_.InitDefault();
@@ -15421,8 +17099,8 @@ void XWalkVideoStreamCommandRej::Clear() {
   _impl_.data_.ClearToEmpty();
   _impl_.detail_.ClearToEmpty();
   ::memset(&_impl_.responding_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.reason_) -
-      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.reason_));
+      reinterpret_cast<char*>(&_impl_.error_signal_) -
+      reinterpret_cast<char*>(&_impl_.responding_)) + sizeof(_impl_.error_signal_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -15464,6 +17142,15 @@ const char* XWalkVideoStreamCommandRej::_InternalParse(const char* ptr, ::_pbi::
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "xwalk.iw.v1.XWalkVideoStreamCommandRej.detail"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_error_signal(static_cast<::xwalk::iw::v1::XWalkErrorSignalNumber>(val));
         } else
           goto handle_unusual;
         continue;
@@ -15524,6 +17211,13 @@ uint8_t* XWalkVideoStreamCommandRej::_InternalSerialize(
         4, this->_internal_detail(), target);
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_error_signal(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -15564,6 +17258,12 @@ size_t XWalkVideoStreamCommandRej::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_reason());
   }
 
+  // .xwalk.iw.v1.XWalkErrorSignalNumber error_signal = 5;
+  if (this->_internal_error_signal() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_error_signal());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -15594,6 +17294,9 @@ void XWalkVideoStreamCommandRej::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_
   if (from._internal_reason() != 0) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (from._internal_error_signal() != 0) {
+    _this->_internal_set_error_signal(from._internal_error_signal());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -15622,8 +17325,8 @@ void XWalkVideoStreamCommandRej::InternalSwap(XWalkVideoStreamCommandRej* other)
       &other->_impl_.detail_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XWalkVideoStreamCommandRej, _impl_.reason_)
-      + sizeof(XWalkVideoStreamCommandRej::_impl_.reason_)
+      PROTOBUF_FIELD_OFFSET(XWalkVideoStreamCommandRej, _impl_.error_signal_)
+      + sizeof(XWalkVideoStreamCommandRej::_impl_.error_signal_)
       - PROTOBUF_FIELD_OFFSET(XWalkVideoStreamCommandRej, _impl_.responding_)>(
           reinterpret_cast<char*>(&_impl_.responding_),
           reinterpret_cast<char*>(&other->_impl_.responding_));
@@ -15632,7 +17335,7 @@ void XWalkVideoStreamCommandRej::InternalSwap(XWalkVideoStreamCommandRej* other)
 ::PROTOBUF_NAMESPACE_ID::Metadata XWalkVideoStreamCommandRej::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_getter, &descriptor_table_xHal_5fRpi5CarXIwMessageRej_2eproto_once,
-      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[45]);
+      file_level_metadata_xHal_5fRpi5CarXIwMessageRej_2eproto[46]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -15640,6 +17343,10 @@ void XWalkVideoStreamCommandRej::InternalSwap(XWalkVideoStreamCommandRej* other)
 }  // namespace iw
 }  // namespace xwalk
 PROTOBUF_NAMESPACE_OPEN
+template<> PROTOBUF_NOINLINE ::xwalk::iw::v1::XWalkTraceRej*
+Arena::CreateMaybeMessage< ::xwalk::iw::v1::XWalkTraceRej >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::xwalk::iw::v1::XWalkTraceRej >(arena);
+}
 template<> PROTOBUF_NOINLINE ::xwalk::iw::v1::XWalkI2cRejPayload*
 Arena::CreateMaybeMessage< ::xwalk::iw::v1::XWalkI2cRejPayload >(Arena* arena) {
   return Arena::CreateMessageInternal< ::xwalk::iw::v1::XWalkI2cRejPayload >(arena);

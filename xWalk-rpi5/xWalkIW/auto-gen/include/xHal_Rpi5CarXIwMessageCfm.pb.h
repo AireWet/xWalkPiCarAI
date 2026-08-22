@@ -31,6 +31,7 @@
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/unknown_field_set.h>
 #include "xHal_Rpi5CarXIwMessageReq.pb.h"
+#include "xHal_Rpi5CarXIwSignal.pb.h"
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_xHal_5fRpi5CarXIwMessageCfm_2eproto
