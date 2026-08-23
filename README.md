@@ -10,21 +10,21 @@ Normal host builds use simulated or software backends and do not actuate physica
 
 ```text
 MyPiCarX/
-├── xWalk-rpi5/                Integrated Raspberry Pi 5 product
+├── xWalk-rpi5-hw/             Integrated Raspberry Pi 5 product
 │   ├── CMakeLists.txt         Product build entry point
 │   ├── CMakePresets.json      Supported host and Raspberry Pi build presets
 │   ├── xWalkAgent/            Product behavior and feature agents
 │   ├── xWalkAudioResources/   Versioned sound and music resources
 │   ├── xWalkController/       CLI and application composition
 │   ├── xWalkHal/              Hardware abstraction and simulation backends
-│   ├── xWalkIW/               Interface schemas and generated bindings
 │   ├── xWalkLibrary/          Shared libraries and external dependencies
 │   ├── xWalkTrace/            Shared tracing implementation
 │   └── cmake/                 Shared CMake modules and toolchains
 ├── devloper-note/             Developer documentation components
 │   ├── gerrit-note/           Gerrit administration and CI documentation
 │   └── xwalk-rpi5-note/       C++ architecture, build, and deployment documentation
-└── xWalkTool/                 CI, Gerrit, deployment, quality, and maintenance tools
+├── xWalk-rpi5-iw/             Interface schemas and generated bindings
+└── scripts/integration/           CI, Gerrit, deployment, quality, and maintenance tools
 ```
 
 ## Prerequisites
@@ -45,10 +45,10 @@ quality tools, generators, Raspberry Pi packages, and dependency troubleshooting
 ## Build the complete repository
 
 Run all commands from the repository root. The `sanity` preset enables the complete Debug host build, tests,
-compile commands, and strict compiler warnings. The preset is loaded from the `xWalk-rpi5` product source tree.
+compile commands, and strict compiler warnings. The preset is loaded from the `xWalk-rpi5-hw` product source tree.
 
 ```bash
-cmake --fresh -S xWalk-rpi5 --preset sanity
+cmake --fresh -S xWalk-rpi5-hw --preset sanity
 cmake --build build-host/sanity --parallel
 ctest --test-dir build-host/sanity --output-on-failure --no-tests=error
 ```
@@ -58,7 +58,7 @@ The generated files are written below `build-host/sanity`.
 For an optimized host build:
 
 ```bash
-cmake --fresh -S xWalk-rpi5 --preset host-release
+cmake --fresh -S xWalk-rpi5-hw --preset host-release
 cmake --build build-host/release --parallel
 ctest --test-dir build-host/release --output-on-failure --no-tests=error
 ```
@@ -69,7 +69,7 @@ After building the `sanity` preset, validate the deployment configuration withou
 contacting external services:
 
 ```bash
-build-host/sanity/xWalkController/xWalkApp/xwalk-picarx-control --deployment-config="$PWD/xWalk-rpi5/xWalkController/xWalkConfig/picar-x.conf" --diagnose --no-hardware
+build-host/sanity/xWalkController/xWalkApp/xwalk-picarx-control --deployment-config="$PWD/xWalk-rpi5-hw/xWalkController/xWalkConfig/picar-x.conf" --diagnose --no-hardware
 ```
 
 The diagnostic must finish with `[SIMULATED]`. Do not remove `--no-hardware` during ordinary host validation.
@@ -79,7 +79,7 @@ The diagnostic must finish with `[SIMULATED]`. Do not remove `--no-hardware` dur
 Create and test a staged Release installation without modifying the host system:
 
 ```bash
-cmake --fresh -S xWalk-rpi5 --preset host-release
+cmake --fresh -S xWalk-rpi5-hw --preset host-release
 cmake --build build-host/release --parallel
 DESTDIR="$PWD/build-host/deploy" cmake --install build-host/release
 ```
@@ -100,7 +100,7 @@ services, configuration, and rollback are documented in the
 On a compatible Raspberry Pi build host, configure and compile the product with:
 
 ```bash
-cmake --fresh -S xWalk-rpi5 --preset rpi-release
+cmake --fresh -S xWalk-rpi5-hw --preset rpi-release
 cmake --build build-rpi/cmake --parallel
 ctest --test-dir build-rpi/cmake -N -L hardware
 ```
@@ -118,8 +118,8 @@ confirming the Raspberry Pi model, Robot HAT revision, wiring, power, clear move
 - [C++ documentation index](devloper-note/xwalk-rpi5-note/index.md)
 - [Build and open the developer-note wiki](devloper-note/README.md)
 - [Build and installation guide](devloper-note/xwalk-rpi5-note/Doc/note/Installation.md)
-- [Controller and CLI overview](xWalk-rpi5/xWalkController/README.md)
-- [Development and maintenance tools](xWalkTool/README.md)
+- [Controller and CLI overview](xWalk-rpi5-hw/xWalkController/README.md)
+- [Development and maintenance tools](scripts/integration/README.md)
 - [Repository instructions](AGENTS.md)
 
 ## Run Gerrit and Gerrit CI
@@ -144,19 +144,19 @@ environment override to disable push-triggered startup.
 Assess the local host before the first installation:
 
 ```bash
-xWalkTool/py-agent/gerrit-tool/local-linux/gerrit-local.sh assess
+scripts/integration/py-agent/gerrit-tool/local-linux/gerrit-local.sh assess
 ```
 
 Install and start a local Gerrit instance when it has not been installed previously:
 
 ```bash
-xWalkTool/py-agent/gerrit-tool/local-linux/gerrit-local.sh install
+scripts/integration/py-agent/gerrit-tool/local-linux/gerrit-local.sh install
 ```
 
 Start an existing local Gerrit instance after a reboot or shutdown:
 
 ```bash
-xWalkTool/py-agent/gerrit-tool/local-linux/gerrit-local.sh start
+scripts/integration/py-agent/gerrit-tool/local-linux/gerrit-local.sh start
 ```
 
 After installation, use the generated management commands to inspect and control the server:
@@ -176,8 +176,8 @@ git config --file "$HOME/gerrit-site/etc/gerrit.config" --get gerrit.canonicalWe
 ```
 
 The local profile normally exposes Gerrit SSH on port `29419`. Installation details and troubleshooting are in the
-[local Gerrit guide](xWalkTool/py-agent/gerrit-tool/local-linux/README.md). Administrators operating the managed
-server profile should use the separate [Gerrit administration guide](xWalkTool/py-agent/gerrit-tool/README.md).
+[local Gerrit guide](scripts/integration/py-agent/gerrit-tool/local-linux/README.md). Administrators operating the managed
+server profile should use the separate [Gerrit administration guide](scripts/integration/py-agent/gerrit-tool/README.md).
 
 ### Run Gerrit Host Quality CI
 
@@ -226,10 +226,10 @@ Selecting **Mark As Active** in Gerrit triggers CI for the current WIP patch set
 Run representative repository-owned checks locally before uploading:
 
 ```bash
-xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh preparation
-xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh developer-note-wiki
-xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh deployment-scripts
-xWalkTool/shell-agent/gerrit-tool/run-host-ci-job.sh build-and-test gcc Debug
+scripts/integration/shell-agent/gerrit-tool/run-host-ci-job.sh preparation
+scripts/integration/shell-agent/gerrit-tool/run-host-ci-job.sh developer-note-wiki
+scripts/integration/shell-agent/gerrit-tool/run-host-ci-job.sh deployment-scripts
+scripts/integration/shell-agent/gerrit-tool/run-host-ci-job.sh build-and-test gcc Debug
 ```
 
 These checks are host-safe and do not authorize physical hardware tests.

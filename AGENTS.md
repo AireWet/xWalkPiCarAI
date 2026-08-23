@@ -9,7 +9,7 @@ read and follow both knowledge-base documents:
 - [`.agents/gudlines/DOCUMENTATION_GUIDELINES.md`](.agents/gudlines/DOCUMENTATION_GUIDELINES.md)
 
 Treat these files as the coding, architecture, and documentation knowledge base
-for the complete `MyPiCarX` workspace, including `xWalk-rpi5/xWalkLibrary/common`, `xWalkHal`,
+for the complete `MyPiCarX` workspace, including `xWalk-rpi5-hw/xWalkLibrary/common`, `xWalkHal`,
 `xWalkAgent`, and `xWalkController`.
 
 Apply the guide to every future implementation. Preserve intentional existing
@@ -46,14 +46,14 @@ below `xWalkLibrary/x86_64` and `xWalkLibrary/aarch64`.
 Before completing any C++ change, format all project-owned C++ files with:
 
 ```bash
-xWalkTool/py-agent/dev-tool/styler-tool/xWalkStyler format
+scripts/integration/py-agent/dev-tool/styler-tool/xWalkStyler format
 ```
 
 Before submitting or merging a change, validate formatting without modifying
 the checkout:
 
 ```bash
-xWalkTool/py-agent/dev-tool/styler-tool/xWalkStyler check
+scripts/integration/py-agent/dev-tool/styler-tool/xWalkStyler check
 ```
 
 ## Header-owned type definitions
@@ -118,7 +118,7 @@ an active change into WIP must not trigger CI.
 
 GitHub contains only the configured integrated repository. During the current
 migration that repository is `xWalkPiCarAI/master`; the final target is
-`xWalk-rpi5/master`. Component repositories must not have GitHub remotes. After
+`xWalk-rpi5-hw/master`. Component repositories must not have GitHub remotes. After
 an integration change passes complete CI, receives approval, and is submitted
 to the configured Gerrit integration branch, the dedicated synchronization
 service may fast-forward that exact submitted commit to the matching GitHub

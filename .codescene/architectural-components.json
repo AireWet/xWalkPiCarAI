@@ -1,31 +1,31 @@
 [
   {
     "name": "Agent",
-    "patterns": ["xWalk-rpi5/xWalkAgent/**"]
+    "patterns": ["xWalk-rpi5-hw/xWalkAgent/**"]
   },
   {
     "name": "Audio Resources",
-    "patterns": ["xWalk-rpi5/xWalkAudioResources/**"]
+    "patterns": ["xWalk-rpi5-hw/xWalkAudioResources/**"]
   },
   {
     "name": "Controller",
-    "patterns": ["xWalk-rpi5/xWalkController/**"]
+    "patterns": ["xWalk-rpi5-hw/xWalkController/**"]
   },
   {
     "name": "HAL",
-    "patterns": ["xWalk-rpi5/xWalkHal/**"]
+    "patterns": ["xWalk-rpi5-hw/xWalkHal/**"]
   },
   {
     "name": "Interface",
-    "patterns": ["xWalk-rpi5/xWalkIW/**"]
+    "patterns": ["xWalk-rpi5-iw/**"]
   },
   {
     "name": "Library",
-    "patterns": ["xWalk-rpi5/xWalkLibrary/**"]
+    "patterns": ["xWalk-rpi5-hw/xWalkLibrary/**"]
   },
   {
     "name": "Trace",
-    "patterns": ["xWalk-rpi5/xWalkTrace/**"]
+    "patterns": ["xWalk-rpi5-hw/xWalkTrace/**"]
   },
   {
     "name": "Developer Documentation",

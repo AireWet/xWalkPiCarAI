@@ -4,7 +4,7 @@
     "files.associations": {
         "*.h": "cpp"
     },
-    "cmake.sourceDirectory": "${workspaceFolder}/xWalk-rpi5",
+    "cmake.sourceDirectory": "${workspaceFolder}/xWalk-rpi5-hw",
     "cmake.configureOnOpen": true,
     "cmake.useCMakePresets": "always",
     "github-actions.remote-name": "github-actions",

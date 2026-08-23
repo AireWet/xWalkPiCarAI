@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 4.0.0?>
+<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+    <storageModule moduleId="org.eclipse.cdt.core.settings">
+        <cconfiguration id="xwalk.host.debug">
+            <storageModule buildSystemId="org.eclipse.cdt.core.defaultConfigDataProvider"
+                id="xwalk.host.debug" moduleId="org.eclipse.cdt.core.settings" name="Host Debug">
+                <externalSettings/>
+                <extensions>
+                    <extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+                    <extension id="org.eclipse.cdt.core.GNU_ELF" point="org.eclipse.cdt.core.BinaryParser">
+                        <attribute key="addr2line" value="addr2line"/>
+                        <attribute key="c++filt" value="c++filt"/>
+                    </extension>
+                </extensions>
+            </storageModule>
+            <storageModule moduleId="org.eclipse.cdt.core.language.mapping">
+                <project-mappings/>
+            </storageModule>
+            <storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+            <storageModule moduleId="org.eclipse.cdt.core.pathentry">
+                <pathentry excluding="**/build*/**|**/CMakeFiles/**" kind="src" path=""/>
+                <pathentry kind="out" path="xWalkController/build-eclipse-host"/>
+                <pathentry kind="con" name="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO" path=""/>
+                <pathentry kind="mac" name="__cplusplus" path="" value="201703L"/>
+                <pathentry kind="mac" name="XWALK_RUNTIME_DATA_DIRECTORY" path=""
+                    value="&quot;/usr/local/share/xwalk&quot;"/>
+                <pathentry kind="mac" name="XWALK_PICARX_CONFIG_FILE" path=""
+                    value="&quot;xWalkController/xWalkConfig/picar-x.conf&quot;"/>
+                <pathentry kind="mac" name="XWALK_TEST_SOUND_DIRECTORY" path=""
+                    value="&quot;xWalkAudioResources/sounds&quot;"/>
+                <pathentry kind="mac" name="XWALK_TEST_MUSIC_DIRECTORY" path=""
+                    value="&quot;xWalkAudioResources/music&quot;"/>
+                <pathentry kind="mac" name="XWALK_VOICE_ACTIVE_CAR_CONFIG_DIRECTORY" path=""
+                    value="&quot;xWalkAgent/xWalkVoice/xWalkVoiceActiveCar/config&quot;"/>
+                <pathentry include="/usr/include/opencv4" kind="inc" path="" system="true"/>
+                <pathentry include="xWalkLibrary/common/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkController/xWalkHandler/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkController/xWalkApp/activate/include"
+                    kind="inc" path="" system="false"/>
+                <pathentry include="xWalkController/xWalkApp/boot/include"
+                    kind="inc" path="" system="false"/>
+                <pathentry include="xWalkController/xWalkApp/parse/include"
+                    kind="inc" path="" system="false"/>
+                <pathentry include="xWalkController/xWalkTest/xGoogleTest/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkController/xWalkTest/xSequenceTest/core/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkController/xWalkTest/xSequenceTest/hardware/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkCalibration/xWalkGrayscaleCalibration/include"
+                    kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkCalibration/xWalkServoMotorCalibration/include"
+                    kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkCalibration/xWalkServoZeroing/include"
+                    kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkConnectivity/xWalkSpiTransfer/include"
+                    kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkPlatform/xWalkBoot/core/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkPlatform/xWalkBoot/hardware/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkPlatform/xWalkBoot/stub/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkPlatform/xWalkBoot/stub/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVision/xWalkCameraCapture/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVehicle/xWalkCliffDetection/include"
+                    kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVehicle/xWalkKeyboardControl/include"
+                    kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVehicle/xWalkLineTracking/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVehicle/xWalkMoveExample/include"
+                    kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVehicle/xWalkObstacleAvoidance/include"
+                    kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVision/xWalkComputerVision/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVision/xWalkFaceTracking/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVision/xWalkBullFight/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVision/xWalkTreasureHunt/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVision/xWalkVideoRecording/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVision/xWalkVideoRecording/hardware/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVision/xWalkVideoCar/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkConnectivity/xWalkAppControl/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkConnectivity/xWalkAppControl/hardware/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkMedia/xWalkSoundBackgroundMusic/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVision/xWalkComputerVision/hardware/include"
+                    kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVoice/xWalkLocalVoiceChatbot/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVoice/xWalkVoiceActiveCar/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVoice/xWalkVoicePromptCar/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVoice/xWalkStorytellingRobot/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVoice/xWalkVoiceControlledCar/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVoice/xWalkTextVisionTalk/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVoice/xWalkOnlineLlmTest/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVoice/xWalkVoiceActiveCarGpt/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVoice/xWalkGptCar/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVehicle/xWalkPicarx/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkAgent/xWalkVehicle/xWalkSelfDrive/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkAdc/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkAdc/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkAdc/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkAdxl345/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkAdxl345/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkAdxl345/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkAudio/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkAudio/hardware/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkAudio/hardware/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkAudio/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkConfig/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkConfig/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkBoardControl/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkBoardControl/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkBoardControl/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/sensor/xWalkBuzzer/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/sensor/xWalkBuzzer/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/sensor/xWalkBuzzer/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkCamera/core/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkCamera/hardware/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkCamera/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkCamera/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkConfig/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkGpio/core/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkGpio/hardware/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkGpio/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkGpio/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkGPT/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkGPT/hardware/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkGPT/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkGPT/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkI2c/core/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkI2c/hardware/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkI2c/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkI2c/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkLanguageModel/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkLanguageModel/hardware/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkLanguageModel/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkLanguageModel/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/sensor/xWalkLed/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/sensor/xWalkLed/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/sensor/xWalkLed/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/sensor/xWalkLineTracker/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/sensor/xWalkLineTracker/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/sensor/xWalkLineTracker/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/sensor/xWalkMotor/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/sensor/xWalkMotor/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/sensor/xWalkMotor/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkMusic/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkMusic/hardware/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkMusic/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkMusic/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkPwm/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkPwm/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkPwm/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkRobot/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkRobot/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkRobot/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkServo/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkServo/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkServo/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkSpi/core/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkSpi/hardware/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkSpi/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkSpi/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkSpeaker/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkSpeaker/hardware/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkSpeaker/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkSpeaker/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/xWalkTest/xExample/core/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/xWalkTest/xExample/hardware/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/xWalkTest/xGoogleTest/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/xWalkTest/xSequenceTest/core/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/xWalkTest/xSequenceTest/hardware/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkTrace/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkUltrasonic/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkUltrasonic/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkUltrasonic/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkUserButton/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkUserButton/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/device/xWalkUserButton/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkUtils/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkUtils/hardware/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkUtils/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/interface/xWalkUtils/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkVoiceAssistant/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkVoiceAssistant/simulation/include" kind="inc" path="" system="false"/>
+                <pathentry include="xWalkHal/layer1/xWalkVoiceAssistant/test/include" kind="inc" path="" system="false"/>
+                <pathentry include="../xWalk-rpi5-iw/auto-gen/include" kind="inc" path="" system="false"/>
+            </storageModule>
+        </cconfiguration>
+    </storageModule>
+    <storageModule moduleId="cdtBuildSystem" version="4.0.0">
+        <project id="xWalk-rpi5-hw.null.1" name="xWalk-rpi5-hw" projectType="org.eclipse.cdt.build.core.prefbase.projectType"/>
+    </storageModule>
+    <storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+    <storageModule moduleId="scannerConfiguration">
+        <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+    </storageModule>
+</cproject>

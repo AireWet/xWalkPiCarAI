@@ -37,8 +37,8 @@ CMakeUserPresets.json
 *.la
 *.so
 *.so.*
-!/xWalk-rpi5/xWalkLibrary/aarch64/lib/libvosk.so
-!/xWalk-rpi5/xWalkLibrary/x86_64/lib/libvosk.so
+!/xWalk-rpi5-hw/xWalkLibrary/aarch64/lib/libvosk.so
+!/xWalk-rpi5-hw/xWalkLibrary/x86_64/lib/libvosk.so
 *.dylib
 *.dll
 *.exe
@@ -85,7 +85,7 @@ junit.xml
 *.swo
 *~
 /core.[0-9]*
-/xWalkTool/py-agent/gerrit-tool/logs/runtime/
+/scripts/integration/py-agent/gerrit-tool/logs/runtime/
 
 # Tool, language, and editor caches
 .cache/
@@ -117,11 +117,11 @@ Desktop.ini
 # Local deployment configuration and credentials
 .netrc
 *.netrc
-/xWalk-rpi5/xWalkLibrary/X_WALK_LICENSE.KEY
-/xWalk-rpi5/xWalkController/xWalkConfig/picar-x.local.conf
+/xWalk-rpi5-hw/xWalkLibrary/X_WALK_LICENSE.KEY
+/xWalk-rpi5-hw/xWalkController/xWalkConfig/picar-x.local.conf
 **/xWalkLicense.*.json
 **/xWalkLicense.*.cfg
-!/xWalkTool/shell-agent/env-tool/license/xWalkLicense.cfg
+!/scripts/integration/shell-agent/env-tool/license/xWalkLicense.cfg
 **/xWalkLicense.decrypted.json
 **/decrypted-license*.json
 **/decrypted-environment*.json

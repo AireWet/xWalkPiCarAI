@@ -1,0 +1,24 @@
+[submodule "xWalkAgent"]
+	path = xWalkAgent
+	url = ../xWalkAgent
+	branch = master
+[submodule "xWalkAudioResources"]
+	path = xWalkAudioResources
+	url = ../xWalkAudioResources
+	branch = master
+[submodule "xWalkController"]
+	path = xWalkController
+	url = ../xWalkController
+	branch = master
+[submodule "xWalkHal"]
+	path = xWalkHal
+	url = ../xWalkHal
+	branch = master
+[submodule "xWalkLibrary"]
+	path = xWalkLibrary
+	url = ../xWalkLibrary
+	branch = master
+[submodule "xWalkTrace"]
+	path = xWalkTrace
+	url = ../xWalkTrace
+	branch = master
