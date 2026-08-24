@@ -20,14 +20,35 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
-      - name: Check out exact Gerrit component commits
-        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
+      - name: Check out exact submitted component commits
+        uses: ./.github/actions/checkout-private-submodules
+        with:
+          key-bundle: ${{ secrets.AIREWET_SUBMODULE_READ_KEYS }}
       - name: Validate xWalk host dependencies
         run: xWalk-rpi5-tool/shell-agent/quality-tool/check-host-quality-dependencies.sh
       - name: Validate shell scripts and CI metadata
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh preparation
       - name: Validate C++ formatting
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh styler
+      - name: Package exact submitted sources for secret-free jobs
+        run: |
+          tar --create --file "$RUNNER_TEMP/xwalk-submitted-sources.tar" \
+            --exclude='*/.git' \
+            devloper-note \
+            xWalk-rpi5-hw/xWalkAgent \
+            xWalk-rpi5-hw/xWalkAudioResources \
+            xWalk-rpi5-hw/xWalkController \
+            xWalk-rpi5-hw/xWalkHal \
+            xWalk-rpi5-hw/xWalkLibrary \
+            xWalk-rpi5-hw/xWalkTrace \
+            xWalk-rpi5-iw \
+            xWalk-rpi5-tool
+      - uses: actions/upload-artifact@v6
+        with:
+          name: xwalk-submitted-sources-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/xwalk-submitted-sources.tar
+          compression-level: 0
+          retention-days: 1
 
   xwalk-agent:
     name: xWalkAgent
@@ -35,8 +56,10 @@ jobs:
     runs-on: [self-hosted, linux, x64, xwalk-ci]
     steps:
       - uses: actions/checkout@v6
-      - name: Check out exact Gerrit component commits
-        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
+      - name: Check out exact submitted component commits
+        uses: ./.github/actions/checkout-private-submodules
+        with:
+          key-bundle: ${{ secrets.AIREWET_SUBMODULE_READ_KEYS }}
       - name: Configure and build xWalkAgent
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-agent-build
       - name: Run xWalkAgent aggregate tests
@@ -52,8 +75,10 @@ jobs:
     runs-on: [self-hosted, linux, x64, xwalk-ci]
     steps:
       - uses: actions/checkout@v6
-      - name: Check out exact Gerrit component commits
-        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
+      - name: Check out exact submitted component commits
+        uses: ./.github/actions/checkout-private-submodules
+        with:
+          key-bundle: ${{ secrets.AIREWET_SUBMODULE_READ_KEYS }}
       - name: Configure and build xWalkController
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-controller-build
       - name: Run controller, CLI, and Controller-to-HAL tests
@@ -67,8 +92,10 @@ jobs:
     runs-on: [self-hosted, linux, x64, xwalk-ci]
     steps:
       - uses: actions/checkout@v6
-      - name: Check out exact Gerrit component commits
-        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
+      - name: Check out exact submitted component commits
+        uses: ./.github/actions/checkout-private-submodules
+        with:
+          key-bundle: ${{ secrets.AIREWET_SUBMODULE_READ_KEYS }}
       - name: Configure and build xWalkHal
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-hal-build
       - name: Run HAL unit and host-safe sequence tests
@@ -86,8 +113,10 @@ jobs:
     runs-on: [self-hosted, linux, x64, xwalk-ci]
     steps:
       - uses: actions/checkout@v6
-      - name: Check out exact Gerrit component commits
-        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
+      - name: Check out exact submitted component commits
+        uses: ./.github/actions/checkout-private-submodules
+        with:
+          key-bundle: ${{ secrets.AIREWET_SUBMODULE_READ_KEYS }}
       - name: Configure and build xWalk-rpi5-iw
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-iw-build
       - name: Run schema, serialization, gRPC, signal, and transport tests
@@ -99,8 +128,10 @@ jobs:
     runs-on: [self-hosted, linux, x64, xwalk-ci]
     steps:
       - uses: actions/checkout@v6
-      - name: Check out exact Gerrit component commits
-        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
+      - name: Check out exact submitted component commits
+        uses: ./.github/actions/checkout-private-submodules
+        with:
+          key-bundle: ${{ secrets.AIREWET_SUBMODULE_READ_KEYS }}
       - name: Configure and build xWalkLibrary consumers
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-library-build
       - name: Run shared-library, configuration, utility, licence, and architecture tests
@@ -112,8 +143,10 @@ jobs:
     runs-on: [self-hosted, linux, x64, xwalk-ci]
     steps:
       - uses: actions/checkout@v6
-      - name: Check out exact Gerrit component commits
-        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
+      - name: Check out exact submitted component commits
+        uses: ./.github/actions/checkout-private-submodules
+        with:
+          key-bundle: ${{ secrets.AIREWET_SUBMODULE_READ_KEYS }}
       - name: Build and run Trace formatting, routing, macro, and selector tests
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-trace-tests
 
@@ -123,8 +156,10 @@ jobs:
     runs-on: [self-hosted, linux, x64, xwalk-ci]
     steps:
       - uses: actions/checkout@v6
-      - name: Check out exact Gerrit component commits
-        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
+      - name: Check out exact submitted component commits
+        uses: ./.github/actions/checkout-private-submodules
+        with:
+          key-bundle: ${{ secrets.AIREWET_SUBMODULE_READ_KEYS }}
       - name: Configure and build recorded vision scenarios
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-vision-build
       - name: Validate recorded media, OpenCV scenarios, safety, and assets
@@ -136,8 +171,10 @@ jobs:
     runs-on: [self-hosted, linux, x64, xwalk-ci]
     steps:
       - uses: actions/checkout@v6
-      - name: Check out exact Gerrit component commits
-        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
+      - name: Check out exact submitted component commits
+        uses: ./.github/actions/checkout-private-submodules
+        with:
+          key-bundle: ${{ secrets.AIREWET_SUBMODULE_READ_KEYS }}
       - name: Configure and build xWalk Streaming
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-streaming-build
       - name: Run loopback HTTP, MJPEG, lifecycle, timeout, and backpressure tests
@@ -150,8 +187,10 @@ jobs:
     timeout-minutes: 240
     steps:
       - uses: actions/checkout@v6
-      - name: Check out exact Gerrit component commits
-        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
+      - name: Check out exact submitted component commits
+        uses: ./.github/actions/checkout-private-submodules
+        with:
+          key-bundle: ${{ secrets.AIREWET_SUBMODULE_READ_KEYS }}
       - name: Run GCC Debug build and tests
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh build-and-test gcc Debug
       - name: Run GCC Release build and tests
@@ -204,8 +243,10 @@ jobs:
     runs-on: [self-hosted, linux, x64, xwalk-ci]
     steps:
       - uses: actions/checkout@v6
-      - name: Check out exact Gerrit component commits
-        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
+      - name: Check out exact submitted component commits
+        uses: ./.github/actions/checkout-private-submodules
+        with:
+          key-bundle: ${{ secrets.AIREWET_SUBMODULE_READ_KEYS }}
       - name: Validate deployment and provisioning scripts
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh deployment-scripts
       - name: Validate ARM64 dependencies and configured cross-build
@@ -223,8 +264,10 @@ jobs:
     runs-on: [self-hosted, linux, x64, xwalk-ci]
     steps:
       - uses: actions/checkout@v6
-      - name: Check out exact Gerrit component commits
-        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
+      - name: Check out exact submitted component commits
+        uses: ./.github/actions/checkout-private-submodules
+        with:
+          key-bundle: ${{ secrets.AIREWET_SUBMODULE_READ_KEYS }}
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
@@ -244,8 +287,13 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Check out exact Gerrit component commits
-        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
+      - name: Download exact submitted component sources
+        uses: actions/download-artifact@v6
+        with:
+          name: xwalk-submitted-sources-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}
+      - name: Restore exact submitted component sources
+        run: tar --extract --file "$RUNNER_TEMP/xwalk-submitted-sources.tar" --directory "$GITHUB_WORKSPACE"
       - name: Validate MyPiCarX CodeScene component configuration
         run: xWalk-rpi5-tool/py-agent/dev-tool/xWalkCodeHealth validate-config
       - name: Analyse changed code with the licensed CodeScene CLI when available

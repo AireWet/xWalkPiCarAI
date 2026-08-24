@@ -1,0 +1,16 @@
+name: Check out private xWalk submodules
+description: Initialize exact submitted component gitlinks with repository-scoped read-only keys.
+
+inputs:
+  key-bundle:
+    description: JSON object containing the private read-only deploy keys.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Initialize exact submitted component commits
+      shell: bash
+      env:
+        AIREWET_SUBMODULE_READ_KEYS: ${{ inputs.key-bundle }}
+      run: ${{ github.action_path }}/checkout.sh

@@ -25,9 +25,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Validate the integrated repository metadata
-        env:
-          XWALK_GITHUB_METADATA_ONLY: 'true'
-        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
+        uses: ./.github/actions/checkout-private-submodules
+        with:
+          key-bundle: ${{ secrets.AIREWET_SUBMODULE_READ_KEYS }}
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
