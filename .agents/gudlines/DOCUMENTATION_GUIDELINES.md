@@ -36,7 +36,10 @@ a Pages artifact but must not push; publication follows the approved Gerrit inte
 During staging, convert links from developer-note pages to tracked files outside `devloper-note` into GitHub
 source links for the deployed integration revision. Preserve checkout-relative links in the source Markdown.
 Gerrit and GitHub CI must run `xWalk-rpi5-tool/doc-tool/wiki.sh verify` to validate wiki-owned and repository-owned
-links, strictly build the generated Pages artifact, and inspect it before publication.
+links, strictly build the generated Pages artifact, and inspect it before publication. Gerrit remains the
+authoritative review system; GitHub repositories under `AireWet` contain only submitted branches replicated from
+their explicit Gerrit project mappings. Documentation must not instruct developers to push or review through
+GitHub.
 
 Documentation must:
 
