@@ -3,13 +3,13 @@ name: xWalkPiCarAI integration
 on:
   push:
     branches: [master]
-  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
 
 env:
+  AIREWET_SUBMODULE_TOKEN: ${{ secrets.AIREWET_SUBMODULE_TOKEN }}
   XWALK_INTEGRATION_PACKAGES: >-
     clang cmake ninja-build libasound2-dev libboost-dev libcurl4-openssl-dev libgmock-dev
     libgtest-dev libjson-c-dev libopencv-dev libtinyxml2-dev libyaml-cpp-dev
@@ -21,8 +21,16 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+          token: ${{ env.AIREWET_SUBMODULE_TOKEN }}
+          persist-credentials: false
+      - name: Check out exact submitted component commits
+        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
       - name: Validate integration metadata
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/validate-integration-metadata.sh
+      - name: Validate AireWet mirrors and excluded review refs
+        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/validate-airewet-mirrors.sh --remote
 
   private-integration:
     if: vars.XWALK_GERRIT_PRIVATE_CI_ENABLED == 'true'
@@ -34,6 +42,10 @@ jobs:
         build_type: [Debug, Release]
     steps:
       - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+          token: ${{ env.AIREWET_SUBMODULE_TOKEN }}
+          persist-credentials: false
       - name: Configure temporary Gerrit identity
         env:
           GERRIT_KEY: ${{ secrets.GERRIT_SUBMODULE_SSH_KEY }}
@@ -43,7 +55,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/xwalk-gerrit"
           printf '%s' "$GERRIT_KEY" > "$RUNNER_TEMP/xwalk-gerrit/id_ed25519"
           printf '%s\n' "$GERRIT_KNOWN_HOSTS" > "$RUNNER_TEMP/xwalk-gerrit/known_hosts"
-      - name: Check out exact Gerrit submodules
+      - name: Check out exact submitted component commits
         env:
           GERRIT_SUBMODULE_SSH_KEY_FILE: ${{ runner.temp }}/xwalk-gerrit/id_ed25519
           GERRIT_SSH_KNOWN_HOSTS_FILE: ${{ runner.temp }}/xwalk-gerrit/known_hosts
@@ -73,6 +85,10 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+          token: ${{ env.AIREWET_SUBMODULE_TOKEN }}
+          persist-credentials: false
       - name: Configure temporary Gerrit identity
         env:
           GERRIT_KEY: ${{ secrets.GERRIT_SUBMODULE_SSH_KEY }}
@@ -82,7 +98,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/xwalk-gerrit"
           printf '%s' "$GERRIT_KEY" > "$RUNNER_TEMP/xwalk-gerrit/id_ed25519"
           printf '%s\n' "$GERRIT_KNOWN_HOSTS" > "$RUNNER_TEMP/xwalk-gerrit/known_hosts"
-      - name: Check out exact Gerrit submodules
+      - name: Check out exact submitted component commits
         env:
           GERRIT_SUBMODULE_SSH_KEY_FILE: ${{ runner.temp }}/xwalk-gerrit/id_ed25519
           GERRIT_SSH_KNOWN_HOSTS_FILE: ${{ runner.temp }}/xwalk-gerrit/known_hosts
