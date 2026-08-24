@@ -96,11 +96,10 @@ Prefer host tests. Hardware tests are opt-in and must not be run unless the user
 explicitly requests them and confirms that the correct Raspberry Pi and Robot
 HAT setup is connected and safe.
 
-## Gerrit-authoritative, submit-gated publication
+## Gerrit-only publication
 
-Gerrit is the authoritative development and review system. Commit component
-changes in their independent repository and upload them only to Gerrit
-`master` with:
+Never push component changes directly to GitHub. Commit them in their
+independent component repository and upload them only to Gerrit `master` with:
 
 ```bash
 git push origin HEAD:refs/for/master
@@ -117,19 +116,11 @@ For a WIP change, Gerrit's **Mark As Active** button is the Activate action.
 Clearing WIP through that button triggers CI for the current patch set. Moving
 an active change into WIP must not trigger CI.
 
-GitHub repositories under `AireWet` are read-only, submit-gated mirrors.
-Pending patch sets, review refs, drafts, edits, user refs, and temporary refs
-must never be synchronized. Only an exact commit on a submitted Gerrit branch
-may be replicated to the matching GitHub branch. Developers must not push a
-component or integration branch directly to GitHub, and GitHub pull requests
-must not replace Gerrit review.
-
-An optional local `github` remote is fetch-only. Its push URL must remain the
-non-routable policy URL installed by `xWalk-git-env.sh`; `origin` remains
-Gerrit. Never force-push, rewrite published history, delete a mirrored branch,
-or use a wildcard, `--mirror`, `--all`, or working-tree publication push.
-
-The integration repository pins exact submitted component commits. Every
-submodule-pointer change requires its own Gerrit review, complete CI, approval,
-and Submit before Gerrit replication can publish it to
-`https://github.com/AireWet/xWalkPiCarAI`.
+GitHub contains only the configured integrated repository. During the current
+migration that repository is `xWalkPiCarAI/master`; the final target is
+`xWalk-rpi5-hw/master`. Component repositories must not have GitHub remotes. After
+an integration change passes complete CI, receives approval, and is submitted
+to the configured Gerrit integration branch, the dedicated synchronization
+service may fast-forward that exact submitted commit to the matching GitHub
+branch. Do not use a direct, force, mirror, wildcard, or component GitHub push
+as a preliminary, backup, or alternate publication path.

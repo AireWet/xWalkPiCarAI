@@ -15,9 +15,6 @@ permissions:
   pages: write
   id-token: write
 
-env:
-  AIREWET_SUBMODULE_TOKEN: ${{ secrets.AIREWET_SUBMODULE_TOKEN }}
-
 concurrency:
   group: xwalk-developer-notes-pages
   cancel-in-progress: true

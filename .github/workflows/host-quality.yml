@@ -13,9 +13,6 @@ concurrency:
 permissions:
   contents: read
 
-env:
-  AIREWET_SUBMODULE_TOKEN: ${{ secrets.AIREWET_SUBMODULE_TOKEN }}
-
 jobs:
   preparation:
     name: xWalk Preparation
@@ -25,8 +22,6 @@ jobs:
       - uses: actions/checkout@v6
       - name: Check out exact Gerrit component commits
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/checkout-gerrit-submodules.sh
-      - name: Validate AireWet mirrors and excluded review refs
-        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/validate-airewet-mirrors.sh --remote
       - name: Validate xWalk host dependencies
         run: xWalk-rpi5-tool/shell-agent/quality-tool/check-host-quality-dependencies.sh
       - name: Validate shell scripts and CI metadata

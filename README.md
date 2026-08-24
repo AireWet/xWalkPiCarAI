@@ -27,31 +27,6 @@ MyPiCarX/
 └── xWalk-rpi5-tool/           CI, Gerrit, deployment, quality, and maintenance tools
 ```
 
-Every module shown as a submodule is independently versioned in Gerrit and is
-mirrored only after Submit to a private repository under
-[`AireWet`](https://github.com/AireWet). Gerrit remains the authoritative
-development and review system.
-
-## Clone the complete project
-
-Organization members with read access can clone the submitted integration
-tree and all exact component revisions with:
-
-```bash
-git clone --recurse-submodules https://github.com/AireWet/xWalkPiCarAI.git
-```
-
-Initialize or repair an existing clone with:
-
-```bash
-git submodule sync --recursive
-git submodule update --init --recursive
-```
-
-The relative submodule URLs work within the `AireWet` organization. Gerrit
-developers source `xWalk-git-env.sh`, keep `origin` pointed to Gerrit, and use
-the optional `github` remote only for fetching submitted mirror history.
-
 ## Prerequisites
 
 The supported host workflow requires Linux, CMake 3.25 or newer, Ninja, a C++17 compiler, Python 3, and the
@@ -139,7 +114,7 @@ confirming the Raspberry Pi model, Robot HAT revision, wiring, power, clear move
 
 ## Additional documentation
 
-- [Open the published xWalk Developer Notes wiki](https://AireWet.github.io/xWalkPiCarAI/)
+- [Open the published xWalk Developer Notes wiki](https://jochuuu.github.io/xWalkPiCarAI/)
 - [C++ documentation index](devloper-note/xwalk-rpi5-note/index.md)
 - [Build and open the developer-note wiki](devloper-note/README.md)
 - [Build and installation guide](devloper-note/xwalk-rpi5-note/Doc/note/Installation.md)
@@ -239,15 +214,6 @@ git add <files>
 git commit -s
 git push gerrit HEAD:refs/for/master
 ```
-
-After CI passes, an authorized reviewer applies `Code-Review +2` and uses
-Gerrit's Submit action. The replication plugin then sends only the resulting
-submitted `master` commit to the matching private `AireWet` mirror. Do not push
-to GitHub or open a GitHub pull request as an alternate review path.
-
-For a component update, submit the component review first. Then update its
-exact gitlink in `xWalkPiCarAI`, run the complete integration checks, and upload
-that pointer-only change through Gerrit for a separate review and Submit.
 
 Upload work in progress without triggering CI by adding `%wip`:
 

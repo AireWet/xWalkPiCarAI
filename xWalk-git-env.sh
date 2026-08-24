@@ -48,7 +48,7 @@ fi
 : "${GERRIT_UPLIFT_AUTO_SUBMIT:=false}"
 : "${GERRIT_UPLIFT_AUTO_REVIEW:=false}"
 : "${XWALK_GIT_AUTO_START:=true}"
-: "${GITHUB_REPOSITORY_OWNER:=AireWet}"
+: "${GITHUB_REPOSITORY_OWNER:=jochuuu}"
 : "${GITHUB_REPOSITORY_NAME:=xWalkPiCarAI}"
 : "${GITHUB_SYNC_SOURCE_PROJECT:=${GERRIT_INTEGRATION_PROJECT}}"
 : "${GITHUB_SYNC_SOURCE_BRANCH:=${GERRIT_INTEGRATION_BRANCH}}"
@@ -177,21 +177,9 @@ _xwalk_git_env_project_name()
     fi
 }
 
-_xwalk_git_env_github_name()
+_xwalk_git_env_configure_gerrit_pushes()
 {
-    local project_name=$1
-
-    if [[ "${project_name}" == DevloperNote ]]
-    then
-        printf 'xWalkDeveloperNote\n'
-    else
-        printf '%s\n' "${project_name}"
-    fi
-}
-
-_xwalk_git_env_configure_repository_remotes()
-{
-    local fetch_url github_name github_url repository_path remote_name project_name push_url
+    local repository_path remote_name project_name push_url
 
     [[ -x "${XWALK_GERRIT_GIT_CONNECT}" ]] || {
         printf 'Missing Gerrit Git connector: %s\n' "${XWALK_GERRIT_GIT_CONNECT}" >&2
@@ -209,26 +197,9 @@ _xwalk_git_env_configure_repository_remotes()
             repository_path="${XWALK_REPOSITORY_ROOT}/${repository_path}"
         [[ -d "${repository_path}" ]] || continue
         project_name=$(_xwalk_git_env_project_name "${repository_path}")
-        github_name=$(_xwalk_git_env_github_name "${project_name}")
-        github_url="https://github.com/${GITHUB_REPOSITORY_OWNER}/${github_name}.git"
         push_url="ext::${XWALK_GERRIT_GIT_CONNECT} ${GERRIT_USER}@${GERRIT_SERVER_HOST} "
         push_url+="${GERRIT_SSH_PORT} ${project_name} ${XWALK_GIT_AUTO_START} %S"
         git -C "${repository_path}" config --local protocol.ext.allow always
-        git -C "${repository_path}" remote set-url origin \
-            "${GERRIT_SSH_URL}/${project_name}"
-        while IFS= read -r remote_name
-        do
-            fetch_url=$(git -C "${repository_path}" remote get-url \
-                "${remote_name}" 2>/dev/null || true)
-            if [[ "${fetch_url}" == *github.com* ]]
-            then
-                git -C "${repository_path}" remote set-url "${remote_name}" \
-                    "${github_url}"
-                git -C "${repository_path}" config --local --replace-all \
-                    "remote.${remote_name}.pushurl" \
-                    "xwalk-gerrit-uplift-only://direct-github-push-disabled"
-            fi
-        done < <(git -C "${repository_path}" remote)
         for remote_name in origin gerrit
         do
             if git -C "${repository_path}" config --local --get "remote.${remote_name}.url" >/dev/null
@@ -237,14 +208,6 @@ _xwalk_git_env_configure_repository_remotes()
                     "remote.${remote_name}.pushurl" "${push_url}"
             fi
         done
-        if git -C "${repository_path}" config --local --get remote.github.url >/dev/null
-        then
-            git -C "${repository_path}" remote set-url github "${github_url}"
-        else
-            git -C "${repository_path}" remote add github "${github_url}"
-        fi
-        git -C "${repository_path}" config --local --replace-all \
-            remote.github.pushurl "xwalk-gerrit-uplift-only://direct-github-push-disabled"
     done
 }
 
@@ -378,14 +341,12 @@ then
     printf 'XWALK_GIT_AUTO_START must be true or false.\n' >&2
     return 2
 fi
-if ! _xwalk_git_env_configure_repository_remotes
+if ! _xwalk_git_env_configure_gerrit_pushes
 then
-    unset -f _xwalk_git_env_configure_repository_remotes _xwalk_git_env_github_name \
-        _xwalk_git_env_project_name
+    unset -f _xwalk_git_env_configure_gerrit_pushes _xwalk_git_env_project_name
     return 1
 fi
-unset -f _xwalk_git_env_configure_repository_remotes _xwalk_git_env_github_name \
-    _xwalk_git_env_project_name
+unset -f _xwalk_git_env_configure_gerrit_pushes _xwalk_git_env_project_name
 
 if [[ "${XWALK_GIT_ENV_QUIET:-false}" != true ]]
 then
