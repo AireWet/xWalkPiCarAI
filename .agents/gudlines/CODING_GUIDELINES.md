@@ -233,7 +233,7 @@ xWalk-rpi5-hw/xWalkHal/interface/xWalkWebSearch/ bounded loopback SearXNG retrie
 xWalk-rpi5-hw/xWalkHal/layer1/xWalkMusic/  music theory, PCM tone, and injected audio control
 xWalk-rpi5-hw/xWalkHal/layer1/xWalkRobot/  coordinated multi-servo robot control
 xWalk-rpi5-hw/xWalkHal/layer1/xWalkSpeaker/ bounded asynchronous audio-file playback control
-xWalk-rpi5-hw/xWalkTrace/                  filtered callback-based embedded diagnostics
+xWalkTrace/                  filtered callback-based embedded diagnostics
 xWalk-rpi5-hw/xWalkHal/device/xWalkUserButton/ active-low button events and press timing
 xWalk-rpi5-hw/xWalkHal/device/xWalkUltrasonic/ two-pin ultrasonic distance measurement
 xWalk-rpi5-hw/xWalkHal/interface/xWalkUtils/ injected platform utilities and bounded lazy caching
@@ -959,7 +959,7 @@ transport values must not depend on platform POSIX signal numbers.
   `steady_clock` initialization point with microseconds. Do not describe one
   trace call as an operation-duration measurement.
 - Run the class-based
-  `xWalk-rpi5-hw/xWalkTrace/pre-compiler/xHal_Rpi5CarTracePreCompiler.py` before trace
+  `xWalkTrace/pre-compiler/xHal_Rpi5CarTracePreCompiler.py` before trace
   compilation. Its
   token-aware scan covers the complete project root, including generated
   project sources and participating nested repositories, rejects every
@@ -1878,9 +1878,9 @@ cmake -S xWalk-rpi5-hw/xWalkHal/layer1/xWalkBoardControl -B xWalk-rpi5-hw/xWalkH
 cmake --build xWalkBoardControl/build-host --parallel
 ctest --test-dir xWalkBoardControl/build-host --output-on-failure
 
-cmake -S xWalkTrace -B xWalk-rpi5-hw/xWalkTrace/build-host -DXWALK_TRACE_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
-cmake --build xWalk-rpi5-hw/xWalkTrace/build-host --parallel
-ctest --test-dir xWalk-rpi5-hw/xWalkTrace/build-host --output-on-failure
+cmake -S xWalkTrace -B xWalkTrace/build-host -DXWALK_TRACE_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build xWalkTrace/build-host --parallel
+ctest --test-dir xWalkTrace/build-host --output-on-failure
 
 cmake -S xWalk-rpi5-hw/xWalkHal/layer1/xWalkGPT -B xWalk-rpi5-hw/xWalkHal/layer1/xWalkGPT/build-host -DXWALK_GPT_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkGPT/build-host --parallel
@@ -1986,9 +1986,9 @@ cmake -S xWalk-rpi5-hw/xWalkHal/layer1/xWalkBoardControl -B xWalk-rpi5-hw/xWalkH
 cmake --build xWalkBoardControl/build-rpi --parallel
 ctest --test-dir xWalkBoardControl/build-rpi -N -L hardware
 
-cmake -S xWalkTrace -B xWalk-rpi5-hw/xWalkTrace/build-rpi -DXWALK_TRACE_BUILD_HARDWARE_TESTS=ON
-cmake --build xWalk-rpi5-hw/xWalkTrace/build-rpi --parallel
-ctest --test-dir xWalk-rpi5-hw/xWalkTrace/build-rpi -N -L hardware
+cmake -S xWalkTrace -B xWalkTrace/build-rpi -DXWALK_TRACE_BUILD_HARDWARE_TESTS=ON
+cmake --build xWalkTrace/build-rpi --parallel
+ctest --test-dir xWalkTrace/build-rpi -N -L hardware
 
 cmake -S xWalk-rpi5-hw/xWalkHal/layer1/xWalkGPT -B xWalk-rpi5-hw/xWalkHal/layer1/xWalkGPT/build-rpi -DXWALK_GPT_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkGPT/build-rpi --parallel

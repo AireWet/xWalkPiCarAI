@@ -470,7 +470,7 @@ endif()
 
 add_subdirectory(xWalkLibrary/common)
 add_subdirectory("${XWALK_WORKSPACE_ROOT}/xWalk-rpi5-iw" xWalk-rpi5-iw)
-add_subdirectory(xWalkTrace)
+add_subdirectory("${XWALK_WORKSPACE_ROOT}/xWalkTrace" xWalkTrace)
 add_subdirectory(xWalkHal/interface/xWalkI2c)
 add_subdirectory(xWalkHal/interface/xWalkSpi)
 add_subdirectory(xWalkHal/interface/xWalkGpio)

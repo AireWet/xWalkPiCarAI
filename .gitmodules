@@ -31,6 +31,6 @@
 	url = ../xWalk-rpi5-tool.git
 	branch = master
 [submodule "xWalkTrace"]
-	path = xWalk-rpi5-hw/xWalkTrace
+	path = xWalkTrace
 	url = ../xWalkTrace.git
 	branch = master

@@ -18,13 +18,14 @@ MyPiCarX/
 │   ├── xWalkController/       CLI and application composition
 │   ├── xWalkHal/              Hardware abstraction and simulation backends
 │   ├── xWalkLibrary/          Shared libraries and external dependencies
-│   ├── xWalkTrace/            Shared tracing implementation
 │   └── cmake/                 Shared CMake modules and toolchains
 ├── devloper-note/             Developer documentation components
 │   ├── gerrit-note/           Gerrit administration and CI documentation
 │   └── xwalk-rpi5-note/       C++ architecture, build, and deployment documentation
 ├── xWalk-rpi5-iw/             Interface schemas and generated bindings
-└── xWalk-rpi5-tool/           CI, Gerrit, deployment, quality, and maintenance tools
+├── xWalk-rpi5-server/         gRPC server and deployment configuration
+├── xWalk-rpi5-tool/           CI, Gerrit, deployment, quality, and maintenance tools
+└── xWalkTrace/                Shared tracing implementation
 ```
 
 ## Prerequisites

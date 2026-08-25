@@ -18,7 +18,3 @@
 	path = xWalkLibrary
 	url = ../xWalkLibrary.git
 	branch = master
-[submodule "xWalkTrace"]
-	path = xWalkTrace
-	url = ../xWalkTrace.git
-	branch = master

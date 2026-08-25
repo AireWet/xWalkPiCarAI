@@ -40,7 +40,7 @@ jobs:
             xWalk-rpi5-hw/xWalkController \
             xWalk-rpi5-hw/xWalkHal \
             xWalk-rpi5-hw/xWalkLibrary \
-            xWalk-rpi5-hw/xWalkTrace \
+            xWalkTrace \
             xWalk-rpi5-iw \
             xWalk-rpi5-tool
       - uses: actions/upload-artifact@v6

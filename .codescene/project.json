@@ -29,7 +29,7 @@
     },
     {
       "name": "Trace",
-      "patterns": ["xWalk-rpi5-hw/xWalkTrace/**"]
+      "patterns": ["xWalkTrace/**"]
     },
     {
       "name": "Developer Documentation",
