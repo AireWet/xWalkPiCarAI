@@ -41,19 +41,30 @@ For a WIP change, use Gerrit's **Mark As Active** button as the Activate action.
 The WIP-to-active transition triggers CI for the current patch set. Moving an
 active change into WIP does not trigger CI.
 
-Never push a component change to GitHub. GitHub contains only the configured
-integrated repository. During migration, `xWalkPiCarAI/master` is the active
-integration branch; the final target is `xWalk-rpi5-hw/master`. A Gerrit change may
-be submitted only after its current patch set satisfies the configured review
-and automatic verification requirements. The dedicated synchronization
-service may fast-forward only the exact submitted, approved, CI-verified
-integration revision to the matching GitHub branch.
+Never push a component change directly to GitHub. Every `AireWet` component
+repository is a submit-gated mirror of its explicit Gerrit project mapping.
+Gerrit replication publishes only the submitted `master` ref; pending patch
+sets and Gerrit review, metadata, user, edit, cache, and draft refs have no
+GitHub destination. GitHub pull requests are not the project review workflow.
+
+During migration, `xWalkPiCarAI/master` is the active integration branch; the
+final target is `xWalk-rpi5/master`. A Gerrit change may be submitted only after
+its current patch set satisfies the configured review and automatic
+verification requirements. The integration repository pins exact submitted
+component revisions, and each pointer update passes through its own Gerrit
+review and Submit before replication.
 
 Every component Gerrit patch set must use a module-scoped Host Quality graph containing Preparation, only the
 reviewed component's checks, and the Host Quality Gate. Do not execute unrelated module suites in a component
 review. Dependency checkout may initialize exact pinned integration gitlinks needed by the selected component's
 standalone build, but that does not authorize their quality suites. Automatic CI must remain host-safe and must
 not select hardware-labelled tests.
+
+Run distinct Gerrit changes through separate bounded verification workers, including complete integration
+changes. A newer patch set cancels only an older run with the same Gerrit project and change number. A
+change-abandoned event cancels only that change's queued or running flow. On GitHub, key Host Quality concurrency
+by the exact submitted commit SHA so different submitted commits run independently while duplicate executions of
+one commit may cancel.
 
 Every submitted component change must enter `xWalkPiCarAI/master` through a
 separate uplift review that replaces only the owning module source tree. The
