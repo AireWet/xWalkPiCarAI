@@ -1,4 +1,4 @@
-name: xWalk Developer Notes Pages
+name: xWalk Developer Notes Artifact
 
 on:
   push:
@@ -7,16 +7,15 @@ on:
       - devloper-note
       - devloper-note/**
       - xWalk-rpi5-tool/doc-tool/**
+      - .github/actions/checkout-private-submodules/**
       - .github/workflows/developer-note-pages.yml
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: xwalk-developer-notes-pages
+  group: xwalk-developer-notes-artifact
   cancel-in-progress: true
 
 jobs:
@@ -31,25 +30,15 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
-      - name: Read the enabled GitHub Pages configuration
-        uses: actions/configure-pages@v6
       - name: Build the Gerrit-approved developer-note wiki
         env:
-          XWALK_WIKI_GITHUB_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+          XWALK_WIKI_GITHUB_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/
           XWALK_WIKI_GITHUB_SOURCE_REPOSITORY: https://github.com/${{ github.repository }}
           XWALK_WIKI_GITHUB_SOURCE_REVISION: ${{ github.sha }}
         run: xWalk-rpi5-tool/doc-tool/wiki.sh verify --site-url "$XWALK_WIKI_GITHUB_URL"
-      - uses: actions/upload-pages-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
+          name: xwalk-developer-note-site-${{ github.run_id }}-${{ github.run_attempt }}
           path: build-devloper-note-wiki/github-site
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-24.04
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy the approved documentation artifact
-        id: deployment
-        uses: actions/deploy-pages@v5
+          if-no-files-found: error
+          retention-days: 30
