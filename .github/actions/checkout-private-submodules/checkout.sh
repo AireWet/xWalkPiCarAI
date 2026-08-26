@@ -30,18 +30,29 @@ printf '%s\n' \
 
 read_bundle_key()
 {
-    local component="$1"
+    local bundle_key="$1"
+    local private_key
     if [[ -n "$bundle_file" ]]; then
-        jq --exit-status --raw-output --arg component "$component" '.[$component]' "$bundle_file"
+        private_key="$(jq --exit-status --raw-output --arg bundle_key "$bundle_key" \
+            '.[$bundle_key] | select(type == "string" and length > 0)' "$bundle_file")" || {
+            echo "Missing private read key for $bundle_key" >&2
+            return 1
+        }
     else
-        jq --exit-status --raw-output --arg component "$component" \
-            '.[$component]' <<< "$AIREWET_SUBMODULE_READ_KEYS"
+        private_key="$(jq --exit-status --raw-output --arg bundle_key "$bundle_key" \
+            '.[$bundle_key] | select(type == "string" and length > 0)' \
+            <<< "$AIREWET_SUBMODULE_READ_KEYS")" || {
+            echo "Missing private read key for $bundle_key" >&2
+            return 1
+        }
     fi
+    printf '%s\n' "$private_key"
 }
 
-while IFS=$'\t' read -r component repository alias key_name; do
+# The final mapping column is the stable secret-bundle key. Keep xWalkTrace for the renamed repository.
+while IFS=$'\t' read -r component repository alias key_name bundle_key; do
     key_path="$key_root/$key_name"
-    read_bundle_key "$component" > "$key_path"
+    read_bundle_key "$bundle_key" > "$key_path"
     chmod 600 "$key_path"
     printf '%s\n' \
         "Host $alias" \
@@ -65,15 +76,15 @@ while IFS=$'\t' read -r component repository alias key_name; do
         exit 1
     }
 done <<'MAPPINGS'
-DevloperNote	xWalkDeveloperNote	github-xwalk-developer-note	devloper-note
-xWalkAgent	xWalkAgent	github-xwalk-agent	xwalk-agent
-xWalkAudioResources	xWalkAudioResources	github-xwalk-audio-resources	xwalk-audio-resources
-xWalkController	xWalkController	github-xwalk-controller	xwalk-controller
-xWalkHal	xWalkHal	github-xwalk-hal	xwalk-hal
-xWalkLibrary	xWalkLibrary	github-xwalk-library	xwalk-library
-xWalk-rpi5-trace	xWalk-rpi5-trace	github-xwalk-trace	xwalk-trace
-xWalk-rpi5-iw	xWalk-rpi5-iw	github-xwalk-rpi5-iw	xwalk-rpi5-iw
-xWalk-rpi5-tool	xWalk-rpi5-tool	github-xwalk-rpi5-tool	xwalk-rpi5-tool
+DevloperNote	xWalkDeveloperNote	github-xwalk-developer-note	devloper-note	DevloperNote
+xWalkAgent	xWalkAgent	github-xwalk-agent	xwalk-agent	xWalkAgent
+xWalkAudioResources	xWalkAudioResources	github-xwalk-audio-resources	xwalk-audio-resources	xWalkAudioResources
+xWalkController	xWalkController	github-xwalk-controller	xwalk-controller	xWalkController
+xWalkHal	xWalkHal	github-xwalk-hal	xwalk-hal	xWalkHal
+xWalkLibrary	xWalkLibrary	github-xwalk-library	xwalk-library	xWalkLibrary
+xWalk-rpi5-trace	xWalk-rpi5-trace	github-xwalk-trace	xwalk-trace	xWalkTrace
+xWalk-rpi5-iw	xWalk-rpi5-iw	github-xwalk-rpi5-iw	xwalk-rpi5-iw	xWalk-rpi5-iw
+xWalk-rpi5-tool	xWalk-rpi5-tool	github-xwalk-rpi5-tool	xwalk-rpi5-tool	xWalk-rpi5-tool
 MAPPINGS
 
 GIT_SSH_COMMAND="ssh -F $key_root/config" git -C "$root" submodule update --init --recursive
