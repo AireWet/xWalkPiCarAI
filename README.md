@@ -25,7 +25,7 @@ MyPiCarX/
 ├── xWalk-rpi5-iw/             Interface schemas and generated bindings
 ├── xWalk-rpi5-server/         gRPC server and deployment configuration
 ├── xWalk-rpi5-tool/           CI, Gerrit, deployment, quality, and maintenance tools
-└── xWalkTrace/                Shared tracing implementation
+└── xWalk-rpi5-trace/           Shared tracing implementation
 ```
 
 ## Prerequisites

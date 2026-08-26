@@ -167,7 +167,7 @@
                 <pathentry include="xWalkHal/xWalkTest/xGoogleTest/include" kind="inc" path="" system="false"/>
                 <pathentry include="xWalkHal/xWalkTest/xSequenceTest/core/include" kind="inc" path="" system="false"/>
                 <pathentry include="xWalkHal/xWalkTest/xSequenceTest/hardware/include" kind="inc" path="" system="false"/>
-                <pathentry include="../xWalkTrace/include" kind="inc" path="" system="false"/>
+                <pathentry include="../xWalk-rpi5-trace/include" kind="inc" path="" system="false"/>
                 <pathentry include="xWalkHal/device/xWalkUltrasonic/include" kind="inc" path="" system="false"/>
                 <pathentry include="xWalkHal/device/xWalkUltrasonic/simulation/include" kind="inc" path="" system="false"/>
                 <pathentry include="xWalkHal/device/xWalkUltrasonic/test/include" kind="inc" path="" system="false"/>

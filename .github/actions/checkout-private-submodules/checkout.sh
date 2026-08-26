@@ -71,7 +71,7 @@ xWalkAudioResources	xWalkAudioResources	github-xwalk-audio-resources	xwalk-audio
 xWalkController	xWalkController	github-xwalk-controller	xwalk-controller
 xWalkHal	xWalkHal	github-xwalk-hal	xwalk-hal
 xWalkLibrary	xWalkLibrary	github-xwalk-library	xwalk-library
-xWalkTrace	xWalkTrace	github-xwalk-trace	xwalk-trace
+xWalk-rpi5-trace	xWalk-rpi5-trace	github-xwalk-trace	xwalk-trace
 xWalk-rpi5-iw	xWalk-rpi5-iw	github-xwalk-rpi5-iw	xwalk-rpi5-iw
 xWalk-rpi5-tool	xWalk-rpi5-tool	github-xwalk-rpi5-tool	xwalk-rpi5-tool
 MAPPINGS

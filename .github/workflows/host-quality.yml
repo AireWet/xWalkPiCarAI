@@ -40,7 +40,7 @@ jobs:
             xWalk-rpi5-hw/xWalkController \
             xWalk-rpi5-hw/xWalkHal \
             xWalk-rpi5-hw/xWalkLibrary \
-            xWalkTrace \
+            xWalk-rpi5-trace \
             xWalk-rpi5-iw \
             xWalk-rpi5-tool
       - uses: actions/upload-artifact@v6
@@ -138,7 +138,7 @@ jobs:
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-library-tests
 
   xwalk-trace:
-    name: xWalkTrace
+    name: xWalk-rpi5-trace
     needs: preparation
     runs-on: [self-hosted, linux, x64, xwalk-ci]
     steps:

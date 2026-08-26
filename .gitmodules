@@ -30,7 +30,7 @@
 	path = xWalk-rpi5-tool
 	url = ../xWalk-rpi5-tool.git
 	branch = master
-[submodule "xWalkTrace"]
-	path = xWalkTrace
-	url = ../xWalkTrace.git
+[submodule "xWalk-rpi5-trace"]
+	path = xWalk-rpi5-trace
+	url = ../xWalk-rpi5-trace.git
 	branch = master
