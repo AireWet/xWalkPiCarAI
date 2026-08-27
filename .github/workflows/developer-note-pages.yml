@@ -26,7 +26,7 @@ jobs:
       - name: Validate the integrated repository metadata
         uses: ./.github/actions/checkout-private-submodules
         with:
-          key-bundle: ${{ secrets.AIREWET_SUBMODULE_READ_KEYS }}
+          key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'

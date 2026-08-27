@@ -23,7 +23,7 @@ jobs:
       - name: Check out exact submitted component commits
         uses: ./.github/actions/checkout-private-submodules
         with:
-          key-bundle: ${{ secrets.AIREWET_SUBMODULE_READ_KEYS }}
+          key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
       - name: Validate integration metadata
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/validate-integration-metadata.sh
 
@@ -40,7 +40,7 @@ jobs:
       - name: Check out exact submitted component commits
         uses: ./.github/actions/checkout-private-submodules
         with:
-          key-bundle: ${{ secrets.AIREWET_SUBMODULE_READ_KEYS }}
+          key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
       - name: Install host dependencies
         run: xWalk-rpi5-tool/shell-agent/quality-tool/install-github-host-packages.sh $XWALK_INTEGRATION_PACKAGES
       - name: Select compiler
@@ -63,7 +63,7 @@ jobs:
       - name: Check out exact submitted component commits
         uses: ./.github/actions/checkout-private-submodules
         with:
-          key-bundle: ${{ secrets.AIREWET_SUBMODULE_READ_KEYS }}
+          key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
       - name: Install sanitizer dependencies
         run: xWalk-rpi5-tool/shell-agent/quality-tool/install-github-host-packages.sh $XWALK_INTEGRATION_PACKAGES
       - name: Configure ASan and UBSan
