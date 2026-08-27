@@ -1,6 +1,6 @@
 [submodule "DevloperNote"]
 	path = devloper-note
-	url = ../xWalkDeveloperNote.git
+	url = ../devloper-note.git
 	branch = master
 [submodule "xWalkAgent"]
 	path = xWalk-rpi5-hw/xWalkAgent
