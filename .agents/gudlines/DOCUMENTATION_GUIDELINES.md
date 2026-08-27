@@ -35,15 +35,15 @@ loopback. The college-server profile may bind publicly only on an authorized hos
 private Actions artifact but must not push or publish a Pages site. Artifact creation follows the approved Gerrit
 integration synchronization flow. A Pages deployment requires an organization plan that supports the private
 repository, an explicit privacy review, and a separate reviewed Gerrit change.
-An optional global organization wiki at `https://airewet.github.io/` requires the exact repository name
-`AireWet/airewet.github.io`. Treat the complete organization site as public: it must consume only a separately
+An optional global organization wiki at `https://tars-v00-01.github.io/` requires the exact repository name
+`TARS-v00-01/tars-v00-01.github.io`. Treat the complete organization site as public: it must consume only a separately
 reviewed, sanitized documentation source from an explicit Gerrit mapping. Never publish the private developer-note
 artifact, component source, internal addresses, credentials, or restricted metadata to the organization site.
 During staging, convert links from developer-note pages to tracked files outside `devloper-note` into GitHub
 source links for the deployed integration revision. Preserve checkout-relative links in the source Markdown.
 Gerrit and GitHub CI must run `xWalk-rpi5-tool/doc-tool/wiki.sh verify` to validate wiki-owned and repository-owned
 links, strictly build the generated documentation artifact, and inspect it before distribution. Gerrit remains the
-authoritative review system; GitHub repositories under `AireWet` contain only submitted branches replicated from
+authoritative review system; GitHub repositories under `TARS-v00-01` contain only submitted branches replicated from
 their explicit Gerrit project mappings. Documentation must not instruct developers to push or review through
 GitHub.
 

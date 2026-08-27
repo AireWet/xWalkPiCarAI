@@ -4,7 +4,7 @@ umask 077
 
 root="$(git rev-parse --show-toplevel)"
 key_root="${RUNNER_TEMP:?}/xwalk-submodule-read-keys"
-bundle_file="${AIREWET_SUBMODULE_READ_KEYS_FILE:-}"
+bundle_file="${TARS_SUBMODULE_READ_KEYS_FILE:-}"
 
 cleanup()
 {
@@ -13,8 +13,8 @@ cleanup()
 trap cleanup EXIT
 
 if [[ -z "$bundle_file" ]]; then
-    [[ -n "${AIREWET_SUBMODULE_READ_KEYS:-}" ]] || {
-        echo "Missing AIREWET_SUBMODULE_READ_KEYS" >&2
+    [[ -n "${TARS_SUBMODULE_READ_KEYS:-}" ]] || {
+        echo "Missing TARS_SUBMODULE_READ_KEYS" >&2
         exit 2
     }
 elif [[ ! -r "$bundle_file" ]]; then
@@ -41,7 +41,7 @@ read_bundle_key()
     else
         private_key="$(jq --exit-status --raw-output --arg bundle_key "$bundle_key" \
             '.[$bundle_key] | select(type == "string" and length > 0)' \
-            <<< "$AIREWET_SUBMODULE_READ_KEYS")" || {
+            <<< "$TARS_SUBMODULE_READ_KEYS")" || {
             echo "Missing private read key for $bundle_key" >&2
             return 1
         }
@@ -66,13 +66,13 @@ while IFS=$'\t' read -r component repository alias key_name bundle_key; do
         "    UserKnownHostsFile $key_root/known_hosts" \
         >> "$key_root/config"
     git -C "$root" config --local "submodule.$component.url" \
-        "git@$alias:AireWet/$repository.git"
+        "git@$alias:TARS-v00-01/$repository.git"
     review_refs="$(GIT_SSH_COMMAND="ssh -F $key_root/config" git ls-remote \
-        "git@$alias:AireWet/$repository.git" \
+        "git@$alias:TARS-v00-01/$repository.git" \
         'refs/changes/*' 'refs/drafts/*' 'refs/cache-automerge/*' 'refs/meta/*' \
         'refs/users/*' 'refs/edit/*' 'refs/starred-changes/*')"
     [[ -z "$review_refs" ]] || {
-        echo "Gerrit review refs are exposed by AireWet/$repository" >&2
+        echo "Gerrit review refs are exposed by TARS-v00-01/$repository" >&2
         exit 1
     }
 done <<'MAPPINGS'

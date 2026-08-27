@@ -41,7 +41,7 @@ For a WIP change, use Gerrit's **Mark As Active** button as the Activate action.
 The WIP-to-active transition triggers CI for the current patch set. Moving an
 active change into WIP does not trigger CI.
 
-Never push a component change directly to GitHub. Every `AireWet` component
+Never push a component change directly to GitHub. Every `TARS-v00-01` component
 repository is a submit-gated mirror of its explicit Gerrit project mapping.
 Gerrit replication publishes only the submitted `master` ref; pending patch
 sets and Gerrit review, metadata, user, edit, cache, and draft refs have no

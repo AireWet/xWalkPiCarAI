@@ -12,5 +12,5 @@ runs:
     - name: Initialize exact submitted component commits
       shell: bash
       env:
-        AIREWET_SUBMODULE_READ_KEYS: ${{ inputs.key-bundle }}
+        TARS_SUBMODULE_READ_KEYS: ${{ inputs.key-bundle }}
       run: ${{ github.action_path }}/checkout.sh
