@@ -76,7 +76,7 @@ while IFS=$'\t' read -r component repository alias key_name bundle_key; do
         exit 1
     }
 done <<'MAPPINGS'
-DevloperNote	devloper-note	github-xwalk-developer-note	devloper-note	DevloperNote
+devloper-note	devloper-note	github-xwalk-developer-note	devloper-note	DevloperNote
 xWalkAgent	xWalkAgent	github-xwalk-agent	xwalk-agent	xWalkAgent
 xWalkAudioResources	xWalkAudioResources	github-xwalk-audio-resources	xwalk-audio-resources	xWalkAudioResources
 xWalkController	xWalkController	github-xwalk-controller	xwalk-controller	xWalkController

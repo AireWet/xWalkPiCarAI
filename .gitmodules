@@ -1,4 +1,4 @@
-[submodule "DevloperNote"]
+[submodule "devloper-note"]
 	path = devloper-note
 	url = ../devloper-note.git
 	branch = master
