@@ -571,9 +571,11 @@ transport values must not depend on platform POSIX signal numbers.
 
 ## Headers and dependencies
 
-- Include a source file's matching public header first.
-- Add a blank line before additional project headers when they form a separate
-  dependency group.
+- Keep every adjacent C++ include block contiguous, without blank lines between
+  project, standard-library, platform, or dependency headers.
+- Sort each include block by the character length of the included header path,
+  shortest first. Sort equal-length paths alphabetically. Apply the same order
+  to the matching public header instead of reserving a first-header exception.
 - Include project headers by their public basename, for example
   `#include "xHal_Rpi5CarPwm.h"`; let CMake provide include directories.
 - Keep standard-library headers centralized in
@@ -581,8 +583,8 @@ transport values must not depend on platform POSIX signal numbers.
   normally does not add direct standard-library includes.
 - Directly include a standard header in a translation unit when that header is
   required to complete an implementation-only type and relying on a transitive
-  include produces an incomplete-type diagnostic. Keep the matching project
-  header first, then add a separate standard-header group. For example, a file
+  include produces an incomplete-type diagnostic. Place the required standard
+  header in the same length-ordered include block. For example, a file
   that instantiates `std::ifstream` or `std::ofstream` includes `<fstream>`;
   `<iosfwd>` and the stream declarations exposed by `<filesystem>` are not
   complete definitions.
