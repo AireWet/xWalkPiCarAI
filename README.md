@@ -113,6 +113,13 @@ with the corresponding `XWALK_RPI_*` CMake cache value.
 The final command lists hardware tests; it does not execute them. Run hardware-labelled tests only after explicitly
 confirming the Raspberry Pi model, Robot HAT revision, wiring, power, clear movement area, and emergency-stop plan.
 
+## Issue tracking
+
+Create and manage defects, features, stories, and tasks in the
+[TARS Jira project](https://student-team-xwalk-rpi5.atlassian.net/jira/software/projects/TARS/boards/3).
+GitHub Issues is intentionally disabled so Jira remains the single issue-tracking system. Source changes continue
+through Gerrit and should reference the applicable Jira work item.
+
 ## Additional documentation
 
 - [Open the published xWalk Developer Notes wiki](https://jochuuu.github.io/xWalkPiCarAI/)
