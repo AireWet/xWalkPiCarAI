@@ -23,7 +23,7 @@ MyPiCarX/
 │   ├── gerrit-note/           Gerrit administration and CI documentation
 │   └── xwalk-rpi5-note/       C++ architecture, build, and deployment documentation
 ├── xWalk-rpi5-iw/             Interface schemas and generated bindings
-├── xWalk-rpi5-server/         gRPC server and deployment configuration
+├── xWalk-rpi5-node/           Reserved Raspberry Pi node component
 ├── xWalk-rpi5-tool/           CI, Gerrit, deployment, quality, and maintenance tools
 └── xWalk-rpi5-trace/           Shared tracing implementation
 ```
@@ -70,7 +70,6 @@ After changing CMake source lists or moving files, run the VS Code task
 
 ```bash
 cmake --preset host-debug -S xWalk-rpi5-hw
-cmake --preset host-debug -S xWalk-rpi5-server
 ```
 
 If VS Code retains stale symbols after a large relocation, run **C/C++: Reset

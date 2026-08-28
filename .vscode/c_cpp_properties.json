@@ -4,10 +4,6 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}",
-                "${workspaceFolder}/xWalk-rpi5-server/xWalkGrpc/include",
-                "${workspaceFolder}/xWalk-rpi5-server/xWalkHandler/include",
-                "${workspaceFolder}/xWalk-rpi5-server/test/include",
-                "${workspaceFolder}/build-host/xWalk-rpi5-server-debug/xWalkTrace/generated/include",
                 "/usr/include/opencv4",
                 "${workspaceFolder}/xWalk-rpi5-hw/xWalkAgent/test/include",
                 "${workspaceFolder}/xWalk-rpi5-hw/xWalkAgent/xWalkVehicle/**",
@@ -164,13 +160,9 @@
                 "path": [
                     "${workspaceFolder}/xWalk-rpi5-hw",
                     "${workspaceFolder}/xWalk-rpi5-iw",
-                    "${workspaceFolder}/xWalk-rpi5-server",
+                    "${workspaceFolder}/xWalk-rpi5-node",
                     "${workspaceFolder}/xWalk-rpi5-tool",
                     "${workspaceFolder}/xWalk-rpi5-trace",
-                    "${workspaceFolder}/xWalk-rpi5-server/xWalkGrpc/include",
-                    "${workspaceFolder}/xWalk-rpi5-server/xWalkHandler/include",
-                    "${workspaceFolder}/xWalk-rpi5-server/test/include",
-                    "${workspaceFolder}/build-host/xWalk-rpi5-server-debug/xWalkTrace/generated/include",
                     "/usr/include/opencv4",
                     "${workspaceFolder}/xWalk-rpi5-hw/xWalkAgent/test/include",
                     "${workspaceFolder}/xWalk-rpi5-hw/xWalkAgent/xWalkVehicle/**",
@@ -337,10 +329,7 @@
                 "XWALK_TEST_MUSIC_DIRECTORY=\"${workspaceFolder}/xWalk-rpi5-hw/xWalkAudioResources/music\"",
                 "XWALK_VOICE_ACTIVE_CAR_CONFIG_DIRECTORY=\"${workspaceFolder}/xWalk-rpi5-hw/xWalkAgent/xWalkVoice/xWalkVoiceActiveCar/config\""
             ],
-            "compileCommands": [
-                "${workspaceFolder}/build-host/cmake/compile_commands.json",
-                "${workspaceFolder}/build-host/xWalk-rpi5-server-debug/compile_commands.json"
-            ],
+            "compileCommands": ["${workspaceFolder}/build-host/cmake/compile_commands.json"],
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "linux-gcc-x64"

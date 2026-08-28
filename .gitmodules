@@ -22,9 +22,9 @@
 	path = xWalk-rpi5-iw
 	url = ../xWalk-rpi5-iw.git
 	branch = master
-[submodule "xWalk-rpi5-server"]
-	path = xWalk-rpi5-server
-	url = ../xWalk-rpi5-server.git
+[submodule "xWalk-rpi5-node"]
+	path = xWalk-rpi5-node
+	url = ../xWalk-rpi5-node.git
 	branch = master
 [submodule "xWalkLibrary"]
 	path = xWalk-rpi5-hw/xWalkLibrary
