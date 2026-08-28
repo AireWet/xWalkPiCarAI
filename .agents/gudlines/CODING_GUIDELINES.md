@@ -381,6 +381,24 @@ request, confirmation, and rejection XML registries. Keep its
 trace-owned C++ enumeration in `xHal_Rpi5CarErrorSignals.h`; these stable
 transport values must not depend on platform POSIX signal numbers.
 
+## Python tool composition
+
+Use `xWalk-rpi5-tool/py-agent/py-src/xWalkPyAgent` as the common composition root for Python developer, board,
+and Gerrit tooling. Create one application-owned `XWalkPyAgent` from a validated integrated-workspace or standalone
+tool root. Do not introduce a process-wide façade singleton.
+
+Access tools through lazy, cached façade properties. Constructing the façade or accessing a property must not run a
+command, load credentials, write a file, start a service, or open a network connection. Keep host-changing, Jira
+write, Gerrit lifecycle, and other mutating operations behind explicit methods.
+
+Pass command execution, environment snapshots, and clock operations through `XWalkPyAgentContext`. Tests inject
+deterministic implementations instead of contacting external services, changing the host, sleeping, or relying on
+the current process environment. Keep optional dependencies deferred until the owning tool is explicitly selected.
+
+During incremental migration, preserve existing executable paths, arguments, output contracts, and exit codes
+behind focused compatibility adapters. Tool implementations must not import or query `XWalkPyAgent`; dependency
+direction always runs from the façade to the selected tool.
+
 ## Files and naming
 
 - Name HAL headers and sources `xHal_Rpi5Car<Component>.h` and
