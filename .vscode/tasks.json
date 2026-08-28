@@ -1,0 +1,44 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "xWalk: Configure hardware navigation",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--preset",
+                "host-debug",
+                "-S",
+                "${workspaceFolder}/xWalk-rpi5-hw"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "xWalk: Configure server navigation",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--preset",
+                "host-debug",
+                "-S",
+                "${workspaceFolder}/xWalk-rpi5-server"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "xWalk: Refresh all C++ navigation",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "xWalk: Configure hardware navigation",
+                "xWalk: Configure server navigation"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}

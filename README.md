@@ -56,6 +56,26 @@ ctest --test-dir build-host/sanity --output-on-failure --no-tests=error
 
 The generated files are written below `build-host/sanity`.
 
+## VS Code symbol navigation
+
+Open the `MyPiCarX` repository root in VS Code and install the recommended
+CMake Tools and C/C++ extensions. The workspace combines the host product and
+independent server compilation databases, while the fallback symbol browser
+indexes project-owned hardware, simulation, test, interface, tool, trace, and
+server source trees. Ctrl+click, **Go to Definition**, **Go to Declaration**,
+and **Find All References** therefore work across module boundaries.
+
+After changing CMake source lists or moving files, run the VS Code task
+`xWalk: Refresh all C++ navigation`. The equivalent terminal commands are:
+
+```bash
+cmake --preset host-debug -S xWalk-rpi5-hw
+cmake --preset host-debug -S xWalk-rpi5-server
+```
+
+If VS Code retains stale symbols after a large relocation, run **C/C++: Reset
+IntelliSense Database** once and then execute the refresh task again.
+
 For an optimized host build:
 
 ```bash
