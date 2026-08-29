@@ -24,6 +24,7 @@ jobs:
         uses: ./.github/actions/checkout-private-submodules
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
+          supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
       - name: Validate integration metadata
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/validate-integration-metadata.sh
 
@@ -41,6 +42,7 @@ jobs:
         uses: ./.github/actions/checkout-private-submodules
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
+          supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
       - name: Install host dependencies
         run: xWalk-rpi5-tool/shell-agent/quality-tool/install-github-host-packages.sh $XWALK_INTEGRATION_PACKAGES
       - name: Select compiler
@@ -64,6 +66,7 @@ jobs:
         uses: ./.github/actions/checkout-private-submodules
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
+          supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
       - name: Install sanitizer dependencies
         run: xWalk-rpi5-tool/shell-agent/quality-tool/install-github-host-packages.sh $XWALK_INTEGRATION_PACKAGES
       - name: Configure ASan and UBSan

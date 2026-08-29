@@ -5,6 +5,8 @@ umask 077
 root="$(git rev-parse --show-toplevel)"
 key_root="${RUNNER_TEMP:?}/xwalk-submodule-read-keys"
 bundle_file="${TARS_SUBMODULE_READ_KEYS_FILE:-}"
+supplemental_bundle="${TARS_SUBMODULE_READ_KEYS_SUPPLEMENT:-}"
+[[ -n "$supplemental_bundle" ]] || supplemental_bundle='{}'
 
 cleanup()
 {
@@ -34,14 +36,16 @@ read_bundle_key()
     local private_key
     if [[ -n "$bundle_file" ]]; then
         private_key="$(jq --exit-status --raw-output --arg bundle_key "$bundle_key" \
-            '.[$bundle_key] | select(type == "string" and length > 0)' "$bundle_file")" || {
-            echo "Missing private read key for $bundle_key" >&2
-            return 1
-        }
+            '.[$bundle_key] | select(type == "string" and length > 0)' "$bundle_file" 2>/dev/null || true)"
     else
         private_key="$(jq --exit-status --raw-output --arg bundle_key "$bundle_key" \
             '.[$bundle_key] | select(type == "string" and length > 0)' \
-            <<< "$TARS_SUBMODULE_READ_KEYS")" || {
+            <<< "$TARS_SUBMODULE_READ_KEYS" 2>/dev/null || true)"
+    fi
+    if [[ -z "$private_key" ]]; then
+        private_key="$(jq --exit-status --raw-output --arg bundle_key "$bundle_key" \
+            '.[$bundle_key] | select(type == "string" and length > 0)' \
+            <<< "$supplemental_bundle")" || {
             echo "Missing private read key for $bundle_key" >&2
             return 1
         }

@@ -27,6 +27,7 @@ jobs:
         uses: ./.github/actions/checkout-private-submodules
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
+          supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'

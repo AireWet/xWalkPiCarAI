@@ -24,6 +24,7 @@ jobs:
         uses: ./.github/actions/checkout-private-submodules
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
+          supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
       - name: Validate xWalk host dependencies
         run: xWalk-rpi5-tool/shell-agent/quality-tool/check-host-quality-dependencies.sh
       - name: Validate shell scripts and CI metadata
@@ -60,6 +61,7 @@ jobs:
         uses: ./.github/actions/checkout-private-submodules
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
+          supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
       - name: Configure and build xWalkAgent
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-agent-build
       - name: Run xWalkAgent aggregate tests
@@ -79,6 +81,7 @@ jobs:
         uses: ./.github/actions/checkout-private-submodules
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
+          supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
       - name: Configure and build xWalkController
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-controller-build
       - name: Run controller, CLI, and Controller-to-HAL tests
@@ -96,6 +99,7 @@ jobs:
         uses: ./.github/actions/checkout-private-submodules
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
+          supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
       - name: Configure and build xWalkHal
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-hal-build
       - name: Run HAL unit and host-safe sequence tests
@@ -117,6 +121,7 @@ jobs:
         uses: ./.github/actions/checkout-private-submodules
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
+          supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
       - name: Configure and build xWalk-rpi5-iw
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-iw-build
       - name: Run schema, serialization, gRPC, signal, and transport tests
@@ -132,6 +137,7 @@ jobs:
         uses: ./.github/actions/checkout-private-submodules
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
+          supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
       - name: Configure and build xWalkLibrary consumers
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-library-build
       - name: Run shared-library, configuration, utility, licence, and architecture tests
@@ -147,6 +153,7 @@ jobs:
         uses: ./.github/actions/checkout-private-submodules
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
+          supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
       - name: Build and run Trace formatting, routing, macro, and selector tests
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-trace-tests
 
@@ -160,6 +167,7 @@ jobs:
         uses: ./.github/actions/checkout-private-submodules
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
+          supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
       - name: Configure and build recorded vision scenarios
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-vision-build
       - name: Validate recorded media, OpenCV scenarios, safety, and assets
@@ -175,6 +183,7 @@ jobs:
         uses: ./.github/actions/checkout-private-submodules
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
+          supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
       - name: Configure and build xWalk Streaming
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-streaming-build
       - name: Run loopback HTTP, MJPEG, lifecycle, timeout, and backpressure tests
@@ -191,6 +200,7 @@ jobs:
         uses: ./.github/actions/checkout-private-submodules
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
+          supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
       - name: Run GCC Debug build and tests
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh build-and-test gcc Debug
       - name: Run GCC Release build and tests
@@ -247,6 +257,7 @@ jobs:
         uses: ./.github/actions/checkout-private-submodules
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
+          supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
       - name: Validate deployment and provisioning scripts
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh deployment-scripts
       - name: Validate ARM64 dependencies and configured cross-build
@@ -268,6 +279,7 @@ jobs:
         uses: ./.github/actions/checkout-private-submodules
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
+          supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
