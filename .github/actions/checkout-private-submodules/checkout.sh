@@ -84,6 +84,7 @@ xWalkHal	xWalkHal	github-xwalk-hal	xwalk-hal	xWalkHal
 xWalkLibrary	xWalkLibrary	github-xwalk-library	xwalk-library	xWalkLibrary
 xWalk-rpi5-trace	xWalk-rpi5-trace	github-xwalk-trace	xwalk-trace	xWalkTrace
 xWalk-rpi5-iw	xWalk-rpi5-iw	github-xwalk-rpi5-iw	xwalk-rpi5-iw	xWalk-rpi5-iw
+xWalk-rpi5-node	xWalk-rpi5-node	github-xwalk-rpi5-node	xwalk-rpi5-node	xWalk-rpi5-node
 xWalk-rpi5-tool	xWalk-rpi5-tool	github-xwalk-rpi5-tool	xwalk-rpi5-tool	xWalk-rpi5-tool
 MAPPINGS
 
