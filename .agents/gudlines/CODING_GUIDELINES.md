@@ -208,8 +208,7 @@ xWalk-rpi5-hw/xWalkAgent/xWalkPlatform/    process composition Agent group
 xWalk-rpi5-hw/xWalkAgent/xWalkPlatform/xWalkBoot/ host-stub and Raspberry Pi process composition
 xWalk-rpi5-hw/xWalkController/             standalone command-line aggregate that imports xWalkAgent
 xWalk-rpi5-hw/xWalkController/xWalkConfig/ layered controller deployment and calibration configuration
-xWalk-rpi5-hw/xWalkController/xWalkHandler/ typed handler implementation and direct host test
-xWalk-rpi5-hw/xWalkController/xWalkApp/     command parsing, entry points, generated help, and application tests
+xWalk-rpi5-hw/xWalkController/xWalkApp/     command parsing, execution, entry points, generated help, and tests
 xWalk-rpi5-hw/xWalkController/xWalkTest/xGoogleTest/ centralized CLI host-test runner and XML selection
 xWalk-rpi5-hw/xWalkController/xWalkTest/xSequenceTest/ bounded CLI command-sequence verification
 xWalk-rpi5-hw/xWalkAudioResources/music/   packaged background-music resources
@@ -267,10 +266,10 @@ file to grow indefinitely. Follow the established suffixes:
 - The same responsibility-based split for test files.
 
 Keep every xWalk Controller `XWALK_handler<CommandOrModuleName>` member in its
-own source file under the `xWalkHandler/src` functionality directory that owns
+own source file under the `xWalkApp/execute/src` functionality directory that owns
 the command: `vehicle`, `vision`, `voice`, `media`, `connectivity`,
 `calibration`, or `platform`. Keep shared cancellation support under `common`
-and lifecycle in the root `xWalkHandler/src` directory. Keep CLI-to-request
+and lifecycle in the root `xWalkApp/execute/src` directory. Keep CLI-to-request
 parsing and shared Controller output formatting in `xWalkApp/parse/src`. Keep
 top-level and PiCar-X Controller command routing as documented free functions
 under `xWalkApp/activate/include` and `xWalkApp/activate/src`; grant only those application
@@ -969,7 +968,7 @@ direction always runs from the façade to the selected tool.
   and protocol output remains separate at application and Agent interaction
   boundaries: preserve help, version text, protocol responses, and conversation
   output when trace decoration would change their interface contract.
-  `xWalk-rpi5-hw/xWalkController/xWalkHandler` is trace-only for its own status, result,
+  `xWalk-rpi5-hw/xWalkController/xWalkApp/execute` is trace-only for its own status, result,
   warning, and failure records; it must not call its output callback for those
   records.
 - Keep `XWALK_VERBOSE(format, ...)` only as a disabled no-op for source
@@ -1555,7 +1554,7 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
 
 - Keep the standalone `xWalkController` aggregate beside `xWalkAgent` and `xWalkHal`.
   Keep its reusable controller contract, implementation, and direct in-memory
-  test under `xWalkHandler`. Keep host entry behavior in `xWalkApp/cli/host`, Raspberry
+  test under `xWalkApp/execute`. Keep host entry behavior in `xWalkApp/cli/host`, Raspberry
   Pi entry behavior in `xWalkApp/cli/hardware`, command parsing in `xWalkApp/parse`, boot
   composition in `xWalkApp/boot`, command activation in `xWalkApp/activate`, and
   executable-level application tests in `xWalkApp/test`. Keep executable targets
@@ -1602,22 +1601,11 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
   objects rather than silently ignoring unsupported configuration.
 - Execute a command only when the CLI owns a complete safe composition. Return
   a distinct backend-unavailable status for optional services such as audio.
-- Route every non-help production Controller command through
-  `xWalkController/xWalkScheduler`. Use separate stable Controller, Agent, and
-  HAL mailbox IDs, create one scheduler child per registered mailbox, and keep
-  same-mailbox requests sequential while allowing separate mailboxes to run in
-  parallel. A `cxx_xWalk*Send_LPP` name identifies its destination module.
-  Keep the native scheduler signal, module interfaces, and tests independent of
-  Protobuf, gRPC, and server code; a future server is only a transport adapter.
-  Keep direct Controller command-runner calls limited to scheduler child
-  adapters and focused in-memory tests; application entry points must not invoke
-  a handler or xWalkBoot directly.
-- Fork the scheduler child before constructing xWalkBoot, Agent, HAL, listener,
-  camera, GPIO, I2C, SPI, audio, or motor resources. Open and release those
-  resources in the owning child. Use fixed-size pointer-free `SOCK_SEQPACKET`
-  messages, fixed-capacity FIFO and status tables, tracked positive PIDs,
-  bounded graceful shutdown, exact-PID `SIGTERM`, and `waitpid()` reaping. Do
-  not add a thread-based Controller handler dispatcher or process-name killing.
+- Route every non-help production Controller command directly through the
+  command-selected `xWalkBoot` graph. Construct Agent, HAL, listener, camera,
+  GPIO, I2C, SPI, audio, and motor resources only after parsing and retain them
+  in the boot composition until the synchronous command completes. Do not add
+  an intermediate process scheduler or server transport to the local CLI path.
 - Enter RPI backend composition through one automatic `XWalkBootRpi` object.
   Pass one `xAgentContext` to every Boot `run*` interface, invoke its application
   callback at most once, consume a failed run attempt, and retain the stack-owned
