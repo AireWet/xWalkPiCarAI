@@ -83,16 +83,10 @@ cmake --build build-host/release --parallel
 ctest --test-dir build-host/release --output-on-failure --no-tests=error
 ```
 
-## Host-safe diagnostic
+## Controller configuration
 
-After building the `sanity` preset, validate the deployment configuration without opening hardware devices or
-contacting external services:
-
-```bash
-build-host/sanity/xWalkController/xWalkApp/xwalk-picarx-control --deployment-config="$PWD/xWalk-rpi5-hw/xWalkController/xWalkConfig/picar-x.conf" --diagnose --no-hardware
-```
-
-The diagnostic must finish with `[SIMULATED]`. Do not remove `--no-hardware` during ordinary host validation.
+The Controller component currently retains deployment configuration only. It does not build an executable while
+the replacement CBB-style execution architecture is being designed.
 
 ## Installation
 

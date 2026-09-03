@@ -54,9 +54,6 @@ jobs:
         run: cmake --build build-host/integration --parallel
       - name: Test complete integration
         run: ctest --test-dir build-host/integration --output-on-failure --no-tests=error
-      - name: Run host-safe diagnostic
-        run: build-host/integration/xWalkController/xWalkApp/xwalk-picarx-control --deployment-config="$PWD/xWalk-rpi5-hw/xWalkController/xWalkConfig/picar-x.conf" --diagnose --no-hardware
-
   sanitizers:
     if: vars.XWALK_GERRIT_PRIVATE_CI_ENABLED == 'true'
     runs-on: ubuntu-24.04

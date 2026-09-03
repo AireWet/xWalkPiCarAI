@@ -35,16 +35,6 @@
                     value="&quot;xWalkAgent/xWalkVoice/xWalkVoiceActiveCar/config&quot;"/>
                 <pathentry include="/usr/include/opencv4" kind="inc" path="" system="true"/>
                 <pathentry include="xWalkLibrary/common/include" kind="inc" path="" system="false"/>
-                <pathentry include="xWalkController/xWalkApp/execute/include" kind="inc" path="" system="false"/>
-                <pathentry include="xWalkController/xWalkApp/activate/include"
-                    kind="inc" path="" system="false"/>
-                <pathentry include="xWalkController/xWalkApp/boot/include"
-                    kind="inc" path="" system="false"/>
-                <pathentry include="xWalkController/xWalkApp/parse/include"
-                    kind="inc" path="" system="false"/>
-                <pathentry include="xWalkController/xWalkTest/xGoogleTest/include" kind="inc" path="" system="false"/>
-                <pathentry include="xWalkController/xWalkTest/xSequenceTest/core/include" kind="inc" path="" system="false"/>
-                <pathentry include="xWalkController/xWalkTest/xSequenceTest/hardware/include" kind="inc" path="" system="false"/>
                 <pathentry include="xWalkAgent/test/include" kind="inc" path="" system="false"/>
                 <pathentry include="xWalkAgent/xWalkCalibration/xWalkGrayscaleCalibration/include"
                     kind="inc" path="" system="false"/>

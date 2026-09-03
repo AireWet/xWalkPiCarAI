@@ -82,12 +82,10 @@ jobs:
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
           supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
-      - name: Configure and build xWalkController
+      - name: Configure xWalkController settings
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-controller-build
-      - name: Run controller, CLI, and Controller-to-HAL tests
+      - name: Validate retained Controller configuration
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-controller-tests
-      - name: Run device-free deployment configuration diagnosis
-        run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-controller-diagnostic
 
   xwalk-hal:
     name: xWalkHal

@@ -9,7 +9,7 @@ include(${XWALK_RPI5_ROOT}/xWalkLibrary/XWalkDependencies.cmake)
 include(CTest)
 include(GNUInstallDirs)
 
-option(XWALK_BUILD_RPI "Build Raspberry Pi backends and the deployable CLI" OFF)
+option(XWALK_BUILD_RPI "Build Raspberry Pi backends and deployment configuration" OFF)
 option(XWALK_ENABLE_STRICT_WARNINGS "Add the host sanity warning extensions" OFF)
 option(XWALK_ENABLE_SANITIZERS "Enable AddressSanitizer and UndefinedBehaviorSanitizer" OFF)
 option(XWALK_ENABLE_THREAD_SANITIZER "Enable ThreadSanitizer for host concurrency tests" OFF)
@@ -236,12 +236,13 @@ else()
 endif()
 set(XWALK_HAL_BUILD_HOST ${XWALK_ROOT_BUILD_HOST} CACHE BOOL "Controlled by the workspace root" FORCE)
 set(XWALK_HAL_BUILD_RPI ${XWALK_BUILD_RPI} CACHE BOOL "Controlled by the workspace root" FORCE)
-set(XWALK_HAL_BUILD_CLI ON CACHE BOOL "Build the workspace CLI" FORCE)
+set(XWALK_AGENT_BUILD_HOST ${XWALK_ROOT_BUILD_HOST} CACHE BOOL "Controlled by the workspace root" FORCE)
+set(XWALK_AGENT_BUILD_RPI ${XWALK_BUILD_RPI} CACHE BOOL "Controlled by the workspace root" FORCE)
 set(XWALK_CLI_INSTALL_RUNTIME
-    ${XWALK_ROOT_BUILD_HOST} CACHE BOOL "Install the CLI runtime layout" FORCE)
+    ${XWALK_ROOT_BUILD_HOST} CACHE BOOL "Install the retained runtime configuration layout" FORCE)
 if(XWALK_BUILD_RPI)
     set(XWALK_CLI_INSTALL_RUNTIME ON CACHE BOOL
-        "Install the CLI runtime layout" FORCE)
+        "Install the retained runtime configuration layout" FORCE)
 endif()
 
 if(XWALK_BUILD_RPI)
@@ -270,7 +271,7 @@ if(XWALK_BUILD_RPI)
             "${XWALK_RPI_RUNTIME_GENERATION_OUTPUT}${XWALK_RPI_RUNTIME_GENERATION_ERROR}")
     endif()
     message(STATUS "${XWALK_RPI_RUNTIME_GENERATION_OUTPUT}")
-    message(STATUS "RPi CLI runtime configuration: ${XWALK_PICARX_CONFIG_FILE}")
+    message(STATUS "RPi deployment configuration: ${XWALK_PICARX_CONFIG_FILE}")
     message(STATUS "RPi provisioning selected GPIO device: ${XWALK_RPI_GPIO_DEVICE}")
 endif()
 
@@ -306,7 +307,6 @@ set(XWALK_HAL_HOST_OPTION_NAMES
     XWALK_BUZZER_BUILD_HOST_TESTS
     XWALK_CAMERA_BUILD_HOST_TESTS
     XWALK_CONFIG_BUILD_HOST_TESTS
-    XWALK_CLI_BUILD_HOST
     XWALK_GPIO_BUILD_HOST_TESTS
     XWALK_GPT_BUILD_HOST_TESTS
     XWALK_I2C_BUILD_HOST_TESTS
@@ -334,7 +334,6 @@ set(XWALK_HAL_RPI_OPTION_NAMES
     XWALK_BOARD_CONTROL_BUILD_HARDWARE_TESTS
     XWALK_BUZZER_BUILD_HARDWARE_TESTS
     XWALK_CAMERA_BUILD_HARDWARE_TESTS
-    XWALK_CLI_BUILD_RPI
     XWALK_GPIO_BUILD_HARDWARE_TESTS
     XWALK_GPT_BUILD_HARDWARE_TESTS
     XWALK_I2C_BUILD_HARDWARE_TESTS
@@ -511,9 +510,8 @@ endif()
 if(BUILD_TESTING)
     add_subdirectory(xWalkHal/xWalkTest/xSequenceTest)
 endif()
-if(XWALK_HAL_BUILD_CLI OR XWALK_HAL_BUILD_HOST OR XWALK_HAL_BUILD_RPI)
-    add_subdirectory(xWalkController)
-endif()
+add_subdirectory(xWalkAgent)
+add_subdirectory(xWalkController)
 if(XWALK_CLI_INSTALL_RUNTIME)
     install(PROGRAMS
         "${XWALK_WORKSPACE_ROOT}/xWalk-rpi5-tool/shell-agent/env-tool/license/xWalkEnv.sh"
@@ -567,7 +565,6 @@ if(XWALK_BUILD_RPI)
                 --camera "${XWALK_RPI_CAMERA}"
                 --apply
             COMMAND ${XWALK_RPI_SETUP_COMMAND}
-            DEPENDS xwalk-picarx-control
             WORKING_DIRECTORY "${XWALK_WORKSPACE_ROOT}"
             USES_TERMINAL
             VERBATIM)
@@ -576,7 +573,6 @@ if(XWALK_BUILD_RPI)
             COMMAND "${CMAKE_COMMAND}" -E echo
                 "Provisioning ${XWALK_RPI_PROFILE} with selected GPIO device ${XWALK_RPI_GPIO_DEVICE}"
             COMMAND ${XWALK_RPI_SETUP_COMMAND}
-            DEPENDS xwalk-picarx-control
             WORKING_DIRECTORY "${XWALK_WORKSPACE_ROOT}"
             USES_TERMINAL
             VERBATIM)
