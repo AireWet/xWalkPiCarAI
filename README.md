@@ -13,7 +13,7 @@ MyPiCarX/
 ├── xWalk-rpi5-hw/             Integrated Raspberry Pi 5 product
 │   ├── CMakeLists.txt         Product build entry point
 │   ├── CMakePresets.json      Supported host and Raspberry Pi build presets
-│   ├── xWalkAgent/            Product behavior and feature agents
+│   ├── xWalkDriver/            Product behavior and feature agents
 │   ├── xWalkAudioResources/   Versioned sound and music resources
 │   ├── xWalkController/       CLI and application composition
 │   ├── xWalkHal/              Hardware abstraction and simulation backends

@@ -84,7 +84,7 @@ synchronized to the configured GitHub `xWalkPiCarAI/master` branch.
   `uint8`, `uint16`, `uint32`, `int32`, `float64`, and `size`, instead of adding
   unrelated spellings throughout the modules.
 - Qualify shared types through the owning layer's concise namespace: `hal::`
-  in xWalkHal, `agent::` in xWalkAgent, and `ctrl::` in xWalkController. The
+  in xWalkHal, `agent::` in xWalkDriver, and `ctrl::` in xWalkController. The
   common type header exports the same underlying generic aliases into
   `xwalk::hal`, `xwalk::agent`, and `xwalk::controller`; do not use `hal::int32`
   or another HAL-qualified generic alias from Agent or Controller code.
@@ -168,44 +168,44 @@ xWalk-rpi5-tool/shell-agent/env-tool/playbooks/ repository-controlled Zuul Ansib
 xWalk-rpi5-tool/shell-agent/env-tool/quality/ Clang-Tidy, Cppcheck, and gcovr configuration
 xWalk-rpi5-tool/shell-agent/quality-tool/ host quality, sanitizer, coverage, and analysis runners
 xWalk-rpi5-tool/shell-agent/repo-tool/ repository maintenance utilities
-xWalk-rpi5-hw/xWalkAgent/                  application coordinators composed from caller-owned HAL objects
-xWalk-rpi5-hw/xWalkAgent/xWalkVehicle/     movement and autonomous-response Agent group
-xWalk-rpi5-hw/xWalkAgent/xWalkVehicle/xWalkPicarx/ complete PiCar-X movement and sensing coordinator
-xWalk-rpi5-hw/xWalkAgent/xWalkVehicle/xWalkLineTracking/ bounded grayscale line following
-xWalk-rpi5-hw/xWalkAgent/xWalkVehicle/xWalkMoveExample/ bounded movement example
-xWalk-rpi5-hw/xWalkAgent/xWalkVehicle/xWalkKeyboardControl/ keyboard-driven movement coordination
-xWalk-rpi5-hw/xWalkAgent/xWalkVehicle/xWalkObstacleAvoidance/ ultrasonic movement decisions
-xWalk-rpi5-hw/xWalkAgent/xWalkVehicle/xWalkCliffDetection/ grayscale cliff-response state machine
-xWalk-rpi5-hw/xWalkAgent/xWalkVehicle/xWalkSelfDrive/ preset gestures, sounds, and action flow
-xWalk-rpi5-hw/xWalkAgent/xWalkCalibration/ sensor, servo, and motor calibration Agent group
-xWalk-rpi5-hw/xWalkAgent/xWalkCalibration/xWalkGrayscaleCalibration/ grayscale reference calibration
-xWalk-rpi5-hw/xWalkAgent/xWalkCalibration/xWalkServoMotorCalibration/ servo and motor calibration
-xWalk-rpi5-hw/xWalkAgent/xWalkCalibration/xWalkServoZeroing/ ordered Robot HAT servo zeroing
-xWalk-rpi5-hw/xWalkAgent/xWalkVision/      camera, detection, tracking, and video Agent group
-xWalk-rpi5-hw/xWalkAgent/xWalkVision/xWalkComputerVision/ color, face, QR, and photograph coordination
-xWalk-rpi5-hw/xWalkAgent/xWalkVision/xWalkFaceTracking/ face-to-camera-servo coordination
-xWalk-rpi5-hw/xWalkAgent/xWalkVision/xWalkBullFight/ red-target pursuit coordination
-xWalk-rpi5-hw/xWalkAgent/xWalkVision/xWalkTreasureHunt/ color driving and spoken-prompt coordination
-xWalk-rpi5-hw/xWalkAgent/xWalkVision/xWalkVideoRecording/ continuous OpenCV AVI coordination
-xWalk-rpi5-hw/xWalkAgent/xWalkVision/xWalkVideoCar/ camera-assisted driving coordination
-xWalk-rpi5-hw/xWalkAgent/xWalkVision/xWalkCameraCapture/ camera-to-voice image callback adaptation
-xWalk-rpi5-hw/xWalkAgent/xWalkMedia/       sound and music Agent group
-xWalk-rpi5-hw/xWalkAgent/xWalkMedia/xWalkSoundBackgroundMusic/ sound and background music coordination
-xWalk-rpi5-hw/xWalkAgent/xWalkVoice/       speech and conversational Agent group
-xWalk-rpi5-hw/xWalkAgent/xWalkVoice/xWalkLocalVoiceChatbot/ local voice-assistant loop
-xWalk-rpi5-hw/xWalkAgent/xWalkVoice/xWalkVoicePromptCar/ spoken movement demonstration
-xWalk-rpi5-hw/xWalkAgent/xWalkVoice/xWalkStorytellingRobot/ narrated movement sequence
-xWalk-rpi5-hw/xWalkAgent/xWalkVoice/xWalkVoiceControlledCar/ Vosk wake-word movement commands
-xWalk-rpi5-hw/xWalkAgent/xWalkVoice/xWalkTextVisionTalk/ image-grounded Ollama conversation
-xWalk-rpi5-hw/xWalkAgent/xWalkVoice/xWalkOnlineLlmTest/ OpenAI-compatible text conversation
-xWalk-rpi5-hw/xWalkAgent/xWalkVoice/xWalkVoiceActiveCar/ sensor-aware Rolly voice car
-xWalk-rpi5-hw/xWalkAgent/xWalkVoice/xWalkVoiceActiveCarGpt/ English GPT Buddy voice car
-xWalk-rpi5-hw/xWalkAgent/xWalkVoice/xWalkGptCar/ upstream GPT PiCar-X assistant
-xWalk-rpi5-hw/xWalkAgent/xWalkConnectivity/ external-control and transaction Agent group
-xWalk-rpi5-hw/xWalkAgent/xWalkConnectivity/xWalkAppControl/ mobile-app vehicle coordination
-xWalk-rpi5-hw/xWalkAgent/xWalkConnectivity/xWalkSpiTransfer/ bounded SPI transaction coordination
-xWalk-rpi5-hw/xWalkAgent/xWalkPlatform/    process composition Agent group
-xWalk-rpi5-hw/xWalkAgent/xWalkPlatform/xWalkBoot/ host-stub and Raspberry Pi process composition
+xWalk-rpi5-hw/xWalkDriver/                  application coordinators composed from caller-owned HAL objects
+xWalk-rpi5-hw/xWalkDriver/xWalkVehicle/     movement and autonomous-response Agent group
+xWalk-rpi5-hw/xWalkDriver/xWalkVehicle/xWalkPicarx/ complete PiCar-X movement and sensing coordinator
+xWalk-rpi5-hw/xWalkDriver/xWalkVehicle/xWalkLineTracking/ bounded grayscale line following
+xWalk-rpi5-hw/xWalkDriver/xWalkVehicle/xWalkMoveExample/ bounded movement example
+xWalk-rpi5-hw/xWalkDriver/xWalkVehicle/xWalkKeyboardControl/ keyboard-driven movement coordination
+xWalk-rpi5-hw/xWalkDriver/xWalkVehicle/xWalkObstacleAvoidance/ ultrasonic movement decisions
+xWalk-rpi5-hw/xWalkDriver/xWalkVehicle/xWalkCliffDetection/ grayscale cliff-response state machine
+xWalk-rpi5-hw/xWalkDriver/xWalkVehicle/xWalkSelfDrive/ preset gestures, sounds, and action flow
+xWalk-rpi5-hw/xWalkDriver/xWalkCalibration/ sensor, servo, and motor calibration Agent group
+xWalk-rpi5-hw/xWalkDriver/xWalkCalibration/xWalkGrayscaleCalibration/ grayscale reference calibration
+xWalk-rpi5-hw/xWalkDriver/xWalkCalibration/xWalkServoMotorCalibration/ servo and motor calibration
+xWalk-rpi5-hw/xWalkDriver/xWalkCalibration/xWalkServoZeroing/ ordered Robot HAT servo zeroing
+xWalk-rpi5-hw/xWalkDriver/xWalkVision/      camera, detection, tracking, and video Agent group
+xWalk-rpi5-hw/xWalkDriver/xWalkVision/xWalkComputerVision/ color, face, QR, and photograph coordination
+xWalk-rpi5-hw/xWalkDriver/xWalkVision/xWalkFaceTracking/ face-to-camera-servo coordination
+xWalk-rpi5-hw/xWalkDriver/xWalkVision/xWalkBullFight/ red-target pursuit coordination
+xWalk-rpi5-hw/xWalkDriver/xWalkVision/xWalkTreasureHunt/ color driving and spoken-prompt coordination
+xWalk-rpi5-hw/xWalkDriver/xWalkVision/xWalkVideoRecording/ continuous OpenCV AVI coordination
+xWalk-rpi5-hw/xWalkDriver/xWalkVision/xWalkVideoCar/ camera-assisted driving coordination
+xWalk-rpi5-hw/xWalkDriver/xWalkVision/xWalkCameraCapture/ camera-to-voice image callback adaptation
+xWalk-rpi5-hw/xWalkDriver/xWalkMedia/       sound and music Agent group
+xWalk-rpi5-hw/xWalkDriver/xWalkMedia/xWalkSoundBackgroundMusic/ sound and background music coordination
+xWalk-rpi5-hw/xWalkDriver/xWalkVoice/       speech and conversational Agent group
+xWalk-rpi5-hw/xWalkDriver/xWalkVoice/xWalkLocalVoiceChatbot/ local voice-assistant loop
+xWalk-rpi5-hw/xWalkDriver/xWalkVoice/xWalkVoicePromptCar/ spoken movement demonstration
+xWalk-rpi5-hw/xWalkDriver/xWalkVoice/xWalkStorytellingRobot/ narrated movement sequence
+xWalk-rpi5-hw/xWalkDriver/xWalkVoice/xWalkVoiceControlledCar/ Vosk wake-word movement commands
+xWalk-rpi5-hw/xWalkDriver/xWalkVoice/xWalkTextVisionTalk/ image-grounded Ollama conversation
+xWalk-rpi5-hw/xWalkDriver/xWalkVoice/xWalkOnlineLlmTest/ OpenAI-compatible text conversation
+xWalk-rpi5-hw/xWalkDriver/xWalkVoice/xWalkVoiceActiveCar/ sensor-aware Rolly voice car
+xWalk-rpi5-hw/xWalkDriver/xWalkVoice/xWalkVoiceActiveCarGpt/ English GPT Buddy voice car
+xWalk-rpi5-hw/xWalkDriver/xWalkVoice/xWalkGptCar/ upstream GPT PiCar-X assistant
+xWalk-rpi5-hw/xWalkDriver/xWalkConnectivity/ external-control and transaction Agent group
+xWalk-rpi5-hw/xWalkDriver/xWalkConnectivity/xWalkAppControl/ mobile-app vehicle coordination
+xWalk-rpi5-hw/xWalkDriver/xWalkConnectivity/xWalkSpiTransfer/ bounded SPI transaction coordination
+xWalk-rpi5-hw/xWalkDriver/xWalkPlatform/    process composition Agent group
+xWalk-rpi5-hw/xWalkDriver/xWalkPlatform/xWalkBoot/ host-stub and Raspberry Pi process composition
 xWalk-rpi5-hw/xWalkController/             retained Controller configuration without C++ code
 xWalk-rpi5-hw/xWalkController/xWalkConfig/ layered deployment and calibration configuration
 xWalk-rpi5-hw/xWalkAudioResources/music/   packaged background-music resources
@@ -908,7 +908,7 @@ direction always runs from the façade to the selected tool.
 - Use `RPI.<digits>` UIDs with HAL macros, `CTRL.<digits>` UIDs with Controller
   macros, `RPIAGENT.<digits>` UIDs with Agent macros, and `LIB.<digits>` UIDs
   with Library macros. Source files below `xWalkHal`, `xWalkController`,
-  `xWalkAgent`, and `xWalkLibrary` must use their owning macro family. The
+  `xWalkDriver`, and `xWalkLibrary` must use their owning macro family. The
   numeric value must be unique within its tag across the complete repository
   regardless of module, submodule, or priority. IDs `RPI.001`, `CTRL.001`,
   `RPIAGENT.001`, and `LIB.001` are valid together because their tags differ;
@@ -1442,7 +1442,7 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
   it creates a different type and function identity in every translation unit.
   Component nesting also prevents helper-name collisions in aggregate test
   runners. List the support source explicitly in standalone and aggregate test
-  targets. Apply this layout across `xWalkHal` and `xWalkAgent` whenever a test is added or modified.
+  targets. Apply this layout across `xWalkHal` and `xWalkDriver` whenever a test is added or modified.
 - Test public results and observable bus traffic, including register selection,
   byte order, state shared between channels, and validation failures.
 - Add a selector in the test main and a separately named CTest entry when adding
@@ -1515,13 +1515,13 @@ meaning rather than the order of evaluation. Do not use names such as `temp`,
   Controller-owned test runner as an incremental compatibility layer.
 - Keep deployment settings below `xWalkController/xWalkConfig`. The component CMake project may generate and
   install these files, but it must not import Agent or HAL code or expose a C++ target.
-- Compose and test `xWalkAgent` directly from the product CMake project while the Controller is configuration-only.
+- Compose and test `xWalkDriver` directly from the product CMake project while the Controller is configuration-only.
 - Design any future CBB-style mechanism as a separately reviewed architecture with explicit ownership, bounded
   dispatch, payload lifetime, error propagation, concurrency, and Raspberry Pi safety contracts before adding C++
   code to the Controller component.
 ## Agent conventions
 
-- Keep `xWalkAgent` beside `xWalkHal`. Normal Agent modules coordinate caller-owned
+- Keep `xWalkDriver` beside `xWalkHal`. Normal Agent modules coordinate caller-owned
   HAL objects and must not duplicate physical I/O backends or own injected
   project dependencies. `xWalkBoot` is the intentional composition-boundary
   exception: its optional RPi target owns platform backends only for one
@@ -1588,9 +1588,9 @@ Typical host verification commands are:
 cmake -S xWalk-rpi5-hw/xWalkController -B build-controller-config
 cmake --build build-controller-config
 
-cmake -S xWalkAgent -B xWalk-rpi5-hw/xWalkAgent/build-host -DXWALK_AGENT_BUILD_HOST=ON -DCMAKE_BUILD_TYPE=Debug
-cmake --build xWalk-rpi5-hw/xWalkAgent/build-host --parallel
-ctest --test-dir xWalk-rpi5-hw/xWalkAgent/build-host --output-on-failure
+cmake -S xWalkDriver -B xWalk-rpi5-hw/xWalkDriver/build-host -DXWALK_AGENT_BUILD_HOST=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build xWalk-rpi5-hw/xWalkDriver/build-host --parallel
+ctest --test-dir xWalk-rpi5-hw/xWalkDriver/build-host --output-on-failure
 
 cmake -S xWalk-rpi5-hw/xWalkHal/interface/xWalkI2c -B xWalk-rpi5-hw/xWalkHal/interface/xWalkI2c/build-host -DXWALK_I2C_BUILD_HOST_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkI2c/build-host --parallel
@@ -1693,9 +1693,9 @@ ctest --test-dir xWalkUserButton/build-host --output-on-failure
 Typical Linux hardware compilation commands are:
 
 ```bash
-cmake -S xWalkAgent -B xWalk-rpi5-hw/xWalkAgent/build-rpi -DXWALK_AGENT_BUILD_RPI=ON -DCMAKE_BUILD_TYPE=Debug
-cmake --build xWalk-rpi5-hw/xWalkAgent/build-rpi --parallel
-ctest --test-dir xWalk-rpi5-hw/xWalkAgent/build-rpi -N -L hardware
+cmake -S xWalkDriver -B xWalk-rpi5-hw/xWalkDriver/build-rpi -DXWALK_AGENT_BUILD_RPI=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build xWalk-rpi5-hw/xWalkDriver/build-rpi --parallel
+ctest --test-dir xWalk-rpi5-hw/xWalkDriver/build-rpi -N -L hardware
 
 cmake -S xWalk-rpi5-hw/xWalkHal/interface/xWalkI2c -B xWalk-rpi5-hw/xWalkHal/interface/xWalkI2c/build-rpi -DXWALK_I2C_BUILD_HARDWARE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build xWalkI2c/build-rpi --parallel

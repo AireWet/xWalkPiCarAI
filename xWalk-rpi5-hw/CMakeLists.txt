@@ -510,7 +510,7 @@ endif()
 if(BUILD_TESTING)
     add_subdirectory(xWalkHal/xWalkTest/xSequenceTest)
 endif()
-add_subdirectory(xWalkAgent)
+add_subdirectory(xWalkDriver)
 add_subdirectory(xWalkController)
 if(XWALK_CLI_INSTALL_RUNTIME)
     install(PROGRAMS

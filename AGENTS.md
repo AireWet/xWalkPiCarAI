@@ -10,7 +10,7 @@ read and follow both knowledge-base documents:
 
 Treat these files as the coding, architecture, and documentation knowledge base
 for the complete `MyPiCarX` workspace, including `xWalk-rpi5-hw/xWalkLibrary/common`, `xWalkHal`,
-`xWalkAgent`, and `xWalkController`.
+`xWalkDriver`, and `xWalkController`.
 
 Apply the guide to every future implementation. Preserve intentional existing
 architecture, naming, dependency boundaries, validation behavior, test safety,
@@ -71,7 +71,7 @@ state, fixtures, mappings, callbacks, and factories.
 
 ## Repository-wide test support layout
 
-For tests in `xWalkHal`, `xWalkAgent`, and `xWalkController`, move reusable
+For tests in `xWalkHal`, `xWalkDriver`, and `xWalkController`, move reusable
 callback state, fake-backend structures, mapping records, callback declarations,
 and callback-table factories into a dedicated `<Component>TestSupport.h` under
 the owning test `include` directory. Put non-trivial implementations in the

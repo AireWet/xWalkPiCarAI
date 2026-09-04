@@ -2,9 +2,9 @@
 	path = devloper-note
 	url = ../devloper-note.git
 	branch = master
-[submodule "xWalkAgent"]
-	path = xWalk-rpi5-hw/xWalkAgent
-	url = ../xWalkAgent.git
+[submodule "xWalkDriver"]
+	path = xWalk-rpi5-hw/xWalkDriver
+	url = ../xWalkDriver.git
 	branch = master
 [submodule "xWalkAudioResources"]
 	path = xWalk-rpi5-hw/xWalkAudioResources

@@ -36,7 +36,7 @@ jobs:
           tar --create --file "$RUNNER_TEMP/xwalk-submitted-sources.tar" \
             --exclude='*/.git' \
             devloper-note \
-            xWalk-rpi5-hw/xWalkAgent \
+            xWalk-rpi5-hw/xWalkDriver \
             xWalk-rpi5-hw/xWalkAudioResources \
             xWalk-rpi5-hw/xWalkController \
             xWalk-rpi5-hw/xWalkHal \
@@ -52,7 +52,7 @@ jobs:
           retention-days: 1
 
   xwalk-agent:
-    name: xWalkAgent
+    name: xWalkDriver
     needs: preparation
     runs-on: [self-hosted, linux, x64, xwalk-ci]
     steps:
@@ -62,13 +62,13 @@ jobs:
         with:
           key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS }}
           supplemental-key-bundle: ${{ secrets.TARS_SUBMODULE_READ_KEYS_SUPPLEMENT }}
-      - name: Configure and build xWalkAgent
+      - name: Configure and build xWalkDriver
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-agent-build
-      - name: Run xWalkAgent aggregate tests
+      - name: Run xWalkDriver aggregate tests
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-agent-aggregate
-      - name: Run xWalkAgent functional-group tests
+      - name: Run xWalkDriver functional-group tests
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-agent-groups
-      - name: Run xWalkAgent configuration and communication tests
+      - name: Run xWalkDriver configuration and communication tests
         run: xWalk-rpi5-tool/shell-agent/gerrit-tool/run-host-ci-job.sh xwalk-agent-functional
 
   xwalk-controller:

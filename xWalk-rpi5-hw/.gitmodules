@@ -1,6 +1,6 @@
-[submodule "xWalkAgent"]
-	path = xWalkAgent
-	url = ../xWalkAgent.git
+[submodule "xWalkDriver"]
+	path = xWalkDriver
+	url = ../xWalkDriver.git
 	branch = master
 [submodule "xWalkAudioResources"]
 	path = xWalkAudioResources

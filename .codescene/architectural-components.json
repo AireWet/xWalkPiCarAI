@@ -1,7 +1,7 @@
 [
   {
     "name": "Agent",
-    "patterns": ["xWalk-rpi5-hw/xWalkAgent/**"]
+    "patterns": ["xWalk-rpi5-hw/xWalkDriver/**"]
   },
   {
     "name": "Audio Resources",
